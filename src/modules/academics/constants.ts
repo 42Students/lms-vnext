@@ -28,3 +28,34 @@ export const SECTION_STATUSES = [
 ] as const;
 export type SectionStatus =
   (typeof SECTION_STATUSES)[number];
+
+export const LEARNER_PROGRAM_ENROLLMENT_STATUSES = [
+  "ACTIVE",
+  "COMPLETED",
+  "WITHDRAWN",
+] as const;
+export type LearnerProgramEnrollmentStatus =
+  (typeof LEARNER_PROGRAM_ENROLLMENT_STATUSES)[number];
+
+export const SECTION_ENROLLMENT_STATUSES = [
+  "ACTIVE",
+  "COMPLETED",
+  "MOVED",
+  "WITHDRAWN",
+] as const;
+export type SectionEnrollmentStatus =
+  (typeof SECTION_ENROLLMENT_STATUSES)[number];
+
+export const SECTION_FACULTY_ROLES = [
+  "ADVISOR",
+  "COORDINATOR",
+] as const;
+export type SectionFacultyRole =
+  (typeof SECTION_FACULTY_ROLES)[number];
+
+export const SCHEDULE_EVENT_STATUSES = [
+  "SCHEDULED",
+  "CANCELLED",
+] as const;
+export type ScheduleEventStatus =
+  (typeof SCHEDULE_EVENT_STATUSES)[number];

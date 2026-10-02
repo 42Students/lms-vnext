@@ -2,7 +2,11 @@ import { pgEnum } from "drizzle-orm/pg-core";
 import {
   ACADEMIC_PERIOD_STATUSES,
   COHORT_STATUSES,
+  LEARNER_PROGRAM_ENROLLMENT_STATUSES,
   PROGRAM_STATUSES,
+  SCHEDULE_EVENT_STATUSES,
+  SECTION_ENROLLMENT_STATUSES,
+  SECTION_FACULTY_ROLES,
   SECTION_STATUSES,
 } from "@/modules/academics/constants";
 import {
@@ -56,4 +60,25 @@ export const cohortStatusEnum = pgEnum(
 export const sectionStatusEnum = pgEnum(
   "section_status",
   SECTION_STATUSES,
+);
+
+export const learnerProgramEnrollmentStatusEnum =
+  pgEnum(
+    "learner_program_enrollment_status",
+    LEARNER_PROGRAM_ENROLLMENT_STATUSES,
+  );
+
+export const sectionEnrollmentStatusEnum = pgEnum(
+  "section_enrollment_status",
+  SECTION_ENROLLMENT_STATUSES,
+);
+
+export const sectionFacultyRoleEnum = pgEnum(
+  "section_faculty_role",
+  SECTION_FACULTY_ROLES,
+);
+
+export const scheduleEventStatusEnum = pgEnum(
+  "schedule_event_status",
+  SCHEDULE_EVENT_STATUSES,
 );
