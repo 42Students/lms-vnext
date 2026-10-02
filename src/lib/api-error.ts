@@ -1,0 +1,58 @@
+import { NextResponse } from "next/server";
+import { ZodError } from "zod";
+import { SessionAuthenticationError } from "@/auth/session";
+import { ContextResolutionError } from "@/modules/identity/context-service";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { DepartmentServiceError } from "@/modules/departments/service";
+
+export function apiErrorResponse(error: unknown) {
+  if (error instanceof ZodError) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", issues: error.issues },
+      { status: 400 },
+    );
+  }
+
+  if (error instanceof SessionAuthenticationError) {
+    return NextResponse.json(
+      { error: error.code },
+      { status: 401 },
+    );
+  }
+
+  if (error instanceof ContextResolutionError) {
+    return NextResponse.json(
+      { error: error.code },
+      {
+        status:
+          error.code === "MEMBERSHIP_NOT_FOUND"
+            ? 403
+            : 401,
+      },
+    );
+  }
+
+  if (error instanceof AuthorizationError) {
+    return NextResponse.json(
+      { error: "FORBIDDEN" },
+      { status: 403 },
+    );
+  }
+
+  if (error instanceof DepartmentServiceError) {
+    const status =
+      error.code === "DEPARTMENT_NAME_CONFLICT"
+        ? 409
+        : 404;
+
+    return NextResponse.json(
+      { error: error.code },
+      { status },
+    );
+  }
+
+  return NextResponse.json(
+    { error: "INTERNAL_ERROR" },
+    { status: 500 },
+  );
+}
