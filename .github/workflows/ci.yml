@@ -7,12 +7,31 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
 
     steps:
       - name: Checkout
@@ -38,15 +57,24 @@ jobs:
       - name: Validate database schema
         run: npm run db:generate
 
-      - name: Export DB bootstrap artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: db-bootstrap-artifacts
-          path: |
-            package-lock.json
-            drizzle/
-          if-no-files-found: error
-          retention-days: 1
+      - name: Prepare integration database
+        run: npm run db:test:prepare
+
+      - name: Database integration tests
+        run: npm run test:db
 
       - name: Build
         run: npm run build
+
+      - name: Commit generated database artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git add package-lock.json drizzle/
+          if git diff --cached --quiet; then
+            echo "Generated database artifacts are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: commit generated database artifacts"
+          git push

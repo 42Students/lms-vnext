@@ -27,6 +27,10 @@ The platform foundation, core tenant schema, authorization foundation, Identity 
 
 The immediate next phase is **People + Membership Management**.
 
+## Local database
+
+The repeatable PostgreSQL workflow is documented in `docs/database-workflow.md`. The intended local path is a single Docker Compose Postgres service plus deterministic migrate/reset/seed commands.
+
 ## Continuation documents
 
 A new ChatGPT session should read these before making changes:

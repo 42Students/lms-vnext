@@ -15,7 +15,12 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
-    "bootstrap:superadmin": "node --conditions=react-server ./node_modules/tsx/dist/cli.mjs scripts/bootstrap-superadmin.ts"
+    "bootstrap:superadmin": "node --conditions=react-server ./node_modules/tsx/dist/cli.mjs scripts/bootstrap-superadmin.ts",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:seed": "tsx scripts/db-seed.ts",
+    "db:reset": "tsx scripts/db-reset.ts",
+    "db:test:prepare": "tsx scripts/db-test-prepare.ts",
+    "test:db": "vitest run --config vitest.db.config.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",
