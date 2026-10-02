@@ -425,7 +425,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] Input
 - [x] Select
 - [ ] Dialog
-- [ ] DataTable
+- [x] DataTable
 - [ ] ConfirmDialog
 - [ ] Toast
 - [x] EmptyState
@@ -436,9 +436,9 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] top bar
 - [x] membership switcher
 - [x] account menu
-- [ ] loading state conventions
-- [ ] error state conventions
-- [ ] permission-aware actions
+- [x] loading state conventions
+- [x] error state conventions
+- [x] permission-aware actions
 
 ---
 
