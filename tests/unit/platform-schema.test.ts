@@ -4,6 +4,8 @@ import {
   collegeMemberships,
   colleges,
   departments,
+  facultyProfiles,
+  learnerProfiles,
   legacyIdMap,
   membershipRoleEnum,
   organizations,
@@ -28,7 +30,7 @@ describe("core platform schema", () => {
     expect(systemRoleEnum.enumValues).toEqual(["SUPER_ADMIN"]);
   });
 
-  it("exports the expected first-batch tables", () => {
+  it("exports the expected core platform tables", () => {
     expect([
       getTableName(organizations),
       getTableName(colleges),
@@ -36,6 +38,8 @@ describe("core platform schema", () => {
       getTableName(collegeMemberships),
       getTableName(systemRoles),
       getTableName(departments),
+      getTableName(learnerProfiles),
+      getTableName(facultyProfiles),
       getTableName(tenantDomains),
       getTableName(legacyIdMap),
     ]).toEqual([
@@ -45,6 +49,8 @@ describe("core platform schema", () => {
       "college_memberships",
       "system_roles",
       "departments",
+      "learner_profiles",
+      "faculty_profiles",
       "tenant_domains",
       "legacy_id_map",
     ]);

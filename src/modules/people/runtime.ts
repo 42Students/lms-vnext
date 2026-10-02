@@ -8,6 +8,13 @@ import {
   removeMembershipRole,
   updateMembershipLifecycle,
 } from "./membership-service";
+import { drizzleProfileRepository } from "./profile-repository";
+import {
+  getFacultyProfile,
+  getLearnerProfile,
+  upsertFacultyProfile,
+  upsertLearnerProfile,
+} from "./profile-service";
 import { drizzlePeopleRepository } from "./repository";
 import {
   getPersonMembershipDetail,
@@ -90,5 +97,53 @@ export function updateMembershipLifecycleWithRuntime(
     membershipId,
     rawInput,
     drizzlePeopleRepository,
+  );
+}
+
+export function getLearnerProfileWithRuntime(
+  context: RequestContext,
+  membershipId: string,
+) {
+  return getLearnerProfile(
+    context,
+    membershipId,
+    drizzleProfileRepository,
+  );
+}
+
+export function upsertLearnerProfileWithRuntime(
+  context: RequestContext,
+  membershipId: string,
+  rawInput: unknown,
+) {
+  return upsertLearnerProfile(
+    context,
+    membershipId,
+    rawInput,
+    drizzleProfileRepository,
+  );
+}
+
+export function getFacultyProfileWithRuntime(
+  context: RequestContext,
+  membershipId: string,
+) {
+  return getFacultyProfile(
+    context,
+    membershipId,
+    drizzleProfileRepository,
+  );
+}
+
+export function upsertFacultyProfileWithRuntime(
+  context: RequestContext,
+  membershipId: string,
+  rawInput: unknown,
+) {
+  return upsertFacultyProfile(
+    context,
+    membershipId,
+    rawInput,
+    drizzleProfileRepository,
   );
 }

@@ -112,10 +112,10 @@ Legend:
 - [x] membership-choice listing
 - [x] add `people.manage` permission
 - [ ] system-role administration policy
-- [ ] role mutation policy
-- [ ] membership lifecycle policy
+- [x] role mutation policy
+- [x] membership lifecycle policy
 
-**NEXT ITEM:** membership role management and lifecycle (Batch P2).
+**NEXT ITEM:** minimal learner and faculty profiles (Batch P3).
 
 ---
 
@@ -280,14 +280,14 @@ Do not implement archive until downstream dependency rules are understood.
 
 # J. Membership role management
 
-- [ ] list roles
-- [ ] add role
-- [ ] remove role
-- [ ] prevent SUPER_ADMIN through membership endpoint
-- [ ] role change authorization
-- [ ] role idempotency
-- [ ] role mutation tests
-- [ ] API routes
+- [x] list roles
+- [x] add role
+- [x] remove role
+- [x] prevent SUPER_ADMIN through membership endpoint
+- [x] role change authorization
+- [x] role idempotency
+- [x] role mutation tests
+- [x] API routes
 - [ ] UI controls
 - [ ] future activity event
 
@@ -295,16 +295,16 @@ Do not implement archive until downstream dependency rules are understood.
 
 # K. Membership lifecycle
 
-- [ ] suspend membership
-- [ ] suspension reason
-- [ ] suspension timestamp
-- [ ] reactivate
-- [ ] end membership
-- [ ] request resolver blocks suspended membership
-- [ ] another college membership remains active
-- [ ] session behavior on suspended active membership
-- [ ] API routes
-- [ ] tests
+- [x] suspend membership
+- [x] suspension reason
+- [x] suspension timestamp
+- [x] reactivate
+- [x] end membership
+- [x] request resolver blocks suspended membership
+- [x] another college membership remains active
+- [x] session behavior on suspended active membership
+- [x] API routes
+- [x] tests
 - [ ] UI controls
 - [ ] future activity event
 
