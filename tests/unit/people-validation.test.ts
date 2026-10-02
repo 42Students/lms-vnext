@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   listCollegePeopleQuerySchema,
+  membershipLifecycleInputSchema,
+  membershipRoleMutationInputSchema,
   onboardPersonInputSchema,
 } from "@/modules/people/validation";
 
@@ -54,6 +56,12 @@ describe("people onboarding validation", () => {
         roles: ["SUPER_ADMIN"],
       }),
     ).toThrow();
+
+    expect(() =>
+      membershipRoleMutationInputSchema.parse({
+        role: "SUPER_ADMIN",
+      }),
+    ).toThrow();
   });
 
   it("bounds college people list pagination", () => {
@@ -78,6 +86,31 @@ describe("people onboarding validation", () => {
       listCollegePeopleQuerySchema.parse({
         collegeId,
         offset: -1,
+      }),
+    ).toThrow();
+  });
+
+  it("requires a suspension reason and validates lifecycle actions", () => {
+    expect(
+      membershipLifecycleInputSchema.parse({
+        action: "SUSPEND",
+        reason: "  Policy review  ",
+      }),
+    ).toEqual({
+      action: "SUSPEND",
+      reason: "Policy review",
+    });
+
+    expect(() =>
+      membershipLifecycleInputSchema.parse({
+        action: "SUSPEND",
+        reason: "   ",
+      }),
+    ).toThrow();
+
+    expect(() =>
+      membershipLifecycleInputSchema.parse({
+        action: "UNKNOWN",
       }),
     ).toThrow();
   });

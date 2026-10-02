@@ -34,7 +34,8 @@ function authErrorResponse(error: unknown) {
       { error: error.code },
       {
         status:
-          error.code === "MEMBERSHIP_NOT_FOUND"
+          error.code === "MEMBERSHIP_NOT_FOUND" ||
+          error.code === "MEMBERSHIP_NOT_ACTIVE"
             ? 403
             : 401,
       },
@@ -93,21 +94,19 @@ export async function POST(request: Request) {
       activeMembershipId: parsed.data.membershipId,
     });
 
-    if (context.membership?.status !== "ACTIVE") {
-      return NextResponse.json(
-        { error: "MEMBERSHIP_NOT_ACTIVE" },
-        { status: 403 },
-      );
+    const membership = context.membership;
+    if (!membership) {
+      throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
     }
 
     const response = NextResponse.json({
       ok: true,
-      membership: context.membership,
+      membership,
     });
 
     response.cookies.set(
       MEMBERSHIP_COOKIE_NAME,
-      context.membership.id,
+      membership.id,
       {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",

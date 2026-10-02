@@ -21,7 +21,8 @@ import type {
 export type ContextResolutionErrorCode =
   | "USER_NOT_FOUND"
   | "USER_DISABLED"
-  | "MEMBERSHIP_NOT_FOUND";
+  | "MEMBERSHIP_NOT_FOUND"
+  | "MEMBERSHIP_NOT_ACTIVE";
 
 export class ContextResolutionError extends Error {
   constructor(public readonly code: ContextResolutionErrorCode) {
@@ -142,6 +143,10 @@ export async function resolveRequestContext(
 
   if (!membership) {
     throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
+  }
+
+  if (membership.status !== "ACTIVE") {
+    throw new ContextResolutionError("MEMBERSHIP_NOT_ACTIVE");
   }
 
   const roles = await findMembershipRoles(membership.id);

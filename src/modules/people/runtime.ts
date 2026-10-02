@@ -2,6 +2,12 @@ import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
 import { firebaseIdentityDirectory } from "./firebase-identity-directory";
+import {
+  addMembershipRole,
+  listMembershipRoles,
+  removeMembershipRole,
+  updateMembershipLifecycle,
+} from "./membership-service";
 import { drizzlePeopleRepository } from "./repository";
 import {
   getPersonMembershipDetail,
@@ -33,6 +39,56 @@ export function getPersonMembershipDetailWithRuntime(
   return getPersonMembershipDetail(
     context,
     membershipId,
+    drizzlePeopleRepository,
+  );
+}
+
+export function listMembershipRolesWithRuntime(
+  context: RequestContext,
+  membershipId: string,
+) {
+  return listMembershipRoles(
+    context,
+    membershipId,
+    drizzlePeopleRepository,
+  );
+}
+
+export function addMembershipRoleWithRuntime(
+  context: RequestContext,
+  membershipId: string,
+  rawInput: unknown,
+) {
+  return addMembershipRole(
+    context,
+    membershipId,
+    rawInput,
+    drizzlePeopleRepository,
+  );
+}
+
+export function removeMembershipRoleWithRuntime(
+  context: RequestContext,
+  membershipId: string,
+  rawInput: unknown,
+) {
+  return removeMembershipRole(
+    context,
+    membershipId,
+    rawInput,
+    drizzlePeopleRepository,
+  );
+}
+
+export function updateMembershipLifecycleWithRuntime(
+  context: RequestContext,
+  membershipId: string,
+  rawInput: unknown,
+) {
+  return updateMembershipLifecycle(
+    context,
+    membershipId,
+    rawInput,
     drizzlePeopleRepository,
   );
 }

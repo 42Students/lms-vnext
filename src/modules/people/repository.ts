@@ -18,6 +18,11 @@ import {
   users,
 } from "@/db/schema";
 import type { MembershipRole } from "@/modules/identity/constants";
+import {
+  getMembershipLifecyclePatch,
+  removeMembershipRoleFromSet,
+} from "./membership-domain";
+import type { MembershipManagementRepository } from "./membership-service";
 import { PeopleServiceError } from "./errors";
 import type {
   CollegePeoplePage,
@@ -88,7 +93,74 @@ async function loadRolesByMembership(
   return roles;
 }
 
-export const drizzlePeopleRepository: PeopleRepository & PeopleReadRepository = {
+async function loadMembershipDetailFromDb(
+  membershipId: string,
+): Promise<PersonMembershipView | null> {
+  const db = getDb();
+  const [row] = await db
+    .select({
+      organizationId: colleges.organizationId,
+      userId: users.id,
+      identityUid: users.identityUid,
+      phoneE164: users.phoneE164,
+      email: users.email,
+      displayName: users.displayName,
+      membershipId: collegeMemberships.id,
+      collegeId: collegeMemberships.collegeId,
+      status: collegeMemberships.status,
+      suspendedAt: collegeMemberships.suspendedAt,
+      suspensionReason: collegeMemberships.suspensionReason,
+      createdAt: collegeMemberships.createdAt,
+      updatedAt: collegeMemberships.updatedAt,
+    })
+    .from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
+    .innerJoin(
+      organizations,
+      eq(organizations.id, colleges.organizationId),
+    )
+    .where(
+      and(
+        eq(collegeMemberships.id, membershipId),
+        eq(colleges.status, "ACTIVE"),
+        eq(organizations.status, "ACTIVE"),
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    return null;
+  }
+
+  const rolesByMembership = await loadRolesByMembership([row.membershipId]);
+
+  return {
+    organizationId: row.organizationId,
+    user: {
+      id: row.userId,
+      identityUid: row.identityUid,
+      phoneE164: row.phoneE164,
+      email: row.email,
+      displayName: row.displayName,
+    },
+    membership: {
+      id: row.membershipId,
+      collegeId: row.collegeId,
+      status: row.status,
+      suspendedAt: row.suspendedAt,
+      suspensionReason: row.suspensionReason,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      roles: rolesByMembership.get(row.membershipId) ?? [],
+    },
+  };
+}
+
+export const drizzlePeopleRepository:
+  PeopleRepository &
+  PeopleReadRepository &
+  MembershipManagementRepository = {
   async loadActiveCollege(collegeId) {
     const db = getDb();
     const [college] = await db
@@ -390,67 +462,98 @@ export const drizzlePeopleRepository: PeopleRepository & PeopleReadRepository = 
     };
   },
 
-  async loadMembershipDetail(
-    membershipId,
-  ): Promise<PersonMembershipView | null> {
-    const db = getDb();
-    const [row] = await db
-      .select({
-        organizationId: colleges.organizationId,
-        userId: users.id,
-        identityUid: users.identityUid,
-        phoneE164: users.phoneE164,
-        email: users.email,
-        displayName: users.displayName,
-        membershipId: collegeMemberships.id,
-        collegeId: collegeMemberships.collegeId,
-        status: collegeMemberships.status,
-        suspendedAt: collegeMemberships.suspendedAt,
-        suspensionReason: collegeMemberships.suspensionReason,
-        createdAt: collegeMemberships.createdAt,
-        updatedAt: collegeMemberships.updatedAt,
-      })
-      .from(collegeMemberships)
-      .innerJoin(users, eq(users.id, collegeMemberships.userId))
-      .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
-      .innerJoin(
-        organizations,
-        eq(organizations.id, colleges.organizationId),
-      )
-      .where(
-        and(
-          eq(collegeMemberships.id, membershipId),
-          eq(colleges.status, "ACTIVE"),
-          eq(organizations.status, "ACTIVE"),
-        ),
-      )
-      .limit(1);
+  loadMembershipDetail(membershipId) {
+    return loadMembershipDetailFromDb(membershipId);
+  },
 
-    if (!row) {
-      return null;
+  async addMembershipRole(membershipId, role) {
+    const db = getDb();
+    await db
+      .insert(membershipRoles)
+      .values({ membershipId, role })
+      .onConflictDoNothing();
+
+    const roles = await loadRolesByMembership([membershipId]);
+    return roles.get(membershipId) ?? [];
+  },
+
+  async removeMembershipRole(membershipId, role) {
+    const db = getDb();
+
+    return db.transaction(async (tx) => {
+      const currentRows = await tx
+        .select({ role: membershipRoles.role })
+        .from(membershipRoles)
+        .where(eq(membershipRoles.membershipId, membershipId))
+        .orderBy(asc(membershipRoles.role))
+        .for("update");
+
+      const currentRoles = currentRows.map((row) => row.role);
+      const nextRoles = removeMembershipRoleFromSet(
+        currentRoles,
+        role,
+      );
+
+      if (nextRoles.length === currentRoles.length) {
+        return currentRoles;
+      }
+
+      await tx
+        .delete(membershipRoles)
+        .where(
+          and(
+            eq(membershipRoles.membershipId, membershipId),
+            eq(membershipRoles.role, role),
+          ),
+        );
+
+      return nextRoles;
+    });
+  },
+
+  async transitionMembershipLifecycle(membershipId, input) {
+    const db = getDb();
+
+    await db.transaction(async (tx) => {
+      const [current] = await tx
+        .select({
+          status: collegeMemberships.status,
+          suspendedAt: collegeMemberships.suspendedAt,
+          suspensionReason: collegeMemberships.suspensionReason,
+        })
+        .from(collegeMemberships)
+        .where(eq(collegeMemberships.id, membershipId))
+        .for("update")
+        .limit(1);
+
+      if (!current) {
+        throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
+      }
+
+      const patch = getMembershipLifecyclePatch(
+        current,
+        input,
+        new Date(),
+      );
+
+      if (!patch) {
+        return;
+      }
+
+      await tx
+        .update(collegeMemberships)
+        .set({
+          ...patch,
+          updatedAt: new Date(),
+        })
+        .where(eq(collegeMemberships.id, membershipId));
+    });
+
+    const updated = await loadMembershipDetailFromDb(membershipId);
+    if (!updated) {
+      throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
     }
 
-    const rolesByMembership = await loadRolesByMembership([row.membershipId]);
-
-    return {
-      organizationId: row.organizationId,
-      user: {
-        id: row.userId,
-        identityUid: row.identityUid,
-        phoneE164: row.phoneE164,
-        email: row.email,
-        displayName: row.displayName,
-      },
-      membership: {
-        id: row.membershipId,
-        collegeId: row.collegeId,
-        status: row.status,
-        suspendedAt: row.suspendedAt,
-        suspensionReason: row.suspensionReason,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-        roles: rolesByMembership.get(row.membershipId) ?? [],
-      },
-    };
+    return updated;
   },
 };

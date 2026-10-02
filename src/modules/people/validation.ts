@@ -45,7 +45,36 @@ export const listCollegePeopleQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
 });
 
+export const membershipRoleMutationInputSchema = z.object({
+  role: membershipRoleInputSchema,
+});
+
+const suspensionReasonSchema = z
+  .string()
+  .trim()
+  .min(1, "Suspension reason is required")
+  .max(1000, "Suspension reason must be 1000 characters or less");
+
+export const membershipLifecycleInputSchema = z.discriminatedUnion("action", [
+  z.object({
+    action: z.literal("SUSPEND"),
+    reason: suspensionReasonSchema,
+  }),
+  z.object({
+    action: z.literal("REACTIVATE"),
+  }),
+  z.object({
+    action: z.literal("END"),
+  }),
+]);
+
 export type OnboardPersonInput = z.infer<typeof onboardPersonInputSchema>;
 export type ListCollegePeopleQuery = z.infer<
   typeof listCollegePeopleQuerySchema
+>;
+export type MembershipRoleMutationInput = z.infer<
+  typeof membershipRoleMutationInputSchema
+>;
+export type MembershipLifecycleInput = z.infer<
+  typeof membershipLifecycleInputSchema
 >;

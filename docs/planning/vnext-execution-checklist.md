@@ -115,7 +115,7 @@ Legend:
 - [ ] role mutation policy
 - [ ] membership lifecycle policy
 
-**NEXT ITEM:** finish People read APIs, then continue to membership role management and lifecycle.
+**NEXT ITEM:** membership role management and lifecycle (Batch P2).
 
 ---
 
@@ -263,8 +263,8 @@ Do not implement archive until downstream dependency rules are understood.
 
 ## I.5 API
 - [x] POST people/onboard
-- [ ] GET college people
-- [ ] GET person/membership detail
+- [x] GET college people
+- [x] GET person/membership detail
 - [x] error mapping
 - [x] same-origin guard for mutations
 

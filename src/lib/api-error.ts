@@ -28,7 +28,8 @@ export function apiErrorResponse(error: unknown) {
       { error: error.code },
       {
         status:
-          error.code === "MEMBERSHIP_NOT_FOUND"
+          error.code === "MEMBERSHIP_NOT_FOUND" ||
+          error.code === "MEMBERSHIP_NOT_ACTIVE"
             ? 403
             : 401,
       },

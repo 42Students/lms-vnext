@@ -99,6 +99,26 @@ describe("platform authorization policy", () => {
     ).toBe(false);
   });
 
+  it("centralizes membership role and lifecycle mutations", () => {
+    const ownCollege = {
+      organizationId: "org-1",
+      collegeId: "college-1",
+    };
+    const otherCollege = {
+      organizationId: "org-2",
+      collegeId: "college-2",
+    };
+    const admin = memberContext(["COLLEGE_ADMIN"]);
+    const faculty = memberContext(["FACULTY"]);
+
+    expect(can(admin, "membership.role.manage", ownCollege)).toBe(true);
+    expect(can(admin, "membership.lifecycle.manage", ownCollege)).toBe(true);
+    expect(can(admin, "membership.role.manage", otherCollege)).toBe(false);
+    expect(can(admin, "membership.lifecycle.manage", otherCollege)).toBe(false);
+    expect(can(faculty, "membership.role.manage", ownCollege)).toBe(false);
+    expect(can(faculty, "membership.lifecycle.manage", ownCollege)).toBe(false);
+  });
+
   it("blocks suspended memberships", () => {
     const context = memberContext(["COLLEGE_ADMIN"], {
       status: "SUSPENDED",
@@ -110,6 +130,9 @@ describe("platform authorization policy", () => {
     expect(can(context, "people.manage", { collegeId: "college-1" })).toBe(
       false,
     );
+    expect(
+      can(context, "membership.role.manage", { collegeId: "college-1" }),
+    ).toBe(false);
   });
 
   it("models super admin as a real global role without a membership", () => {
@@ -129,6 +152,12 @@ describe("platform authorization policy", () => {
     );
     expect(
       can(context, "people.manage", {
+        organizationId: "org-99",
+        collegeId: "college-99",
+      }),
+    ).toBe(true);
+    expect(
+      can(context, "membership.lifecycle.manage", {
         organizationId: "org-99",
         collegeId: "college-99",
       }),
@@ -163,6 +192,13 @@ describe("platform authorization policy", () => {
     ).toBe(true);
 
     expect(
+      can(context, "membership.role.manage", {
+        organizationId: "org-1",
+        collegeId: "college-1",
+      }),
+    ).toBe(true);
+
+    expect(
       can(context, "department.manage", {
         organizationId: "org-2",
         collegeId: "college-2",
@@ -171,6 +207,13 @@ describe("platform authorization policy", () => {
 
     expect(
       can(context, "people.manage", {
+        organizationId: "org-2",
+        collegeId: "college-2",
+      }),
+    ).toBe(false);
+
+    expect(
+      can(context, "membership.role.manage", {
         organizationId: "org-2",
         collegeId: "college-2",
       }),
