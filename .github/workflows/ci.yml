@@ -38,5 +38,15 @@ jobs:
       - name: Validate database schema
         run: npm run db:generate
 
+      - name: Export DB bootstrap artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-bootstrap-artifacts
+          path: |
+            package-lock.json
+            drizzle/
+          if-no-files-found: error
+          retention-days: 1
+
       - name: Build
         run: npm run build
