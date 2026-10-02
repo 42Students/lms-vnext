@@ -1,6 +1,9 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
-import { getServerEnv } from "@/lib/env";
+import { Pool, type PoolConfig } from "pg";
+import {
+  getDatabaseConnectionConfig,
+  getServerEnv,
+} from "@/lib/env";
 
 type DbState = {
   pool?: Pool;
@@ -17,20 +20,46 @@ if (process.env.NODE_ENV !== "production") {
   globalForDb.__lmsDb = state;
 }
 
-export function getDb() {
-  if (state.db) {
-    return state.db;
-  }
-
-  const { DATABASE_URL } = getServerEnv();
-
-  state.pool = new Pool({
-    connectionString: DATABASE_URL,
-    max: 10,
+function poolConfig(): PoolConfig {
+  const database = getDatabaseConnectionConfig(getServerEnv());
+  const common = {
+    max: database.max,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
-  });
+  };
 
-  state.db = drizzle(state.pool);
+  if (database.mode === "url") {
+    return {
+      ...common,
+      connectionString: database.connectionString,
+    };
+  }
+
+  return {
+    ...common,
+    host: database.host,
+    user: database.user,
+    password: database.password,
+    database: database.database,
+  };
+}
+
+function getPool() {
+  state.pool ??= new Pool(poolConfig());
+  return state.pool;
+}
+
+export function getDb() {
+  state.db ??= drizzle(getPool());
   return state.db;
+}
+
+export async function checkDatabaseConnection() {
+  const client = await getPool().connect();
+
+  try {
+    await client.query("select 1");
+  } finally {
+    client.release();
+  }
 }

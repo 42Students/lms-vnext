@@ -23,13 +23,17 @@ Business logic lives in domain modules rather than React components. Infrastruct
 
 ## Current status
 
-The platform foundation, core tenant schema, authorization foundation, Identity Platform server-session architecture, Organizations, Colleges, and Departments backend paths are implemented and green in CI.
+The core platform backend is largely established: tenant/identity/people domains, membership lifecycle, profiles, SUPER_ADMIN bootstrap, verified tenant domains, canonical PostgreSQL migrations, deterministic seed data, and real PostgreSQL CI integration tests are green.
 
-The immediate next phase is **People + Membership Management**.
+The active phase is **GCP development environment readiness and provisioning**.
 
 ## Local database
 
 The repeatable PostgreSQL workflow is documented in `docs/database-workflow.md`. The intended local path is a single Docker Compose Postgres service plus deterministic migrate/reset/seed commands.
+
+## GCP development environment
+
+The account-independent deployment decisions and provisioning order are documented in `docs/gcp-development.md`. The repository supports local/proxy `DATABASE_URL` connections and Cloud Run Cloud SQL Unix-socket connections without embedding service-account credentials.
 
 ## Continuation documents
 

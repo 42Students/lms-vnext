@@ -340,6 +340,8 @@ The seed should help test cross-college isolation.
 
 Cloud SQL provisioning/connectivity remains part of Batch GCP1 and is the remaining dependency before this phase is fully complete.
 
+Repo-side GCP1 readiness supports Cloud Run Cloud SQL Unix-socket connections, keeps local/proxy DATABASE_URL support, defines secret/IAM strategy, and exposes separate liveness/readiness endpoints.
+
 ## Definition of done
 - empty DB -> migration -> seed works automatically
 - CI can run DB integration tests

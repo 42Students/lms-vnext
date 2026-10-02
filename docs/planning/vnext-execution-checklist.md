@@ -115,7 +115,7 @@ Legend:
 - [x] role mutation policy
 - [x] membership lifecycle policy
 
-**NEXT ITEM:** GCP development infrastructure (Q / Batch GCP1), beginning with project/region confirmation and dev Cloud SQL + Identity Platform.
+**NEXT ITEM:** complete account-bound GCP1 provisioning (project/region -> Cloud SQL -> Artifact Registry -> Cloud Run -> Identity Platform) when GCP project access is available.
 
 ---
 
@@ -391,18 +391,18 @@ Do not implement archive until downstream dependency rules are understood.
 - [ ] choose primary region
 - [ ] enable Cloud SQL
 - [ ] create dev Postgres
-- [ ] create database/user strategy
-- [ ] connect Cloud Run/locally safely
+- [x] create database/user strategy
+- [x] connect Cloud Run/locally safely in application configuration
 - [ ] enable Identity Platform
-- [ ] configure auth provider
-- [ ] create Cloud Storage bucket
+- [~] initial auth provider selected as phone OTP; actual provider configuration waits for GCP project
+- [~] create Cloud Storage bucket only when first storage workflow needs it
 - [ ] create Artifact Registry
-- [ ] define Cloud Run service account
-- [ ] IAM least privilege
-- [ ] Secret Manager if needed
+- [x] define dedicated Cloud Run service account strategy
+- [x] define IAM least-privilege strategy
+- [x] define Secret Manager strategy for DB password
 - [ ] dev Cloud Run service
-- [ ] env configuration
-- [ ] health check
+- [x] application env configuration contract
+- [x] liveness + database readiness checks
 - [ ] smoke deployment
 - [ ] budgets/alerts if useful
 
