@@ -3,5 +3,14 @@ import {
   seedDatabase,
 } from "./db-lib";
 
-await seedDatabase(requireDatabaseUrl());
-process.stdout.write("Deterministic development seed applied.\n");
+async function main() {
+  await seedDatabase(requireDatabaseUrl());
+  process.stdout.write("Deterministic development seed applied.\n");
+}
+
+main().catch((error) => {
+  process.stderr.write(
+    `${error instanceof Error ? error.stack ?? error.message : String(error)}\n`,
+  );
+  process.exitCode = 1;
+});

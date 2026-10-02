@@ -1,12 +1,10 @@
-import { fileURLToPath } from "node:url";
+import path from "node:path";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Pool, type PoolClient } from "pg";
 import { SEED_IDS } from "./db-seed-data";
 
-const migrationsFolder = fileURLToPath(
-  new URL("../drizzle", import.meta.url),
-);
+const migrationsFolder = path.resolve(process.cwd(), "drizzle");
 
 export function requireDatabaseUrl(
   variableName: "DATABASE_URL" | "TEST_DATABASE_URL" = "DATABASE_URL",

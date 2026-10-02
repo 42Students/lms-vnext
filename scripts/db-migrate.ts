@@ -3,5 +3,14 @@ import {
   requireDatabaseUrl,
 } from "./db-lib";
 
-await migrateDatabase(requireDatabaseUrl());
-process.stdout.write("Database migrations applied.\n");
+async function main() {
+  await migrateDatabase(requireDatabaseUrl());
+  process.stdout.write("Database migrations applied.\n");
+}
+
+main().catch((error) => {
+  process.stderr.write(
+    `${error instanceof Error ? error.stack ?? error.message : String(error)}\n`,
+  );
+  process.exitCode = 1;
+});
