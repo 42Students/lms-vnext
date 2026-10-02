@@ -78,12 +78,36 @@ describe("platform authorization policy", () => {
     );
   });
 
+  it("centralizes people management on college-admin tenant scope", () => {
+    const target = {
+      organizationId: "org-1",
+      collegeId: "college-1",
+    };
+
+    expect(can(memberContext(["COLLEGE_ADMIN"]), "people.manage", target)).toBe(
+      true,
+    );
+    expect(can(memberContext(["FACULTY"]), "people.manage", target)).toBe(false);
+    expect(can(memberContext(["MENTOR"]), "people.manage", target)).toBe(false);
+    expect(can(memberContext(["TPO"]), "people.manage", target)).toBe(false);
+    expect(can(memberContext(["LEARNER"]), "people.manage", target)).toBe(false);
+    expect(
+      can(memberContext(["COLLEGE_ADMIN"]), "people.manage", {
+        organizationId: "org-2",
+        collegeId: "college-2",
+      }),
+    ).toBe(false);
+  });
+
   it("blocks suspended memberships", () => {
     const context = memberContext(["COLLEGE_ADMIN"], {
       status: "SUSPENDED",
     });
 
     expect(can(context, "college.read", { collegeId: "college-1" })).toBe(
+      false,
+    );
+    expect(can(context, "people.manage", { collegeId: "college-1" })).toBe(
       false,
     );
   });
@@ -103,6 +127,12 @@ describe("platform authorization policy", () => {
     expect(can(context, "department.manage", { collegeId: "college-99" })).toBe(
       true,
     );
+    expect(
+      can(context, "people.manage", {
+        organizationId: "org-99",
+        collegeId: "college-99",
+      }),
+    ).toBe(true);
   });
 
   it("uses selected superadmin scope as a safety rail", () => {
@@ -126,7 +156,21 @@ describe("platform authorization policy", () => {
     ).toBe(true);
 
     expect(
+      can(context, "people.manage", {
+        organizationId: "org-1",
+        collegeId: "college-1",
+      }),
+    ).toBe(true);
+
+    expect(
       can(context, "department.manage", {
+        organizationId: "org-2",
+        collegeId: "college-2",
+      }),
+    ).toBe(false);
+
+    expect(
+      can(context, "people.manage", {
         organizationId: "org-2",
         collegeId: "college-2",
       }),

@@ -6,6 +6,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { DepartmentServiceError } from "@/modules/departments/service";
 import { OrganizationServiceError } from "@/modules/organizations/service";
 import { CollegeServiceError } from "@/modules/colleges/service";
+import { PeopleServiceError } from "@/modules/people/errors";
 
 export function apiErrorResponse(error: unknown) {
   if (error instanceof ZodError) {
@@ -71,6 +72,18 @@ export function apiErrorResponse(error: unknown) {
       error.code === "COLLEGE_CODE_CONFLICT"
         ? 409
         : 404;
+
+    return NextResponse.json(
+      { error: error.code },
+      { status },
+    );
+  }
+
+  if (error instanceof PeopleServiceError) {
+    const status =
+      error.code === "COLLEGE_NOT_FOUND"
+        ? 404
+        : 409;
 
     return NextResponse.json(
       { error: error.code },

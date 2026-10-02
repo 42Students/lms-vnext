@@ -11,7 +11,8 @@ export type PlatformPermission =
   | "college.read"
   | "college.manage"
   | "department.read"
-  | "department.manage";
+  | "department.manage"
+  | "people.manage";
 
 export type ResourceScope = {
   organizationId?: string | null;
@@ -91,6 +92,7 @@ export function can(
 
     case "college.manage":
     case "department.manage":
+    case "people.manage":
       return (
         hasMembershipRole(context, "COLLEGE_ADMIN") &&
         isSameMembershipCollege(context, resource)
