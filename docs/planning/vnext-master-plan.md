@@ -429,6 +429,8 @@ Turn the platform core into a usable vNext product skeleton.
 
 The existing LMS is the color source of truth. vNext must preserve the **exact rendered color system** from `42Students/lms2-fe` production UI (the `prod-2026` branch at planning time; re-check the active production branch immediately before UI implementation).
 
+Palette extraction was completed against `42Students/lms2-fe@prod-2026` commit `8881715c9092b9041f5a861f93ab1f686b536e91`; the canonical mapping is committed at `docs/design-system/lms-color-parity.md` and implemented in `src/app/globals.css`.
+
 Before building the vNext shell or common components:
 1. inspect the legacy global CSS, Tailwind/theme configuration, component tokens and any module-level overrides that define the current LMS palette
 2. inventory the exact hex/RGB/RGBA/CSS-variable values actually used for brand, navigation, text, borders, surfaces, actions, hover/focus/selected states and semantic statuses

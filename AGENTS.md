@@ -48,3 +48,12 @@ For each legacy feature:
 7. cut over only after reconciliation
 
 Never preserve a bug merely because production currently behaves that way.
+
+## UI visual identity rules
+
+- The existing LMS production palette is the vNext color source of truth.
+- Canonical mapping lives in `docs/design-system/lms-color-parity.md` and `src/app/globals.css`.
+- Use semantic LMS tokens instead of raw Tailwind zinc/slate/blue palettes for product UI.
+- Never accept shadcn default colors as a substitute for the LMS brand palette.
+- Do not introduce a new raw UI color without a concrete semantic need and a documented parity decision.
+- Treat palette mismatch as an implementation defect in the same batch, not later polish.

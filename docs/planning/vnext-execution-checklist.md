@@ -411,13 +411,13 @@ Do not implement archive until downstream dependency rules are understood.
 # R. Core UI / shell
 
 ## Visual parity prerequisite — do before any UI component work
-- [ ] inspect exact LMS palette/tokens in `42Students/lms2-fe` active production branch (`prod-2026` at planning time)
-- [ ] inventory exact hex/RGB/RGBA/CSS-variable values for brand, navigation, surfaces, text, borders, actions and semantic states
-- [ ] document legacy -> vNext semantic color-token mapping
-- [ ] implement centralized vNext tokens using the exact legacy rendered colors
-- [ ] verify shadcn/Tailwind defaults do not replace or approximate LMS brand colors
+- [x] inspect exact LMS palette/tokens in `42Students/lms2-fe@prod-2026` (source commit `8881715c`)
+- [x] inventory exact hex/RGB/RGBA/CSS-variable values for brand, navigation, surfaces, text, borders, actions and semantic states
+- [x] document legacy -> vNext semantic color-token mapping
+- [x] implement centralized vNext tokens using the exact canonical legacy colors
+- [~] Tailwind baseline is mapped to LMS tokens; re-verify shadcn defaults when shadcn is installed
 - [ ] complete shell/common-component color parity review before closing first UI batch
-- [ ] treat palette mismatches as implementation defects, not deferred polish
+- [x] treat palette mismatches as implementation defects, not deferred polish
 
 - [ ] install/configure shadcn/ui
 - [ ] common Button

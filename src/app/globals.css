@@ -1,8 +1,85 @@
 @import "tailwindcss";
 
+/*
+ * LMS vNext color source of truth.
+ *
+ * These values mirror the canonical tokens in:
+ * 42Students/lms2-fe@8881715c9092b9041f5a861f93ab1f686b536e91
+ * src/styles/components/_variables.scss
+ *
+ * Do not replace these with approximate Tailwind/shadcn defaults.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --lms-primary: #26bac7;
+  --lms-primary-hover: #1e9aa8;
+  --lms-primary-text: #1a95a1;
+  --lms-primary-subtle: #eff8fa;
+  --lms-primary-light: #9ee4e8;
+  --lms-brand-dark: #1e363f;
+
+  --lms-neutral-900: #1a1d21;
+  --lms-neutral-700: #54505d;
+  --lms-neutral-500: #6b7280;
+  --lms-neutral-400: #a9a7ae;
+  --lms-neutral-300: #d6dbe3;
+  --lms-neutral-200: #e5e9f0;
+  --lms-neutral-100: #f1f4f9;
+  --lms-neutral-50: #fafbfc;
+
+  --lms-white: #ffffff;
+  --lms-black: #000000;
+
+  --lms-success: #059669;
+  --lms-success-subtle: rgba(5, 150, 105, 0.1);
+  --lms-warning: #d97706;
+  --lms-warning-subtle: rgba(217, 119, 6, 0.1);
+  --lms-error: #ef4444;
+  --lms-error-subtle: rgba(239, 68, 68, 0.1);
+  --lms-info: #26bac7;
+  --lms-info-subtle: #eff8fa;
+
+  --lms-icon-amber: #ed9c2c;
+  --lms-icon-purple: #9c6bcc;
+  --lms-icon-green: #059669;
+
+  --lms-ink-900: #0b1220;
+  --lms-ink-800: #131c2e;
+  --lms-ink-700: #1e293b;
+  --lms-teal-deep: #0e7c87;
+  --lms-gold-accent: #a16207;
+  --lms-gold-subtle: #fef6e7;
+
+  --lms-page-background: var(--lms-neutral-100);
+  --lms-surface: var(--lms-white);
+  --lms-foreground: var(--lms-neutral-900);
+  --lms-body-text: var(--lms-neutral-700);
+  --lms-muted-text: var(--lms-neutral-500);
+  --lms-placeholder: var(--lms-neutral-400);
+  --lms-border: var(--lms-neutral-200);
+  --lms-sidebar-border: var(--lms-neutral-100);
+  --lms-sidebar-active: rgba(38, 186, 199, 0.15);
+  --lms-focus-ring: rgba(38, 186, 199, 0.2);
+
+  --background: var(--lms-page-background);
+  --foreground: var(--lms-foreground);
+}
+
+@theme inline {
+  --color-background: var(--lms-page-background);
+  --color-foreground: var(--lms-foreground);
+  --color-surface: var(--lms-surface);
+  --color-primary: var(--lms-primary);
+  --color-primary-hover: var(--lms-primary-hover);
+  --color-primary-text: var(--lms-primary-text);
+  --color-primary-subtle: var(--lms-primary-subtle);
+  --color-body: var(--lms-body-text);
+  --color-muted: var(--lms-neutral-100);
+  --color-muted-foreground: var(--lms-muted-text);
+  --color-border: var(--lms-border);
+  --color-success: var(--lms-success);
+  --color-warning: var(--lms-warning);
+  --color-error: var(--lms-error);
+  --color-info: var(--lms-info);
 }
 
 * {
@@ -16,7 +93,7 @@ body {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--lms-page-background);
+  color: var(--lms-foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
