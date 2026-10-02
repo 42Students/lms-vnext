@@ -58,7 +58,25 @@ export async function checkDatabaseConnection() {
   const client = await getPool().connect();
 
   try {
-    await client.query("select 1");
+    const result = await client.query<{
+      organizations: string | null;
+      users: string | null;
+      memberships: string | null;
+    }>(
+      `select
+         to_regclass('public.organizations')::text as organizations,
+         to_regclass('public.users')::text as users,
+         to_regclass('public.college_memberships')::text as memberships`,
+    );
+
+    const schema = result.rows[0];
+    if (
+      !schema?.organizations ||
+      !schema.users ||
+      !schema.memberships
+    ) {
+      throw new Error("Core database schema is not migrated");
+    }
   } finally {
     client.release();
   }

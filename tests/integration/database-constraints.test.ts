@@ -11,6 +11,10 @@ import {
   Pool,
   type PoolClient,
 } from "pg";
+import {
+  checkDatabaseConnection,
+  closeDatabaseConnection,
+} from "@/db/client";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -52,9 +56,14 @@ afterEach(async () => {
 
 afterAll(async () => {
   await pool.end();
+  await closeDatabaseConnection();
 });
 
 describe("canonical PostgreSQL constraints", () => {
+  it("passes the deployment readiness schema probe after migrations", async () => {
+    await expect(checkDatabaseConnection()).resolves.toBeUndefined();
+  });
+
   it("keeps the seed cross-college membership scenario intact", async () => {
     const result = await client.query(
       `select college_id
