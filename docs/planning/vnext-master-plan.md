@@ -31,8 +31,8 @@ PHASE 0  Foundation                           DONE
 PHASE 1  Core schema + tenant model           MOSTLY DONE
 PHASE 2  Identity + memberships + people      MOSTLY DONE
 PHASE 3  Real DB migrations + dev DB          MOSTLY DONE
-PHASE 4  Identity Platform + login UI          PENDING
-PHASE 5  Core admin UI                         PENDING
+PHASE 4  Identity Platform + login UI          PARTIAL / GCP-BLOCKED
+PHASE 5  Core admin UI                         MOSTLY DONE
 PHASE 6  Legacy migration tooling              PENDING
 PHASE 7  Academics core                        PENDING
 PHASE 8  Courses / learning                    PENDING

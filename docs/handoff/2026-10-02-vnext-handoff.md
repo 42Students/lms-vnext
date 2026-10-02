@@ -3,8 +3,8 @@
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
 **Branch:** `main`
-**Baseline used for this handoff refresh:** `f75e144589760f2ae85187bb84dd5401c32555c8`
-**Latest verified CI at that baseline:** run #46 — green
+**Baseline used for this handoff refresh:** `9120baa745fcf71dcc947d9e7a142bed9ddb011b`
+**Latest verified CI at that baseline:** run #47 — green
 
 Always verify the live `main` HEAD and latest CI before changing anything.
 
@@ -189,6 +189,8 @@ Core canonical values include:
 - error `#ef4444`
 
 Do not replace them with Tailwind zinc/slate/blue or shadcn defaults.
+
+CSP remains deliberately deferred until the live Identity Platform/Firebase/reCAPTCHA origins are known; do not guess an allowlist.
 
 ## 8. Deliberately deferred items
 

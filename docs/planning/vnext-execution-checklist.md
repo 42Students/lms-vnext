@@ -143,7 +143,7 @@ Legend:
 - [x] membership chooser UI
 - [x] session-expiry UX
 - [x] revoked-session UX
-- [ ] privileged-user MFA decision
+- [x] privileged-user MFA decision
 
 ---
 
@@ -619,7 +619,7 @@ Do not build a generic chatbot first.
 - [ ] production Identity Platform config
 - [ ] production storage bucket
 - [ ] IAM review
-- [ ] security headers
+- [x] security headers
 - [ ] structured logging
 - [ ] error tracking
 - [ ] slow query monitoring
