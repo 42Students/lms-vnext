@@ -424,10 +424,10 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] common Button
 - [x] Input
 - [x] Select
-- [ ] Dialog
+- [x] Dialog
 - [x] DataTable
-- [ ] ConfirmDialog
-- [ ] Toast
+- [x] ConfirmDialog
+- [x] Toast
 - [x] EmptyState
 - [x] PageHeader
 - [x] StatusBadge

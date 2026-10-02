@@ -9,6 +9,7 @@ import { MembershipSwitcher } from "./membership-switcher";
 import { AdminScopeSwitcher } from "./admin-scope-switcher";
 import { AccountActions } from "./account-actions";
 import { SidebarNav } from "./sidebar-nav";
+import { ToastProvider } from "@/components/ui/toast";
 import {
   getShellNavigation,
   getShellRoleLabel,
@@ -45,7 +46,8 @@ export function AppShell({
       : null;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <ToastProvider>
+      <div className="min-h-screen bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--lms-sidebar-border)] bg-surface md:flex">
         <div className="flex min-h-20 items-center border-b border-[var(--lms-sidebar-border)] px-5">
           <div>
@@ -114,5 +116,6 @@ export function AppShell({
         </main>
       </div>
     </div>
+    </ToastProvider>
   );
 }
