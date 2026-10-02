@@ -27,6 +27,7 @@ const uiFiles = [
   "src/components/admin/person-onboard-dialog.tsx",
   "src/components/admin/person-profile-dialog.tsx",
   "src/components/admin/person-membership-actions.tsx",
+  "src/components/admin/tenant-domain-manager.tsx",
 ];
 
 describe("first UI batch color parity", () => {

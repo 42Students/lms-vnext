@@ -41,6 +41,7 @@ describe("authenticated shell model", () => {
       "Colleges",
       "Departments",
       "People",
+      "Domains",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe("Super Admin");
   });
@@ -55,6 +56,7 @@ describe("authenticated shell model", () => {
       "My College",
       "Departments",
       "People",
+      "Domains",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe("College Admin");
   });

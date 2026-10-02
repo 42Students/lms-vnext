@@ -365,7 +365,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] delete/archive mapping
 - [x] tenant host resolution
 - [x] tests
-- [ ] UI
+- [x] UI
 - [~] cross-domain auth handoff intentionally deferred until login/UI proves a need
 
 ---
