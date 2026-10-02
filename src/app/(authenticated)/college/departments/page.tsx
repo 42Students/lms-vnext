@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { DepartmentActions } from "@/components/admin/department-actions";
 import { DepartmentCreateForm } from "@/components/admin/department-create-form";
 import {
   DataTable,
@@ -27,6 +28,17 @@ const columns: DataTableColumn<DepartmentRow>[] = [
     header: "Created",
     cell: (department) =>
       department.createdAt.toISOString().slice(0, 10),
+  },
+  {
+    key: "actions",
+    header: <span className="sr-only">Actions</span>,
+    className: "text-right",
+    cell: (department) => (
+      <DepartmentActions
+        departmentId={department.id}
+        name={department.name}
+      />
+    ),
   },
 ];
 

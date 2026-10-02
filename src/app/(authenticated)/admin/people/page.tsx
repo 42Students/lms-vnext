@@ -1,5 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
+import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import {
   DataTable,
   type DataTableColumn,
@@ -99,6 +100,7 @@ export default async function SuperAdminPeoplePage() {
         eyebrow="Super Admin"
         title="People"
         description="Canonical people and memberships inside the selected college safety scope."
+        actions={<PersonOnboardDialog collegeId={collegeId} />}
       />
       <DataTable
         columns={columns}

@@ -163,7 +163,7 @@ Legend:
 - [x] superadmin manage policy
 - [x] college-admin limited read behavior
 - [x] unit validation tests
-- [ ] Organizations UI
+- [x] Organizations UI
 - [ ] organization E2E flow
 - [x] DB integration tests
 
@@ -188,7 +188,7 @@ Legend:
 - [ ] college archive service
 - [ ] college archive dependency policy
 - [ ] college archive API
-- [ ] Colleges UI
+- [x] Colleges UI
 - [ ] college E2E flow
 - [x] DB integration tests
 
@@ -217,7 +217,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [ ] real faculty dependency count
 - [ ] real courses dependency count
 - [ ] archive API after dependencies exist
-- [ ] Departments UI
+- [x] Departments UI
 - [ ] department E2E flow
 - [x] DB integration tests
 
@@ -288,7 +288,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] role idempotency
 - [x] role mutation tests
 - [x] API routes
-- [ ] UI controls
+- [x] UI controls
 - [ ] future activity event
 
 ---
@@ -305,7 +305,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] session behavior on suspended active membership
 - [x] API routes
 - [x] tests
-- [ ] UI controls
+- [x] UI controls
 - [ ] future activity event
 
 ---
@@ -446,17 +446,17 @@ Do not implement archive until downstream dependency rules are understood.
 
 ## Superadmin
 - [ ] dashboard shell
-- [ ] Organizations page
-- [ ] Colleges page
-- [ ] Departments page
-- [ ] People page
+- [x] Organizations page
+- [x] Colleges page
+- [x] Departments page
+- [x] People page
 - [x] scope UX
 
 ## College admin
 - [ ] dashboard shell
-- [ ] own college page
-- [ ] Departments page
-- [ ] People page
+- [x] own college page
+- [x] Departments page
+- [x] People page
 - [x] role management
 - [x] suspension management
 

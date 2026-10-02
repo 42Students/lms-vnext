@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
+import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import {
   DataTable,
   type DataTableColumn,
@@ -84,6 +85,11 @@ export default async function CollegePeoplePage() {
         eyebrow="College Admin"
         title="People"
         description="Canonical users and membership roles for your college."
+        actions={
+          <PersonOnboardDialog
+            collegeId={membership.collegeId}
+          />
+        }
       />
       <DataTable
         columns={columns}

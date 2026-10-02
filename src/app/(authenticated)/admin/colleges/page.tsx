@@ -1,5 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeCreateForm } from "@/components/admin/college-create-form";
+import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import {
   DataTable,
   type DataTableColumn,
@@ -40,6 +41,14 @@ const columns: DataTableColumn<CollegeRow>[] = [
     header: "Created",
     cell: (college) =>
       college.createdAt.toISOString().slice(0, 10),
+  },
+  {
+    key: "actions",
+    header: <span className="sr-only">Actions</span>,
+    className: "text-right",
+    cell: (college) => (
+      <CollegeEditDialog college={college} />
+    ),
   },
 ];
 

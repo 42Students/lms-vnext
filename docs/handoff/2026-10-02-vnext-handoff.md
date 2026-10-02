@@ -3,8 +3,8 @@
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
 **Branch:** `main`
-**Baseline used for this handoff refresh:** `e075a3676ec3b399a363001f80ce97af81efc220`
-**Latest verified CI at that baseline:** run #38 — green
+**Baseline used for this handoff refresh:** `6c3b98bf08a4e15e07f11312fd3d0915b5201146`
+**Latest verified CI at that baseline:** run #42 — green
 
 Always verify the live `main` HEAD and latest CI before changing anything.
 
@@ -66,6 +66,13 @@ Completed and green:
 - server-validated organization/college scope choices
 - scope-aware Super Admin Organizations/Colleges reads
 - college-scoped Super Admin Departments/People views
+- shared Dialog / ConfirmDialog / Toast interaction layer
+- Organization rename/archive UI with server-side dependency guard
+- College edit UI with stable organization/code ownership
+- Department rename UI
+- People onboarding UI for College Admin and scoped Super Admin
+- membership role controls for LEARNER / FACULTY / COLLEGE_ADMIN / MENTOR / TPO
+- membership suspend/reactivate/end UI with reason + terminal-state handling
 
 ## 3. Identity model
 
@@ -211,16 +218,17 @@ If GCP account access is unavailable in the current chat, do not redesign the st
 
 Non-cloud work can continue while GCP1 is account-blocked. Current core continuation order:
 
-1. finish remaining shared UI primitives (Dialog / ConfirmDialog / Toast; shadcn install only when lockfile-safe)
-2. finish Super Admin / College Admin mutation UX
-3. People role + suspension management UI
-4. browser Firebase/Identity client config and login UI once GCP Identity Platform exists
-5. core E2E acceptance flow
-6. legacy migration tooling
-7. Academics
-8. Courses
-9. Projects
-10. Placements / TPO / HR
+1. finish role-aware Super Admin / College Admin dashboard surfaces
+2. add Learner / Faculty profile editing UI
+3. add tenant-domain management UI
+4. install/configure shadcn only when package-lock can be updated atomically; do not replace canonical LMS colors
+5. browser Firebase/Identity client config and login UI once GCP Identity Platform exists
+6. core E2E acceptance flow
+7. legacy migration tooling
+8. Academics
+9. Courses
+10. Projects
+11. Placements / TPO / HR
 
 ## 10. Commit strategy
 

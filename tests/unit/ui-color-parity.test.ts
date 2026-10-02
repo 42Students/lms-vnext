@@ -21,6 +21,10 @@ const uiFiles = [
   "src/components/admin/organization-create-form.tsx",
   "src/components/admin/college-create-form.tsx",
   "src/components/admin/department-create-form.tsx",
+  "src/components/admin/organization-actions.tsx",
+  "src/components/admin/college-edit-dialog.tsx",
+  "src/components/admin/department-actions.tsx",
+  "src/components/admin/person-onboard-dialog.tsx",
   "src/components/admin/person-membership-actions.tsx",
 ];
 

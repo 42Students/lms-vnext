@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -34,7 +35,15 @@ export default async function CollegeOverviewPage() {
         eyebrow="College Admin"
         title={college.name}
         description="Your college profile is loaded through the tenant-scoped college service."
-        actions={<StatusBadge tone="success">Active</StatusBadge>}
+        actions={
+          <>
+            <StatusBadge tone="success">Active</StatusBadge>
+            <CollegeEditDialog
+              college={college}
+              triggerLabel="Edit college"
+            />
+          </>
+        }
       />
       <section className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-4">
         <div>
