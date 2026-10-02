@@ -37,9 +37,9 @@ Legend:
 - [x] AGENTS.md
 - [x] architecture docs
 - [x] migration strategy docs
-- [ ] commit package-lock.json
-- [ ] switch CI from `npm install` to `npm ci`
-- [ ] switch Docker install from `npm install` to `npm ci`
+- [x] commit package-lock.json
+- [x] switch CI from `npm install` to `npm ci`
+- [x] switch Docker install from `npm install` to `npm ci`
 
 ---
 
@@ -83,11 +83,11 @@ Legend:
 - [x] one role assignment per membership+role
 - [x] department active name uniqueness per college
 - [x] domain host uniqueness
-- [ ] canonical generated migration committed
-- [ ] migration metadata committed
-- [ ] migration apply test against real PostgreSQL
-- [ ] DB integration tests
-- [ ] migration reset documentation
+- [x] canonical generated migration committed
+- [x] migration metadata committed
+- [x] migration apply test against real PostgreSQL
+- [x] DB integration tests
+- [x] migration reset documentation
 
 ---
 
@@ -115,7 +115,7 @@ Legend:
 - [x] role mutation policy
 - [x] membership lifecycle policy
 
-**NEXT ITEM:** real PostgreSQL workflow (P / Batch DB1).
+**NEXT ITEM:** GCP development infrastructure (Q / Batch GCP1), beginning with project/region confirmation and dev Cloud SQL + Identity Platform.
 
 ---
 
@@ -314,7 +314,7 @@ Do not implement archive until downstream dependency rules are understood.
 
 - [x] design minimal profile
 - [x] schema
-- [ ] migration
+- [x] migration
 - [x] service
 - [x] validation
 - [x] create/update
@@ -372,16 +372,16 @@ Do not implement archive until downstream dependency rules are understood.
 
 # P. Real PostgreSQL workflow
 
-- [ ] add committed Drizzle migration
-- [ ] add migration command
-- [ ] add local Postgres setup
-- [ ] add reset command
-- [ ] add seed command
-- [ ] add test DB command
-- [ ] deterministic seed data
-- [ ] cross-college seed scenario
-- [ ] CI DB integration test job
-- [ ] migration smoke test
+- [x] add committed Drizzle migration
+- [x] add migration command
+- [x] add local Postgres setup
+- [x] add reset command
+- [x] add seed command
+- [x] add test DB command
+- [x] deterministic seed data
+- [x] cross-college seed scenario
+- [x] CI DB integration test job
+- [x] migration smoke test
 
 ---
 
@@ -610,7 +610,7 @@ Do not build a generic chatbot first.
 
 # AB. Production readiness
 
-- [ ] package lock + npm ci
+- [x] package lock + npm ci
 - [ ] production Cloud SQL
 - [ ] backup policy
 - [ ] restore test
@@ -684,14 +684,17 @@ Before finishing batch:
 The next chat should start here:
 
 ```text
-NEXT: Batch DB1 / Real PostgreSQL workflow
-1. generate and inspect the canonical Drizzle migration + metadata
-2. verify indexes, partial unique indexes, checks and FK delete behavior
-3. add migrate/reset/seed/test-DB commands
-4. add a simple local PostgreSQL workflow
-5. add deterministic cross-college seed data
-6. add migration smoke/integration tests
-7. make CI run the DB integration path
+NEXT: Batch GCP1 / Development infrastructure
+1. confirm/select the GCP development project and primary region
+2. provision/configure dev Cloud SQL PostgreSQL
+3. enable/configure Identity Platform and the initial login provider
+4. configure safe local/Cloud Run connectivity and least-privilege service account access
+5. create the development storage bucket and Artifact Registry only as needed
+6. configure environment variables/secrets without committing credentials
+7. deploy/smoke-test the vNext health/database/auth path
+8. keep infrastructure minimal and low-maintenance
 ```
 
-Do not jump to Academics, Projects, Placements or UI before this core path is stable. Before any UI work, complete the exact-LMS color parity prerequisite in section R.
+If cloud provisioning cannot proceed because account/project access is unavailable, do not redesign the stack. Continue with code-side preparation or another non-blocked checklist dependency.
+
+Before any UI work, complete the exact-LMS color parity prerequisite in section R.

@@ -30,7 +30,7 @@ The plan should be followed in order unless a blocking dependency or production 
 PHASE 0  Foundation                           DONE
 PHASE 1  Core schema + tenant model           MOSTLY DONE
 PHASE 2  Identity + memberships + people      MOSTLY DONE
-PHASE 3  Real DB migrations + dev DB          PENDING
+PHASE 3  Real DB migrations + dev DB          MOSTLY DONE
 PHASE 4  Identity Platform + login UI          PENDING
 PHASE 5  Core admin UI                         PENDING
 PHASE 6  Legacy migration tooling              PENDING
@@ -329,6 +329,16 @@ Create deterministic dev seed for:
 - departments
 
 The seed should help test cross-college isolation.
+
+## Local/CI status after Batch DB1
+- canonical Drizzle migration + metadata committed
+- empty PostgreSQL -> migration -> deterministic seed works automatically
+- CI runs migration smoke tests and DB integration tests against PostgreSQL
+- developer reset/migrate/seed workflow documented
+- deterministic cross-college seed scenario exists
+- package lock is canonical and CI/Docker use `npm ci`
+
+Cloud SQL provisioning/connectivity remains part of Batch GCP1 and is the remaining dependency before this phase is fully complete.
 
 ## Definition of done
 - empty DB -> migration -> seed works automatically
