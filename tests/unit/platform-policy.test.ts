@@ -115,6 +115,47 @@ describe("platform authorization policy", () => {
     );
   });
 
+  it("keeps academics readable to same-college members but mutable only by College Admin", () => {
+    const ownCollege = {
+      organizationId: "org-1",
+      collegeId: "college-1",
+    };
+    const otherCollege = {
+      organizationId: "org-2",
+      collegeId: "college-2",
+    };
+
+    expect(
+      can(memberContext(["LEARNER"]), "academics.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["FACULTY"]), "academics.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["MENTOR"]), "academics.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["TPO"]), "academics.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["FACULTY"]), "academics.manage", ownCollege),
+    ).toBe(false);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "academics.manage",
+        ownCollege,
+      ),
+    ).toBe(true);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "academics.manage",
+        otherCollege,
+      ),
+    ).toBe(false);
+  });
+
   it("centralizes people management on college-admin tenant scope", () => {
     const target = {
       organizationId: "org-1",

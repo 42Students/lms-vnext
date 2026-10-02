@@ -9,6 +9,7 @@ import { CollegeServiceError } from "@/modules/colleges/service";
 import { PeopleServiceError } from "@/modules/people/errors";
 import { TenantDomainServiceError } from "@/modules/tenant-domains/service";
 import { AdminScopeServiceError } from "@/modules/admin-scope/service";
+import { AcademicsServiceError } from "@/modules/academics/errors";
 import { logError } from "@/observability/logger";
 
 export function apiErrorResponse(error: unknown) {
@@ -80,6 +81,22 @@ export function apiErrorResponse(error: unknown) {
     return NextResponse.json(
       { error: error.code },
       { status },
+    );
+  }
+
+  if (error instanceof AcademicsServiceError) {
+    const notFound = new Set([
+      "COLLEGE_NOT_FOUND",
+      "DEPARTMENT_NOT_FOUND",
+      "PROGRAM_NOT_FOUND",
+      "ACADEMIC_PERIOD_NOT_FOUND",
+      "COHORT_NOT_FOUND",
+      "SECTION_NOT_FOUND",
+    ]);
+
+    return NextResponse.json(
+      { error: error.code },
+      { status: notFound.has(error.code) ? 404 : 409 },
     );
   }
 
