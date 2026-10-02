@@ -25,6 +25,7 @@ const uiFiles = [
   "src/components/admin/college-edit-dialog.tsx",
   "src/components/admin/department-actions.tsx",
   "src/components/admin/person-onboard-dialog.tsx",
+  "src/components/admin/person-profile-dialog.tsx",
   "src/components/admin/person-membership-actions.tsx",
 ];
 

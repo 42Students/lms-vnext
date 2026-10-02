@@ -320,7 +320,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] create/update
 - [x] tests
 - [x] API/server actions
-- [ ] UI
+- [x] UI
 - [ ] legacy learner mapping
 - [x] do not prematurely embed full academics model
 
@@ -336,7 +336,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] service
 - [x] validation
 - [x] tests
-- [ ] UI
+- [x] UI
 - [ ] legacy FacultyType classification/mapping
 
 ---

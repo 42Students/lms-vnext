@@ -11,6 +11,7 @@ import {
   type MembershipStatus,
 } from "@/modules/identity/constants";
 import { Button } from "@/components/ui/button";
+import { PersonProfileDialog } from "@/components/admin/person-profile-dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,11 +30,13 @@ function roleLabel(role: MembershipRole) {
 
 export function PersonMembershipActions({
   membershipId,
+  collegeId,
   displayName,
   roles,
   status,
 }: {
   membershipId: string;
+  collegeId: string;
   displayName: string;
   roles: readonly MembershipRole[];
   status: MembershipStatus;
@@ -152,6 +155,13 @@ export function PersonMembershipActions({
   return (
     <>
       <div className="flex flex-wrap justify-end gap-2">
+        <PersonProfileDialog
+          membershipId={membershipId}
+          collegeId={collegeId}
+          displayName={displayName}
+          roles={currentRoles}
+          disabled={currentStatus === "ENDED"}
+        />
         <Button
           variant="secondary"
           size="sm"

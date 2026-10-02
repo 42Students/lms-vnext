@@ -57,6 +57,7 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
     cell: (person) => (
       <PersonMembershipActions
         membershipId={person.membership.id}
+        collegeId={person.membership.collegeId}
         displayName={person.user.displayName || "Person"}
         roles={person.membership.roles}
         status={person.membership.status}
