@@ -405,6 +405,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] application env configuration contract
 - [x] liveness + database readiness checks
 - [x] manual WIF-based development deployment + migration workflow
+- [x] deployment configuration structural validation before GCP authentication
 - [ ] smoke deployment
 - [ ] budgets/alerts if useful
 

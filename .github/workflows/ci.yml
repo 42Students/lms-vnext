@@ -55,6 +55,41 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Deployment config validator
+        env:
+          GCP_PROJECT_ID: lms-vnext-dev
+          GCP_REGION: asia-south1
+          GAR_REPOSITORY: lms-vnext
+          CLOUD_RUN_SERVICE: lms-vnext-dev
+          CLOUD_SQL_CONNECTION_NAME: lms-vnext-dev:asia-south1:lms-vnext-dev
+          CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT: runtime@lms-vnext-dev.iam.gserviceaccount.com
+          GCP_WORKLOAD_IDENTITY_PROVIDER: projects/123456789/locations/global/workloadIdentityPools/github/providers/github
+          GCP_DEPLOYER_SERVICE_ACCOUNT: deployer@lms-vnext-dev.iam.gserviceaccount.com
+          DB_USER: lms_vnext_app
+          DB_NAME: lms_vnext
+          DB_PASSWORD_SECRET: lms-vnext-db-password
+        run: node scripts/validate-deployment-config.mjs
+
+      - name: Deployment config validator rejects mismatched Cloud SQL
+        env:
+          GCP_PROJECT_ID: lms-vnext-dev
+          GCP_REGION: asia-south1
+          GAR_REPOSITORY: lms-vnext
+          CLOUD_RUN_SERVICE: lms-vnext-dev
+          CLOUD_SQL_CONNECTION_NAME: other-project:asia-south1:lms-vnext-dev
+          CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT: runtime@lms-vnext-dev.iam.gserviceaccount.com
+          GCP_WORKLOAD_IDENTITY_PROVIDER: projects/123456789/locations/global/workloadIdentityPools/github/providers/github
+          GCP_DEPLOYER_SERVICE_ACCOUNT: deployer@lms-vnext-dev.iam.gserviceaccount.com
+          DB_USER: lms_vnext_app
+          DB_NAME: lms_vnext
+          DB_PASSWORD_SECRET: lms-vnext-db-password
+        shell: bash
+        run: |
+          if node scripts/validate-deployment-config.mjs; then
+            echo "Expected malformed deployment config to fail validation"
+            exit 1
+          fi
+
       - name: Validate database schema
         run: |
           npm run db:generate

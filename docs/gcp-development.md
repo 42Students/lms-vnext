@@ -140,7 +140,7 @@ Optional:
 
 - `GCS_BUCKET`
 
-The workflow fails before authentication if required variables are absent.
+The workflow fails before authentication if required variables are absent. After checkout it also runs `scripts/validate-deployment-config.mjs` to reject malformed or internally inconsistent project/region/Cloud SQL/service-account/database/secret values before any GCP mutation.
 
 The deployer identity needs only the permissions required to push Artifact Registry images, deploy/update Cloud Run services/jobs, and act as the runtime service account. The runtime service account—not GitHub—gets Cloud SQL Client and access to the specific DB password secret.
 
