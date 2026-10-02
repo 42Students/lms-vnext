@@ -9,6 +9,7 @@ import { CollegeServiceError } from "@/modules/colleges/service";
 import { PeopleServiceError } from "@/modules/people/errors";
 import { TenantDomainServiceError } from "@/modules/tenant-domains/service";
 import { AdminScopeServiceError } from "@/modules/admin-scope/service";
+import { logError } from "@/observability/logger";
 
 export function apiErrorResponse(error: unknown) {
   if (error instanceof ZodError) {
@@ -115,6 +116,10 @@ export function apiErrorResponse(error: unknown) {
       { status },
     );
   }
+
+  logError("api.unhandled_error", error, {
+    component: "api",
+  });
 
   return NextResponse.json(
     { error: "INTERNAL_ERROR" },

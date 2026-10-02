@@ -3,8 +3,8 @@
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
 **Branch:** `main`
-**Baseline used for this handoff refresh:** `9120baa745fcf71dcc947d9e7a142bed9ddb011b`
-**Latest verified CI at that baseline:** run #47 — green
+**Baseline used for this handoff refresh:** `fc5bea2d49314b3d4ed00169b823e6669f3b5f60`
+**Latest verified CI at that baseline:** run #48 — green
 
 Always verify the live `main` HEAD and latest CI before changing anything.
 
@@ -251,5 +251,6 @@ Non-cloud work can continue while GCP1 is account-blocked. Current core continua
 6. `docs/database-workflow.md`
 7. `docs/gcp-development.md`
 8. `docs/design-system/lms-color-parity.md`
+9. `docs/operations/deployment-and-rollback.md`
 
 Do not restart architecture discussion unless an implementation blocker proves a locked decision invalid.

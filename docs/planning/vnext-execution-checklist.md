@@ -620,12 +620,12 @@ Do not build a generic chatbot first.
 - [ ] production storage bucket
 - [ ] IAM review
 - [x] security headers
-- [ ] structured logging
+- [x] structured logging
 - [ ] error tracking
 - [ ] slow query monitoring
-- [ ] migration deployment procedure
-- [ ] rollback procedure
-- [ ] runbook
+- [x] migration deployment procedure
+- [x] rollback procedure
+- [x] runbook
 - [ ] smoke tests
 - [ ] load tests on hot workflows
 

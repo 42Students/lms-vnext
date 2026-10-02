@@ -2,15 +2,26 @@ import {
   migrateDatabase,
   migrationPoolConfigFromEnv,
 } from "./db-lib";
+import {
+  logError,
+  writeStructuredLog,
+} from "../src/observability/logger";
 
 async function main() {
+  writeStructuredLog("INFO", "database.migration_started", {
+    component: "migration",
+  });
+
   await migrateDatabase(migrationPoolConfigFromEnv());
-  process.stdout.write("Database migrations applied.\n");
+
+  writeStructuredLog("INFO", "database.migration_completed", {
+    component: "migration",
+  });
 }
 
 main().catch((error) => {
-  process.stderr.write(
-    `${error instanceof Error ? error.stack ?? error.message : String(error)}\n`,
-  );
+  logError("database.migration_failed", error, {
+    component: "migration",
+  });
   process.exitCode = 1;
 });
