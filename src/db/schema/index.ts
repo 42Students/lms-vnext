@@ -1,4 +1,8 @@
-// LMS domain tables will be introduced deliberately during module migration.
-// The initial schema stays empty so we do not prematurely copy legacy models.
-
-export {};
+export * from "./enums";
+export * from "./organizations";
+export * from "./colleges";
+export * from "./users";
+export * from "./memberships";
+export * from "./departments";
+export * from "./tenant-domains";
+export * from "./legacy-id-map";
