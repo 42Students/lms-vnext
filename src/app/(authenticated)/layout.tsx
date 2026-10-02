@@ -6,15 +6,24 @@ import {
   listMembershipChoices,
 } from "@/modules/identity/context-service";
 import { AppShell } from "@/components/shell/app-shell";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { listAdminScopeChoices } from "@/modules/admin-scope/service";
 
 async function loadShellData() {
   try {
     const context = await getCurrentRequestContext();
-    const memberships = await listMembershipChoices(
-      context.user.identityUid,
-    );
+    const [memberships, adminScopeChoices] = await Promise.all([
+      listMembershipChoices(context.user.identityUid),
+      isSuperAdmin(context)
+        ? listAdminScopeChoices(context)
+        : Promise.resolve(null),
+    ]);
 
-    return { context, memberships };
+    return {
+      context,
+      memberships,
+      adminScopeChoices,
+    };
   } catch (error) {
     if (
       error instanceof SessionAuthenticationError ||
@@ -42,6 +51,7 @@ export default async function AuthenticatedLayout({
     <AppShell
       context={shellData.context}
       memberships={shellData.memberships}
+      adminScopeChoices={shellData.adminScopeChoices}
     >
       {children}
     </AppShell>

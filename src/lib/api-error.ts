@@ -8,6 +8,7 @@ import { OrganizationServiceError } from "@/modules/organizations/service";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { PeopleServiceError } from "@/modules/people/errors";
 import { TenantDomainServiceError } from "@/modules/tenant-domains/service";
+import { AdminScopeServiceError } from "@/modules/admin-scope/service";
 
 export function apiErrorResponse(error: unknown) {
   if (error instanceof ZodError) {
@@ -78,6 +79,13 @@ export function apiErrorResponse(error: unknown) {
     return NextResponse.json(
       { error: error.code },
       { status },
+    );
+  }
+
+  if (error instanceof AdminScopeServiceError) {
+    return NextResponse.json(
+      { error: error.code },
+      { status: 404 },
     );
   }
 

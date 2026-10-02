@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { can } from "@/modules/permissions/policy";
 import { listColleges } from "@/modules/colleges/service";
 import { listOrganizations } from "@/modules/organizations/service";
 
@@ -48,27 +49,35 @@ export default async function CollegesPage() {
     listColleges(context),
     listOrganizations(context),
   ]);
+  const creatableOrganizations = organizations.filter(
+    (organization) =>
+      can(context, "college.manage", {
+        organizationId: organization.id,
+      }),
+  );
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Colleges"
-        description="Active colleges across the platform. Tenant ownership remains enforced by the server."
+        description="Active colleges are constrained by the selected Super Admin safety scope."
       />
-      {organizations.length > 0 ? (
+      {creatableOrganizations.length > 0 ? (
         <CollegeCreateForm
-          organizations={organizations.map((organization) => ({
-            id: organization.id,
-            name: organization.name,
-          }))}
+          organizations={creatableOrganizations.map(
+            (organization) => ({
+              id: organization.id,
+              name: organization.name,
+            }),
+          )}
         />
-      ) : (
+      ) : organizations.length === 0 ? (
         <EmptyState
           title="Create an organization first"
           description="Every college belongs to an organization, so the organization is the required first tenant boundary."
         />
-      )}
+      ) : null}
       <DataTable
         columns={columns}
         rows={colleges}

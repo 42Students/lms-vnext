@@ -90,6 +90,33 @@ export async function listOrganizations(context: RequestContext) {
   const db = getDb();
 
   if (isSuperAdmin(context)) {
+    const selected = context.adminScope;
+    const selectedOrganizationId =
+      selected?.organizationId ?? null;
+
+    if (selectedOrganizationId) {
+      requirePermission(context, "organization.read", {
+        organizationId: selectedOrganizationId,
+        collegeId: selected?.collegeId ?? null,
+      });
+
+      return db
+        .select({
+          id: organizations.id,
+          name: organizations.name,
+          createdAt: organizations.createdAt,
+          updatedAt: organizations.updatedAt,
+        })
+        .from(organizations)
+        .where(
+          and(
+            eq(organizations.id, selectedOrganizationId),
+            eq(organizations.status, "ACTIVE"),
+          ),
+        )
+        .orderBy(asc(organizations.name));
+    }
+
     return db
       .select({
         id: organizations.id,

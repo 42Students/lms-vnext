@@ -115,12 +115,59 @@ export async function listColleges(
   const db = getDb();
 
   if (isSuperAdmin(context)) {
-    const organizationId = organizationIdInput
+    const requestedOrganizationId = organizationIdInput
       ? collegeOrganizationIdSchema.parse(organizationIdInput)
       : null;
+    const selectedOrganizationId =
+      context.adminScope?.organizationId ?? null;
+    const selectedCollegeId =
+      context.adminScope?.collegeId ?? null;
 
-    if (organizationId) {
-      await loadActiveOrganization(organizationId);
+    if (
+      requestedOrganizationId &&
+      selectedOrganizationId &&
+      requestedOrganizationId !== selectedOrganizationId
+    ) {
+      throw new AuthorizationError("college.read");
+    }
+
+    if (selectedCollegeId) {
+      requirePermission(context, "college.read", {
+        organizationId: selectedOrganizationId,
+        collegeId: selectedCollegeId,
+      });
+
+      return db
+        .select({
+          id: colleges.id,
+          organizationId: colleges.organizationId,
+          name: colleges.name,
+          code: colleges.code,
+          logoObjectPath: colleges.logoObjectPath,
+          city: colleges.city,
+          state: colleges.state,
+          country: colleges.country,
+          createdAt: colleges.createdAt,
+          updatedAt: colleges.updatedAt,
+        })
+        .from(colleges)
+        .where(
+          and(
+            eq(colleges.id, selectedCollegeId),
+            eq(colleges.status, "ACTIVE"),
+          ),
+        )
+        .orderBy(asc(colleges.name));
+    }
+
+    const effectiveOrganizationId =
+      requestedOrganizationId ?? selectedOrganizationId;
+
+    if (effectiveOrganizationId) {
+      await loadActiveOrganization(effectiveOrganizationId);
+      requirePermission(context, "college.read", {
+        organizationId: effectiveOrganizationId,
+      });
     }
 
     return db
@@ -138,10 +185,13 @@ export async function listColleges(
       })
       .from(colleges)
       .where(
-        organizationId
+        effectiveOrganizationId
           ? and(
               eq(colleges.status, "ACTIVE"),
-              eq(colleges.organizationId, organizationId),
+              eq(
+                colleges.organizationId,
+                effectiveOrganizationId,
+              ),
             )
           : eq(colleges.status, "ACTIVE"),
       )

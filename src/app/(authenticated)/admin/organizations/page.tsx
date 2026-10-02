@@ -5,6 +5,7 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
+import { can } from "@/modules/permissions/policy";
 import { listOrganizations } from "@/modules/organizations/service";
 
 type OrganizationRow = Awaited<
@@ -32,15 +33,19 @@ const columns: DataTableColumn<OrganizationRow>[] = [
 export default async function OrganizationsPage() {
   const context = await getCurrentRequestContext();
   const organizations = await listOrganizations(context);
+  const canCreate = can(
+    context,
+    "organization.manage",
+  );
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Organizations"
-        description="Platform-level organizations available to the current Super Admin scope."
+        description="Platform organizations are constrained by the selected Super Admin safety scope."
       />
-      <OrganizationCreateForm />
+      {canCreate ? <OrganizationCreateForm /> : null}
       <DataTable
         columns={columns}
         rows={organizations}

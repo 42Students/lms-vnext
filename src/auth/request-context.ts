@@ -8,6 +8,10 @@ import {
   verifyIdentitySessionCookie,
 } from "./session";
 import { resolveRequestContext } from "@/modules/identity/context-service";
+import {
+  ADMIN_SCOPE_COOKIE_NAME,
+  decodeAdminScopeCookie,
+} from "./admin-scope";
 
 export async function getCurrentRequestContext() {
   const cookieStore = await cookies();
@@ -20,10 +24,14 @@ export async function getCurrentRequestContext() {
   const identity = await verifyIdentitySessionCookie(sessionCookie);
   const activeMembershipId =
     cookieStore.get(MEMBERSHIP_COOKIE_NAME)?.value ?? null;
+  const adminScope = decodeAdminScopeCookie(
+    cookieStore.get(ADMIN_SCOPE_COOKIE_NAME)?.value,
+  );
 
   return resolveRequestContext({
     identityUid: identity.uid,
     activeMembershipId,
+    adminScope,
   });
 }
 

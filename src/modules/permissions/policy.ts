@@ -6,6 +6,7 @@ import {
 } from "@/modules/identity/context";
 
 export type PlatformPermission =
+  | "admin-scope.select"
   | "organization.read"
   | "organization.manage"
   | "college.read"
@@ -69,6 +70,10 @@ export function can(
 ): boolean {
   if (!context || context.user.platformStatus !== "ACTIVE") {
     return false;
+  }
+
+  if (permission === "admin-scope.select") {
+    return isSuperAdmin(context);
   }
 
   if (isSuperAdmin(context)) {

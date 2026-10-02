@@ -1,7 +1,12 @@
 import type { ReactNode } from "react";
-import type { RequestContext } from "@/modules/identity/context";
+import {
+  isSuperAdmin,
+  type RequestContext,
+} from "@/modules/identity/context";
 import type { MembershipChoice } from "@/modules/identity/context-service";
+import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import { MembershipSwitcher } from "./membership-switcher";
+import { AdminScopeSwitcher } from "./admin-scope-switcher";
 import { AccountActions } from "./account-actions";
 import { SidebarNav } from "./sidebar-nav";
 import {
@@ -12,18 +17,32 @@ import {
 export function AppShell({
   context,
   memberships,
+  adminScopeChoices,
   children,
 }: {
   context: RequestContext;
   memberships: readonly MembershipChoice[];
+  adminScopeChoices: AdminScopeChoices | null;
   children: ReactNode;
 }) {
   const navigation = getShellNavigation(context);
+  const superAdmin = isSuperAdmin(context);
   const currentMembership = context.membership
     ? memberships.find(
         (membership) => membership.id === context.membership?.id,
       ) ?? null
     : null;
+
+  const selectedScopeLabel = context.adminScope?.collegeId
+    ? adminScopeChoices?.colleges.find(
+        (college) => college.id === context.adminScope?.collegeId,
+      )?.name ?? "Scoped college"
+    : context.adminScope?.organizationId
+      ? adminScopeChoices?.organizations.find(
+          (organization) =>
+            organization.id === context.adminScope?.organizationId,
+        )?.name ?? "Scoped organization"
+      : null;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -45,9 +64,9 @@ export function AppShell({
           <p className="m-0 text-xs font-semibold text-muted-foreground">
             {getShellRoleLabel(context)}
           </p>
-          {currentMembership ? (
+          {currentMembership || selectedScopeLabel ? (
             <p className="mt-1 truncate text-sm font-semibold text-body">
-              {currentMembership.collegeName}
+              {currentMembership?.collegeName ?? selectedScopeLabel}
             </p>
           ) : null}
         </div>
@@ -63,16 +82,23 @@ export function AppShell({
               <p className="mt-1 truncate text-sm font-semibold text-foreground">
                 {currentMembership
                   ? currentMembership.collegeName
-                  : context.user.systemRoles.includes("SUPER_ADMIN")
-                    ? "Platform administration"
+                  : superAdmin
+                    ? selectedScopeLabel ?? "Platform administration"
                     : "Choose an active college"}
               </p>
             </div>
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-              <MembershipSwitcher
-                memberships={memberships}
-                activeMembershipId={context.membership?.id ?? null}
-              />
+              {superAdmin && adminScopeChoices ? (
+                <AdminScopeSwitcher
+                  choices={adminScopeChoices}
+                  scope={context.adminScope}
+                />
+              ) : (
+                <MembershipSwitcher
+                  memberships={memberships}
+                  activeMembershipId={context.membership?.id ?? null}
+                />
+              )}
               <AccountActions />
             </div>
           </div>

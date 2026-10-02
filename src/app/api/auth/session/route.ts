@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
+import { ADMIN_SCOPE_COOKIE_NAME } from "@/auth/admin-scope";
 import {
   MEMBERSHIP_COOKIE_NAME,
   SESSION_COOKIE_NAME,
@@ -56,8 +57,15 @@ export async function POST(request: Request) {
       maxAge: SESSION_MAX_AGE_SECONDS,
     });
 
-    // Never carry a tenant selection across a fresh login.
+    // Never carry tenant/admin selections across a fresh login.
     response.cookies.set(MEMBERSHIP_COOKIE_NAME, "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
+    response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -94,6 +102,13 @@ export async function DELETE(request: Request) {
     maxAge: 0,
   });
   response.cookies.set(MEMBERSHIP_COOKIE_NAME, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+  response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

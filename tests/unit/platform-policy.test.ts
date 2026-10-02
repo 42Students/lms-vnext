@@ -84,6 +84,22 @@ describe("platform authorization policy", () => {
     expect(can(memberContext(["COLLEGE_ADMIN"]), "system-role.manage")).toBe(false);
   });
 
+  it("lets SUPER_ADMIN change the safety scope even while scoped", () => {
+    const scoped: RequestContext = {
+      user: { ...baseUser, systemRoles: ["SUPER_ADMIN"] },
+      membership: null,
+      adminScope: {
+        organizationId: "org-1",
+        collegeId: "college-1",
+      },
+    };
+
+    expect(can(scoped, "admin-scope.select")).toBe(true);
+    expect(
+      can(memberContext(["COLLEGE_ADMIN"]), "admin-scope.select"),
+    ).toBe(false);
+  });
+
   it("requires COLLEGE_ADMIN for tenant mutations", () => {
     const faculty = memberContext(["FACULTY"]);
     const admin = memberContext(["FACULTY", "COLLEGE_ADMIN"]);

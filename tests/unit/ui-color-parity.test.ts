@@ -12,6 +12,7 @@ const uiFiles = [
   "src/components/shell/app-shell.tsx",
   "src/components/shell/sidebar-nav.tsx",
   "src/components/shell/membership-switcher.tsx",
+  "src/components/shell/admin-scope-switcher.tsx",
   "src/components/shell/account-actions.tsx",
   "src/components/admin/organization-create-form.tsx",
   "src/components/admin/college-create-form.tsx",

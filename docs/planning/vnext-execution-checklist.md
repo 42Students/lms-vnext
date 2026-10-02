@@ -450,7 +450,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [ ] Colleges page
 - [ ] Departments page
 - [ ] People page
-- [ ] scope UX
+- [x] scope UX
 
 ## College admin
 - [ ] dashboard shell

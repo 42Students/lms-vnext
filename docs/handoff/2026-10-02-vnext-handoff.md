@@ -3,8 +3,8 @@
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
 **Branch:** `main`
-**Baseline immediately before this handoff update:** `2532ab90e694dc569f25a2fbb2f6baf3a3b18435`
-**Latest verified CI at that baseline:** run #27 — green
+**Baseline used for this handoff refresh:** `e075a3676ec3b399a363001f80ce97af81efc220`
+**Latest verified CI at that baseline:** run #38 — green
 
 Always verify the live `main` HEAD and latest CI before changing anything.
 
@@ -55,6 +55,17 @@ Completed and green:
 - Cloud Run/Cloud SQL Unix-socket runtime configuration
 - `/health` liveness and `/ready` database readiness
 - service-level PostgreSQL integration tests for Organizations/Colleges/Departments
+- PostgreSQL integration coverage for People/memberships, profiles, tenant domains, identity/system roles
+- exact LMS color tokens and parity regression tests
+- authenticated LMS shell with responsive sidebar/top bar
+- membership switching + sign-out
+- core UI primitives and loading/error/table conventions
+- guarded Super Admin and College Admin core pages
+- create Organization / College / Department UI flows
+- HttpOnly Super Admin safety-scope persistence and selector
+- server-validated organization/college scope choices
+- scope-aware Super Admin Organizations/Colleges reads
+- college-scoped Super Admin Departments/People views
 
 ## 3. Identity model
 
@@ -86,6 +97,8 @@ Central policy already covers:
 - system-role.manage
 
 Suspended memberships fail request-context resolution. SUPER_ADMIN selected scope is a safety rail, not an identity change.
+
+The selected Super Admin scope is persisted in an HttpOnly `lms_admin_scope` cookie. The server validates active organization/college selections before setting it. Scope switching remains available to a scoped SUPER_ADMIN so they cannot trap themselves inside a tenant. Fresh login/logout clears both membership and admin-scope selection.
 
 ## 5. Database state
 
@@ -196,20 +209,18 @@ Current next dependency is account-bound GCP1 provisioning:
 
 If GCP account access is unavailable in the current chat, do not redesign the stack and do not guess resource values. Continue only with non-blocked core work.
 
-After GCP1:
+Non-cloud work can continue while GCP1 is account-blocked. Current core continuation order:
 
-1. browser Firebase/Identity client config
-2. login UI
-3. membership chooser UI
-4. authenticated shell
-5. common components
-6. Superadmin/College Admin core UI
-7. core E2E acceptance flow
-8. legacy migration tooling
-9. Academics
-10. Courses
-11. Projects
-12. Placements / TPO / HR
+1. finish remaining shared UI primitives (Dialog / ConfirmDialog / Toast; shadcn install only when lockfile-safe)
+2. finish Super Admin / College Admin mutation UX
+3. People role + suspension management UI
+4. browser Firebase/Identity client config and login UI once GCP Identity Platform exists
+5. core E2E acceptance flow
+6. legacy migration tooling
+7. Academics
+8. Courses
+9. Projects
+10. Placements / TPO / HR
 
 ## 10. Commit strategy
 
