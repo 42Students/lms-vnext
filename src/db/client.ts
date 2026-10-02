@@ -62,20 +62,34 @@ export async function checkDatabaseConnection() {
       organizations: string | null;
       users: string | null;
       memberships: string | null;
+      programs: string | null;
+      academicPeriods: string | null;
+      cohorts: string | null;
+      sections: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
          to_regclass('public.users')::text as users,
-         to_regclass('public.college_memberships')::text as memberships`,
+         to_regclass('public.college_memberships')::text as memberships,
+         to_regclass('public.programs')::text as "programs",
+         to_regclass('public.academic_periods')::text as "academicPeriods",
+         to_regclass('public.cohorts')::text as "cohorts",
+         to_regclass('public.sections')::text as "sections"`,
     );
 
     const schema = result.rows[0];
     if (
       !schema?.organizations ||
       !schema.users ||
-      !schema.memberships
+      !schema.memberships ||
+      !schema.programs ||
+      !schema.academicPeriods ||
+      !schema.cohorts ||
+      !schema.sections
     ) {
-      throw new Error("Core database schema is not migrated");
+      throw new Error(
+        "Database schema is not fully migrated",
+      );
     }
   } finally {
     client.release();

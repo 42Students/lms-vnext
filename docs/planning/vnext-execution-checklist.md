@@ -500,21 +500,21 @@ Do not restart migration work unless this product decision is explicitly changed
 
 ---
 
-# V. Academics — later
+# V. Academics — ACTIVE
 
-Do not start before core platform acceptance flow is working.
+The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blocked on live Identity Platform configuration, but that no longer blocks backend/schema Academics work.
 
-- [ ] legacy Academics audit
-- [ ] Programs design
-- [ ] academic period design
-- [ ] cohorts/batches
-- [ ] classes/sections
+- [x] legacy Academics behavior audit (reference only)
+- [x] Programs design + A1 schema/service/API
+- [x] academic period design + A1 schema/service/API
+- [~] cohorts/batches — core structure/lifecycle in A1; learner progression continues in A2
+- [~] classes/sections — core structure in A1; roster membership continues in A2
 - [ ] enrollments
 - [ ] faculty assignments
 - [ ] schedules
-- [ ] migration
+- [x] greenfield decision: no academic data migration required
 - [ ] UI
-- [ ] tests
+- [~] tests — A1 policy + PostgreSQL integration coverage; A2 tests remain
 
 ---
 
@@ -527,7 +527,7 @@ Do not start before core platform acceptance flow is working.
 - [ ] lessons/content
 - [ ] progress
 - [ ] permissions
-- [ ] migration
+- [x] greenfield decision: no legacy course data migration required
 - [ ] UI
 - [ ] regression tests
 
@@ -547,7 +547,7 @@ Do not start early.
 - [ ] submission model
 - [ ] evaluation model
 - [ ] materialization redesign
-- [ ] migration
+- [x] greenfield decision: no legacy project data migration required
 - [ ] adversarial tests
 - [ ] UI
 
@@ -566,7 +566,7 @@ Do not start early.
 - [ ] drive day
 - [ ] TPO operations
 - [ ] HR operations
-- [ ] migration
+- [x] greenfield decision: no legacy placement data migration required
 - [ ] tests
 - [ ] UI
 
@@ -625,22 +625,22 @@ Do not build a generic chatbot first.
 
 ---
 
-# AC. Legacy cutover
+# AC. Fresh vNext production launch
 
-For every migrated domain:
+The legacy LMS is not active and no traffic/data cutover is required.
 
-- [ ] feature parity / intentional redesign complete
-- [ ] data migration complete
-- [ ] reconciliation complete
+- [x] legacy data migration/cutover retired for greenfield launch
+- [ ] intended vNext feature scope complete
 - [ ] permissions validated
 - [ ] critical regression tests green
 - [ ] user acceptance complete
-- [ ] cutover plan
-- [ ] rollback plan
-- [ ] cutover
-- [ ] monitor
-- [ ] freeze old writes
-- [ ] retire old code after safety window
+- [ ] production infrastructure ready
+- [ ] launch plan
+- [ ] application/database rollback plan validated
+- [ ] launch
+- [ ] monitor launch window
+- [ ] close launch findings
+- [ ] retire any unused legacy infrastructure only if it still exists
 
 ---
 

@@ -618,9 +618,9 @@ If a future import requirement appears, treat it as a new scoped project rather 
 # 10. Phase 7 — Academics core
 
 ## Goal
-Migrate the relational foundation required by Courses, Projects and other modules.
+Build the relational foundation required by Courses, Projects and other modules.
 
-Before implementation, inspect old repos deeply.
+Before implementation, inspect old repos deeply as behavior/regression references only. No legacy academic data migration is required.
 
 Likely capabilities:
 - academic years/terms
@@ -648,7 +648,7 @@ Likely capabilities:
 7. schedule/calendar
 
 ## Definition of done
-Academics can represent real college structure and supports Course migration.
+Academics can represent real college structure and supports the Courses build.
 
 ---
 
@@ -657,7 +657,7 @@ Academics can represent real college structure and supports Course migration.
 ## Goal
 Rebuild the course experience cleanly.
 
-Perform a new legacy audit first.
+Perform a new legacy behavior audit first. No legacy course data migration is required.
 
 Likely scope:
 - courses
@@ -683,7 +683,7 @@ Use typed domain outputs directly in the single TypeScript repo.
 - progress transitions
 - content ordering
 - deleted/archived references
-- malformed legacy content during migration
+- malformed or invalid content inputs at vNext boundaries
 
 ---
 
@@ -692,7 +692,7 @@ Use typed domain outputs directly in the single TypeScript repo.
 ## Goal
 Migrate the most complex current module only after platform and academic primitives are stable.
 
-Projects is explicitly NOT an early migration target.
+Projects is explicitly NOT an early build target.
 
 ## Required pre-work
 - inspect legacy Projects backend and frontend
@@ -713,7 +713,7 @@ Projects is explicitly NOT an early migration target.
 ## Key requirement
 Eliminate hidden materialization/template coupling that caused legacy regressions.
 
-## Migration method
+## Implementation method
 Break into bounded subdomains:
 1. templates
 2. project instances
@@ -851,39 +851,28 @@ AI should call explicit domain services/tools, not unrestricted SQL.
 
 ---
 
-# 16. Phase 13 — Production cutover and legacy retirement
+# 16. Phase 13 — Production launch
 
 ## Goal
-Move colleges safely without big-bang risk.
+Launch LMS vNext as the fresh authoritative LMS.
 
-## Strategy
-Use strangler migration where needed.
+The legacy/current LMS is not active, so there is no strangler traffic cutover and no legacy production data reconciliation requirement.
 
-For not-yet-migrated domains:
-- old system remains authoritative
+## Launch sequence
+1. intended vNext feature scope complete
+2. permissions and tenant isolation validated
+3. critical regression/load/smoke tests green
+4. production GCP resources and backups ready
+5. Identity Platform production configuration ready
+6. user acceptance complete
+7. launch plan and rollback procedure reviewed
+8. deploy production
+9. run authenticated production smoke
+10. monitor launch window
+11. close launch findings
 
-For migrated domains:
-- vNext becomes authoritative
-
-## Per-domain cutover
-1. feature complete
-2. data migrated
-3. reconciliation clean
-4. permissions tested
-5. load/smoke tested
-6. users validate workflow
-7. switch traffic
-8. monitor
-9. freeze legacy writes for that domain
-10. retire legacy code later
-
-## Final retirement
-Only when:
-- all active domains moved
-- all required historical data migrated
-- audit/compliance retention handled
-- rollback window expired
-- old infra no longer required
+## Legacy infrastructure
+If unused legacy infrastructure still exists, retire it separately after confirming it has no operational dependency. Do not preserve old infrastructure merely because earlier plans assumed a data migration.
 
 ---
 

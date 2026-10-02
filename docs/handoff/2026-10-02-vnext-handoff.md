@@ -239,7 +239,7 @@ Non-cloud work can continue while GCP1 is account-blocked. Current core continua
 2. install/configure shadcn only when package-lock can be updated atomically; do not replace canonical LMS colors
 3. browser Firebase/Identity client config and login UI once real GCP Identity Platform configuration exists
 4. core E2E acceptance flow after real browser login is available
-5. Academics
+5. continue Academics A2 after A1 is green
 6. Courses
 7. Projects
 8. Placements / TPO / HR
