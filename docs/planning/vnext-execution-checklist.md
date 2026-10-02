@@ -111,11 +111,11 @@ Legend:
 - [x] membership role loading
 - [x] membership-choice listing
 - [x] add `people.manage` permission
-- [ ] system-role administration policy
+- [x] system-role administration policy
 - [x] role mutation policy
 - [x] membership lifecycle policy
 
-**NEXT ITEM:** minimal learner and faculty profiles (Batch P3).
+**NEXT ITEM:** tenant-domain lifecycle closeout (O), then real PostgreSQL workflow (P / Batch DB1).
 
 ---
 
@@ -312,30 +312,30 @@ Do not implement archive until downstream dependency rules are understood.
 
 # L. Learner profile
 
-- [ ] design minimal profile
-- [ ] schema
+- [x] design minimal profile
+- [x] schema
 - [ ] migration
-- [ ] service
-- [ ] validation
-- [ ] create/update
-- [ ] tests
-- [ ] API/server actions
+- [x] service
+- [x] validation
+- [x] create/update
+- [x] tests
+- [x] API/server actions
 - [ ] UI
 - [ ] legacy learner mapping
-- [ ] do not prematurely embed full academics model
+- [x] do not prematurely embed full academics model
 
 ---
 
 # M. Faculty profile
 
-- [ ] design minimal profile
-- [ ] schema
-- [ ] primary department relation
-- [ ] employment type separate from auth role
-- [ ] academic title separate from auth role
-- [ ] service
-- [ ] validation
-- [ ] tests
+- [x] design minimal profile
+- [x] schema
+- [x] primary department relation
+- [x] employment type separate from auth role
+- [x] academic title separate from auth role
+- [x] service
+- [x] validation
+- [x] tests
 - [ ] UI
 - [ ] legacy FacultyType classification/mapping
 
@@ -343,14 +343,14 @@ Do not implement archive until downstream dependency rules are understood.
 
 # N. Superadmin bootstrap
 
-- [ ] decide secure bootstrap mechanism
-- [ ] bootstrap first Identity Platform identity
-- [ ] create vNext user
-- [ ] assign SUPER_ADMIN system role
-- [ ] ensure public API cannot self-bootstrap
-- [ ] document recovery process
-- [ ] test global access
-- [ ] test selected-scope safety rail
+- [x] decide secure bootstrap mechanism
+- [~] bootstrap first Identity Platform identity — implementation ready; actual dev bootstrap waits for Identity Platform project configuration
+- [x] create vNext user
+- [x] assign SUPER_ADMIN system role
+- [x] ensure public API cannot self-bootstrap
+- [x] document recovery process
+- [x] test global access
+- [x] test selected-scope safety rail
 
 ---
 
@@ -409,6 +409,15 @@ Do not implement archive until downstream dependency rules are understood.
 ---
 
 # R. Core UI / shell
+
+## Visual parity prerequisite — do before any UI component work
+- [ ] inspect exact LMS palette/tokens in `42Students/lms2-fe` active production branch (`prod-2026` at planning time)
+- [ ] inventory exact hex/RGB/RGBA/CSS-variable values for brand, navigation, surfaces, text, borders, actions and semantic states
+- [ ] document legacy -> vNext semantic color-token mapping
+- [ ] implement centralized vNext tokens using the exact legacy rendered colors
+- [ ] verify shadcn/Tailwind defaults do not replace or approximate LMS brand colors
+- [ ] complete shell/common-component color parity review before closing first UI batch
+- [ ] treat palette mismatches as implementation defects, not deferred polish
 
 - [ ] install/configure shadcn/ui
 - [ ] common Button
@@ -675,14 +684,20 @@ Before finishing batch:
 The next chat should start here:
 
 ```text
-NEXT: Phase 2 / People + Membership Management
-1. add people.manage permission + tests
-2. onboarding validation
-3. canonical Identity Platform/vNext user resolver for onboarding
-4. idempotent membership creation
-5. membership role assignment
-6. authenticated onboarding API
+NEXT: Phase 2 closeout / Tenant Domains
+1. normalize and validate tenant hosts
+2. create/update/delete domain mappings with uniqueness guarantees
+3. define primary-domain semantics and verification state
+4. resolve tenant safely from host
+5. add unit tests
+6. keep cross-domain auth handoff deferred until a real need exists
 7. CI green
+
+THEN: Batch DB1 / Real PostgreSQL workflow
+- commit the canonical Drizzle migration + metadata
+- add migrate/reset/seed/test-DB commands
+- add deterministic cross-college seed data
+- add migration smoke/integration tests
 ```
 
-Do not jump to Academics, Projects, Placements or UI before this core path is stable.
+Do not jump to Academics, Projects, Placements or UI before this core path is stable. Before any UI work, complete the exact-LMS color parity prerequisite in section R.

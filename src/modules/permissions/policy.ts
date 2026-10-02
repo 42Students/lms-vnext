@@ -13,6 +13,7 @@ export type PlatformPermission =
   | "department.read"
   | "department.manage"
   | "people.manage"
+  | "system-role.manage"
   | "membership.role.manage"
   | "membership.lifecycle.manage";
 
@@ -91,6 +92,9 @@ export function can(
     case "college.read":
     case "department.read":
       return isSameMembershipCollege(context, resource);
+
+    case "system-role.manage":
+      return false;
 
     case "college.manage":
     case "department.manage":

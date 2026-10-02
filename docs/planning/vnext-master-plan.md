@@ -29,7 +29,7 @@ The plan should be followed in order unless a blocking dependency or production 
 ```text
 PHASE 0  Foundation                           DONE
 PHASE 1  Core schema + tenant model           MOSTLY DONE
-PHASE 2  Identity + memberships + people      NEXT
+PHASE 2  Identity + memberships + people      MOSTLY DONE
 PHASE 3  Real DB migrations + dev DB          PENDING
 PHASE 4  Identity Platform + login UI          PENDING
 PHASE 5  Core admin UI                         PENDING
@@ -414,10 +414,31 @@ Turn the platform core into a usable vNext product skeleton.
 
 ## 8.1 Design system
 
+### Hard visual-continuity rule — exact existing LMS colors
+
+The existing LMS is the color source of truth. vNext must preserve the **exact rendered color system** from `42Students/lms2-fe` production UI (the `prod-2026` branch at planning time; re-check the active production branch immediately before UI implementation).
+
+Before building the vNext shell or common components:
+1. inspect the legacy global CSS, Tailwind/theme configuration, component tokens and any module-level overrides that define the current LMS palette
+2. inventory the exact hex/RGB/RGBA/CSS-variable values actually used for brand, navigation, text, borders, surfaces, actions, hover/focus/selected states and semantic statuses
+3. record a legacy -> vNext semantic token mapping
+4. implement those exact values as centralized vNext tokens
+5. only then build reusable UI components
+
+Non-negotiable rules:
+- do **not** invent a replacement primary blue, accent color, sidebar color or neutral palette
+- do **not** approximate legacy colors with "close" shadcn/Tailwind defaults
+- shadcn/ui may provide component behavior/structure, but its default palette must not replace the LMS palette
+- new semantic colors may be introduced only when the legacy LMS has no suitable state; document the reason and keep additions minimal
+- module UI redesigns may improve layout, spacing, hierarchy and usability without changing the established LMS visual identity
+- every UI batch must include a color-parity review before it is considered complete
+- avoid deferring known palette mismatches as later polish; color parity is part of first-pass implementation
+
 Use:
 - Tailwind
 - shadcn/ui
-- calm white/light interface
+- the exact existing LMS color palette via centralized semantic tokens
+- calm white/light interface where that matches the existing LMS
 - accessible states
 - consistent spacing
 - no heavy custom CSS framework
@@ -466,6 +487,8 @@ Build:
 - suspend/reactivate
 
 ## 8.5 UI rules
+
+Every page must preserve the exact existing LMS color system. Visual acceptance includes comparing shell/navigation, primary and secondary actions, form controls, tables/cards, selected/hover states and status treatments against the current production LMS before closing the batch.
 
 Every page must include:
 - loading state
@@ -998,6 +1021,9 @@ Membership role management + lifecycle
 ### Batch P3
 Learner/faculty profiles
 
+### Batch P4
+Secure SUPER_ADMIN bootstrap + system-role administration policy
+
 ### Batch DB1
 First migration + local DB workflow + integration tests
 
@@ -1033,6 +1059,7 @@ Current decisions:
 - no GraphQL
 - no event sourcing
 - no big-bang rewrite
+- existing LMS color system is the vNext visual source of truth; no replacement palette or approximate brand colors
 
 A future change should have a concrete problem statement and evidence.
 

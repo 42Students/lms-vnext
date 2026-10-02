@@ -63,6 +63,27 @@ describe("platform authorization policy", () => {
     );
   });
 
+  it("allows only an unscoped SUPER_ADMIN to manage global system roles", () => {
+    const unscoped: RequestContext = {
+      user: { ...baseUser, systemRoles: ["SUPER_ADMIN"] },
+      membership: null,
+      adminScope: null,
+    };
+    const collegeScoped: RequestContext = {
+      ...unscoped,
+      adminScope: { organizationId: "org-1", collegeId: "college-1" },
+    };
+    const organizationScoped: RequestContext = {
+      ...unscoped,
+      adminScope: { organizationId: "org-1", collegeId: null },
+    };
+
+    expect(can(unscoped, "system-role.manage")).toBe(true);
+    expect(can(collegeScoped, "system-role.manage")).toBe(false);
+    expect(can(organizationScoped, "system-role.manage")).toBe(false);
+    expect(can(memberContext(["COLLEGE_ADMIN"]), "system-role.manage")).toBe(false);
+  });
+
   it("requires COLLEGE_ADMIN for tenant mutations", () => {
     const faculty = memberContext(["FACULTY"]);
     const admin = memberContext(["FACULTY", "COLLEGE_ADMIN"]);
