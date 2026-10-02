@@ -626,7 +626,7 @@ Do not build a generic chatbot first.
 - [x] migration deployment procedure
 - [x] rollback procedure
 - [x] runbook
-- [ ] smoke tests
+- [~] public runtime/deployment smoke automated; authenticated production smoke waits for live Identity Platform
 - [ ] load tests on hot workflows
 
 ---

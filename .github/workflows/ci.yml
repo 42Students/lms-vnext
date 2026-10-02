@@ -71,3 +71,19 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Public runtime smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3000 HOSTNAME=127.0.0.1 node .next/standalone/server.js > /tmp/lms-vnext-smoke.log 2>&1 &
+          SERVER_PID=$!
+          cleanup() {
+            kill "$SERVER_PID" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          SMOKE_RETRIES=20 SMOKE_RETRY_DELAY_MS=500 npm run smoke:public -- http://127.0.0.1:3000 || {
+            cat /tmp/lms-vnext-smoke.log
+            exit 1
+          }

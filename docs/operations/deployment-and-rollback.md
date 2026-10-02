@@ -104,11 +104,16 @@ Never run the local `db:reset` workflow as a production recovery mechanism.
 
 ## Smoke checks
 
-The development workflow already automates:
+The shared `scripts/smoke-public.mjs` contract is executed in both normal CI and the development deployment workflow.
+
+Normal CI boots the built standalone Next.js server against the PostgreSQL service and verifies:
 
 - `GET /health`
 - `GET /ready`
 - readiness database/schema validation
+- baseline response security headers
+
+The development deployment workflow runs the same contract against the deployed Cloud Run URL.
 
 Once live browser authentication exists, production smoke coverage must additionally include the core authenticated acceptance path:
 

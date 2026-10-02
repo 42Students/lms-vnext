@@ -3,8 +3,8 @@
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
 **Branch:** `main`
-**Baseline used for this handoff refresh:** `fc5bea2d49314b3d4ed00169b823e6669f3b5f60`
-**Latest verified CI at that baseline:** run #48 — green
+**Baseline used for this handoff refresh:** `d8c487b9542525457b9ada3f7b846c575e199d03`
+**Latest verified CI at that baseline:** run #49 — green
 
 Always verify the live `main` HEAD and latest CI before changing anything.
 
