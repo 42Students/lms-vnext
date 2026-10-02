@@ -465,6 +465,7 @@ Do not implement archive until downstream dependency rules are understood.
 
 # T. Core E2E acceptance flow
 
+- [x] pre-browser PostgreSQL acceptance rehearsal for tenant/admin/people/membership isolation
 - [ ] superadmin login
 - [ ] create organization
 - [ ] create college
