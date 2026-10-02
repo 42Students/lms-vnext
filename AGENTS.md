@@ -57,3 +57,12 @@ Never preserve a bug merely because production currently behaves that way.
 - Never accept shadcn default colors as a substitute for the LMS brand palette.
 - Do not introduce a new raw UI color without a concrete semantic need and a documented parity decision.
 - Treat palette mismatch as an implementation defect in the same batch, not later polish.
+
+
+## Greenfield data rule
+
+- LMS vNext is a fresh system. No production/legacy LMS data needs to be migrated.
+- Do not build legacy DB connections, extractors, reconciliation tooling, migration runners, or data backfills unless the user explicitly changes this decision later.
+- The legacy `lms` / `lms2-fe` repositories remain behavior, UX and regression references only.
+- New vNext data should be created through vNext application flows, seeds, fixtures, or test factories.
+- The existing `legacy_id_map` schema artifact is not an active product dependency and must not be used as justification to restart migration work.

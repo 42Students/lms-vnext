@@ -8,6 +8,17 @@
 
 Always verify the live `main` HEAD and latest CI before changing anything.
 
+### Greenfield data decision — locked
+
+The legacy/current LMS is not in active use and **no legacy production data needs to be migrated into vNext**.
+
+- Phase 6 legacy migration tooling is retired.
+- Do not build legacy DB connections, extractors, profilers, reconciliation runners or backfills.
+- Legacy repos remain behavior/UX/regression references only.
+- All vNext data starts fresh and is created natively.
+- Do not restart migration work unless the user explicitly changes this decision.
+
+
 ---
 
 ## 1. Locked architecture — do not reopen
@@ -228,11 +239,10 @@ Non-cloud work can continue while GCP1 is account-blocked. Current core continua
 2. install/configure shadcn only when package-lock can be updated atomically; do not replace canonical LMS colors
 3. browser Firebase/Identity client config and login UI once real GCP Identity Platform configuration exists
 4. core E2E acceptance flow after real browser login is available
-5. legacy migration tooling
-6. Academics
-7. Courses
-8. Projects
-9. Placements / TPO / HR
+5. Academics
+6. Courses
+7. Projects
+8. Placements / TPO / HR
 
 ## 10. Commit strategy
 

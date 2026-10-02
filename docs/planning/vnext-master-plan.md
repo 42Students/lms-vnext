@@ -33,8 +33,8 @@ PHASE 2  Identity + memberships + people      MOSTLY DONE
 PHASE 3  Real DB migrations + dev DB          MOSTLY DONE
 PHASE 4  Identity Platform + login UI          PARTIAL / GCP-BLOCKED
 PHASE 5  Core admin UI                         MOSTLY DONE
-PHASE 6  Legacy migration tooling              PENDING
-PHASE 7  Academics core                        PENDING
+PHASE 6  Legacy migration tooling              RETIRED — GREENFIELD
+PHASE 7  Academics core                        NEXT
 PHASE 8  Courses / learning                    PENDING
 PHASE 9  Projects                              PENDING
 PHASE 10 Placements / TPO / HR                 PENDING
@@ -599,6 +599,21 @@ After each entity:
 A copy/sample of legacy core data migrates repeatedly to clean vNext DB with identical final state.
 
 ---
+
+## Phase 6 retirement — greenfield data decision
+
+LMS vNext will start with fresh data. The current/legacy LMS is not in active use and no production data needs to be carried forward.
+
+Therefore:
+
+- do not connect vNext migration tooling to the legacy database
+- do not implement organization/college/department/learner/faculty extractors
+- do not build collision/reconciliation/backfill runners for legacy data
+- do not make `legacy_id_map` part of the active execution plan
+- keep legacy repositories only as behavior, UX, regression and domain-knowledge references
+- create all vNext records natively through vNext workflows, seeds and test fixtures
+
+If a future import requirement appears, treat it as a new scoped project rather than silently reviving the retired Phase 6 plan.
 
 # 10. Phase 7 — Academics core
 

@@ -1,6 +1,6 @@
 # Core Platform Migration Map
 
-Status: **approved design baseline for implementation**
+Status: **historical behavior/reference baseline only — legacy data migration retired**
 Source branches inspected:
 - `42Students/lms@prod-2026` — `790a200b305f17cd640aec78490f33adf0e5f3df`
 - `42Students/lms2-fe@prod-2026` — `89806d4d6fe31a40532dc1ecbc61f6fbd1a2ac02`
@@ -17,6 +17,13 @@ Scope of this document:
 - account suspension / lifecycle
 
 This is intentionally not a line-by-line port plan. It records the behavior we need to preserve and the legacy implementation we should leave behind.
+
+## Greenfield decision
+
+LMS vNext is starting with fresh data. No legacy database data needs to be migrated.
+
+Use this document only to understand behavior worth preserving and legacy design choices worth avoiding. Do not implement the migration identity map, data extractors, reconciliation pipeline, or production backfill tooling unless the user explicitly reopens migration as a separate requirement.
+
 
 ---
 

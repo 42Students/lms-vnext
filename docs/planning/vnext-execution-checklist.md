@@ -487,25 +487,16 @@ Core platform should not be declared complete until this passes.
 
 ---
 
-# U. Legacy migration tooling
+# U. Legacy migration tooling — RETIRED
 
-- [ ] legacy DB connection/read-only config
-- [ ] legacy organization extractor
-- [ ] legacy college extractor
-- [ ] legacy department extractor
-- [ ] legacy learner extractor
-- [ ] legacy faculty extractor
-- [ ] data profiler
-- [ ] E.164 normalizer
-- [ ] identity collision classifier
-- [ ] orphan reference report
-- [ ] department duplicate report
-- [ ] faculty/college mismatch report
-- [ ] idempotent migration runner
-- [ ] legacy_id_map writer
-- [ ] reconciliation report
-- [ ] rerun test
-- [ ] sample production-like migration
+LMS vNext is greenfield. No legacy production data migration is required.
+
+- [x] greenfield data decision locked
+- [x] legacy repositories retained as behavior/reference oracles only
+- [x] legacy DB extraction/reconciliation/import tooling removed from execution scope
+- [x] all new organizations, colleges, people and domain data will be created natively in vNext
+
+Do not restart migration work unless this product decision is explicitly changed.
 
 ---
 
