@@ -68,6 +68,7 @@
   --color-background: var(--lms-page-background);
   --color-foreground: var(--lms-foreground);
   --color-surface: var(--lms-surface);
+  --color-on-primary: var(--lms-white);
   --color-primary: var(--lms-primary);
   --color-primary-hover: var(--lms-primary-hover);
   --color-primary-text: var(--lms-primary-text);

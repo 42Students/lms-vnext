@@ -417,25 +417,25 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] document legacy -> vNext semantic color-token mapping
 - [x] implement centralized vNext tokens using the exact canonical legacy colors
 - [~] Tailwind baseline is mapped to LMS tokens; re-verify shadcn defaults when shadcn is installed
-- [ ] complete shell/common-component color parity review before closing first UI batch
+- [x] complete shell/common-component color parity review before closing first UI batch
 - [x] treat palette mismatches as implementation defects, not deferred polish
 
 - [ ] install/configure shadcn/ui
-- [ ] common Button
-- [ ] Input
-- [ ] Select
+- [x] common Button
+- [x] Input
+- [x] Select
 - [ ] Dialog
 - [ ] DataTable
 - [ ] ConfirmDialog
 - [ ] Toast
-- [ ] EmptyState
-- [ ] PageHeader
-- [ ] StatusBadge
-- [ ] authenticated layout
-- [ ] sidebar
-- [ ] top bar
-- [ ] membership switcher
-- [ ] account menu
+- [x] EmptyState
+- [x] PageHeader
+- [x] StatusBadge
+- [x] authenticated layout
+- [x] sidebar
+- [x] top bar
+- [x] membership switcher
+- [x] account menu
 - [ ] loading state conventions
 - [ ] error state conventions
 - [ ] permission-aware actions
