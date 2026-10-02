@@ -111,6 +111,8 @@ Repo-side preparation is done, but account-bound resources are not provisioned f
 Committed strategy:
 
 - Cloud Run -> Cloud SQL via managed Cloud SQL attachment + Unix socket
+- manual GitHub `Deploy development` workflow uses Workload Identity Federation (no JSON key)
+- dedicated migrator image + Cloud Run migration job runs before web deployment
 - local development -> `DATABASE_URL` / Cloud SQL Auth Proxy
 - dedicated DB user `lms_vnext_app`
 - DB password in Secret Manager

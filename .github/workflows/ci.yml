@@ -63,6 +63,9 @@ jobs:
       - name: Prepare integration database
         run: npm run db:test:prepare
 
+      - name: Migration command smoke
+        run: npm run db:migrate
+
       - name: Database integration tests
         run: npm run test:db
 

@@ -1,0 +1,161 @@
+name: Deploy development
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: lms-vnext-development
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ vars.GCP_REGION }}
+      GAR_REPOSITORY: ${{ vars.GAR_REPOSITORY }}
+      CLOUD_RUN_SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
+      CLOUD_SQL_CONNECTION_NAME: ${{ vars.CLOUD_SQL_CONNECTION_NAME }}
+      CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT: ${{ vars.CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT }}
+      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      GCP_DEPLOYER_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+      DB_USER: ${{ vars.DB_USER }}
+      DB_NAME: ${{ vars.DB_NAME }}
+      DB_PASSWORD_SECRET: ${{ vars.DB_PASSWORD_SECRET }}
+      GCS_BUCKET: ${{ vars.GCS_BUCKET }}
+
+    steps:
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            GCP_PROJECT_ID
+            GCP_REGION
+            GAR_REPOSITORY
+            CLOUD_RUN_SERVICE
+            CLOUD_SQL_CONNECTION_NAME
+            CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT
+            GCP_WORKLOAD_IDENTITY_PROVIDER
+            GCP_DEPLOYER_SERVICE_ACCOUNT
+            DB_USER
+            DB_NAME
+            DB_PASSWORD_SECRET
+          )
+          missing=()
+          for name in "${required[@]}"; do
+            if [[ -z "${!name:-}" ]]; then
+              missing+=("$name")
+            fi
+          done
+          if (( ${#missing[@]} > 0 )); then
+            printf 'Missing required GitHub repository variables: %s\n' "${missing[*]}"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Artifact Registry authentication
+        shell: bash
+        run: |
+          gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build and push application images
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPOSITORY}/lms-vnext"
+          APP_IMAGE="${IMAGE_BASE}:${GITHUB_SHA}"
+          MIGRATION_IMAGE="${IMAGE_BASE}-migrate:${GITHUB_SHA}"
+
+          docker build --tag "${APP_IMAGE}" .
+          docker build --target migrator --tag "${MIGRATION_IMAGE}" .
+          docker push "${APP_IMAGE}"
+          docker push "${MIGRATION_IMAGE}"
+
+          echo "APP_IMAGE=${APP_IMAGE}" >> "$GITHUB_ENV"
+          echo "MIGRATION_IMAGE=${MIGRATION_IMAGE}" >> "$GITHUB_ENV"
+
+      - name: Deploy migration job
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcloud run jobs deploy "${CLOUD_RUN_SERVICE}-migrate" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --image="${MIGRATION_IMAGE}" \
+            --service-account="${CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT}" \
+            --set-cloudsql-instances="${CLOUD_SQL_CONNECTION_NAME}" \
+            --set-env-vars="DB_USER=${DB_USER},DB_NAME=${DB_NAME},INSTANCE_UNIX_SOCKET=/cloudsql/${CLOUD_SQL_CONNECTION_NAME},DB_POOL_MAX=2" \
+            --set-secrets="DB_PASSWORD=${DB_PASSWORD_SECRET}:latest" \
+            --tasks=1 \
+            --max-retries=0 \
+            --task-timeout=10m \
+            --quiet
+
+      - name: Run database migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcloud run jobs execute "${CLOUD_RUN_SERVICE}-migrate" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --wait
+
+      - name: Deploy Cloud Run service
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_ENV="DB_USER=${DB_USER},DB_NAME=${DB_NAME},INSTANCE_UNIX_SOCKET=/cloudsql/${CLOUD_SQL_CONNECTION_NAME},DB_POOL_MAX=5,GOOGLE_CLOUD_PROJECT=${GCP_PROJECT_ID},GCP_REGION=${GCP_REGION}"
+          if [[ -n "${GCS_BUCKET:-}" ]]; then
+            APP_ENV="${APP_ENV},GCS_BUCKET=${GCS_BUCKET}"
+          fi
+
+          gcloud run deploy "${CLOUD_RUN_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --image="${APP_IMAGE}" \
+            --service-account="${CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT}" \
+            --set-cloudsql-instances="${CLOUD_SQL_CONNECTION_NAME}" \
+            --set-env-vars="${APP_ENV}" \
+            --set-secrets="DB_PASSWORD=${DB_PASSWORD_SECRET}:latest" \
+            --allow-unauthenticated \
+            --quiet
+
+      - name: Smoke health and readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          SERVICE_URL="$(gcloud run services describe "${CLOUD_RUN_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --format='value(status.url)')"
+
+          curl --fail --silent --show-error --retry 6 --retry-delay 5 "${SERVICE_URL}/health"
+          READY_PAYLOAD="$(curl --fail --silent --show-error --retry 6 --retry-delay 5 "${SERVICE_URL}/ready")"
+          printf '%s\n' "${READY_PAYLOAD}"
+
+          node -e '
+            const payload = JSON.parse(process.argv[1]);
+            if (payload.status !== "ready" || payload.dependencies?.database !== "ok") {
+              throw new Error("Cloud Run readiness check did not report a migrated database");
+            }
+          ' "${READY_PAYLOAD}"

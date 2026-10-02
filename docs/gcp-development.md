@@ -106,14 +106,47 @@ Do not make liveness depend on Cloud SQL; a temporary database incident should n
 7. store DB password in Secret Manager
 8. create the dedicated runtime service account
 9. grant Cloud SQL Client and only required secret access
-10. build/push the container
-11. deploy Cloud Run with the Cloud SQL instance attached
-12. inject the DB secret and non-secret env values
-13. run committed Drizzle migrations against the dev database
-14. enable/configure Identity Platform phone provider and web app
-15. smoke `/health` and `/ready`
-16. add the storage bucket only when the first file workflow needs it
-17. add budgets/alerts before persistent paid use
+10. configure the GitHub deployment variables and Workload Identity Federation described below
+11. run the manual `Deploy development` GitHub Action from `main`
+12. the workflow builds/pushes the app and migrator images
+13. the workflow deploys and executes a Cloud Run migration job against Cloud SQL
+14. the workflow deploys Cloud Run with the Cloud SQL attachment and Secret Manager DB password
+15. enable/configure Identity Platform phone provider and web app
+16. verify the workflow smoke checks `/health` and `/ready`
+17. add the storage bucket only when the first file workflow needs it
+18. add budgets/alerts before persistent paid use
+
+## GitHub deployment workflow
+
+`.github/workflows/deploy-development.yml` is intentionally manual (`workflow_dispatch`) and only deploys `main`.
+
+It authenticates with Google Cloud Workload Identity Federation. No service-account JSON key belongs in GitHub or the repository.
+
+Required GitHub repository variables:
+
+- `GCP_PROJECT_ID`
+- `GCP_REGION`
+- `GAR_REPOSITORY`
+- `CLOUD_RUN_SERVICE`
+- `CLOUD_SQL_CONNECTION_NAME`
+- `CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT`
+- `GCP_WORKLOAD_IDENTITY_PROVIDER`
+- `GCP_DEPLOYER_SERVICE_ACCOUNT`
+- `DB_USER`
+- `DB_NAME`
+- `DB_PASSWORD_SECRET`
+
+Optional:
+
+- `GCS_BUCKET`
+
+The workflow fails before authentication if required variables are absent.
+
+The deployer identity needs only the permissions required to push Artifact Registry images, deploy/update Cloud Run services/jobs, and act as the runtime service account. The runtime service account—not GitHub—gets Cloud SQL Client and access to the specific DB password secret.
+
+The web service is network-public because browser users must reach the LMS; application authentication/authorization remains authoritative. The migration job is not a public HTTP service.
+
+The Dockerfile contains a dedicated `migrator` target. The same immutable Git SHA produces both the web image and migration image. Migrations run and must succeed before the new web revision is deployed.
 
 ## Values still required from the actual GCP account
 
@@ -131,4 +164,4 @@ Do not make liveness depend on Cloud SQL; a temporary database incident should n
 - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
 - `NEXT_PUBLIC_FIREBASE_APP_ID`
 
-Once those values exist, the next implementation batch can add the authenticated dev deployment workflow without placeholders or guessed infrastructure.
+Once those values/resources exist, run the committed manual development deployment workflow. Do not add JSON service-account keys as a workaround.

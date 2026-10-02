@@ -1,10 +1,10 @@
 import {
   migrateDatabase,
-  requireDatabaseUrl,
+  migrationPoolConfigFromEnv,
 } from "./db-lib";
 
 async function main() {
-  await migrateDatabase(requireDatabaseUrl());
+  await migrateDatabase(migrationPoolConfigFromEnv());
   process.stdout.write("Database migrations applied.\n");
 }
 

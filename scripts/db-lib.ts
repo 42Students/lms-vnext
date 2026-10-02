@@ -1,7 +1,15 @@
 import path from "node:path";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
-import { Pool, type PoolClient } from "pg";
+import {
+  Pool,
+  type PoolClient,
+  type PoolConfig,
+} from "pg";
+import {
+  getDatabaseConnectionConfig,
+  parseServerEnv,
+} from "../src/lib/env";
 import { SEED_IDS } from "./db-seed-data";
 
 const migrationsFolder = path.resolve(process.cwd(), "drizzle");
@@ -23,6 +31,33 @@ export function requireDatabaseUrl(
   }
 
   return value;
+}
+
+export function migrationPoolConfigFromEnv(): PoolConfig {
+  const env = parseServerEnv({
+    DATABASE_URL: process.env.DATABASE_URL,
+    DB_USER: process.env.DB_USER,
+    DB_PASSWORD: process.env.DB_PASSWORD,
+    DB_NAME: process.env.DB_NAME,
+    INSTANCE_UNIX_SOCKET: process.env.INSTANCE_UNIX_SOCKET,
+    DB_POOL_MAX: process.env.DB_POOL_MAX ?? "2",
+  });
+  const database = getDatabaseConnectionConfig(env);
+
+  if (database.mode === "url") {
+    return {
+      connectionString: database.connectionString,
+      max: Math.min(database.max, 2),
+    };
+  }
+
+  return {
+    host: database.host,
+    user: database.user,
+    password: database.password,
+    database: database.database,
+    max: Math.min(database.max, 2),
+  };
 }
 
 function databaseName(databaseUrl: string) {
@@ -54,8 +89,14 @@ export function assertResetAllowed(databaseUrl: string) {
   );
 }
 
-export async function migrateDatabase(databaseUrl: string) {
-  const pool = new Pool({ connectionString: databaseUrl, max: 2 });
+export async function migrateDatabase(
+  database: string | PoolConfig,
+) {
+  const pool = new Pool(
+    typeof database === "string"
+      ? { connectionString: database, max: 2 }
+      : database,
+  );
 
   try {
     const db = drizzle(pool);

@@ -403,6 +403,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [ ] dev Cloud Run service
 - [x] application env configuration contract
 - [x] liveness + database readiness checks
+- [x] manual WIF-based development deployment + migration workflow
 - [ ] smoke deployment
 - [ ] budgets/alerts if useful
 
