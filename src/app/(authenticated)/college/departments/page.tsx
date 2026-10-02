@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { DepartmentCreateForm } from "@/components/admin/department-create-form";
 import {
   DataTable,
   type DataTableColumn,
@@ -49,6 +50,7 @@ export default async function CollegeDepartmentsPage() {
         title="Departments"
         description="Active departments in your college. Cross-college access is denied by the service layer."
       />
+      <DepartmentCreateForm collegeId={membership.collegeId} />
       <DataTable
         columns={columns}
         rows={departments}

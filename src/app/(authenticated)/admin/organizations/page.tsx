@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { OrganizationCreateForm } from "@/components/admin/organization-create-form";
 import {
   DataTable,
   type DataTableColumn,
@@ -39,6 +40,7 @@ export default async function OrganizationsPage() {
         title="Organizations"
         description="Platform-level organizations available to the current Super Admin scope."
       />
+      <OrganizationCreateForm />
       <DataTable
         columns={columns}
         rows={organizations}

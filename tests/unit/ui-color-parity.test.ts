@@ -13,6 +13,9 @@ const uiFiles = [
   "src/components/shell/sidebar-nav.tsx",
   "src/components/shell/membership-switcher.tsx",
   "src/components/shell/account-actions.tsx",
+  "src/components/admin/organization-create-form.tsx",
+  "src/components/admin/college-create-form.tsx",
+  "src/components/admin/department-create-form.tsx",
 ];
 
 describe("first UI batch color parity", () => {

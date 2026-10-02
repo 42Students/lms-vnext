@@ -1,10 +1,13 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { CollegeCreateForm } from "@/components/admin/college-create-form";
 import {
   DataTable,
   type DataTableColumn,
 } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listColleges } from "@/modules/colleges/service";
+import { listOrganizations } from "@/modules/organizations/service";
 
 type CollegeRow = Awaited<ReturnType<typeof listColleges>>[number];
 
@@ -41,7 +44,10 @@ const columns: DataTableColumn<CollegeRow>[] = [
 
 export default async function CollegesPage() {
   const context = await getCurrentRequestContext();
-  const colleges = await listColleges(context);
+  const [colleges, organizations] = await Promise.all([
+    listColleges(context),
+    listOrganizations(context),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -50,6 +56,19 @@ export default async function CollegesPage() {
         title="Colleges"
         description="Active colleges across the platform. Tenant ownership remains enforced by the server."
       />
+      {organizations.length > 0 ? (
+        <CollegeCreateForm
+          organizations={organizations.map((organization) => ({
+            id: organization.id,
+            name: organization.name,
+          }))}
+        />
+      ) : (
+        <EmptyState
+          title="Create an organization first"
+          description="Every college belongs to an organization, so the organization is the required first tenant boundary."
+        />
+      )}
       <DataTable
         columns={columns}
         rows={colleges}
