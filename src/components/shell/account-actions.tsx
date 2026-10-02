@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export function AccountActions() {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -19,7 +21,8 @@ export function AccountActions() {
         return;
       }
 
-      window.location.assign("/");
+      router.push("/");
+      router.refresh();
     });
   }
 

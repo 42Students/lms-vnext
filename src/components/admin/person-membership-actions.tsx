@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useEffect,
   useState,
   useTransition,
 } from "react";
@@ -56,13 +55,6 @@ export function PersonMembershipActions({
   const [lifecyclePending, startLifecycleTransition] =
     useTransition();
 
-  useEffect(() => {
-    setCurrentRoles([...roles]);
-  }, [roles]);
-
-  useEffect(() => {
-    setCurrentStatus(status);
-  }, [status]);
 
   async function mutateRole(role: MembershipRole) {
     if (currentStatus === "ENDED" || rolePending) {
