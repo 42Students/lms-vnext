@@ -5,6 +5,7 @@ import { ContextResolutionError } from "@/modules/identity/context-service";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { DepartmentServiceError } from "@/modules/departments/service";
 import { OrganizationServiceError } from "@/modules/organizations/service";
+import { CollegeServiceError } from "@/modules/colleges/service";
 
 export function apiErrorResponse(error: unknown) {
   if (error instanceof ZodError) {
@@ -54,11 +55,22 @@ export function apiErrorResponse(error: unknown) {
 
   if (error instanceof OrganizationServiceError) {
     const status =
-      error.code === "ORGANIZATION_NAME_CONFLICT"
+      error.code === "ORGANIZATION_NAME_CONFLICT" ||
+      error.code === "ORGANIZATION_HAS_COLLEGES"
         ? 409
-        : error.code === "ORGANIZATION_HAS_COLLEGES"
-          ? 409
-          : 404;
+        : 404;
+
+    return NextResponse.json(
+      { error: error.code },
+      { status },
+    );
+  }
+
+  if (error instanceof CollegeServiceError) {
+    const status =
+      error.code === "COLLEGE_CODE_CONFLICT"
+        ? 409
+        : 404;
 
     return NextResponse.json(
       { error: error.code },
