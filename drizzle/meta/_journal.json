@@ -15,6 +15,13 @@
       "when": 1790974337104,
       "tag": "0001_closed_sister_grimm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790975406505,
+      "tag": "0002_wild_proudstar",
+      "breakpoints": true
     }
   ]
 }
