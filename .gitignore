@@ -1,0 +1,15 @@
+/node_modules
+/.next/
+/out/
+/build
+.env
+.env.*
+!.env.example
+/coverage/
+/playwright-report/
+/test-results/
+.DS_Store
+*.swp
+.idea/
+.vscode/
+*.log
