@@ -7,6 +7,7 @@ import { DepartmentServiceError } from "@/modules/departments/service";
 import { OrganizationServiceError } from "@/modules/organizations/service";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { PeopleServiceError } from "@/modules/people/errors";
+import { TenantDomainServiceError } from "@/modules/tenant-domains/service";
 
 export function apiErrorResponse(error: unknown) {
   if (error instanceof ZodError) {
@@ -73,6 +74,19 @@ export function apiErrorResponse(error: unknown) {
       error.code === "COLLEGE_CODE_CONFLICT"
         ? 409
         : 404;
+
+    return NextResponse.json(
+      { error: error.code },
+      { status },
+    );
+  }
+
+  if (error instanceof TenantDomainServiceError) {
+    const status =
+      error.code === "DOMAIN_NOT_FOUND" ||
+      error.code === "COLLEGE_NOT_FOUND"
+        ? 404
+        : 409;
 
     return NextResponse.json(
       { error: error.code },

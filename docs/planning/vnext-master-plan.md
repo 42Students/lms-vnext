@@ -107,7 +107,6 @@ MOSTLY DONE.
 ## Remaining before phase close
 - first canonical committed Drizzle migration
 - DB integration tests
-- lifecycle service for tenant domains
 - college archive semantics once downstream dependencies exist
 - optional organization/college validation hardening based on real DB behavior
 

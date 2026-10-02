@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
   pgTable,
   text,
@@ -31,9 +32,12 @@ export const tenantDomains = pgTable(
   (table) => [
     uniqueIndex("tenant_domains_host_uq").on(sql`lower(${table.host})`),
     index("tenant_domains_college_idx").on(table.collegeId),
-    index("tenant_domains_college_primary_idx").on(
-      table.collegeId,
-      table.isPrimary,
+    uniqueIndex("tenant_domains_college_primary_uq")
+      .on(table.collegeId)
+      .where(sql`${table.isPrimary} = true`),
+    check(
+      "tenant_domains_primary_verified_ck",
+      sql`not ${table.isPrimary} or ${table.isVerified}`,
     ),
   ],
 );

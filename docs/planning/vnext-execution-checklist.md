@@ -115,7 +115,7 @@ Legend:
 - [x] role mutation policy
 - [x] membership lifecycle policy
 
-**NEXT ITEM:** tenant-domain lifecycle closeout (O), then real PostgreSQL workflow (P / Batch DB1).
+**NEXT ITEM:** real PostgreSQL workflow (P / Batch DB1).
 
 ---
 
@@ -357,16 +357,16 @@ Do not implement archive until downstream dependency rules are understood.
 # O. Tenant domains
 
 - [x] table exists
-- [ ] host normalization helper
-- [ ] create domain mapping
-- [ ] unique host handling
-- [ ] primary-domain semantics
-- [ ] verification workflow
-- [ ] delete/archive mapping
-- [ ] tenant host resolution
-- [ ] tests
+- [x] host normalization helper
+- [x] create domain mapping
+- [x] unique host handling
+- [x] primary-domain semantics
+- [x] verification workflow
+- [x] delete/archive mapping
+- [x] tenant host resolution
+- [x] tests
 - [ ] UI
-- [ ] decide cross-domain auth handoff later
+- [~] cross-domain auth handoff intentionally deferred until login/UI proves a need
 
 ---
 
@@ -684,20 +684,14 @@ Before finishing batch:
 The next chat should start here:
 
 ```text
-NEXT: Phase 2 closeout / Tenant Domains
-1. normalize and validate tenant hosts
-2. create/update/delete domain mappings with uniqueness guarantees
-3. define primary-domain semantics and verification state
-4. resolve tenant safely from host
-5. add unit tests
-6. keep cross-domain auth handoff deferred until a real need exists
-7. CI green
-
-THEN: Batch DB1 / Real PostgreSQL workflow
-- commit the canonical Drizzle migration + metadata
-- add migrate/reset/seed/test-DB commands
-- add deterministic cross-college seed data
-- add migration smoke/integration tests
+NEXT: Batch DB1 / Real PostgreSQL workflow
+1. generate and inspect the canonical Drizzle migration + metadata
+2. verify indexes, partial unique indexes, checks and FK delete behavior
+3. add migrate/reset/seed/test-DB commands
+4. add a simple local PostgreSQL workflow
+5. add deterministic cross-college seed data
+6. add migration smoke/integration tests
+7. make CI run the DB integration path
 ```
 
 Do not jump to Academics, Projects, Placements or UI before this core path is stable. Before any UI work, complete the exact-LMS color parity prerequisite in section R.
