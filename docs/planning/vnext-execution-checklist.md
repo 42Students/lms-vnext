@@ -165,7 +165,7 @@ Legend:
 - [x] unit validation tests
 - [ ] Organizations UI
 - [ ] organization E2E flow
-- [ ] DB integration tests
+- [x] DB integration tests
 
 ---
 
@@ -190,7 +190,7 @@ Legend:
 - [ ] college archive API
 - [ ] Colleges UI
 - [ ] college E2E flow
-- [ ] DB integration tests
+- [x] DB integration tests
 
 Do not implement archive until downstream dependency rules are understood.
 
@@ -219,7 +219,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [ ] archive API after dependencies exist
 - [ ] Departments UI
 - [ ] department E2E flow
-- [ ] DB integration tests
+- [x] DB integration tests
 
 ---
 

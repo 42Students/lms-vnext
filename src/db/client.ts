@@ -63,3 +63,12 @@ export async function checkDatabaseConnection() {
     client.release();
   }
 }
+
+export async function closeDatabaseConnection() {
+  if (state.pool) {
+    await state.pool.end();
+  }
+
+  state.pool = undefined;
+  state.db = undefined;
+}
