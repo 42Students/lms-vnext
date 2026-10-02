@@ -73,6 +73,8 @@ Completed and green:
 - People onboarding UI for College Admin and scoped Super Admin
 - membership role controls for LEARNER / FACULTY / COLLEGE_ADMIN / MENTOR / TPO
 - membership suspend/reactivate/end UI with reason + terminal-state handling
+- role-aware Super Admin dashboard with safety-scope counts
+- role-aware College Admin dashboard with college/department/people counts
 
 ## 3. Identity model
 
@@ -218,9 +220,9 @@ If GCP account access is unavailable in the current chat, do not redesign the st
 
 Non-cloud work can continue while GCP1 is account-blocked. Current core continuation order:
 
-1. finish role-aware Super Admin / College Admin dashboard surfaces
-2. add Learner / Faculty profile editing UI
-3. add tenant-domain management UI
+1. add Learner / Faculty profile editing UI
+2. add tenant-domain management UI
+3. finish session-expiry / revoked-session UX around the browser auth flow once Identity Platform exists
 4. install/configure shadcn only when package-lock can be updated atomically; do not replace canonical LMS colors
 5. browser Firebase/Identity client config and login UI once GCP Identity Platform exists
 6. core E2E acceptance flow

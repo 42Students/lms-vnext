@@ -445,7 +445,7 @@ Do not implement archive until downstream dependency rules are understood.
 # S. Core admin UI
 
 ## Superadmin
-- [ ] dashboard shell
+- [x] dashboard shell
 - [x] Organizations page
 - [x] Colleges page
 - [x] Departments page
@@ -453,7 +453,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] scope UX
 
 ## College admin
-- [ ] dashboard shell
+- [x] dashboard shell
 - [x] own college page
 - [x] Departments page
 - [x] People page
