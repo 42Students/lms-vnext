@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { MembershipChooser } from "@/components/auth/membership-chooser";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -13,6 +14,7 @@ import { listOrganizations } from "@/modules/organizations/service";
 import {
   listCollegePeopleWithRuntime,
 } from "@/modules/people/runtime";
+import { listMembershipChoices } from "@/modules/identity/context-service";
 
 function MetricCard({
   label,
@@ -197,6 +199,23 @@ export default async function DashboardPage() {
 
   if (isSuperAdmin(context)) {
     return <SuperAdminDashboard context={context} />;
+  }
+
+  if (!context.membership) {
+    const memberships = await listMembershipChoices(
+      context.user.identityUid,
+    );
+
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="College access"
+          title="Choose your college"
+          description="One canonical account can belong to multiple colleges. Choose the membership you want to use for this session."
+        />
+        <MembershipChooser memberships={memberships} />
+      </div>
+    );
   }
 
   if (hasMembershipRole(context, "COLLEGE_ADMIN")) {

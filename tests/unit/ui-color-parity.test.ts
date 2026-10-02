@@ -13,6 +13,8 @@ const uiFiles = [
   "src/components/ui/confirm-dialog.tsx",
   "src/components/ui/toast.tsx",
   "src/components/ui/textarea.tsx",
+  "src/components/auth/membership-chooser.tsx",
+  "src/components/auth/membership-recovery.tsx",
   "src/components/shell/app-shell.tsx",
   "src/components/shell/sidebar-nav.tsx",
   "src/components/shell/membership-switcher.tsx",

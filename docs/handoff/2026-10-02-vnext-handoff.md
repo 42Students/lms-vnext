@@ -3,8 +3,8 @@
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
 **Branch:** `main`
-**Baseline used for this handoff refresh:** `3df07b19a17ca55784ad4ce1f436755d846af7e5`
-**Latest verified CI at that baseline:** run #45 — green
+**Baseline used for this handoff refresh:** `f75e144589760f2ae85187bb84dd5401c32555c8`
+**Latest verified CI at that baseline:** run #46 — green
 
 Always verify the live `main` HEAD and latest CI before changing anything.
 
@@ -220,16 +220,15 @@ If GCP account access is unavailable in the current chat, do not redesign the st
 
 Non-cloud work can continue while GCP1 is account-blocked. Current core continuation order:
 
-1. add tenant-domain management UI
-3. finish session-expiry / revoked-session UX around the browser auth flow once Identity Platform exists
-4. install/configure shadcn only when package-lock can be updated atomically; do not replace canonical LMS colors
-5. browser Firebase/Identity client config and login UI once GCP Identity Platform exists
-6. core E2E acceptance flow
-7. legacy migration tooling
-8. Academics
-9. Courses
-10. Projects
-11. Placements / TPO / HR
+1. inspect remaining core-platform checklist gaps and close only genuinely non-cloud-blocked items
+2. install/configure shadcn only when package-lock can be updated atomically; do not replace canonical LMS colors
+3. browser Firebase/Identity client config and login UI once real GCP Identity Platform configuration exists
+4. core E2E acceptance flow after real browser login is available
+5. legacy migration tooling
+6. Academics
+7. Courses
+8. Projects
+9. Placements / TPO / HR
 
 ## 10. Commit strategy
 

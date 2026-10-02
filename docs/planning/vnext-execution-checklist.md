@@ -140,9 +140,9 @@ Legend:
 - [ ] configure initial login provider
 - [ ] browser auth SDK/config
 - [ ] login UI
-- [ ] membership chooser UI
-- [ ] session-expiry UX
-- [ ] revoked-session UX
+- [x] membership chooser UI
+- [x] session-expiry UX
+- [x] revoked-session UX
 - [ ] privileged-user MFA decision
 
 ---

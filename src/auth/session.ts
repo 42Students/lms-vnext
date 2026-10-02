@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getIdentityAdminAuth } from "./firebase-admin";
+import { classifySessionVerificationError } from "./session-error";
 
 export const SESSION_COOKIE_NAME = "lms_session";
 export const MEMBERSHIP_COOKIE_NAME = "lms_membership";
@@ -12,6 +13,8 @@ export class SessionAuthenticationError extends Error {
     public readonly code:
       | "SESSION_MISSING"
       | "SESSION_INVALID"
+      | "SESSION_EXPIRED"
+      | "SESSION_REVOKED"
       | "RECENT_SIGN_IN_REQUIRED",
   ) {
     super(code);
@@ -43,8 +46,10 @@ export async function verifyIdentitySessionCookie(sessionCookie: string) {
       sessionCookie,
       true,
     );
-  } catch {
-    throw new SessionAuthenticationError("SESSION_INVALID");
+  } catch (error) {
+    throw new SessionAuthenticationError(
+      classifySessionVerificationError(error),
+    );
   }
 }
 
