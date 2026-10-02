@@ -40,6 +40,19 @@ export function createStructuredLogRecord(
   };
 }
 
+export function createErrorLogFields(error: unknown) {
+  const serialized = serializeError(error);
+  const stackTrace = serialized.stack;
+
+  return {
+    error_name: serialized.name,
+    message:
+      stackTrace ??
+      `${serialized.name}: ${serialized.message}`,
+    ...(stackTrace ? { stack_trace: stackTrace } : {}),
+  };
+}
+
 export function writeStructuredLog(
   severity: LogSeverity,
   event: string,
@@ -69,6 +82,6 @@ export function logError(
 ) {
   writeStructuredLog("ERROR", event, {
     ...fields,
-    error: serializeError(error),
+    ...createErrorLogFields(error),
   });
 }

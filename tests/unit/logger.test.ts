@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  createErrorLogFields,
   createStructuredLogRecord,
   serializeError,
 } from "@/observability/logger";
@@ -35,5 +36,21 @@ describe("structured logger", () => {
       "database unavailable",
     );
     expect(serialized).not.toHaveProperty("password");
+  });
+
+  it("emits Error Reporting friendly top-level error fields", () => {
+    const error = new Error("request exploded");
+    (
+      error as Error & {
+        password?: string;
+      }
+    ).password = "do-not-log";
+
+    const fields = createErrorLogFields(error);
+
+    expect(fields.error_name).toBe("Error");
+    expect(fields.message).toContain("request exploded");
+    expect(fields.stack_trace).toContain("request exploded");
+    expect(fields).not.toHaveProperty("password");
   });
 });

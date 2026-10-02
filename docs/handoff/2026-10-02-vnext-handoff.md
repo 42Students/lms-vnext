@@ -3,8 +3,8 @@
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
 **Branch:** `main`
-**Baseline used for this handoff refresh:** `d8c487b9542525457b9ada3f7b846c575e199d03`
-**Latest verified CI at that baseline:** run #49 — green
+**Baseline used for this handoff refresh:** `0e91ddd3219732bd3bdf30202951cb42ae6136a7`
+**Latest verified CI at that baseline:** run #50 — green
 
 Always verify the live `main` HEAD and latest CI before changing anything.
 
@@ -108,6 +108,8 @@ Central policy already covers:
 Suspended memberships fail request-context resolution. SUPER_ADMIN selected scope is a safety rail, not an identity change.
 
 The selected Super Admin scope is persisted in an HttpOnly `lms_admin_scope` cookie. The server validates active organization/college selections before setting it. Scope switching remains available to a scoped SUPER_ADMIN so they cannot trap themselves inside a tenant. Fresh login/logout clears both membership and admin-scope selection.
+
+A subsequent SUPER_ADMIN assignment UI/API remains deliberately deferred until privileged MFA is actually live and activity/audit events exist. Do not expose system-role elevation merely to close a UI checkbox.
 
 ## 5. Database state
 
@@ -252,5 +254,7 @@ Non-cloud work can continue while GCP1 is account-blocked. Current core continua
 7. `docs/gcp-development.md`
 8. `docs/design-system/lms-color-parity.md`
 9. `docs/operations/deployment-and-rollback.md`
+10. `docs/operations/data-protection.md`
+11. `docs/operations/observability.md`
 
 Do not restart architecture discussion unless an implementation blocker proves a locked decision invalid.

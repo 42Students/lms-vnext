@@ -351,6 +351,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] document recovery process
 - [x] test global access
 - [x] test selected-scope safety rail
+- [~] subsequent SUPER_ADMIN UI/API deferred until privileged MFA is live and activity/audit events exist
 
 ---
 
@@ -613,7 +614,7 @@ Do not build a generic chatbot first.
 
 - [x] package lock + npm ci
 - [ ] production Cloud SQL
-- [ ] backup policy
+- [x] backup policy
 - [ ] restore test
 - [ ] Cloud Run production service
 - [ ] production Identity Platform config
@@ -621,8 +622,8 @@ Do not build a generic chatbot first.
 - [ ] IAM review
 - [x] security headers
 - [x] structured logging
-- [ ] error tracking
-- [ ] slow query monitoring
+- [~] Error Reporting-compatible structured errors ready; GCP verification and alerting pending
+- [~] Cloud SQL Query Insights selected; enablement and baseline wait for production Cloud SQL
 - [x] migration deployment procedure
 - [x] rollback procedure
 - [x] runbook
