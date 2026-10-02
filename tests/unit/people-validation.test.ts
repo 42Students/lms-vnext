@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { onboardPersonInputSchema } from "@/modules/people/validation";
+import {
+  listCollegePeopleQuerySchema,
+  onboardPersonInputSchema,
+} from "@/modules/people/validation";
 
 const collegeId = "7f8e7b00-8503-4a2d-a222-fdfe8eb55ac0";
 
@@ -49,6 +52,32 @@ describe("people onboarding validation", () => {
         phoneE164: "+919397662127",
         displayName: "Phanindra",
         roles: ["SUPER_ADMIN"],
+      }),
+    ).toThrow();
+  });
+
+  it("bounds college people list pagination", () => {
+    expect(
+      listCollegePeopleQuerySchema.parse({
+        collegeId,
+      }),
+    ).toEqual({
+      collegeId,
+      limit: 50,
+      offset: 0,
+    });
+
+    expect(() =>
+      listCollegePeopleQuerySchema.parse({
+        collegeId,
+        limit: 101,
+      }),
+    ).toThrow();
+
+    expect(() =>
+      listCollegePeopleQuerySchema.parse({
+        collegeId,
+        offset: -1,
       }),
     ).toThrow();
   });

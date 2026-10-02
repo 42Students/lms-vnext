@@ -1,5 +1,6 @@
 export type PeopleServiceErrorCode =
   | "COLLEGE_NOT_FOUND"
+  | "MEMBERSHIP_NOT_FOUND"
   | "IDENTITY_COLLISION"
   | "MEMBERSHIP_NOT_ACTIVE";
 

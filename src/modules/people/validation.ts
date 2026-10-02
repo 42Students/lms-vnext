@@ -2,6 +2,7 @@ import { z } from "zod";
 import { MEMBERSHIP_ROLES } from "@/modules/identity/constants";
 
 export const personCollegeIdSchema = z.string().uuid();
+export const personMembershipIdSchema = z.string().uuid();
 
 export const phoneE164Schema = z
   .string()
@@ -38,4 +39,13 @@ export const onboardPersonInputSchema = z.object({
     .transform((roles) => [...new Set(roles)]),
 });
 
+export const listCollegePeopleQuerySchema = z.object({
+  collegeId: personCollegeIdSchema,
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+
 export type OnboardPersonInput = z.infer<typeof onboardPersonInputSchema>;
+export type ListCollegePeopleQuery = z.infer<
+  typeof listCollegePeopleQuerySchema
+>;

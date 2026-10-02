@@ -1,12 +1,18 @@
 import type { RequestContext } from "@/modules/identity/context";
-import type { MembershipRole } from "@/modules/identity/constants";
+import type {
+  MembershipRole,
+  MembershipStatus,
+} from "@/modules/identity/constants";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
   resolveOrCreateIdentity,
   type IdentityDirectory,
 } from "./identity";
 import {
+  listCollegePeopleQuerySchema,
   onboardPersonInputSchema,
+  personMembershipIdSchema,
+  type ListCollegePeopleQuery,
   type OnboardPersonInput,
 } from "./validation";
 import { PeopleServiceError } from "./errors";
@@ -41,11 +47,51 @@ export type OnboardedPerson = {
   };
 };
 
+export type PersonMembershipView = {
+  organizationId: string;
+  user: {
+    id: string;
+    identityUid: string;
+    phoneE164: string | null;
+    email: string | null;
+    displayName: string | null;
+  };
+  membership: {
+    id: string;
+    collegeId: string;
+    status: MembershipStatus;
+    suspendedAt: Date | null;
+    suspensionReason: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    roles: MembershipRole[];
+  };
+};
+
+export type CollegePeoplePage = {
+  items: PersonMembershipView[];
+  pagination: {
+    limit: number;
+    offset: number;
+    total: number;
+  };
+};
+
 export interface PeopleRepository {
   loadActiveCollege(collegeId: string): Promise<PeopleTargetCollege | null>;
   persistPersonMembership(
     input: PersistPersonMembershipInput,
   ): Promise<OnboardedPerson>;
+}
+
+export interface PeopleReadRepository {
+  loadActiveCollege(collegeId: string): Promise<PeopleTargetCollege | null>;
+  listCollegePeople(
+    input: ListCollegePeopleQuery,
+  ): Promise<CollegePeoplePage>;
+  loadMembershipDetail(
+    membershipId: string,
+  ): Promise<PersonMembershipView | null>;
 }
 
 export type OnboardPersonDependencies = {
@@ -84,9 +130,49 @@ export async function onboardPerson(
   return dependencies.repository.persistPersonMembership({
     identityUid: identity.uid,
     phoneE164: input.phoneE164,
-    email: input.email,
+    email: input.email ?? identity.email ?? undefined,
     displayName: input.displayName,
     collegeId: college.id,
     roles: input.roles,
   });
+}
+
+export async function listCollegePeople(
+  context: RequestContext,
+  rawQuery: unknown,
+  repository: PeopleReadRepository,
+) {
+  const query = listCollegePeopleQuerySchema.parse(rawQuery);
+  const college = await repository.loadActiveCollege(query.collegeId);
+
+  if (!college) {
+    throw new PeopleServiceError("COLLEGE_NOT_FOUND");
+  }
+
+  requirePermission(context, "people.manage", {
+    organizationId: college.organizationId,
+    collegeId: college.id,
+  });
+
+  return repository.listCollegePeople(query);
+}
+
+export async function getPersonMembershipDetail(
+  context: RequestContext,
+  membershipIdInput: string,
+  repository: PeopleReadRepository,
+) {
+  const membershipId = personMembershipIdSchema.parse(membershipIdInput);
+  const person = await repository.loadMembershipDetail(membershipId);
+
+  if (!person) {
+    throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
+  }
+
+  requirePermission(context, "people.manage", {
+    organizationId: person.organizationId,
+    collegeId: person.membership.collegeId,
+  });
+
+  return person;
 }

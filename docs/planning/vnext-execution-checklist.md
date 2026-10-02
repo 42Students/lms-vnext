@@ -110,12 +110,12 @@ Legend:
 - [x] membership ownership verification
 - [x] membership role loading
 - [x] membership-choice listing
-- [ ] add `people.manage` permission
+- [x] add `people.manage` permission
 - [ ] system-role administration policy
 - [ ] role mutation policy
 - [ ] membership lifecycle policy
 
-**NEXT ITEM:** add `people.manage` and implement People/Membership onboarding.
+**NEXT ITEM:** finish People read APIs, then continue to membership role management and lifecycle.
 
 ---
 
@@ -226,55 +226,55 @@ Do not implement archive until downstream dependency rules are understood.
 # I. People and memberships — immediate next batch
 
 ## I.1 Permission
-- [ ] add `people.manage`
-- [ ] allow SUPER_ADMIN according to scope
-- [ ] allow COLLEGE_ADMIN only in own college
-- [ ] deny FACULTY
-- [ ] deny MENTOR unless separately admin
-- [ ] deny TPO unless separately admin
-- [ ] deny LEARNER
-- [ ] policy tests
+- [x] add `people.manage`
+- [x] allow SUPER_ADMIN according to scope
+- [x] allow COLLEGE_ADMIN only in own college
+- [x] deny FACULTY
+- [x] deny MENTOR unless separately admin
+- [x] deny TPO unless separately admin
+- [x] deny LEARNER
+- [x] policy tests
 
 ## I.2 Onboarding validation
-- [ ] collegeId UUID
-- [ ] phone normalized E.164
-- [ ] email normalized/optional
-- [ ] display name required
-- [ ] role list required
-- [ ] role deduplication
-- [ ] reject system roles in membership role input
+- [x] collegeId UUID
+- [x] phone normalized E.164
+- [x] email normalized/optional
+- [x] display name required
+- [x] role list required
+- [x] role deduplication
+- [x] reject system roles in membership role input
 
 ## I.3 Canonical identity creation
-- [ ] find Identity Platform user by phone/email where supported
-- [ ] create Identity Platform user if absent
-- [ ] classify phone/email collision
-- [ ] never silently merge ambiguous identity
-- [ ] create/find vNext user row
-- [ ] synchronize safe display/email/phone fields intentionally
+- [x] find Identity Platform user by phone/email where supported
+- [x] create Identity Platform user if absent
+- [x] classify phone/email collision
+- [x] never silently merge ambiguous identity
+- [x] create/find vNext user row
+- [x] synchronize safe display/email/phone fields intentionally
 
 ## I.4 Membership creation
-- [ ] load target college server-side
-- [ ] authorize target college
-- [ ] create membership if absent
-- [ ] reuse same membership if operation repeats
-- [ ] prevent duplicate membership
-- [ ] assign requested roles idempotently
-- [ ] return user + membership + roles
+- [x] load target college server-side
+- [x] authorize target college
+- [x] create membership if absent
+- [x] reuse same membership if operation repeats
+- [x] prevent duplicate membership
+- [x] assign requested roles idempotently
+- [x] return user + membership + roles
 
 ## I.5 API
-- [ ] POST people/onboard
+- [x] POST people/onboard
 - [ ] GET college people
 - [ ] GET person/membership detail
-- [ ] error mapping
-- [ ] same-origin guard for mutations
+- [x] error mapping
+- [x] same-origin guard for mutations
 
 ## I.6 Tests
-- [ ] same request twice remains idempotent
-- [ ] same person can join second college
-- [ ] admin cannot onboard to different college
-- [ ] faculty cannot onboard
-- [ ] duplicate role is harmless
-- [ ] ambiguous identity collision blocks safely
+- [x] same request twice remains idempotent
+- [x] same person can join second college
+- [x] admin cannot onboard to different college
+- [x] faculty cannot onboard
+- [x] duplicate role is harmless
+- [x] ambiguous identity collision blocks safely
 
 ---
 

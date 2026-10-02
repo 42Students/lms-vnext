@@ -1,6 +1,14 @@
 import "server-only";
 
-import { and, asc, eq, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  eq,
+  inArray,
+  or,
+  sql,
+} from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -12,9 +20,12 @@ import {
 import type { MembershipRole } from "@/modules/identity/constants";
 import { PeopleServiceError } from "./errors";
 import type {
+  CollegePeoplePage,
   OnboardedPerson,
+  PeopleReadRepository,
   PeopleRepository,
   PersistPersonMembershipInput,
+  PersonMembershipView,
 } from "./service";
 
 function isUniqueViolation(error: unknown) {
@@ -50,7 +61,34 @@ function assertUserCompatible(
   }
 }
 
-export const drizzlePeopleRepository: PeopleRepository = {
+async function loadRolesByMembership(
+  membershipIds: string[],
+): Promise<Map<string, MembershipRole[]>> {
+  if (membershipIds.length === 0) {
+    return new Map();
+  }
+
+  const db = getDb();
+  const roleRows = await db
+    .select({
+      membershipId: membershipRoles.membershipId,
+      role: membershipRoles.role,
+    })
+    .from(membershipRoles)
+    .where(inArray(membershipRoles.membershipId, membershipIds))
+    .orderBy(asc(membershipRoles.role));
+
+  const roles = new Map<string, MembershipRole[]>();
+  for (const row of roleRows) {
+    const existing = roles.get(row.membershipId) ?? [];
+    existing.push(row.role);
+    roles.set(row.membershipId, existing);
+  }
+
+  return roles;
+}
+
+export const drizzlePeopleRepository: PeopleRepository & PeopleReadRepository = {
   async loadActiveCollege(collegeId) {
     const db = getDb();
     const [college] = await db
@@ -267,7 +305,7 @@ export const drizzlePeopleRepository: PeopleRepository = {
             id: membership.id,
             collegeId: membership.collegeId,
             status: "ACTIVE",
-            roles: roleRows.map((row) => row.role as MembershipRole),
+            roles: roleRows.map((row) => row.role),
           },
         };
       });
@@ -282,5 +320,137 @@ export const drizzlePeopleRepository: PeopleRepository = {
 
       throw error;
     }
+  },
+
+  async listCollegePeople(input): Promise<CollegePeoplePage> {
+    const db = getDb();
+    const [totalRow] = await db
+      .select({ total: count() })
+      .from(collegeMemberships)
+      .where(eq(collegeMemberships.collegeId, input.collegeId));
+
+    const rows = await db
+      .select({
+        organizationId: colleges.organizationId,
+        userId: users.id,
+        identityUid: users.identityUid,
+        phoneE164: users.phoneE164,
+        email: users.email,
+        displayName: users.displayName,
+        membershipId: collegeMemberships.id,
+        collegeId: collegeMemberships.collegeId,
+        status: collegeMemberships.status,
+        suspendedAt: collegeMemberships.suspendedAt,
+        suspensionReason: collegeMemberships.suspensionReason,
+        createdAt: collegeMemberships.createdAt,
+        updatedAt: collegeMemberships.updatedAt,
+      })
+      .from(collegeMemberships)
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
+      .where(eq(collegeMemberships.collegeId, input.collegeId))
+      .orderBy(
+        asc(users.displayName),
+        asc(users.id),
+        asc(collegeMemberships.id),
+      )
+      .limit(input.limit)
+      .offset(input.offset);
+
+    const rolesByMembership = await loadRolesByMembership(
+      rows.map((row) => row.membershipId),
+    );
+
+    return {
+      items: rows.map((row): PersonMembershipView => ({
+        organizationId: row.organizationId,
+        user: {
+          id: row.userId,
+          identityUid: row.identityUid,
+          phoneE164: row.phoneE164,
+          email: row.email,
+          displayName: row.displayName,
+        },
+        membership: {
+          id: row.membershipId,
+          collegeId: row.collegeId,
+          status: row.status,
+          suspendedAt: row.suspendedAt,
+          suspensionReason: row.suspensionReason,
+          createdAt: row.createdAt,
+          updatedAt: row.updatedAt,
+          roles: rolesByMembership.get(row.membershipId) ?? [],
+        },
+      })),
+      pagination: {
+        limit: input.limit,
+        offset: input.offset,
+        total: totalRow?.total ?? 0,
+      },
+    };
+  },
+
+  async loadMembershipDetail(
+    membershipId,
+  ): Promise<PersonMembershipView | null> {
+    const db = getDb();
+    const [row] = await db
+      .select({
+        organizationId: colleges.organizationId,
+        userId: users.id,
+        identityUid: users.identityUid,
+        phoneE164: users.phoneE164,
+        email: users.email,
+        displayName: users.displayName,
+        membershipId: collegeMemberships.id,
+        collegeId: collegeMemberships.collegeId,
+        status: collegeMemberships.status,
+        suspendedAt: collegeMemberships.suspendedAt,
+        suspensionReason: collegeMemberships.suspensionReason,
+        createdAt: collegeMemberships.createdAt,
+        updatedAt: collegeMemberships.updatedAt,
+      })
+      .from(collegeMemberships)
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
+      .innerJoin(
+        organizations,
+        eq(organizations.id, colleges.organizationId),
+      )
+      .where(
+        and(
+          eq(collegeMemberships.id, membershipId),
+          eq(colleges.status, "ACTIVE"),
+          eq(organizations.status, "ACTIVE"),
+        ),
+      )
+      .limit(1);
+
+    if (!row) {
+      return null;
+    }
+
+    const rolesByMembership = await loadRolesByMembership([row.membershipId]);
+
+    return {
+      organizationId: row.organizationId,
+      user: {
+        id: row.userId,
+        identityUid: row.identityUid,
+        phoneE164: row.phoneE164,
+        email: row.email,
+        displayName: row.displayName,
+      },
+      membership: {
+        id: row.membershipId,
+        collegeId: row.collegeId,
+        status: row.status,
+        suspendedAt: row.suspendedAt,
+        suspensionReason: row.suspensionReason,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        roles: rolesByMembership.get(row.membershipId) ?? [],
+      },
+    };
   },
 };

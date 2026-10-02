@@ -81,7 +81,8 @@ export function apiErrorResponse(error: unknown) {
 
   if (error instanceof PeopleServiceError) {
     const status =
-      error.code === "COLLEGE_NOT_FOUND"
+      error.code === "COLLEGE_NOT_FOUND" ||
+      error.code === "MEMBERSHIP_NOT_FOUND"
         ? 404
         : 409;
 
