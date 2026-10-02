@@ -457,8 +457,8 @@ Do not implement archive until downstream dependency rules are understood.
 - [ ] own college page
 - [ ] Departments page
 - [ ] People page
-- [ ] role management
-- [ ] suspension management
+- [x] role management
+- [x] suspension management
 
 ---
 

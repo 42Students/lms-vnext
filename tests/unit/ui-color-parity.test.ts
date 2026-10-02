@@ -12,6 +12,7 @@ const uiFiles = [
   "src/components/ui/dialog.tsx",
   "src/components/ui/confirm-dialog.tsx",
   "src/components/ui/toast.tsx",
+  "src/components/ui/textarea.tsx",
   "src/components/shell/app-shell.tsx",
   "src/components/shell/sidebar-nav.tsx",
   "src/components/shell/membership-switcher.tsx",
@@ -20,6 +21,7 @@ const uiFiles = [
   "src/components/admin/organization-create-form.tsx",
   "src/components/admin/college-create-form.tsx",
   "src/components/admin/department-create-form.tsx",
+  "src/components/admin/person-membership-actions.tsx",
 ];
 
 describe("first UI batch color parity", () => {

@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
 import {
   DataTable,
   type DataTableColumn,
@@ -49,6 +50,19 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
       >
         {person.membership.status}
       </StatusBadge>
+    ),
+  },
+  {
+    key: "actions",
+    header: <span className="sr-only">Actions</span>,
+    className: "text-right",
+    cell: (person) => (
+      <PersonMembershipActions
+        membershipId={person.membership.id}
+        displayName={person.user.displayName || "Person"}
+        roles={person.membership.roles}
+        status={person.membership.status}
+      />
     ),
   },
 ];
