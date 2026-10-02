@@ -1,0 +1,145 @@
+import { describe, expect, it } from "vitest";
+import {
+  AuthorizationError,
+  can,
+  requirePermission,
+} from "@/modules/permissions/policy";
+import type {
+  MembershipRole,
+} from "@/modules/identity/constants";
+import type {
+  ActiveMembership,
+  RequestContext,
+} from "@/modules/identity/context";
+
+const baseUser = {
+  id: "user-1",
+  identityUid: "identity-1",
+  platformStatus: "ACTIVE" as const,
+  systemRoles: [] as const,
+};
+
+function memberContext(
+  roles: readonly MembershipRole[],
+  overrides: Partial<ActiveMembership> = {},
+): RequestContext {
+  return {
+    user: baseUser,
+    membership: {
+      id: "membership-1",
+      collegeId: "college-1",
+      organizationId: "org-1",
+      status: "ACTIVE",
+      roles,
+      ...overrides,
+    },
+  };
+}
+
+describe("platform authorization policy", () => {
+  it("fails closed for missing or disabled identity", () => {
+    expect(can(null, "college.read", { collegeId: "college-1" })).toBe(false);
+
+    expect(
+      can(
+        {
+          user: { ...baseUser, platformStatus: "DISABLED" },
+          membership: null,
+        },
+        "college.read",
+        { collegeId: "college-1" },
+      ),
+    ).toBe(false);
+  });
+
+  it("allows an active member to read only their college", () => {
+    const context = memberContext(["FACULTY"]);
+
+    expect(can(context, "department.read", { collegeId: "college-1" })).toBe(
+      true,
+    );
+    expect(can(context, "department.read", { collegeId: "college-2" })).toBe(
+      false,
+    );
+  });
+
+  it("requires COLLEGE_ADMIN for tenant mutations", () => {
+    const faculty = memberContext(["FACULTY"]);
+    const admin = memberContext(["FACULTY", "COLLEGE_ADMIN"]);
+
+    expect(
+      can(faculty, "department.manage", { collegeId: "college-1" }),
+    ).toBe(false);
+    expect(can(admin, "department.manage", { collegeId: "college-1" })).toBe(
+      true,
+    );
+    expect(can(admin, "department.manage", { collegeId: "college-2" })).toBe(
+      false,
+    );
+  });
+
+  it("blocks suspended memberships", () => {
+    const context = memberContext(["COLLEGE_ADMIN"], {
+      status: "SUSPENDED",
+    });
+
+    expect(can(context, "college.read", { collegeId: "college-1" })).toBe(
+      false,
+    );
+  });
+
+  it("models super admin as a real global role without a membership", () => {
+    const context: RequestContext = {
+      user: {
+        ...baseUser,
+        systemRoles: ["SUPER_ADMIN"],
+      },
+      membership: null,
+    };
+
+    expect(
+      can(context, "organization.manage", { organizationId: "org-99" }),
+    ).toBe(true);
+    expect(can(context, "department.manage", { collegeId: "college-99" })).toBe(
+      true,
+    );
+  });
+
+  it("uses selected superadmin scope as a safety rail", () => {
+    const context: RequestContext = {
+      user: {
+        ...baseUser,
+        systemRoles: ["SUPER_ADMIN"],
+      },
+      membership: null,
+      adminScope: {
+        organizationId: "org-1",
+        collegeId: "college-1",
+      },
+    };
+
+    expect(
+      can(context, "department.manage", {
+        organizationId: "org-1",
+        collegeId: "college-1",
+      }),
+    ).toBe(true);
+
+    expect(
+      can(context, "department.manage", {
+        organizationId: "org-2",
+        collegeId: "college-2",
+      }),
+    ).toBe(false);
+  });
+
+  it("throws through the require helper when authorization fails", () => {
+    const context = memberContext(["FACULTY"]);
+
+    expect(() =>
+      requirePermission(context, "department.manage", {
+        collegeId: "college-1",
+      }),
+    ).toThrow(AuthorizationError);
+  });
+});
