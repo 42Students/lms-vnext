@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import { FacultyItemActions } from "./faculty-item-actions";
+import { FacultyAssignmentReview } from "./faculty-assignment-review";
+import { FacultyQuizReview } from "./faculty-quiz-review";
 import {
   facultyOwnedItemActions,
   nextLessonItemSequence,
@@ -126,8 +128,10 @@ function ContentItem({
 
 function AssignmentItem({
   item,
+  deliveryId,
 }: {
   item: Workspace["lessons"][number]["assignments"][number];
+  deliveryId: string;
 }) {
   const actions = facultyOwnedItemActions({
     deliveryId: item.deliveryId,
@@ -190,14 +194,23 @@ function AssignmentItem({
           actions={available}
         />
       ) : null}
+
+      <FacultyAssignmentReview
+        assignmentId={item.id}
+        deliveryId={deliveryId}
+        maxPoints={item.maxPoints}
+        status={item.status}
+      />
     </article>
   );
 }
 
 function QuizItem({
   item,
+  deliveryId,
 }: {
   item: Workspace["lessons"][number]["quizzes"][number];
+  deliveryId: string;
 }) {
   const actions = facultyOwnedItemActions({
     deliveryId: item.deliveryId,
@@ -263,6 +276,14 @@ function QuizItem({
           actions={available}
         />
       ) : null}
+
+      <FacultyQuizReview
+        quizId={item.id}
+        deliveryId={deliveryId}
+        status={item.status}
+        resultsPublished={item.resultsPublished}
+        deliveryOwned={item.deliveryId !== null}
+      />
     </article>
   );
 }
@@ -464,6 +485,7 @@ export function FacultyCourseWorkspace({
                               <AssignmentItem
                                 key={item.id}
                                 item={item}
+                                deliveryId={course.deliveryId}
                               />
                             ),
                           )}
@@ -472,6 +494,7 @@ export function FacultyCourseWorkspace({
                               <QuizItem
                                 key={item.id}
                                 item={item}
+                                deliveryId={course.deliveryId}
                               />
                             ),
                           )}

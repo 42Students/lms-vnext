@@ -7,6 +7,8 @@ import {
 import { getDb } from "@/db/client";
 import {
   assignmentSubmissions,
+  collegeMemberships,
+  users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
@@ -342,8 +344,57 @@ export async function listAssignmentSubmissions(
   }
 
   return getDb()
-    .select()
+    .select({
+      id: assignmentSubmissions.id,
+      assignmentId:
+        assignmentSubmissions.assignmentId,
+      deliveryId:
+        assignmentSubmissions.deliveryId,
+      membershipId:
+        assignmentSubmissions.membershipId,
+      submissionType:
+        assignmentSubmissions.submissionType,
+      textContent:
+        assignmentSubmissions.textContent,
+      submissionUrl:
+        assignmentSubmissions.submissionUrl,
+      submittedAt:
+        assignmentSubmissions.submittedAt,
+      pointsAwarded:
+        assignmentSubmissions.pointsAwarded,
+      feedback:
+        assignmentSubmissions.feedback,
+      gradingStatus:
+        assignmentSubmissions.gradingStatus,
+      gradePublished:
+        assignmentSubmissions.gradePublished,
+      gradedByUserId:
+        assignmentSubmissions.gradedByUserId,
+      gradedAt:
+        assignmentSubmissions.gradedAt,
+      version: assignmentSubmissions.version,
+      createdAt:
+        assignmentSubmissions.createdAt,
+      updatedAt:
+        assignmentSubmissions.updatedAt,
+      learnerDisplayName: users.displayName,
+      learnerEmail: users.email,
+    })
     .from(assignmentSubmissions)
+    .innerJoin(
+      collegeMemberships,
+      eq(
+        collegeMemberships.id,
+        assignmentSubmissions.membershipId,
+      ),
+    )
+    .innerJoin(
+      users,
+      eq(
+        users.id,
+        collegeMemberships.userId,
+      ),
+    )
     .where(
       and(
         eq(

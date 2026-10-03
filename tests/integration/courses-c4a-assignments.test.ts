@@ -615,6 +615,9 @@ describe("courses C4A assignments against PostgreSQL", () => {
       expect.objectContaining({
         id: submitted.id,
         version: 0,
+        learnerDisplayName: "Seed Learner",
+        learnerEmail:
+          "learner.seed@example.com",
       }),
     ]);
 

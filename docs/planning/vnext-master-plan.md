@@ -775,7 +775,16 @@ Courses UI2B1 adds Faculty exact-delivery authoring and lifecycle controls:
 - raw storage-key/video upload authoring remains hidden until signed Cloud Storage receipts exist
 - shared-vs-exact mutation-state unit regressions
 
-Next Courses work is UI2B2 Faculty Assignment grading + Quiz attempt/result operations, then College/Super Admin Course structural UI, media playback/resume, and Course-level UI regression/E2E hardening.
+Courses UI2B2 completes Faculty assessment operations:
+- learner-named Assignment submission queues for the exact Section Delivery
+- inline TEXT / HTTPS LINK submission review
+- expected-version Assignment grading, feedback, explicit publication and safe regrading
+- learner-named Quiz attempt review using immutable answer snapshots
+- exact-delivery CLOSED Quiz result publication/hiding
+- shared-Offering Quiz result publication remains admin-owned while Faculty retain Section attempt review
+- operation-state regressions covering grading publication and shared-vs-exact Quiz authority
+
+Next Courses work is College/Super Admin Course structural UI, then media playback/resume and Course-level UI regression/E2E hardening.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

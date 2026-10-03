@@ -11,6 +11,8 @@ import {
   quizAttempts,
   quizOptions,
   quizQuestions,
+  collegeMemberships,
+  users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
@@ -555,8 +557,36 @@ export async function listQuizAttempts(
   }
 
   const attempts = await getDb()
-    .select()
+    .select({
+      id: quizAttempts.id,
+      quizId: quizAttempts.quizId,
+      deliveryId: quizAttempts.deliveryId,
+      membershipId:
+        quizAttempts.membershipId,
+      attemptNumber:
+        quizAttempts.attemptNumber,
+      score: quizAttempts.score,
+      maxScore: quizAttempts.maxScore,
+      submittedAt: quizAttempts.submittedAt,
+      createdAt: quizAttempts.createdAt,
+      learnerDisplayName: users.displayName,
+      learnerEmail: users.email,
+    })
     .from(quizAttempts)
+    .innerJoin(
+      collegeMemberships,
+      eq(
+        collegeMemberships.id,
+        quizAttempts.membershipId,
+      ),
+    )
+    .innerJoin(
+      users,
+      eq(
+        users.id,
+        collegeMemberships.userId,
+      ),
+    )
     .where(
       and(
         eq(quizAttempts.quizId, quizId),

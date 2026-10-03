@@ -642,6 +642,9 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       attemptNumber: 1,
       score: 4,
       maxScore: 10,
+      learnerDisplayName: "Seed Learner",
+      learnerEmail:
+        "learner.seed@example.com",
     });
 
     const hidden = await getMyQuizAttempts(

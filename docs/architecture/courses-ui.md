@@ -136,3 +136,30 @@ Lifecycle controls are derived from a pure client state model but remain advisor
 - shared Offering items -> no Faculty mutation actions
 
 New items are deliberately created as DRAFT so a teacher can review the generated learner-facing shape before publication.
+
+
+## UI2B2 Faculty assessment review and grading
+
+UI2B2 completes the Faculty assessment operations loop inside the exact teaching workspace.
+
+Assignment review:
+
+- PUBLISHED shared-Offering and exact-delivery Assignments can be reviewed for the Faculty member's exact Section Delivery
+- submission review payloads include learner display name/email from the Membership -> User identity graph
+- TEXT responses render inline and HTTPS LINK responses open explicitly
+- points + optional feedback use the existing expected-version optimistic concurrency contract
+- stale grade writes fail rather than overwriting another grader
+- grade publication is explicit and separate from grading
+- regrading a published grade automatically returns it to unpublished state until republished
+- learner feedback remains private until publication
+
+Quiz review:
+
+- PUBLISHED/CLOSED Quiz attempts can be reviewed for the exact Section Delivery
+- learner identity, score and immutable submitted question/option snapshots are presented together
+- correctness review never depends on the mutable live Quiz key
+- exact-delivery CLOSED Quizzes allow Faculty to publish or hide results
+- shared-Offering Quiz result publication stays College Admin / scoped Super Admin owned because it affects every Section using that shared Quiz
+- Faculty may still review their own Section's attempts for a shared Quiz
+
+The UI action model is covered independently from rendering so future styling changes cannot accidentally grant shared-Offering result control or publish an ungraded Assignment.

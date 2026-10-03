@@ -32,6 +32,16 @@ const errorLabels: Record<string, string> = {
     "You do not have access to this Course item.",
   CONTENT_DELIVERY_MISMATCH:
     "This content does not belong to your Course delivery.",
+  ASSIGNMENT_SUBMISSION_CONFLICT:
+    "This grade changed after you opened it. Refresh the submissions and try again.",
+  ASSIGNMENT_GRADE_INVALID:
+    "The grade is outside the allowed point range.",
+  ASSIGNMENT_NOT_GRADED:
+    "Save a grade before publishing it.",
+  INVALID_QUIZ_TRANSITION:
+    "This Quiz action is not valid in its current state.",
+  FACULTY_TEACHING_SCOPE_REQUIRED:
+    "Your active Teaching Assignment does not cover this Section delivery.",
   CONTENT_TYPE_SHAPE_INVALID:
     "The content details do not match the selected content type.",
   LESSON_CONTENT_NOT_PUBLISHED:
