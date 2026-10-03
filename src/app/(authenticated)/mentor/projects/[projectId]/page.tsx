@@ -33,6 +33,9 @@ export default async function MentorProjectPage({
       backLabel="Mentoring Projects"
       eyebrow="Mentor Project"
       mode="MENTOR"
+      currentMembershipId={
+        context.membership?.id ?? null
+      }
     />
   );
 }

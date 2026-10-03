@@ -27,6 +27,9 @@ export default async function CollegeProjectPage({
       backLabel="Projects"
       eyebrow="College Admin Project"
       mode="ADMIN"
+      currentMembershipId={
+        context.membership?.id ?? null
+      }
     />
   );
 }

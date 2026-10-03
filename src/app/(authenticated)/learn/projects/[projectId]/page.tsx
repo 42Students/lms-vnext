@@ -33,6 +33,9 @@ export default async function LearnerProjectPage({
       backLabel="My Projects"
       eyebrow="Learner Project"
       mode="LEARNER"
+      currentMembershipId={
+        context.membership?.id ?? null
+      }
     />
   );
 }

@@ -15,6 +15,15 @@ import {
 import {
   ProjectTaskSubmissionControl,
 } from "./project-task-submission-control";
+import {
+  CreateProjectResourceControl,
+  ProjectResourceActions,
+} from "./project-resource-controls";
+import {
+  ProjectMeetingTransitionActions,
+  RequestProjectMeetingControl,
+  ScheduleProjectMeetingControl,
+} from "./project-meeting-controls";
 import type {
   getProjectWorkspaceView,
 } from "@/modules/projects/workspace-view-service";
@@ -112,12 +121,14 @@ export function ProjectWorkspace({
   backLabel,
   eyebrow,
   mode,
+  currentMembershipId,
 }: {
   workspace: Workspace;
   backHref: string;
   backLabel: string;
   eyebrow: string;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
+  currentMembershipId: string | null;
 }) {
   const { readiness } = workspace;
   const tasksBySprint = new Map<
@@ -626,14 +637,21 @@ export function ProjectWorkspace({
 
       <div className="grid gap-6 xl:grid-cols-2">
         <section className="space-y-3">
-          <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">
-              Resources
-            </h2>
-            <p className="mt-1 text-sm text-body">
-              Template and runtime links available to the
-              Project team.
-            </p>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="m-0 text-lg font-semibold text-foreground">
+                Resources
+              </h2>
+              <p className="mt-1 text-sm text-body">
+                Template and runtime links available to the
+                Project team.
+              </p>
+            </div>
+            {mode !== "LEARNER" ? (
+              <CreateProjectResourceControl
+                projectId={workspace.project.id}
+              />
+            ) : null}
           </div>
           <div className="space-y-3">
             {workspace.resources.length === 0 ? (
@@ -677,6 +695,20 @@ export function ProjectWorkspace({
                         Open resource ↗
                       </a>
                     ) : null}
+                    {mode !== "LEARNER" ? (
+                      <ProjectResourceActions
+                        projectId={workspace.project.id}
+                        resource={{
+                          id: resource.id,
+                          title: resource.title,
+                          description:
+                            resource.description,
+                          url: resource.url,
+                          required:
+                            resource.required,
+                        }}
+                      />
+                    ) : null}
                   </article>
                 );
               })
@@ -685,14 +717,38 @@ export function ProjectWorkspace({
         </section>
 
         <section className="space-y-3">
-          <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">
-              Meetings
-            </h2>
-            <p className="mt-1 text-sm text-body">
-              Requested, scheduled and completed Project
-              conversations.
-            </p>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="m-0 text-lg font-semibold text-foreground">
+                Meetings
+              </h2>
+              <p className="mt-1 text-sm text-body">
+                Requested, scheduled and completed Project
+                conversations.
+              </p>
+            </div>
+            {mode === "LEARNER" ? (
+              <RequestProjectMeetingControl
+                projectId={workspace.project.id}
+              />
+            ) : (
+              <ScheduleProjectMeetingControl
+                projectId={workspace.project.id}
+                sprints={workspace.sprints.map(
+                  (sprint) => ({
+                    id: sprint.id,
+                    label: sprint.title,
+                  }),
+                )}
+                tasks={workspace.tasks.map(
+                  (task) => ({
+                    id: task.id,
+                    label: task.title,
+                    sprintId: task.sprintId,
+                  }),
+                )}
+              />
+            )}
           </div>
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
@@ -747,6 +803,37 @@ export function ProjectWorkspace({
                         Join meeting ↗
                       </a>
                     ) : null}
+                    {mode !== "LEARNER" &&
+                    (meeting.status === "REQUESTED" ||
+                      meeting.status === "SCHEDULED") ? (
+                      <div className="mt-3">
+                        <ScheduleProjectMeetingControl
+                          projectId={workspace.project.id}
+                          meeting={meeting}
+                          sprints={workspace.sprints.map(
+                            (sprint) => ({
+                              id: sprint.id,
+                              label: sprint.title,
+                            }),
+                          )}
+                          tasks={workspace.tasks.map(
+                            (task) => ({
+                              id: task.id,
+                              label: task.title,
+                              sprintId: task.sprintId,
+                            }),
+                          )}
+                        />
+                      </div>
+                    ) : null}
+                    <ProjectMeetingTransitionActions
+                      projectId={workspace.project.id}
+                      meeting={meeting}
+                      mode={mode}
+                      currentMembershipId={
+                        currentMembershipId
+                      }
+                    />
                   </article>
                 );
               })

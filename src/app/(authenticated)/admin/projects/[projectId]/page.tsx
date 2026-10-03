@@ -27,6 +27,9 @@ export default async function SuperAdminProjectPage({
       backLabel="Projects"
       eyebrow="Super Admin Project"
       mode="ADMIN"
+      currentMembershipId={
+        context.membership?.id ?? null
+      }
     />
   );
 }
