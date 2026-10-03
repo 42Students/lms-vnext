@@ -15,6 +15,7 @@ import {
   listCollegePeopleWithRuntime,
 } from "@/modules/people/runtime";
 import { listMembershipChoices } from "@/modules/identity/context-service";
+import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 
 function MetricCard({
   label,
@@ -220,6 +221,46 @@ export default async function DashboardPage() {
 
   if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
     return <CollegeAdminDashboard context={context} />;
+  }
+
+  if (hasMembershipRole(context, "LEARNER")) {
+    const courses =
+      await listLearnerCourseDeliveries(context);
+
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Learner"
+          title="Learning dashboard"
+          description="Continue your active Section Courses from one place."
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <MetricCard
+            label="Active Courses"
+            value={courses.length}
+            description="Courses currently delivered to your active Section."
+            href="/learn/courses"
+          />
+          <section className="rounded-xl border border-border bg-surface p-5">
+            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              Continue learning
+            </p>
+            <p className="mt-3 text-lg font-semibold text-foreground">
+              Open My Courses
+            </p>
+            <p className="mt-2 text-sm leading-6 text-body">
+              Course progress now combines lesson content, assignment submissions and quiz attempts.
+            </p>
+            <Link
+              href="/learn/courses"
+              className="mt-4 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+            >
+              View Courses →
+            </Link>
+          </section>
+        </div>
+      </div>
+    );
   }
 
   return (

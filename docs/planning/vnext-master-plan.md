@@ -732,7 +732,17 @@ Courses C4C completes assessment aggregation into the learner workspace:
 - nextContent remains for compatibility and nextItem becomes the cross-item Continue Learning pointer
 - Course summary now covers content, assignment, Quiz, completed and missed item counts
 
-The next major Courses work is the learner/faculty/admin Course UI, followed by Course-level UI regression/E2E hardening.
+Courses UI1 adds the learner-facing read/navigation experience:
+- role-guarded /learn/courses routes
+- learner shell navigation
+- Course overview cards with period, Section and aggregate progress
+- exact-delivery learning workspace
+- Continue Learning driven by C4C nextItem
+- unified Lesson rendering for Content, Assignments and Quizzes
+- missed-state and grade-privacy presentation
+- learner dashboard entry point
+
+Next Courses work is UI1b learner interactions (content completion, Assignment submission and Quiz taking), then Faculty Course authoring/operations UI, College/Super Admin Course structural UI, and Course-level UI regression/E2E hardening.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

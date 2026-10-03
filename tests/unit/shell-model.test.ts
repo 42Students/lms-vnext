@@ -63,7 +63,27 @@ describe("authenticated shell model", () => {
     expect(getShellRoleLabel(shellContext)).toBe("College Admin");
   });
 
-  it("does not expose admin navigation to ordinary membership roles", () => {
+  it("gives learners their Course workspace without admin navigation", () => {
+    const shellContext = context(["LEARNER"]);
+
+    expect(getShellNavigation(shellContext)).toEqual([
+      {
+        label: "Dashboard",
+        href: "/dashboard",
+        shortLabel: "D",
+      },
+      {
+        label: "My Courses",
+        href: "/learn/courses",
+        shortLabel: "C",
+      },
+    ]);
+    expect(getShellRoleLabel(shellContext)).toBe(
+      "Learner",
+    );
+  });
+
+  it("does not expose admin navigation to other ordinary membership roles", () => {
     const shellContext = context(["FACULTY", "MENTOR"]);
 
     expect(getShellNavigation(shellContext)).toEqual([

@@ -533,7 +533,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [ ] assignment file uploads — wait for Cloud Storage upload receipt/signing workflow
 - [x] quizzes — DRAFT/PUBLISHED/CLOSED/ARCHIVED definitions, validated questions/options, atomic race-safe attempts, immutable answer snapshots, scoring and gated result visibility
 - [x] greenfield decision: no legacy course data migration required
-- [ ] UI
+- [~] UI — UI1 learner My Courses overview + exact-delivery learning workspace complete; learner interactions + Faculty/Admin Course UI remain
 - [~] regression tests — C1 + C2 + C3 + C4A + C4B + C4C PostgreSQL tenant/scope/lifecycle/progress/assignment/quiz/concurrency/aggregation coverage; UI tests remain
 
 ---

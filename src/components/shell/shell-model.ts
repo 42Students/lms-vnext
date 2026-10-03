@@ -26,6 +26,15 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
 ];
 
+const learnerItems: ShellNavItem[] = [
+  dashboard,
+  {
+    label: "My Courses",
+    href: "/learn/courses",
+    shortLabel: "C",
+  },
+];
+
 const collegeAdminItems: ShellNavItem[] = [
   dashboard,
   { label: "My College", href: "/college", shortLabel: "C" },
@@ -42,6 +51,10 @@ export function getShellNavigation(context: RequestContext) {
 
   if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
     return collegeAdminItems;
+  }
+
+  if (hasMembershipRole(context, "LEARNER")) {
+    return learnerItems;
   }
 
   return [dashboard];
