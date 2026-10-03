@@ -856,3 +856,108 @@ export const projectEvaluationItems = pgTable(
     ),
   ],
 );
+
+export const projectMeetings = pgTable(
+  "project_meetings",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    status: varchar("status", { length: 32 })
+      .notNull()
+      .default("REQUESTED"),
+    meetingType: varchar("meeting_type", {
+      length: 20,
+    })
+      .notNull()
+      .default("GENERAL"),
+    title: text("title").notNull(),
+    agenda: text("agenda"),
+    startsAt: timestamp("starts_at", {
+      withTimezone: true,
+    }).notNull(),
+    endsAt: timestamp("ends_at", {
+      withTimezone: true,
+    }).notNull(),
+    timeZone: varchar("time_zone", {
+      length: 80,
+    }).notNull(),
+    meetingUrl: text("meeting_url"),
+    requestedByMembershipId: uuid(
+      "requested_by_membership_id",
+    ).references(() => collegeMemberships.id, {
+      onDelete: "restrict",
+    }),
+    scheduledByUserId: uuid("scheduled_by_user_id")
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    scheduledByMembershipId: uuid(
+      "scheduled_by_membership_id",
+    ).references(() => collegeMemberships.id, {
+      onDelete: "restrict",
+    }),
+    linkedSprintId: uuid("linked_sprint_id")
+      .references(() => projectSprints.id, {
+        onDelete: "restrict",
+      }),
+    linkedTaskId: uuid("linked_task_id")
+      .references(() => projectTasks.id, {
+        onDelete: "restrict",
+      }),
+    outcome: text("outcome"),
+    cancellationNote: text("cancellation_note"),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("project_meetings_project_start_idx").on(
+      table.projectId,
+      table.startsAt,
+    ),
+    index("project_meetings_project_status_idx").on(
+      table.projectId,
+      table.status,
+    ),
+    index("project_meetings_requester_idx").on(
+      table.requestedByMembershipId,
+      table.status,
+    ),
+    check(
+      "project_meetings_status_ck",
+      sql`${table.status} in ('REQUESTED', 'SCHEDULED', 'COMPLETED', 'CANCELLED')`,
+    ),
+    check(
+      "project_meetings_type_ck",
+      sql`${table.meetingType} in ('GENERAL', 'PLANNING', 'STANDUP', 'REVIEW', 'RETRO')`,
+    ),
+    check(
+      "project_meetings_time_order_ck",
+      sql`${table.endsAt} > ${table.startsAt}`,
+    ),
+    check(
+      "project_meetings_request_shape_ck",
+      sql`${table.status} <> 'REQUESTED' or ${table.requestedByMembershipId} is not null`,
+    ),
+    check(
+      "project_meetings_schedule_shape_ck",
+      sql`${table.status} not in ('SCHEDULED', 'COMPLETED') or (${table.scheduledByUserId} is not null and ${table.meetingUrl} is not null)`,
+    ),
+  ],
+);

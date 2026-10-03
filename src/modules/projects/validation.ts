@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  PROJECT_MEETING_TYPES,
   PROJECT_MEMBER_ROLES,
   PROJECT_TASK_PRIORITIES,
   PROJECT_SUBMISSION_REVIEW_DECISIONS,
@@ -613,4 +614,117 @@ export type CreateProjectResourceInput = z.infer<
 >;
 export type UpdateProjectResourceInput = z.infer<
   typeof updateProjectResourceInputSchema
+>;
+
+export const projectMeetingIdSchema = z.string().uuid();
+
+const projectMeetingWindowShape = {
+  title: titleSchema,
+  agenda: z
+    .string()
+    .trim()
+    .min(1)
+    .max(4000)
+    .nullable()
+    .optional(),
+  startsAt: z
+    .string()
+    .datetime({ offset: true }),
+  endsAt: z
+    .string()
+    .datetime({ offset: true }),
+  timeZone: z
+    .string()
+    .trim()
+    .min(1)
+    .max(80),
+};
+
+function withValidMeetingWindow<
+  T extends z.ZodRawShape,
+>(shape: T) {
+  return z
+    .object(shape)
+    .strict()
+    .refine(
+      (input) =>
+        new Date(
+          (input as { endsAt: string }).endsAt,
+        ).getTime() >
+        new Date(
+          (input as { startsAt: string }).startsAt,
+        ).getTime(),
+      {
+        message:
+          "Project meeting end time must be after start time",
+        path: ["endsAt"],
+      },
+    );
+}
+
+const projectMeetingHttpsUrlSchema = z
+  .string()
+  .trim()
+  .url()
+  .max(2048)
+  .refine(
+    (value) => value.startsWith("https://"),
+    {
+      message:
+        "Project meeting URL must use https",
+    },
+  );
+
+export const requestProjectMeetingInputSchema =
+  withValidMeetingWindow(
+    projectMeetingWindowShape,
+  );
+
+export const scheduleProjectMeetingInputSchema =
+  withValidMeetingWindow({
+    ...projectMeetingWindowShape,
+    meetingType: z
+      .enum(PROJECT_MEETING_TYPES)
+      .optional(),
+    meetingUrl: projectMeetingHttpsUrlSchema,
+    linkedSprintId:
+      projectSprintIdSchema.nullable().optional(),
+    linkedTaskId:
+      projectTaskIdSchema.nullable().optional(),
+  });
+
+export const projectMeetingTransitionInputSchema =
+  z.discriminatedUnion("action", [
+    z
+      .object({
+        action: z.literal("COMPLETE"),
+        outcome: z
+          .string()
+          .trim()
+          .min(1)
+          .max(4000)
+          .optional(),
+      })
+      .strict(),
+    z
+      .object({
+        action: z.literal("CANCEL"),
+        note: z
+          .string()
+          .trim()
+          .min(1)
+          .max(2000)
+          .optional(),
+      })
+      .strict(),
+  ]);
+
+export type RequestProjectMeetingInput = z.infer<
+  typeof requestProjectMeetingInputSchema
+>;
+export type ScheduleProjectMeetingInput = z.infer<
+  typeof scheduleProjectMeetingInputSchema
+>;
+export type ProjectMeetingTransitionInput = z.infer<
+  typeof projectMeetingTransitionInputSchema
 >;

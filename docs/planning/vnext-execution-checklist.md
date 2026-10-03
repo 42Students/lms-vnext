@@ -550,7 +550,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] submission model — task attempts + review plus versioned final drafts/submissions and immutable final review history
 - [x] evaluation model — approved-submission-only rubric evaluation with normalized scored criteria
 - [x] resources — materialized template resources + mentor/admin runtime URL/text CRUD; storage-backed uploads remain Cloud Storage-dependent
-- [~] meetings/readiness — derived readiness complete from normalized lifecycle/submission/evaluation state; meetings next
+- [x] meetings/readiness — derived readiness plus learner request / mentor-admin schedule-complete-cancel meeting lifecycle; no legacy Calendar-sync coupling
 - [x] materialization redesign — one transaction, assigned immutable version -> normalized instance rows; no live template fallback
 - [x] greenfield decision: no legacy project data migration required
 - [ ] adversarial tests

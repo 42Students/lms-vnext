@@ -99,6 +99,7 @@ export async function checkDatabaseConnection() {
       projectSubmissionReviews: string | null;
       projectEvaluations: string | null;
       projectEvaluationItems: string | null;
+      projectMeetings: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -140,7 +141,8 @@ export async function checkDatabaseConnection() {
          to_regclass('public.project_submissions')::text as "projectSubmissions",
          to_regclass('public.project_submission_reviews')::text as "projectSubmissionReviews",
          to_regclass('public.project_evaluations')::text as "projectEvaluations",
-         to_regclass('public.project_evaluation_items')::text as "projectEvaluationItems"`,
+         to_regclass('public.project_evaluation_items')::text as "projectEvaluationItems",
+         to_regclass('public.project_meetings')::text as "projectMeetings"`,
     );
 
     const schema = result.rows[0];
@@ -184,7 +186,8 @@ export async function checkDatabaseConnection() {
       !schema.projectSubmissions ||
       !schema.projectSubmissionReviews ||
       !schema.projectEvaluations ||
-      !schema.projectEvaluationItems
+      !schema.projectEvaluationItems ||
+      !schema.projectMeetings
     ) {
       throw new Error(
         "Database schema is not fully migrated",

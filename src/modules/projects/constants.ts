@@ -73,3 +73,18 @@ export const PROJECT_SUBMISSION_REVIEW_DECISIONS = [
   "CHANGES_REQUESTED",
   "APPROVED",
 ] as const;
+
+export const PROJECT_MEETING_STATUSES = [
+  "REQUESTED",
+  "SCHEDULED",
+  "COMPLETED",
+  "CANCELLED",
+] as const;
+
+export const PROJECT_MEETING_TYPES = [
+  "GENERAL",
+  "PLANNING",
+  "STANDUP",
+  "REVIEW",
+  "RETRO",
+] as const;

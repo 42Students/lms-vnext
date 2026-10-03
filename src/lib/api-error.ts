@@ -170,6 +170,7 @@ export function apiErrorResponse(error: unknown) {
       "PROJECT_TASK_SUBMISSION_NOT_FOUND",
       "PROJECT_SUBMISSION_NOT_FOUND",
       "PROJECT_RESOURCE_NOT_FOUND",
+      "PROJECT_MEETING_NOT_FOUND",
     ]);
 
     const forbidden = new Set([
@@ -177,6 +178,7 @@ export function apiErrorResponse(error: unknown) {
       "PROJECT_LIFECYCLE_ACCESS_DENIED",
       "PROJECT_TASK_SUBMISSION_ACCESS_DENIED",
       "PROJECT_SUBMISSION_ACCESS_DENIED",
+      "PROJECT_MEETING_ACCESS_DENIED",
     ]);
 
     return NextResponse.json(
