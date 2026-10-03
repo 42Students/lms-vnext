@@ -810,7 +810,7 @@ Courses UI4 adds learner YouTube playback/resume:
 - external-link fallback when inline playback fails
 - storage-backed VIDEO remains blocked on signed Cloud Storage delivery rather than exposing raw storage keys
 
-Next Courses work is Course-level browser regression/E2E hardening plus the signed Cloud Storage VIDEO/upload workflow when GCP storage is provisioned.
+Course browser regression now runs in CI across seeded learner, Faculty and College Admin journeys with exact-Section leakage assertions. Next Courses work is the signed Cloud Storage VIDEO/upload-receipt workflow when GCP storage is provisioned.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

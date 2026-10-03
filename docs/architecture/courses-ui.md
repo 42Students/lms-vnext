@@ -247,3 +247,24 @@ The player never accepts a learner-supplied duration. The authored duration rema
 Storage-backed VIDEO remains intentionally unavailable in the learner player until the signed Cloud Storage delivery/upload-receipt workflow exists. The UI continues to show the attached-media placeholder rather than exposing raw storage keys or inventing a public URL.
 
 Pure unit coverage protects YouTube URL parsing and playback checkpoint behavior.
+
+
+## UI5 Course browser regression
+
+The Course browser acceptance path now runs in Playwright against a deterministic disposable PostgreSQL fixture.
+
+The fixture creates one Course Offering with two Section Deliveries and deliberately different audiences:
+
+- shared Offering RESOURCE
+- Section A exact RESOURCE
+- Section B exact RESOURCE
+
+The browser suite verifies:
+
+- a Section A learner sees the shared + Section A items and never the Section B item
+- learner RESOURCE completion persists through the real Course progress API and server refresh
+- assigned Faculty sees the shared + exact teaching content and never the sibling Section
+- College Admin can enter the Offering shared-learning workspace
+- Admin shared authoring does not surface Section-specific content
+
+The suite uses the non-production secret-gated E2E identity harness, but all membership, tenant and Course authorization still executes through the normal database-backed request context.

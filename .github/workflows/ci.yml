@@ -104,6 +104,23 @@ jobs:
       - name: Database integration tests
         run: npm run test:db
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Prepare Course browser E2E database
+        env:
+          E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npm run db:e2e:prepare
+
+      - name: Configure browser E2E auth secret
+        shell: bash
+        run: echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+
+      - name: Browser E2E tests
+        env:
+          E2E_AUTH_ENABLED: "true"
+        run: npm run test:e2e
+
       - name: Build
         run: npm run build
 

@@ -47,3 +47,20 @@ The following remain blocked until the real Identity Platform project exists:
 - test identities and region/provider configuration
 
 Those are implementation/configuration tasks. The production policy decision itself is now fixed.
+
+
+## Browser E2E authentication harness
+
+Authenticated Playwright coverage uses a deliberately narrow test-only identity harness while the live Identity Platform project remains account-bound.
+
+The harness:
+
+- is unconditionally disabled when `NODE_ENV=production`
+- requires `E2E_AUTH_ENABLED=true` plus a secret of at least 32 characters
+- receives the secret and test Identity UID only through HttpOnly first-party cookies
+- substitutes only the externally verified Identity UID
+- still resolves the canonical vNext User, active Membership, roles, tenant and Admin scope from PostgreSQL
+- leaves every existing service authorization check authoritative
+- uses a fresh random secret in CI rather than committing one
+
+It is not a login endpoint, does not create users or roles, and cannot be used as a production authentication fallback. Live Identity Platform session verification remains the only production path.

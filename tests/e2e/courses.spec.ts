@@ -1,0 +1,230 @@
+import {
+  expect,
+  test,
+  type BrowserContext,
+} from "@playwright/test";
+import {
+  E2E_IDENTITY_COOKIE_NAME,
+  E2E_SECRET_COOKIE_NAME,
+} from "../../src/auth/e2e-identity";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+
+const baseUrl = "http://127.0.0.1:3000";
+const membershipCookieName = "lms_membership";
+const e2eSecret = process.env.E2E_AUTH_SECRET;
+
+async function authenticate(
+  context: BrowserContext,
+  identityUid: string,
+  membershipId: string,
+) {
+  if (!e2eSecret) {
+    throw new Error(
+      "E2E_AUTH_SECRET is required for authenticated browser tests",
+    );
+  }
+
+  await context.addCookies([
+    {
+      name: E2E_IDENTITY_COOKIE_NAME,
+      value: identityUid,
+      url: baseUrl,
+      httpOnly: true,
+      sameSite: "Lax",
+    },
+    {
+      name: E2E_SECRET_COOKIE_NAME,
+      value: e2eSecret,
+      url: baseUrl,
+      httpOnly: true,
+      sameSite: "Lax",
+    },
+    {
+      name: membershipCookieName,
+      value: membershipId,
+      url: baseUrl,
+      httpOnly: true,
+      sameSite: "Lax",
+    },
+  ]);
+}
+
+test.describe("Course browser regression", () => {
+  test.skip(
+    !e2eSecret,
+    "Authenticated browser E2E requires E2E_AUTH_SECRET",
+  );
+  test.describe.configure({ mode: "serial" });
+
+  test("learner sees only the exact Section Course and can save progress", async ({
+    page,
+    context,
+  }) => {
+    await authenticate(
+      context,
+      "seed-learner",
+      SEED_IDS.learnerCollegeAMembership,
+    );
+
+    await page.goto("/learn/courses");
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "My Courses",
+      }),
+    ).toBeVisible();
+
+    const courseCard = page.getByRole("link", {
+      name: /E2E Browser Course/,
+    });
+    await expect(courseCard).toContainText(
+      "E2E Section A",
+    );
+    await courseCard.click();
+
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "E2E Browser Course",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Shared Notes", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Section A Notes", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Section B Secret", {
+        exact: true,
+      }),
+    ).toHaveCount(0);
+
+    const sharedArticle = page
+      .getByRole("article")
+      .filter({ hasText: "E2E Shared Notes" });
+    await sharedArticle
+      .getByRole("button", {
+        name: "Mark as complete",
+      })
+      .click();
+    await expect(
+      sharedArticle.getByText("Completed", {
+        exact: true,
+      }),
+    ).toBeVisible();
+  });
+
+  test("faculty sees shared plus exact teaching content but not a sibling Section", async ({
+    page,
+    context,
+  }) => {
+    await authenticate(
+      context,
+      "seed-shared-faculty",
+      SEED_IDS.facultyCollegeAMembership,
+    );
+
+    await page.goto("/teach/courses");
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "My Teaching Courses",
+      }),
+    ).toBeVisible();
+
+    const courseCard = page.getByRole("link", {
+      name: /E2E Browser Course/,
+    });
+    await expect(courseCard).toContainText(
+      "E2E Section A",
+    );
+    await expect(courseCard).toContainText("PRIMARY");
+    await courseCard.click();
+
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "E2E Browser Course",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Shared Notes", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Section A Notes", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Section B Secret", {
+        exact: true,
+      }),
+    ).toHaveCount(0);
+  });
+
+  test("College Admin shared authoring stays Offering-wide", async ({
+    page,
+    context,
+  }) => {
+    await authenticate(
+      context,
+      "seed-college-admin",
+      SEED_IDS.collegeAdminMembership,
+    );
+
+    await page.goto("/college/courses");
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Courses",
+      }),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByText("E2E Browser Course", {
+          exact: true,
+        })
+        .first(),
+    ).toBeVisible();
+
+    await page
+      .getByRole("link", {
+        name: "Open learning",
+      })
+      .click();
+
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "E2E Browser Course",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Learning Path", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Shared Notes", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("E2E Section A Notes", {
+        exact: true,
+      }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText("E2E Section B Secret", {
+        exact: true,
+      }),
+    ).toHaveCount(0);
+  });
+});
