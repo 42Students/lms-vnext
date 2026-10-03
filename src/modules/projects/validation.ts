@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   PROJECT_MEMBER_ROLES,
   PROJECT_TASK_PRIORITIES,
+  PROJECT_TASK_STATUSES,
 } from "./constants";
 
 const projectKeySchema = z
@@ -339,4 +340,18 @@ export type AddProjectMemberInput = z.input<
 >;
 export type UpdateProjectMemberInput = z.infer<
   typeof updateProjectMemberInputSchema
+>;
+
+export const projectReleaseIdSchema = z.string().uuid();
+export const projectSprintIdSchema = z.string().uuid();
+export const projectTaskIdSchema = z.string().uuid();
+
+export const updateProjectTaskStatusInputSchema = z
+  .object({
+    status: z.enum(PROJECT_TASK_STATUSES),
+  })
+  .strict();
+
+export type UpdateProjectTaskStatusInput = z.infer<
+  typeof updateProjectTaskStatusInputSchema
 >;

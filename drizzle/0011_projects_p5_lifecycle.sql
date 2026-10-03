@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "project_sprints_active_project_uq" ON "project_sprints" USING btree ("project_id") WHERE "project_sprints"."status" = 'ACTIVE';

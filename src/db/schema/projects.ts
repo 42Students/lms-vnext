@@ -325,6 +325,9 @@ export const projectSprints = pgTable(
     uniqueIndex(
       "project_sprints_release_sequence_uq",
     ).on(table.releaseId, table.sequence),
+    uniqueIndex("project_sprints_active_project_uq")
+      .on(table.projectId)
+      .where(sql`${table.status} = 'ACTIVE'`),
     index("project_sprints_project_status_idx").on(
       table.projectId,
       table.status,

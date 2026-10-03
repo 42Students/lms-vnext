@@ -133,3 +133,25 @@ export async function requireProjectReadAccess(
     access: member.role,
   };
 }
+
+export async function requireProjectLifecycleAccess(
+  context: RequestContext,
+  projectIdInput: string,
+) {
+  const scope =
+    await requireProjectReadAccess(
+      context,
+      projectIdInput,
+    );
+
+  if (
+    scope.access !== "ADMIN" &&
+    scope.access !== "MENTOR"
+  ) {
+    throw new ProjectsServiceError(
+      "PROJECT_LIFECYCLE_ACCESS_DENIED",
+    );
+  }
+
+  return scope;
+}

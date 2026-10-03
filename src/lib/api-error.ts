@@ -164,10 +164,14 @@ export function apiErrorResponse(error: unknown) {
       "PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND",
       "PROJECT_NOT_FOUND",
       "PROJECT_MEMBER_NOT_FOUND",
+      "PROJECT_RELEASE_NOT_FOUND",
+      "PROJECT_SPRINT_NOT_FOUND",
+      "PROJECT_TASK_NOT_FOUND",
     ]);
 
     const forbidden = new Set([
       "PROJECT_ACCESS_DENIED",
+      "PROJECT_LIFECYCLE_ACCESS_DENIED",
     ]);
 
     return NextResponse.json(

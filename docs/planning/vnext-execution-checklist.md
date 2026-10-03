@@ -545,8 +545,8 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] project instance model — tenant-owned root pinned to exact template version
 - [x] team model — canonical college-membership participation with history and exact-project access
 - [x] mentor model — MENTOR role required, multiple mentors allowed, one active primary mentor enforced
-- [~] workspace model — normalized admin + exact learner/mentor participant read models exist; task operations remain
-- [~] sprint/task model — releases/sprints/tasks materialize as normalized rows; lifecycle/board operations remain
+- [x] workspace model — normalized admin + exact learner/mentor reads; no live template fallback; lifecycle state is sourced from instance tables
+- [x] sprint/task model — normalized materialization plus mentor/admin lifecycle gates, one-active-sprint DB invariant, task state and release shipping rules
 - [ ] submission model
 - [ ] evaluation model
 - [x] materialization redesign — one transaction, assigned immutable version -> normalized instance rows; no live template fallback
