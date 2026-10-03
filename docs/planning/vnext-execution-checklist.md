@@ -561,7 +561,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 # Y. Placements / TPO / HR — ACTIVE
 
 - [x] current-state inventory
-- [ ] companies/employers
+- [x] companies/employers — canonical global employer identity + college-private relationship/trust/owner lifecycle
 - [ ] candidate preferences
 - [ ] jobs
 - [ ] eligibility
