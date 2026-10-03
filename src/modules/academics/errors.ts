@@ -52,15 +52,28 @@ export class AcademicsServiceError extends Error {
 export function postgresConstraintName(
   error: unknown,
 ) {
-  if (
-    error &&
-    typeof error === "object" &&
-    "constraint" in error &&
-    typeof (error as { constraint?: unknown })
-      .constraint === "string"
-  ) {
-    return (error as { constraint: string })
-      .constraint;
+  let current: unknown = error;
+
+  for (let depth = 0; depth < 5; depth += 1) {
+    if (!current || typeof current !== "object") {
+      return null;
+    }
+
+    if (
+      "constraint" in current &&
+      typeof (current as { constraint?: unknown })
+        .constraint === "string"
+    ) {
+      return (current as { constraint: string })
+        .constraint;
+    }
+
+    if ("cause" in current) {
+      current = (current as { cause?: unknown }).cause;
+      continue;
+    }
+
+    return null;
   }
 
   return null;
