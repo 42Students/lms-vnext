@@ -239,7 +239,7 @@ Non-cloud work can continue while GCP1 is account-blocked. Current core continua
 2. install/configure shadcn only when package-lock can be updated atomically; do not replace canonical LMS colors
 3. browser Firebase/Identity client config and login UI once real GCP Identity Platform configuration exists
 4. core E2E acceptance flow after real browser login is available
-5. continue Academics A2 after A1 is green
+5. finish Academics UI after A2 backend is green
 6. Courses
 7. Projects
 8. Placements / TPO / HR
@@ -268,3 +268,16 @@ Non-cloud work can continue while GCP1 is account-blocked. Current core continua
 11. `docs/operations/observability.md`
 
 Do not restart architecture discussion unless an implementation blocker proves a locked decision invalid.
+
+
+### Academics A2 safety rules
+
+- one active Program enrollment per learner college membership
+- Section placement is history, never a mutable current-class/current-semester pointer
+- same-period moves become MOVED
+- forward-period promotions close older active placements as COMPLETED
+- backward-period placement is rejected
+- target Section capacity is checked under a row lock
+- Section Faculty responsibility requires same-college active FACULTY membership
+- generic schedule events must stay inside the Section Academic Period
+- course teaching assignment remains deferred to Courses

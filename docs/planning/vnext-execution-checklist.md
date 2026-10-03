@@ -502,19 +502,19 @@ Do not restart migration work unless this product decision is explicitly changed
 
 # V. Academics — ACTIVE
 
-The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blocked on live Identity Platform configuration, but that no longer blocks backend/schema Academics work.
+The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blocked on live Identity Platform configuration, but that no longer blocks Academics backend/schema work.
 
 - [x] legacy Academics behavior audit (reference only)
-- [x] Programs design + A1 schema/service/API
-- [x] academic period design + A1 schema/service/API
-- [~] cohorts/batches — core structure/lifecycle in A1; learner progression continues in A2
-- [~] classes/sections — core structure in A1; roster membership continues in A2
-- [ ] enrollments
-- [ ] faculty assignments
-- [ ] schedules
+- [x] Programs design + schema/service/API
+- [x] academic period design + schema/service/API
+- [x] cohorts/batches — relational structure + lifecycle + progression boundary
+- [x] classes/sections — period-specific structure + historical roster boundary
+- [x] enrollments — Program lifecycle + Section placement/move/promotion history
+- [x] faculty assignments — Section ADVISOR/COORDINATOR responsibilities
+- [x] schedules — generic Section calendar events with period/faculty validation
 - [x] greenfield decision: no academic data migration required
 - [ ] UI
-- [~] tests — A1 policy + PostgreSQL integration coverage; A2 tests remain
+- [x] tests — policy + PostgreSQL A1/A2 tenant/lifecycle/constraint coverage
 
 ---
 

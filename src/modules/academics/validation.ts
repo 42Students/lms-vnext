@@ -83,9 +83,10 @@ export const updateAcademicPeriodInputSchema = z
     endDate: academicDateSchema.optional(),
   })
   .refine(
-    (value) => Object.values(value).some(
-      (item) => item !== undefined,
-    ),
+    (value) =>
+      Object.values(value).some(
+        (item) => item !== undefined,
+      ),
     "At least one academic period field is required",
   );
 
@@ -110,9 +111,10 @@ export const updateCohortInputSchema = z
       academicPeriodIdSchema.nullable().optional(),
   })
   .refine(
-    (value) => Object.values(value).some(
-      (item) => item !== undefined,
-    ),
+    (value) =>
+      Object.values(value).some(
+        (item) => item !== undefined,
+      ),
     "At least one cohort field is required",
   );
 
@@ -129,21 +131,149 @@ export const createSectionInputSchema = z.object({
   academicPeriodId: academicPeriodIdSchema,
   name: academicNameSchema,
   code: academicCodeSchema,
-  capacity: z.number().int().positive().max(10000).nullable().optional(),
+  capacity: z
+    .number()
+    .int()
+    .positive()
+    .max(10000)
+    .nullable()
+    .optional(),
 });
 
 export const updateSectionInputSchema = z
   .object({
     name: academicNameSchema.optional(),
     code: academicCodeSchema.optional(),
-    capacity: z.number().int().positive().max(10000).nullable().optional(),
+    capacity: z
+      .number()
+      .int()
+      .positive()
+      .max(10000)
+      .nullable()
+      .optional(),
   })
   .refine(
-    (value) => Object.values(value).some(
-      (item) => item !== undefined,
-    ),
+    (value) =>
+      Object.values(value).some(
+        (item) => item !== undefined,
+      ),
     "At least one section field is required",
   );
+
+export const membershipIdSchema = z.string().uuid();
+export const learnerEnrollmentIdSchema =
+  z.string().uuid();
+export const sectionEnrollmentIdSchema =
+  z.string().uuid();
+export const facultyAssignmentIdSchema =
+  z.string().uuid();
+export const scheduleEventIdSchema =
+  z.string().uuid();
+
+export const createLearnerProgramEnrollmentInputSchema =
+  z.object({
+    membershipId: membershipIdSchema,
+    programId: programIdSchema,
+    cohortId: cohortIdSchema,
+  });
+
+export const learnerProgramEnrollmentTransitionSchema =
+  z.object({
+    action: z.enum(["COMPLETE", "WITHDRAW"]),
+  });
+
+export const assignLearnerSectionInputSchema =
+  z.object({
+    learnerEnrollmentId:
+      learnerEnrollmentIdSchema,
+    sectionId: sectionIdSchema,
+  });
+
+export const sectionEnrollmentTransitionSchema =
+  z.object({
+    action: z.enum(["COMPLETE", "WITHDRAW"]),
+  });
+
+export const createSectionFacultyAssignmentInputSchema =
+  z.object({
+    sectionId: sectionIdSchema,
+    membershipId: membershipIdSchema,
+    role: z.enum([
+      "ADVISOR",
+      "COORDINATOR",
+    ]),
+  });
+
+export const scheduleDateTimeSchema = z
+  .string()
+  .datetime({ offset: true });
+
+export const createSectionScheduleEventInputSchema =
+  z
+    .object({
+      sectionId: sectionIdSchema,
+      facultyMembershipId:
+        membershipIdSchema.nullable().optional(),
+      title: academicNameSchema,
+      description: z
+        .string()
+        .trim()
+        .max(4000)
+        .nullable()
+        .optional(),
+      startsAt: scheduleDateTimeSchema,
+      endsAt: scheduleDateTimeSchema,
+      location: z
+        .string()
+        .trim()
+        .max(500)
+        .nullable()
+        .optional(),
+    })
+    .refine(
+      (value) =>
+        new Date(value.endsAt).getTime() >
+        new Date(value.startsAt).getTime(),
+      {
+        message:
+          "Schedule event end time must be after start time",
+        path: ["endsAt"],
+      },
+    );
+
+export const updateSectionScheduleEventInputSchema =
+  z
+    .object({
+      facultyMembershipId:
+        membershipIdSchema.nullable().optional(),
+      title: academicNameSchema.optional(),
+      description: z
+        .string()
+        .trim()
+        .max(4000)
+        .nullable()
+        .optional(),
+      startsAt: scheduleDateTimeSchema.optional(),
+      endsAt: scheduleDateTimeSchema.optional(),
+      location: z
+        .string()
+        .trim()
+        .max(500)
+        .nullable()
+        .optional(),
+    })
+    .refine(
+      (value) =>
+        Object.values(value).some(
+          (item) => item !== undefined,
+        ),
+      "At least one schedule field is required",
+    );
+
+export const scheduleEventTransitionSchema =
+  z.object({
+    action: z.literal("CANCEL"),
+  });
 
 export type CreateProgramInput = z.infer<
   typeof createProgramInputSchema
@@ -169,3 +299,22 @@ export type CreateSectionInput = z.infer<
 export type UpdateSectionInput = z.infer<
   typeof updateSectionInputSchema
 >;
+export type CreateLearnerProgramEnrollmentInput =
+  z.infer<
+    typeof createLearnerProgramEnrollmentInputSchema
+  >;
+export type AssignLearnerSectionInput = z.infer<
+  typeof assignLearnerSectionInputSchema
+>;
+export type CreateSectionFacultyAssignmentInput =
+  z.infer<
+    typeof createSectionFacultyAssignmentInputSchema
+  >;
+export type CreateSectionScheduleEventInput =
+  z.infer<
+    typeof createSectionScheduleEventInputSchema
+  >;
+export type UpdateSectionScheduleEventInput =
+  z.infer<
+    typeof updateSectionScheduleEventInputSchema
+  >;

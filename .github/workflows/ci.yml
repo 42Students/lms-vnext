@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - academics-a2-schema-gen
 
 permissions:
   contents: read
