@@ -184,7 +184,7 @@ const placementJobWorkModes = [
 
 const optionalHttpUrlSchema = httpUrlSchema.nullable().optional();
 
-export const createPlacementJobInputSchema = z
+const placementJobFieldsSchema = z
   .object({
     collegeId: z.string().uuid(),
     companyRelationshipId: z.string().uuid(),
@@ -200,8 +200,10 @@ export const createPlacementJobInputSchema = z
     externalApplicationUrl: optionalHttpUrlSchema,
     applicationDeadline: z.coerce.date().nullable().optional(),
   })
-  .strict()
-  .superRefine((value, ctx) => {
+  .strict();
+
+export const createPlacementJobInputSchema =
+  placementJobFieldsSchema.superRefine((value, ctx) => {
     if (
       value.minimumAnnualCtcInr != null &&
       value.maximumAnnualCtcInr != null &&
@@ -225,11 +227,35 @@ export const createPlacementJobInputSchema = z
     }
   });
 
-export const updatePlacementJobInputSchema = createPlacementJobInputSchema
-  .omit({ collegeId: true, companyRelationshipId: true })
-  .partial()
-  .strict()
-  .refine((value) => Object.keys(value).length > 0, "Provide at least one job field");
+export const updatePlacementJobInputSchema =
+  placementJobFieldsSchema
+    .omit({
+      collegeId: true,
+      companyRelationshipId: true,
+    })
+    .partial()
+    .strict()
+    .superRefine((value, ctx) => {
+      if (Object.keys(value).length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Provide at least one job field",
+        });
+      }
+      if (
+        value.minimumAnnualCtcInr != null &&
+        value.maximumAnnualCtcInr != null &&
+        value.maximumAnnualCtcInr <
+          value.minimumAnnualCtcInr
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["maximumAnnualCtcInr"],
+          message:
+            "Maximum CTC must be greater than or equal to minimum CTC",
+        });
+      }
+    });
 
 export type CreatePlacementJobInput = z.input<
   typeof createPlacementJobInputSchema
