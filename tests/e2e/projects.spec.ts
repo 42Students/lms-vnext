@@ -83,7 +83,7 @@ test.describe("Projects browser regression", () => {
     });
     await createDialog
       .getByLabel("Assigned template")
-      .selectOption({ label: /E2E Project Template/ });
+      .selectOption({ index: 0 });
 
     const unique = Date.now().toString();
     const title = `E2E Browser Project ${unique}`;
