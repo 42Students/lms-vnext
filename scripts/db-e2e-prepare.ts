@@ -234,6 +234,8 @@ async function main() {
           contentType: "RESOURCE",
           title: "E2E Shared Notes",
           notes: "Shared browser fixture",
+          externalUrl:
+            "https://example.com/e2e-shared-notes",
           sequence: 0,
         },
       );
