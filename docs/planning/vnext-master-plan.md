@@ -34,8 +34,8 @@ PHASE 3  Real DB migrations + dev DB          MOSTLY DONE
 PHASE 4  Identity Platform + login UI          PARTIAL / GCP-BLOCKED
 PHASE 5  Core admin UI                         MOSTLY DONE
 PHASE 6  Legacy migration tooling              RETIRED — GREENFIELD
-PHASE 7  Academics core                        NEXT
-PHASE 8  Courses / learning                    PENDING
+PHASE 7  Academics core                        DONE
+PHASE 8  Courses / learning                    NEXT
 PHASE 9  Projects                              PENDING
 PHASE 10 Placements / TPO / HR                 PENDING
 PHASE 11 Activity / notifications / analytics  PENDING

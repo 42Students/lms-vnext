@@ -87,8 +87,12 @@ export function AcademicsOverview({
       className: "text-right",
       cell: (program) => (
         <ProgramActions
-          programId={program.id}
-          name={program.name}
+          program={{
+            id: program.id,
+            name: program.name,
+            code: program.code,
+            durationTerms: program.durationTerms,
+          }}
         />
       ),
     },
@@ -134,8 +138,14 @@ export function AcademicsOverview({
       className: "text-right",
       cell: (period) => (
         <AcademicPeriodActions
-          periodId={period.id}
-          status={period.status}
+          period={{
+            id: period.id,
+            name: period.name,
+            code: period.code,
+            startDate: period.startDate,
+            endDate: period.endDate,
+            status: period.status,
+          }}
         />
       ),
     },
@@ -180,8 +190,21 @@ export function AcademicsOverview({
       className: "text-right",
       cell: (cohort) => (
         <CohortActions
-          cohortId={cohort.id}
-          status={cohort.status}
+          cohort={{
+            id: cohort.id,
+            name: cohort.name,
+            code: cohort.code,
+            expectedEndPeriodId:
+              cohort.expectedEndPeriodId,
+            status: cohort.status,
+          }}
+          periods={workspace.periods.map(
+            (period) => ({
+              id: period.id,
+              name: period.name,
+              code: period.code,
+            }),
+          )}
         />
       ),
     },
@@ -244,8 +267,12 @@ export function AcademicsOverview({
       className: "text-right",
       cell: (section) => (
         <SectionActions
-          sectionId={section.id}
-          name={section.name}
+          section={{
+            id: section.id,
+            name: section.name,
+            code: section.code,
+            capacity: section.capacity,
+          }}
           operationsHref={`${sectionBasePath}/${section.id}`}
         />
       ),
