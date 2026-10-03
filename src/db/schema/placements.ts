@@ -740,3 +740,165 @@ export const placementApplicationScreeningHistory = pgTable(
     ),
   ],
 );
+
+
+export const placementJobRounds = pgTable(
+  "placement_job_rounds",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobId: uuid("job_id")
+      .notNull()
+      .references(() => placementJobs.id, {
+        onDelete: "restrict",
+      }),
+    sequence: integer("sequence").notNull(),
+    kind: varchar("kind", { length: 24 }).notNull(),
+    name: text("name").notNull(),
+    mode: varchar("mode", { length: 24 }),
+    scheduledAt: timestamp("scheduled_at", {
+      withTimezone: true,
+    }),
+    timezone: varchar("timezone", { length: 64 }),
+    venue: text("venue"),
+    meetingUrl: text("meeting_url"),
+    whatToBring: text("what_to_bring"),
+    platform: text("platform"),
+    testUrl: text("test_url"),
+    durationMinutes: integer("duration_minutes"),
+    resultsDueAt: timestamp("results_due_at", {
+      withTimezone: true,
+    }),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("PENDING"),
+    completedAt: timestamp("completed_at", {
+      withTimezone: true,
+    }),
+    cancelledAt: timestamp("cancelled_at", {
+      withTimezone: true,
+    }),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "placement_job_rounds_active_sequence_uq",
+    )
+      .on(table.jobId, table.sequence)
+      .where(sql`${table.status} <> 'CANCELLED'`),
+    index("placement_job_rounds_job_status_idx").on(
+      table.jobId,
+      table.status,
+    ),
+    check(
+      "placement_job_rounds_sequence_ck",
+      sql`${table.sequence} > 0`,
+    ),
+    check(
+      "placement_job_rounds_kind_ck",
+      sql`${table.kind} in ('TALK', 'TEST', 'VENDOR_TEST', 'GD', 'INTERVIEW')`,
+    ),
+    check(
+      "placement_job_rounds_mode_ck",
+      sql`${table.mode} is null or ${table.mode} in ('ON_CAMPUS', 'VIRTUAL')`,
+    ),
+    check(
+      "placement_job_rounds_status_ck",
+      sql`${table.status} in ('PENDING', 'SCHEDULED', 'COMPLETED', 'CANCELLED')`,
+    ),
+    check(
+      "placement_job_rounds_duration_ck",
+      sql`${table.durationMinutes} is null or (${table.durationMinutes} > 0 and ${table.durationMinutes} <= 1440)`,
+    ),
+    check(
+      "placement_job_rounds_schedule_pair_ck",
+      sql`(${table.scheduledAt} is null and ${table.timezone} is null)
+        or (${table.scheduledAt} is not null and ${table.timezone} is not null)`,
+    ),
+    check(
+      "placement_job_rounds_results_due_ck",
+      sql`${table.resultsDueAt} is null
+        or ${table.scheduledAt} is null
+        or ${table.resultsDueAt} >= ${table.scheduledAt}`,
+    ),
+    check(
+      "placement_job_rounds_delivery_ck",
+      sql`${table.status} not in ('SCHEDULED', 'COMPLETED')
+        or (${table.mode} = 'ON_CAMPUS'
+          and coalesce(length(trim(${table.venue})), 0) > 0)
+        or (${table.mode} = 'VIRTUAL'
+          and coalesce(length(trim(${table.meetingUrl})), 0) > 0)`,
+    ),
+    check(
+      "placement_job_rounds_lifecycle_ck",
+      sql`(${table.status} = 'PENDING'
+          and ${table.scheduledAt} is null
+          and ${table.timezone} is null
+          and ${table.completedAt} is null
+          and ${table.cancelledAt} is null)
+        or (${table.status} = 'SCHEDULED'
+          and ${table.scheduledAt} is not null
+          and ${table.timezone} is not null
+          and ${table.mode} is not null
+          and ${table.completedAt} is null
+          and ${table.cancelledAt} is null)
+        or (${table.status} = 'COMPLETED'
+          and ${table.scheduledAt} is not null
+          and ${table.timezone} is not null
+          and ${table.mode} is not null
+          and ${table.completedAt} is not null
+          and ${table.cancelledAt} is null)
+        or (${table.status} = 'CANCELLED'
+          and ${table.completedAt} is null
+          and ${table.cancelledAt} is not null)`,
+    ),
+  ],
+);
+
+export const placementJobRoundEvents = pgTable(
+  "placement_job_round_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    roundId: uuid("round_id")
+      .notNull()
+      .references(() => placementJobRounds.id, {
+        onDelete: "restrict",
+      }),
+    eventType: varchar("event_type", {
+      length: 32,
+    }).notNull(),
+    actorUserId: uuid("actor_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index(
+      "placement_job_round_events_round_created_idx",
+    ).on(table.roundId, table.createdAt),
+    check(
+      "placement_job_round_events_type_ck",
+      sql`${table.eventType} in ('CREATED', 'UPDATED', 'SCHEDULED', 'RESCHEDULED', 'REORDERED', 'COMPLETED', 'CANCELLED')`,
+    ),
+  ],
+);

@@ -204,6 +204,7 @@ export function apiErrorResponse(error: unknown) {
       "PLACEMENT_ELIGIBILITY_OVERRIDE_NOT_FOUND",
       "PLACEMENT_APPLICATION_NOT_FOUND",
       "PLACEMENT_SCREENING_NOT_FOUND",
+      "PLACEMENT_ROUND_NOT_FOUND",
     ]);
 
     return NextResponse.json(

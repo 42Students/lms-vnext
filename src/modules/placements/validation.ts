@@ -517,3 +517,240 @@ export type PlacementScreeningDecisionInput =
   z.input<
     typeof placementScreeningDecisionInputSchema
   >;
+
+
+export const placementRoundIdSchema =
+  z.string().uuid();
+
+export const placementRoundKinds = [
+  "TALK",
+  "TEST",
+  "VENDOR_TEST",
+  "GD",
+  "INTERVIEW",
+] as const;
+
+export const placementRoundModes = [
+  "ON_CAMPUS",
+  "VIRTUAL",
+] as const;
+
+const placementTimeZoneSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(64)
+  .refine((value) => {
+    try {
+      new Intl.DateTimeFormat("en-US", {
+        timeZone: value,
+      }).format();
+      return true;
+    } catch {
+      return false;
+    }
+  }, "Use a valid IANA timezone");
+
+const placementRoundDefinitionFields = {
+  kind: z.enum(placementRoundKinds),
+  name: z.string().trim().min(1).max(100),
+  whatToBring: z
+    .string()
+    .trim()
+    .min(1)
+    .max(1000)
+    .nullable()
+    .optional(),
+  platform: z
+    .string()
+    .trim()
+    .min(1)
+    .max(120)
+    .nullable()
+    .optional(),
+  testUrl: optionalHttpUrlSchema,
+  durationMinutes: z
+    .number()
+    .int()
+    .positive()
+    .max(1440)
+    .nullable()
+    .optional(),
+};
+
+export const createPlacementRoundInputSchema =
+  z.object(placementRoundDefinitionFields).strict();
+
+export const updatePlacementRoundInputSchema =
+  z
+    .object(placementRoundDefinitionFields)
+    .partial()
+    .strict()
+    .superRefine((value, ctx) => {
+      if (Object.keys(value).length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Provide at least one round field",
+        });
+      }
+    });
+
+export const placementRoundActionInputSchema =
+  z
+    .object({
+      action: z.enum([
+        "SCHEDULE",
+        "COMPLETE",
+        "CANCEL",
+      ]),
+      scheduledAt: z.coerce
+        .date()
+        .optional(),
+      timezone:
+        placementTimeZoneSchema.optional(),
+      mode: z
+        .enum(placementRoundModes)
+        .optional(),
+      venue: z
+        .string()
+        .trim()
+        .min(1)
+        .max(500)
+        .nullable()
+        .optional(),
+      meetingUrl:
+        optionalHttpUrlSchema,
+      resultsDueAt: z.coerce
+        .date()
+        .nullable()
+        .optional(),
+      reason: z
+        .string()
+        .trim()
+        .min(3)
+        .max(1000)
+        .optional(),
+    })
+    .strict()
+    .superRefine((value, ctx) => {
+      if (value.action === "SCHEDULE") {
+        if (!value.scheduledAt) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["scheduledAt"],
+            message:
+              "A scheduled round requires a date and time",
+          });
+        }
+        if (!value.timezone) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["timezone"],
+            message:
+              "A scheduled round requires a timezone",
+          });
+        }
+        if (!value.mode) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["mode"],
+            message:
+              "A scheduled round requires a mode",
+          });
+        }
+        if (
+          value.mode === "ON_CAMPUS" &&
+          !value.venue
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["venue"],
+            message:
+              "On-campus rounds require a venue",
+          });
+        }
+        if (
+          value.mode === "VIRTUAL" &&
+          !value.meetingUrl
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["meetingUrl"],
+            message:
+              "Virtual rounds require a meeting URL",
+          });
+        }
+        if (
+          value.scheduledAt &&
+          value.resultsDueAt &&
+          value.resultsDueAt <
+            value.scheduledAt
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["resultsDueAt"],
+            message:
+              "Results due time cannot be before the round starts",
+          });
+        }
+      } else {
+        if (
+          value.scheduledAt !== undefined ||
+          value.timezone !== undefined ||
+          value.mode !== undefined ||
+          value.venue !== undefined ||
+          value.meetingUrl !== undefined ||
+          value.resultsDueAt !== undefined
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            message:
+              "Schedule fields are only valid for the SCHEDULE action",
+          });
+        }
+        if (
+          value.action === "CANCEL" &&
+          !value.reason
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["reason"],
+            message:
+              "Cancelling a round requires a reason",
+          });
+        }
+      }
+    });
+
+export const reorderPlacementRoundsInputSchema =
+  z
+    .object({
+      roundIds: z
+        .array(z.string().uuid())
+        .min(1)
+        .max(50)
+        .refine(
+          (ids) =>
+            new Set(ids).size === ids.length,
+          "Round IDs must be unique",
+        ),
+    })
+    .strict();
+
+export type CreatePlacementRoundInput =
+  z.input<
+    typeof createPlacementRoundInputSchema
+  >;
+export type UpdatePlacementRoundInput =
+  z.input<
+    typeof updatePlacementRoundInputSchema
+  >;
+export type PlacementRoundActionInput =
+  z.input<
+    typeof placementRoundActionInputSchema
+  >;
+export type ReorderPlacementRoundsInput =
+  z.input<
+    typeof reorderPlacementRoundsInputSchema
+  >;
