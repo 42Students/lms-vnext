@@ -159,3 +159,81 @@ export const candidatePreferencesInputSchema = z
 export type CandidatePreferencesInput = z.input<
   typeof candidatePreferencesInputSchema
 >;
+
+
+export const placementJobIdSchema = z.string().uuid();
+
+export const placementJobStatuses = [
+  "DRAFT",
+  "PUBLISHED",
+  "CLOSED",
+  "ARCHIVED",
+] as const;
+
+export const placementJobApplicationModes = [
+  "INTERNAL",
+  "HYBRID",
+  "EXTERNAL_ONLY",
+] as const;
+
+const placementJobWorkModes = [
+  "ONSITE",
+  "HYBRID",
+  "REMOTE",
+] as const;
+
+const optionalHttpUrlSchema = httpUrlSchema.nullable().optional();
+
+export const createPlacementJobInputSchema = z
+  .object({
+    collegeId: z.string().uuid(),
+    companyRelationshipId: z.string().uuid(),
+    title: z.string().trim().min(2).max(200),
+    description: z.string().trim().min(1).max(20_000),
+    employmentType: z.enum(placementEmploymentTypes),
+    workMode: z.enum(placementJobWorkModes),
+    locations: distinctTextList(20, 120).optional().default([]),
+    openings: z.number().int().positive().max(100_000).nullable().optional(),
+    minimumAnnualCtcInr: z.number().int().min(0).max(100_000_000).nullable().optional(),
+    maximumAnnualCtcInr: z.number().int().min(0).max(100_000_000).nullable().optional(),
+    applicationMode: z.enum(placementJobApplicationModes).optional().default("INTERNAL"),
+    externalApplicationUrl: optionalHttpUrlSchema,
+    applicationDeadline: z.coerce.date().nullable().optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (
+      value.minimumAnnualCtcInr != null &&
+      value.maximumAnnualCtcInr != null &&
+      value.maximumAnnualCtcInr < value.minimumAnnualCtcInr
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["maximumAnnualCtcInr"],
+        message: "Maximum CTC must be greater than or equal to minimum CTC",
+      });
+    }
+    if (
+      value.applicationMode === "EXTERNAL_ONLY" &&
+      !value.externalApplicationUrl
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["externalApplicationUrl"],
+        message: "External-only jobs require an application URL",
+      });
+    }
+  });
+
+export const updatePlacementJobInputSchema = createPlacementJobInputSchema
+  .omit({ collegeId: true, companyRelationshipId: true })
+  .partial()
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, "Provide at least one job field");
+
+export type CreatePlacementJobInput = z.input<
+  typeof createPlacementJobInputSchema
+>;
+export type UpdatePlacementJobInput = z.input<
+  typeof updatePlacementJobInputSchema
+>;
