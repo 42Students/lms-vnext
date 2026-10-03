@@ -200,6 +200,8 @@ export function apiErrorResponse(error: unknown) {
       "PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND",
       "PLACEMENT_OWNER_MEMBERSHIP_NOT_FOUND",
       "PLACEMENT_JOB_NOT_FOUND",
+      "PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND",
+      "PLACEMENT_ELIGIBILITY_OVERRIDE_NOT_FOUND",
     ]);
 
     return NextResponse.json(

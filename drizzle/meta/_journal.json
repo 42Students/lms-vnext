@@ -134,6 +134,13 @@
       "when": 1791022000000,
       "tag": "0018_placements_p3_jobs",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791023200000,
+      "tag": "0019_placements_p4_eligibility",
+      "breakpoints": true
     }
   ]
 }

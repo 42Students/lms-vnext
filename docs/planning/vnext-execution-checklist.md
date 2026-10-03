@@ -563,8 +563,8 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] current-state inventory
 - [x] companies/employers — canonical global employer identity + college-private relationship/trust/owner lifecycle
 - [x] candidate preferences — learner self-scoped typed matching preferences + notification choices
-- [ ] jobs
-- [ ] eligibility
+- [x] jobs — tenant-scoped draft/publish/close/archive lifecycle with employer relationship boundary
+- [~] eligibility — explainable academic evidence/rules/overrides coded; CI verification pending
 - [ ] applications
 - [ ] screening
 - [ ] evaluation config

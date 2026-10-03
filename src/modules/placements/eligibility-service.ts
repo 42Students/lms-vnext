@@ -1,17 +1,21 @@
 import {
   and,
   eq,
+  inArray,
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  cohorts,
   collegeMemberships,
+  departments,
   learnerProgramEnrollments,
   membershipRoles,
   placementCandidateAcademicEvidence,
   placementEligibilityOverrides,
   placementJobEligibilityPolicies,
   placementJobs,
+  programs,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -292,6 +296,60 @@ export async function upsertVerifiedAcademicEvidence(
   return row;
 }
 
+async function validateEligibilityAcademicScope(
+  collegeId: string,
+  allowedProgramIds: readonly string[],
+  allowedCohortIds: readonly string[],
+) {
+  const db = getDb();
+
+  if (allowedProgramIds.length > 0) {
+    const rows = await db
+      .select({ id: programs.id })
+      .from(programs)
+      .innerJoin(
+        departments,
+        eq(departments.id, programs.departmentId),
+      )
+      .where(
+        and(
+          inArray(programs.id, [...allowedProgramIds]),
+          eq(departments.collegeId, collegeId),
+        ),
+      );
+    if (rows.length !== allowedProgramIds.length) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
+      );
+    }
+  }
+
+  if (allowedCohortIds.length > 0) {
+    const rows = await db
+      .select({ id: cohorts.id })
+      .from(cohorts)
+      .innerJoin(
+        programs,
+        eq(programs.id, cohorts.programId),
+      )
+      .innerJoin(
+        departments,
+        eq(departments.id, programs.departmentId),
+      )
+      .where(
+        and(
+          inArray(cohorts.id, [...allowedCohortIds]),
+          eq(departments.collegeId, collegeId),
+        ),
+      );
+    if (rows.length !== allowedCohortIds.length) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
+      );
+    }
+  }
+}
+
 export async function upsertJobEligibilityPolicy(
   context: RequestContext,
   jobIdInput: string,
@@ -313,6 +371,11 @@ export async function upsertJobEligibilityPolicy(
     placementEligibilityPolicyInputSchema.parse(
       rawInput,
     );
+  await validateEligibilityAcademicScope(
+    job.collegeId,
+    input.allowedProgramIds,
+    input.allowedCohortIds,
+  );
   const values = {
     allowedProgramIds: input.allowedProgramIds,
     allowedCohortIds: input.allowedCohortIds,
