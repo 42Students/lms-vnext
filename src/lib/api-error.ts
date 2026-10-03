@@ -199,6 +199,7 @@ export function apiErrorResponse(error: unknown) {
       "COLLEGE_NOT_FOUND",
       "PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND",
       "PLACEMENT_OWNER_MEMBERSHIP_NOT_FOUND",
+      "PLACEMENT_JOB_NOT_FOUND",
     ]);
 
     return NextResponse.json(
