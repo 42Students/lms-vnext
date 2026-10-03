@@ -26,6 +26,7 @@ export default async function CollegeProjectPage({
       backHref="/college/projects"
       backLabel="Projects"
       eyebrow="College Admin Project"
+      mode="ADMIN"
     />
   );
 }

@@ -554,7 +554,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] materialization redesign — one transaction, assigned immutable version -> normalized instance rows; no live template fallback
 - [x] greenfield decision: no legacy project data migration required
 - [x] adversarial tests — same-college outsider denial, cross-project ID substitution, learner privilege escalation, unsafe URL and stale-state coverage layered on P2-P7 regression suites
-- [~] UI — Learner/Mentor/College Admin/scoped Super Admin navigation, Project lists and shared read-complete workspace landed; mutation controls + Projects browser E2E remain
+- [~] UI — all role navigation/lists/workspace reads + learner task/final submit + mentor/admin lifecycle/task review/final review/evaluation controls landed; resources/meetings/team/project-creation controls + Projects browser E2E remain
 
 ---
 

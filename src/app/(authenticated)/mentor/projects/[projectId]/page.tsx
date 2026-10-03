@@ -32,6 +32,7 @@ export default async function MentorProjectPage({
       backHref="/mentor/projects"
       backLabel="Mentoring Projects"
       eyebrow="Mentor Project"
+      mode="MENTOR"
     />
   );
 }

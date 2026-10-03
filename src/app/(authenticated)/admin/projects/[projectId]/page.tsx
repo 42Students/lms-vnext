@@ -26,6 +26,7 @@ export default async function SuperAdminProjectPage({
       backHref="/admin/projects"
       backLabel="Projects"
       eyebrow="Super Admin Project"
+      mode="ADMIN"
     />
   );
 }

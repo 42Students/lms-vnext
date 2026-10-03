@@ -1,6 +1,20 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {
+  ReleaseLifecycleActions,
+  SprintLifecycleActions,
+  TaskLifecycleActions,
+  TaskReviewActions,
+} from "./project-lifecycle-actions";
+import {
+  FinalReviewControl,
+  LearnerFinalDeliveryControl,
+  ProjectEvaluationControl,
+} from "./project-final-delivery-controls";
+import {
+  ProjectTaskSubmissionControl,
+} from "./project-task-submission-control";
 import type {
   getProjectWorkspaceView,
 } from "@/modules/projects/workspace-view-service";
@@ -97,11 +111,13 @@ export function ProjectWorkspace({
   backHref,
   backLabel,
   eyebrow,
+  mode,
 }: {
   workspace: Workspace;
   backHref: string;
   backLabel: string;
   eyebrow: string;
+  mode: "LEARNER" | "MENTOR" | "ADMIN";
 }) {
   const { readiness } = workspace;
   const tasksBySprint = new Map<
@@ -230,6 +246,34 @@ export function ProjectWorkspace({
         />
       </div>
 
+      {mode === "LEARNER" ? (
+        <section className="rounded-xl border border-border bg-surface p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="m-0 text-base font-semibold text-foreground">
+                Your final delivery
+              </h2>
+              <p className="mt-1 text-sm text-body">
+                Prepare the final draft early; submit it after all execution work is complete.
+              </p>
+            </div>
+            <LearnerFinalDeliveryControl
+              projectId={workspace.project.id}
+              latest={
+                workspace.finalDelivery.submissions.at(-1) ??
+                null
+              }
+              canCreateDraft={
+                readiness.finalSubmission.canCreateDraft
+              }
+              canSubmitDraft={
+                readiness.finalSubmission.canSubmitDraft
+              }
+            />
+          </div>
+        </section>
+      ) : null}
+
       <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -305,9 +349,18 @@ export function ProjectWorkspace({
                     </p>
                   ) : null}
                 </div>
-                <StatusBadge tone={tone(release.status)}>
-                  {label(release.status)}
-                </StatusBadge>
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusBadge tone={tone(release.status)}>
+                    {label(release.status)}
+                  </StatusBadge>
+                  {mode !== "LEARNER" ? (
+                    <ReleaseLifecycleActions
+                      projectId={workspace.project.id}
+                      releaseId={release.id}
+                      status={release.status}
+                    />
+                  ) : null}
+                </div>
               </div>
 
               <div className="mt-4 space-y-3">
@@ -329,11 +382,20 @@ export function ProjectWorkspace({
                           </p>
                         ) : null}
                       </div>
-                      <StatusBadge
-                        tone={tone(sprint.status)}
-                      >
-                        {label(sprint.status)}
-                      </StatusBadge>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <StatusBadge
+                          tone={tone(sprint.status)}
+                        >
+                          {label(sprint.status)}
+                        </StatusBadge>
+                        {mode !== "LEARNER" ? (
+                          <SprintLifecycleActions
+                            projectId={workspace.project.id}
+                            sprintId={sprint.id}
+                            status={sprint.status}
+                          />
+                        ) : null}
+                      </div>
                     </div>
 
                     <div className="mt-3 grid gap-2">
@@ -381,6 +443,39 @@ export function ProjectWorkspace({
                                 </StatusBadge>
                               </div>
                             </div>
+                            {mode === "LEARNER" &&
+                            sprint.status === "ACTIVE" &&
+                            task.status !== "DONE" &&
+                            task.status !== "IN_REVIEW" ? (
+                              <div className="mt-3">
+                                <ProjectTaskSubmissionControl
+                                  projectId={workspace.project.id}
+                                  taskId={task.id}
+                                />
+                              </div>
+                            ) : null}
+                            {mode !== "LEARNER" ? (
+                              <div className="mt-3 flex flex-wrap items-end gap-2">
+                                <TaskLifecycleActions
+                                  projectId={workspace.project.id}
+                                  taskId={task.id}
+                                  status={task.status}
+                                  sprintStatus={sprint.status}
+                                />
+                                {latestAttempt?.status ===
+                                  "SUBMITTED" &&
+                                task.status ===
+                                  "IN_REVIEW" ? (
+                                  <TaskReviewActions
+                                    projectId={workspace.project.id}
+                                    taskId={task.id}
+                                    submissionId={
+                                      latestAttempt.id
+                                    }
+                                  />
+                                ) : null}
+                              </div>
+                            ) : null}
                           </div>
                         );
                       })}
@@ -486,6 +581,29 @@ export function ProjectWorkspace({
                             {review.feedback}
                           </p>
                         ) : null}
+                      </div>
+                    ) : null}
+
+                    {mode !== "LEARNER" &&
+                    submission.status ===
+                      "SUBMITTED" ? (
+                      <div className="mt-3">
+                        <FinalReviewControl
+                          projectId={workspace.project.id}
+                          submissionId={submission.id}
+                        />
+                      </div>
+                    ) : null}
+
+                    {mode !== "LEARNER" &&
+                    submission.status ===
+                      "APPROVED" &&
+                    !evaluation ? (
+                      <div className="mt-3">
+                        <ProjectEvaluationControl
+                          projectId={workspace.project.id}
+                          submissionId={submission.id}
+                        />
                       </div>
                     ) : null}
 

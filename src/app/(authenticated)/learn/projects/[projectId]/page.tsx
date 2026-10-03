@@ -32,6 +32,7 @@ export default async function LearnerProjectPage({
       backHref="/learn/projects"
       backLabel="My Projects"
       eyebrow="Learner Project"
+      mode="LEARNER"
     />
   );
 }
