@@ -23,6 +23,7 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Departments", href: "/admin/departments", shortLabel: "D" },
   { label: "Academics", href: "/admin/academics", shortLabel: "A" },
   { label: "Courses", href: "/admin/courses", shortLabel: "C" },
+  { label: "Projects", href: "/admin/projects", shortLabel: "P" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
 ];
@@ -31,6 +32,18 @@ const learnerItem: ShellNavItem = {
   label: "My Courses",
   href: "/learn/courses",
   shortLabel: "C",
+};
+
+const learnerProjectsItem: ShellNavItem = {
+  label: "My Projects",
+  href: "/learn/projects",
+  shortLabel: "P",
+};
+
+const mentorProjectsItem: ShellNavItem = {
+  label: "Mentoring Projects",
+  href: "/mentor/projects",
+  shortLabel: "P",
 };
 
 const facultyItem: ShellNavItem = {
@@ -45,6 +58,7 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "Departments", href: "/college/departments", shortLabel: "D" },
   { label: "Academics", href: "/college/academics", shortLabel: "A" },
   { label: "Courses", href: "/college/courses", shortLabel: "C" },
+  { label: "Projects", href: "/college/projects", shortLabel: "P" },
   { label: "People", href: "/college/people", shortLabel: "P" },
   { label: "Domains", href: "/college/domains", shortLabel: "D" },
 ];
@@ -61,11 +75,15 @@ export function getShellNavigation(context: RequestContext) {
   const items: ShellNavItem[] = [dashboard];
 
   if (hasMembershipRole(context, "LEARNER")) {
-    items.push(learnerItem);
+    items.push(learnerItem, learnerProjectsItem);
   }
 
   if (hasMembershipRole(context, "FACULTY")) {
     items.push(facultyItem);
+  }
+
+  if (hasMembershipRole(context, "MENTOR")) {
+    items.push(mentorProjectsItem);
   }
 
   return items;

@@ -2,6 +2,7 @@ import {
   and,
   asc,
   eq,
+  inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -201,4 +202,52 @@ export async function getProjectEvaluation(
     );
 
   return { evaluation, items };
+}
+
+export async function listProjectEvaluations(
+  context: RequestContext,
+  projectIdInput: string,
+) {
+  const scope =
+    await requireProjectReadAccess(
+      context,
+      projectIdInput,
+    );
+  const evaluations = await getDb()
+    .select()
+    .from(projectEvaluations)
+    .where(
+      eq(
+        projectEvaluations.projectId,
+        scope.project.id,
+      ),
+    )
+    .orderBy(
+      asc(projectEvaluations.evaluatedAt),
+    );
+
+  if (evaluations.length === 0) {
+    return {
+      evaluations,
+      items: [],
+    };
+  }
+
+  const items = await getDb()
+    .select()
+    .from(projectEvaluationItems)
+    .where(
+      inArray(
+        projectEvaluationItems.evaluationId,
+        evaluations.map(
+          (evaluation) => evaluation.id,
+        ),
+      ),
+    )
+    .orderBy(
+      asc(projectEvaluationItems.evaluationId),
+      asc(projectEvaluationItems.sequence),
+    );
+
+  return { evaluations, items };
 }

@@ -103,6 +103,24 @@ describe("Project template blueprint validation", () => {
     ).toBe(true);
   });
 
+  it("rejects unsafe template resource URL schemes before materialization", () => {
+    const blueprint = validBlueprint();
+    blueprint.resources[0]!.url =
+      "javascript:alert(1)";
+
+    const result =
+      projectTemplateBlueprintSchema.safeParse(blueprint);
+
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.some(
+        (issue) =>
+          issue.path.join(".") ===
+          "resources.0.url",
+      ),
+    ).toBe(true);
+  });
+
   it("keeps template slugs stable and machine-safe", () => {
     expect(
       createProjectTemplateInputSchema.safeParse({

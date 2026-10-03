@@ -378,3 +378,28 @@ export async function listProjectTaskSubmissions(
       asc(projectTaskSubmissions.version),
     );
 }
+
+export async function listProjectTaskSubmissionsForProject(
+  context: RequestContext,
+  projectIdInput: string,
+) {
+  const scope =
+    await requireProjectReadAccess(
+      context,
+      projectIdInput,
+    );
+
+  return getDb()
+    .select()
+    .from(projectTaskSubmissions)
+    .where(
+      eq(
+        projectTaskSubmissions.projectId,
+        scope.project.id,
+      ),
+    )
+    .orderBy(
+      asc(projectTaskSubmissions.taskId),
+      asc(projectTaskSubmissions.version),
+    );
+}

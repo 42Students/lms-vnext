@@ -67,7 +67,21 @@ const resourceSchema = z
     key: projectKeySchema,
     title: titleSchema,
     description: descriptionSchema,
-    url: z.string().trim().url().max(2048).optional(),
+    url: z
+      .string()
+      .trim()
+      .url()
+      .max(2048)
+      .refine(
+        (value) =>
+          value.startsWith("https://") ||
+          value.startsWith("http://"),
+        {
+          message:
+            "Project resource URL must use http or https",
+        },
+      )
+      .optional(),
     required: z.boolean().default(false),
     sequence: sequenceSchema,
   })

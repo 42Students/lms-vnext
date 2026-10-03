@@ -42,6 +42,7 @@ describe("authenticated shell model", () => {
       "Departments",
       "Academics",
       "Courses",
+      "Projects",
       "People",
       "Domains",
     ]);
@@ -59,6 +60,7 @@ describe("authenticated shell model", () => {
       "Departments",
       "Academics",
       "Courses",
+      "Projects",
       "People",
       "Domains",
     ]);
@@ -78,6 +80,11 @@ describe("authenticated shell model", () => {
         label: "My Courses",
         href: "/learn/courses",
         shortLabel: "C",
+      },
+      {
+        label: "My Projects",
+        href: "/learn/projects",
+        shortLabel: "P",
       },
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
@@ -99,6 +106,11 @@ describe("authenticated shell model", () => {
         href: "/teach/courses",
         shortLabel: "T",
       },
+      {
+        label: "Mentoring Projects",
+        href: "/mentor/projects",
+        shortLabel: "P",
+      },
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · Mentor",
@@ -118,6 +130,7 @@ describe("authenticated shell model", () => {
     ).toEqual([
       "Dashboard",
       "My Courses",
+      "My Projects",
       "Teaching Courses",
     ]);
   });
