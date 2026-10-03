@@ -28,32 +28,36 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
 ];
 
-const learnerItem: ShellNavItem = {
-  label: "My Courses",
-  href: "/learn/courses",
-  shortLabel: "C",
-};
+const learnerItems: ShellNavItem[] = [
+  {
+    label: "My Courses",
+    href: "/learn/courses",
+    shortLabel: "C",
+  },
+  {
+    label: "My Projects",
+    href: "/learn/projects",
+    shortLabel: "P",
+  },
+];
 
-const learnerProjectsItem: ShellNavItem = {
-  label: "My Projects",
-  href: "/learn/projects",
-  shortLabel: "P",
-};
+const facultyItems: ShellNavItem[] = [
+  {
+    label: "Teaching Courses",
+    href: "/teach/courses",
+    shortLabel: "T",
+  },
+];
 
-const mentorProjectsItem: ShellNavItem = {
-  label: "Mentoring Projects",
-  href: "/mentor/projects",
-  shortLabel: "P",
-};
-
-const facultyItem: ShellNavItem = {
-  label: "Teaching Courses",
-  href: "/teach/courses",
-  shortLabel: "T",
-};
+const mentorItems: ShellNavItem[] = [
+  {
+    label: "Mentoring Projects",
+    href: "/mentor/projects",
+    shortLabel: "P",
+  },
+];
 
 const collegeAdminItems: ShellNavItem[] = [
-  dashboard,
   { label: "My College", href: "/college", shortLabel: "C" },
   { label: "Departments", href: "/college/departments", shortLabel: "D" },
   { label: "Academics", href: "/college/academics", shortLabel: "A" },
@@ -63,27 +67,49 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "Domains", href: "/college/domains", shortLabel: "D" },
 ];
 
+function pushUnique(
+  target: ShellNavItem[],
+  additions: readonly ShellNavItem[],
+) {
+  for (const item of additions) {
+    if (!target.some((current) => current.href === item.href)) {
+      target.push(item);
+    }
+  }
+}
+
+function getMembershipWorkspaces(context: RequestContext) {
+  const items: ShellNavItem[] = [];
+
+  if (hasMembershipRole(context, "LEARNER")) {
+    pushUnique(items, learnerItems);
+  }
+
+  if (hasMembershipRole(context, "FACULTY")) {
+    pushUnique(items, facultyItems);
+  }
+
+  if (hasMembershipRole(context, "MENTOR")) {
+    pushUnique(items, mentorItems);
+  }
+
+  return items;
+}
+
 export function getShellNavigation(context: RequestContext) {
   if (isSuperAdmin(context)) {
     return superAdminItems;
   }
 
-  if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
-    return collegeAdminItems;
-  }
-
   const items: ShellNavItem[] = [dashboard];
 
-  if (hasMembershipRole(context, "LEARNER")) {
-    items.push(learnerItem, learnerProjectsItem);
-  }
+  // Membership roles are additive. A College Admin may also teach,
+  // mentor or learn, so those workspaces must not disappear merely
+  // because the membership also carries COLLEGE_ADMIN.
+  pushUnique(items, getMembershipWorkspaces(context));
 
-  if (hasMembershipRole(context, "FACULTY")) {
-    items.push(facultyItem);
-  }
-
-  if (hasMembershipRole(context, "MENTOR")) {
-    items.push(mentorProjectsItem);
+  if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
+    pushUnique(items, collegeAdminItems);
   }
 
   return items;
@@ -96,10 +122,6 @@ export function getShellRoleLabel(context: RequestContext) {
 
   if (!context.membership) {
     return "Select membership";
-  }
-
-  if (context.membership.roles.includes("COLLEGE_ADMIN")) {
-    return "College Admin";
   }
 
   return context.membership.roles

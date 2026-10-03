@@ -8,9 +8,11 @@ import type { ShellNavItem } from "./shell-model";
 export function SidebarNav({
   items,
   compact = false,
+  onNavigate,
 }: {
   items: readonly ShellNavItem[];
   compact?: boolean;
+  onNavigate?: () => void;
 }) {
   const pathname = usePathname();
 
@@ -33,6 +35,7 @@ export function SidebarNav({
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
+            onClick={onNavigate}
             className={cx(
               "group flex min-h-11 items-center rounded-r-lg border-l-2 px-3 text-sm font-semibold transition-colors",
               active

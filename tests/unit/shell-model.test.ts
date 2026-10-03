@@ -117,6 +117,34 @@ describe("authenticated shell model", () => {
     );
   });
 
+  it("keeps College Admin workspaces additive for faculty and mentor roles", () => {
+    const shellContext = context([
+      "COLLEGE_ADMIN",
+      "FACULTY",
+      "MENTOR",
+    ]);
+
+    expect(
+      getShellNavigation(shellContext).map(
+        (item) => item.label,
+      ),
+    ).toEqual([
+      "Dashboard",
+      "Teaching Courses",
+      "Mentoring Projects",
+      "My College",
+      "Departments",
+      "Academics",
+      "Courses",
+      "Projects",
+      "People",
+      "Domains",
+    ]);
+    expect(getShellRoleLabel(shellContext)).toBe(
+      "College Admin · Faculty · Mentor",
+    );
+  });
+
   it("keeps both learner and faculty Course entry points for a dual-role membership", () => {
     const shellContext = context([
       "LEARNER",

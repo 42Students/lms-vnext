@@ -9,6 +9,7 @@ import { MembershipSwitcher } from "./membership-switcher";
 import { AdminScopeSwitcher } from "./admin-scope-switcher";
 import { AccountActions } from "./account-actions";
 import { SidebarNav } from "./sidebar-nav";
+import { MobileNavigation } from "./mobile-navigation";
 import { ToastProvider } from "@/components/ui/toast";
 import {
   getShellNavigation,
@@ -77,17 +78,20 @@ export function AppShell({
       <div className="min-h-screen md:pl-64">
         <header className="sticky top-0 z-10 border-b border-border bg-surface/95 backdrop-blur">
           <div className="mx-auto flex min-h-20 max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-            <div className="min-w-0">
-              <p className="m-0 text-xs font-semibold text-muted-foreground">
-                {getShellRoleLabel(context)}
-              </p>
-              <p className="mt-1 truncate text-sm font-semibold text-foreground">
-                {currentMembership
-                  ? currentMembership.collegeName
-                  : superAdmin
-                    ? selectedScopeLabel ?? "Platform administration"
-                    : "Choose an active college"}
-              </p>
+            <div className="flex min-w-0 items-center gap-3">
+              <MobileNavigation items={navigation} />
+              <div className="min-w-0">
+                <p className="m-0 text-xs font-semibold text-muted-foreground">
+                  {getShellRoleLabel(context)}
+                </p>
+                <p className="mt-1 truncate text-sm font-semibold text-foreground">
+                  {currentMembership
+                    ? currentMembership.collegeName
+                    : superAdmin
+                      ? selectedScopeLabel ?? "Platform administration"
+                      : "Choose an active college"}
+                </p>
+              </div>
             </div>
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               {superAdmin && adminScopeChoices ? (
@@ -102,11 +106,6 @@ export function AppShell({
                 />
               )}
               <AccountActions />
-            </div>
-          </div>
-          <div className="overflow-x-auto border-t border-[var(--lms-sidebar-border)] px-3 py-2 md:hidden">
-            <div className="min-w-max">
-              <SidebarNav items={navigation} compact />
             </div>
           </div>
         </header>

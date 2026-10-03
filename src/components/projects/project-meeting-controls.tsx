@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  type FormEvent,
-  useEffect,
-  useState,
-} from "react";
+import { type FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -163,12 +159,14 @@ export function RequestProjectMeetingControl({
   const [error, setError] =
     useState<string | null>(null);
 
-  useEffect(() => {
+  function openDialog() {
     setTimeZone(
       Intl.DateTimeFormat()
         .resolvedOptions().timeZone || "UTC",
     );
-  }, []);
+    setError(null);
+    setOpen(true);
+  }
 
   async function submit(
     event: FormEvent<HTMLFormElement>,
@@ -222,7 +220,7 @@ export function RequestProjectMeetingControl({
       <Button
         size="sm"
         variant="secondary"
-        onClick={() => setOpen(true)}
+        onClick={openDialog}
       >
         Request meeting
       </Button>
@@ -332,15 +330,6 @@ export function ScheduleProjectMeetingControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
-
-  useEffect(() => {
-    if (!meeting) {
-      setTimeZone(
-        Intl.DateTimeFormat()
-          .resolvedOptions().timeZone || "UTC",
-      );
-    }
-  }, [meeting]);
 
   function openDialog() {
     setTitle(meeting?.title ?? "");
