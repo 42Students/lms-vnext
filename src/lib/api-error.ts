@@ -12,6 +12,7 @@ import { AdminScopeServiceError } from "@/modules/admin-scope/service";
 import { AcademicsServiceError } from "@/modules/academics/errors";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { ProjectsServiceError } from "@/modules/projects/errors";
+import { PlacementsServiceError } from "@/modules/placements/errors";
 import { logError } from "@/observability/logger";
 
 export function apiErrorResponse(error: unknown) {
@@ -190,6 +191,19 @@ export function apiErrorResponse(error: unknown) {
             ? 403
             : 409,
       },
+    );
+  }
+
+  if (error instanceof PlacementsServiceError) {
+    const notFound = new Set([
+      "COLLEGE_NOT_FOUND",
+      "PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND",
+      "PLACEMENT_OWNER_MEMBERSHIP_NOT_FOUND",
+    ]);
+
+    return NextResponse.json(
+      { error: error.code },
+      { status: notFound.has(error.code) ? 404 : 409 },
     );
   }
 

@@ -1,0 +1,352 @@
+import {
+  and,
+  asc,
+  eq,
+  ilike,
+  isNull,
+  or,
+} from "drizzle-orm";
+import { getDb } from "@/db/client";
+import {
+  collegeMemberships,
+  membershipRoles,
+  placementCompanies,
+  placementCompanyRelationships,
+} from "@/db/schema";
+import type { RequestContext } from "@/modules/identity/context";
+import { requirePlacementManageScope } from "./scope";
+import { PlacementsServiceError } from "./errors";
+import {
+  createPlacementCompanyInputSchema,
+  placementCompanyRelationshipIdSchema,
+  updatePlacementCompanyRelationshipInputSchema,
+  type CreatePlacementCompanyInput,
+  type UpdatePlacementCompanyRelationshipInput,
+} from "./validation";
+
+async function loadRelationship(
+  relationshipId: string,
+) {
+  const [row] = await getDb()
+    .select({
+      relationship: placementCompanyRelationships,
+      company: placementCompanies,
+    })
+    .from(placementCompanyRelationships)
+    .innerJoin(
+      placementCompanies,
+      eq(
+        placementCompanies.id,
+        placementCompanyRelationships.companyId,
+      ),
+    )
+    .where(
+      eq(
+        placementCompanyRelationships.id,
+        relationshipId,
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND",
+    );
+  }
+
+  return row;
+}
+
+async function requireValidOwner(
+  collegeId: string,
+  membershipId: string,
+) {
+  const rows = await getDb()
+    .select({ role: membershipRoles.role })
+    .from(collegeMemberships)
+    .innerJoin(
+      membershipRoles,
+      eq(
+        membershipRoles.membershipId,
+        collegeMemberships.id,
+      ),
+    )
+    .where(
+      and(
+        eq(collegeMemberships.id, membershipId),
+        eq(collegeMemberships.collegeId, collegeId),
+        eq(collegeMemberships.status, "ACTIVE"),
+      ),
+    );
+
+  if (rows.length === 0) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_OWNER_MEMBERSHIP_NOT_FOUND",
+    );
+  }
+
+  if (
+    !rows.some(
+      ({ role }) =>
+        role === "TPO" || role === "COLLEGE_ADMIN",
+    )
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_OWNER_ROLE_REQUIRED",
+    );
+  }
+}
+
+export async function listPlacementCompanies(
+  context: RequestContext,
+  collegeIdInput: string,
+) {
+  const collegeId =
+    createPlacementCompanyInputSchema.shape.collegeId.parse(
+      collegeIdInput,
+    );
+  await requirePlacementManageScope(context, collegeId);
+
+  return getDb()
+    .select({
+      relationshipId: placementCompanyRelationships.id,
+      companyId: placementCompanies.id,
+      name: placementCompanies.name,
+      websiteUrl: placementCompanies.websiteUrl,
+      primaryDomain: placementCompanies.primaryDomain,
+      logoObjectPath: placementCompanies.logoObjectPath,
+      isTrusted: placementCompanyRelationships.isTrusted,
+      ownerMembershipId:
+        placementCompanyRelationships.ownerMembershipId,
+      createdAt: placementCompanyRelationships.createdAt,
+      updatedAt: placementCompanyRelationships.updatedAt,
+    })
+    .from(placementCompanyRelationships)
+    .innerJoin(
+      placementCompanies,
+      eq(
+        placementCompanies.id,
+        placementCompanyRelationships.companyId,
+      ),
+    )
+    .where(
+      and(
+        eq(placementCompanyRelationships.collegeId, collegeId),
+        eq(placementCompanyRelationships.status, "ACTIVE"),
+        eq(placementCompanies.status, "ACTIVE"),
+        isNull(placementCompanyRelationships.archivedAt),
+      ),
+    )
+    .orderBy(asc(placementCompanies.name));
+}
+
+export async function createPlacementCompany(
+  context: RequestContext,
+  rawInput: CreatePlacementCompanyInput,
+) {
+  const input =
+    createPlacementCompanyInputSchema.parse(rawInput);
+  await requirePlacementManageScope(context, input.collegeId);
+  const db = getDb();
+
+  return db.transaction(async (tx) => {
+    const identityFilter = input.primaryDomain
+      ? or(
+          ilike(placementCompanies.name, input.name),
+          ilike(
+            placementCompanies.primaryDomain,
+            input.primaryDomain,
+          ),
+        )
+      : ilike(placementCompanies.name, input.name);
+
+    const matches = await tx
+      .select()
+      .from(placementCompanies)
+      .where(identityFilter)
+      .limit(2);
+
+    const distinctIds = new Set(
+      matches.map((company) => company.id),
+    );
+    if (distinctIds.size > 1) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_COMPANY_IDENTITY_CONFLICT",
+      );
+    }
+
+    let company = matches[0] ?? null;
+    if (
+      company &&
+      input.primaryDomain &&
+      company.primaryDomain &&
+      company.primaryDomain.toLowerCase() !==
+        input.primaryDomain
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_COMPANY_IDENTITY_CONFLICT",
+      );
+    }
+
+    if (!company) {
+      const [created] = await tx
+        .insert(placementCompanies)
+        .values({
+          name: input.name,
+          websiteUrl: input.websiteUrl ?? null,
+          primaryDomain: input.primaryDomain ?? null,
+          createdByUserId: context.user.id,
+        })
+        .onConflictDoNothing()
+        .returning();
+
+      company = created ?? null;
+
+      if (!company) {
+        const [concurrent] = await tx
+          .select()
+          .from(placementCompanies)
+          .where(identityFilter)
+          .limit(1);
+        company = concurrent ?? null;
+      }
+    } else if (
+      (!company.primaryDomain && input.primaryDomain) ||
+      (!company.websiteUrl && input.websiteUrl)
+    ) {
+      const [enriched] = await tx
+        .update(placementCompanies)
+        .set({
+          primaryDomain:
+            company.primaryDomain ??
+            input.primaryDomain ??
+            null,
+          websiteUrl:
+            company.websiteUrl ??
+            input.websiteUrl ??
+            null,
+          updatedAt: new Date(),
+        })
+        .where(eq(placementCompanies.id, company.id))
+        .returning();
+      company = enriched ?? company;
+    }
+
+    if (!company) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_COMPANY_IDENTITY_CONFLICT",
+      );
+    }
+
+    const now = new Date();
+    const [relationship] = await tx
+      .insert(placementCompanyRelationships)
+      .values({
+        collegeId: input.collegeId,
+        companyId: company.id,
+        isTrusted: input.isTrusted,
+        createdByUserId: context.user.id,
+      })
+      .onConflictDoUpdate({
+        target: [
+          placementCompanyRelationships.collegeId,
+          placementCompanyRelationships.companyId,
+        ],
+        set: {
+          status: "ACTIVE",
+          archivedAt: null,
+          updatedAt: now,
+        },
+      })
+      .returning();
+
+    return { company, relationship };
+  });
+}
+
+export async function updatePlacementCompanyRelationship(
+  context: RequestContext,
+  relationshipIdInput: string,
+  rawInput: UpdatePlacementCompanyRelationshipInput,
+) {
+  const relationshipId =
+    placementCompanyRelationshipIdSchema.parse(
+      relationshipIdInput,
+    );
+  const input =
+    updatePlacementCompanyRelationshipInputSchema.parse(
+      rawInput,
+    );
+  const current = await loadRelationship(relationshipId);
+
+  await requirePlacementManageScope(
+    context,
+    current.relationship.collegeId,
+  );
+
+  if (input.ownerMembershipId) {
+    await requireValidOwner(
+      current.relationship.collegeId,
+      input.ownerMembershipId,
+    );
+  }
+
+  const [updated] = await getDb()
+    .update(placementCompanyRelationships)
+    .set({
+      ...(input.isTrusted === undefined
+        ? {}
+        : { isTrusted: input.isTrusted }),
+      ...(input.ownerMembershipId === undefined
+        ? {}
+        : { ownerMembershipId: input.ownerMembershipId }),
+      updatedAt: new Date(),
+    })
+    .where(
+      eq(
+        placementCompanyRelationships.id,
+        relationshipId,
+      ),
+    )
+    .returning();
+
+  return { company: current.company, relationship: updated };
+}
+
+export async function archivePlacementCompanyRelationship(
+  context: RequestContext,
+  relationshipIdInput: string,
+) {
+  const relationshipId =
+    placementCompanyRelationshipIdSchema.parse(
+      relationshipIdInput,
+    );
+  const current = await loadRelationship(relationshipId);
+
+  await requirePlacementManageScope(
+    context,
+    current.relationship.collegeId,
+  );
+
+  if (current.relationship.status === "ARCHIVED") {
+    return current;
+  }
+
+  const now = new Date();
+  const [relationship] = await getDb()
+    .update(placementCompanyRelationships)
+    .set({
+      status: "ARCHIVED",
+      archivedAt: now,
+      updatedAt: now,
+    })
+    .where(
+      eq(
+        placementCompanyRelationships.id,
+        relationshipId,
+      ),
+    )
+    .returning();
+
+  return { company: current.company, relationship };
+}
