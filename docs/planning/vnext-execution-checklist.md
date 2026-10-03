@@ -538,7 +538,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 
 ---
 
-# X. Projects — ACTIVE
+# X. Projects — CLOSED
 
 - [x] current-state inventory — legacy backend/frontend/audit surfaces mapped; vNext contract in docs/architecture/projects.md
 - [x] template model — immutable version snapshots, explicit published-version college assignment, lifecycle APIs and PostgreSQL regression coverage
@@ -554,13 +554,13 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] materialization redesign — one transaction, assigned immutable version -> normalized instance rows; no live template fallback
 - [x] greenfield decision: no legacy project data migration required
 - [x] adversarial tests — same-college outsider denial, cross-project ID substitution, learner privilege escalation, unsafe URL and stale-state coverage layered on P2-P7 regression suites
-- [~] UI — all role navigation/list/workspace reads + execution/submission/review/evaluation + resource CRUD + learner meeting requests + mentor/admin meeting lifecycle controls landed; team/project-creation admin setup + Projects browser E2E remain
+- [x] UI — all role navigation/list/workspace reads + execution/submission/review/evaluation + resource CRUD + learner meeting requests + mentor/admin meeting lifecycle controls + admin project creation/team setup + seeded learner/mentor/admin browser E2E complete; storage-backed resource uploads remain shared Cloud Storage-dependent
 
 ---
 
-# Y. Placements / TPO / HR — later
+# Y. Placements / TPO / HR — ACTIVE
 
-- [ ] current-state inventory
+- [x] current-state inventory
 - [ ] companies/employers
 - [ ] candidate preferences
 - [ ] jobs

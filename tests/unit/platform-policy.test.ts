@@ -226,6 +226,50 @@ describe("platform authorization policy", () => {
     ).toBe(false);
   });
 
+  it("keeps Placement access role-aware and tenant-scoped", () => {
+    const ownCollege = {
+      organizationId: "org-1",
+      collegeId: "college-1",
+    };
+    const otherCollege = {
+      organizationId: "org-2",
+      collegeId: "college-2",
+    };
+
+    expect(
+      can(memberContext(["LEARNER"]), "placements.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["TPO"]), "placements.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["FACULTY"]), "placements.read", ownCollege),
+    ).toBe(false);
+    expect(
+      can(memberContext(["TPO"]), "placements.manage", ownCollege),
+    ).toBe(true);
+    expect(
+      can(
+        memberContext(["FACULTY", "TPO"]),
+        "placements.manage",
+        ownCollege,
+      ),
+    ).toBe(true);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "placements.manage",
+        ownCollege,
+      ),
+    ).toBe(true);
+    expect(
+      can(memberContext(["LEARNER"]), "placements.manage", ownCollege),
+    ).toBe(false);
+    expect(
+      can(memberContext(["TPO"]), "placements.manage", otherCollege),
+    ).toBe(false);
+  });
+
   it("keeps reusable Project template lifecycle platform-managed", () => {
     const unscoped: RequestContext = {
       user: {

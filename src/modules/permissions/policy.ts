@@ -19,6 +19,8 @@ export type PlatformPermission =
   | "courses.manage"
   | "projects.read"
   | "projects.manage"
+  | "placements.read"
+  | "placements.manage"
   | "project-template.manage"
   | "project-template.assign"
   | "people.manage"
@@ -109,10 +111,25 @@ export function can(
     case "projects.read":
       return isSameMembershipCollege(context, resource);
 
+    case "placements.read":
+      return (
+        (hasMembershipRole(context, "LEARNER") ||
+          hasMembershipRole(context, "TPO") ||
+          hasMembershipRole(context, "COLLEGE_ADMIN")) &&
+        isSameMembershipCollege(context, resource)
+      );
+
     case "system-role.manage":
     case "project-template.manage":
     case "project-template.assign":
       return false;
+
+    case "placements.manage":
+      return (
+        (hasMembershipRole(context, "TPO") ||
+          hasMembershipRole(context, "COLLEGE_ADMIN")) &&
+        isSameMembershipCollege(context, resource)
+      );
 
     case "college.manage":
     case "department.manage":
