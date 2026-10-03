@@ -270,7 +270,7 @@ const percentageSchema = z
   .min(0)
   .max(100)
   .refine(
-    (value) => Number.isInteger(value * 100),
+    (value) => Math.abs(value * 100 - Math.round(value * 100)) < 1e-8,
     "Use at most two decimal places",
   );
 
@@ -279,7 +279,7 @@ const cgpaSchema = z
   .min(0)
   .max(10)
   .refine(
-    (value) => Number.isInteger(value * 100),
+    (value) => Math.abs(value * 100 - Math.round(value * 100)) < 1e-8,
     "Use at most two decimal places",
   );
 
