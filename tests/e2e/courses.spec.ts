@@ -9,7 +9,7 @@ import {
 } from "../../src/auth/e2e-identity";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const baseUrl = "http://127.0.0.1:3000";
+const baseUrl = "http://localhost:3000";
 const membershipCookieName = "lms_membership";
 const e2eSecret = process.env.E2E_AUTH_SECRET;
 
