@@ -553,7 +553,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] meetings/readiness — derived readiness plus learner request / mentor-admin schedule-complete-cancel meeting lifecycle; no legacy Calendar-sync coupling
 - [x] materialization redesign — one transaction, assigned immutable version -> normalized instance rows; no live template fallback
 - [x] greenfield decision: no legacy project data migration required
-- [ ] adversarial tests
+- [x] adversarial tests — same-college outsider denial, cross-project ID substitution, learner privilege escalation, unsafe URL and stale-state coverage layered on P2-P7 regression suites
 - [ ] UI
 
 ---
