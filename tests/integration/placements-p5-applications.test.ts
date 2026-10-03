@@ -91,6 +91,12 @@ const otherLearner: RequestContext = {
 
 async function cleanup() {
   await pool.query(
+    "delete from placement_application_screening_history",
+  );
+  await pool.query(
+    "delete from placement_application_screenings",
+  );
+  await pool.query(
     "delete from placement_application_status_history",
   );
   await pool.query(
