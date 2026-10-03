@@ -166,7 +166,7 @@ export async function updatePlacementJob(
     input.externalApplicationUrl === undefined
       ? current.externalApplicationUrl
       : input.externalApplicationUrl;
-  if (nextMode === "EXTERNAL_ONLY" && !nextExternalUrl) {
+  if (nextMode !== "INTERNAL" && !nextExternalUrl) {
     throw new PlacementsServiceError(
       "PLACEMENT_JOB_EXTERNAL_URL_REQUIRED",
     );
@@ -200,7 +200,7 @@ export async function publishPlacementJob(
     current.companyRelationshipId,
   );
   if (
-    current.applicationMode === "EXTERNAL_ONLY" &&
+    current.applicationMode !== "INTERNAL" &&
     !current.externalApplicationUrl
   ) {
     throw new PlacementsServiceError(

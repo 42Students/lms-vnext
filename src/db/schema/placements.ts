@@ -4,6 +4,7 @@ import {
   check,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -287,7 +288,7 @@ export const placementJobs = pgTable(
     ),
     check(
       "placement_jobs_external_url_ck",
-      sql`(${table.applicationMode} <> 'EXTERNAL_ONLY') or (${table.externalApplicationUrl} is not null)`,
+      sql`(${table.applicationMode} = 'INTERNAL') or (${table.externalApplicationUrl} is not null)`,
     ),
     check(
       "placement_jobs_lifecycle_ck",
@@ -513,6 +514,81 @@ export const placementEligibilityOverrides = pgTable(
     check(
       "placement_eligibility_overrides_reason_ck",
       sql`length(trim(${table.reason})) > 0`,
+    ),
+  ],
+);
+
+
+export const placementApplications = pgTable(
+  "placement_applications",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobId: uuid("job_id")
+      .notNull()
+      .references(() => placementJobs.id, {
+        onDelete: "restrict",
+      }),
+    membershipId: uuid("membership_id")
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    channel: varchar("channel", { length: 16 }).notNull(),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("SUBMITTED"),
+    eligibilityStatus: varchar("eligibility_status", {
+      length: 40,
+    }).notNull(),
+    eligibilitySnapshot: jsonb(
+      "eligibility_snapshot",
+    ).notNull(),
+    submittedByUserId: uuid("submitted_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    submittedAt: timestamp("submitted_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    withdrawnAt: timestamp("withdrawn_at", {
+      withTimezone: true,
+    }),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "placement_applications_job_membership_uq",
+    ).on(table.jobId, table.membershipId),
+    index("placement_applications_job_status_idx").on(
+      table.jobId,
+      table.status,
+    ),
+    index(
+      "placement_applications_membership_status_idx",
+    ).on(table.membershipId, table.status),
+    check(
+      "placement_applications_channel_ck",
+      sql`${table.channel} in ('INTERNAL', 'EXTERNAL')`,
+    ),
+    check(
+      "placement_applications_status_ck",
+      sql`${table.status} in ('SUBMITTED', 'WITHDRAWN')`,
+    ),
+    check(
+      "placement_applications_eligibility_status_ck",
+      sql`${table.eligibilityStatus} in ('ELIGIBLE', 'ELIGIBLE_WITH_MISSING_EVIDENCE')`,
+    ),
+    check(
+      "placement_applications_lifecycle_ck",
+      sql`(${table.status} = 'SUBMITTED' and ${table.withdrawnAt} is null)
+        or (${table.status} = 'WITHDRAWN' and ${table.withdrawnAt} is not null)`,
     ),
   ],
 );

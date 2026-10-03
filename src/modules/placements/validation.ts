@@ -216,13 +216,14 @@ export const createPlacementJobInputSchema =
       });
     }
     if (
-      value.applicationMode === "EXTERNAL_ONLY" &&
+      value.applicationMode !== "INTERNAL" &&
       !value.externalApplicationUrl
     ) {
       ctx.addIssue({
         code: "custom",
         path: ["externalApplicationUrl"],
-        message: "External-only jobs require an application URL",
+        message:
+          "Hybrid and external-only jobs require an application URL",
       });
     }
   });
@@ -427,3 +428,30 @@ export type PlacementEligibilityPolicyInput = z.input<
 export type PlacementEligibilityOverrideInput = z.input<
   typeof placementEligibilityOverrideInputSchema
 >;
+
+
+export const placementApplicationIdSchema =
+  z.string().uuid();
+
+export const placementApplicationChannels = [
+  "INTERNAL",
+  "EXTERNAL",
+] as const;
+
+export const createPlacementApplicationInputSchema =
+  z
+    .object({
+      channel: z
+        .enum(placementApplicationChannels)
+        .optional(),
+      externalConfirmation: z
+        .boolean()
+        .optional()
+        .default(false),
+    })
+    .strict();
+
+export type CreatePlacementApplicationInput =
+  z.input<
+    typeof createPlacementApplicationInputSchema
+  >;
