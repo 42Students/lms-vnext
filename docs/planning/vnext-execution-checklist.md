@@ -500,7 +500,7 @@ Do not restart migration work unless this product decision is explicitly changed
 
 ---
 
-# V. Academics — ACTIVE
+# V. Academics — CLOSED
 
 The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blocked on live Identity Platform configuration, but that no longer blocks Academics backend/schema work.
 
@@ -513,7 +513,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] faculty assignments — Section ADVISOR/COORDINATOR responsibilities
 - [x] schedules — generic Section calendar events with period/faculty validation
 - [x] greenfield decision: no academic data migration required
-- [ ] UI
+- [x] UI — College Admin + scoped Super Admin overview, CRUD/lifecycle surfaces and Section operations workspace
 - [x] tests — policy + PostgreSQL A1/A2 tenant/lifecycle/constraint coverage
 
 ---

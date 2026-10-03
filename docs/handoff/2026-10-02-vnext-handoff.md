@@ -239,8 +239,8 @@ Non-cloud work can continue while GCP1 is account-blocked. Current core continua
 2. install/configure shadcn only when package-lock can be updated atomically; do not replace canonical LMS colors
 3. browser Firebase/Identity client config and login UI once real GCP Identity Platform configuration exists
 4. core E2E acceptance flow after real browser login is available
-5. finish Academics UI after A2 backend is green
-6. Courses
+5. Courses
+6. Projects
 7. Projects
 8. Placements / TPO / HR
 
@@ -281,3 +281,40 @@ Do not restart architecture discussion unless an implementation blocker proves a
 - Section Faculty responsibility requires same-college active FACULTY membership
 - generic schedule events must stay inside the Section Academic Period
 - course teaching assignment remains deferred to Courses
+
+
+### Academics UI workspace
+
+A shared Academics overview is staged for College Admin and college-scoped Super Admin:
+- create Programs, Academic Periods, Cohorts and Sections
+- activate/close Academic Periods
+- activate/complete/archive Cohorts
+- archive Programs/Sections
+- open a Section operations page
+- admit learners into a Program
+- place/move/promote learners with history
+- complete/withdraw Program or Section enrollment
+- assign/end Section Faculty Advisor/Coordinator responsibilities
+- create/cancel generic Section schedule events
+
+Program, planned Academic Period, planned Cohort and active Section edit dialogs are included. Academics A1 + A2 + admin UI are ready to close after final CI.
+
+
+### Academics phase closure
+
+Academics is complete for the current vNext scope:
+- Program CRUD/lifecycle
+- Academic Period CRUD/lifecycle
+- Cohort/Batch CRUD/lifecycle
+- period-specific Section CRUD
+- learner Program enrollment lifecycle
+- historical Section movement/promotion/withdrawal
+- capacity-safe roster assignment
+- Section Faculty Advisor/Coordinator responsibilities
+- generic Section schedule/calendar events
+- College Admin UI
+- college-scoped Super Admin UI
+- PostgreSQL integration/regression coverage
+- readiness includes all Academics tables
+
+Course catalogs, offerings, teaching assignments, learning content and learner course progress intentionally begin in the Courses phase.

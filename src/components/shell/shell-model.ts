@@ -21,6 +21,7 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Organizations", href: "/admin/organizations", shortLabel: "O" },
   { label: "Colleges", href: "/admin/colleges", shortLabel: "C" },
   { label: "Departments", href: "/admin/departments", shortLabel: "D" },
+  { label: "Academics", href: "/admin/academics", shortLabel: "A" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
 ];
@@ -29,6 +30,7 @@ const collegeAdminItems: ShellNavItem[] = [
   dashboard,
   { label: "My College", href: "/college", shortLabel: "C" },
   { label: "Departments", href: "/college/departments", shortLabel: "D" },
+  { label: "Academics", href: "/college/academics", shortLabel: "A" },
   { label: "People", href: "/college/people", shortLabel: "P" },
   { label: "Domains", href: "/college/domains", shortLabel: "D" },
 ];

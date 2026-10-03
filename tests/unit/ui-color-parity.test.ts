@@ -30,6 +30,11 @@ const uiFiles = [
   "src/components/admin/person-profile-dialog.tsx",
   "src/components/admin/person-membership-actions.tsx",
   "src/components/admin/tenant-domain-manager.tsx",
+  "src/components/academics/section-operations.tsx",
+  "src/components/academics/academics-section-page.tsx",
+  "src/components/academics/academics-overview.tsx",
+  "src/components/academics/academics-actions.tsx",
+  "src/components/academics/academics-create-panel.tsx",
 ];
 
 describe("first UI batch color parity", () => {
