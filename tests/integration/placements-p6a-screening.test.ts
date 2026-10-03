@@ -248,6 +248,11 @@ describe("Placement P6A screening", () => {
         tpo,
         application.id,
       );
+    if (!("history" in managerView)) {
+      throw new Error(
+        "Manager screening view must include history",
+      );
+    }
     expect(managerView.history).toHaveLength(2);
     expect(
       managerView.history.map((item) => [
@@ -310,6 +315,11 @@ describe("Placement P6A screening", () => {
         tpo,
         application.id,
       );
+    if (!("screening" in managerView)) {
+      throw new Error(
+        "Manager screening view must include internal state",
+      );
+    }
     expect(
       managerView.screening.internalReason,
     ).toBe(
