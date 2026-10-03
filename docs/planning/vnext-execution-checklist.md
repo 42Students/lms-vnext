@@ -538,12 +538,10 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 
 ---
 
-# X. Projects — later
+# X. Projects — ACTIVE
 
-Do not start early.
-
-- [ ] current-state inventory
-- [ ] template model
+- [x] current-state inventory — legacy backend/frontend/audit surfaces mapped; vNext contract in docs/architecture/projects.md
+- [~] template model — immutable blueprint validation + centralized lifecycle/assignment permissions complete; persistence/API next
 - [ ] project instance model
 - [ ] team model
 - [ ] mentor model

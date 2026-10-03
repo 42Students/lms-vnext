@@ -191,6 +191,92 @@ describe("platform authorization policy", () => {
     ).toBe(false);
   });
 
+  it("keeps project workspace access tenant-scoped and admin mutations centralized", () => {
+    const ownCollege = {
+      organizationId: "org-1",
+      collegeId: "college-1",
+    };
+    const otherCollege = {
+      organizationId: "org-2",
+      collegeId: "college-2",
+    };
+
+    expect(
+      can(memberContext(["LEARNER"]), "projects.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["MENTOR"]), "projects.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["FACULTY"]), "projects.manage", ownCollege),
+    ).toBe(false);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "projects.manage",
+        ownCollege,
+      ),
+    ).toBe(true);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "projects.manage",
+        otherCollege,
+      ),
+    ).toBe(false);
+  });
+
+  it("keeps reusable Project template lifecycle platform-managed", () => {
+    const unscoped: RequestContext = {
+      user: {
+        ...baseUser,
+        systemRoles: ["SUPER_ADMIN"],
+      },
+      membership: null,
+      adminScope: null,
+    };
+    const collegeScoped: RequestContext = {
+      ...unscoped,
+      adminScope: {
+        organizationId: "org-1",
+        collegeId: "college-1",
+      },
+    };
+
+    expect(can(unscoped, "project-template.manage")).toBe(true);
+    expect(
+      can(collegeScoped, "project-template.manage"),
+    ).toBe(false);
+    expect(
+      can(collegeScoped, "project-template.assign", {
+        organizationId: "org-1",
+        collegeId: "college-1",
+      }),
+    ).toBe(true);
+    expect(
+      can(collegeScoped, "project-template.assign", {
+        organizationId: "org-2",
+        collegeId: "college-2",
+      }),
+    ).toBe(false);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "project-template.manage",
+      ),
+    ).toBe(false);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "project-template.assign",
+        {
+          organizationId: "org-1",
+          collegeId: "college-1",
+        },
+      ),
+    ).toBe(false);
+  });
+
   it("centralizes people management on college-admin tenant scope", () => {
     const target = {
       organizationId: "org-1",
