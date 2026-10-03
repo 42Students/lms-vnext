@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { courseApiError } from "./learner-course-api";
@@ -13,11 +13,17 @@ export function ResourceProgressControl({
   deliveryId: string;
 }) {
   const router = useRouter();
+  const [hydrated, setHydrated] =
+    useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] =
     useState<string | null>(null);
   const [complete, setComplete] =
     useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   async function markComplete() {
     setError(null);
@@ -63,7 +69,7 @@ export function ResourceProgressControl({
         variant={
           complete ? "secondary" : "primary"
         }
-        disabled={saving || complete}
+        disabled={!hydrated || saving || complete}
         onClick={markComplete}
       >
         {complete
