@@ -14,6 +14,10 @@ import {
   COURSE_OFFERING_TYPES,
   COURSE_STATUSES,
   COURSE_TEACHING_ROLES,
+  LEARNING_PATH_STATUSES,
+  COURSE_LESSON_STATUSES,
+  LESSON_CONTENT_TYPES,
+  LESSON_CONTENT_STATUSES,
 } from "@/modules/courses/constants";
 import {
   COLLEGE_STATUSES,
@@ -107,4 +111,24 @@ export const courseOfferingStatusEnum = pgEnum(
 export const courseTeachingRoleEnum = pgEnum(
   "course_teaching_role",
   COURSE_TEACHING_ROLES,
+);
+
+export const learningPathStatusEnum = pgEnum(
+  "learning_path_status",
+  LEARNING_PATH_STATUSES,
+);
+
+export const courseLessonStatusEnum = pgEnum(
+  "course_lesson_status",
+  COURSE_LESSON_STATUSES,
+);
+
+export const lessonContentTypeEnum = pgEnum(
+  "lesson_content_type",
+  LESSON_CONTENT_TYPES,
+);
+
+export const lessonContentStatusEnum = pgEnum(
+  "lesson_content_status",
+  LESSON_CONTENT_STATUSES,
 );

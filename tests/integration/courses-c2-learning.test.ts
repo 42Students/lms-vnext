@@ -1,0 +1,671 @@
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
+import { Pool } from "pg";
+import { ZodError } from "zod";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { createProgram } from "@/modules/academics/program-service";
+import { createAcademicPeriod } from "@/modules/academics/period-service";
+import { createCohort } from "@/modules/academics/cohort-service";
+import { createSection } from "@/modules/academics/section-service";
+import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
+import { assignLearnerToSection } from "@/modules/academics/roster-service";
+import { createCourse } from "@/modules/courses/course-service";
+import { createCourseOffering } from "@/modules/courses/offering-service";
+import { createCourseSectionDelivery } from "@/modules/courses/delivery-service";
+import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assignment-service";
+import {
+  createLearningPath,
+  listLearningPaths,
+  transitionLearningPath,
+} from "@/modules/courses/learning-path-service";
+import {
+  createCourseLesson,
+  listCourseLessons,
+} from "@/modules/courses/lesson-service";
+import {
+  createLessonContent,
+  listLessonContents,
+  transitionLessonContent,
+  updateLessonContent,
+} from "@/modules/courses/lesson-content-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+
+const databaseUrl =
+  process.env.TEST_DATABASE_URL ??
+  process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error(
+    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
+  );
+}
+
+const pool = new Pool({
+  connectionString: databaseUrl,
+  max: 1,
+});
+
+const collegeAdmin: RequestContext = {
+  user: {
+    id: SEED_IDS.collegeAdminUser,
+    identityUid: "seed-college-admin",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.collegeAdminMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+
+const faculty: RequestContext = {
+  user: {
+    id: SEED_IDS.facultyUser,
+    identityUid: "seed-faculty",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.facultyCollegeAMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["FACULTY", "MENTOR"],
+  },
+};
+
+const learner: RequestContext = {
+  user: {
+    id: SEED_IDS.learnerUser,
+    identityUid: "seed-learner",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.learnerCollegeAMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["LEARNER"],
+  },
+};
+
+async function cleanupC2() {
+  await pool.query(
+    `delete from lesson_contents
+     where lesson_id in (
+       select cl.id
+       from course_lessons cl
+       join course_learning_paths lp
+         on lp.id = cl.learning_path_id
+       join course_offerings co
+         on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_lessons
+     where learning_path_id in (
+       select lp.id
+       from course_learning_paths lp
+       join course_offerings co
+         on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_learning_paths
+     where offering_id in (
+       select co.id
+       from course_offerings co
+       join courses c on c.id = co.course_id
+       where c.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_teaching_assignments
+     where delivery_id in (
+       select csd.id
+       from course_section_deliveries csd
+       join course_offerings co
+         on co.id = csd.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_section_deliveries
+     where offering_id in (
+       select co.id
+       from course_offerings co
+       join courses c on c.id = co.course_id
+       where c.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_offerings
+     where course_id in (
+       select id from courses
+       where code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    "delete from courses where code like 'C2-%'",
+  );
+
+  await pool.query(
+    `delete from section_enrollments
+     where learner_enrollment_id in (
+       select lpe.id
+       from learner_program_enrollments lpe
+       join programs p on p.id = lpe.program_id
+       where p.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from learner_program_enrollments
+     where program_id in (
+       select id from programs
+       where code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from sections
+     where cohort_id in (
+       select c.id
+       from cohorts c
+       join programs p on p.id = c.program_id
+       where p.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from cohorts
+     where program_id in (
+       select id from programs
+       where code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    "delete from programs where code like 'C2-%'",
+  );
+  await pool.query(
+    "delete from academic_periods where code like 'C2-%'",
+  );
+}
+
+async function createStructure() {
+  const program = await createProgram(
+    collegeAdmin,
+    {
+      departmentId: SEED_IDS.departmentA,
+      name: "C2 Computer Science",
+      code: "C2-PROGRAM",
+      durationTerms: 8,
+    },
+  );
+  const period = await createAcademicPeriod(
+    collegeAdmin,
+    {
+      collegeId: SEED_IDS.collegeA,
+      name: "C2 Semester 1",
+      code: "C2-PERIOD",
+      startDate: "2026-07-01",
+      endDate: "2026-12-15",
+    },
+  );
+  const cohort = await createCohort(
+    collegeAdmin,
+    {
+      programId: program.id,
+      name: "C2 2026 Intake",
+      code: "C2-COHORT",
+      startPeriodId: period.id,
+    },
+  );
+  const sectionA = await createSection(
+    collegeAdmin,
+    {
+      cohortId: cohort.id,
+      academicPeriodId: period.id,
+      name: "C2 Section A",
+      code: "C2-A",
+      capacity: 60,
+    },
+  );
+  const sectionB = await createSection(
+    collegeAdmin,
+    {
+      cohortId: cohort.id,
+      academicPeriodId: period.id,
+      name: "C2 Section B",
+      code: "C2-B",
+      capacity: 60,
+    },
+  );
+  const course = await createCourse(
+    collegeAdmin,
+    {
+      departmentId: SEED_IDS.departmentA,
+      name: "C2 Data Structures",
+      code: "C2-DS",
+    },
+  );
+  const offering = await createCourseOffering(
+    collegeAdmin,
+    {
+      courseId: course.id,
+      cohortId: cohort.id,
+      academicPeriodId: period.id,
+      type: "CORE",
+      credits: 4,
+      displayOrder: 0,
+    },
+  );
+  const deliveryA =
+    await createCourseSectionDelivery(
+      collegeAdmin,
+      {
+        offeringId: offering.id,
+        sectionId: sectionA.id,
+      },
+    );
+  const deliveryB =
+    await createCourseSectionDelivery(
+      collegeAdmin,
+      {
+        offeringId: offering.id,
+        sectionId: sectionB.id,
+      },
+    );
+
+  await createCourseTeachingAssignment(
+    collegeAdmin,
+    {
+      deliveryId: deliveryA.id,
+      membershipId:
+        SEED_IDS.facultyCollegeAMembership,
+      role: "PRIMARY",
+    },
+  );
+
+  const enrollment =
+    await createLearnerProgramEnrollment(
+      collegeAdmin,
+      {
+        membershipId:
+          SEED_IDS.learnerCollegeAMembership,
+        programId: program.id,
+        cohortId: cohort.id,
+      },
+    );
+
+  await assignLearnerToSection(
+    collegeAdmin,
+    {
+      learnerEnrollmentId: enrollment.id,
+      sectionId: sectionA.id,
+    },
+  );
+
+  return {
+    program,
+    period,
+    cohort,
+    sectionA,
+    sectionB,
+    course,
+    offering,
+    deliveryA,
+    deliveryB,
+  };
+}
+
+beforeEach(async () => {
+  await cleanupC2();
+});
+
+afterAll(async () => {
+  await cleanupC2();
+  await pool.end();
+  await closeDatabaseConnection();
+});
+
+describe("courses C2 learning structure against PostgreSQL", () => {
+  it("combines generic and exact-section content without leaking another delivery", async () => {
+    const structure = await createStructure();
+    const path = await createLearningPath(
+      collegeAdmin,
+      {
+        offeringId: structure.offering.id,
+        title: "C2 Learning Path",
+        description: "Semester learning path",
+      },
+    );
+    const lesson = await createCourseLesson(
+      collegeAdmin,
+      {
+        learningPathId: path.id,
+        name: "C2 Arrays",
+        sequence: 0,
+      },
+    );
+
+    const generic =
+      await createLessonContent(
+        collegeAdmin,
+        {
+          lessonId: lesson.id,
+          contentType: "RESOURCE",
+          title: "C2 Array Notes",
+          notes: "Shared notes",
+          sequence: 0,
+        },
+      );
+
+    const sectionAContent =
+      await createLessonContent(
+        faculty,
+        {
+          lessonId: lesson.id,
+          deliveryId:
+            structure.deliveryA.id,
+          contentType: "YOUTUBE",
+          title: "C2 Section A Walkthrough",
+          externalUrl:
+            "https://www.youtube.com/watch?v=abc123",
+          sequence: 1,
+        },
+      );
+
+    await expect(
+      createLessonContent(faculty, {
+        lessonId: lesson.id,
+        contentType: "RESOURCE",
+        title: "C2 Unsafe Generic",
+        notes: "Faculty cannot create shared content",
+        sequence: 2,
+      }),
+    ).rejects.toBeInstanceOf(
+      AuthorizationError,
+    );
+
+    await expect(
+      listLearningPaths(
+        learner,
+        structure.offering.id,
+        structure.deliveryA.id,
+      ),
+    ).resolves.toEqual([]);
+
+    await transitionLessonContent(
+      collegeAdmin,
+      generic.id,
+      { action: "PUBLISH" },
+    );
+    await transitionLessonContent(
+      faculty,
+      sectionAContent.id,
+      { action: "PUBLISH" },
+    );
+
+    const sectionBContent =
+      await createLessonContent(
+        collegeAdmin,
+        {
+          lessonId: lesson.id,
+          deliveryId:
+            structure.deliveryB.id,
+          contentType: "RESOURCE",
+          title: "C2 Section B Notes",
+          notes: "Only Section B",
+          sequence: 2,
+        },
+      );
+    await transitionLessonContent(
+      collegeAdmin,
+      sectionBContent.id,
+      { action: "PUBLISH" },
+    );
+    await transitionLearningPath(
+      collegeAdmin,
+      path.id,
+      { action: "PUBLISH" },
+    );
+
+    const learnerPaths =
+      await listLearningPaths(
+        learner,
+        structure.offering.id,
+        structure.deliveryA.id,
+      );
+    expect(learnerPaths).toEqual([
+      expect.objectContaining({
+        id: path.id,
+        status: "PUBLISHED",
+      }),
+    ]);
+
+    await expect(
+      listCourseLessons(
+        learner,
+        path.id,
+        structure.deliveryA.id,
+      ),
+    ).resolves.toEqual([
+      expect.objectContaining({
+        id: lesson.id,
+      }),
+    ]);
+
+    const learnerContents =
+      await listLessonContents(
+        learner,
+        lesson.id,
+        structure.deliveryA.id,
+      );
+
+    expect(
+      learnerContents.map((item) => item.id),
+    ).toEqual([
+      generic.id,
+      sectionAContent.id,
+    ]);
+    expect(
+      learnerContents.some(
+        (item) =>
+          item.id === sectionBContent.id,
+      ),
+    ).toBe(false);
+
+    await expect(
+      listLessonContents(
+        learner,
+        lesson.id,
+        structure.deliveryB.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED",
+    });
+
+    await expect(
+      listLessonContents(
+        faculty,
+        lesson.id,
+        structure.deliveryB.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "FACULTY_TEACHING_SCOPE_REQUIRED",
+    });
+
+    const edited =
+      await updateLessonContent(
+        faculty,
+        sectionAContent.id,
+        {
+          title:
+            "C2 Section A Walkthrough Updated",
+        },
+      );
+    expect(edited.title).toBe(
+      "C2 Section A Walkthrough Updated",
+    );
+  });
+
+  it("protects shared structure with admin authority and database uniqueness", async () => {
+    const structure = await createStructure();
+    const path = await createLearningPath(
+      collegeAdmin,
+      {
+        offeringId: structure.offering.id,
+        title: "C2 Canonical Path",
+      },
+    );
+
+    await expect(
+      createLearningPath(collegeAdmin, {
+        offeringId: structure.offering.id,
+        title: "C2 Duplicate Path",
+      }),
+    ).rejects.toMatchObject({
+      code: "LEARNING_PATH_CONFLICT",
+    });
+
+    await expect(
+      createCourseLesson(faculty, {
+        learningPathId: path.id,
+        name: "C2 Faculty Shared Lesson",
+        sequence: 0,
+      }),
+    ).rejects.toBeInstanceOf(
+      AuthorizationError,
+    );
+
+    const lesson = await createCourseLesson(
+      collegeAdmin,
+      {
+        learningPathId: path.id,
+        name: "C2 Linked Lists",
+        sequence: 0,
+      },
+    );
+
+    await expect(
+      createCourseLesson(collegeAdmin, {
+        learningPathId: path.id,
+        name: "c2 linked lists",
+        sequence: 1,
+      }),
+    ).rejects.toMatchObject({
+      code: "LESSON_NAME_CONFLICT",
+    });
+
+    await expect(
+      createCourseLesson(collegeAdmin, {
+        learningPathId: path.id,
+        name: "C2 Stacks",
+        sequence: 0,
+      }),
+    ).rejects.toMatchObject({
+      code: "LESSON_SEQUENCE_CONFLICT",
+    });
+
+    await expect(
+      createLessonContent(collegeAdmin, {
+        lessonId: lesson.id,
+        contentType: "YOUTUBE",
+        title: "C2 Bad Video Link",
+        externalUrl:
+          "https://example.com/video",
+        sequence: 0,
+      }),
+    ).rejects.toBeInstanceOf(ZodError);
+
+    await expect(
+      pool.query(
+        `insert into lesson_contents
+          (lesson_id, content_type, title, sequence, created_by_user_id)
+         values ($1, 'VIDEO', 'C2 Invalid Video', 0, $2)`,
+        [
+          lesson.id,
+          SEED_IDS.collegeAdminUser,
+        ],
+      ),
+    ).rejects.toMatchObject({
+      code: "23514",
+    });
+  });
+
+  it("rejects caller-selected content scope that does not belong to the lesson offering", async () => {
+    const structure = await createStructure();
+    const path = await createLearningPath(
+      collegeAdmin,
+      {
+        offeringId: structure.offering.id,
+        title: "C2 Scope Path",
+      },
+    );
+    const lesson = await createCourseLesson(
+      collegeAdmin,
+      {
+        learningPathId: path.id,
+        name: "C2 Trees",
+        sequence: 0,
+      },
+    );
+
+    const otherCourse = await createCourse(
+      collegeAdmin,
+      {
+        departmentId: SEED_IDS.departmentA,
+        name: "C2 Operating Systems",
+        code: "C2-OS",
+      },
+    );
+    const otherOffering =
+      await createCourseOffering(
+        collegeAdmin,
+        {
+          courseId: otherCourse.id,
+          cohortId: structure.cohort.id,
+          academicPeriodId:
+            structure.period.id,
+          type: "CORE",
+          credits: 4,
+          displayOrder: 1,
+        },
+      );
+    const otherDelivery =
+      await createCourseSectionDelivery(
+        collegeAdmin,
+        {
+          offeringId: otherOffering.id,
+          sectionId: structure.sectionA.id,
+        },
+      );
+
+    await expect(
+      createLessonContent(collegeAdmin, {
+        lessonId: lesson.id,
+        deliveryId: otherDelivery.id,
+        contentType: "RESOURCE",
+        title: "C2 Wrong Scope",
+        notes: "Must be rejected",
+        sequence: 0,
+      }),
+    ).rejects.toMatchObject({
+      code: "CONTENT_DELIVERY_MISMATCH",
+    });
+  });
+});

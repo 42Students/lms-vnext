@@ -1,12 +1,15 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   colleges,
+  courseLearningPaths,
+  courseLessons,
   courseOfferings,
   courseSectionDeliveries,
   courseTeachingAssignments,
   courses,
+  lessonContents,
   departments,
   membershipRoles,
   organizations,
@@ -280,5 +283,147 @@ export async function loadCourseMembership(
     roles: roles.map(
       (row) => row.role,
     ) as MembershipRole[],
+  };
+}
+
+export async function loadLearningPathScope(
+  learningPathId: string,
+  includeArchived = false,
+) {
+  const db = getDb();
+  const conditions = [
+    eq(courseLearningPaths.id, learningPathId),
+  ];
+
+  if (!includeArchived) {
+    conditions.push(
+      ne(courseLearningPaths.status, "ARCHIVED"),
+    );
+  }
+
+  const [path] = await db
+    .select()
+    .from(courseLearningPaths)
+    .where(and(...conditions))
+    .limit(1);
+
+  if (!path) {
+    throw new CoursesServiceError(
+      "LEARNING_PATH_NOT_FOUND",
+    );
+  }
+
+  const offering =
+    await loadCourseOfferingScope(
+      path.offeringId,
+      includeArchived,
+    );
+
+  return {
+    ...path,
+    courseId: offering.courseId,
+    cohortId: offering.cohortId,
+    academicPeriodId:
+      offering.academicPeriodId,
+    collegeId: offering.collegeId,
+    organizationId: offering.organizationId,
+  };
+}
+
+export async function loadCourseLessonScope(
+  lessonId: string,
+  includeArchived = false,
+) {
+  const db = getDb();
+  const conditions = [
+    eq(courseLessons.id, lessonId),
+  ];
+
+  if (!includeArchived) {
+    conditions.push(
+      eq(courseLessons.status, "ACTIVE"),
+    );
+  }
+
+  const [lesson] = await db
+    .select()
+    .from(courseLessons)
+    .where(and(...conditions))
+    .limit(1);
+
+  if (!lesson) {
+    throw new CoursesServiceError(
+      "LESSON_NOT_FOUND",
+    );
+  }
+
+  const path = await loadLearningPathScope(
+    lesson.learningPathId,
+    includeArchived,
+  );
+
+  return {
+    ...lesson,
+    offeringId: path.offeringId,
+    learningPathStatus: path.status,
+    collegeId: path.collegeId,
+    organizationId: path.organizationId,
+  };
+}
+
+export async function loadLessonContentScope(
+  contentId: string,
+  includeArchived = false,
+) {
+  const db = getDb();
+  const conditions = [
+    eq(lessonContents.id, contentId),
+  ];
+
+  if (!includeArchived) {
+    conditions.push(
+      ne(lessonContents.status, "ARCHIVED"),
+    );
+  }
+
+  const [content] = await db
+    .select()
+    .from(lessonContents)
+    .where(and(...conditions))
+    .limit(1);
+
+  if (!content) {
+    throw new CoursesServiceError(
+      "LESSON_CONTENT_NOT_FOUND",
+    );
+  }
+
+  const lesson = await loadCourseLessonScope(
+    content.lessonId,
+    includeArchived,
+  );
+
+  if (content.deliveryId) {
+    const delivery =
+      await loadCourseSectionDeliveryScope(
+        content.deliveryId,
+        true,
+      );
+
+    if (
+      delivery.offeringId !== lesson.offeringId
+    ) {
+      throw new CoursesServiceError(
+        "CONTENT_DELIVERY_MISMATCH",
+      );
+    }
+  }
+
+  return {
+    ...content,
+    offeringId: lesson.offeringId,
+    learningPathId: lesson.learningPathId,
+    collegeId: lesson.collegeId,
+    organizationId: lesson.organizationId,
   };
 }

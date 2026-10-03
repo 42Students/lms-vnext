@@ -114,12 +114,32 @@ export function apiErrorResponse(error: unknown) {
       "OFFERING_NOT_FOUND",
       "SECTION_DELIVERY_NOT_FOUND",
       "TEACHING_ASSIGNMENT_NOT_FOUND",
+      "LEARNING_PATH_NOT_FOUND",
+      "LESSON_NOT_FOUND",
+      "LESSON_CONTENT_NOT_FOUND",
       "MEMBERSHIP_NOT_FOUND",
     ]);
 
+    const forbidden = new Set([
+      "LEARNING_ACCESS_DENIED",
+      "FACULTY_TEACHING_SCOPE_REQUIRED",
+      "LEARNER_ENROLLMENT_SCOPE_REQUIRED",
+    ]);
+    const badRequest = new Set([
+      "CONTENT_TYPE_SHAPE_INVALID",
+    ]);
+
+    const status = notFound.has(error.code)
+      ? 404
+      : forbidden.has(error.code)
+        ? 403
+        : badRequest.has(error.code)
+          ? 400
+          : 409;
+
     return NextResponse.json(
       { error: error.code },
-      { status: notFound.has(error.code) ? 404 : 409 },
+      { status },
     );
   }
 

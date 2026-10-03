@@ -26,3 +26,35 @@ export const COURSE_TEACHING_ROLES = [
 ] as const;
 export type CourseTeachingRole =
   (typeof COURSE_TEACHING_ROLES)[number];
+
+export const LEARNING_PATH_STATUSES = [
+  "DRAFT",
+  "PUBLISHED",
+  "ARCHIVED",
+] as const;
+export type LearningPathStatus =
+  (typeof LEARNING_PATH_STATUSES)[number];
+
+export const COURSE_LESSON_STATUSES = [
+  "ACTIVE",
+  "ARCHIVED",
+] as const;
+export type CourseLessonStatus =
+  (typeof COURSE_LESSON_STATUSES)[number];
+
+export const LESSON_CONTENT_TYPES = [
+  "RESOURCE",
+  "VIDEO",
+  "YOUTUBE",
+  "LIVE_CLASS",
+] as const;
+export type LessonContentType =
+  (typeof LESSON_CONTENT_TYPES)[number];
+
+export const LESSON_CONTENT_STATUSES = [
+  "DRAFT",
+  "PUBLISHED",
+  "ARCHIVED",
+] as const;
+export type LessonContentStatus =
+  (typeof LESSON_CONTENT_STATUSES)[number];

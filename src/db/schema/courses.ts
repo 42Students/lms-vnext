@@ -17,11 +17,16 @@ import {
 } from "./academics";
 import { departments } from "./departments";
 import { collegeMemberships } from "./memberships";
+import { users } from "./users";
 import {
   courseOfferingStatusEnum,
   courseOfferingTypeEnum,
   courseStatusEnum,
   courseTeachingRoleEnum,
+  learningPathStatusEnum,
+  courseLessonStatusEnum,
+  lessonContentTypeEnum,
+  lessonContentStatusEnum,
 } from "./enums";
 
 export const courses = pgTable(
@@ -239,5 +244,173 @@ export const courseTeachingAssignments = pgTable(
     index(
       "course_teaching_assignments_delivery_idx",
     ).on(table.deliveryId),
+  ],
+);
+
+export const courseLearningPaths = pgTable(
+  "course_learning_paths",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    offeringId: uuid("offering_id")
+      .notNull()
+      .references(() => courseOfferings.id, {
+        onDelete: "restrict",
+      }),
+    title: text("title").notNull(),
+    description: text("description"),
+    status: learningPathStatusEnum("status")
+      .notNull()
+      .default("DRAFT"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("course_learning_paths_current_uq")
+      .on(table.offeringId)
+      .where(sql`${table.status} <> 'ARCHIVED'`),
+    index("course_learning_paths_offering_status_idx")
+      .on(table.offeringId, table.status),
+  ],
+);
+
+export const courseLessons = pgTable(
+  "course_lessons",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    learningPathId: uuid("learning_path_id")
+      .notNull()
+      .references(() => courseLearningPaths.id, {
+        onDelete: "restrict",
+      }),
+    name: text("name").notNull(),
+    description: text("description"),
+    sequence: integer("sequence").notNull(),
+    status: courseLessonStatusEnum("status")
+      .notNull()
+      .default("ACTIVE"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("course_lessons_active_name_uq")
+      .on(
+        table.learningPathId,
+        sql`lower(${table.name})`,
+      )
+      .where(sql`${table.status} = 'ACTIVE'`),
+    uniqueIndex("course_lessons_active_sequence_uq")
+      .on(table.learningPathId, table.sequence)
+      .where(sql`${table.status} = 'ACTIVE'`),
+    index("course_lessons_path_status_idx").on(
+      table.learningPathId,
+      table.status,
+    ),
+    check(
+      "course_lessons_sequence_ck",
+      sql`${table.sequence} >= 0`,
+    ),
+  ],
+);
+
+export const lessonContents = pgTable(
+  "lesson_contents",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    lessonId: uuid("lesson_id")
+      .notNull()
+      .references(() => courseLessons.id, {
+        onDelete: "restrict",
+      }),
+    deliveryId: uuid("delivery_id")
+      .references(() => courseSectionDeliveries.id, {
+        onDelete: "restrict",
+      }),
+    contentType:
+      lessonContentTypeEnum("content_type")
+        .notNull(),
+    title: text("title").notNull(),
+    notes: text("notes"),
+    externalUrl: text("external_url"),
+    storageKey: text("storage_key"),
+    startsAt: timestamp("starts_at", {
+      withTimezone: true,
+    }),
+    endsAt: timestamp("ends_at", {
+      withTimezone: true,
+    }),
+    sequence: integer("sequence").notNull(),
+    status: lessonContentStatusEnum("status")
+      .notNull()
+      .default("DRAFT"),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("lesson_contents_lesson_status_sequence_idx")
+      .on(
+        table.lessonId,
+        table.status,
+        table.sequence,
+      ),
+    index("lesson_contents_delivery_status_idx")
+      .on(table.deliveryId, table.status),
+    check(
+      "lesson_contents_sequence_ck",
+      sql`${table.sequence} >= 0`,
+    ),
+    check(
+      "lesson_contents_shape_ck",
+      sql`(
+        (${table.contentType} = 'RESOURCE'
+          and (${table.notes} is not null or ${table.externalUrl} is not null or ${table.storageKey} is not null)
+          and ${table.startsAt} is null and ${table.endsAt} is null)
+        or
+        (${table.contentType} = 'VIDEO'
+          and ${table.storageKey} is not null
+          and ${table.externalUrl} is null
+          and ${table.startsAt} is null and ${table.endsAt} is null)
+        or
+        (${table.contentType} = 'YOUTUBE'
+          and ${table.externalUrl} is not null
+          and ${table.storageKey} is null
+          and ${table.startsAt} is null and ${table.endsAt} is null)
+        or
+        (${table.contentType} = 'LIVE_CLASS'
+          and ${table.externalUrl} is not null
+          and ${table.storageKey} is null
+          and ${table.startsAt} is not null
+          and ${table.endsAt} is not null
+          and ${table.endsAt} > ${table.startsAt})
+      )`,
+    ),
   ],
 );

@@ -680,7 +680,16 @@ Courses C1 establishes the safe structural graph:
 - PostgreSQL uniqueness/dependency guards
 - tenant and structural permission regression coverage
 
-Next Courses work starts with the learning structure on top of this graph: learning paths, lessons and content.
+Courses C2 adds the learning structure:
+- one current Learning Path per Offering with DRAFT/PUBLISHED/ARCHIVED lifecycle
+- ordered Lessons with DB-enforced active name/sequence uniqueness
+- generic Offering content plus exact Section Delivery content
+- canonical RESOURCE / VIDEO / YOUTUBE / LIVE_CLASS content
+- exact Faculty teaching-scope and Learner section-enrollment access
+- learner reads restricted to published content
+- content-shape constraints and adversarial scope tests
+
+Next Courses work is learner progress/completion, course-facing query surfaces and the Course UI.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.
