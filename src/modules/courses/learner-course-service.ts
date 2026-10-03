@@ -413,6 +413,7 @@ export async function getLearnerCourseWorkspace(
     submittedAt: Date | null;
     gradePublished: boolean;
     pointsAwarded: number | null;
+    feedback: string | null;
     gradingStatus:
       | "NOT_GRADED"
       | "GRADED";
@@ -539,6 +540,8 @@ export async function getLearnerCourseWorkspace(
           assignmentSubmissions.gradePublished,
         pointsAwarded:
           assignmentSubmissions.pointsAwarded,
+        feedback:
+          assignmentSubmissions.feedback,
         gradingStatus:
           assignmentSubmissions.gradingStatus,
       })
@@ -614,6 +617,10 @@ export async function getLearnerCourseWorkspace(
         pointsAwarded:
           row.gradePublished
             ? row.pointsAwarded
+            : null,
+        feedback:
+          row.gradePublished
+            ? row.feedback
             : null,
         gradingStatus:
           row.gradePublished &&

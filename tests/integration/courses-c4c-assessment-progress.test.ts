@@ -32,7 +32,11 @@ import {
   transitionCourseAssignment,
   updateCourseAssignment,
 } from "@/modules/courses/assignment-service";
-import { submitCourseAssignment } from "@/modules/courses/assignment-submission-service";
+import {
+  gradeAssignmentSubmission,
+  publishAssignmentGrade,
+  submitCourseAssignment,
+} from "@/modules/courses/assignment-submission-service";
 import {
   createCourseQuiz,
   getCourseQuiz,
@@ -618,13 +622,33 @@ describe("courses C4C assessment aggregation", () => {
       itemId: structure.assignment.id,
     });
 
-    await submitCourseAssignment(
-      learner,
-      structure.assignment.id,
+    const submission =
+      await submitCourseAssignment(
+        learner,
+        structure.assignment.id,
+        {
+          deliveryId: structure.deliveryA.id,
+          submissionType: "TEXT",
+          textContent: "My answer",
+        },
+      );
+
+    const graded =
+      await gradeAssignmentSubmission(
+        collegeAdmin,
+        submission.id,
+        {
+          pointsAwarded: 8,
+          feedback:
+            "Good explanation of the queue behavior.",
+          expectedVersion: 0,
+        },
+      );
+    await publishAssignmentGrade(
+      collegeAdmin,
+      submission.id,
       {
-        deliveryId: structure.deliveryA.id,
-        submissionType: "TEXT",
-        textContent: "My answer",
+        expectedVersion: graded.version,
       },
     );
 
@@ -648,9 +672,11 @@ describe("courses C4C assessment aggregation", () => {
       afterAssignment.lessons[0]
         ?.assignments[0],
     ).toMatchObject({
-      gradePublished: false,
-      pointsAwarded: null,
-      gradingStatus: "NOT_GRADED",
+      gradePublished: true,
+      pointsAwarded: 8,
+      feedback:
+        "Good explanation of the queue behavior.",
+      gradingStatus: "GRADED",
       progress: {
         status: "COMPLETED",
         percentComplete: 100,

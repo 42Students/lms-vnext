@@ -2,6 +2,13 @@ import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { AssignmentSubmissionControl } from "./assignment-submission-control";
+import { QuizAttemptControl } from "./quiz-attempt-control";
+import { ResourceProgressControl } from "./resource-progress-control";
+import {
+  assignmentInteractionState,
+  resourceInteractionState,
+} from "./learner-interaction-model";
 import {
   getLearnerCourseWorkspace,
 } from "@/modules/courses/learner-course-service";
@@ -135,11 +142,18 @@ function Metric({
 
 function ContentCard({
   content,
+  deliveryId,
 }: {
   content: Workspace["lessons"][number]["contents"][number];
+  deliveryId: string;
 }) {
   const start = formatDateTime(content.startsAt);
   const end = formatDateTime(content.endsAt);
+  const interaction = resourceInteractionState({
+    type: content.type,
+    externalUrl: content.externalUrl,
+    progressStatus: content.progress.status,
+  });
 
   return (
     <article
@@ -210,15 +224,31 @@ function ContentCard({
           Media is attached to this lesson and will open in the learner player when storage delivery is connected.
         </p>
       ) : null}
+
+      {interaction.canMarkComplete ? (
+        <ResourceProgressControl
+          contentId={content.id}
+          deliveryId={deliveryId}
+        />
+      ) : null}
     </article>
   );
 }
 
 function AssignmentCard({
   assignment,
+  deliveryId,
 }: {
   assignment: Workspace["lessons"][number]["assignments"][number];
+  deliveryId: string;
 }) {
+  const interaction =
+    assignmentInteractionState({
+      submissionId: assignment.submissionId,
+      progressStatus:
+        assignment.progress.status,
+    });
+
   return (
     <article
       id={`item-ASSIGNMENT-${assignment.id}`}
@@ -280,6 +310,11 @@ function AssignmentCard({
             {assignment.pointsAwarded ?? 0}/
             {assignment.maxPoints}
           </strong>
+          {assignment.feedback ? (
+            <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
+              {assignment.feedback}
+            </p>
+          ) : null}
         </div>
       ) : assignment.submissionId ? (
         <p className="mt-4 text-xs font-semibold text-muted-foreground">
@@ -290,19 +325,24 @@ function AssignmentCard({
         <p className="mt-4 text-xs font-semibold text-error">
           The submission window has closed.
         </p>
-      ) : (
-        <p className="mt-4 text-xs font-semibold text-primary-text">
-          Submission action will be enabled in the learner interaction pass.
-        </p>
-      )}
+      ) : null}
+
+      {interaction.canSubmit ? (
+        <AssignmentSubmissionControl
+          assignmentId={assignment.id}
+          deliveryId={deliveryId}
+        />
+      ) : null}
     </article>
   );
 }
 
 function QuizCard({
   quiz,
+  deliveryId,
 }: {
   quiz: Workspace["lessons"][number]["quizzes"][number];
+  deliveryId: string;
 }) {
   return (
     <article
@@ -371,11 +411,17 @@ function QuizCard({
             ? " · Results are published."
             : " · Results are not published yet."}
         </p>
-      ) : (
-        <p className="mt-4 text-xs font-semibold text-primary-text">
-          Quiz-taking controls will be enabled in the learner interaction pass.
-        </p>
-      )}
+      ) : null}
+
+      <QuizAttemptControl
+        quizId={quiz.id}
+        deliveryId={deliveryId}
+        status={quiz.status}
+        attemptsUsed={quiz.attemptsUsed}
+        attemptsRemaining={quiz.attemptsRemaining}
+        resultsPublished={quiz.resultsPublished}
+        progressStatus={quiz.progress.status}
+      />
     </article>
   );
 }
@@ -523,6 +569,7 @@ export function LearnerCourseWorkspace({
                             <ContentCard
                               key={item.id}
                               content={content}
+                              deliveryId={deliveryId}
                             />
                           ) : null;
                         }
@@ -541,6 +588,7 @@ export function LearnerCourseWorkspace({
                             <AssignmentCard
                               key={item.id}
                               assignment={assignment}
+                              deliveryId={deliveryId}
                             />
                           ) : null;
                         }
@@ -555,6 +603,7 @@ export function LearnerCourseWorkspace({
                           <QuizCard
                             key={item.id}
                             quiz={quiz}
+                            deliveryId={deliveryId}
                           />
                         ) : null;
                       })}

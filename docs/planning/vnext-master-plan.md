@@ -742,7 +742,18 @@ Courses UI1 adds the learner-facing read/navigation experience:
 - missed-state and grade-privacy presentation
 - learner dashboard entry point
 
-Next Courses work is UI1b learner interactions (content completion, Assignment submission and Quiz taking), then Faculty Course authoring/operations UI, College/Super Admin Course structural UI, and Course-level UI regression/E2E hardening.
+Courses UI1b adds learner interactions while keeping all authoritative rules server-side:
+- RESOURCE manual completion for externally accessible resources
+- final TEXT / HTTPS LINK Assignment submission
+- published Assignment grade + feedback presentation
+- Quiz start/retake flow while attempts remain
+- learner-safe SINGLE_CHOICE / MULTIPLE_CHOICE rendering
+- final Quiz submission with unanswered-question warning
+- CLOSED + results-published Quiz review from immutable attempt snapshots
+- canonical workspace refresh after mutation
+- pure interaction-state regression tests preventing accidental reopen/re-submit states
+
+Next Courses work is Faculty Course authoring/operations UI, then College/Super Admin Course structural UI, media playback/resume, and Course-level UI regression/E2E hardening.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

@@ -44,17 +44,30 @@ The UI does not reimplement progress rules. Completion, missed state, grade priv
 
 The legacy-compatible `nextContent` output remains available to other callers; the learner UI uses `nextItem`.
 
-## Interaction boundary
+## UI1b learner interactions
 
-UI1 is the read/navigation surface. It intentionally does not fake unsupported interactions:
+UI1b turns the read-only workspace into a usable learner workflow without moving domain rules into React.
 
-- RESOURCE completion
-- Assignment TEXT/LINK submission
-- Quiz taking
-- video playback/resume
-- Course authoring
+Implemented interactions:
 
-Those actions are implemented in the existing APIs/domain services and will be wired into dedicated client interaction components in the next learner UI pass.
+- externally accessible RESOURCE items can be marked complete through the C3 progress API
+- Assignments accept one final TEXT or HTTPS LINK submission
+- published Assignment grades include feedback only after grade publication
+- open Quizzes can be attempted/retaken while attempts remain
+- SINGLE_CHOICE and MULTIPLE_CHOICE inputs are rendered from the learner-safe Quiz payload
+- unanswered Quiz questions are explicitly warned before final submission
+- Quiz scores and answer correctness are never shown while the Quiz is open
+- CLOSED + results-published Quizzes render immutable submitted-attempt snapshots rather than the live answer key
+- every successful mutation refreshes the canonical server workspace so progress and Continue Learning remain server-derived
+
+Client interaction state is centralized in a small pure model and covered by unit tests so visual refactors cannot accidentally reopen a submitted Assignment, CLOSED Quiz, exhausted Quiz, or unsupported media-completion action.
+
+Still intentionally deferred:
+
+- VIDEO/YOUTUBE playback and resume controls
+- storage-backed RESOURCE/video delivery
+- Assignment FILE uploads
+- Course authoring/teaching operations
 
 Cloud Storage-backed video/file delivery remains deferred until the canonical signed-upload/signed-read workflow exists. The UI does not expose raw storage keys.
 
