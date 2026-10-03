@@ -121,7 +121,7 @@ test.describe("Projects browser regression", () => {
       "Seed Learner",
     );
     await teamDialog
-      .getByLabel("Member")
+      .getByLabel("Member", { exact: true })
       .selectOption(SEED_IDS.learnerCollegeAMembership);
     await teamDialog
       .getByRole("button", { name: "Add teammate" })
@@ -143,7 +143,7 @@ test.describe("Projects browser regression", () => {
       "Seed Shared Faculty",
     );
     await teamDialog
-      .getByLabel("Member")
+      .getByLabel("Member", { exact: true })
       .selectOption(SEED_IDS.facultyCollegeAMembership);
     await teamDialog
       .getByLabel("Primary mentor")
