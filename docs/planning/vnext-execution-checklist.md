@@ -513,7 +513,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] faculty assignments — Section ADVISOR/COORDINATOR responsibilities
 - [x] schedules — generic Section calendar events with period/faculty validation
 - [x] greenfield decision: no academic data migration required
-- [ ] UI
+- [~] core Academics + Section operations UI staged; edit dialogs still pending
 - [x] tests — policy + PostgreSQL A1/A2 tenant/lifecycle/constraint coverage
 
 ---

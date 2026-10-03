@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - academics-ui
 
 permissions:
   contents: read

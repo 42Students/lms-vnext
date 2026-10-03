@@ -281,3 +281,20 @@ Do not restart architecture discussion unless an implementation blocker proves a
 - Section Faculty responsibility requires same-college active FACULTY membership
 - generic schedule events must stay inside the Section Academic Period
 - course teaching assignment remains deferred to Courses
+
+
+### Academics UI workspace
+
+A shared Academics overview is staged for College Admin and college-scoped Super Admin:
+- create Programs, Academic Periods, Cohorts and Sections
+- activate/close Academic Periods
+- activate/complete/archive Cohorts
+- archive Programs/Sections
+- open a Section operations page
+- admit learners into a Program
+- place/move/promote learners with history
+- complete/withdraw Program or Section enrollment
+- assign/end Section Faculty Advisor/Coordinator responsibilities
+- create/cancel generic Section schedule events
+
+Program/Period/Cohort/Section edit dialogs remain the final UI closure item.
