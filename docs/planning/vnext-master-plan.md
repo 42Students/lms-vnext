@@ -784,7 +784,16 @@ Courses UI2B2 completes Faculty assessment operations:
 - shared-Offering Quiz result publication remains admin-owned while Faculty retain Section attempt review
 - operation-state regressions covering grading publication and shared-vs-exact Quiz authority
 
-Next Courses work is College/Super Admin Course structural UI, then media playback/resume and Course-level UI regression/E2E hardening.
+Courses UI3A adds College Admin and college-scoped Super Admin structural operations:
+- shared server workspace over Academics + Courses + People
+- Course catalog create/edit/dependency-safe archive
+- Cohort + Academic Period Offering create/edit/dependency-safe archive
+- exact Section Delivery create/end with compatible-Section filtering
+- active Faculty Membership selection and PRIMARY / CO_TEACHER / TA Teaching Assignment create/end
+- explicit Super Admin college-scope requirement
+- Courses navigation for both admin shells
+
+Next Courses work is UI3B Admin shared Learning Path/Lesson/Offering-wide learning-item authoring, then media playback/resume and Course-level UI regression/E2E hardening.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

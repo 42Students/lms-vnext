@@ -60,6 +60,40 @@ const errorLabels: Record<string, string> = {
     "This quiz can no longer be structurally changed because attempts already exist.",
   FACULTY_TEACHING_SCOPE_REQUIRED:
     "You need an active teaching assignment for this exact Section delivery.",
+  COURSE_NAME_CONFLICT:
+    "An active Course with this name already exists in the Department.",
+  COURSE_CODE_CONFLICT:
+    "An active Course with this code already exists in the Department.",
+  COURSE_HAS_ACTIVE_OFFERINGS:
+    "Archive active Course Offerings before archiving this Course.",
+  OFFERING_CONFLICT:
+    "This Course is already offered to the selected Cohort and Academic Period.",
+  OFFERING_NOT_MUTABLE:
+    "This Course Offering is no longer mutable.",
+  OFFERING_COHORT_PERIOD_MISMATCH:
+    "The Academic Period is outside the selected Cohort's valid period window.",
+  ACADEMIC_PERIOD_CLOSED:
+    "The selected Academic Period is closed.",
+  COHORT_NOT_MUTABLE:
+    "The selected Cohort is no longer available for new Course operations.",
+  OFFERING_HAS_ACTIVE_DELIVERIES:
+    "End active Section Deliveries before archiving this Offering.",
+  SECTION_DELIVERY_CONFLICT:
+    "This Offering is already connected to the selected Section.",
+  SECTION_NOT_DELIVERABLE:
+    "The selected Section does not match this Offering's Cohort and Academic Period.",
+  DELIVERY_HAS_ACTIVE_TEACHERS:
+    "End active Teaching Assignments before ending this Section Delivery.",
+  TEACHING_ASSIGNMENT_CONFLICT:
+    "This Faculty member already has an active Teaching Assignment for the delivery.",
+  PRIMARY_TEACHER_CONFLICT:
+    "This Section Delivery already has an active Primary teacher.",
+  FACULTY_ROLE_REQUIRED:
+    "The selected membership does not have the Faculty role.",
+  MEMBERSHIP_NOT_ACTIVE:
+    "The selected Faculty membership is not active.",
+  MEMBERSHIP_COLLEGE_MISMATCH:
+    "The selected Faculty membership belongs to a different college.",
 };
 
 export async function courseApiError(

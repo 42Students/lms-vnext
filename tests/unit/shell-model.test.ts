@@ -41,6 +41,7 @@ describe("authenticated shell model", () => {
       "Colleges",
       "Departments",
       "Academics",
+      "Courses",
       "People",
       "Domains",
     ]);
@@ -57,6 +58,7 @@ describe("authenticated shell model", () => {
       "My College",
       "Departments",
       "Academics",
+      "Courses",
       "People",
       "Domains",
     ]);

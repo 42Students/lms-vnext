@@ -163,3 +163,37 @@ Quiz review:
 - Faculty may still review their own Section's attempts for a shared Quiz
 
 The UI action model is covered independently from rendering so future styling changes cannot accidentally grant shared-Offering result control or publish an ungraded Assignment.
+
+
+## UI3A College / Super Admin structural Course operations
+
+UI3A exposes the C1 structural graph through the existing admin design system for both College Admin and college-scoped Super Admin.
+
+Routes:
+
+- /college/courses — the active membership's college
+- /admin/courses — the Super Admin's selected college safety scope
+
+Both routes use the same server-composed Course workspace. Super Admin never receives an unscoped global Course management surface.
+
+The structural workspace provides:
+
+- active Department-owned Course catalog
+- Cohort + Academic Period Course Offerings
+- exact Offering -> Section Deliveries
+- exact Delivery -> Faculty Teaching Assignments
+- active Faculty Membership choices from the People domain
+- compact counts for Courses, Offerings, Deliveries and Teaching Assignments
+
+Mutations reuse the existing server services and dependency guards:
+
+- Course create/edit/archive
+- Offering create/edit/archive
+- Section Delivery create/end
+- PRIMARY / CO_TEACHER / TA Teaching Assignment create/end
+
+The client filters Section choices to the selected Offering's exact Cohort + Academic Period, while the server remains authoritative and rejects invalid scope, closed Periods, incompatible Sections, duplicate primary teachers and cross-college Faculty.
+
+Archive/end controls preserve history and surface dependency conflicts instead of cascading deletion.
+
+Shared Learning Path / Lesson / Offering-wide content authoring is intentionally separated into UI3B so the structural administration page does not become a single overloaded form.
