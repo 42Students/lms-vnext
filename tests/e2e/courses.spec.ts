@@ -107,15 +107,39 @@ test.describe("Course browser regression", () => {
     const sharedArticle = page
       .getByRole("article")
       .filter({ hasText: "E2E Shared Notes" });
+    const progressResponsePromise =
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(
+            "/api/courses/progress/",
+          ) &&
+          response.request().method() === "PUT",
+      );
     await sharedArticle
       .getByRole("button", {
         name: "Mark as complete",
       })
       .click();
+    const progressResponse =
+      await progressResponsePromise;
+    expect(progressResponse.ok()).toBe(true);
     await expect(
-      sharedArticle.getByText("Completed", {
-        exact: true,
-      }),
+      progressResponse.json(),
+    ).resolves.toMatchObject({
+      progress: {
+        status: "COMPLETED",
+      },
+    });
+
+    await page.reload();
+    const refreshedSharedArticle = page
+      .getByRole("article")
+      .filter({ hasText: "E2E Shared Notes" });
+    await expect(
+      refreshedSharedArticle.getByText(
+        "Completed",
+        { exact: true },
+      ),
     ).toBeVisible();
   });
 
