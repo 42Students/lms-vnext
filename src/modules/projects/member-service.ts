@@ -2,7 +2,9 @@ import {
   and,
   asc,
   eq,
+  ilike,
   isNull,
+  or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -24,6 +26,7 @@ import {
 } from "./access";
 import {
   addProjectMemberInputSchema,
+  projectMemberCandidateQuerySchema,
   projectMemberIdSchema,
   updateProjectMemberInputSchema,
   type AddProjectMemberInput,
@@ -118,6 +121,58 @@ async function loadActiveProjectMember(
   }
 
   return member;
+}
+
+export async function listProjectMemberCandidates(
+  context: RequestContext,
+  projectIdInput: string,
+  rawQuery: unknown,
+) {
+  const scope = await requireProjectManageAccess(
+    context,
+    projectIdInput,
+  );
+  const query = projectMemberCandidateQuerySchema.parse(rawQuery);
+  const search = query.q
+    ? or(
+        ilike(users.displayName, `%${query.q}%`),
+        ilike(users.email, `%${query.q}%`),
+      )
+    : undefined;
+
+  return getDb()
+    .select({
+      membershipId: collegeMemberships.id,
+      displayName: users.displayName,
+      email: users.email,
+    })
+    .from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(
+      membershipRoles,
+      and(
+        eq(membershipRoles.membershipId, collegeMemberships.id),
+        eq(membershipRoles.role, query.role),
+      ),
+    )
+    .leftJoin(
+      projectMembers,
+      and(
+        eq(projectMembers.membershipId, collegeMemberships.id),
+        eq(projectMembers.projectId, scope.project.id),
+        isNull(projectMembers.endedAt),
+      ),
+    )
+    .where(
+      and(
+        eq(collegeMemberships.collegeId, scope.collegeId),
+        eq(collegeMemberships.status, "ACTIVE"),
+        isNull(projectMembers.id),
+        search,
+      ),
+    )
+    .orderBy(asc(users.displayName), asc(collegeMemberships.id))
+    .limit(query.limit);
 }
 
 export async function addProjectMember(

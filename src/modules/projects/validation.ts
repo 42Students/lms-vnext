@@ -308,6 +308,14 @@ export type CreateProjectInstanceInput = z.infer<
 
 export const projectMemberIdSchema = z.string().uuid();
 
+export const projectMemberCandidateQuerySchema = z
+  .object({
+    role: z.enum(PROJECT_MEMBER_ROLES),
+    q: z.string().trim().max(120).default(""),
+    limit: z.coerce.number().int().min(1).max(50).default(20),
+  })
+  .strict();
+
 export const addProjectMemberInputSchema = z
   .object({
     membershipId: z.string().uuid(),

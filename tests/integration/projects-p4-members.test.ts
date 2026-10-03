@@ -12,6 +12,7 @@ import {
   addProjectMember,
   endProjectMember,
   listMyProjectInstances,
+  listProjectMemberCandidates,
   listProjectMembers,
   updateProjectMember,
 } from "@/modules/projects/member-service";
@@ -422,6 +423,46 @@ describe("Projects P4 team and mentor membership", () => {
     ).rejects.toMatchObject({
       code: "PROJECT_ACCESS_DENIED",
     });
+  });
+
+  it("lists only eligible same-college candidates and excludes active teammates", async () => {
+    const project = await createProject();
+
+    await expect(
+      listProjectMemberCandidates(collegeAdmin, project.id, {
+        role: "LEARNER",
+        q: "Outsider",
+      }),
+    ).resolves.toEqual([
+      expect.objectContaining({
+        membershipId: outsider.membershipId,
+        displayName: "P4 Outsider",
+      }),
+    ]);
+
+    await expect(
+      listProjectMemberCandidates(collegeAdmin, project.id, {
+        role: "MENTOR",
+        q: "Second Mentor",
+      }),
+    ).resolves.toEqual([
+      expect.objectContaining({
+        membershipId: secondMentor.membershipId,
+        displayName: "P4 Second Mentor",
+      }),
+    ]);
+
+    await addProjectMember(collegeAdmin, project.id, {
+      membershipId: outsider.membershipId,
+      role: "LEARNER",
+    });
+
+    await expect(
+      listProjectMemberCandidates(collegeAdmin, project.id, {
+        role: "LEARNER",
+        q: "Outsider",
+      }),
+    ).resolves.toEqual([]);
   });
 
   it("enforces learner/mentor college roles and one active primary mentor", async () => {
