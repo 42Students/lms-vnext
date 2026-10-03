@@ -202,3 +202,99 @@ export const placementCandidatePreferences = pgTable(
     ),
   ],
 );
+
+
+export const placementJobs = pgTable(
+  "placement_jobs",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    companyRelationshipId: uuid("company_relationship_id")
+      .notNull()
+      .references(() => placementCompanyRelationships.id, {
+        onDelete: "restrict",
+      }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    employmentType: varchar("employment_type", { length: 24 })
+      .notNull(),
+    workMode: varchar("work_mode", { length: 24 }).notNull(),
+    locations: text("locations")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    openings: integer("openings"),
+    minimumAnnualCtcInr: integer("minimum_annual_ctc_inr"),
+    maximumAnnualCtcInr: integer("maximum_annual_ctc_inr"),
+    applicationMode: varchar("application_mode", { length: 24 })
+      .notNull()
+      .default("INTERNAL"),
+    externalApplicationUrl: text("external_application_url"),
+    applicationDeadline: timestamp("application_deadline", {
+      withTimezone: true,
+    }),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("DRAFT"),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+    archivedAt: timestamp("archived_at", { withTimezone: true }),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("placement_jobs_college_status_idx").on(
+      table.collegeId,
+      table.status,
+    ),
+    index("placement_jobs_relationship_idx").on(
+      table.companyRelationshipId,
+    ),
+    check(
+      "placement_jobs_status_ck",
+      sql`${table.status} in ('DRAFT', 'PUBLISHED', 'CLOSED', 'ARCHIVED')`,
+    ),
+    check(
+      "placement_jobs_employment_type_ck",
+      sql`${table.employmentType} in ('FULL_TIME', 'INTERNSHIP', 'CONTRACT')`,
+    ),
+    check(
+      "placement_jobs_work_mode_ck",
+      sql`${table.workMode} in ('ONSITE', 'HYBRID', 'REMOTE')`,
+    ),
+    check(
+      "placement_jobs_application_mode_ck",
+      sql`${table.applicationMode} in ('INTERNAL', 'HYBRID', 'EXTERNAL_ONLY')`,
+    ),
+    check(
+      "placement_jobs_openings_ck",
+      sql`${table.openings} is null or ${table.openings} > 0`,
+    ),
+    check(
+      "placement_jobs_ctc_ck",
+      sql`(${table.minimumAnnualCtcInr} is null or ${table.minimumAnnualCtcInr} >= 0)
+        and (${table.maximumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} >= 0)
+        and (${table.minimumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} >= ${table.minimumAnnualCtcInr})`,
+    ),
+    check(
+      "placement_jobs_external_url_ck",
+      sql`(${table.applicationMode} <> 'EXTERNAL_ONLY') or (${table.externalApplicationUrl} is not null)`,
+    ),
+    check(
+      "placement_jobs_lifecycle_ck",
+      sql`(${table.status} = 'DRAFT' and ${table.publishedAt} is null and ${table.closedAt} is null and ${table.archivedAt} is null)
+        or (${table.status} = 'PUBLISHED' and ${table.publishedAt} is not null and ${table.closedAt} is null and ${table.archivedAt} is null)
+        or (${table.status} = 'CLOSED' and ${table.publishedAt} is not null and ${table.closedAt} is not null and ${table.archivedAt} is null)
+        or (${table.status} = 'ARCHIVED' and ${table.archivedAt} is not null)`,
+    ),
+  ],
+);
