@@ -385,6 +385,7 @@ describe("courses C2 learning structure against PostgreSQL", () => {
           title: "C2 Section A Walkthrough",
           externalUrl:
             "https://www.youtube.com/watch?v=abc123",
+          durationSeconds: 600,
           sequence: 1,
         },
       );
@@ -588,6 +589,7 @@ describe("courses C2 learning structure against PostgreSQL", () => {
         title: "C2 Bad Video Link",
         externalUrl:
           "https://example.com/video",
+        durationSeconds: 300,
         sequence: 0,
       }),
     ).rejects.toBeInstanceOf(ZodError);

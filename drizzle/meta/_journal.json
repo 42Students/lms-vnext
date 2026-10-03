@@ -36,6 +36,13 @@
       "when": 1791001200000,
       "tag": "0004_courses_c2_learning",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791002400000,
+      "tag": "0005_courses_c3_progress",
+      "breakpoints": true
     }
   ]
 }

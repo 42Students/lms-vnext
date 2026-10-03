@@ -689,7 +689,16 @@ Courses C2 adds the learning structure:
 - learner reads restricted to published content
 - content-shape constraints and adversarial scope tests
 
-Next Courses work is learner progress/completion, course-facing query surfaces and the Course UI.
+Courses C3 adds learner progress and Course-facing query surfaces:
+- learner Course discovery from active Program/Section enrollment
+- exact-delivery workspace with generic + Section-specific published content
+- one Membership + Content progress row
+- monotonic media resume position
+- VIDEO/YOUTUBE completion from authored duration rather than learner-supplied duration
+- RESOURCE/manual completion and post-session LIVE_CLASS completion
+- aggregate progress and deterministic Continue Learning next-content selection
+
+Next Courses work is assessment/submission behavior and the Course UI.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

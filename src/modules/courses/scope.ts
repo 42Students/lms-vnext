@@ -423,6 +423,8 @@ export async function loadLessonContentScope(
     ...content,
     offeringId: lesson.offeringId,
     learningPathId: lesson.learningPathId,
+    learningPathStatus:
+      lesson.learningPathStatus,
     collegeId: lesson.collegeId,
     organizationId: lesson.organizationId,
   };

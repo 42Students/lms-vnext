@@ -308,6 +308,11 @@ const videoContentSchema =
       .nullable()
       .optional(),
     storageKey: storageKeySchema,
+    durationSeconds: z
+      .number()
+      .int()
+      .min(1)
+      .max(86400),
   });
 
 const youtubeContentSchema =
@@ -329,6 +334,11 @@ const youtubeContentSchema =
         },
         "YouTube content requires a youtube.com or youtu.be URL",
       ),
+    durationSeconds: z
+      .number()
+      .int()
+      .min(1)
+      .max(86400),
   });
 
 const liveClassContentSchema =
@@ -378,6 +388,13 @@ export const updateLessonContentInputSchema =
           .optional(),
       storageKey:
         storageKeySchema.nullable().optional(),
+      durationSeconds: z
+        .number()
+        .int()
+        .min(1)
+        .max(86400)
+        .nullable()
+        .optional(),
       startsAt: z
         .string()
         .datetime({ offset: true })
@@ -431,4 +448,32 @@ export type CreateLessonContentInput =
 export type UpdateLessonContentInput =
   z.infer<
     typeof updateLessonContentInputSchema
+  >;
+
+
+export const saveLearnerContentProgressInputSchema =
+  z
+    .object({
+      deliveryId:
+        courseSectionDeliveryIdSchema,
+      positionSeconds: z
+        .number()
+        .int()
+        .min(0)
+        .max(86400)
+        .optional(),
+      completed: z
+        .boolean()
+        .optional(),
+    })
+    .refine(
+      (value) =>
+        value.positionSeconds !== undefined ||
+        value.completed === true,
+      "Provide a position update or mark the content complete",
+    );
+
+export type SaveLearnerContentProgressInput =
+  z.infer<
+    typeof saveLearnerContentProgressInputSchema
   >;

@@ -46,6 +46,7 @@ function normalizedContentValues(
     notes: input.notes ?? null,
     externalUrl: null as string | null,
     storageKey: null as string | null,
+    durationSeconds: null as number | null,
     startsAt: null as Date | null,
     endsAt: null as Date | null,
     sequence: input.sequence,
@@ -64,11 +65,15 @@ function normalizedContentValues(
       return {
         ...base,
         storageKey: input.storageKey,
+        durationSeconds:
+          input.durationSeconds,
       };
     case "YOUTUBE":
       return {
         ...base,
         externalUrl: input.externalUrl,
+        durationSeconds:
+          input.durationSeconds,
       };
     case "LIVE_CLASS":
       return {
@@ -112,7 +117,8 @@ function mergedContentInput(
     case "RESOURCE":
       rejectUnsupportedUpdate(
         input.startsAt !== undefined ||
-          input.endsAt !== undefined,
+          input.endsAt !== undefined ||
+          input.durationSeconds !== undefined,
       );
       return createLessonContentInputSchema.parse({
         ...common,
@@ -140,6 +146,10 @@ function mergedContentInput(
           input.storageKey === undefined
             ? current.storageKey
             : input.storageKey,
+        durationSeconds:
+          input.durationSeconds === undefined
+            ? current.durationSeconds
+            : input.durationSeconds,
       });
 
     case "YOUTUBE":
@@ -155,11 +165,16 @@ function mergedContentInput(
           input.externalUrl === undefined
             ? current.externalUrl
             : input.externalUrl,
+        durationSeconds:
+          input.durationSeconds === undefined
+            ? current.durationSeconds
+            : input.durationSeconds,
       });
 
     case "LIVE_CLASS":
       rejectUnsupportedUpdate(
-        input.storageKey !== undefined,
+        input.storageKey !== undefined ||
+          input.durationSeconds !== undefined,
       );
       return createLessonContentInputSchema.parse({
         ...common,
@@ -384,6 +399,8 @@ export async function updateLessonContent(
       notes: normalized.notes,
       externalUrl: normalized.externalUrl,
       storageKey: normalized.storageKey,
+      durationSeconds:
+        normalized.durationSeconds,
       startsAt: normalized.startsAt,
       endsAt: normalized.endsAt,
       sequence: normalized.sequence,

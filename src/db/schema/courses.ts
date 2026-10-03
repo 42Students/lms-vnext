@@ -348,6 +348,7 @@ export const lessonContents = pgTable(
     notes: text("notes"),
     externalUrl: text("external_url"),
     storageKey: text("storage_key"),
+    durationSeconds: integer("duration_seconds"),
     startsAt: timestamp("starts_at", {
       withTimezone: true,
     }),
@@ -388,29 +389,91 @@ export const lessonContents = pgTable(
       sql`${table.sequence} >= 0`,
     ),
     check(
+      "lesson_contents_duration_ck",
+      sql`${table.durationSeconds} is null or ${table.durationSeconds} between 1 and 86400`,
+    ),
+    check(
       "lesson_contents_shape_ck",
       sql`(
         (${table.contentType} = 'RESOURCE'
           and (${table.notes} is not null or ${table.externalUrl} is not null or ${table.storageKey} is not null)
+          and ${table.durationSeconds} is null
           and ${table.startsAt} is null and ${table.endsAt} is null)
         or
         (${table.contentType} = 'VIDEO'
           and ${table.storageKey} is not null
           and ${table.externalUrl} is null
+          and ${table.durationSeconds} is not null
           and ${table.startsAt} is null and ${table.endsAt} is null)
         or
         (${table.contentType} = 'YOUTUBE'
           and ${table.externalUrl} is not null
           and ${table.storageKey} is null
+          and ${table.durationSeconds} is not null
           and ${table.startsAt} is null and ${table.endsAt} is null)
         or
         (${table.contentType} = 'LIVE_CLASS'
           and ${table.externalUrl} is not null
           and ${table.storageKey} is null
+          and ${table.durationSeconds} is null
           and ${table.startsAt} is not null
           and ${table.endsAt} is not null
           and ${table.endsAt} > ${table.startsAt})
       )`,
+    ),
+  ],
+);
+
+
+export const learnerContentProgress = pgTable(
+  "learner_content_progress",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    membershipId: uuid("membership_id")
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    lessonContentId: uuid("lesson_content_id")
+      .notNull()
+      .references(() => lessonContents.id, {
+        onDelete: "restrict",
+      }),
+    lastPositionSeconds: integer(
+      "last_position_seconds",
+    )
+      .notNull()
+      .default(0),
+    completedAt: timestamp("completed_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "learner_content_progress_membership_content_uq",
+    ).on(
+      table.membershipId,
+      table.lessonContentId,
+    ),
+    index(
+      "learner_content_progress_membership_idx",
+    ).on(table.membershipId),
+    index(
+      "learner_content_progress_content_idx",
+    ).on(table.lessonContentId),
+    check(
+      "learner_content_progress_position_ck",
+      sql`${table.lastPositionSeconds} >= 0`,
     ),
   ],
 );

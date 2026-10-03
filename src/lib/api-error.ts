@@ -124,9 +124,13 @@ export function apiErrorResponse(error: unknown) {
       "LEARNING_ACCESS_DENIED",
       "FACULTY_TEACHING_SCOPE_REQUIRED",
       "LEARNER_ENROLLMENT_SCOPE_REQUIRED",
+      "LEARNER_PROGRESS_ACCESS_DENIED",
     ]);
     const badRequest = new Set([
       "CONTENT_TYPE_SHAPE_INVALID",
+      "TIMED_CONTENT_MANUAL_COMPLETION_NOT_ALLOWED",
+      "CONTENT_DURATION_REQUIRED",
+      "LIVE_CLASS_NOT_FINISHED",
     ]);
 
     const status = notFound.has(error.code)
