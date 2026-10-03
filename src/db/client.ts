@@ -88,6 +88,11 @@ export async function checkDatabaseConnection() {
       projectTemplates: string | null;
       projectTemplateVersions: string | null;
       projectTemplateCollegeAssignments: string | null;
+      projectInstances: string | null;
+      projectReleases: string | null;
+      projectSprints: string | null;
+      projectTasks: string | null;
+      projectResources: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -118,7 +123,12 @@ export async function checkDatabaseConnection() {
          to_regclass('public.quiz_attempt_answers')::text as "quizAttemptAnswers",
          to_regclass('public.project_templates')::text as "projectTemplates",
          to_regclass('public.project_template_versions')::text as "projectTemplateVersions",
-         to_regclass('public.project_template_college_assignments')::text as "projectTemplateCollegeAssignments"`,
+         to_regclass('public.project_template_college_assignments')::text as "projectTemplateCollegeAssignments",
+         to_regclass('public.project_instances')::text as "projectInstances",
+         to_regclass('public.project_releases')::text as "projectReleases",
+         to_regclass('public.project_sprints')::text as "projectSprints",
+         to_regclass('public.project_tasks')::text as "projectTasks",
+         to_regclass('public.project_resources')::text as "projectResources"`,
     );
 
     const schema = result.rows[0];
@@ -151,7 +161,12 @@ export async function checkDatabaseConnection() {
       !schema.quizAttemptAnswers ||
       !schema.projectTemplates ||
       !schema.projectTemplateVersions ||
-      !schema.projectTemplateCollegeAssignments
+      !schema.projectTemplateCollegeAssignments ||
+      !schema.projectInstances ||
+      !schema.projectReleases ||
+      !schema.projectSprints ||
+      !schema.projectTasks ||
+      !schema.projectResources
     ) {
       throw new Error(
         "Database schema is not fully migrated",

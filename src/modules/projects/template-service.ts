@@ -505,10 +505,16 @@ export async function listAssignedProjectTemplates(
     )
     .innerJoin(
       projectTemplateVersions,
-      eq(
-        projectTemplateVersions.id,
-        projectTemplateCollegeAssignments
-          .templateVersionId,
+      and(
+        eq(
+          projectTemplateVersions.id,
+          projectTemplateCollegeAssignments
+            .templateVersionId,
+        ),
+        eq(
+          projectTemplateVersions.templateId,
+          projectTemplateCollegeAssignments.templateId,
+        ),
       ),
     )
     .where(

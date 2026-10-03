@@ -1,0 +1,380 @@
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
+import { Pool } from "pg";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import {
+  assignProjectTemplateToCollege,
+  createProjectTemplate,
+  publishProjectTemplate,
+  reviseProjectTemplate,
+} from "@/modules/projects/template-service";
+import {
+  createProjectInstance,
+  getProjectInstanceWorkspace,
+} from "@/modules/projects/instance-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+
+const databaseUrl =
+  process.env.TEST_DATABASE_URL ??
+  process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error(
+    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
+  );
+}
+
+const pool = new Pool({
+  connectionString: databaseUrl,
+  max: 1,
+});
+
+const superAdmin: RequestContext = {
+  user: {
+    id: SEED_IDS.superAdminUser,
+    identityUid: "seed-superadmin",
+    platformStatus: "ACTIVE",
+    systemRoles: ["SUPER_ADMIN"],
+  },
+  membership: null,
+  adminScope: null,
+};
+
+const scopedSuperAdmin: RequestContext = {
+  ...superAdmin,
+  adminScope: {
+    organizationId: SEED_IDS.organization,
+    collegeId: SEED_IDS.collegeA,
+  },
+};
+
+const collegeAdmin: RequestContext = {
+  user: {
+    id: SEED_IDS.collegeAdminUser,
+    identityUid: "seed-college-admin",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.collegeAdminMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+
+function blueprint(label: string) {
+  return {
+    overview: {
+      goal: label + " goal",
+      deliverables: [label + " demo"],
+    },
+    releases: [
+      {
+        key: "release-1",
+        title: label + " Release",
+        sequence: 0,
+      },
+    ],
+    sprints: [
+      {
+        key: "sprint-1",
+        releaseKey: "release-1",
+        title: label + " Sprint",
+        sequence: 0,
+      },
+    ],
+    tasks: [
+      {
+        key: "task-1",
+        sprintKey: "sprint-1",
+        title: label + " Task",
+        priority: "HIGH" as const,
+        sequence: 0,
+      },
+    ],
+    resources: [
+      {
+        key: "resource-1",
+        title: label + " Guide",
+        url: "https://example.com/" +
+          label.toLowerCase(),
+        required: true,
+        sequence: 0,
+      },
+    ],
+  };
+}
+
+async function cleanup() {
+  await pool.query(
+    `delete from project_resources
+     where project_id in (
+       select id from project_instances
+       where slug like 'p3-%'
+     )`,
+  );
+  await pool.query(
+    `delete from project_tasks
+     where project_id in (
+       select id from project_instances
+       where slug like 'p3-%'
+     )`,
+  );
+  await pool.query(
+    `delete from project_sprints
+     where project_id in (
+       select id from project_instances
+       where slug like 'p3-%'
+     )`,
+  );
+  await pool.query(
+    `delete from project_releases
+     where project_id in (
+       select id from project_instances
+       where slug like 'p3-%'
+     )`,
+  );
+  await pool.query(
+    "delete from project_instances where slug like 'p3-%'",
+  );
+  await pool.query(
+    `delete from project_template_college_assignments
+     where template_id in (
+       select id from project_templates
+       where slug like 'p3-%'
+     )`,
+  );
+  await pool.query(
+    `delete from project_template_versions
+     where template_id in (
+       select id from project_templates
+       where slug like 'p3-%'
+     )`,
+  );
+  await pool.query(
+    "delete from project_templates where slug like 'p3-%'",
+  );
+}
+
+beforeEach(cleanup);
+
+afterAll(async () => {
+  await cleanup();
+  await pool.end();
+  await closeDatabaseConnection();
+});
+
+describe("Projects P3 deterministic materialization", () => {
+  it("freezes normalized instance state at the assigned template version", async () => {
+    const createdTemplate =
+      await createProjectTemplate(
+        superAdmin,
+        {
+          slug: "p3-materialization",
+          title: "P3 Materialization",
+          blueprint: blueprint("V1"),
+        },
+      );
+    await publishProjectTemplate(
+      superAdmin,
+      createdTemplate.template.id,
+    );
+    await assignProjectTemplateToCollege(
+      scopedSuperAdmin,
+      createdTemplate.template.id,
+      SEED_IDS.collegeA,
+    );
+
+    const firstProject =
+      await createProjectInstance(
+        collegeAdmin,
+        {
+          collegeId: SEED_IDS.collegeA,
+          templateId:
+            createdTemplate.template.id,
+          slug: "p3-instance-v1",
+          title: "P3 Instance V1",
+        },
+      );
+
+    const firstWorkspace =
+      await getProjectInstanceWorkspace(
+        collegeAdmin,
+        firstProject.id,
+      );
+    expect(firstWorkspace).toMatchObject({
+      project: {
+        templateId:
+          createdTemplate.template.id,
+      },
+      releases: [
+        {
+          templateKey: "release-1",
+          title: "V1 Release",
+        },
+      ],
+      sprints: [
+        {
+          templateKey: "sprint-1",
+          title: "V1 Sprint",
+        },
+      ],
+      tasks: [
+        {
+          templateKey: "task-1",
+          title: "V1 Task",
+        },
+      ],
+      resources: [
+        {
+          templateKey: "resource-1",
+          title: "V1 Guide",
+        },
+      ],
+    });
+
+    const revised = await reviseProjectTemplate(
+      superAdmin,
+      createdTemplate.template.id,
+      {
+        title: "P3 Materialization V2",
+        blueprint: blueprint("V2"),
+        changeNote: "New future version",
+      },
+    );
+    await publishProjectTemplate(
+      superAdmin,
+      createdTemplate.template.id,
+    );
+    await assignProjectTemplateToCollege(
+      scopedSuperAdmin,
+      createdTemplate.template.id,
+      SEED_IDS.collegeA,
+    );
+
+    const rereadFirst =
+      await getProjectInstanceWorkspace(
+        collegeAdmin,
+        firstProject.id,
+      );
+    expect(rereadFirst.project.templateVersionId).not.toBe(
+      revised.version.id,
+    );
+    expect(rereadFirst.tasks[0]?.title).toBe(
+      "V1 Task",
+    );
+
+    const secondProject =
+      await createProjectInstance(
+        collegeAdmin,
+        {
+          collegeId: SEED_IDS.collegeA,
+          templateId:
+            createdTemplate.template.id,
+          slug: "p3-instance-v2",
+          title: "P3 Instance V2",
+        },
+      );
+    const secondWorkspace =
+      await getProjectInstanceWorkspace(
+        collegeAdmin,
+        secondProject.id,
+      );
+    expect(
+      secondWorkspace.project.templateVersionId,
+    ).toBe(revised.version.id);
+    expect(secondWorkspace.tasks[0]?.title).toBe(
+      "V2 Task",
+    );
+  });
+
+  it("requires exact college authority and an active assigned template", async () => {
+    const template = await createProjectTemplate(
+      superAdmin,
+      {
+        slug: "p3-unassigned",
+        title: "P3 Unassigned",
+        blueprint: blueprint("Unassigned"),
+      },
+    );
+    await publishProjectTemplate(
+      superAdmin,
+      template.template.id,
+    );
+
+    await expect(
+      createProjectInstance(collegeAdmin, {
+        collegeId: SEED_IDS.collegeA,
+        templateId: template.template.id,
+        slug: "p3-no-assignment",
+        title: "P3 No Assignment",
+      }),
+    ).rejects.toMatchObject({
+      code: "PROJECT_TEMPLATE_NOT_ASSIGNED",
+    });
+
+    await expect(
+      createProjectInstance(collegeAdmin, {
+        collegeId: SEED_IDS.collegeB,
+        templateId: template.template.id,
+        slug: "p3-foreign-college",
+        title: "P3 Foreign College",
+      }),
+    ).rejects.toBeInstanceOf(
+      AuthorizationError,
+    );
+  });
+
+  it("enforces stable project slugs per college", async () => {
+    const template = await createProjectTemplate(
+      superAdmin,
+      {
+        slug: "p3-slug-template",
+        title: "P3 Slug Template",
+        blueprint: blueprint("Slug"),
+      },
+    );
+    await publishProjectTemplate(
+      superAdmin,
+      template.template.id,
+    );
+    await assignProjectTemplateToCollege(
+      scopedSuperAdmin,
+      template.template.id,
+      SEED_IDS.collegeA,
+    );
+
+    await createProjectInstance(
+      collegeAdmin,
+      {
+        collegeId: SEED_IDS.collegeA,
+        templateId: template.template.id,
+        slug: "p3-stable-slug",
+        title: "P3 Stable Slug",
+      },
+    );
+
+    await expect(
+      createProjectInstance(
+        collegeAdmin,
+        {
+          collegeId: SEED_IDS.collegeA,
+          templateId: template.template.id,
+          slug: "p3-stable-slug",
+          title: "P3 Duplicate Slug",
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_SLUG_CONFLICT",
+    });
+  });
+});

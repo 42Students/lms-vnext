@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   index,
   integer,
@@ -160,3 +161,302 @@ export const projectTemplateCollegeAssignments =
       ).on(table.templateVersionId),
     ],
   );
+
+export const projectInstances = pgTable(
+  "project_instances",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, {
+        onDelete: "restrict",
+      }),
+    templateId: uuid("template_id")
+      .notNull()
+      .references(() => projectTemplates.id, {
+        onDelete: "restrict",
+      }),
+    templateVersionId: uuid("template_version_id")
+      .notNull()
+      .references(() => projectTemplateVersions.id, {
+        onDelete: "restrict",
+      }),
+    slug: varchar("slug", { length: 96 }).notNull(),
+    title: text("title").notNull(),
+    summary: text("summary"),
+    status: varchar("status", { length: 32 })
+      .notNull()
+      .default("PLANNED"),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    materializedAt: timestamp("materialized_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    archivedAt: timestamp("archived_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("project_instances_college_slug_uq").on(
+      table.collegeId,
+      sql`lower(${table.slug})`,
+    ),
+    index("project_instances_college_status_idx").on(
+      table.collegeId,
+      table.status,
+    ),
+    index("project_instances_template_version_idx").on(
+      table.templateVersionId,
+    ),
+    check(
+      "project_instances_status_ck",
+      sql`${table.status} in ('PLANNED', 'ACTIVE', 'COMPLETED', 'ARCHIVED')`,
+    ),
+  ],
+);
+
+export const projectReleases = pgTable(
+  "project_releases",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    templateKey: varchar("template_key", {
+      length: 64,
+    }).notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+    sequence: integer("sequence").notNull(),
+    status: varchar("status", { length: 32 })
+      .notNull()
+      .default("PLANNED"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("project_releases_project_key_uq").on(
+      table.projectId,
+      table.templateKey,
+    ),
+    uniqueIndex(
+      "project_releases_project_sequence_uq",
+    ).on(table.projectId, table.sequence),
+    index("project_releases_project_status_idx").on(
+      table.projectId,
+      table.status,
+    ),
+    check(
+      "project_releases_sequence_ck",
+      sql`${table.sequence} >= 0`,
+    ),
+    check(
+      "project_releases_status_ck",
+      sql`${table.status} in ('PLANNED', 'IN_PROGRESS', 'SHIPPED')`,
+    ),
+  ],
+);
+
+export const projectSprints = pgTable(
+  "project_sprints",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    releaseId: uuid("release_id")
+      .notNull()
+      .references(() => projectReleases.id, {
+        onDelete: "restrict",
+      }),
+    templateKey: varchar("template_key", {
+      length: 64,
+    }).notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+    sequence: integer("sequence").notNull(),
+    status: varchar("status", { length: 32 })
+      .notNull()
+      .default("PLANNED"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("project_sprints_project_key_uq").on(
+      table.projectId,
+      table.templateKey,
+    ),
+    uniqueIndex(
+      "project_sprints_release_sequence_uq",
+    ).on(table.releaseId, table.sequence),
+    index("project_sprints_project_status_idx").on(
+      table.projectId,
+      table.status,
+    ),
+    check(
+      "project_sprints_sequence_ck",
+      sql`${table.sequence} >= 0`,
+    ),
+    check(
+      "project_sprints_status_ck",
+      sql`${table.status} in ('PLANNED', 'ACTIVE', 'COMPLETED')`,
+    ),
+  ],
+);
+
+export const projectTasks = pgTable(
+  "project_tasks",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    sprintId: uuid("sprint_id")
+      .notNull()
+      .references(() => projectSprints.id, {
+        onDelete: "restrict",
+      }),
+    templateKey: varchar("template_key", {
+      length: 64,
+    }).notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+    acceptanceCriteria: text("acceptance_criteria"),
+    priority: varchar("priority", { length: 16 })
+      .notNull()
+      .default("MEDIUM"),
+    status: varchar("status", { length: 32 })
+      .notNull()
+      .default("TODO"),
+    sequence: integer("sequence").notNull(),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("project_tasks_project_key_uq").on(
+      table.projectId,
+      table.templateKey,
+    ),
+    uniqueIndex("project_tasks_sprint_sequence_uq").on(
+      table.sprintId,
+      table.sequence,
+    ),
+    index("project_tasks_project_status_idx").on(
+      table.projectId,
+      table.status,
+    ),
+    check(
+      "project_tasks_sequence_ck",
+      sql`${table.sequence} >= 0`,
+    ),
+    check(
+      "project_tasks_priority_ck",
+      sql`${table.priority} in ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')`,
+    ),
+    check(
+      "project_tasks_status_ck",
+      sql`${table.status} in ('TODO', 'IN_PROGRESS', 'BLOCKED', 'IN_REVIEW', 'DONE')`,
+    ),
+  ],
+);
+
+export const projectResources = pgTable(
+  "project_resources",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    templateKey: varchar("template_key", {
+      length: 64,
+    }).notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+    url: text("url"),
+    required: boolean("required")
+      .notNull()
+      .default(false),
+    sequence: integer("sequence").notNull(),
+    status: varchar("status", { length: 32 })
+      .notNull()
+      .default("ACTIVE"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("project_resources_project_key_uq").on(
+      table.projectId,
+      table.templateKey,
+    ),
+    uniqueIndex(
+      "project_resources_project_sequence_uq",
+    ).on(table.projectId, table.sequence),
+    index("project_resources_project_status_idx").on(
+      table.projectId,
+      table.status,
+    ),
+    check(
+      "project_resources_sequence_ck",
+      sql`${table.sequence} >= 0`,
+    ),
+    check(
+      "project_resources_status_ck",
+      sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
+    ),
+  ],
+);

@@ -268,3 +268,19 @@ export const reviseProjectTemplateInputSchema = z
 export type ReviseProjectTemplateInput = z.infer<
   typeof reviseProjectTemplateInputSchema
 >;
+
+export const projectInstanceIdSchema = z.string().uuid();
+
+export const createProjectInstanceInputSchema = z
+  .object({
+    collegeId: z.string().uuid(),
+    templateId: projectTemplateIdSchema,
+    slug: projectKeySchema,
+    title: titleSchema,
+    summary: z.string().trim().min(1).max(2000).optional(),
+  })
+  .strict();
+
+export type CreateProjectInstanceInput = z.infer<
+  typeof createProjectInstanceInputSchema
+>;

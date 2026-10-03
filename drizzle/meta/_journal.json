@@ -64,6 +64,13 @@
       "when": 1791010000000,
       "tag": "0008_projects_p1_templates",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791011200000,
+      "tag": "0009_projects_p3_instances",
+      "breakpoints": true
     }
   ]
 }

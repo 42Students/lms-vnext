@@ -162,6 +162,7 @@ export function apiErrorResponse(error: unknown) {
       "PROJECT_TEMPLATE_NOT_FOUND",
       "PROJECT_TEMPLATE_VERSION_NOT_FOUND",
       "PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND",
+      "PROJECT_NOT_FOUND",
     ]);
 
     return NextResponse.json(
