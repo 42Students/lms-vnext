@@ -10,6 +10,12 @@ import {
   SECTION_STATUSES,
 } from "@/modules/academics/constants";
 import {
+  COURSE_OFFERING_STATUSES,
+  COURSE_OFFERING_TYPES,
+  COURSE_STATUSES,
+  COURSE_TEACHING_ROLES,
+} from "@/modules/courses/constants";
+import {
   COLLEGE_STATUSES,
   MEMBERSHIP_ROLES,
   MEMBERSHIP_STATUSES,
@@ -81,4 +87,24 @@ export const sectionFacultyRoleEnum = pgEnum(
 export const scheduleEventStatusEnum = pgEnum(
   "schedule_event_status",
   SCHEDULE_EVENT_STATUSES,
+);
+
+export const courseStatusEnum = pgEnum(
+  "course_status",
+  COURSE_STATUSES,
+);
+
+export const courseOfferingTypeEnum = pgEnum(
+  "course_offering_type",
+  COURSE_OFFERING_TYPES,
+);
+
+export const courseOfferingStatusEnum = pgEnum(
+  "course_offering_status",
+  COURSE_OFFERING_STATUSES,
+);
+
+export const courseTeachingRoleEnum = pgEnum(
+  "course_teaching_role",
+  COURSE_TEACHING_ROLES,
 );

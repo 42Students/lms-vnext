@@ -10,6 +10,7 @@ import { PeopleServiceError } from "@/modules/people/errors";
 import { TenantDomainServiceError } from "@/modules/tenant-domains/service";
 import { AdminScopeServiceError } from "@/modules/admin-scope/service";
 import { AcademicsServiceError } from "@/modules/academics/errors";
+import { CoursesServiceError } from "@/modules/courses/errors";
 import { logError } from "@/observability/logger";
 
 export function apiErrorResponse(error: unknown) {
@@ -96,6 +97,23 @@ export function apiErrorResponse(error: unknown) {
       "SECTION_ENROLLMENT_NOT_FOUND",
       "FACULTY_ASSIGNMENT_NOT_FOUND",
       "SCHEDULE_EVENT_NOT_FOUND",
+      "MEMBERSHIP_NOT_FOUND",
+    ]);
+
+    return NextResponse.json(
+      { error: error.code },
+      { status: notFound.has(error.code) ? 404 : 409 },
+    );
+  }
+
+  if (error instanceof CoursesServiceError) {
+    const notFound = new Set([
+      "COLLEGE_NOT_FOUND",
+      "DEPARTMENT_NOT_FOUND",
+      "COURSE_NOT_FOUND",
+      "OFFERING_NOT_FOUND",
+      "SECTION_DELIVERY_NOT_FOUND",
+      "TEACHING_ASSIGNMENT_NOT_FOUND",
       "MEMBERSHIP_NOT_FOUND",
     ]);
 

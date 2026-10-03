@@ -518,18 +518,20 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 
 ---
 
-# W. Courses — later
+# W. Courses — ACTIVE
 
-- [ ] legacy Course audit
-- [ ] course domain
-- [ ] offerings
+- [~] legacy Course audit — C1 structural/authorization behavior audited; lesson/content/progress behavior remains
+- [x] course domain — department-owned Course catalog with archive dependency guard
+- [x] offerings — Cohort + Academic Period offerings with CORE/ELECTIVE, credits and order
+- [x] Section deliveries — exact Offering -> Section scope
+- [x] Faculty teaching assignments — PRIMARY / CO_TEACHER / TA on exact Section delivery
 - [ ] learning paths
 - [ ] lessons/content
 - [ ] progress
-- [ ] permissions
+- [~] permissions — C1 structural read/manage + exact teaching scope complete; learner/content authorization remains
 - [x] greenfield decision: no legacy course data migration required
 - [ ] UI
-- [ ] regression tests
+- [~] regression tests — C1 PostgreSQL tenant/lifecycle/constraint suite added; learning/content tests remain
 
 ---
 

@@ -70,6 +70,10 @@ export async function checkDatabaseConnection() {
       sectionEnrollments: string | null;
       sectionFacultyAssignments: string | null;
       sectionScheduleEvents: string | null;
+      courses: string | null;
+      courseOfferings: string | null;
+      courseSectionDeliveries: string | null;
+      courseTeachingAssignments: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -82,7 +86,11 @@ export async function checkDatabaseConnection() {
          to_regclass('public.learner_program_enrollments')::text as "learnerProgramEnrollments",
          to_regclass('public.section_enrollments')::text as "sectionEnrollments",
          to_regclass('public.section_faculty_assignments')::text as "sectionFacultyAssignments",
-         to_regclass('public.section_schedule_events')::text as "sectionScheduleEvents"`,
+         to_regclass('public.section_schedule_events')::text as "sectionScheduleEvents",
+         to_regclass('public.courses')::text as "courses",
+         to_regclass('public.course_offerings')::text as "courseOfferings",
+         to_regclass('public.course_section_deliveries')::text as "courseSectionDeliveries",
+         to_regclass('public.course_teaching_assignments')::text as "courseTeachingAssignments"`,
     );
 
     const schema = result.rows[0];
@@ -97,7 +105,11 @@ export async function checkDatabaseConnection() {
       !schema.learnerProgramEnrollments ||
       !schema.sectionEnrollments ||
       !schema.sectionFacultyAssignments ||
-      !schema.sectionScheduleEvents
+      !schema.sectionScheduleEvents ||
+      !schema.courses ||
+      !schema.courseOfferings ||
+      !schema.courseSectionDeliveries ||
+      !schema.courseTeachingAssignments
     ) {
       throw new Error(
         "Database schema is not fully migrated",

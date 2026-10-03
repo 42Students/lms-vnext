@@ -35,7 +35,7 @@ PHASE 4  Identity Platform + login UI          PARTIAL / GCP-BLOCKED
 PHASE 5  Core admin UI                         MOSTLY DONE
 PHASE 6  Legacy migration tooling              RETIRED — GREENFIELD
 PHASE 7  Academics core                        DONE
-PHASE 8  Courses / learning                    NEXT
+PHASE 8  Courses / learning                    ACTIVE
 PHASE 9  Projects                              PENDING
 PHASE 10 Placements / TPO / HR                 PENDING
 PHASE 11 Activity / notifications / analytics  PENDING
@@ -669,6 +669,18 @@ Likely scope:
 - lesson content
 - assignments/assessments if they belong here
 - progress
+
+## Current progress
+
+Courses C1 establishes the safe structural graph:
+- department-owned Course catalog
+- Cohort + Academic Period Course Offerings
+- exact Section Deliveries
+- exact Faculty Teaching Assignments with PRIMARY / CO_TEACHER / TA roles
+- PostgreSQL uniqueness/dependency guards
+- tenant and structural permission regression coverage
+
+Next Courses work starts with the learning structure on top of this graph: learning paths, lessons and content.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

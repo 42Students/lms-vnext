@@ -156,6 +156,41 @@ describe("platform authorization policy", () => {
     ).toBe(false);
   });
 
+  it("keeps courses readable to same-college members but structural mutation admin-only", () => {
+    const ownCollege = {
+      organizationId: "org-1",
+      collegeId: "college-1",
+    };
+    const otherCollege = {
+      organizationId: "org-2",
+      collegeId: "college-2",
+    };
+
+    expect(
+      can(memberContext(["LEARNER"]), "courses.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["FACULTY"]), "courses.read", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["FACULTY"]), "courses.manage", ownCollege),
+    ).toBe(false);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "courses.manage",
+        ownCollege,
+      ),
+    ).toBe(true);
+    expect(
+      can(
+        memberContext(["COLLEGE_ADMIN"]),
+        "courses.manage",
+        otherCollege,
+      ),
+    ).toBe(false);
+  });
+
   it("centralizes people management on college-admin tenant scope", () => {
     const target = {
       organizationId: "org-1",
