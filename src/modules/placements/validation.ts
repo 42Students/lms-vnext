@@ -58,3 +58,104 @@ export type CreatePlacementCompanyInput = z.input<
 export type UpdatePlacementCompanyRelationshipInput = z.infer<
   typeof updatePlacementCompanyRelationshipInputSchema
 >;
+
+
+export const placementEmploymentTypes = [
+  "FULL_TIME",
+  "INTERNSHIP",
+  "CONTRACT",
+] as const;
+
+export const placementWorkModes = [
+  "ONSITE",
+  "HYBRID",
+  "REMOTE",
+  "NO_PREFERENCE",
+] as const;
+
+export const placementShiftPreferences = [
+  "DAY",
+  "NIGHT",
+  "FLEXIBLE",
+  "NO_PREFERENCE",
+] as const;
+
+export const placementRelocationPreferences = [
+  "YES",
+  "NO",
+  "NO_PREFERENCE",
+] as const;
+
+function distinctTextList(
+  maxItems: number,
+  maxLength: number,
+) {
+  return z
+    .array(
+      z
+        .string()
+        .trim()
+        .min(1)
+        .max(maxLength),
+    )
+    .max(maxItems)
+    .transform((values) => {
+      const seen = new Set<string>();
+      const result: string[] = [];
+
+      for (const value of values) {
+        const key = value.toLocaleLowerCase("en");
+        if (seen.has(key)) continue;
+        seen.add(key);
+        result.push(value);
+      }
+
+      return result;
+    });
+}
+
+export const candidatePreferencesInputSchema = z
+  .object({
+    preferredRoleTitles: distinctTextList(20, 120)
+      .optional()
+      .default([]),
+    preferredLocations: distinctTextList(20, 120)
+      .optional()
+      .default([]),
+    preferredEmploymentTypes: z
+      .array(z.enum(placementEmploymentTypes))
+      .max(placementEmploymentTypes.length)
+      .transform((values) => [...new Set(values)])
+      .optional()
+      .default([]),
+    preferredWorkMode: z
+      .enum(placementWorkModes)
+      .optional()
+      .default("NO_PREFERENCE"),
+    shiftPreference: z
+      .enum(placementShiftPreferences)
+      .optional()
+      .default("NO_PREFERENCE"),
+    minimumAnnualCtcInr: z
+      .number()
+      .int()
+      .min(0)
+      .max(100_000_000)
+      .nullable()
+      .optional()
+      .default(null),
+    relocationPreference: z
+      .enum(placementRelocationPreferences)
+      .optional()
+      .default("NO_PREFERENCE"),
+    notifyMatchingJobs: z.boolean().optional().default(true),
+    notifyApplicationUpdates: z
+      .boolean()
+      .optional()
+      .default(true),
+  })
+  .strict();
+
+export type CandidatePreferencesInput = z.input<
+  typeof candidatePreferencesInputSchema
+>;

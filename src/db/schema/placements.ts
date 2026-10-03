@@ -3,6 +3,7 @@ import {
   boolean,
   check,
   index,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -119,6 +120,85 @@ export const placementCompanyRelationships = pgTable(
     check(
       "placement_company_relationships_archive_shape_ck",
       sql`(${table.status} = 'ARCHIVED') = (${table.archivedAt} is not null)`,
+    ),
+  ],
+);
+
+
+export const placementCandidatePreferences = pgTable(
+  "placement_candidate_preferences",
+  {
+    membershipId: uuid("membership_id")
+      .primaryKey()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    preferredRoleTitles: text("preferred_role_titles")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    preferredLocations: text("preferred_locations")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    preferredEmploymentTypes: text(
+      "preferred_employment_types",
+    )
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    preferredWorkMode: varchar("preferred_work_mode", {
+      length: 24,
+    })
+      .notNull()
+      .default("NO_PREFERENCE"),
+    shiftPreference: varchar("shift_preference", {
+      length: 24,
+    })
+      .notNull()
+      .default("NO_PREFERENCE"),
+    minimumAnnualCtcInr: integer("minimum_annual_ctc_inr"),
+    relocationPreference: varchar(
+      "relocation_preference",
+      { length: 24 },
+    )
+      .notNull()
+      .default("NO_PREFERENCE"),
+    notifyMatchingJobs: boolean("notify_matching_jobs")
+      .notNull()
+      .default(true),
+    notifyApplicationUpdates: boolean(
+      "notify_application_updates",
+    )
+      .notNull()
+      .default(true),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    check(
+      "placement_candidate_preferences_work_mode_ck",
+      sql`${table.preferredWorkMode} in ('ONSITE', 'HYBRID', 'REMOTE', 'NO_PREFERENCE')`,
+    ),
+    check(
+      "placement_candidate_preferences_shift_ck",
+      sql`${table.shiftPreference} in ('DAY', 'NIGHT', 'FLEXIBLE', 'NO_PREFERENCE')`,
+    ),
+    check(
+      "placement_candidate_preferences_relocation_ck",
+      sql`${table.relocationPreference} in ('YES', 'NO', 'NO_PREFERENCE')`,
+    ),
+    check(
+      "placement_candidate_preferences_ctc_ck",
+      sql`${table.minimumAnnualCtcInr} is null or ${table.minimumAnnualCtcInr} >= 0`,
     ),
   ],
 );
