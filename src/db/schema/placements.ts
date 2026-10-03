@@ -592,3 +592,47 @@ export const placementApplications = pgTable(
     ),
   ],
 );
+
+
+export const placementApplicationStatusHistory = pgTable(
+  "placement_application_status_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    applicationId: uuid("application_id")
+      .notNull()
+      .references(() => placementApplications.id, {
+        onDelete: "restrict",
+      }),
+    fromStatus: varchar("from_status", { length: 24 }),
+    toStatus: varchar("to_status", { length: 24 }).notNull(),
+    actorUserId: uuid("actor_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    reason: text("reason"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index(
+      "placement_application_status_history_application_idx",
+    ).on(table.applicationId, table.createdAt),
+    check(
+      "placement_application_status_history_from_ck",
+      sql`${table.fromStatus} is null or ${table.fromStatus} in ('SUBMITTED', 'WITHDRAWN')`,
+    ),
+    check(
+      "placement_application_status_history_to_ck",
+      sql`${table.toStatus} in ('SUBMITTED', 'WITHDRAWN')`,
+    ),
+    check(
+      "placement_application_status_history_transition_ck",
+      sql`(${table.fromStatus} is null and ${table.toStatus} = 'SUBMITTED')
+        or (${table.fromStatus} = 'SUBMITTED' and ${table.toStatus} = 'WITHDRAWN')`,
+    ),
+  ],
+);

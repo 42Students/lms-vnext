@@ -1,5 +1,6 @@
 import {
   and,
+  asc,
   desc,
   eq,
 } from "drizzle-orm";
@@ -7,6 +8,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   placementApplications,
+  placementApplicationStatusHistory,
   placementCompanyRelationships,
   placementCompanies,
   placementJobs,
@@ -164,7 +166,23 @@ async function loadApplicationDetails(
       "PLACEMENT_APPLICATION_NOT_FOUND",
     );
   }
-  return row;
+
+  const history = await getDb()
+    .select()
+    .from(placementApplicationStatusHistory)
+    .where(
+      eq(
+        placementApplicationStatusHistory.applicationId,
+        applicationId,
+      ),
+    )
+    .orderBy(
+      asc(
+        placementApplicationStatusHistory.createdAt,
+      ),
+    );
+
+  return { ...row, history };
 }
 
 function resolveExistingApplication(
@@ -268,19 +286,38 @@ export async function applyToPlacementJob(
     );
   }
 
-  const [created] = await getDb()
-    .insert(placementApplications)
-    .values({
-      jobId: job.id,
-      membershipId: membership.id,
-      channel,
-      eligibilityStatus: eligibility.status,
-      eligibilitySnapshot: eligibility,
-      submittedByUserId: context.user.id,
-      submittedAt: now,
-    })
-    .onConflictDoNothing()
-    .returning();
+  const created = await getDb().transaction(
+    async (tx) => {
+      const [application] = await tx
+        .insert(placementApplications)
+        .values({
+          jobId: job.id,
+          membershipId: membership.id,
+          channel,
+          eligibilityStatus: eligibility.status,
+          eligibilitySnapshot: eligibility,
+          submittedByUserId: context.user.id,
+          submittedAt: now,
+        })
+        .onConflictDoNothing()
+        .returning();
+
+      if (!application) return null;
+
+      await tx
+        .insert(
+          placementApplicationStatusHistory,
+        )
+        .values({
+          applicationId: application.id,
+          fromStatus: null,
+          toStatus: "SUBMITTED",
+          actorUserId: context.user.id,
+        });
+
+      return application;
+    },
+  );
 
   if (created) return created;
 
@@ -449,26 +486,45 @@ export async function withdrawPlacementApplication(
   }
 
   const now = new Date();
-  const [updated] = await getDb()
-    .update(placementApplications)
-    .set({
-      status: "WITHDRAWN",
-      withdrawnAt: now,
-      updatedAt: now,
-    })
-    .where(
-      and(
-        eq(
-          placementApplications.id,
-          applicationId,
-        ),
-        eq(
-          placementApplications.status,
-          "SUBMITTED",
-        ),
-      ),
-    )
-    .returning();
+  const updated = await getDb().transaction(
+    async (tx) => {
+      const [application] = await tx
+        .update(placementApplications)
+        .set({
+          status: "WITHDRAWN",
+          withdrawnAt: now,
+          updatedAt: now,
+        })
+        .where(
+          and(
+            eq(
+              placementApplications.id,
+              applicationId,
+            ),
+            eq(
+              placementApplications.status,
+              "SUBMITTED",
+            ),
+          ),
+        )
+        .returning();
+
+      if (!application) return null;
+
+      await tx
+        .insert(
+          placementApplicationStatusHistory,
+        )
+        .values({
+          applicationId: application.id,
+          fromStatus: "SUBMITTED",
+          toStatus: "WITHDRAWN",
+          actorUserId: context.user.id,
+        });
+
+      return application;
+    },
+  );
 
   if (updated) return updated;
 

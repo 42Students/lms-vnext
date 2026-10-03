@@ -91,6 +91,9 @@ const otherLearner: RequestContext = {
 
 async function cleanup() {
   await pool.query(
+    "delete from placement_application_status_history",
+  );
+  await pool.query(
     "delete from placement_applications",
   );
   await pool.query(
@@ -340,12 +343,40 @@ describe("Placement P5 applications", () => {
       Date,
     );
 
+    const history = await pool.query(
+      `select from_status, to_status
+       from placement_application_status_history
+       where application_id = $1
+       order by created_at asc`,
+      [application.id],
+    );
+    expect(history.rows).toEqual([
+      {
+        from_status: null,
+        to_status: "SUBMITTED",
+      },
+      {
+        from_status: "SUBMITTED",
+        to_status: "WITHDRAWN",
+      },
+    ]);
+
     const repeated =
       await withdrawPlacementApplication(
         learner,
         application.id,
       );
     expect(repeated.id).toBe(application.id);
+
+    const repeatedHistory = await pool.query(
+      `select count(*)::int as count
+       from placement_application_status_history
+       where application_id = $1`,
+      [application.id],
+    );
+    expect(
+      repeatedHistory.rows[0]?.count,
+    ).toBe(2);
 
     await expect(
       applyToPlacementJob(
