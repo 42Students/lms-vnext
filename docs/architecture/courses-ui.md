@@ -109,3 +109,30 @@ The Faculty workspace shows:
 Structural Course / Learning Path / Lesson ownership remains College Admin / scoped Super Admin. Shared Offering items are read-only to ordinary Faculty. Exact-delivery Content, Assignments and Quizzes use the existing teaching-scope mutation rules; their authoring controls are intentionally the next UI2B batch.
 
 Ordinary multi-role memberships keep every applicable Course entry point in the shell. A membership with both LEARNER and FACULTY roles can navigate to both My Courses and Teaching Courses without receiving admin navigation.
+
+
+## UI2B1 Faculty exact-delivery authoring
+
+UI2B1 adds authoring controls only inside the Faculty member's exact active Section Delivery.
+
+Supported draft creation:
+
+- RESOURCE with notes and/or HTTPS URL
+- YOUTUBE with validated YouTube URL and authored duration
+- LIVE_CLASS with HTTPS meeting URL and start/end timestamps
+- Assignment with description, deadline and points
+- Quiz with dynamic SINGLE_CHOICE / MULTIPLE_CHOICE questions, options, correctness, points and attempt limit
+
+VIDEO and file-backed RESOURCE creation remain hidden until the signed Cloud Storage upload-receipt workflow exists. The UI never accepts or invents raw storage keys.
+
+All Faculty-created items include the exact Delivery id in the request. Existing domain services re-check the active Teaching Assignment server-side, so changing client payload ids cannot grant access to a sibling Section.
+
+Lifecycle controls are derived from a pure client state model but remain advisory only; server services are authoritative:
+
+- exact DRAFT content/assignment/quiz -> publish or archive
+- exact PUBLISHED content/assignment -> archive
+- exact PUBLISHED quiz -> close or archive
+- exact CLOSED quiz -> archive
+- shared Offering items -> no Faculty mutation actions
+
+New items are deliberately created as DRAFT so a teacher can review the generated learner-facing shape before publication.

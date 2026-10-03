@@ -764,7 +764,18 @@ Courses UI2A adds the Faculty teaching read/operations foundation:
 - Faculty shell/dashboard entry point, including dual LEARNER+FACULTY navigation
 - PostgreSQL acceptance coverage for exact teaching scope
 
-Next Courses work is UI2B Faculty exact-delivery authoring/grading operations, then College/Super Admin Course structural UI, media playback/resume, and Course-level UI regression/E2E hardening.
+Courses UI2B1 adds Faculty exact-delivery authoring and lifecycle controls:
+- Section-only RESOURCE / YouTube / live-class draft creation
+- Section-only Assignment draft creation
+- dynamic Section-only single/multiple-choice Quiz builder
+- DRAFT-first workflow with existing server validation and exact Teaching Assignment re-check
+- publish/archive controls for exact content and assignments
+- publish/close/archive controls for exact Quizzes
+- shared Offering items remain read-only to Faculty
+- raw storage-key/video upload authoring remains hidden until signed Cloud Storage receipts exist
+- shared-vs-exact mutation-state unit regressions
+
+Next Courses work is UI2B2 Faculty Assignment grading + Quiz attempt/result operations, then College/Super Admin Course structural UI, media playback/resume, and Course-level UI regression/E2E hardening.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

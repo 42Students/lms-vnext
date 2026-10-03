@@ -1,6 +1,12 @@
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
+import { FacultyItemActions } from "./faculty-item-actions";
+import {
+  facultyOwnedItemActions,
+  nextLessonItemSequence,
+} from "./faculty-course-operation-model";
 import {
   getFacultyCourseWorkspace,
 } from "@/modules/courses/faculty-course-service";
@@ -61,6 +67,20 @@ function ContentItem({
 }: {
   item: Workspace["lessons"][number]["contents"][number];
 }) {
+  const actions = facultyOwnedItemActions({
+    deliveryId: item.deliveryId,
+    status: item.status,
+    kind: "CONTENT",
+  });
+  const available = [
+    ...(actions.canPublish
+      ? (["PUBLISH"] as const)
+      : []),
+    ...(actions.canArchive
+      ? (["ARCHIVE"] as const)
+      : []),
+  ];
+
   return (
     <article className="rounded-lg border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -94,6 +114,12 @@ function ContentItem({
           {item.notes}
         </p>
       ) : null}
+      {item.deliveryId ? (
+        <FacultyItemActions
+          transitionUrl={`/api/courses/lesson-contents/${item.id}/transition`}
+          actions={available}
+        />
+      ) : null}
     </article>
   );
 }
@@ -103,6 +129,20 @@ function AssignmentItem({
 }: {
   item: Workspace["lessons"][number]["assignments"][number];
 }) {
+  const actions = facultyOwnedItemActions({
+    deliveryId: item.deliveryId,
+    status: item.status,
+    kind: "ASSIGNMENT",
+  });
+  const available = [
+    ...(actions.canPublish
+      ? (["PUBLISH"] as const)
+      : []),
+    ...(actions.canArchive
+      ? (["ARCHIVE"] as const)
+      : []),
+  ];
+
   return (
     <article className="rounded-lg border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -144,6 +184,12 @@ function AssignmentItem({
             ).format(item.dueAt)}`
           : "No deadline"}
       </p>
+      {item.deliveryId ? (
+        <FacultyItemActions
+          transitionUrl={`/api/courses/assignments/${item.id}/transition`}
+          actions={available}
+        />
+      ) : null}
     </article>
   );
 }
@@ -153,6 +199,23 @@ function QuizItem({
 }: {
   item: Workspace["lessons"][number]["quizzes"][number];
 }) {
+  const actions = facultyOwnedItemActions({
+    deliveryId: item.deliveryId,
+    status: item.status,
+    kind: "QUIZ",
+  });
+  const available = [
+    ...(actions.canPublish
+      ? (["PUBLISH"] as const)
+      : []),
+    ...(actions.canClose
+      ? (["CLOSE"] as const)
+      : []),
+    ...(actions.canArchive
+      ? (["ARCHIVE"] as const)
+      : []),
+  ];
+
   return (
     <article className="rounded-lg border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -194,6 +257,12 @@ function QuizItem({
             : "Results hidden"}
         </span>
       </div>
+      {item.deliveryId ? (
+        <FacultyItemActions
+          transitionUrl={`/api/courses/quizzes/${item.id}/transition`}
+          actions={available}
+        />
+      ) : null}
     </article>
   );
 }
@@ -321,6 +390,18 @@ export function FacultyCourseWorkspace({
                     lesson.contents.length +
                     lesson.assignments.length +
                     lesson.quizzes.length;
+                  const nextSequence =
+                    nextLessonItemSequence([
+                      ...lesson.contents.map(
+                        (item) => item.sequence,
+                      ),
+                      ...lesson.assignments.map(
+                        (item) => item.sequence,
+                      ),
+                      ...lesson.quizzes.map(
+                        (item) => item.sequence,
+                      ),
+                    ]);
 
                   return (
                     <section
@@ -349,13 +430,27 @@ export function FacultyCourseWorkspace({
                         </span>
                       </div>
 
+                      <FacultyLessonAuthoring
+                        lessonId={lesson.id}
+                        deliveryId={course.deliveryId}
+                        nextContentSequence={
+                          nextSequence
+                        }
+                        nextAssignmentSequence={
+                          nextSequence
+                        }
+                        nextQuizSequence={
+                          nextSequence
+                        }
+                      />
+
                       {itemCount === 0 ? (
-                        <div className="rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
+                        <div className="mt-3 rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
                           No active content or
                           assessments in this lesson.
                         </div>
                       ) : (
-                        <div className="space-y-3">
+                        <div className="mt-3 space-y-3">
                           {lesson.contents.map(
                             (item) => (
                               <ContentItem

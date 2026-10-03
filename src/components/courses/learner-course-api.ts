@@ -32,6 +32,28 @@ const errorLabels: Record<string, string> = {
     "You do not have access to this Course item.",
   CONTENT_DELIVERY_MISMATCH:
     "This content does not belong to your Course delivery.",
+  CONTENT_TYPE_SHAPE_INVALID:
+    "The content details do not match the selected content type.",
+  LESSON_CONTENT_NOT_PUBLISHED:
+    "This content is not published.",
+  INVALID_LESSON_CONTENT_TRANSITION:
+    "This content cannot move to that lifecycle state.",
+  ASSIGNMENT_NAME_CONFLICT:
+    "An active assignment with this title already exists in the same audience.",
+  ASSIGNMENT_SEQUENCE_CONFLICT:
+    "Another active assignment already uses this order.",
+  INVALID_ASSIGNMENT_TRANSITION:
+    "This assignment cannot move to that lifecycle state.",
+  QUIZ_NAME_CONFLICT:
+    "An active quiz with this title already exists in the same audience.",
+  QUIZ_SEQUENCE_CONFLICT:
+    "Another active quiz already uses this order.",
+  INVALID_QUIZ_TRANSITION:
+    "This quiz cannot move to that lifecycle state.",
+  QUIZ_HAS_ATTEMPTS:
+    "This quiz can no longer be structurally changed because attempts already exist.",
+  FACULTY_TEACHING_SCOPE_REQUIRED:
+    "You need an active teaching assignment for this exact Section delivery.",
 };
 
 export async function courseApiError(
