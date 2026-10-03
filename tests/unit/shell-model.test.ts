@@ -83,7 +83,7 @@ describe("authenticated shell model", () => {
     );
   });
 
-  it("does not expose admin navigation to other ordinary membership roles", () => {
+  it("gives faculty teaching navigation without admin navigation", () => {
     const shellContext = context(["FACULTY", "MENTOR"]);
 
     expect(getShellNavigation(shellContext)).toEqual([
@@ -92,9 +92,31 @@ describe("authenticated shell model", () => {
         href: "/dashboard",
         shortLabel: "D",
       },
+      {
+        label: "Teaching Courses",
+        href: "/teach/courses",
+        shortLabel: "T",
+      },
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · Mentor",
     );
+  });
+
+  it("keeps both learner and faculty Course entry points for a dual-role membership", () => {
+    const shellContext = context([
+      "LEARNER",
+      "FACULTY",
+    ]);
+
+    expect(
+      getShellNavigation(shellContext).map(
+        (item) => item.label,
+      ),
+    ).toEqual([
+      "Dashboard",
+      "My Courses",
+      "Teaching Courses",
+    ]);
   });
 });

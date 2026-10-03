@@ -520,7 +520,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 
 # W. Courses — ACTIVE
 
-- [~] legacy Course audit — C1 structure + C2 learning + C3 progress + C4A assignments + C4B quizzes + C4C assessment aggregation + learner UI interactions audited; Faculty/Admin Course UI remains
+- [~] legacy Course audit — C1 structure + C2 learning + C3 progress + C4A assignments + C4B quizzes + C4C assessment aggregation + learner UI + Faculty UI2A audited; Faculty authoring/Admin Course UI remains
 - [x] course domain — department-owned Course catalog with archive dependency guard
 - [x] offerings — Cohort + Academic Period offerings with CORE/ELECTIVE, credits and order
 - [x] Section deliveries — exact Offering -> Section scope
@@ -533,8 +533,8 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [ ] assignment file uploads — wait for Cloud Storage upload receipt/signing workflow
 - [x] quizzes — DRAFT/PUBLISHED/CLOSED/ARCHIVED definitions, validated questions/options, atomic race-safe attempts, immutable answer snapshots, scoring and gated result visibility
 - [x] greenfield decision: no legacy course data migration required
-- [~] UI — UI1 learner My Courses + exact-delivery workspace and UI1b RESOURCE completion / Assignment submission / Quiz-taking + result review complete; media playback + Faculty/Admin Course UI remain
-- [~] regression tests — C1 + C2 + C3 + C4A + C4B + C4C PostgreSQL coverage plus learner interaction-state unit regressions; Faculty/Admin UI and E2E tests remain
+- [~] UI — UI1/UI1b learner workspace/interactions complete; UI2A Faculty My Teaching Courses + exact-delivery read workspace complete; Faculty authoring, media playback and Admin Course UI remain
+- [~] regression tests — C1-C4C PostgreSQL coverage + learner interaction unit regressions + Faculty UI2A exact-teaching/sibling-delivery PostgreSQL coverage; Faculty authoring/Admin UI and E2E tests remain
 
 ---
 

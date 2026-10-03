@@ -16,6 +16,7 @@ import {
 } from "@/modules/people/runtime";
 import { listMembershipChoices } from "@/modules/identity/context-service";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
+import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 
 function MetricCard({
   label,
@@ -221,6 +222,46 @@ export default async function DashboardPage() {
 
   if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
     return <CollegeAdminDashboard context={context} />;
+  }
+
+  if (hasMembershipRole(context, "FACULTY")) {
+    const courses =
+      await listFacultyCourseDeliveries(context);
+
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Faculty"
+          title="Teaching dashboard"
+          description="Open the exact Section Course deliveries assigned to your active faculty membership."
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <MetricCard
+            label="Teaching Courses"
+            value={courses.length}
+            description="Active Course Section deliveries where you have a teaching assignment."
+            href="/teach/courses"
+          />
+          <section className="rounded-xl border border-border bg-surface p-5">
+            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              Teaching scope
+            </p>
+            <p className="mt-3 text-lg font-semibold text-foreground">
+              Exact delivery access
+            </p>
+            <p className="mt-2 text-sm leading-6 text-body">
+              Course content and assessments are scoped through your active teaching assignments, not a client-selected class or faculty id.
+            </p>
+            <Link
+              href="/teach/courses"
+              className="mt-4 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+            >
+              View Teaching Courses →
+            </Link>
+          </section>
+        </div>
+      </div>
+    );
   }
 
   if (hasMembershipRole(context, "LEARNER")) {

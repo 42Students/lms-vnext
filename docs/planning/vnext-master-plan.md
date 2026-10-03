@@ -753,7 +753,18 @@ Courses UI1b adds learner interactions while keeping all authoritative rules ser
 - canonical workspace refresh after mutation
 - pure interaction-state regression tests preventing accidental reopen/re-submit states
 
-Next Courses work is Faculty Course authoring/operations UI, then College/Super Admin Course structural UI, media playback/resume, and Course-level UI regression/E2E hardening.
+Courses UI2A adds the Faculty teaching read/operations foundation:
+- FACULTY-only /teach route group
+- My Teaching Courses discovered from the authenticated Membership's active Teaching Assignments
+- exact Section-delivery workspace with Course/period/role context
+- current Learning Path and active Lesson inventory
+- shared Offering vs exact Section audience labeling
+- DRAFT/PUBLISHED/CLOSED visibility for content and assessments
+- sibling Section URL tampering denied by exact Teaching Assignment scope
+- Faculty shell/dashboard entry point, including dual LEARNER+FACULTY navigation
+- PostgreSQL acceptance coverage for exact teaching scope
+
+Next Courses work is UI2B Faculty exact-delivery authoring/grading operations, then College/Super Admin Course structural UI, media playback/resume, and Course-level UI regression/E2E hardening.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

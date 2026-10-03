@@ -26,14 +26,17 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
 ];
 
-const learnerItems: ShellNavItem[] = [
-  dashboard,
-  {
-    label: "My Courses",
-    href: "/learn/courses",
-    shortLabel: "C",
-  },
-];
+const learnerItem: ShellNavItem = {
+  label: "My Courses",
+  href: "/learn/courses",
+  shortLabel: "C",
+};
+
+const facultyItem: ShellNavItem = {
+  label: "Teaching Courses",
+  href: "/teach/courses",
+  shortLabel: "T",
+};
 
 const collegeAdminItems: ShellNavItem[] = [
   dashboard,
@@ -53,11 +56,17 @@ export function getShellNavigation(context: RequestContext) {
     return collegeAdminItems;
   }
 
+  const items: ShellNavItem[] = [dashboard];
+
   if (hasMembershipRole(context, "LEARNER")) {
-    return learnerItems;
+    items.push(learnerItem);
   }
 
-  return [dashboard];
+  if (hasMembershipRole(context, "FACULTY")) {
+    items.push(facultyItem);
+  }
+
+  return items;
 }
 
 export function getShellRoleLabel(context: RequestContext) {

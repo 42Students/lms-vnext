@@ -83,3 +83,29 @@ Course UI reuses the vNext system:
 - existing focus-ring/accessibility conventions
 
 No separate Course theme or legacy page CSS is introduced.
+
+
+## UI2A Faculty teaching workspace
+
+Faculty Course discovery starts from the authenticated active Membership and active `course_teaching_assignments`. The browser never supplies a faculty id or chooses an arbitrary Section.
+
+Routes:
+
+- `/teach/courses` — active exact Section deliveries assigned to the Faculty membership
+- `/teach/courses/[deliveryId]` — one exact teaching workspace
+
+The `/teach` route group requires the FACULTY membership role. The service independently revalidates the exact Teaching Assignment so direct URL tampering to a sibling Section fails closed.
+
+The Faculty workspace shows:
+
+- Course, Section, Academic Period and teaching role
+- current non-archived Learning Path and lifecycle state
+- active Lessons
+- shared Offering content versus exact Section content
+- Assignment and Quiz definitions visible to the Section
+- DRAFT/PUBLISHED/CLOSED assessment states
+- a compact draft/published item inventory
+
+Structural Course / Learning Path / Lesson ownership remains College Admin / scoped Super Admin. Shared Offering items are read-only to ordinary Faculty. Exact-delivery Content, Assignments and Quizzes use the existing teaching-scope mutation rules; their authoring controls are intentionally the next UI2B batch.
+
+Ordinary multi-role memberships keep every applicable Course entry point in the shell. A membership with both LEARNER and FACULTY roles can navigate to both My Courses and Teaching Courses without receiving admin navigation.
