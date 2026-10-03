@@ -126,4 +126,8 @@ P4. team/mentor model
 P5. releases/sprints/tasks
 P6. submissions/reviews/evaluation
 P7. resources/meetings/readiness
+   - URL/text resources can be added by mentors/admins without pretending to come from a template
+   - Cloud Storage-backed resources remain gated on the shared signed-upload workflow
+   - readiness is derived from normalized release/sprint/task/final-submission/evaluation state; no manual override is copied from legacy
+   - meetings remain the next P7 slice and will not reintroduce legacy Calendar-sync coupling
 P8. learner/mentor/admin UI and browser regression

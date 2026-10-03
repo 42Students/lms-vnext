@@ -538,3 +538,79 @@ export type ReviewProjectSubmissionInput = z.infer<
 export type CreateProjectEvaluationInput = z.infer<
   typeof createProjectEvaluationInputSchema
 >;
+
+export const projectResourceIdSchema = z.string().uuid();
+
+const projectResourceHttpUrlSchema = z
+  .string()
+  .trim()
+  .url()
+  .max(2048)
+  .refine(
+    (value) =>
+      value.startsWith("https://") ||
+      value.startsWith("http://"),
+    {
+      message:
+        "Project resource URL must use http or https",
+    },
+  );
+
+export const createProjectResourceInputSchema = z
+  .object({
+    title: titleSchema,
+    description: z
+      .string()
+      .trim()
+      .min(1)
+      .max(4000)
+      .nullable()
+      .optional(),
+    url: projectResourceHttpUrlSchema
+      .nullable()
+      .optional(),
+    required: z.boolean().optional(),
+  })
+  .strict()
+  .refine(
+    (input) =>
+      Boolean(input.description || input.url),
+    {
+      message:
+        "Project resource requires a description or URL",
+    },
+  );
+
+export const updateProjectResourceInputSchema = z
+  .object({
+    title: titleSchema.optional(),
+    description: z
+      .string()
+      .trim()
+      .min(1)
+      .max(4000)
+      .nullable()
+      .optional(),
+    url: projectResourceHttpUrlSchema
+      .nullable()
+      .optional(),
+    required: z.boolean().optional(),
+  })
+  .strict()
+  .refine(
+    (input) =>
+      Object.values(input).some(
+        (value) => value !== undefined,
+      ),
+    {
+      message:
+        "At least one Project resource field is required",
+    },
+  );
+
+export type CreateProjectResourceInput = z.infer<
+  typeof createProjectResourceInputSchema
+>;
+export type UpdateProjectResourceInput = z.infer<
+  typeof updateProjectResourceInputSchema
+>;

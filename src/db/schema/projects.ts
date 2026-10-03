@@ -420,7 +420,7 @@ export const projectResources = pgTable(
       }),
     templateKey: varchar("template_key", {
       length: 64,
-    }).notNull(),
+    }),
     title: text("title").notNull(),
     description: text("description"),
     url: text("url"),

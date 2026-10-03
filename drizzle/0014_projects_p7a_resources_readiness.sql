@@ -1,0 +1,1 @@
+ALTER TABLE "project_resources" ALTER COLUMN "template_key" DROP NOT NULL;

@@ -169,6 +169,7 @@ export function apiErrorResponse(error: unknown) {
       "PROJECT_TASK_NOT_FOUND",
       "PROJECT_TASK_SUBMISSION_NOT_FOUND",
       "PROJECT_SUBMISSION_NOT_FOUND",
+      "PROJECT_RESOURCE_NOT_FOUND",
     ]);
 
     const forbidden = new Set([

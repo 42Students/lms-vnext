@@ -99,6 +99,13 @@
       "when": 1791016000000,
       "tag": "0013_projects_p6b_final_evaluation",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1791017200000,
+      "tag": "0014_projects_p7a_resources_readiness",
+      "breakpoints": true
     }
   ]
 }
