@@ -93,6 +93,7 @@ export async function checkDatabaseConnection() {
       projectSprints: string | null;
       projectTasks: string | null;
       projectResources: string | null;
+      projectMembers: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -128,7 +129,8 @@ export async function checkDatabaseConnection() {
          to_regclass('public.project_releases')::text as "projectReleases",
          to_regclass('public.project_sprints')::text as "projectSprints",
          to_regclass('public.project_tasks')::text as "projectTasks",
-         to_regclass('public.project_resources')::text as "projectResources"`,
+         to_regclass('public.project_resources')::text as "projectResources",
+         to_regclass('public.project_members')::text as "projectMembers"`,
     );
 
     const schema = result.rows[0];
@@ -166,7 +168,8 @@ export async function checkDatabaseConnection() {
       !schema.projectReleases ||
       !schema.projectSprints ||
       !schema.projectTasks ||
-      !schema.projectResources
+      !schema.projectResources ||
+      !schema.projectMembers
     ) {
       throw new Error(
         "Database schema is not fully migrated",

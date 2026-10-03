@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { PROJECT_TASK_PRIORITIES } from "./constants";
+import {
+  PROJECT_MEMBER_ROLES,
+  PROJECT_TASK_PRIORITIES,
+} from "./constants";
 
 const projectKeySchema = z
   .string()
@@ -283,4 +286,57 @@ export const createProjectInstanceInputSchema = z
 
 export type CreateProjectInstanceInput = z.infer<
   typeof createProjectInstanceInputSchema
+>;
+
+export const projectMemberIdSchema = z.string().uuid();
+
+export const addProjectMemberInputSchema = z
+  .object({
+    membershipId: z.string().uuid(),
+    role: z.enum(PROJECT_MEMBER_ROLES),
+    isPrimary: z.boolean().default(false),
+    roleLabel: z
+      .string()
+      .trim()
+      .min(1)
+      .max(120)
+      .optional(),
+  })
+  .strict()
+  .refine(
+    (input) =>
+      !input.isPrimary || input.role === "MENTOR",
+    {
+      message:
+        "Only a Project mentor can be primary",
+      path: ["isPrimary"],
+    },
+  );
+
+export const updateProjectMemberInputSchema = z
+  .object({
+    isPrimary: z.boolean().optional(),
+    roleLabel: z
+      .string()
+      .trim()
+      .min(1)
+      .max(120)
+      .nullable()
+      .optional(),
+  })
+  .strict()
+  .refine(
+    (input) =>
+      input.isPrimary !== undefined ||
+      input.roleLabel !== undefined,
+    {
+      message: "At least one member field is required",
+    },
+  );
+
+export type AddProjectMemberInput = z.infer<
+  typeof addProjectMemberInputSchema
+>;
+export type UpdateProjectMemberInput = z.infer<
+  typeof updateProjectMemberInputSchema
 >;

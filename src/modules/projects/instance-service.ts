@@ -18,6 +18,8 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { collegeIdSchema } from "@/modules/academics/validation";
+import { requireProjectReadAccess } from "./access";
 import { loadProjectCollegeScope } from "./scope";
 import {
   ProjectsServiceError,
@@ -295,8 +297,9 @@ export async function createProjectInstance(
 
 export async function listProjectInstances(
   context: RequestContext,
-  collegeId: string,
+  collegeIdInput: string,
 ) {
+  const collegeId = collegeIdSchema.parse(collegeIdInput);
   const college =
     await loadProjectCollegeScope(collegeId);
 
@@ -323,14 +326,12 @@ export async function getProjectInstanceWorkspace(
 ) {
   const projectId =
     projectInstanceIdSchema.parse(projectIdInput);
-  const project = await loadProject(projectId);
-  const college =
-    await loadProjectCollegeScope(project.collegeId);
-
-  requirePermission(context, "projects.manage", {
-    organizationId: college.organizationId,
-    collegeId: college.id,
-  });
+  const scope =
+    await requireProjectReadAccess(
+      context,
+      projectId,
+    );
+  const project = scope.project;
 
   const db = getDb();
   const [releases, sprints, tasks, resources] =

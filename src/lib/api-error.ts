@@ -163,11 +163,22 @@ export function apiErrorResponse(error: unknown) {
       "PROJECT_TEMPLATE_VERSION_NOT_FOUND",
       "PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND",
       "PROJECT_NOT_FOUND",
+      "PROJECT_MEMBER_NOT_FOUND",
+    ]);
+
+    const forbidden = new Set([
+      "PROJECT_ACCESS_DENIED",
     ]);
 
     return NextResponse.json(
       { error: error.code },
-      { status: notFound.has(error.code) ? 404 : 409 },
+      {
+        status: notFound.has(error.code)
+          ? 404
+          : forbidden.has(error.code)
+            ? 403
+            : 409,
+      },
     );
   }
 

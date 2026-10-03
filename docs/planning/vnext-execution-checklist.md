@@ -543,9 +543,9 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] current-state inventory — legacy backend/frontend/audit surfaces mapped; vNext contract in docs/architecture/projects.md
 - [x] template model — immutable version snapshots, explicit published-version college assignment, lifecycle APIs and PostgreSQL regression coverage
 - [x] project instance model — tenant-owned root pinned to exact template version
-- [ ] team model
-- [ ] mentor model
-- [~] workspace model — normalized admin read model exists; role/team operations remain
+- [x] team model — canonical college-membership participation with history and exact-project access
+- [x] mentor model — MENTOR role required, multiple mentors allowed, one active primary mentor enforced
+- [~] workspace model — normalized admin + exact learner/mentor participant read models exist; task operations remain
 - [~] sprint/task model — releases/sprints/tasks materialize as normalized rows; lifecycle/board operations remain
 - [ ] submission model
 - [ ] evaluation model

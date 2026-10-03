@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 import type { ProjectTemplateBlueprint } from "@/modules/projects/validation";
 import { colleges } from "./colleges";
+import { collegeMemberships } from "./memberships";
 import { users } from "./users";
 
 export const projectTemplates = pgTable(
@@ -457,6 +458,78 @@ export const projectResources = pgTable(
     check(
       "project_resources_status_ck",
       sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
+    ),
+  ],
+);
+
+export const projectMembers = pgTable(
+  "project_members",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    membershipId: uuid("membership_id")
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    role: varchar("role", { length: 16 }).notNull(),
+    isPrimary: boolean("is_primary")
+      .notNull()
+      .default(false),
+    roleLabel: text("role_label"),
+    startedAt: timestamp("started_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    endedAt: timestamp("ended_at", {
+      withTimezone: true,
+    }),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("project_members_active_membership_uq")
+      .on(table.projectId, table.membershipId)
+      .where(sql`${table.endedAt} is null`),
+    uniqueIndex("project_members_active_primary_mentor_uq")
+      .on(table.projectId)
+      .where(
+        sql`${table.endedAt} is null and ${table.role} = 'MENTOR' and ${table.isPrimary} = true`,
+      ),
+    index("project_members_membership_active_idx").on(
+      table.membershipId,
+      table.endedAt,
+    ),
+    index("project_members_project_role_idx").on(
+      table.projectId,
+      table.role,
+      table.endedAt,
+    ),
+    check(
+      "project_members_role_ck",
+      sql`${table.role} in ('LEARNER', 'MENTOR')`,
+    ),
+    check(
+      "project_members_primary_role_ck",
+      sql`${table.isPrimary} = false or ${table.role} = 'MENTOR'`,
     ),
   ],
 );

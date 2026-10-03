@@ -43,3 +43,10 @@ export const PROJECT_TASK_STATUSES = [
   "IN_REVIEW",
   "DONE",
 ] as const;
+
+export const PROJECT_MEMBER_ROLES = [
+  "LEARNER",
+  "MENTOR",
+] as const;
+export type ProjectMemberRole =
+  (typeof PROJECT_MEMBER_ROLES)[number];
