@@ -116,10 +116,7 @@ export async function createProjectSubmissionDraft(
   const input =
     projectSubmissionDraftInputSchema.parse(rawInput);
 
-  if (
-    scope.project.status === "PLANNED" ||
-    scope.project.status === "ARCHIVED"
-  ) {
+  if (scope.project.status === "ARCHIVED") {
     throw new ProjectsServiceError(
       "PROJECT_SUBMISSION_INVALID_STATE",
     );
