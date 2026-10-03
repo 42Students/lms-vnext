@@ -520,7 +520,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 
 # W. Courses — ACTIVE
 
-- [~] legacy Course audit — C1-C4C + learner UI + Faculty UI2A/UI2B1/UI2B2 + Admin UI3A/UI3B audited; media/E2E remain
+- [~] legacy Course audit — C1-C4C + learner UI + Faculty UI2A/UI2B1/UI2B2 + Admin UI3A/UI3B + YouTube media playback audited; signed storage VIDEO + browser E2E remain
 - [x] course domain — department-owned Course catalog with archive dependency guard
 - [x] offerings — Cohort + Academic Period offerings with CORE/ELECTIVE, credits and order
 - [x] Section deliveries — exact Offering -> Section scope
@@ -533,8 +533,8 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [ ] assignment file uploads — wait for Cloud Storage upload receipt/signing workflow
 - [x] quizzes — DRAFT/PUBLISHED/CLOSED/ARCHIVED definitions, validated questions/options, atomic race-safe attempts, immutable answer snapshots, scoring and gated result visibility
 - [x] greenfield decision: no legacy course data migration required
-- [~] UI — learner UI1/UI1b complete; Faculty UI2A/UI2B1/UI2B2 complete; College Admin + scoped Super Admin UI3A structural operations + UI3B shared Learning Path/Lesson/Offering-wide item authoring complete; media playback remains
-- [~] regression tests — C1-C4C PostgreSQL + learner interaction + Faculty exact-teaching/learner-identity review coverage + UI2B1/UI2B2 operation-state + admin shell/build regressions; Course browser E2E remains
+- [~] UI — learner UI1/UI1b + YouTube playback/resume complete; Faculty UI2A/UI2B1/UI2B2 complete; College Admin + scoped Super Admin UI3A/UI3B complete; signed storage VIDEO playback remains dependency-blocked
+- [~] regression tests — C1-C4C PostgreSQL + learner interaction + Faculty exact-teaching/learner-identity review coverage + UI2B1/UI2B2 operation-state + admin shell/build + media helper regressions; Course browser E2E remains
 
 ---
 

@@ -102,6 +102,14 @@ const errorLabels: Record<string, string> = {
     "An active Lesson with this name already exists in the Learning Path.",
   LESSON_SEQUENCE_CONFLICT:
     "Another active Lesson already uses this order.",
+  LEARNER_PROGRESS_ACCESS_DENIED:
+    "Your current enrollment does not allow progress updates for this Course item.",
+  TIMED_CONTENT_MANUAL_COMPLETION_NOT_ALLOWED:
+    "Timed media completes from playback progress rather than a manual completion action.",
+  CONTENT_DURATION_REQUIRED:
+    "This media item is missing its authored duration.",
+  LIVE_CLASS_NOT_FINISHED:
+    "This live class can be completed only after its scheduled end time.",
 };
 
 export async function courseApiError(

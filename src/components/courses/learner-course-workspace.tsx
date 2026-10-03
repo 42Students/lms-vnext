@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { QuizAttemptControl } from "./quiz-attempt-control";
 import { ResourceProgressControl } from "./resource-progress-control";
+import { LearnerYouTubePlayer } from "./learner-youtube-player";
 import {
   assignmentInteractionState,
   resourceInteractionState,
@@ -210,7 +211,26 @@ function ContentCard({
         </p>
       ) : null}
 
-      {content.externalUrl ? (
+      {content.type === "YOUTUBE" &&
+      content.externalUrl ? (
+        <LearnerYouTubePlayer
+          contentId={content.id}
+          deliveryId={deliveryId}
+          externalUrl={content.externalUrl}
+          initialPositionSeconds={
+            content.progress
+              .lastPositionSeconds
+          }
+          authoredDurationSeconds={
+            content.progress
+              .durationSeconds
+          }
+          completed={
+            content.progress.status ===
+            "COMPLETED"
+          }
+        />
+      ) : content.externalUrl ? (
         <a
           href={content.externalUrl}
           target="_blank"
@@ -221,7 +241,7 @@ function ContentCard({
         </a>
       ) : content.storageKey ? (
         <p className="mt-4 text-xs font-semibold text-muted-foreground">
-          Media is attached to this lesson and will open in the learner player when storage delivery is connected.
+          Media is attached to this lesson and will open in the learner player when signed storage delivery is connected.
         </p>
       ) : null}
 

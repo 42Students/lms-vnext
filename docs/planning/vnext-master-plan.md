@@ -802,7 +802,15 @@ Courses UI3B adds Admin shared-learning authoring:
 - shared Quiz result publication/hiding after close
 - one audience-aware authoring builder reused without weakening exact Faculty scope
 
-Next Courses work is media playback/resume and Course-level browser regression/E2E hardening.
+Courses UI4 adds learner YouTube playback/resume:
+- inline YouTube IFrame API playback
+- resume from server-saved position
+- five-second, pause/end and page-hide progress checkpoints
+- existing monotonic server progress + 90% completion semantics
+- external-link fallback when inline playback fails
+- storage-backed VIDEO remains blocked on signed Cloud Storage delivery rather than exposing raw storage keys
+
+Next Courses work is Course-level browser regression/E2E hardening plus the signed Cloud Storage VIDEO/upload workflow when GCP storage is provisioned.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

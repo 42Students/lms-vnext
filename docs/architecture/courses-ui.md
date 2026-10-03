@@ -225,3 +225,25 @@ The existing Faculty lesson-item builder now accepts an explicit audience mode. 
 The Offering workspace intentionally returns only generic shared items. Section-specific items stay in the exact Faculty teaching workspace, so Admin shared authoring does not accidentally become a cross-Section content editor.
 
 File/video upload authoring remains hidden until the signed Cloud Storage upload-receipt workflow exists.
+
+
+## UI4 learner media playback and resume
+
+UI4 closes the currently available timed-media interaction path without weakening the storage boundary.
+
+YouTube learning content now:
+
+- renders an inline YouTube IFrame API player inside the learner Course workspace
+- seeks to the learner's last server-saved position on player readiness
+- saves forward playback progress every five seconds while playing
+- force-saves on pause, ended and page-hide/navigation cleanup
+- keeps progress monotonic through the existing server-side progress service
+- completes at the existing 90% authored-duration threshold
+- refreshes the canonical Course workspace after completion
+- falls back to an external YouTube link when inline playback cannot load
+
+The player never accepts a learner-supplied duration. The authored duration remains the server-side completion denominator.
+
+Storage-backed VIDEO remains intentionally unavailable in the learner player until the signed Cloud Storage delivery/upload-receipt workflow exists. The UI continues to show the attached-media placeholder rather than exposing raw storage keys or inventing a public URL.
+
+Pure unit coverage protects YouTube URL parsing and playback checkpoint behavior.
