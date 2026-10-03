@@ -213,6 +213,7 @@ export function AddProjectMemberControl({
               Member
             </span>
             <Select
+              aria-label="Project member"
               value={membershipId}
               disabled={searching || candidates.length === 0}
               onChange={(event) =>

@@ -117,11 +117,11 @@ test.describe("Projects browser regression", () => {
     let teamDialog = page.getByRole("dialog", {
       name: "Add Project teammate",
     });
-    await expect(teamDialog.getByLabel("Member", { exact: true })).toContainText(
+    await expect(teamDialog.getByLabel("Project member")).toContainText(
       "Seed Learner",
     );
     await teamDialog
-      .getByLabel("Member", { exact: true })
+      .getByLabel("Project member")
       .selectOption(SEED_IDS.learnerCollegeAMembership);
     await teamDialog
       .getByRole("button", { name: "Add teammate" })
@@ -139,11 +139,11 @@ test.describe("Projects browser regression", () => {
     await teamDialog
       .getByLabel("Project role")
       .selectOption("MENTOR");
-    await expect(teamDialog.getByLabel("Member", { exact: true })).toContainText(
+    await expect(teamDialog.getByLabel("Project member")).toContainText(
       "Seed Shared Faculty",
     );
     await teamDialog
-      .getByLabel("Member", { exact: true })
+      .getByLabel("Project member")
       .selectOption(SEED_IDS.facultyCollegeAMembership);
     await teamDialog
       .getByLabel("Primary mentor")
