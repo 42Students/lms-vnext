@@ -1,0 +1,279 @@
+import { z } from "zod";
+import {
+  QUIZ_QUESTION_TYPES,
+} from "./constants";
+import {
+  courseLessonIdSchema,
+  courseSectionDeliveryIdSchema,
+} from "./validation";
+
+export const courseQuizIdSchema =
+  z.string().uuid();
+export const quizAttemptIdSchema =
+  z.string().uuid();
+
+const titleSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(255);
+
+const descriptionSchema = z
+  .string()
+  .trim()
+  .max(10000);
+
+const dateTimeSchema = z
+  .string()
+  .datetime({ offset: true });
+
+const quizOptionInputSchema = z.object({
+  text: z.string().trim().min(1).max(2000),
+  correct: z.boolean(),
+  sequence: z.number().int().min(0).max(100),
+});
+
+const quizQuestionInputSchema = z
+  .object({
+    type: z.enum(QUIZ_QUESTION_TYPES),
+    prompt: z
+      .string()
+      .trim()
+      .min(1)
+      .max(5000),
+    points: z
+      .number()
+      .int()
+      .min(1)
+      .max(1000),
+    sequence: z
+      .number()
+      .int()
+      .min(0)
+      .max(1000),
+    options: z
+      .array(quizOptionInputSchema)
+      .min(2)
+      .max(20),
+  })
+  .superRefine((question, ctx) => {
+    const sequences = new Set<number>();
+    const texts = new Set<string>();
+    let correctCount = 0;
+
+    question.options.forEach((option, index) => {
+      if (sequences.has(option.sequence)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["options", index, "sequence"],
+          message:
+            "Option sequence must be unique within a question",
+        });
+      }
+      sequences.add(option.sequence);
+
+      const normalized = option.text.toLowerCase();
+      if (texts.has(normalized)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["options", index, "text"],
+          message:
+            "Option text must be unique within a question",
+        });
+      }
+      texts.add(normalized);
+
+      if (option.correct) correctCount += 1;
+    });
+
+    if (
+      question.type === "SINGLE_CHOICE" &&
+      correctCount !== 1
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["options"],
+        message:
+          "Single-choice questions require exactly one correct option",
+      });
+    }
+
+    if (
+      question.type === "MULTIPLE_CHOICE" &&
+      (correctCount < 1 ||
+        correctCount >= question.options.length)
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["options"],
+        message:
+          "Multiple-choice questions require at least one correct and one incorrect option",
+      });
+    }
+  });
+
+const questionsSchema = z
+  .array(quizQuestionInputSchema)
+  .min(1)
+  .max(100)
+  .superRefine((questions, ctx) => {
+    const sequences = new Set<number>();
+    let total = 0;
+
+    questions.forEach((question, index) => {
+      if (sequences.has(question.sequence)) {
+        ctx.addIssue({
+          code: "custom",
+          path: [index, "sequence"],
+          message:
+            "Question sequence must be unique within a quiz",
+        });
+      }
+      sequences.add(question.sequence);
+      total += question.points;
+    });
+
+    if (total > 10000) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "Quiz total points may not exceed 10000",
+      });
+    }
+  });
+
+export const createCourseQuizInputSchema =
+  z.object({
+    lessonId: courseLessonIdSchema,
+    deliveryId:
+      courseSectionDeliveryIdSchema
+        .nullable()
+        .optional(),
+    title: titleSchema,
+    description:
+      descriptionSchema.nullable().optional(),
+    dueAt: dateTimeSchema
+      .nullable()
+      .optional(),
+    maxAttempts: z
+      .number()
+      .int()
+      .min(1)
+      .max(20)
+      .optional()
+      .default(1),
+    sequence: z
+      .number()
+      .int()
+      .min(0)
+      .max(10000),
+    questions: questionsSchema,
+  });
+
+export const updateCourseQuizInputSchema =
+  z
+    .object({
+      title: titleSchema.optional(),
+      description:
+        descriptionSchema
+          .nullable()
+          .optional(),
+      dueAt: dateTimeSchema
+        .nullable()
+        .optional(),
+      maxAttempts: z
+        .number()
+        .int()
+        .min(1)
+        .max(20)
+        .optional(),
+      sequence: z
+        .number()
+        .int()
+        .min(0)
+        .max(10000)
+        .optional(),
+      questions: questionsSchema.optional(),
+    })
+    .refine(
+      (value) =>
+        Object.values(value).some(
+          (item) => item !== undefined,
+        ),
+      "At least one quiz field is required",
+    );
+
+export const quizTransitionSchema = z.object({
+  action: z.enum([
+    "PUBLISH",
+    "CLOSE",
+    "ARCHIVE",
+  ]),
+});
+
+export const setQuizResultsInputSchema =
+  z.object({
+    published: z.boolean(),
+  });
+
+const quizAnswerInputSchema = z.object({
+  questionId: z.string().uuid(),
+  selectedOptionIds: z
+    .array(z.string().uuid())
+    .max(20)
+    .default([]),
+});
+
+export const submitQuizInputSchema = z
+  .object({
+    deliveryId:
+      courseSectionDeliveryIdSchema,
+    answers: z
+      .array(quizAnswerInputSchema)
+      .max(100)
+      .default([]),
+  })
+  .superRefine((value, ctx) => {
+    const questions = new Set<string>();
+
+    value.answers.forEach((answer, index) => {
+      if (questions.has(answer.questionId)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["answers", index, "questionId"],
+          message:
+            "A question may only be answered once",
+        });
+      }
+      questions.add(answer.questionId);
+
+      const options = new Set(
+        answer.selectedOptionIds,
+      );
+      if (
+        options.size !==
+        answer.selectedOptionIds.length
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: [
+            "answers",
+            index,
+            "selectedOptionIds",
+          ],
+          message:
+            "Selected options may not contain duplicates",
+        });
+      }
+    });
+  });
+
+export type CreateCourseQuizInput = z.infer<
+  typeof createCourseQuizInputSchema
+>;
+export type UpdateCourseQuizInput = z.infer<
+  typeof updateCourseQuizInputSchema
+>;
+export type SubmitQuizInput = z.infer<
+  typeof submitQuizInputSchema
+>;

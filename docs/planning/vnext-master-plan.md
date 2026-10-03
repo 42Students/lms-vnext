@@ -710,7 +710,20 @@ Courses C4A adds assignment assessment behavior:
 - PostgreSQL payload, uniqueness and lifecycle constraints
 - file submissions intentionally wait for the Cloud Storage upload-receipt/signing workflow
 
-Next Courses work is C4B quizzes, assessment aggregation into Continue Learning, and the Course UI.
+Courses C4B adds quiz assessment behavior:
+- Lesson-owned Quiz definitions with generic Offering or exact Section Delivery audience
+- DRAFT/PUBLISHED/CLOSED/ARCHIVED lifecycle
+- SINGLE_CHOICE and MULTIPLE_CHOICE validation
+- server-side answer ownership validation and exact-set scoring
+- atomic Quiz attempts with DB-protected attempt numbering
+- immutable question/option/score snapshots per submitted attempt
+- question key frozen after attempts begin
+- no learner answer-key exposure while a Quiz is open
+- explicit result publication only after CLOSE
+- exact Faculty Teaching Assignment review scope
+- adversarial concurrent-final-attempt and historical-snapshot regression tests
+
+Next Courses work is assessment aggregation into Continue Learning, then the learner/faculty/admin Course UI.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

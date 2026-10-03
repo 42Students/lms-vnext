@@ -21,6 +21,8 @@ import {
   COURSE_ASSIGNMENT_STATUSES,
   ASSIGNMENT_SUBMISSION_TYPES,
   ASSIGNMENT_GRADING_STATUSES,
+  COURSE_QUIZ_STATUSES,
+  QUIZ_QUESTION_TYPES,
 } from "@/modules/courses/constants";
 import {
   COLLEGE_STATUSES,
@@ -150,4 +152,15 @@ export const assignmentSubmissionTypeEnum = pgEnum(
 export const assignmentGradingStatusEnum = pgEnum(
   "assignment_grading_status",
   ASSIGNMENT_GRADING_STATUSES,
+);
+
+
+export const courseQuizStatusEnum = pgEnum(
+  "course_quiz_status",
+  COURSE_QUIZ_STATUSES,
+);
+
+export const quizQuestionTypeEnum = pgEnum(
+  "quiz_question_type",
+  QUIZ_QUESTION_TYPES,
 );

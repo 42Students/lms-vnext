@@ -520,7 +520,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 
 # W. Courses — ACTIVE
 
-- [~] legacy Course audit — C1 structure + C2 learning + C3 progress + C4A assignment behavior audited; quiz/UI behavior remains
+- [~] legacy Course audit — C1 structure + C2 learning + C3 progress + C4A assignments + C4B quiz behavior audited; UI/assessment aggregation remains
 - [x] course domain — department-owned Course catalog with archive dependency guard
 - [x] offerings — Cohort + Academic Period offerings with CORE/ELECTIVE, credits and order
 - [x] Section deliveries — exact Offering -> Section scope
@@ -528,13 +528,13 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] learning paths — one current path per Offering with publish/archive lifecycle
 - [x] lessons/content — ordered Lessons + generic/exact-delivery RESOURCE/VIDEO/YOUTUBE/LIVE_CLASS content
 - [~] progress — C3 passive content progress, authored-duration media completion, learner Course discovery and Continue Learning workspace complete; assignment/quiz aggregation remains
-- [~] permissions — structural + exact Faculty teaching + exact Learner enrollment/content/progress + assignment submission/grading access complete; quiz access remains
+- [x] permissions — structural + exact Faculty teaching + exact Learner enrollment/content/progress + assignment + quiz access complete
 - [x] assignments — DRAFT/PUBLISHED/ARCHIVED definitions, generic/exact-delivery audience, one-shot TEXT/LINK submissions, version-safe grading and grade publication
 - [ ] assignment file uploads — wait for Cloud Storage upload receipt/signing workflow
-- [ ] quizzes — definitions, questions/options, attempts, scoring and result visibility
+- [x] quizzes — DRAFT/PUBLISHED/CLOSED/ARCHIVED definitions, validated questions/options, atomic race-safe attempts, immutable answer snapshots, scoring and gated result visibility
 - [x] greenfield decision: no legacy course data migration required
 - [ ] UI
-- [~] regression tests — C1 + C2 + C3 + C4A PostgreSQL tenant/scope/lifecycle/progress/assignment/concurrency coverage; quiz/UI tests remain
+- [~] regression tests — C1 + C2 + C3 + C4A + C4B PostgreSQL tenant/scope/lifecycle/progress/assignment/quiz/concurrency coverage; assessment aggregation/UI tests remain
 
 ---
 

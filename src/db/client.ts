@@ -80,6 +80,11 @@ export async function checkDatabaseConnection() {
       learnerContentProgress: string | null;
       courseAssignments: string | null;
       assignmentSubmissions: string | null;
+      courseQuizzes: string | null;
+      quizQuestions: string | null;
+      quizOptions: string | null;
+      quizAttempts: string | null;
+      quizAttemptAnswers: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -102,7 +107,12 @@ export async function checkDatabaseConnection() {
          to_regclass('public.lesson_contents')::text as "lessonContents",
          to_regclass('public.learner_content_progress')::text as "learnerContentProgress",
          to_regclass('public.course_assignments')::text as "courseAssignments",
-         to_regclass('public.assignment_submissions')::text as "assignmentSubmissions"`,
+         to_regclass('public.assignment_submissions')::text as "assignmentSubmissions",
+         to_regclass('public.course_quizzes')::text as "courseQuizzes",
+         to_regclass('public.quiz_questions')::text as "quizQuestions",
+         to_regclass('public.quiz_options')::text as "quizOptions",
+         to_regclass('public.quiz_attempts')::text as "quizAttempts",
+         to_regclass('public.quiz_attempt_answers')::text as "quizAttemptAnswers"`,
     );
 
     const schema = result.rows[0];
@@ -127,7 +137,12 @@ export async function checkDatabaseConnection() {
       !schema.lessonContents ||
       !schema.learnerContentProgress ||
       !schema.courseAssignments ||
-      !schema.assignmentSubmissions
+      !schema.assignmentSubmissions ||
+      !schema.courseQuizzes ||
+      !schema.quizQuestions ||
+      !schema.quizOptions ||
+      !schema.quizAttempts ||
+      !schema.quizAttemptAnswers
     ) {
       throw new Error(
         "Database schema is not fully migrated",

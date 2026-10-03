@@ -81,3 +81,20 @@ export const ASSIGNMENT_GRADING_STATUSES = [
 ] as const;
 export type AssignmentGradingStatus =
   (typeof ASSIGNMENT_GRADING_STATUSES)[number];
+
+
+export const COURSE_QUIZ_STATUSES = [
+  "DRAFT",
+  "PUBLISHED",
+  "CLOSED",
+  "ARCHIVED",
+] as const;
+export type CourseQuizStatus =
+  (typeof COURSE_QUIZ_STATUSES)[number];
+
+export const QUIZ_QUESTION_TYPES = [
+  "SINGLE_CHOICE",
+  "MULTIPLE_CHOICE",
+] as const;
+export type QuizQuestionType =
+  (typeof QUIZ_QUESTION_TYPES)[number];

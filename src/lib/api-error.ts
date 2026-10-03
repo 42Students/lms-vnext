@@ -120,6 +120,8 @@ export function apiErrorResponse(error: unknown) {
       "MEMBERSHIP_NOT_FOUND",
       "ASSIGNMENT_NOT_FOUND",
       "ASSIGNMENT_SUBMISSION_NOT_FOUND",
+      "QUIZ_NOT_FOUND",
+      "QUIZ_ATTEMPT_NOT_FOUND",
     ]);
 
     const forbidden = new Set([
@@ -134,6 +136,9 @@ export function apiErrorResponse(error: unknown) {
       "CONTENT_DURATION_REQUIRED",
       "LIVE_CLASS_NOT_FINISHED",
       "ASSIGNMENT_GRADE_INVALID",
+      "QUIZ_QUESTION_INVALID",
+      "QUIZ_OPTION_INVALID",
+      "QUIZ_ANSWER_INVALID",
     ]);
 
     const status = notFound.has(error.code)
