@@ -636,3 +636,107 @@ export const placementApplicationStatusHistory = pgTable(
     ),
   ],
 );
+
+
+export const placementApplicationScreenings = pgTable(
+  "placement_application_screenings",
+  {
+    applicationId: uuid("application_id")
+      .primaryKey()
+      .references(() => placementApplications.id, {
+        onDelete: "restrict",
+      }),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("PENDING"),
+    candidateMessage: text("candidate_message"),
+    internalReason: text("internal_reason"),
+    decidedByUserId: uuid("decided_by_user_id").references(
+      () => users.id,
+      { onDelete: "restrict" },
+    ),
+    decidedAt: timestamp("decided_at", {
+      withTimezone: true,
+    }),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index(
+      "placement_application_screenings_status_idx",
+    ).on(table.status, table.updatedAt),
+    check(
+      "placement_application_screenings_status_ck",
+      sql`${table.status} in ('PENDING', 'HOLD', 'SHORTLISTED', 'REJECTED')`,
+    ),
+    check(
+      "placement_application_screenings_shape_ck",
+      sql`(${table.status} = 'PENDING'
+          and ${table.decidedByUserId} is null
+          and ${table.decidedAt} is null
+          and ${table.candidateMessage} is null
+          and ${table.internalReason} is null)
+        or (${table.status} = 'HOLD'
+          and ${table.decidedByUserId} is not null
+          and ${table.decidedAt} is not null
+          and coalesce(length(trim(${table.internalReason})), 0) > 0)
+        or (${table.status} = 'SHORTLISTED'
+          and ${table.decidedByUserId} is not null
+          and ${table.decidedAt} is not null)
+        or (${table.status} = 'REJECTED'
+          and ${table.decidedByUserId} is not null
+          and ${table.decidedAt} is not null
+          and coalesce(length(trim(${table.candidateMessage})), 0) > 0)`,
+    ),
+  ],
+);
+
+export const placementApplicationScreeningHistory = pgTable(
+  "placement_application_screening_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    applicationId: uuid("application_id")
+      .notNull()
+      .references(() => placementApplications.id, {
+        onDelete: "restrict",
+      }),
+    fromStatus: varchar("from_status", {
+      length: 24,
+    }).notNull(),
+    toStatus: varchar("to_status", {
+      length: 24,
+    }).notNull(),
+    candidateMessage: text("candidate_message"),
+    internalReason: text("internal_reason"),
+    actorUserId: uuid("actor_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index(
+      "placement_application_screening_history_application_idx",
+    ).on(table.applicationId, table.createdAt),
+    check(
+      "placement_application_screening_history_status_ck",
+      sql`${table.fromStatus} in ('PENDING', 'HOLD', 'SHORTLISTED', 'REJECTED')
+        and ${table.toStatus} in ('HOLD', 'SHORTLISTED', 'REJECTED')`,
+    ),
+    check(
+      "placement_application_screening_history_transition_ck",
+      sql`(${table.fromStatus} = 'PENDING'
+          and ${table.toStatus} in ('HOLD', 'SHORTLISTED', 'REJECTED'))
+        or (${table.fromStatus} = 'HOLD'
+          and ${table.toStatus} in ('SHORTLISTED', 'REJECTED'))`,
+    ),
+  ],
+);

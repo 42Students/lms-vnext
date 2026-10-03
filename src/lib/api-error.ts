@@ -203,6 +203,7 @@ export function apiErrorResponse(error: unknown) {
       "PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND",
       "PLACEMENT_ELIGIBILITY_OVERRIDE_NOT_FOUND",
       "PLACEMENT_APPLICATION_NOT_FOUND",
+      "PLACEMENT_SCREENING_NOT_FOUND",
     ]);
 
     return NextResponse.json(

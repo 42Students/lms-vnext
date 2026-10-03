@@ -9,6 +9,7 @@ import {
   collegeMemberships,
   placementApplications,
   placementApplicationStatusHistory,
+  placementApplicationScreenings,
   placementCompanyRelationships,
   placementCompanies,
   placementJobs,
@@ -313,6 +314,12 @@ export async function applyToPlacementJob(
           fromStatus: null,
           toStatus: "SUBMITTED",
           actorUserId: context.user.id,
+        });
+
+      await tx
+        .insert(placementApplicationScreenings)
+        .values({
+          applicationId: application.id,
         });
 
       return application;

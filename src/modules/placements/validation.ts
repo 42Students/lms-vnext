@@ -455,3 +455,65 @@ export type CreatePlacementApplicationInput =
   z.input<
     typeof createPlacementApplicationInputSchema
   >;
+
+
+export const placementScreeningStatuses = [
+  "PENDING",
+  "HOLD",
+  "SHORTLISTED",
+  "REJECTED",
+] as const;
+
+export const placementScreeningDecisionInputSchema =
+  z
+    .object({
+      decision: z.enum([
+        "HOLD",
+        "SHORTLISTED",
+        "REJECTED",
+      ]),
+      candidateMessage: z
+        .string()
+        .trim()
+        .min(1)
+        .max(1000)
+        .nullable()
+        .optional(),
+      internalReason: z
+        .string()
+        .trim()
+        .min(1)
+        .max(2000)
+        .nullable()
+        .optional(),
+    })
+    .strict()
+    .superRefine((value, ctx) => {
+      if (
+        value.decision === "REJECTED" &&
+        !value.candidateMessage
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["candidateMessage"],
+          message:
+            "Rejected candidates require a candidate-facing message",
+        });
+      }
+      if (
+        value.decision === "HOLD" &&
+        !value.internalReason
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["internalReason"],
+          message:
+            "Hold decisions require an internal reason",
+        });
+      }
+    });
+
+export type PlacementScreeningDecisionInput =
+  z.input<
+    typeof placementScreeningDecisionInputSchema
+  >;
