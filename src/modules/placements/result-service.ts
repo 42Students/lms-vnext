@@ -1,0 +1,629 @@
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  lt,
+  max,
+  ne,
+} from "drizzle-orm";
+import { getDb } from "@/db/client";
+import {
+  placementApplications,
+  placementApplicationScreenings,
+  placementJobRounds,
+  placementJobs,
+  placementRoundResults,
+} from "@/db/schema";
+import {
+  hasMembershipRole,
+  type RequestContext,
+} from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { PlacementsServiceError } from "./errors";
+import { requirePlacementManageScope } from "./scope";
+import {
+  placementResultIdSchema,
+  placementRoundIdSchema,
+  stagePlacementRoundResultInputSchema,
+  type StagePlacementRoundResultInput,
+} from "./validation";
+
+async function loadRoundContext(roundId: string) {
+  const [row] = await getDb()
+    .select({
+      round: placementJobRounds,
+      job: placementJobs,
+    })
+    .from(placementJobRounds)
+    .innerJoin(
+      placementJobs,
+      eq(
+        placementJobs.id,
+        placementJobRounds.jobId,
+      ),
+    )
+    .where(eq(placementJobRounds.id, roundId))
+    .limit(1);
+
+  if (!row) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_ROUND_NOT_FOUND",
+    );
+  }
+  return row;
+}
+
+async function loadApplicationForRound(
+  round: typeof placementJobRounds.$inferSelect,
+  applicationId: string,
+) {
+  const [row] = await getDb()
+    .select({
+      application: placementApplications,
+      screening: placementApplicationScreenings,
+    })
+    .from(placementApplications)
+    .innerJoin(
+      placementApplicationScreenings,
+      eq(
+        placementApplicationScreenings.applicationId,
+        placementApplications.id,
+      ),
+    )
+    .where(eq(placementApplications.id, applicationId))
+    .limit(1);
+
+  if (!row || row.application.jobId !== round.jobId) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_NOT_PARTICIPANT",
+    );
+  }
+  if (row.application.status !== "SUBMITTED") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_APPLICATION_INACTIVE",
+    );
+  }
+  if (row.screening.status !== "SHORTLISTED") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_SCREENING_NOT_SHORTLISTED",
+    );
+  }
+  return row;
+}
+
+async function requireRoundParticipant(
+  round: typeof placementJobRounds.$inferSelect,
+  applicationId: string,
+) {
+  const application =
+    await loadApplicationForRound(
+      round,
+      applicationId,
+    );
+
+  const previousRounds = await getDb()
+    .select()
+    .from(placementJobRounds)
+    .where(
+      and(
+        eq(placementJobRounds.jobId, round.jobId),
+        lt(
+          placementJobRounds.sequence,
+          round.sequence,
+        ),
+        ne(
+          placementJobRounds.status,
+          "CANCELLED",
+        ),
+      ),
+    )
+    .orderBy(asc(placementJobRounds.sequence));
+
+  for (const previous of previousRounds) {
+    if (previous.kind === "TALK") continue;
+
+    const [applied] = await getDb()
+      .select({
+        outcome: placementRoundResults.outcome,
+      })
+      .from(placementRoundResults)
+      .where(
+        and(
+          eq(
+            placementRoundResults.roundId,
+            previous.id,
+          ),
+          eq(
+            placementRoundResults.applicationId,
+            applicationId,
+          ),
+          eq(
+            placementRoundResults.status,
+            "APPLIED",
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (!applied || applied.outcome !== "PASS") {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_NOT_PARTICIPANT",
+      );
+    }
+  }
+
+  return application;
+}
+
+function sameStagedResult(
+  current: typeof placementRoundResults.$inferSelect,
+  input: ReturnType<
+    typeof stagePlacementRoundResultInputSchema.parse
+  >,
+) {
+  return (
+    current.outcome === input.outcome &&
+    current.waitlistRank ===
+      (input.waitlistRank ?? null) &&
+    current.scorePercent ===
+      (input.scorePercent ?? null) &&
+    current.reasonCategory ===
+      (input.reasonCategory ?? null) &&
+    current.candidateMessage ===
+      (input.candidateMessage ?? null) &&
+    current.internalComment ===
+      (input.internalComment ?? null)
+  );
+}
+
+export async function listPlacementRoundResults(
+  context: RequestContext,
+  roundIdInput: string,
+) {
+  const roundId = placementRoundIdSchema.parse(
+    roundIdInput,
+  );
+  const { round, job } =
+    await loadRoundContext(roundId);
+  await requirePlacementManageScope(
+    context,
+    job.collegeId,
+  );
+
+  return getDb()
+    .select()
+    .from(placementRoundResults)
+    .where(
+      eq(placementRoundResults.roundId, round.id),
+    )
+    .orderBy(
+      asc(placementRoundResults.applicationId),
+      desc(placementRoundResults.version),
+    );
+}
+
+export async function stagePlacementRoundResult(
+  context: RequestContext,
+  roundIdInput: string,
+  rawInput: StagePlacementRoundResultInput,
+) {
+  const roundId = placementRoundIdSchema.parse(
+    roundIdInput,
+  );
+  const input =
+    stagePlacementRoundResultInputSchema.parse(
+      rawInput,
+    );
+  const { round, job } =
+    await loadRoundContext(roundId);
+  await requirePlacementManageScope(
+    context,
+    job.collegeId,
+  );
+
+  if (round.kind === "TALK") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_INVALID_ROUND_TYPE",
+    );
+  }
+  if (
+    round.status !== "SCHEDULED" &&
+    round.status !== "COMPLETED"
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_ROUND_NOT_READY",
+    );
+  }
+
+  await requireRoundParticipant(
+    round,
+    input.applicationId,
+  );
+
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const [lockedRound] = await tx
+      .select({
+        status: placementJobRounds.status,
+      })
+      .from(placementJobRounds)
+      .where(
+        eq(
+          placementJobRounds.id,
+          round.id,
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (
+      !lockedRound ||
+      (lockedRound.status !== "SCHEDULED" &&
+        lockedRound.status !== "COMPLETED")
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_ROUND_NOT_READY",
+      );
+    }
+
+    const [lockedApplication] = await tx
+      .select({
+        status: placementApplications.status,
+      })
+      .from(placementApplications)
+      .where(
+        eq(
+          placementApplications.id,
+          input.applicationId,
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (
+      !lockedApplication ||
+      lockedApplication.status !== "SUBMITTED"
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_APPLICATION_INACTIVE",
+      );
+    }
+
+    const [current] = await tx
+      .select()
+      .from(placementRoundResults)
+      .where(
+        and(
+          eq(
+            placementRoundResults.roundId,
+            round.id,
+          ),
+          eq(
+            placementRoundResults.applicationId,
+            input.applicationId,
+          ),
+          ne(
+            placementRoundResults.status,
+            "SUPERSEDED",
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (current?.status === "APPLIED") {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_ALREADY_APPLIED",
+      );
+    }
+    if (
+      current?.status === "STAGED" &&
+      sameStagedResult(current, input)
+    ) {
+      return current;
+    }
+
+    const [aggregate] = await tx
+      .select({
+        maxVersion: max(
+          placementRoundResults.version,
+        ),
+      })
+      .from(placementRoundResults)
+      .where(
+        and(
+          eq(
+            placementRoundResults.roundId,
+            round.id,
+          ),
+          eq(
+            placementRoundResults.applicationId,
+            input.applicationId,
+          ),
+        ),
+      );
+
+    const nextVersion =
+      Number(aggregate?.maxVersion ?? 0) + 1;
+    const now = new Date();
+
+    if (current?.status === "STAGED") {
+      await tx
+        .update(placementRoundResults)
+        .set({
+          status: "SUPERSEDED",
+          supersededAt: now,
+          updatedAt: now,
+        })
+        .where(
+          eq(
+            placementRoundResults.id,
+            current.id,
+          ),
+        );
+    }
+
+    const [staged] = await tx
+      .insert(placementRoundResults)
+      .values({
+        roundId: round.id,
+        applicationId: input.applicationId,
+        version: nextVersion,
+        outcome: input.outcome,
+        waitlistRank:
+          input.waitlistRank ?? null,
+        scorePercent:
+          input.scorePercent ?? null,
+        reasonCategory:
+          input.reasonCategory ?? null,
+        candidateMessage:
+          input.candidateMessage ?? null,
+        internalComment:
+          input.internalComment ?? null,
+        source: "TPO",
+        status: "STAGED",
+        submittedByUserId: context.user.id,
+        submittedAt: now,
+      })
+      .returning();
+
+    return staged;
+  });
+}
+
+async function loadResultContext(resultId: string) {
+  const [row] = await getDb()
+    .select({
+      result: placementRoundResults,
+      round: placementJobRounds,
+      job: placementJobs,
+      application: placementApplications,
+      screening: placementApplicationScreenings,
+    })
+    .from(placementRoundResults)
+    .innerJoin(
+      placementJobRounds,
+      eq(
+        placementJobRounds.id,
+        placementRoundResults.roundId,
+      ),
+    )
+    .innerJoin(
+      placementJobs,
+      eq(
+        placementJobs.id,
+        placementJobRounds.jobId,
+      ),
+    )
+    .innerJoin(
+      placementApplications,
+      eq(
+        placementApplications.id,
+        placementRoundResults.applicationId,
+      ),
+    )
+    .innerJoin(
+      placementApplicationScreenings,
+      eq(
+        placementApplicationScreenings.applicationId,
+        placementApplications.id,
+      ),
+    )
+    .where(eq(placementRoundResults.id, resultId))
+    .limit(1);
+
+  if (!row) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_NOT_FOUND",
+    );
+  }
+  return row;
+}
+
+export async function applyPlacementRoundResult(
+  context: RequestContext,
+  resultIdInput: string,
+) {
+  const resultId =
+    placementResultIdSchema.parse(resultIdInput);
+  const current =
+    await loadResultContext(resultId);
+  await requirePlacementManageScope(
+    context,
+    current.job.collegeId,
+  );
+
+  if (current.result.status === "APPLIED") {
+    return current.result;
+  }
+  if (current.result.status !== "STAGED") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_NOT_FOUND",
+    );
+  }
+  if (current.round.status !== "COMPLETED") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_ROUND_NOT_READY",
+    );
+  }
+  if (current.round.kind === "TALK") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RESULT_INVALID_ROUND_TYPE",
+    );
+  }
+
+  await requireRoundParticipant(
+    current.round,
+    current.application.id,
+  );
+
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const [lockedApplication] = await tx
+      .select({
+        status: placementApplications.status,
+      })
+      .from(placementApplications)
+      .where(
+        eq(
+          placementApplications.id,
+          current.application.id,
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (
+      !lockedApplication ||
+      lockedApplication.status !== "SUBMITTED"
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_APPLICATION_INACTIVE",
+      );
+    }
+
+    const [lockedResult] = await tx
+      .select()
+      .from(placementRoundResults)
+      .where(
+        eq(
+          placementRoundResults.id,
+          resultId,
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!lockedResult) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_NOT_FOUND",
+      );
+    }
+    if (lockedResult.status === "APPLIED") {
+      return lockedResult;
+    }
+    if (lockedResult.status !== "STAGED") {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_NOT_FOUND",
+      );
+    }
+
+    const now = new Date();
+    const [applied] = await tx
+      .update(placementRoundResults)
+      .set({
+        status: "APPLIED",
+        appliedByUserId: context.user.id,
+        appliedAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(
+            placementRoundResults.id,
+            resultId,
+          ),
+          eq(
+            placementRoundResults.status,
+            "STAGED",
+          ),
+        ),
+      )
+      .returning();
+
+    if (!applied) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RESULT_NOT_FOUND",
+      );
+    }
+    return applied;
+  });
+}
+
+export async function listOwnAppliedPlacementResults(
+  context: RequestContext,
+) {
+  if (
+    !context.membership ||
+    !hasMembershipRole(context, "LEARNER")
+  ) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  return getDb()
+    .select({
+      resultId: placementRoundResults.id,
+      jobId: placementJobs.id,
+      roundId: placementJobRounds.id,
+      roundSequence: placementJobRounds.sequence,
+      roundKind: placementJobRounds.kind,
+      roundName: placementJobRounds.name,
+      outcome: placementRoundResults.outcome,
+      waitlistRank:
+        placementRoundResults.waitlistRank,
+      scorePercent:
+        placementRoundResults.scorePercent,
+      reasonCategory:
+        placementRoundResults.reasonCategory,
+      candidateMessage:
+        placementRoundResults.candidateMessage,
+      appliedAt: placementRoundResults.appliedAt,
+    })
+    .from(placementRoundResults)
+    .innerJoin(
+      placementApplications,
+      eq(
+        placementApplications.id,
+        placementRoundResults.applicationId,
+      ),
+    )
+    .innerJoin(
+      placementJobRounds,
+      eq(
+        placementJobRounds.id,
+        placementRoundResults.roundId,
+      ),
+    )
+    .innerJoin(
+      placementJobs,
+      eq(
+        placementJobs.id,
+        placementJobRounds.jobId,
+      ),
+    )
+    .where(
+      and(
+        eq(
+          placementApplications.membershipId,
+          context.membership.id,
+        ),
+        eq(
+          placementRoundResults.status,
+          "APPLIED",
+        ),
+      ),
+    )
+    .orderBy(
+      desc(placementRoundResults.appliedAt),
+    );
+}

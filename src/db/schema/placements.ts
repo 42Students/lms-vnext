@@ -902,3 +902,135 @@ export const placementJobRoundEvents = pgTable(
     ),
   ],
 );
+
+
+export const placementRoundResults = pgTable(
+  "placement_round_results",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    roundId: uuid("round_id")
+      .notNull()
+      .references(() => placementJobRounds.id, {
+        onDelete: "restrict",
+      }),
+    applicationId: uuid("application_id")
+      .notNull()
+      .references(() => placementApplications.id, {
+        onDelete: "restrict",
+      }),
+    version: integer("version").notNull(),
+    outcome: varchar("outcome", { length: 24 }).notNull(),
+    waitlistRank: integer("waitlist_rank"),
+    scorePercent: integer("score_percent"),
+    reasonCategory: varchar("reason_category", {
+      length: 32,
+    }),
+    candidateMessage: text("candidate_message"),
+    internalComment: text("internal_comment"),
+    source: varchar("source", { length: 16 })
+      .notNull()
+      .default("TPO"),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("STAGED"),
+    submittedByUserId: uuid("submitted_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    submittedAt: timestamp("submitted_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    appliedByUserId: uuid("applied_by_user_id").references(
+      () => users.id,
+      { onDelete: "restrict" },
+    ),
+    appliedAt: timestamp("applied_at", {
+      withTimezone: true,
+    }),
+    supersededAt: timestamp("superseded_at", {
+      withTimezone: true,
+    }),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "placement_round_results_round_application_version_uq",
+    ).on(
+      table.roundId,
+      table.applicationId,
+      table.version,
+    ),
+    uniqueIndex(
+      "placement_round_results_current_uq",
+    )
+      .on(table.roundId, table.applicationId)
+      .where(sql`${table.status} <> 'SUPERSEDED'`),
+    index(
+      "placement_round_results_round_status_idx",
+    ).on(table.roundId, table.status),
+    index(
+      "placement_round_results_application_status_idx",
+    ).on(table.applicationId, table.status),
+    check(
+      "placement_round_results_version_ck",
+      sql`${table.version} > 0`,
+    ),
+    check(
+      "placement_round_results_outcome_ck",
+      sql`${table.outcome} in ('PASS', 'FAIL', 'HOLD', 'ABSENT')`,
+    ),
+    check(
+      "placement_round_results_waitlist_ck",
+      sql`(${table.outcome} = 'HOLD'
+          and ${table.waitlistRank} is not null
+          and ${table.waitlistRank} > 0)
+        or (${table.outcome} <> 'HOLD'
+          and ${table.waitlistRank} is null)`,
+    ),
+    check(
+      "placement_round_results_score_ck",
+      sql`${table.scorePercent} is null
+        or (${table.scorePercent} >= 0 and ${table.scorePercent} <= 100)`,
+    ),
+    check(
+      "placement_round_results_reason_category_ck",
+      sql`${table.reasonCategory} is null
+        or ${table.reasonCategory} in ('APTITUDE', 'TECHNICAL', 'COMMUNICATION', 'OTHER')`,
+    ),
+    check(
+      "placement_round_results_source_ck",
+      sql`${table.source} in ('TPO', 'HR', 'IMPORT')`,
+    ),
+    check(
+      "placement_round_results_status_ck",
+      sql`${table.status} in ('STAGED', 'APPLIED', 'SUPERSEDED')`,
+    ),
+    check(
+      "placement_round_results_candidate_message_ck",
+      sql`${table.outcome} = 'PASS'
+        or coalesce(length(trim(${table.candidateMessage})), 0) > 0`,
+    ),
+    check(
+      "placement_round_results_lifecycle_ck",
+      sql`(${table.status} = 'STAGED'
+          and ${table.appliedByUserId} is null
+          and ${table.appliedAt} is null
+          and ${table.supersededAt} is null)
+        or (${table.status} = 'APPLIED'
+          and ${table.appliedByUserId} is not null
+          and ${table.appliedAt} is not null
+          and ${table.supersededAt} is null)
+        or (${table.status} = 'SUPERSEDED'
+          and ${table.appliedByUserId} is null
+          and ${table.appliedAt} is null
+          and ${table.supersededAt} is not null)`,
+    ),
+  ],
+);

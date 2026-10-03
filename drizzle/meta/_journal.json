@@ -169,6 +169,13 @@
       "when": 1791026200000,
       "tag": "0023_placements_p6b_rounds",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791026800000,
+      "tag": "0024_placements_p6c_results",
+      "breakpoints": true
     }
   ]
 }

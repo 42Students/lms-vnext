@@ -754,3 +754,112 @@ export type ReorderPlacementRoundsInput =
   z.input<
     typeof reorderPlacementRoundsInputSchema
   >;
+
+
+export const placementResultIdSchema =
+  z.string().uuid();
+
+export const placementRoundResultOutcomes = [
+  "PASS",
+  "FAIL",
+  "HOLD",
+  "ABSENT",
+] as const;
+
+export const placementRoundResultReasonCategories = [
+  "APTITUDE",
+  "TECHNICAL",
+  "COMMUNICATION",
+  "OTHER",
+] as const;
+
+export const stagePlacementRoundResultInputSchema =
+  z
+    .object({
+      applicationId: placementApplicationIdSchema,
+      outcome: z.enum(
+        placementRoundResultOutcomes,
+      ),
+      waitlistRank: z
+        .number()
+        .int()
+        .positive()
+        .max(100_000)
+        .nullable()
+        .optional(),
+      scorePercent: z
+        .number()
+        .int()
+        .min(0)
+        .max(100)
+        .nullable()
+        .optional(),
+      reasonCategory: z
+        .enum(
+          placementRoundResultReasonCategories,
+        )
+        .nullable()
+        .optional(),
+      candidateMessage: z
+        .string()
+        .trim()
+        .min(1)
+        .max(1000)
+        .nullable()
+        .optional(),
+      internalComment: z
+        .string()
+        .trim()
+        .min(1)
+        .max(2000)
+        .nullable()
+        .optional(),
+    })
+    .strict()
+    .superRefine((value, ctx) => {
+      if (
+        value.outcome === "HOLD" &&
+        !value.waitlistRank
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["waitlistRank"],
+          message:
+            "Hold results require a waitlist rank",
+        });
+      }
+      if (
+        value.outcome !== "HOLD" &&
+        value.waitlistRank != null
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["waitlistRank"],
+          message:
+            "Waitlist rank is only valid for hold results",
+        });
+      }
+      if (
+        value.outcome !== "PASS" &&
+        !value.candidateMessage
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["candidateMessage"],
+          message:
+            "Non-pass results require a candidate-facing message",
+        });
+      }
+    });
+
+export const applyPlacementRoundResultInputSchema =
+  z
+    .object({
+      action: z.literal("APPLY"),
+    })
+    .strict();
+
+export type StagePlacementRoundResultInput =
+  z.input<
+    typeof stagePlacementRoundResultInputSchema
+  >;
