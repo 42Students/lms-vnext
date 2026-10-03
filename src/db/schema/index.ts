@@ -9,3 +9,4 @@ export * from "./tenant-domains";
 export * from "./legacy-id-map";
 export * from "./academics";
 export * from "./courses";
+export * from "./assessments";

@@ -58,3 +58,26 @@ export const LESSON_CONTENT_STATUSES = [
 ] as const;
 export type LessonContentStatus =
   (typeof LESSON_CONTENT_STATUSES)[number];
+
+
+export const COURSE_ASSIGNMENT_STATUSES = [
+  "DRAFT",
+  "PUBLISHED",
+  "ARCHIVED",
+] as const;
+export type CourseAssignmentStatus =
+  (typeof COURSE_ASSIGNMENT_STATUSES)[number];
+
+export const ASSIGNMENT_SUBMISSION_TYPES = [
+  "TEXT",
+  "LINK",
+] as const;
+export type AssignmentSubmissionType =
+  (typeof ASSIGNMENT_SUBMISSION_TYPES)[number];
+
+export const ASSIGNMENT_GRADING_STATUSES = [
+  "NOT_GRADED",
+  "GRADED",
+] as const;
+export type AssignmentGradingStatus =
+  (typeof ASSIGNMENT_GRADING_STATUSES)[number];

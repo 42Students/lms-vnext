@@ -698,7 +698,19 @@ Courses C3 adds learner progress and Course-facing query surfaces:
 - RESOURCE/manual completion and post-session LIVE_CLASS completion
 - aggregate progress and deterministic Continue Learning next-content selection
 
-Next Courses work is assessment/submission behavior and the Course UI.
+Courses C4A adds assignment assessment behavior:
+- Lesson-owned Assignment definitions with generic Offering or exact Section Delivery audience
+- DRAFT/PUBLISHED/ARCHIVED lifecycle and deadline validation
+- one-shot learner TEXT/HTTPS-LINK submissions
+- exact learner Section Delivery authorization
+- exact Faculty Teaching Assignment grading scope
+- unpublished grade privacy
+- expected-version grading/publishing to prevent lost updates
+- regrading automatically hides a previously published grade
+- PostgreSQL payload, uniqueness and lifecycle constraints
+- file submissions intentionally wait for the Cloud Storage upload-receipt/signing workflow
+
+Next Courses work is C4B quizzes, assessment aggregation into Continue Learning, and the Course UI.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

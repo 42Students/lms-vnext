@@ -18,6 +18,9 @@ import {
   COURSE_LESSON_STATUSES,
   LESSON_CONTENT_TYPES,
   LESSON_CONTENT_STATUSES,
+  COURSE_ASSIGNMENT_STATUSES,
+  ASSIGNMENT_SUBMISSION_TYPES,
+  ASSIGNMENT_GRADING_STATUSES,
 } from "@/modules/courses/constants";
 import {
   COLLEGE_STATUSES,
@@ -131,4 +134,20 @@ export const lessonContentTypeEnum = pgEnum(
 export const lessonContentStatusEnum = pgEnum(
   "lesson_content_status",
   LESSON_CONTENT_STATUSES,
+);
+
+
+export const courseAssignmentStatusEnum = pgEnum(
+  "course_assignment_status",
+  COURSE_ASSIGNMENT_STATUSES,
+);
+
+export const assignmentSubmissionTypeEnum = pgEnum(
+  "assignment_submission_type",
+  ASSIGNMENT_SUBMISSION_TYPES,
+);
+
+export const assignmentGradingStatusEnum = pgEnum(
+  "assignment_grading_status",
+  ASSIGNMENT_GRADING_STATUSES,
 );

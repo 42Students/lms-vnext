@@ -78,6 +78,8 @@ export async function checkDatabaseConnection() {
       courseLessons: string | null;
       lessonContents: string | null;
       learnerContentProgress: string | null;
+      courseAssignments: string | null;
+      assignmentSubmissions: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -98,7 +100,9 @@ export async function checkDatabaseConnection() {
          to_regclass('public.course_learning_paths')::text as "courseLearningPaths",
          to_regclass('public.course_lessons')::text as "courseLessons",
          to_regclass('public.lesson_contents')::text as "lessonContents",
-         to_regclass('public.learner_content_progress')::text as "learnerContentProgress"`,
+         to_regclass('public.learner_content_progress')::text as "learnerContentProgress",
+         to_regclass('public.course_assignments')::text as "courseAssignments",
+         to_regclass('public.assignment_submissions')::text as "assignmentSubmissions"`,
     );
 
     const schema = result.rows[0];
@@ -121,7 +125,9 @@ export async function checkDatabaseConnection() {
       !schema.courseLearningPaths ||
       !schema.courseLessons ||
       !schema.lessonContents ||
-      !schema.learnerContentProgress
+      !schema.learnerContentProgress ||
+      !schema.courseAssignments ||
+      !schema.assignmentSubmissions
     ) {
       throw new Error(
         "Database schema is not fully migrated",

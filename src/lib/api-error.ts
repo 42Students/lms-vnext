@@ -118,6 +118,8 @@ export function apiErrorResponse(error: unknown) {
       "LESSON_NOT_FOUND",
       "LESSON_CONTENT_NOT_FOUND",
       "MEMBERSHIP_NOT_FOUND",
+      "ASSIGNMENT_NOT_FOUND",
+      "ASSIGNMENT_SUBMISSION_NOT_FOUND",
     ]);
 
     const forbidden = new Set([
@@ -131,6 +133,7 @@ export function apiErrorResponse(error: unknown) {
       "TIMED_CONTENT_MANUAL_COMPLETION_NOT_ALLOWED",
       "CONTENT_DURATION_REQUIRED",
       "LIVE_CLASS_NOT_FINISHED",
+      "ASSIGNMENT_GRADE_INVALID",
     ]);
 
     const status = notFound.has(error.code)
