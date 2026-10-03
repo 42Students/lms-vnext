@@ -61,3 +61,15 @@ export const PROJECT_TASK_REVIEW_DECISIONS = [
   "CHANGES_REQUESTED",
   "APPROVED",
 ] as const;
+
+export const PROJECT_SUBMISSION_STATUSES = [
+  "DRAFT",
+  "SUBMITTED",
+  "CHANGES_REQUESTED",
+  "APPROVED",
+] as const;
+
+export const PROJECT_SUBMISSION_REVIEW_DECISIONS = [
+  "CHANGES_REQUESTED",
+  "APPROVED",
+] as const;

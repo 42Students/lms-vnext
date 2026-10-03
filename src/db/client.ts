@@ -95,6 +95,10 @@ export async function checkDatabaseConnection() {
       projectResources: string | null;
       projectMembers: string | null;
       projectTaskSubmissions: string | null;
+      projectSubmissions: string | null;
+      projectSubmissionReviews: string | null;
+      projectEvaluations: string | null;
+      projectEvaluationItems: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -132,7 +136,11 @@ export async function checkDatabaseConnection() {
          to_regclass('public.project_tasks')::text as "projectTasks",
          to_regclass('public.project_resources')::text as "projectResources",
          to_regclass('public.project_members')::text as "projectMembers",
-         to_regclass('public.project_task_submissions')::text as "projectTaskSubmissions"`,
+         to_regclass('public.project_task_submissions')::text as "projectTaskSubmissions",
+         to_regclass('public.project_submissions')::text as "projectSubmissions",
+         to_regclass('public.project_submission_reviews')::text as "projectSubmissionReviews",
+         to_regclass('public.project_evaluations')::text as "projectEvaluations",
+         to_regclass('public.project_evaluation_items')::text as "projectEvaluationItems"`,
     );
 
     const schema = result.rows[0];
@@ -172,7 +180,11 @@ export async function checkDatabaseConnection() {
       !schema.projectTasks ||
       !schema.projectResources ||
       !schema.projectMembers ||
-      !schema.projectTaskSubmissions
+      !schema.projectTaskSubmissions ||
+      !schema.projectSubmissions ||
+      !schema.projectSubmissionReviews ||
+      !schema.projectEvaluations ||
+      !schema.projectEvaluationItems
     ) {
       throw new Error(
         "Database schema is not fully migrated",

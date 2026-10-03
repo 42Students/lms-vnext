@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   PROJECT_MEMBER_ROLES,
   PROJECT_TASK_PRIORITIES,
+  PROJECT_SUBMISSION_REVIEW_DECISIONS,
   PROJECT_TASK_REVIEW_DECISIONS,
   PROJECT_TASK_STATUSES,
 } from "./constants";
@@ -417,3 +418,123 @@ export type ReviewProjectTaskSubmissionInput =
   z.infer<
     typeof reviewProjectTaskSubmissionInputSchema
   >;
+
+const optionalHttpUrlSchema = z
+  .string()
+  .trim()
+  .url()
+  .max(2048)
+  .refine(
+    (value) =>
+      value.startsWith("https://") ||
+      value.startsWith("http://"),
+    {
+      message: "URL must use http or https",
+    },
+  )
+  .optional();
+
+export const projectSubmissionIdSchema =
+  z.string().uuid();
+
+export const projectSubmissionDraftInputSchema = z
+  .object({
+    summary: z.string().trim().min(1).max(6000),
+    sourceUrl: optionalHttpUrlSchema,
+    demoUrl: optionalHttpUrlSchema,
+    notes: z
+      .string()
+      .trim()
+      .min(1)
+      .max(6000)
+      .optional(),
+  })
+  .strict();
+
+export const reviewProjectSubmissionInputSchema =
+  z
+    .object({
+      decision: z.enum(
+        PROJECT_SUBMISSION_REVIEW_DECISIONS,
+      ),
+      feedback: z
+        .string()
+        .trim()
+        .min(1)
+        .max(6000)
+        .optional(),
+    })
+    .strict()
+    .refine(
+      (input) =>
+        input.decision !== "CHANGES_REQUESTED" ||
+        Boolean(input.feedback),
+      {
+        message:
+          "Feedback is required when requesting changes",
+        path: ["feedback"],
+      },
+    );
+
+const projectEvaluationItemInputSchema = z
+  .object({
+    criterion: z.string().trim().min(1).max(240),
+    score: z.number().int().min(0).max(1000),
+    maxScore: z.number().int().min(1).max(1000),
+    feedback: z
+      .string()
+      .trim()
+      .min(1)
+      .max(4000)
+      .optional(),
+  })
+  .strict()
+  .refine(
+    (item) => item.score <= item.maxScore,
+    {
+      message:
+        "Evaluation score cannot exceed maxScore",
+      path: ["score"],
+    },
+  );
+
+export const createProjectEvaluationInputSchema =
+  z
+    .object({
+      summary: z
+        .string()
+        .trim()
+        .min(1)
+        .max(6000)
+        .optional(),
+      items: z
+        .array(projectEvaluationItemInputSchema)
+        .min(1)
+        .max(20),
+    })
+    .strict()
+    .superRefine((input, ctx) => {
+      const criteria = new Set<string>();
+      input.items.forEach((item, index) => {
+        const key = item.criterion.toLowerCase();
+        if (criteria.has(key)) {
+          ctx.addIssue({
+            code: "custom",
+            message:
+              "Evaluation criteria must be unique",
+            path: ["items", index, "criterion"],
+          });
+        }
+        criteria.add(key);
+      });
+    });
+
+export type ProjectSubmissionDraftInput = z.infer<
+  typeof projectSubmissionDraftInputSchema
+>;
+export type ReviewProjectSubmissionInput = z.infer<
+  typeof reviewProjectSubmissionInputSchema
+>;
+export type CreateProjectEvaluationInput = z.infer<
+  typeof createProjectEvaluationInputSchema
+>;

@@ -547,8 +547,8 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] mentor model — MENTOR role required, multiple mentors allowed, one active primary mentor enforced
 - [x] workspace model — normalized admin + exact learner/mentor reads; no live template fallback; lifecycle state is sourced from instance tables
 - [x] sprint/task model — normalized materialization plus mentor/admin lifecycle gates, one-active-sprint DB invariant, task state and release shipping rules
-- [~] submission model — task attempt history + learner submit + mentor/admin review complete; final project delivery next
-- [ ] evaluation model
+- [x] submission model — task attempts + review plus versioned final drafts/submissions and immutable final review history
+- [x] evaluation model — approved-submission-only rubric evaluation with normalized scored criteria
 - [x] materialization redesign — one transaction, assigned immutable version -> normalized instance rows; no live template fallback
 - [x] greenfield decision: no legacy project data migration required
 - [ ] adversarial tests

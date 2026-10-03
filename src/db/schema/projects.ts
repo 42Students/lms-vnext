@@ -632,3 +632,227 @@ export const projectTaskSubmissions = pgTable(
     ),
   ],
 );
+
+export const projectSubmissions = pgTable(
+  "project_submissions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    version: integer("version").notNull(),
+    status: varchar("status", { length: 32 })
+      .notNull()
+      .default("DRAFT"),
+    summary: text("summary").notNull(),
+    sourceUrl: text("source_url"),
+    demoUrl: text("demo_url"),
+    notes: text("notes"),
+    createdByMembershipId: uuid(
+      "created_by_membership_id",
+    )
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    submittedByMembershipId: uuid(
+      "submitted_by_membership_id",
+    ).references(() => collegeMemberships.id, {
+      onDelete: "restrict",
+    }),
+    submittedAt: timestamp("submitted_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "project_submissions_project_version_uq",
+    ).on(table.projectId, table.version),
+    uniqueIndex(
+      "project_submissions_open_project_uq",
+    )
+      .on(table.projectId)
+      .where(
+        sql`${table.status} in ('DRAFT', 'SUBMITTED')`,
+      ),
+    index("project_submissions_project_status_idx").on(
+      table.projectId,
+      table.status,
+    ),
+    check(
+      "project_submissions_version_ck",
+      sql`${table.version} >= 1`,
+    ),
+    check(
+      "project_submissions_status_ck",
+      sql`${table.status} in ('DRAFT', 'SUBMITTED', 'CHANGES_REQUESTED', 'APPROVED')`,
+    ),
+    check(
+      "project_submissions_submit_shape_ck",
+      sql`(
+        (${table.status} = 'DRAFT'
+          and ${table.submittedByMembershipId} is null
+          and ${table.submittedAt} is null)
+        or
+        (${table.status} in ('SUBMITTED', 'CHANGES_REQUESTED', 'APPROVED')
+          and ${table.submittedByMembershipId} is not null
+          and ${table.submittedAt} is not null)
+      )`,
+    ),
+  ],
+);
+
+export const projectSubmissionReviews = pgTable(
+  "project_submission_reviews",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    submissionId: uuid("submission_id")
+      .notNull()
+      .references(() => projectSubmissions.id, {
+        onDelete: "restrict",
+      }),
+    decision: varchar("decision", {
+      length: 32,
+    }).notNull(),
+    feedback: text("feedback"),
+    reviewedByUserId: uuid("reviewed_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    reviewedByMembershipId: uuid(
+      "reviewed_by_membership_id",
+    ).references(() => collegeMemberships.id, {
+      onDelete: "restrict",
+    }),
+    reviewedAt: timestamp("reviewed_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "project_submission_reviews_submission_uq",
+    ).on(table.submissionId),
+    index(
+      "project_submission_reviews_project_idx",
+    ).on(table.projectId, table.reviewedAt),
+    check(
+      "project_submission_reviews_decision_ck",
+      sql`${table.decision} in ('CHANGES_REQUESTED', 'APPROVED')`,
+    ),
+    check(
+      "project_submission_reviews_feedback_ck",
+      sql`${table.decision} <> 'CHANGES_REQUESTED' or (${table.feedback} is not null and length(trim(${table.feedback})) > 0)`,
+    ),
+  ],
+);
+
+export const projectEvaluations = pgTable(
+  "project_evaluations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    submissionId: uuid("submission_id")
+      .notNull()
+      .references(() => projectSubmissions.id, {
+        onDelete: "restrict",
+      }),
+    evaluatorUserId: uuid("evaluator_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    evaluatorMembershipId: uuid(
+      "evaluator_membership_id",
+    ).references(() => collegeMemberships.id, {
+      onDelete: "restrict",
+    }),
+    totalScore: integer("total_score").notNull(),
+    maxScore: integer("max_score").notNull(),
+    summary: text("summary"),
+    evaluatedAt: timestamp("evaluated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "project_evaluations_submission_uq",
+    ).on(table.submissionId),
+    index("project_evaluations_project_idx").on(
+      table.projectId,
+      table.evaluatedAt,
+    ),
+    check(
+      "project_evaluations_score_ck",
+      sql`${table.maxScore} > 0 and ${table.totalScore} >= 0 and ${table.totalScore} <= ${table.maxScore}`,
+    ),
+  ],
+);
+
+export const projectEvaluationItems = pgTable(
+  "project_evaluation_items",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    evaluationId: uuid("evaluation_id")
+      .notNull()
+      .references(() => projectEvaluations.id, {
+        onDelete: "restrict",
+      }),
+    criterion: text("criterion").notNull(),
+    score: integer("score").notNull(),
+    maxScore: integer("max_score").notNull(),
+    feedback: text("feedback"),
+    sequence: integer("sequence").notNull(),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "project_evaluation_items_evaluation_sequence_uq",
+    ).on(table.evaluationId, table.sequence),
+    index(
+      "project_evaluation_items_evaluation_idx",
+    ).on(table.evaluationId),
+    check(
+      "project_evaluation_items_score_ck",
+      sql`${table.maxScore} > 0 and ${table.score} >= 0 and ${table.score} <= ${table.maxScore}`,
+    ),
+    check(
+      "project_evaluation_items_sequence_ck",
+      sql`${table.sequence} >= 0`,
+    ),
+  ],
+);

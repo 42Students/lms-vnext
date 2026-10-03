@@ -92,6 +92,13 @@
       "when": 1791014800000,
       "tag": "0012_projects_p6a_task_submissions",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791016000000,
+      "tag": "0013_projects_p6b_final_evaluation",
+      "breakpoints": true
     }
   ]
 }
