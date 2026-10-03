@@ -94,6 +94,14 @@ const errorLabels: Record<string, string> = {
     "The selected Faculty membership is not active.",
   MEMBERSHIP_COLLEGE_MISMATCH:
     "The selected Faculty membership belongs to a different college.",
+  LEARNING_PATH_CONFLICT:
+    "This Offering already has an active Learning Path.",
+  INVALID_LEARNING_PATH_TRANSITION:
+    "This Learning Path cannot move to that lifecycle state.",
+  LESSON_NAME_CONFLICT:
+    "An active Lesson with this name already exists in the Learning Path.",
+  LESSON_SEQUENCE_CONFLICT:
+    "Another active Lesson already uses this order.",
 };
 
 export async function courseApiError(

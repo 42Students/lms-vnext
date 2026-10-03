@@ -41,6 +41,7 @@ export default async function SuperAdminCoursesPage() {
       />
       <AdminCourseOverview
         workspace={workspace}
+        offeringBasePath="/admin/courses/offerings"
       />
     </div>
   );

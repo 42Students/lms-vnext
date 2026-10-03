@@ -793,7 +793,16 @@ Courses UI3A adds College Admin and college-scoped Super Admin structural operat
 - explicit Super Admin college-scope requirement
 - Courses navigation for both admin shells
 
-Next Courses work is UI3B Admin shared Learning Path/Lesson/Offering-wide learning-item authoring, then media playback/resume and Course-level UI regression/E2E hardening.
+Courses UI3B adds Admin shared-learning authoring:
+- Offering-level College Admin and college-scoped Super Admin workspace
+- Learning Path create/edit/publish/archive
+- Lesson create/edit/reorder/archive
+- Offering-wide RESOURCE / YouTube / live-class / Assignment / Quiz draft creation
+- shared content and assessment lifecycle controls
+- shared Quiz result publication/hiding after close
+- one audience-aware authoring builder reused without weakening exact Faculty scope
+
+Next Courses work is media playback/resume and Course-level browser regression/E2E hardening.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

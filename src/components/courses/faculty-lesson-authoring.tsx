@@ -71,12 +71,14 @@ function FieldLabel({
 export function FacultyLessonAuthoring({
   lessonId,
   deliveryId,
+  audience = "SECTION",
   nextContentSequence,
   nextAssignmentSequence,
   nextQuizSequence,
 }: {
   lessonId: string;
-  deliveryId: string;
+  deliveryId: string | null;
+  audience?: "SECTION" | "OFFERING";
   nextContentSequence: number;
   nextAssignmentSequence: number;
   nextQuizSequence: number;
@@ -550,11 +552,14 @@ export function FacultyLessonAuthoring({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="m-0 text-sm font-semibold text-foreground">
-            Add to this Section
+            {audience === "OFFERING"
+              ? "Add shared learning item"
+              : "Add to this Section"}
           </p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">
-            New items are DRAFT and target only
-            this exact Section delivery.
+            {audience === "OFFERING"
+              ? "New items are DRAFT and shared across every Section Delivery in this Offering."
+              : "New items are DRAFT and target only this exact Section delivery."}
           </p>
         </div>
         {mode ? (

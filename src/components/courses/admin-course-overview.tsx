@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   DataTable,
   type DataTableColumn,
@@ -44,8 +45,10 @@ function Metric({
 
 export function AdminCourseOverview({
   workspace,
+  offeringBasePath,
 }: {
   workspace: Workspace;
+  offeringBasePath: string;
 }) {
   const deliveryCountByOffering = new Map<
     string,
@@ -202,17 +205,29 @@ export function AdminCourseOverview({
       ),
       className: "text-right",
       cell: (offering) => (
-        <OfferingActions
-          offering={{
-            id: offering.id,
-            type: offering.type,
-            credits: offering.credits,
-            displayOrder:
-              offering.displayOrder,
-            courseName:
-              offering.courseName,
-          }}
-        />
+        <div className="flex flex-wrap justify-end gap-2">
+          <Link
+            href={
+              offeringBasePath +
+              "/" +
+              offering.id
+            }
+            className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+          >
+            Open learning
+          </Link>
+          <OfferingActions
+            offering={{
+              id: offering.id,
+              type: offering.type,
+              credits: offering.credits,
+              displayOrder:
+                offering.displayOrder,
+              courseName:
+                offering.courseName,
+            }}
+          />
+        </div>
       ),
     },
   ];

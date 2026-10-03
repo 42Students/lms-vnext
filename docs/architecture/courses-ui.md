@@ -197,3 +197,31 @@ The client filters Section choices to the selected Offering's exact Cohort + Aca
 Archive/end controls preserve history and surface dependency conflicts instead of cascading deletion.
 
 Shared Learning Path / Lesson / Offering-wide content authoring is intentionally separated into UI3B so the structural administration page does not become a single overloaded form.
+
+
+## UI3B Admin shared learning authoring
+
+UI3B adds an Offering-level shared-learning workspace for College Admin and college-scoped Super Admin.
+
+Entry points:
+
+- Course Offerings expose an Open learning action
+- /college/courses/offerings/[offeringId]
+- /admin/courses/offerings/[offeringId]
+
+The server resolves the Offering's Course, Cohort and Academic Period, then requires courses.manage for that exact college. A Super Admin still requires the selected college safety scope.
+
+Shared structure operations:
+
+- create/edit/publish/archive the current Learning Path
+- create/edit/reorder/archive Lessons
+- create Offering-wide RESOURCE, YouTube, live-class, Assignment and Quiz drafts
+- publish/archive shared content and Assignments
+- publish/close/archive shared Quizzes
+- publish or hide shared Quiz results only after CLOSE
+
+The existing Faculty lesson-item builder now accepts an explicit audience mode. Faculty continues to pass an exact Section Delivery; Admin passes null for Offering-wide items. This keeps one validation-aware authoring implementation without weakening server authorization.
+
+The Offering workspace intentionally returns only generic shared items. Section-specific items stay in the exact Faculty teaching workspace, so Admin shared authoring does not accidentally become a cross-Section content editor.
+
+File/video upload authoring remains hidden until the signed Cloud Storage upload-receipt workflow exists.

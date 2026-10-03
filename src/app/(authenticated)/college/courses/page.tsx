@@ -28,6 +28,7 @@ export default async function CollegeCoursesPage() {
       />
       <AdminCourseOverview
         workspace={workspace}
+        offeringBasePath="/college/courses/offerings"
       />
     </div>
   );
