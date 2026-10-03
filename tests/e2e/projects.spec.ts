@@ -117,7 +117,7 @@ test.describe("Projects browser regression", () => {
     let teamDialog = page.getByRole("dialog", {
       name: "Add Project teammate",
     });
-    await expect(teamDialog.getByLabel("Member")).toContainText(
+    await expect(teamDialog.getByLabel("Member", { exact: true })).toContainText(
       "Seed Learner",
     );
     await teamDialog
@@ -139,7 +139,7 @@ test.describe("Projects browser regression", () => {
     await teamDialog
       .getByLabel("Project role")
       .selectOption("MENTOR");
-    await expect(teamDialog.getByLabel("Member")).toContainText(
+    await expect(teamDialog.getByLabel("Member", { exact: true })).toContainText(
       "Seed Shared Faculty",
     );
     await teamDialog
