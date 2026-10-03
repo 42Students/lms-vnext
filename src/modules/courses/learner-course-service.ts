@@ -3,6 +3,7 @@ import {
   asc,
   desc,
   eq,
+  inArray,
   isNull,
   ne,
   or,
@@ -10,14 +11,18 @@ import {
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
+  assignmentSubmissions,
+  courseAssignments,
   courseLearningPaths,
   courseLessons,
   courseOfferings,
+  courseQuizzes,
   courseSectionDeliveries,
   courses,
   learnerContentProgress,
   learnerProgramEnrollments,
   lessonContents,
+  quizAttempts,
   sectionEnrollments,
   sections,
 } from "@/db/schema";
@@ -183,6 +188,38 @@ export async function listLearnerCourseDeliveries(
     );
 }
 
+type AssessmentProgressStatus =
+  | "NOT_STARTED"
+  | "COMPLETED"
+  | "MISSED";
+
+type AssessmentProgress = {
+  status: AssessmentProgressStatus;
+  percentComplete: number;
+  completedAt: Date | null;
+};
+
+function assessmentProgress(
+  completedAt: Date | null,
+  missed: boolean,
+): AssessmentProgress {
+  if (completedAt) {
+    return {
+      status: "COMPLETED",
+      percentComplete: 100,
+      completedAt,
+    };
+  }
+
+  return {
+    status: missed
+      ? "MISSED"
+      : "NOT_STARTED",
+    percentComplete: 0,
+    completedAt: null,
+  };
+}
+
 export async function getLearnerCourseWorkspace(
   context: RequestContext,
   deliveryIdInput: string,
@@ -253,8 +290,18 @@ export async function getLearnerCourseWorkspace(
         lessonsTotal: 0,
         contentsCompleted: 0,
         contentsTotal: 0,
+        assignmentsCompleted: 0,
+        assignmentsTotal: 0,
+        assignmentsMissed: 0,
+        quizzesCompleted: 0,
+        quizzesTotal: 0,
+        quizzesMissed: 0,
+        itemsCompleted: 0,
+        itemsTotal: 0,
+        itemsMissed: 0,
       },
       nextContent: null,
+      nextItem: null,
       lessons: [],
     };
   }
@@ -354,12 +401,61 @@ export async function getLearnerCourseWorkspace(
       typeof buildLearnerProgressView
     >;
   };
+
+  type AssignmentItem = {
+    id: string;
+    title: string;
+    description: string | null;
+    dueAt: Date | null;
+    maxPoints: number;
+    sequence: number;
+    submissionId: string | null;
+    submittedAt: Date | null;
+    gradePublished: boolean;
+    pointsAwarded: number | null;
+    gradingStatus:
+      | "NOT_GRADED"
+      | "GRADED";
+    progress: AssessmentProgress;
+  };
+
+  type QuizItem = {
+    id: string;
+    title: string;
+    description: string | null;
+    dueAt: Date | null;
+    maxAttempts: number;
+    totalPoints: number;
+    sequence: number;
+    status:
+      | "PUBLISHED"
+      | "CLOSED";
+    resultsPublished: boolean;
+    attemptsUsed: number;
+    attemptsRemaining: number;
+    progress: AssessmentProgress;
+  };
+
   type LessonItem = {
     id: string;
     name: string;
     description: string | null;
     sequence: number;
     contents: ContentItem[];
+    assignments: AssignmentItem[];
+    quizzes: QuizItem[];
+    items: Array<{
+      kind:
+        | "CONTENT"
+        | "ASSIGNMENT"
+        | "QUIZ";
+      id: string;
+      title: string;
+      sequence: number;
+      progress:
+        | ContentItem["progress"]
+        | AssessmentProgress;
+    }>;
   };
 
   const lessons = new Map<
@@ -376,6 +472,9 @@ export async function getLearnerCourseWorkspace(
         description: row.lessonDescription,
         sequence: row.lessonSequence,
         contents: [],
+        assignments: [],
+        quizzes: [],
+        items: [],
       };
       lessons.set(row.lessonId, lesson);
     }
@@ -416,6 +515,303 @@ export async function getLearnerCourseWorkspace(
   }
 
   const lessonList = [...lessons.values()];
+  const lessonIds = lessonList.map(
+    (lesson) => lesson.id,
+  );
+  const now = Date.now();
+
+  if (lessonIds.length > 0) {
+    const assignments = await getDb()
+      .select({
+        id: courseAssignments.id,
+        lessonId: courseAssignments.lessonId,
+        title: courseAssignments.title,
+        description:
+          courseAssignments.description,
+        dueAt: courseAssignments.dueAt,
+        maxPoints: courseAssignments.maxPoints,
+        sequence: courseAssignments.sequence,
+        submissionId:
+          assignmentSubmissions.id,
+        submittedAt:
+          assignmentSubmissions.submittedAt,
+        gradePublished:
+          assignmentSubmissions.gradePublished,
+        pointsAwarded:
+          assignmentSubmissions.pointsAwarded,
+        gradingStatus:
+          assignmentSubmissions.gradingStatus,
+      })
+      .from(courseAssignments)
+      .leftJoin(
+        assignmentSubmissions,
+        and(
+          eq(
+            assignmentSubmissions.assignmentId,
+            courseAssignments.id,
+          ),
+          eq(
+            assignmentSubmissions.membershipId,
+            membership.id,
+          ),
+          eq(
+            assignmentSubmissions.deliveryId,
+            deliveryId,
+          ),
+        ),
+      )
+      .where(
+        and(
+          inArray(
+            courseAssignments.lessonId,
+            lessonIds,
+          ),
+          eq(
+            courseAssignments.status,
+            "PUBLISHED",
+          ),
+          or(
+            isNull(
+              courseAssignments.deliveryId,
+            ),
+            eq(
+              courseAssignments.deliveryId,
+              deliveryId,
+            ),
+          ),
+        ),
+      )
+      .orderBy(
+        asc(courseAssignments.sequence),
+        asc(courseAssignments.createdAt),
+        asc(courseAssignments.id),
+      );
+
+    for (const row of assignments) {
+      const lesson = lessons.get(
+        row.lessonId,
+      );
+      if (!lesson) continue;
+
+      const progress = assessmentProgress(
+        row.submittedAt,
+        !row.submittedAt &&
+          Boolean(row.dueAt) &&
+          row.dueAt!.getTime() < now,
+      );
+
+      lesson.assignments.push({
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        dueAt: row.dueAt,
+        maxPoints: row.maxPoints,
+        sequence: row.sequence,
+        submissionId: row.submissionId,
+        submittedAt: row.submittedAt,
+        gradePublished:
+          row.gradePublished ?? false,
+        pointsAwarded:
+          row.gradePublished
+            ? row.pointsAwarded
+            : null,
+        gradingStatus:
+          row.gradePublished &&
+          row.gradingStatus === "GRADED"
+            ? "GRADED"
+            : "NOT_GRADED",
+        progress,
+      });
+    }
+
+    const quizzes = await getDb()
+      .select({
+        id: courseQuizzes.id,
+        lessonId: courseQuizzes.lessonId,
+        title: courseQuizzes.title,
+        description: courseQuizzes.description,
+        dueAt: courseQuizzes.dueAt,
+        maxAttempts:
+          courseQuizzes.maxAttempts,
+        totalPoints: courseQuizzes.totalPoints,
+        sequence: courseQuizzes.sequence,
+        status: courseQuizzes.status,
+        resultsPublished:
+          courseQuizzes.resultsPublished,
+      })
+      .from(courseQuizzes)
+      .where(
+        and(
+          inArray(
+            courseQuizzes.lessonId,
+            lessonIds,
+          ),
+          inArray(courseQuizzes.status, [
+            "PUBLISHED",
+            "CLOSED",
+          ]),
+          or(
+            isNull(courseQuizzes.deliveryId),
+            eq(
+              courseQuizzes.deliveryId,
+              deliveryId,
+            ),
+          ),
+        ),
+      )
+      .orderBy(
+        asc(courseQuizzes.sequence),
+        asc(courseQuizzes.createdAt),
+        asc(courseQuizzes.id),
+      );
+
+    const quizIds = quizzes.map(
+      (quiz) => quiz.id,
+    );
+    const quizAttemptRows =
+      quizIds.length > 0
+        ? await getDb()
+            .select({
+              quizId: quizAttempts.quizId,
+              id: quizAttempts.id,
+              submittedAt:
+                quizAttempts.submittedAt,
+            })
+            .from(quizAttempts)
+            .where(
+              and(
+                inArray(
+                  quizAttempts.quizId,
+                  quizIds,
+                ),
+                eq(
+                  quizAttempts.membershipId,
+                  membership.id,
+                ),
+                eq(
+                  quizAttempts.deliveryId,
+                  deliveryId,
+                ),
+              ),
+            )
+            .orderBy(
+              asc(quizAttempts.submittedAt),
+            )
+        : [];
+
+    const attemptsByQuiz = new Map<
+      string,
+      Array<{
+        id: string;
+        submittedAt: Date;
+      }>
+    >();
+
+    for (const attempt of quizAttemptRows) {
+      const bucket =
+        attemptsByQuiz.get(attempt.quizId) ??
+        [];
+      bucket.push({
+        id: attempt.id,
+        submittedAt: attempt.submittedAt,
+      });
+      attemptsByQuiz.set(
+        attempt.quizId,
+        bucket,
+      );
+    }
+
+    for (const row of quizzes) {
+      const lesson = lessons.get(
+        row.lessonId,
+      );
+      if (!lesson) continue;
+
+      const attempts =
+        attemptsByQuiz.get(row.id) ?? [];
+      const completedAt =
+        attempts.length > 0
+          ? attempts[0]!.submittedAt
+          : null;
+      const missed =
+        !completedAt &&
+        (row.status === "CLOSED" ||
+          (Boolean(row.dueAt) &&
+            row.dueAt!.getTime() < now));
+      const progress =
+        assessmentProgress(
+          completedAt,
+          missed,
+        );
+
+      lesson.quizzes.push({
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        dueAt: row.dueAt,
+        maxAttempts: row.maxAttempts,
+        totalPoints: row.totalPoints,
+        sequence: row.sequence,
+        status:
+          row.status === "CLOSED"
+            ? "CLOSED"
+            : "PUBLISHED",
+        resultsPublished:
+          row.resultsPublished,
+        attemptsUsed: attempts.length,
+        attemptsRemaining:
+          row.status === "PUBLISHED"
+            ? Math.max(
+                0,
+                row.maxAttempts -
+                  attempts.length,
+              )
+            : 0,
+        progress,
+      });
+    }
+  }
+
+  const kindOrder = {
+    CONTENT: 0,
+    ASSIGNMENT: 1,
+    QUIZ: 2,
+  } as const;
+
+  for (const lesson of lessonList) {
+    lesson.items = [
+      ...lesson.contents.map((content) => ({
+        kind: "CONTENT" as const,
+        id: content.id,
+        title: content.title,
+        sequence: content.sequence,
+        progress: content.progress,
+      })),
+      ...lesson.assignments.map(
+        (assignment) => ({
+          kind: "ASSIGNMENT" as const,
+          id: assignment.id,
+          title: assignment.title,
+          sequence: assignment.sequence,
+          progress: assignment.progress,
+        }),
+      ),
+      ...lesson.quizzes.map((quiz) => ({
+        kind: "QUIZ" as const,
+        id: quiz.id,
+        title: quiz.title,
+        sequence: quiz.sequence,
+        progress: quiz.progress,
+      })),
+    ].sort(
+      (a, b) =>
+        a.sequence - b.sequence ||
+        kindOrder[a.kind] -
+          kindOrder[b.kind] ||
+        a.id.localeCompare(b.id),
+    );
+  }
+
   const allContents = lessonList.flatMap(
     (lesson) =>
       lesson.contents.map((content) => ({
@@ -423,32 +819,98 @@ export async function getLearnerCourseWorkspace(
         content,
       })),
   );
+  const allAssignments =
+    lessonList.flatMap((lesson) =>
+      lesson.assignments.map(
+        (assignment) => ({
+          lesson,
+          assignment,
+        }),
+      ),
+    );
+  const allQuizzes = lessonList.flatMap(
+    (lesson) =>
+      lesson.quizzes.map((quiz) => ({
+        lesson,
+        quiz,
+      })),
+  );
+  const allItems = lessonList.flatMap(
+    (lesson) =>
+      lesson.items.map((item) => ({
+        lesson,
+        item,
+      })),
+  );
+
   const contentsCompleted =
     allContents.filter(
       ({ content }) =>
         content.progress.status ===
         "COMPLETED",
     ).length;
-  const progressPoints = allContents.reduce(
-    (sum, { content }) =>
-      sum + content.progress.percentComplete,
+  const assignmentsCompleted =
+    allAssignments.filter(
+      ({ assignment }) =>
+        assignment.progress.status ===
+        "COMPLETED",
+    ).length;
+  const assignmentsMissed =
+    allAssignments.filter(
+      ({ assignment }) =>
+        assignment.progress.status ===
+        "MISSED",
+    ).length;
+  const quizzesCompleted =
+    allQuizzes.filter(
+      ({ quiz }) =>
+        quiz.progress.status ===
+        "COMPLETED",
+    ).length;
+  const quizzesMissed = allQuizzes.filter(
+    ({ quiz }) =>
+      quiz.progress.status === "MISSED",
+  ).length;
+
+  const progressPoints = allItems.reduce(
+    (sum, { item }) =>
+      sum + item.progress.percentComplete,
     0,
   );
+  const itemsCompleted = allItems.filter(
+    ({ item }) =>
+      item.progress.status === "COMPLETED",
+  ).length;
+  const itemsMissed = allItems.filter(
+    ({ item }) =>
+      item.progress.status === "MISSED",
+  ).length;
+
   const lessonsCompleted =
     lessonList.filter(
       (lesson) =>
-        lesson.contents.length > 0 &&
-        lesson.contents.every(
-          (content) =>
-            content.progress.status ===
+        lesson.items.length > 0 &&
+        lesson.items.every(
+          (item) =>
+            item.progress.status ===
             "COMPLETED",
         ),
     ).length;
-  const next =
+
+  const nextContent =
     allContents.find(
       ({ content }) =>
         content.progress.status !==
         "COMPLETED",
+    ) ?? null;
+
+  const nextItem =
+    allItems.find(
+      ({ item }) =>
+        item.progress.status ===
+        "NOT_STARTED" ||
+        item.progress.status ===
+          "IN_PROGRESS",
     ) ?? null;
 
   return {
@@ -473,27 +935,51 @@ export async function getLearnerCourseWorkspace(
     },
     summary: {
       overallPercent:
-        allContents.length > 0
+        allItems.length > 0
           ? Math.round(
               progressPoints /
-                allContents.length,
+                allItems.length,
             )
           : 0,
       lessonsCompleted,
       lessonsTotal: lessonList.length,
       contentsCompleted,
       contentsTotal: allContents.length,
+      assignmentsCompleted,
+      assignmentsTotal:
+        allAssignments.length,
+      assignmentsMissed,
+      quizzesCompleted,
+      quizzesTotal: allQuizzes.length,
+      quizzesMissed,
+      itemsCompleted,
+      itemsTotal: allItems.length,
+      itemsMissed,
     },
-    nextContent: next
+    nextContent: nextContent
       ? {
-          lessonId: next.lesson.id,
-          lessonName: next.lesson.name,
-          contentId: next.content.id,
+          lessonId: nextContent.lesson.id,
+          lessonName:
+            nextContent.lesson.name,
+          contentId:
+            nextContent.content.id,
           contentTitle:
-            next.content.title,
-          contentType: next.content.type,
+            nextContent.content.title,
+          contentType:
+            nextContent.content.type,
           progress:
-            next.content.progress,
+            nextContent.content.progress,
+        }
+      : null,
+    nextItem: nextItem
+      ? {
+          lessonId: nextItem.lesson.id,
+          lessonName: nextItem.lesson.name,
+          kind: nextItem.item.kind,
+          itemId: nextItem.item.id,
+          title: nextItem.item.title,
+          sequence: nextItem.item.sequence,
+          progress: nextItem.item.progress,
         }
       : null,
     lessons: lessonList,

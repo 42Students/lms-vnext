@@ -66,7 +66,42 @@ Service-level authorization additionally enforces:
 - PUBLISHED Lesson Content
 - exact delivery targeting for section-specific content
 
-## Deferred from C3
+## C4C assessment aggregation
+
+C4C extends the learner workspace without introducing another progress table.
+
+Assessment completion is derived from the assessment's canonical transactional record:
+
+- Assignment is COMPLETED once the learner has a persisted submission.
+- Quiz is COMPLETED once the learner has at least one persisted attempt.
+- An unsubmitted Assignment whose deadline has passed is MISSED.
+- An unattempted Quiz is MISSED when its deadline has passed or it is CLOSED.
+
+MISSED assessments remain visible in the workspace and count as incomplete in overall progress, but Continue Learning skips them because the learner can no longer act on them.
+
+Each Lesson now exposes:
+
+- contents
+- assignments
+- quizzes
+- a deterministic combined items list
+
+Combined ordering is sequence-first. When different item kinds intentionally share the same sequence, the stable tie-breaker is CONTENT, then ASSIGNMENT, then QUIZ, then id.
+
+The workspace keeps the legacy-compatible nextContent field and adds nextItem for the true cross-assessment Continue Learning target.
+
+Summary counters now cover content, assignments, quizzes, completed items and missed items. Overall percent is the average completion percentage across all visible learning items.
+
+## Deferred after C4C
+
+- assignment file upload transport / Cloud Storage receipts
+- randomized quiz presentation
+- manual/descriptive quiz grading
+- learner/faculty/admin Course UI
+- attendance-derived Live Class completion
+- configurable completion threshold if product evidence requires it
+
+## Historical C3 deferred list
 
 - assignments/quizzes, attempts, submissions and grading
 - actual Cloud Storage upload/signing

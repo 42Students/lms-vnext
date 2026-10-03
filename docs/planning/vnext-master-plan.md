@@ -723,7 +723,16 @@ Courses C4B adds quiz assessment behavior:
 - exact Faculty Teaching Assignment review scope
 - adversarial concurrent-final-attempt and historical-snapshot regression tests
 
-Next Courses work is assessment aggregation into Continue Learning, then the learner/faculty/admin Course UI.
+Courses C4C completes assessment aggregation into the learner workspace:
+- Assignment submission counts as assessment completion
+- at least one Quiz attempt counts as assessment completion
+- expired/unavailable unattempted assessments are marked MISSED
+- MISSED work remains visible in progress but is skipped by Continue Learning
+- Lesson contents, Assignments and Quizzes are combined into deterministic ordered learning items
+- nextContent remains for compatibility and nextItem becomes the cross-item Continue Learning pointer
+- Course summary now covers content, assignment, Quiz, completed and missed item counts
+
+The next major Courses work is the learner/faculty/admin Course UI, followed by Course-level UI regression/E2E hardening.
 
 ## Critical caution
 Do not recreate old API response-shape duplication.

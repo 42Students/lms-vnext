@@ -1,0 +1,766 @@
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
+import { Pool } from "pg";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { createProgram } from "@/modules/academics/program-service";
+import { createAcademicPeriod } from "@/modules/academics/period-service";
+import { createCohort } from "@/modules/academics/cohort-service";
+import { createSection } from "@/modules/academics/section-service";
+import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
+import { assignLearnerToSection } from "@/modules/academics/roster-service";
+import { createCourse } from "@/modules/courses/course-service";
+import { createCourseOffering } from "@/modules/courses/offering-service";
+import { createCourseSectionDelivery } from "@/modules/courses/delivery-service";
+import {
+  createLearningPath,
+  transitionLearningPath,
+} from "@/modules/courses/learning-path-service";
+import { createCourseLesson } from "@/modules/courses/lesson-service";
+import {
+  createLessonContent,
+  transitionLessonContent,
+} from "@/modules/courses/lesson-content-service";
+import { saveLearnerContentProgress } from "@/modules/courses/progress-service";
+import {
+  createCourseAssignment,
+  transitionCourseAssignment,
+  updateCourseAssignment,
+} from "@/modules/courses/assignment-service";
+import { submitCourseAssignment } from "@/modules/courses/assignment-submission-service";
+import {
+  createCourseQuiz,
+  getCourseQuiz,
+  transitionCourseQuiz,
+  updateCourseQuiz,
+} from "@/modules/courses/quiz-service";
+import { submitCourseQuiz } from "@/modules/courses/quiz-attempt-service";
+import { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+
+const databaseUrl =
+  process.env.TEST_DATABASE_URL ??
+  process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error(
+    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
+  );
+}
+
+const pool = new Pool({
+  connectionString: databaseUrl,
+  max: 1,
+});
+
+const collegeAdmin: RequestContext = {
+  user: {
+    id: SEED_IDS.collegeAdminUser,
+    identityUid: "seed-college-admin",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.collegeAdminMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["COLLEGE_ADMIN"],
+  },
+};
+
+const learner: RequestContext = {
+  user: {
+    id: SEED_IDS.learnerUser,
+    identityUid: "seed-learner",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.learnerCollegeAMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["LEARNER"],
+  },
+};
+
+async function cleanupC4C() {
+  await pool.query(
+    `delete from quiz_attempt_answers
+     where attempt_id in (
+       select qa.id from quiz_attempts qa
+       join course_quizzes q on q.id = qa.quiz_id
+       join course_lessons cl on cl.id = q.lesson_id
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from quiz_attempts
+     where quiz_id in (
+       select q.id from course_quizzes q
+       join course_lessons cl on cl.id = q.lesson_id
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from quiz_options
+     where question_id in (
+       select qq.id from quiz_questions qq
+       join course_quizzes q on q.id = qq.quiz_id
+       join course_lessons cl on cl.id = q.lesson_id
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from quiz_questions
+     where quiz_id in (
+       select q.id from course_quizzes q
+       join course_lessons cl on cl.id = q.lesson_id
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_quizzes
+     where lesson_id in (
+       select cl.id from course_lessons cl
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from assignment_submissions
+     where assignment_id in (
+       select a.id from course_assignments a
+       join course_lessons cl on cl.id = a.lesson_id
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_assignments
+     where lesson_id in (
+       select cl.id from course_lessons cl
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from learner_content_progress
+     where lesson_content_id in (
+       select lc.id from lesson_contents lc
+       join course_lessons cl on cl.id = lc.lesson_id
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from lesson_contents
+     where lesson_id in (
+       select cl.id from course_lessons cl
+       join course_learning_paths lp on lp.id = cl.learning_path_id
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_lessons
+     where learning_path_id in (
+       select lp.id from course_learning_paths lp
+       join course_offerings co on co.id = lp.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_learning_paths
+     where offering_id in (
+       select co.id from course_offerings co
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_teaching_assignments
+     where delivery_id in (
+       select csd.id from course_section_deliveries csd
+       join course_offerings co on co.id = csd.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_section_deliveries
+     where offering_id in (
+       select co.id from course_offerings co
+       join courses c on c.id = co.course_id
+       where c.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_offerings
+     where course_id in (
+       select id from courses
+       where code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    "delete from courses where code like 'C4C-%'",
+  );
+  await pool.query(
+    `delete from section_enrollments
+     where learner_enrollment_id in (
+       select lpe.id from learner_program_enrollments lpe
+       join programs p on p.id = lpe.program_id
+       where p.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from learner_program_enrollments
+     where program_id in (
+       select id from programs
+       where code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from sections
+     where cohort_id in (
+       select c.id from cohorts c
+       join programs p on p.id = c.program_id
+       where p.code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    `delete from cohorts
+     where program_id in (
+       select id from programs
+       where code like 'C4C-%'
+     )`,
+  );
+  await pool.query(
+    "delete from programs where code like 'C4C-%'",
+  );
+  await pool.query(
+    "delete from academic_periods where code like 'C4C-%'",
+  );
+}
+
+async function createStructure() {
+  const program = await createProgram(
+    collegeAdmin,
+    {
+      departmentId: SEED_IDS.departmentA,
+      name: "C4C Computer Science",
+      code: "C4C-PROGRAM",
+      durationTerms: 8,
+    },
+  );
+  const period = await createAcademicPeriod(
+    collegeAdmin,
+    {
+      collegeId: SEED_IDS.collegeA,
+      name: "C4C Semester 1",
+      code: "C4C-PERIOD",
+      startDate: "2026-07-01",
+      endDate: "2027-12-31",
+    },
+  );
+  const cohort = await createCohort(
+    collegeAdmin,
+    {
+      programId: program.id,
+      name: "C4C 2026 Intake",
+      code: "C4C-COHORT",
+      startPeriodId: period.id,
+    },
+  );
+  const sectionA = await createSection(
+    collegeAdmin,
+    {
+      cohortId: cohort.id,
+      academicPeriodId: period.id,
+      name: "C4C Section A",
+      code: "C4C-A",
+    },
+  );
+  const sectionB = await createSection(
+    collegeAdmin,
+    {
+      cohortId: cohort.id,
+      academicPeriodId: period.id,
+      name: "C4C Section B",
+      code: "C4C-B",
+    },
+  );
+  const course = await createCourse(
+    collegeAdmin,
+    {
+      departmentId: SEED_IDS.departmentA,
+      name: "C4C Data Structures",
+      code: "C4C-DS",
+    },
+  );
+  const offering = await createCourseOffering(
+    collegeAdmin,
+    {
+      courseId: course.id,
+      cohortId: cohort.id,
+      academicPeriodId: period.id,
+      type: "CORE",
+      credits: 4,
+      displayOrder: 0,
+    },
+  );
+  const deliveryA =
+    await createCourseSectionDelivery(
+      collegeAdmin,
+      {
+        offeringId: offering.id,
+        sectionId: sectionA.id,
+      },
+    );
+  const deliveryB =
+    await createCourseSectionDelivery(
+      collegeAdmin,
+      {
+        offeringId: offering.id,
+        sectionId: sectionB.id,
+      },
+    );
+  const enrollment =
+    await createLearnerProgramEnrollment(
+      collegeAdmin,
+      {
+        membershipId:
+          SEED_IDS.learnerCollegeAMembership,
+        programId: program.id,
+        cohortId: cohort.id,
+      },
+    );
+  await assignLearnerToSection(
+    collegeAdmin,
+    {
+      learnerEnrollmentId: enrollment.id,
+      sectionId: sectionA.id,
+    },
+  );
+
+  const path = await createLearningPath(
+    collegeAdmin,
+    {
+      offeringId: offering.id,
+      title: "C4C Learning Path",
+    },
+  );
+  const lesson = await createCourseLesson(
+    collegeAdmin,
+    {
+      learningPathId: path.id,
+      name: "C4C Arrays",
+      sequence: 0,
+    },
+  );
+
+  const resource = await createLessonContent(
+    collegeAdmin,
+    {
+      lessonId: lesson.id,
+      contentType: "RESOURCE",
+      title: "C4C Notes",
+      notes: "Read the notes",
+      sequence: 0,
+    },
+  );
+  await transitionLessonContent(
+    collegeAdmin,
+    resource.id,
+    { action: "PUBLISH" },
+  );
+
+  const assignment =
+    await createCourseAssignment(
+      collegeAdmin,
+      {
+        lessonId: lesson.id,
+        title: "C4C Practice",
+        dueAt:
+          "2027-12-01T12:00:00.000Z",
+        maxPoints: 10,
+        sequence: 1,
+      },
+    );
+  await transitionCourseAssignment(
+    collegeAdmin,
+    assignment.id,
+    { action: "PUBLISH" },
+  );
+
+  const quiz = await createCourseQuiz(
+    collegeAdmin,
+    {
+      lessonId: lesson.id,
+      title: "C4C Checkpoint",
+      dueAt:
+        "2027-12-01T12:00:00.000Z",
+      maxAttempts: 1,
+      sequence: 2,
+      questions: [
+        {
+          type: "SINGLE_CHOICE",
+          prompt: "FIFO means?",
+          points: 5,
+          sequence: 0,
+          options: [
+            {
+              text: "First in first out",
+              correct: true,
+              sequence: 0,
+            },
+            {
+              text: "First in last out",
+              correct: false,
+              sequence: 1,
+            },
+          ],
+        },
+      ],
+    },
+  );
+  await transitionCourseQuiz(
+    collegeAdmin,
+    quiz.id,
+    { action: "PUBLISH" },
+  );
+
+  const siblingAssignment =
+    await createCourseAssignment(
+      collegeAdmin,
+      {
+        lessonId: lesson.id,
+        deliveryId: deliveryB.id,
+        title: "C4C Section B Assignment",
+        dueAt:
+          "2027-12-01T12:00:00.000Z",
+        maxPoints: 10,
+        sequence: 3,
+      },
+    );
+  await transitionCourseAssignment(
+    collegeAdmin,
+    siblingAssignment.id,
+    { action: "PUBLISH" },
+  );
+
+  const siblingQuiz = await createCourseQuiz(
+    collegeAdmin,
+    {
+      lessonId: lesson.id,
+      deliveryId: deliveryB.id,
+      title: "C4C Section B Quiz",
+      dueAt:
+        "2027-12-01T12:00:00.000Z",
+      maxAttempts: 1,
+      sequence: 4,
+      questions: [
+        {
+          type: "SINGLE_CHOICE",
+          prompt: "Section B only?",
+          points: 1,
+          sequence: 0,
+          options: [
+            {
+              text: "Yes",
+              correct: true,
+              sequence: 0,
+            },
+            {
+              text: "No",
+              correct: false,
+              sequence: 1,
+            },
+          ],
+        },
+      ],
+    },
+  );
+  await transitionCourseQuiz(
+    collegeAdmin,
+    siblingQuiz.id,
+    { action: "PUBLISH" },
+  );
+
+  await transitionLearningPath(
+    collegeAdmin,
+    path.id,
+    { action: "PUBLISH" },
+  );
+
+  return {
+    deliveryA,
+    deliveryB,
+    lesson,
+    resource,
+    assignment,
+    quiz,
+    siblingAssignment,
+    siblingQuiz,
+  };
+}
+
+beforeEach(async () => {
+  await cleanupC4C();
+});
+
+afterAll(async () => {
+  await cleanupC4C();
+  await pool.end();
+  await closeDatabaseConnection();
+});
+
+describe("courses C4C assessment aggregation", () => {
+  it("moves Continue Learning across content, assignment and quiz in deterministic order", async () => {
+    const structure = await createStructure();
+
+    const initial =
+      await getLearnerCourseWorkspace(
+        learner,
+        structure.deliveryA.id,
+      );
+
+    expect(
+      initial.lessons[0]?.items.map(
+        (item) => [
+          item.kind,
+          item.id,
+          item.sequence,
+        ],
+      ),
+    ).toEqual([
+      ["CONTENT", structure.resource.id, 0],
+      [
+        "ASSIGNMENT",
+        structure.assignment.id,
+        1,
+      ],
+      ["QUIZ", structure.quiz.id, 2],
+    ]);
+    expect(
+      initial.lessons[0]?.assignments.some(
+        (item) =>
+          item.id ===
+          structure.siblingAssignment.id,
+      ),
+    ).toBe(false);
+    expect(
+      initial.lessons[0]?.quizzes.some(
+        (item) =>
+          item.id === structure.siblingQuiz.id,
+      ),
+    ).toBe(false);
+    expect(initial.summary).toMatchObject({
+      overallPercent: 0,
+      contentsTotal: 1,
+      assignmentsTotal: 1,
+      quizzesTotal: 1,
+      itemsTotal: 3,
+      itemsCompleted: 0,
+    });
+    expect(initial.nextItem).toMatchObject({
+      kind: "CONTENT",
+      itemId: structure.resource.id,
+    });
+
+    await saveLearnerContentProgress(
+      learner,
+      structure.resource.id,
+      {
+        deliveryId: structure.deliveryA.id,
+        completed: true,
+      },
+    );
+
+    const afterContent =
+      await getLearnerCourseWorkspace(
+        learner,
+        structure.deliveryA.id,
+      );
+    expect(afterContent.summary.overallPercent).toBe(
+      33,
+    );
+    expect(afterContent.nextItem).toMatchObject({
+      kind: "ASSIGNMENT",
+      itemId: structure.assignment.id,
+    });
+
+    await submitCourseAssignment(
+      learner,
+      structure.assignment.id,
+      {
+        deliveryId: structure.deliveryA.id,
+        submissionType: "TEXT",
+        textContent: "My answer",
+      },
+    );
+
+    const afterAssignment =
+      await getLearnerCourseWorkspace(
+        learner,
+        structure.deliveryA.id,
+      );
+    expect(
+      afterAssignment.summary.overallPercent,
+    ).toBe(67);
+    expect(afterAssignment.summary).toMatchObject({
+      assignmentsCompleted: 1,
+      itemsCompleted: 2,
+    });
+    expect(afterAssignment.nextItem).toMatchObject({
+      kind: "QUIZ",
+      itemId: structure.quiz.id,
+    });
+    expect(
+      afterAssignment.lessons[0]
+        ?.assignments[0],
+    ).toMatchObject({
+      gradePublished: false,
+      pointsAwarded: null,
+      gradingStatus: "NOT_GRADED",
+      progress: {
+        status: "COMPLETED",
+        percentComplete: 100,
+      },
+    });
+
+    const quizView = await getCourseQuiz(
+      collegeAdmin,
+      structure.quiz.id,
+    );
+    const question = quizView.questions[0]!;
+    const correct = question.options
+      .filter((option) => option.correct)
+      .map((option) => option.id);
+
+    await submitCourseQuiz(
+      learner,
+      structure.quiz.id,
+      {
+        deliveryId: structure.deliveryA.id,
+        answers: [
+          {
+            questionId: question.id,
+            selectedOptionIds: correct,
+          },
+        ],
+      },
+    );
+
+    const complete =
+      await getLearnerCourseWorkspace(
+        learner,
+        structure.deliveryA.id,
+      );
+    expect(complete.summary).toMatchObject({
+      overallPercent: 100,
+      lessonsCompleted: 1,
+      contentsCompleted: 1,
+      assignmentsCompleted: 1,
+      quizzesCompleted: 1,
+      itemsCompleted: 3,
+      itemsTotal: 3,
+      itemsMissed: 0,
+    });
+    expect(complete.nextItem).toBeNull();
+    expect(
+      complete.lessons[0]?.quizzes[0],
+    ).toMatchObject({
+      attemptsUsed: 1,
+      attemptsRemaining: 0,
+      progress: {
+        status: "COMPLETED",
+        percentComplete: 100,
+      },
+    });
+  });
+
+  it("marks expired unsubmitted assessments missed and skips impossible Continue Learning actions", async () => {
+    const structure = await createStructure();
+
+    await updateCourseAssignment(
+      collegeAdmin,
+      structure.assignment.id,
+      {
+        dueAt:
+          "2020-01-01T12:00:00.000Z",
+      },
+    );
+    await updateCourseQuiz(
+      collegeAdmin,
+      structure.quiz.id,
+      {
+        dueAt:
+          "2020-01-01T12:00:00.000Z",
+      },
+    );
+    await saveLearnerContentProgress(
+      learner,
+      structure.resource.id,
+      {
+        deliveryId: structure.deliveryA.id,
+        completed: true,
+      },
+    );
+
+    const workspace =
+      await getLearnerCourseWorkspace(
+        learner,
+        structure.deliveryA.id,
+      );
+
+    expect(workspace.summary).toMatchObject({
+      overallPercent: 33,
+      assignmentsMissed: 1,
+      quizzesMissed: 1,
+      itemsCompleted: 1,
+      itemsMissed: 2,
+      itemsTotal: 3,
+    });
+    expect(
+      workspace.lessons[0]?.assignments[0]
+        ?.progress.status,
+    ).toBe("MISSED");
+    expect(
+      workspace.lessons[0]?.quizzes[0]
+        ?.progress.status,
+    ).toBe("MISSED");
+    expect(workspace.nextItem).toBeNull();
+    expect(
+      workspace.summary.lessonsCompleted,
+    ).toBe(0);
+  });
+});
