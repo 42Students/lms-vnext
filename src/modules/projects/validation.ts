@@ -334,7 +334,7 @@ export const updateProjectMemberInputSchema = z
     },
   );
 
-export type AddProjectMemberInput = z.infer<
+export type AddProjectMemberInput = z.input<
   typeof addProjectMemberInputSchema
 >;
 export type UpdateProjectMemberInput = z.infer<
