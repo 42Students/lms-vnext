@@ -69,7 +69,8 @@ export function FacultyQuizReview({
   status:
     | "DRAFT"
     | "PUBLISHED"
-    | "CLOSED";
+    | "CLOSED"
+    | "ARCHIVED";
   resultsPublished: boolean;
   deliveryOwned: boolean;
 }) {

@@ -13,7 +13,11 @@ export function assignmentSubmissionActions(input: {
 
 export function quizReviewActions(input: {
   deliveryOwned: boolean;
-  status: "DRAFT" | "PUBLISHED" | "CLOSED";
+  status:
+    | "DRAFT"
+    | "PUBLISHED"
+    | "CLOSED"
+    | "ARCHIVED";
   resultsPublished: boolean;
 }) {
   return {

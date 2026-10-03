@@ -38,10 +38,6 @@ const errorLabels: Record<string, string> = {
     "The grade is outside the allowed point range.",
   ASSIGNMENT_NOT_GRADED:
     "Save a grade before publishing it.",
-  INVALID_QUIZ_TRANSITION:
-    "This Quiz action is not valid in its current state.",
-  FACULTY_TEACHING_SCOPE_REQUIRED:
-    "Your active Teaching Assignment does not cover this Section delivery.",
   CONTENT_TYPE_SHAPE_INVALID:
     "The content details do not match the selected content type.",
   LESSON_CONTENT_NOT_PUBLISHED:
