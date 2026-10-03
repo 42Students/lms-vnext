@@ -263,3 +263,167 @@ export type CreatePlacementJobInput = z.input<
 export type UpdatePlacementJobInput = z.input<
   typeof updatePlacementJobInputSchema
 >;
+
+
+const percentageSchema = z
+  .number()
+  .min(0)
+  .max(100)
+  .refine(
+    (value) => Number.isInteger(value * 100),
+    "Use at most two decimal places",
+  );
+
+const cgpaSchema = z
+  .number()
+  .min(0)
+  .max(10)
+  .refine(
+    (value) => Number.isInteger(value * 100),
+    "Use at most two decimal places",
+  );
+
+export const candidateAcademicEvidenceInputSchema = z
+  .object({
+    cgpa: cgpaSchema.nullable().optional().default(null),
+    activeBacklogs: z
+      .number()
+      .int()
+      .min(0)
+      .max(100)
+      .nullable()
+      .optional()
+      .default(null),
+    pastBacklogs: z
+      .number()
+      .int()
+      .min(0)
+      .max(100)
+      .nullable()
+      .optional()
+      .default(null),
+    tenthPercentage: percentageSchema
+      .nullable()
+      .optional()
+      .default(null),
+    twelfthPercentage: percentageSchema
+      .nullable()
+      .optional()
+      .default(null),
+    diplomaPercentage: percentageSchema
+      .nullable()
+      .optional()
+      .default(null),
+    undergraduatePercentage: percentageSchema
+      .nullable()
+      .optional()
+      .default(null),
+    gapYears: z
+      .number()
+      .int()
+      .min(0)
+      .max(50)
+      .nullable()
+      .optional()
+      .default(null),
+    isLateralEntry: z.boolean().optional().default(false),
+    passingYear: z
+      .number()
+      .int()
+      .min(1950)
+      .max(2200)
+      .nullable()
+      .optional()
+      .default(null),
+  })
+  .strict();
+
+export const placementMissingEvidencePolicies = [
+  "ALLOW_WITH_FLAG",
+  "REQUIRE_COMPLETE",
+] as const;
+
+export const placementEligibilityPolicyInputSchema = z
+  .object({
+    allowedProgramIds: z
+      .array(z.string().uuid())
+      .max(100)
+      .transform((values) => [...new Set(values)])
+      .optional()
+      .default([]),
+    allowedCohortIds: z
+      .array(z.string().uuid())
+      .max(100)
+      .transform((values) => [...new Set(values)])
+      .optional()
+      .default([]),
+    minCgpa: cgpaSchema.nullable().optional().default(null),
+    maxActiveBacklogs: z
+      .number()
+      .int()
+      .min(0)
+      .max(100)
+      .nullable()
+      .optional()
+      .default(null),
+    maxPastBacklogs: z
+      .number()
+      .int()
+      .min(0)
+      .max(100)
+      .nullable()
+      .optional()
+      .default(null),
+    minTenthPercentage: percentageSchema
+      .nullable()
+      .optional()
+      .default(null),
+    minTwelfthPercentage: percentageSchema
+      .nullable()
+      .optional()
+      .default(null),
+    minDiplomaPercentage: percentageSchema
+      .nullable()
+      .optional()
+      .default(null),
+    minUndergraduatePercentage: percentageSchema
+      .nullable()
+      .optional()
+      .default(null),
+    maxGapYears: z
+      .number()
+      .int()
+      .min(0)
+      .max(50)
+      .nullable()
+      .optional()
+      .default(null),
+    allowedPassingYears: z
+      .array(z.number().int().min(1950).max(2200))
+      .max(30)
+      .transform((values) => [...new Set(values)])
+      .optional()
+      .default([]),
+    missingEvidencePolicy: z
+      .enum(placementMissingEvidencePolicies)
+      .optional()
+      .default("ALLOW_WITH_FLAG"),
+  })
+  .strict();
+
+export const placementEligibilityOverrideInputSchema = z
+  .object({
+    decision: z.enum(["INCLUDE", "EXCLUDE"]),
+    reason: z.string().trim().min(1).max(1000),
+  })
+  .strict();
+
+export type CandidateAcademicEvidenceInput = z.input<
+  typeof candidateAcademicEvidenceInputSchema
+>;
+export type PlacementEligibilityPolicyInput = z.input<
+  typeof placementEligibilityPolicyInputSchema
+>;
+export type PlacementEligibilityOverrideInput = z.input<
+  typeof placementEligibilityOverrideInputSchema
+>;

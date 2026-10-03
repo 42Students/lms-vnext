@@ -298,3 +298,221 @@ export const placementJobs = pgTable(
     ),
   ],
 );
+
+
+export const placementCandidateAcademicEvidence = pgTable(
+  "placement_candidate_academic_evidence",
+  {
+    membershipId: uuid("membership_id")
+      .primaryKey()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    cgpaHundredths: integer("cgpa_hundredths"),
+    activeBacklogs: integer("active_backlogs"),
+    pastBacklogs: integer("past_backlogs"),
+    tenthPctBasisPoints: integer("tenth_pct_basis_points"),
+    twelfthPctBasisPoints: integer("twelfth_pct_basis_points"),
+    diplomaPctBasisPoints: integer("diploma_pct_basis_points"),
+    undergraduatePctBasisPoints: integer(
+      "undergraduate_pct_basis_points",
+    ),
+    gapYears: integer("gap_years"),
+    isLateralEntry: boolean("is_lateral_entry")
+      .notNull()
+      .default(false),
+    passingYear: integer("passing_year"),
+    source: varchar("source", { length: 16 })
+      .notNull()
+      .default("SELF"),
+    verifiedByUserId: uuid("verified_by_user_id").references(
+      () => users.id,
+      { onDelete: "restrict" },
+    ),
+    verifiedAt: timestamp("verified_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    check(
+      "placement_candidate_academic_evidence_cgpa_ck",
+      sql`${table.cgpaHundredths} is null or ${table.cgpaHundredths} between 0 and 1000`,
+    ),
+    check(
+      "placement_candidate_academic_evidence_backlogs_ck",
+      sql`(${table.activeBacklogs} is null or ${table.activeBacklogs} >= 0)
+        and (${table.pastBacklogs} is null or ${table.pastBacklogs} >= 0)`,
+    ),
+    check(
+      "placement_candidate_academic_evidence_percentages_ck",
+      sql`(${table.tenthPctBasisPoints} is null or ${table.tenthPctBasisPoints} between 0 and 10000)
+        and (${table.twelfthPctBasisPoints} is null or ${table.twelfthPctBasisPoints} between 0 and 10000)
+        and (${table.diplomaPctBasisPoints} is null or ${table.diplomaPctBasisPoints} between 0 and 10000)
+        and (${table.undergraduatePctBasisPoints} is null or ${table.undergraduatePctBasisPoints} between 0 and 10000)`,
+    ),
+    check(
+      "placement_candidate_academic_evidence_gap_ck",
+      sql`${table.gapYears} is null or ${table.gapYears} >= 0`,
+    ),
+    check(
+      "placement_candidate_academic_evidence_passing_year_ck",
+      sql`${table.passingYear} is null or ${table.passingYear} between 1950 and 2200`,
+    ),
+    check(
+      "placement_candidate_academic_evidence_source_ck",
+      sql`${table.source} in ('SELF', 'VERIFIED')`,
+    ),
+    check(
+      "placement_candidate_academic_evidence_verification_ck",
+      sql`(${table.source} = 'VERIFIED' and ${table.verifiedByUserId} is not null and ${table.verifiedAt} is not null)
+        or (${table.source} = 'SELF' and ${table.verifiedByUserId} is null and ${table.verifiedAt} is null)`,
+    ),
+  ],
+);
+
+export const placementJobEligibilityPolicies = pgTable(
+  "placement_job_eligibility_policies",
+  {
+    jobId: uuid("job_id")
+      .primaryKey()
+      .references(() => placementJobs.id, {
+        onDelete: "restrict",
+      }),
+    allowedProgramIds: uuid("allowed_program_ids")
+      .array()
+      .notNull()
+      .default(sql`'{}'::uuid[]`),
+    allowedCohortIds: uuid("allowed_cohort_ids")
+      .array()
+      .notNull()
+      .default(sql`'{}'::uuid[]`),
+    minCgpaHundredths: integer("min_cgpa_hundredths"),
+    maxActiveBacklogs: integer("max_active_backlogs"),
+    maxPastBacklogs: integer("max_past_backlogs"),
+    minTenthPctBasisPoints: integer(
+      "min_tenth_pct_basis_points",
+    ),
+    minTwelfthPctBasisPoints: integer(
+      "min_twelfth_pct_basis_points",
+    ),
+    minDiplomaPctBasisPoints: integer(
+      "min_diploma_pct_basis_points",
+    ),
+    minUndergraduatePctBasisPoints: integer(
+      "min_undergraduate_pct_basis_points",
+    ),
+    maxGapYears: integer("max_gap_years"),
+    allowedPassingYears: integer("allowed_passing_years")
+      .array()
+      .notNull()
+      .default(sql`'{}'::integer[]`),
+    missingEvidencePolicy: varchar(
+      "missing_evidence_policy",
+      { length: 32 },
+    )
+      .notNull()
+      .default("ALLOW_WITH_FLAG"),
+    updatedByUserId: uuid("updated_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    check(
+      "placement_job_eligibility_policy_cgpa_ck",
+      sql`${table.minCgpaHundredths} is null or ${table.minCgpaHundredths} between 0 and 1000`,
+    ),
+    check(
+      "placement_job_eligibility_policy_backlogs_ck",
+      sql`(${table.maxActiveBacklogs} is null or ${table.maxActiveBacklogs} >= 0)
+        and (${table.maxPastBacklogs} is null or ${table.maxPastBacklogs} >= 0)`,
+    ),
+    check(
+      "placement_job_eligibility_policy_percentages_ck",
+      sql`(${table.minTenthPctBasisPoints} is null or ${table.minTenthPctBasisPoints} between 0 and 10000)
+        and (${table.minTwelfthPctBasisPoints} is null or ${table.minTwelfthPctBasisPoints} between 0 and 10000)
+        and (${table.minDiplomaPctBasisPoints} is null or ${table.minDiplomaPctBasisPoints} between 0 and 10000)
+        and (${table.minUndergraduatePctBasisPoints} is null or ${table.minUndergraduatePctBasisPoints} between 0 and 10000)`,
+    ),
+    check(
+      "placement_job_eligibility_policy_gap_ck",
+      sql`${table.maxGapYears} is null or ${table.maxGapYears} >= 0`,
+    ),
+    check(
+      "placement_job_eligibility_policy_missing_ck",
+      sql`${table.missingEvidencePolicy} in ('ALLOW_WITH_FLAG', 'REQUIRE_COMPLETE')`,
+    ),
+  ],
+);
+
+export const placementEligibilityOverrides = pgTable(
+  "placement_eligibility_overrides",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobId: uuid("job_id")
+      .notNull()
+      .references(() => placementJobs.id, {
+        onDelete: "restrict",
+      }),
+    membershipId: uuid("membership_id")
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    decision: varchar("decision", { length: 16 }).notNull(),
+    reason: text("reason").notNull(),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    revokedAt: timestamp("revoked_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "placement_eligibility_overrides_active_uq",
+    )
+      .on(table.jobId, table.membershipId)
+      .where(sql`${table.revokedAt} is null`),
+    index("placement_eligibility_overrides_member_idx").on(
+      table.membershipId,
+      table.revokedAt,
+    ),
+    check(
+      "placement_eligibility_overrides_decision_ck",
+      sql`${table.decision} in ('INCLUDE', 'EXCLUDE')`,
+    ),
+    check(
+      "placement_eligibility_overrides_reason_ck",
+      sql`length(trim(${table.reason})) > 0`,
+    ),
+  ],
+);
