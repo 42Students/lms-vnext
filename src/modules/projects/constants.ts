@@ -50,3 +50,14 @@ export const PROJECT_MEMBER_ROLES = [
 ] as const;
 export type ProjectMemberRole =
   (typeof PROJECT_MEMBER_ROLES)[number];
+
+export const PROJECT_TASK_SUBMISSION_STATUSES = [
+  "SUBMITTED",
+  "CHANGES_REQUESTED",
+  "APPROVED",
+] as const;
+
+export const PROJECT_TASK_REVIEW_DECISIONS = [
+  "CHANGES_REQUESTED",
+  "APPROVED",
+] as const;

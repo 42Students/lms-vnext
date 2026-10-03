@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   PROJECT_MEMBER_ROLES,
   PROJECT_TASK_PRIORITIES,
+  PROJECT_TASK_REVIEW_DECISIONS,
   PROJECT_TASK_STATUSES,
 } from "./constants";
 
@@ -355,3 +356,64 @@ export const updateProjectTaskStatusInputSchema = z
 export type UpdateProjectTaskStatusInput = z.infer<
   typeof updateProjectTaskStatusInputSchema
 >;
+
+export const projectTaskSubmissionIdSchema =
+  z.string().uuid();
+
+export const submitProjectTaskInputSchema = z
+  .object({
+    submissionUrl: z
+      .string()
+      .trim()
+      .url()
+      .max(2048)
+      .refine(
+        (value) =>
+          value.startsWith("https://") ||
+          value.startsWith("http://"),
+        {
+          message:
+            "Task submission URL must use http or https",
+        },
+      ),
+    note: z
+      .string()
+      .trim()
+      .min(1)
+      .max(4000)
+      .optional(),
+  })
+  .strict();
+
+export const reviewProjectTaskSubmissionInputSchema =
+  z
+    .object({
+      decision: z.enum(
+        PROJECT_TASK_REVIEW_DECISIONS,
+      ),
+      feedback: z
+        .string()
+        .trim()
+        .min(1)
+        .max(4000)
+        .optional(),
+    })
+    .strict()
+    .refine(
+      (input) =>
+        input.decision !== "CHANGES_REQUESTED" ||
+        Boolean(input.feedback),
+      {
+        message:
+          "Feedback is required when requesting changes",
+        path: ["feedback"],
+      },
+    );
+
+export type SubmitProjectTaskInput = z.infer<
+  typeof submitProjectTaskInputSchema
+>;
+export type ReviewProjectTaskSubmissionInput =
+  z.infer<
+    typeof reviewProjectTaskSubmissionInputSchema
+  >;

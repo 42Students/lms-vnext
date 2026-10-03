@@ -536,3 +536,99 @@ export const projectMembers = pgTable(
     ),
   ],
 );
+
+export const projectTaskSubmissions = pgTable(
+  "project_task_submissions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    taskId: uuid("task_id")
+      .notNull()
+      .references(() => projectTasks.id, {
+        onDelete: "restrict",
+      }),
+    version: integer("version").notNull(),
+    submittedByMembershipId: uuid(
+      "submitted_by_membership_id",
+    )
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    submissionUrl: text("submission_url").notNull(),
+    note: text("note"),
+    status: varchar("status", { length: 32 })
+      .notNull()
+      .default("SUBMITTED"),
+    submittedAt: timestamp("submitted_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    reviewedByUserId: uuid("reviewed_by_user_id")
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    reviewedByMembershipId: uuid(
+      "reviewed_by_membership_id",
+    ).references(() => collegeMemberships.id, {
+      onDelete: "restrict",
+    }),
+    reviewedAt: timestamp("reviewed_at", {
+      withTimezone: true,
+    }),
+    feedback: text("feedback"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "project_task_submissions_task_version_uq",
+    ).on(table.taskId, table.version),
+    uniqueIndex(
+      "project_task_submissions_active_uq",
+    )
+      .on(table.taskId)
+      .where(sql`${table.status} = 'SUBMITTED'`),
+    index(
+      "project_task_submissions_project_task_idx",
+    ).on(table.projectId, table.taskId),
+    index(
+      "project_task_submissions_submitter_idx",
+    ).on(table.submittedByMembershipId),
+    check(
+      "project_task_submissions_version_ck",
+      sql`${table.version} >= 1`,
+    ),
+    check(
+      "project_task_submissions_status_ck",
+      sql`${table.status} in ('SUBMITTED', 'CHANGES_REQUESTED', 'APPROVED')`,
+    ),
+    check(
+      "project_task_submissions_review_ck",
+      sql`(
+        (${table.status} = 'SUBMITTED'
+          and ${table.reviewedByUserId} is null
+          and ${table.reviewedByMembershipId} is null
+          and ${table.reviewedAt} is null
+          and ${table.feedback} is null)
+        or
+        (${table.status} in ('CHANGES_REQUESTED', 'APPROVED')
+          and ${table.reviewedByUserId} is not null
+          and ${table.reviewedAt} is not null)
+      )`,
+    ),
+  ],
+);
