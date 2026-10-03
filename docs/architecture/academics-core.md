@@ -182,3 +182,75 @@ A1 integration tests must prove:
 - readiness fails if the Academics migration is absent
 
 A2 extends this with enrollment/assignment isolation.
+
+
+## A2 — progression, rosters and section operations
+
+A2 makes learner progression and section operations explicit history instead of mutable pointers.
+
+### Learner Program Enrollment
+
+One active Program enrollment is allowed per college membership.
+
+Fields include membership, Program, Cohort, lifecycle status, admitted time, and terminal completion/withdrawal timestamps.
+
+Rules:
+- membership must be ACTIVE and carry LEARNER
+- membership College must equal the Program's College
+- Cohort must belong to the Program
+- Cohort must be PLANNED or ACTIVE when admitting the learner
+- only one active Program enrollment per membership
+- ending the Program enrollment also closes any active Section placements
+
+### Section Enrollment history
+
+Section placement is append-only history.
+
+Rules:
+- target Section must belong to the learner's Cohort
+- target Section must be ACTIVE
+- target Academic Period must not be CLOSED
+- same-period moves close the previous placement as MOVED
+- forward-period placement closes earlier active placements as COMPLETED
+- moving backward to an earlier Academic Period is rejected
+- assigning the same learner to the same Section/Period is idempotent
+- Section capacity is checked while the target Section row is locked inside the transaction
+- concurrent duplicate placement is additionally blocked by a partial unique index
+
+This replaces legacy learner.class_id / Batch.currentSemester mutation as the progression source of truth.
+
+### Section Faculty responsibilities
+
+A2 supports Section-level responsibilities only:
+- ADVISOR
+- COORDINATOR
+
+The membership must be ACTIVE, contain FACULTY, and belong to the same College as the Section.
+
+Course teaching/instructor assignment is intentionally deferred to the Courses phase.
+
+### Section schedule events
+
+A2 provides generic Section calendar events.
+
+Rules:
+- event belongs to one Section
+- optional Faculty membership must be active FACULTY in the same College
+- start/end must fall inside the Section's Academic Period
+- end must be after start
+- new/edited events cannot target a CLOSED Academic Period
+- cancellation is explicit and retained as history
+
+Course-specific class meetings may later reference/extend this boundary rather than duplicating tenant and time validation.
+
+### A2 database constraints
+
+PostgreSQL enforces:
+- one active Program enrollment per membership
+- unique membership + Program + Cohort enrollment identity
+- one active Section placement per learner enrollment + Academic Period
+- Section enrollment terminal rows require ended_at
+- active Section Faculty responsibility uniqueness
+- schedule event end > start
+
+Service-level tenant/role checks remain authoritative for cross-table College ownership.

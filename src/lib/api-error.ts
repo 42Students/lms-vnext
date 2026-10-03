@@ -92,6 +92,11 @@ export function apiErrorResponse(error: unknown) {
       "ACADEMIC_PERIOD_NOT_FOUND",
       "COHORT_NOT_FOUND",
       "SECTION_NOT_FOUND",
+      "LEARNER_ENROLLMENT_NOT_FOUND",
+      "SECTION_ENROLLMENT_NOT_FOUND",
+      "FACULTY_ASSIGNMENT_NOT_FOUND",
+      "SCHEDULE_EVENT_NOT_FOUND",
+      "MEMBERSHIP_NOT_FOUND",
     ]);
 
     return NextResponse.json(
