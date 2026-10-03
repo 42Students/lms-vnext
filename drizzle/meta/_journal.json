@@ -120,6 +120,13 @@
       "when": 1791019600000,
       "tag": "0016_placements_p1_companies",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1791020800000,
+      "tag": "0017_placements_p2_candidate_preferences",
+      "breakpoints": true
     }
   ]
 }
