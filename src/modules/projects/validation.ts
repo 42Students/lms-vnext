@@ -223,3 +223,48 @@ export type ProjectTemplateBlueprint = z.infer<
 export type CreateProjectTemplateInput = z.infer<
   typeof createProjectTemplateInputSchema
 >;
+
+export const publishableProjectTemplateBlueprintSchema =
+  projectTemplateBlueprintSchema
+    .refine(
+      (blueprint) => blueprint.releases.length > 0,
+      {
+        message:
+          "A published Project template needs at least one release",
+        path: ["releases"],
+      },
+    )
+    .refine(
+      (blueprint) => blueprint.sprints.length > 0,
+      {
+        message:
+          "A published Project template needs at least one sprint",
+        path: ["sprints"],
+      },
+    )
+    .refine(
+      (blueprint) => blueprint.tasks.length > 0,
+      {
+        message:
+          "A published Project template needs at least one task",
+        path: ["tasks"],
+      },
+    );
+
+export const reviseProjectTemplateInputSchema = z
+  .object({
+    title: titleSchema,
+    summary: z.string().trim().min(1).max(2000).optional(),
+    blueprint: projectTemplateBlueprintSchema,
+    changeNote: z
+      .string()
+      .trim()
+      .min(1)
+      .max(1000)
+      .optional(),
+  })
+  .strict();
+
+export type ReviseProjectTemplateInput = z.infer<
+  typeof reviseProjectTemplateInputSchema
+>;

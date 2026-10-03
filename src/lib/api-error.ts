@@ -11,6 +11,7 @@ import { TenantDomainServiceError } from "@/modules/tenant-domains/service";
 import { AdminScopeServiceError } from "@/modules/admin-scope/service";
 import { AcademicsServiceError } from "@/modules/academics/errors";
 import { CoursesServiceError } from "@/modules/courses/errors";
+import { ProjectsServiceError } from "@/modules/projects/errors";
 import { logError } from "@/observability/logger";
 
 export function apiErrorResponse(error: unknown) {
@@ -152,6 +153,20 @@ export function apiErrorResponse(error: unknown) {
     return NextResponse.json(
       { error: error.code },
       { status },
+    );
+  }
+
+  if (error instanceof ProjectsServiceError) {
+    const notFound = new Set([
+      "COLLEGE_NOT_FOUND",
+      "PROJECT_TEMPLATE_NOT_FOUND",
+      "PROJECT_TEMPLATE_VERSION_NOT_FOUND",
+      "PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND",
+    ]);
+
+    return NextResponse.json(
+      { error: error.code },
+      { status: notFound.has(error.code) ? 404 : 409 },
     );
   }
 

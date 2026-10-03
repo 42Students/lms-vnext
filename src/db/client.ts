@@ -85,6 +85,9 @@ export async function checkDatabaseConnection() {
       quizOptions: string | null;
       quizAttempts: string | null;
       quizAttemptAnswers: string | null;
+      projectTemplates: string | null;
+      projectTemplateVersions: string | null;
+      projectTemplateCollegeAssignments: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -112,7 +115,10 @@ export async function checkDatabaseConnection() {
          to_regclass('public.quiz_questions')::text as "quizQuestions",
          to_regclass('public.quiz_options')::text as "quizOptions",
          to_regclass('public.quiz_attempts')::text as "quizAttempts",
-         to_regclass('public.quiz_attempt_answers')::text as "quizAttemptAnswers"`,
+         to_regclass('public.quiz_attempt_answers')::text as "quizAttemptAnswers",
+         to_regclass('public.project_templates')::text as "projectTemplates",
+         to_regclass('public.project_template_versions')::text as "projectTemplateVersions",
+         to_regclass('public.project_template_college_assignments')::text as "projectTemplateCollegeAssignments"`,
     );
 
     const schema = result.rows[0];
@@ -142,7 +148,10 @@ export async function checkDatabaseConnection() {
       !schema.quizQuestions ||
       !schema.quizOptions ||
       !schema.quizAttempts ||
-      !schema.quizAttemptAnswers
+      !schema.quizAttemptAnswers ||
+      !schema.projectTemplates ||
+      !schema.projectTemplateVersions ||
+      !schema.projectTemplateCollegeAssignments
     ) {
       throw new Error(
         "Database schema is not fully migrated",

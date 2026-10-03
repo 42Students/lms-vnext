@@ -57,6 +57,13 @@
       "when": 1791004800000,
       "tag": "0007_courses_c4b_quizzes",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791010000000,
+      "tag": "0008_projects_p1_templates",
+      "breakpoints": true
     }
   ]
 }
