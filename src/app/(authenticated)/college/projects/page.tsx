@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectList } from "@/components/projects/project-list";
+import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectInstances } from "@/modules/projects/instance-service";
+import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 
 export default async function CollegeProjectsPage() {
   const context = await getCurrentRequestContext();
@@ -11,10 +13,10 @@ export default async function CollegeProjectsPage() {
     redirect("/dashboard");
   }
 
-  const projects = await listProjectInstances(
-    context,
-    membership.collegeId,
-  );
+  const [projects, templates] = await Promise.all([
+    listProjectInstances(context, membership.collegeId),
+    listAssignedProjectTemplates(context, membership.collegeId),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -22,6 +24,18 @@ export default async function CollegeProjectsPage() {
         eyebrow="College Admin"
         title="Projects"
         description="College Project workspaces, execution state, teams, delivery and review."
+        actions={
+          <CreateProjectControl
+            collegeId={membership.collegeId}
+            basePath="/college/projects"
+            templates={templates.map((template) => ({
+              templateId: template.templateId,
+              title: template.title,
+              version: template.version,
+              summary: template.summary,
+            }))}
+          />
+        }
       />
       <ProjectList
         items={projects.map((project) => ({

@@ -24,6 +24,10 @@ import {
   RequestProjectMeetingControl,
   ScheduleProjectMeetingControl,
 } from "./project-meeting-controls";
+import {
+  AddProjectMemberControl,
+  ProjectMemberActions,
+} from "./project-team-controls";
 import type {
   getProjectWorkspaceView,
 } from "@/modules/projects/workspace-view-service";
@@ -286,14 +290,21 @@ export function ProjectWorkspace({
       ) : null}
 
       <section className="space-y-3">
-        <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
-            Team
-          </h2>
-          <p className="mt-1 text-sm text-body">
-            Canonical college memberships with explicit
-            Project responsibility.
-          </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="m-0 text-lg font-semibold text-foreground">
+              Team
+            </h2>
+            <p className="mt-1 text-sm text-body">
+              Canonical college memberships with explicit
+              Project responsibility.
+            </p>
+          </div>
+          {mode === "ADMIN" ? (
+            <AddProjectMemberControl
+              projectId={workspace.project.id}
+            />
+          ) : null}
         </div>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {workspace.members.map((member) => (
@@ -325,6 +336,17 @@ export function ProjectWorkspace({
                     : label(member.role)}
                 </StatusBadge>
               </div>
+              {mode === "ADMIN" ? (
+                <ProjectMemberActions
+                  projectId={workspace.project.id}
+                  member={{
+                    id: member.id,
+                    role: member.role,
+                    isPrimary: member.isPrimary,
+                    displayName: member.displayName,
+                  }}
+                />
+              ) : null}
             </article>
           ))}
         </div>

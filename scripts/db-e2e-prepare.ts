@@ -30,6 +30,7 @@ async function main() {
     pathService,
     lessonService,
     contentService,
+    projectTemplateService,
   ] = await Promise.all([
     import("./db-lib"),
     import("./db-seed-data"),
@@ -47,6 +48,7 @@ async function main() {
     import("../src/modules/courses/learning-path-service"),
     import("../src/modules/courses/lesson-service"),
     import("../src/modules/courses/lesson-content-service"),
+    import("../src/modules/projects/template-service"),
   ]);
 
   await dbLib.resetDatabase(databaseUrl);
@@ -66,6 +68,23 @@ async function main() {
       organizationId: ids.organization,
       status: "ACTIVE",
       roles: ["COLLEGE_ADMIN"],
+    },
+  };
+  const superAdmin: RequestContext = {
+    user: {
+      id: ids.superAdminUser,
+      identityUid: "seed-superadmin",
+      platformStatus: "ACTIVE",
+      systemRoles: ["SUPER_ADMIN"],
+    },
+    membership: null,
+    adminScope: null,
+  };
+  const scopedSuperAdmin: RequestContext = {
+    ...superAdmin,
+    adminScope: {
+      organizationId: ids.organization,
+      collegeId: ids.collegeA,
     },
   };
   const faculty: RequestContext = {
@@ -285,8 +304,58 @@ async function main() {
       { action: "PUBLISH" },
     );
 
+    const projectTemplate =
+      await projectTemplateService.createProjectTemplate(
+        superAdmin,
+        {
+          slug: "e2e-project-template",
+          title: "E2E Project Template",
+          summary: "Deterministic Project browser fixture",
+          blueprint: {
+            overview: {
+              goal: "Exercise Project creation and team setup in the browser.",
+              deliverables: ["E2E Project delivery"],
+            },
+            releases: [
+              {
+                key: "release-1",
+                title: "E2E Release",
+                sequence: 0,
+              },
+            ],
+            sprints: [
+              {
+                key: "sprint-1",
+                releaseKey: "release-1",
+                title: "E2E Sprint",
+                sequence: 0,
+              },
+            ],
+            tasks: [
+              {
+                key: "task-1",
+                sprintKey: "sprint-1",
+                title: "E2E Project Task",
+                priority: "MEDIUM",
+                sequence: 0,
+              },
+            ],
+            resources: [],
+          },
+        },
+      );
+    await projectTemplateService.publishProjectTemplate(
+      superAdmin,
+      projectTemplate.template.id,
+    );
+    await projectTemplateService.assignProjectTemplateToCollege(
+      scopedSuperAdmin,
+      projectTemplate.template.id,
+      ids.collegeA,
+    );
+
     process.stdout.write(
-      "Deterministic Course browser E2E fixture applied.\n",
+      "Deterministic Course + Project browser E2E fixtures applied.\n",
     );
   } finally {
     await dbClient.closeDatabaseConnection();
