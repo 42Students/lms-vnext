@@ -52,7 +52,7 @@ export const updatePlacementCompanyRelationshipInputSchema = z
     "Provide at least one relationship field",
   );
 
-export type CreatePlacementCompanyInput = z.infer<
+export type CreatePlacementCompanyInput = z.input<
   typeof createPlacementCompanyInputSchema
 >;
 export type UpdatePlacementCompanyRelationshipInput = z.infer<
