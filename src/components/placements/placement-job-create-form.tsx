@@ -8,6 +8,23 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 
+export type PlacementAcademicTargetingChoice = {
+  programs: Array<{
+    id: string;
+    name: string;
+    code: string;
+    departmentName: string;
+  }>;
+  cohorts: Array<{
+    id: string;
+    name: string;
+    code: string;
+    programId: string;
+    programName: string;
+    status: string;
+  }>;
+};
+
 export type PlacementCompanyChoice = {
   relationshipId: string;
   name: string;
@@ -85,10 +102,12 @@ function nullableInteger(
 export function PlacementJobCreateForm({
   collegeId,
   companies,
+  academicOptions,
   basePath,
 }: {
   collegeId: string;
   companies: readonly PlacementCompanyChoice[];
+  academicOptions: PlacementAcademicTargetingChoice;
   basePath: string;
 }) {
   const router = useRouter();
@@ -109,6 +128,32 @@ export function PlacementJobCreateForm({
     useState(false);
   const [publishNow, setPublishNow] =
     useState(false);
+  const [
+    selectedProgramIds,
+    setSelectedProgramIds,
+  ] = useState<string[]>([]);
+  const [
+    selectedCohortIds,
+    setSelectedCohortIds,
+  ] = useState<string[]>([]);
+
+  function toggleId(
+    value: string,
+    current: string[],
+    setCurrent: (
+      next:
+        | string[]
+        | ((previous: string[]) => string[]),
+    ) => void,
+  ) {
+    setCurrent(
+      current.includes(value)
+        ? current.filter(
+            (item) => item !== value,
+          )
+        : [...current, value],
+    );
+  }
 
   async function submit(
     event: FormEvent<HTMLFormElement>,
@@ -255,8 +300,10 @@ export function PlacementJobCreateForm({
         `/api/placements/jobs/${jobId}/eligibility-policy`,
         "PUT",
         {
-          allowedProgramIds: [],
-          allowedCohortIds: [],
+          allowedProgramIds:
+            selectedProgramIds,
+          allowedCohortIds:
+            selectedCohortIds,
           minCgpa: nullableDecimal(
             String(
               data.get("minCgpa") ?? "",
@@ -668,7 +715,107 @@ export function PlacementJobCreateForm({
             Configure explainable numeric requirements now. Program/cohort scoping can remain empty when the opportunity is open across the college.
           </p>
         </div>
-        <div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 p-5">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <fieldset className="rounded-lg border border-border bg-muted p-4">
+              <legend className="px-1 text-xs font-semibold text-body">
+                Eligible programs
+              </legend>
+              <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
+                Leave all unchecked to make the opportunity available across programs.
+              </p>
+              {academicOptions.programs.length === 0 ? (
+                <p className="m-0 text-sm text-muted-foreground">
+                  No active programs are available in this college yet.
+                </p>
+              ) : (
+                <div className="grid gap-2">
+                  {academicOptions.programs.map(
+                    (program) => (
+                      <label
+                        key={program.id}
+                        className="flex items-start gap-2 text-sm text-body"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedProgramIds.includes(
+                            program.id,
+                          )}
+                          onChange={() =>
+                            toggleId(
+                              program.id,
+                              selectedProgramIds,
+                              setSelectedProgramIds,
+                            )
+                          }
+                        />
+                        <span>
+                          <span className="font-semibold text-foreground">
+                            {program.name}
+                          </span>
+                          <span className="block text-xs text-muted-foreground">
+                            {program.code} ·{" "}
+                            {program.departmentName}
+                          </span>
+                        </span>
+                      </label>
+                    ),
+                  )}
+                </div>
+              )}
+            </fieldset>
+
+            <fieldset className="rounded-lg border border-border bg-muted p-4">
+              <legend className="px-1 text-xs font-semibold text-body">
+                Eligible cohorts
+              </legend>
+              <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
+                Cohorts can narrow the opportunity further before it is published.
+              </p>
+              {academicOptions.cohorts.length === 0 ? (
+                <p className="m-0 text-sm text-muted-foreground">
+                  No active or planned cohorts are available yet.
+                </p>
+              ) : (
+                <div className="grid gap-2">
+                  {academicOptions.cohorts.map(
+                    (cohort) => (
+                      <label
+                        key={cohort.id}
+                        className="flex items-start gap-2 text-sm text-body"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedCohortIds.includes(
+                            cohort.id,
+                          )}
+                          onChange={() =>
+                            toggleId(
+                              cohort.id,
+                              selectedCohortIds,
+                              setSelectedCohortIds,
+                            )
+                          }
+                        />
+                        <span>
+                          <span className="font-semibold text-foreground">
+                            {cohort.name}
+                          </span>
+                          <span className="block text-xs text-muted-foreground">
+                            {cohort.code} ·{" "}
+                            {cohort.programName} ·{" "}
+                            {cohort.status}
+                          </span>
+                        </span>
+                      </label>
+                    ),
+                  )}
+                </div>
+              )}
+            </fieldset>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["minCgpa", "Minimum CGPA", "0.01"],
             [
@@ -749,6 +896,7 @@ export function PlacementJobCreateForm({
               </option>
             </select>
           </label>
+          </div>
         </div>
       </section>
 
