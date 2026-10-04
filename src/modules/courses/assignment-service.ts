@@ -7,6 +7,8 @@ import {
   or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   assignmentSubmissions,
   courseAssignments,
@@ -392,31 +394,66 @@ export async function transitionCourseAssignment(
       ? "PUBLISHED"
       : "ARCHIVED";
 
-  const [updated] = await getDb()
-    .update(courseAssignments)
-    .set({
-      status: nextStatus,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(
-          courseAssignments.id,
-          assignmentId,
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const [updated] = await tx
+      .update(courseAssignments)
+      .set({
+        status: nextStatus,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(
+            courseAssignments.id,
+            assignmentId,
+          ),
+          ne(
+            courseAssignments.status,
+            "ARCHIVED",
+          ),
         ),
-        ne(
-          courseAssignments.status,
-          "ARCHIVED",
-        ),
-      ),
-    )
-    .returning();
+      )
+      .returning();
 
-  if (!updated) {
-    throw new CoursesServiceError(
-      "ASSIGNMENT_NOT_FOUND",
-    );
-  }
+    if (!updated) {
+      throw new CoursesServiceError(
+        "ASSIGNMENT_NOT_FOUND",
+      );
+    }
 
-  return updated;
+    if (input.action === "PUBLISH") {
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_PUBLISHED,
+          collegeId: current.collegeId,
+          organizationId:
+            current.organizationId,
+          subjectType:
+            "course_assignment",
+          subjectId: updated.id,
+          subjectLabel: updated.title,
+          summary:
+            `Assignment ${updated.title} published`,
+          metadata: {
+            learningPathId:
+              current.learningPathId,
+            offeringId:
+              current.offeringId,
+            deliveryId:
+              updated.deliveryId,
+          },
+          groupKey:
+            `course-offering:${current.offeringId}:publishing`,
+          dedupeKey:
+            `course-assignment:${updated.id}:published`,
+        },
+      );
+    }
+
+    return updated;
+  });
 }

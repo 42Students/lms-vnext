@@ -490,6 +490,30 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       ),
     ).toBe(false);
 
+    const activity = await pool.query<{
+      event_type: string;
+    }>(
+      `select event_type
+         from activity_events
+        where subject_id in ($1, $2)
+           or (
+             event_type = 'academics.learner.enrolled'
+             and metadata ->> 'programId' = $1
+           )`,
+      [structure.program.id, path.id],
+    );
+    expect(
+      activity.rows.map(
+        (row) => row.event_type,
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "academics.program.created",
+        "academics.learner.enrolled",
+        "courses.learning_path.published",
+      ]),
+    );
+
     await expect(
       listLessonContents(
         learner,

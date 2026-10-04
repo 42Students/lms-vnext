@@ -449,6 +449,27 @@ describe("courses C4A assignments against PostgreSQL", () => {
       ),
     ).toEqual([generic.id, exact.id]);
 
+    const publishEvents =
+      await pool.query<{
+        subject_id: string;
+      }>(
+        `select subject_id
+           from activity_events
+          where event_type =
+            'courses.assignment.published'
+            and subject_id = any($1::text[])`,
+        [[generic.id, exact.id]],
+      );
+    expect(
+      new Set(
+        publishEvents.rows.map(
+          (row) => row.subject_id,
+        ),
+      ),
+    ).toEqual(
+      new Set([generic.id, exact.id]),
+    );
+
     await expect(
       listCourseAssignments(
         learner,

@@ -5,6 +5,8 @@ import {
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   courseLearningPaths,
 } from "@/db/schema";
@@ -239,25 +241,57 @@ export async function transitionLearningPath(
     );
   }
 
-  const [updated] = await getDb()
-    .update(courseLearningPaths)
-    .set({
-      status: nextStatus,
-      updatedAt: new Date(),
-    })
-    .where(
-      eq(
-        courseLearningPaths.id,
-        learningPathId,
-      ),
-    )
-    .returning();
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const [updated] = await tx
+      .update(courseLearningPaths)
+      .set({
+        status: nextStatus,
+        updatedAt: new Date(),
+      })
+      .where(
+        eq(
+          courseLearningPaths.id,
+          learningPathId,
+        ),
+      )
+      .returning();
 
-  if (!updated) {
-    throw new CoursesServiceError(
-      "LEARNING_PATH_NOT_FOUND",
-    );
-  }
+    if (!updated) {
+      throw new CoursesServiceError(
+        "LEARNING_PATH_NOT_FOUND",
+      );
+    }
 
-  return updated;
+    if (input.action === "PUBLISH") {
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.COURSES_LEARNING_PATH_PUBLISHED,
+          collegeId: current.collegeId,
+          organizationId:
+            current.organizationId,
+          subjectType:
+            "course_learning_path",
+          subjectId: updated.id,
+          subjectLabel: updated.title,
+          summary:
+            `Learning path ${updated.title} published`,
+          metadata: {
+            offeringId:
+              updated.offeringId,
+            courseId: current.courseId,
+          },
+          groupKey:
+            `course-offering:${updated.offeringId}:publishing`,
+          dedupeKey:
+            `course-learning-path:${updated.id}:published`,
+        },
+      );
+    }
+
+    return updated;
+  });
 }

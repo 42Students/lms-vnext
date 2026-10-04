@@ -7,6 +7,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   cohorts,
   departments,
@@ -195,17 +197,47 @@ export async function createProgram(
   const db = getDb();
 
   try {
-    const [created] = await db
-      .insert(programs)
-      .values({
-        departmentId: input.departmentId,
-        name: input.name,
-        code: input.code,
-        durationTerms: input.durationTerms,
-      })
-      .returning();
+    return await db.transaction(async (tx) => {
+      const [created] = await tx
+        .insert(programs)
+        .values({
+          departmentId: input.departmentId,
+          name: input.name,
+          code: input.code,
+          durationTerms: input.durationTerms,
+        })
+        .returning();
 
-    return created;
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_CREATED,
+          collegeId: department.collegeId,
+          organizationId:
+            department.organizationId,
+          subjectType: "program",
+          subjectId: created.id,
+          subjectLabel: created.name,
+          summary:
+            `Program ${created.name} created`,
+          metadata: {
+            code: created.code,
+            departmentId:
+              created.departmentId,
+            durationTerms:
+              created.durationTerms,
+          },
+          groupKey:
+            `academics-program:${created.id}`,
+          dedupeKey:
+            `academics-program:${created.id}:created`,
+        },
+      );
+
+      return created;
+    });
   } catch (error) {
     throw mapProgramConstraint(error);
   }

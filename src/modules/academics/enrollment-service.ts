@@ -4,6 +4,8 @@ import {
   eq,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   learnerProgramEnrollments,
@@ -177,16 +179,47 @@ export async function createLearnerProgramEnrollment(
   const db = getDb();
 
   try {
-    const [created] = await db
-      .insert(learnerProgramEnrollments)
-      .values({
-        membershipId: input.membershipId,
-        programId: input.programId,
-        cohortId: input.cohortId,
-      })
-      .returning();
+    return await db.transaction(async (tx) => {
+      const [created] = await tx
+        .insert(learnerProgramEnrollments)
+        .values({
+          membershipId: input.membershipId,
+          programId: input.programId,
+          cohortId: input.cohortId,
+        })
+        .returning();
 
-    return created;
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.ACADEMICS_LEARNER_ENROLLED,
+          collegeId: program.collegeId,
+          organizationId:
+            program.organizationId,
+          subjectType:
+            "learner_program_enrollment",
+          subjectId: created.id,
+          subjectLabel:
+            "Learner program enrollment",
+          summary:
+            "Learner enrolled into an academic program",
+          metadata: {
+            membershipId:
+              created.membershipId,
+            programId: created.programId,
+            cohortId: created.cohortId,
+          },
+          groupKey:
+            `academics-program:${created.programId}:enrollments`,
+          dedupeKey:
+            `academics-enrollment:${created.id}:created`,
+        },
+      );
+
+      return created;
+    });
   } catch (error) {
     throw mapEnrollmentConstraint(error);
   }
