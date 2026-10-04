@@ -37,7 +37,7 @@ export type ProjectStatus = {
 const executionStartPattern =
   /^# A\. Repository and foundation$/;
 const executionEndPattern =
-  /^# AD\. Rules for future ChatGPT sessions$/;
+  /^# AE\. Rules for future ChatGPT sessions$/;
 const sectionPattern =
   /^# ([A-Z]{1,2}\. .+)$/;
 const itemPattern =

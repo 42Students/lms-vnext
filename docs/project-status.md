@@ -14,12 +14,12 @@ For machine-readable output:
 npm run status -- --json
 ```
 
-The command reads `docs/planning/vnext-execution-checklist.md` and counts only product execution phases **A through AC**.
+The command reads `docs/planning/vnext-execution-checklist.md` and counts only product execution phases **A through AD**.
 
 It deliberately excludes:
 
 - the legend/example checkboxes at the top of the checklist;
-- section AD, which contains instructions for future ChatGPT sessions rather than LMS implementation work.
+- section AE, which contains instructions for future ChatGPT sessions rather than LMS implementation work.
 
 Two completion measures are reported:
 

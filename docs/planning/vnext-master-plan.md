@@ -40,7 +40,8 @@ PHASE 9  Projects                              DONE
 PHASE 10 Placements / TPO / HR                 ACTIVE
 PHASE 11 Activity / notifications / analytics  DONE
 PHASE 12 AI capabilities                       FOUNDATION ACTIVE / VERTEX-BLOCKED
-PHASE 13 Production cutover / retirement       PENDING
+PHASE 13 Legacy account/page parity             ACTIVE — RELEASE GATE
+PHASE 14 Production cutover / retirement       PENDING
 ```
 
 ---
@@ -999,7 +1000,29 @@ AI should call explicit domain services/tools, not unrestricted SQL.
 
 ---
 
-# 16. Phase 13 — Production launch
+# 16. Phase 13 — Legacy account/page parity
+
+## Phase 13 parity release gate
+
+Goal: recreate every meaningful user-facing surface from the current LMS for all seven accounts before broad navigation/UI redesign.
+
+Detailed source of truth: `docs/planning/account-surface-parity.md`.
+
+Rules:
+- legacy frontend is the behavior/product oracle, not a code template;
+- every page/tab/section/action/workflow must be accounted for;
+- MISSING and VERIFY are launch blockers;
+- update parity documentation in the same commit that closes a surface;
+- implement with vNext architecture and centralized authorization;
+- after parity reaches 100%, navigation/UI consolidation becomes a separate product pass.
+
+Execution order: Learner → Faculty → Mentor → College Admin → Super Admin → TPO → HR/Recruiter → shared blockers → final fresh legacy diff.
+
+Definition of done: zero MISSING/VERIFY rows, no PARTIAL row hiding unfinished behavior, intentional removals documented, final route/navigation/section diff complete and critical browser parity regressions green.
+
+---
+
+# 16A. Phase 14 — Production launch
 
 ## Goal
 Launch LMS vNext as the fresh authoritative LMS.

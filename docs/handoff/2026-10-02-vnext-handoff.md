@@ -1,5 +1,7 @@
 # LMS vNext — Current Handoff
 
+> **2026-10-04 parity directive:** account/page parity is now the highest-priority non-cloud work and a release gate. Read `docs/planning/account-surface-parity.md`. Clone the legacy product surface first using clean vNext architecture; redesign/consolidate only after parity is explicitly closed.
+
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
 **Branch:** `main`
@@ -220,7 +222,9 @@ These are intentional deferrals, not forgotten work.
 
 Operational source of truth remains `docs/planning/vnext-execution-checklist.md`.
 
-Current next dependency is account-bound GCP1 provisioning:
+Highest-priority continuation is now **account-surface parity**. Continue Learner → Faculty → Mentor → College Admin → Super Admin → TPO → HR/Recruiter from `docs/planning/account-surface-parity.md`. Update the matrix in the same commit that closes each surface.
+
+Account-bound GCP1 provisioning remains required in parallel when project access is available:
 
 1. confirm project ID
 2. confirm primary region

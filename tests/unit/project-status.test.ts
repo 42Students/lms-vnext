@@ -8,7 +8,7 @@ import {
 } from "../../scripts/project-status";
 
 describe("project status parser", () => {
-  it("counts only execution phases A through AC", () => {
+  it("counts product execution phases through AD and excludes future-chat rules", () => {
     const status =
       parseExecutionChecklist(`
 # LMS vNext — Execution Checklist
@@ -30,18 +30,22 @@ Legend:
 # AC. Fresh vNext production launch
 - [ ] launch
 
-# AD. Rules for future ChatGPT sessions
+# AD. Legacy account-surface parity — ACTIVE
+- [x] inventory
+- [ ] learner parity
+
+# AE. Rules for future ChatGPT sessions
 - [ ] read handoff
 - [ ] inspect current HEAD
 `);
 
     expect(status).toMatchObject({
-      done: 3,
+      done: 4,
       partial: 1,
-      open: 2,
-      total: 6,
+      open: 3,
+      total: 8,
       strictPercent: 50,
-      practicalPercent: 58.33,
+      practicalPercent: 56.25,
     });
 
     expect(
@@ -52,6 +56,7 @@ Legend:
       "A. Repository and foundation",
       "B. Core migration research",
       "AC. Fresh vNext production launch",
+      "AD. Legacy account-surface parity — ACTIVE",
     ]);
   });
 
@@ -63,7 +68,7 @@ Legend:
 - [~] waiting on dependency
 - [ ] still open
 
-# AD. Rules for future ChatGPT sessions
+# AE. Rules for future ChatGPT sessions
 - [ ] not product work
 `);
 

@@ -651,7 +651,30 @@ The legacy LMS is not active and no traffic/data cutover is required.
 
 ---
 
-# AD. Rules for future ChatGPT sessions
+
+# AD. Legacy account-surface parity — ACTIVE
+
+Detailed route/section/action truth: `docs/planning/account-surface-parity.md`. This phase is a release gate.
+
+- [x] clone-first / redesign-later strategy locked
+- [x] initial seven-account legacy route inventory committed
+- [ ] Learner page + section + action parity complete
+- [ ] Faculty page + section + action parity complete
+- [ ] Mentor page + section + action parity complete
+- [ ] College Admin page + section + action parity complete
+- [ ] Super Admin page + section + action parity complete
+- [ ] TPO page + section + action parity complete
+- [ ] HR / Recruiter page + section + action parity complete
+- [ ] shared login/account/storage parity blockers resolved or explicitly accepted
+- [ ] zero MISSING rows in parity matrix
+- [ ] zero VERIFY rows in parity matrix
+- [ ] no PARTIAL row hides an unfinished user job
+- [ ] final fresh route/navigation/section diff against latest legacy `prod-2026`
+- [ ] critical seven-account browser parity regression suite green
+
+---
+
+# AE. Rules for future ChatGPT sessions
 
 Before coding:
 - [ ] read `AGENTS.md`
@@ -686,15 +709,15 @@ Before finishing batch:
 The next chat should start here:
 
 ```text
-NEXT: Batch GCP1 / Development infrastructure
-1. confirm/select the GCP development project and primary region
-2. provision/configure dev Cloud SQL PostgreSQL
-3. enable/configure Identity Platform and the initial login provider
-4. configure safe local/Cloud Run connectivity and least-privilege service account access
-5. create the development storage bucket and Artifact Registry only as needed
-6. configure environment variables/secrets without committing credentials
-7. deploy/smoke-test the vNext health/database/auth path
-8. keep infrastructure minimal and low-maintenance
+NEXT: Account-surface parity closure
+1. read docs/planning/account-surface-parity.md
+2. fetch latest lms2-fe/prod-2026 and lms-vnext/main
+3. continue the first MISSING/PARTIAL/VERIFY row in the active account
+4. preserve legacy page/section/action behavior before broad redesign
+5. implement with vNext architecture and centralized authorization
+6. add regression coverage and update the parity row in the same commit
+7. continue until zero MISSING and zero VERIFY rows remain
+8. mark GCP/Identity/Storage dependencies BLOCKED and continue non-cloud parity work
 ```
 
 If cloud provisioning cannot proceed because account/project access is unavailable, do not redesign the stack. Continue with code-side preparation or another non-blocked checklist dependency.
