@@ -1143,3 +1143,245 @@ export type PlacementJoiningOutcomeInput =
   z.input<
     typeof placementJoiningOutcomeInputSchema
   >;
+
+
+export const placementLearnerRequestIdSchema =
+  z.string().uuid();
+
+export const placementLearnerRequestTypes = [
+  "APPLICATION_WITHDRAWAL",
+  "ROUND_RESCHEDULE",
+  "ABSENCE_DISPUTE",
+  "CORRECTION",
+  "OFFER_EXTENSION",
+  "OTHER",
+] as const;
+
+export const createPlacementLearnerRequestInputSchema =
+  z
+    .object({
+      applicationId:
+        placementApplicationIdSchema,
+      requestType: z.enum(
+        placementLearnerRequestTypes,
+      ),
+      roundId:
+        placementRoundIdSchema
+          .nullable()
+          .optional(),
+      offerId:
+        placementOfferIdSchema
+          .nullable()
+          .optional(),
+      reason: z
+        .string()
+        .trim()
+        .min(3)
+        .max(2000),
+      requestedScheduledAt:
+        z.coerce.date().optional(),
+      timezone:
+        placementTimeZoneSchema.optional(),
+      requestedExpiresAt:
+        z.coerce.date().optional(),
+      correctionField: z
+        .string()
+        .trim()
+        .min(1)
+        .max(160)
+        .optional(),
+      requestedValue: z
+        .string()
+        .trim()
+        .min(1)
+        .max(4000)
+        .optional(),
+    })
+    .strict()
+    .superRefine((value, ctx) => {
+      if (
+        value.requestType ===
+        "ROUND_RESCHEDULE"
+      ) {
+        if (!value.roundId) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["roundId"],
+            message:
+              "Round reschedule requires a round",
+          });
+        }
+        if (!value.requestedScheduledAt) {
+          ctx.addIssue({
+            code: "custom",
+            path: [
+              "requestedScheduledAt",
+            ],
+            message:
+              "Round reschedule requires a requested time",
+          });
+        }
+        if (!value.timezone) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["timezone"],
+            message:
+              "Round reschedule requires a timezone",
+          });
+        }
+      }
+
+      if (
+        value.requestType ===
+          "ABSENCE_DISPUTE" &&
+        !value.roundId
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["roundId"],
+          message:
+            "Absence dispute requires a round",
+        });
+      }
+
+      if (
+        value.requestType ===
+        "OFFER_EXTENSION"
+      ) {
+        if (!value.offerId) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["offerId"],
+            message:
+              "Offer extension requires an offer",
+          });
+        }
+        if (!value.requestedExpiresAt) {
+          ctx.addIssue({
+            code: "custom",
+            path: [
+              "requestedExpiresAt",
+            ],
+            message:
+              "Offer extension requires a requested expiry",
+          });
+        }
+      }
+
+      if (
+        value.requestType ===
+        "CORRECTION"
+      ) {
+        if (!value.correctionField) {
+          ctx.addIssue({
+            code: "custom",
+            path: [
+              "correctionField",
+            ],
+            message:
+              "Correction request requires a field",
+          });
+        }
+        if (!value.requestedValue) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["requestedValue"],
+            message:
+              "Correction request requires the desired value",
+          });
+        }
+      }
+
+      if (
+        value.requestType !==
+          "ROUND_RESCHEDULE" &&
+        value.requestedScheduledAt
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: [
+            "requestedScheduledAt",
+          ],
+          message:
+            "Requested schedule is only valid for round reschedule",
+        });
+      }
+      if (
+        value.requestType !==
+          "ROUND_RESCHEDULE" &&
+        value.timezone
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["timezone"],
+          message:
+            "Timezone is only valid for round reschedule",
+        });
+      }
+      if (
+        value.requestType !==
+          "OFFER_EXTENSION" &&
+        value.requestedExpiresAt
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: [
+            "requestedExpiresAt",
+          ],
+          message:
+            "Requested expiry is only valid for offer extension",
+        });
+      }
+      if (
+        value.requestType !==
+          "CORRECTION" &&
+        (value.correctionField ||
+          value.requestedValue)
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Correction fields are only valid for correction requests",
+        });
+      }
+    });
+
+export const placementLearnerRequestActionSchema =
+  z.discriminatedUnion("action", [
+    z
+      .object({
+        action: z.literal("APPROVE"),
+        reason: z
+          .string()
+          .trim()
+          .min(3)
+          .max(2000)
+          .optional(),
+      })
+      .strict(),
+    z
+      .object({
+        action: z.literal("REJECT"),
+        reason: z
+          .string()
+          .trim()
+          .min(3)
+          .max(2000),
+      })
+      .strict(),
+    z
+      .object({
+        action: z.literal("CANCEL"),
+      })
+      .strict(),
+  ]);
+
+export type CreatePlacementLearnerRequestInput =
+  z.input<
+    typeof createPlacementLearnerRequestInputSchema
+  >;
+
+export type PlacementLearnerRequestActionInput =
+  z.input<
+    typeof placementLearnerRequestActionSchema
+  >;
