@@ -71,6 +71,12 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.offer.responded",
   PLACEMENTS_JOINING_RECORDED:
     "placements.joining.recorded",
+  PLACEMENTS_REQUEST_CREATED:
+    "placements.request.created",
+  PLACEMENTS_REQUEST_RESOLVED:
+    "placements.request.resolved",
+  PLACEMENTS_OFFER_EXTENDED:
+    "placements.offer.extended",
 } as const;
 
 export type ActivityEventType =

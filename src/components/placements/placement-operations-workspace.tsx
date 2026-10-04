@@ -6,10 +6,12 @@ import {
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { listPlacementRecruiterGrants } from "@/modules/placements/recruiter-service";
 import { listPlacementSeasons } from "@/modules/placements/season-service";
+import { listPlacementLearnerRequests } from "@/modules/placements/request-service";
 import { PlacementEmployerRelationships } from "./placement-employer-relationships";
 import { PlacementRecruiterAccess } from "./placement-recruiter-access";
 import { PlacementOperationsOverview } from "./placement-operations-overview";
 import { PlacementSeasonManager } from "./placement-season-manager";
+import { PlacementRequestQueue } from "./placement-request-queue";
 
 export async function PlacementOperationsWorkspace({
   context,
@@ -26,6 +28,7 @@ export async function PlacementOperationsWorkspace({
     owners,
     recruiterGrants,
     seasons,
+    learnerRequests,
   ] = await Promise.all([
     getPlacementTpoOperations(
       context,
@@ -47,6 +50,10 @@ export async function PlacementOperationsWorkspace({
       context,
       collegeId,
     ),
+    listPlacementLearnerRequests(
+      context,
+      collegeId,
+    ),
   ]);
 
   return (
@@ -54,6 +61,32 @@ export async function PlacementOperationsWorkspace({
       <PlacementOperationsOverview
         operations={operations}
         basePath={basePath}
+      />
+      <PlacementRequestQueue
+        requests={learnerRequests.map(
+          (row) => ({
+            requestId:
+              row.request.id,
+            requestType:
+              row.request.requestType,
+            status:
+              row.request.status,
+            reason:
+              row.request.reason,
+            decisionReason:
+              row.request.decisionReason,
+            requestedPayload:
+              row.request.requestedPayload,
+            createdAt:
+              row.request.createdAt.toISOString(),
+            jobTitle:
+              row.job.title,
+            learnerName:
+              row.learner.displayName ??
+              row.learner.email ??
+              "Learner",
+          }),
+        )}
       />
       <PlacementSeasonManager
         collegeId={collegeId}

@@ -194,25 +194,39 @@ function JobActions({
     }
   }
 
-  async function withdraw() {
+  async function requestWithdrawal() {
     if (!application) return;
+
+    const reason =
+      window.prompt(
+        "Why do you want to withdraw this application?",
+      )?.trim();
+    if (!reason) return;
+
     setPendingAction("WITHDRAW");
     try {
       await placementMutation(
-        `/api/placements/applications/${application.id}/actions`,
-        { action: "WITHDRAW" },
+        "/api/placements/requests/me",
+        {
+          applicationId:
+            application.id,
+          requestType:
+            "APPLICATION_WITHDRAWAL",
+          reason,
+        },
       );
       showToast({
         tone: "success",
-        title: "Application withdrawn",
+        title: "Withdrawal requested",
         description:
-          "The withdrawal is recorded in your placement history.",
+          "The placement team will review your request. Your application stays active until approval.",
       });
       router.refresh();
     } catch (error) {
       showToast({
         tone: "error",
-        title: "Could not withdraw",
+        title:
+          "Could not request withdrawal",
         description:
           error instanceof Error
             ? humanize(error.message)
@@ -233,11 +247,11 @@ function JobActions({
           size="sm"
           variant="secondary"
           disabled={pendingAction !== null}
-          onClick={withdraw}
+          onClick={requestWithdrawal}
         >
           {pendingAction === "WITHDRAW"
-            ? "Withdrawing…"
-            : "Withdraw"}
+            ? "Requesting…"
+            : "Request withdrawal"}
         </Button>
       </div>
     );

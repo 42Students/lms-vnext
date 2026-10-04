@@ -1352,6 +1352,161 @@ export const placementOffers = pgTable(
   ],
 );
 
+export const placementLearnerRequests = pgTable(
+  "placement_learner_requests",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    applicationId: uuid("application_id")
+      .notNull()
+      .references(() => placementApplications.id, {
+        onDelete: "restrict",
+      }),
+    membershipId: uuid("membership_id")
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    roundId: uuid("round_id").references(
+      () => placementJobRounds.id,
+      { onDelete: "restrict" },
+    ),
+    offerId: uuid("offer_id").references(
+      () => placementOffers.id,
+      { onDelete: "restrict" },
+    ),
+    requestType: varchar("request_type", {
+      length: 32,
+    }).notNull(),
+    status: varchar("status", {
+      length: 24,
+    })
+      .notNull()
+      .default("PENDING"),
+    reason: text("reason").notNull(),
+    requestedPayload: jsonb(
+      "requested_payload",
+    )
+      .notNull()
+      .default(sql`'{}'::jsonb`),
+    decisionReason: text("decision_reason"),
+    requestedByUserId: uuid(
+      "requested_by_user_id",
+    )
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    decidedByUserId: uuid(
+      "decided_by_user_id",
+    ).references(() => users.id, {
+      onDelete: "restrict",
+    }),
+    decidedAt: timestamp("decided_at", {
+      withTimezone: true,
+    }),
+    effectAppliedAt: timestamp(
+      "effect_applied_at",
+      { withTimezone: true },
+    ),
+    cancelledAt: timestamp("cancelled_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "placement_learner_requests_pending_type_uq",
+    )
+      .on(
+        table.applicationId,
+        table.requestType,
+      )
+      .where(
+        sql`${table.status} = 'PENDING'`,
+      ),
+    index(
+      "placement_learner_requests_application_status_idx",
+    ).on(
+      table.applicationId,
+      table.status,
+      table.createdAt,
+    ),
+    index(
+      "placement_learner_requests_membership_status_idx",
+    ).on(
+      table.membershipId,
+      table.status,
+      table.createdAt,
+    ),
+    check(
+      "placement_learner_requests_type_ck",
+      sql`${table.requestType} in ('APPLICATION_WITHDRAWAL', 'ROUND_RESCHEDULE', 'ABSENCE_DISPUTE', 'CORRECTION', 'OFFER_EXTENSION', 'OTHER')`,
+    ),
+    check(
+      "placement_learner_requests_status_ck",
+      sql`${table.status} in ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED')`,
+    ),
+    check(
+      "placement_learner_requests_reason_ck",
+      sql`length(trim(${table.reason})) > 0`,
+    ),
+    check(
+      "placement_learner_requests_payload_ck",
+      sql`jsonb_typeof(${table.requestedPayload}) = 'object'`,
+    ),
+    check(
+      "placement_learner_requests_target_ck",
+      sql`(${table.requestType} in ('ROUND_RESCHEDULE', 'ABSENCE_DISPUTE')
+          and ${table.roundId} is not null
+          and ${table.offerId} is null)
+        or (${table.requestType} = 'OFFER_EXTENSION'
+          and ${table.offerId} is not null
+          and ${table.roundId} is null)
+        or (${table.requestType} in ('APPLICATION_WITHDRAWAL', 'CORRECTION', 'OTHER')
+          and ${table.roundId} is null
+          and ${table.offerId} is null)`,
+    ),
+    check(
+      "placement_learner_requests_rejection_reason_ck",
+      sql`${table.status} <> 'REJECTED'
+        or coalesce(length(trim(${table.decisionReason})), 0) > 0`,
+    ),
+    check(
+      "placement_learner_requests_lifecycle_ck",
+      sql`(${table.status} = 'PENDING'
+          and ${table.decidedByUserId} is null
+          and ${table.decidedAt} is null
+          and ${table.effectAppliedAt} is null
+          and ${table.cancelledAt} is null)
+        or (${table.status} = 'APPROVED'
+          and ${table.decidedByUserId} is not null
+          and ${table.decidedAt} is not null
+          and ${table.effectAppliedAt} is not null
+          and ${table.cancelledAt} is null)
+        or (${table.status} = 'REJECTED'
+          and ${table.decidedByUserId} is not null
+          and ${table.decidedAt} is not null
+          and ${table.effectAppliedAt} is null
+          and ${table.cancelledAt} is null)
+        or (${table.status} = 'CANCELLED'
+          and ${table.decidedByUserId} is null
+          and ${table.decidedAt} is null
+          and ${table.effectAppliedAt} is null
+          and ${table.cancelledAt} is not null)`,
+    ),
+  ],
+);
+
+
 export const placementOfferStatusHistory = pgTable(
   "placement_offer_status_history",
   {
