@@ -6,6 +6,7 @@ import {
   placementCompanyRelationships,
   placementCompanies,
   placementJobs,
+  placementJobRoleOptions,
   placementSeasons,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -209,6 +210,23 @@ export async function createPlacementJob(
       })
       .returning();
 
+    await tx
+      .insert(placementJobRoleOptions)
+      .values({
+        jobId: job.id,
+        title: job.title,
+        employmentType:
+          job.employmentType,
+        workMode: job.workMode,
+        locations: job.locations,
+        openings: job.openings,
+        minimumAnnualCtcInr:
+          job.minimumAnnualCtcInr,
+        maximumAnnualCtcInr:
+          job.maximumAnnualCtcInr,
+        isPrimary: true,
+      });
+
     return job;
   });
 }
@@ -258,16 +276,93 @@ export async function updatePlacementJob(
     );
   }
 
-  const [updated] = await getDb()
-    .update(placementJobs)
-    .set({
-      ...input,
-      updatedAt: new Date(),
-    })
-    .where(eq(placementJobs.id, jobId))
-    .returning();
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const nextTitle =
+      input.title ?? current.title;
+    const [duplicateRole] = await tx
+      .select({
+        id: placementJobRoleOptions.id,
+      })
+      .from(placementJobRoleOptions)
+      .where(
+        and(
+          eq(
+            placementJobRoleOptions.jobId,
+            jobId,
+          ),
+          eq(
+            placementJobRoleOptions.status,
+            "ACTIVE",
+          ),
+          eq(
+            placementJobRoleOptions.title,
+            nextTitle,
+          ),
+          eq(
+            placementJobRoleOptions.isPrimary,
+            false,
+          ),
+        ),
+      )
+      .limit(1);
 
-  return updated;
+    if (duplicateRole) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ROLE_OPTION_DUPLICATE",
+      );
+    }
+
+    const [updated] = await tx
+      .update(placementJobs)
+      .set({
+        ...input,
+        updatedAt: new Date(),
+      })
+      .where(eq(placementJobs.id, jobId))
+      .returning();
+
+    const [primaryRole] = await tx
+      .update(placementJobRoleOptions)
+      .set({
+        title: updated.title,
+        employmentType:
+          updated.employmentType,
+        workMode: updated.workMode,
+        locations: updated.locations,
+        openings: updated.openings,
+        minimumAnnualCtcInr:
+          updated.minimumAnnualCtcInr,
+        maximumAnnualCtcInr:
+          updated.maximumAnnualCtcInr,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(
+            placementJobRoleOptions.jobId,
+            jobId,
+          ),
+          eq(
+            placementJobRoleOptions.isPrimary,
+            true,
+          ),
+          eq(
+            placementJobRoleOptions.status,
+            "ACTIVE",
+          ),
+        ),
+      )
+      .returning();
+
+    if (!primaryRole) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ROLE_OPTION_PRIMARY_REQUIRED",
+      );
+    }
+
+    return updated;
+  });
 }
 
 export async function publishPlacementJob(
@@ -295,6 +390,31 @@ export async function publishPlacementJob(
   ) {
     throw new PlacementsServiceError(
       "PLACEMENT_JOB_EXTERNAL_URL_REQUIRED",
+    );
+  }
+
+  const [activeRole] = await getDb()
+    .select({
+      id: placementJobRoleOptions.id,
+    })
+    .from(placementJobRoleOptions)
+    .where(
+      and(
+        eq(
+          placementJobRoleOptions.jobId,
+          current.id,
+        ),
+        eq(
+          placementJobRoleOptions.status,
+          "ACTIVE",
+        ),
+      ),
+    )
+    .limit(1);
+
+  if (!activeRole) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_ROLE_OPTION_REQUIRED",
     );
   }
 
