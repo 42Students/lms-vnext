@@ -24,6 +24,7 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Academics", href: "/admin/academics", shortLabel: "A" },
   { label: "Courses", href: "/admin/courses", shortLabel: "C" },
   { label: "Projects", href: "/admin/projects", shortLabel: "P" },
+  { label: "Placements", href: "/admin/placements", shortLabel: "P" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
 ];
@@ -37,6 +38,11 @@ const learnerItems: ShellNavItem[] = [
   {
     label: "My Projects",
     href: "/learn/projects",
+    shortLabel: "P",
+  },
+  {
+    label: "Placements",
+    href: "/learn/placements",
     shortLabel: "P",
   },
 ];
@@ -57,12 +63,21 @@ const mentorItems: ShellNavItem[] = [
   },
 ];
 
+const tpoItems: ShellNavItem[] = [
+  {
+    label: "Placement Operations",
+    href: "/tpo/placements",
+    shortLabel: "P",
+  },
+];
+
 const collegeAdminItems: ShellNavItem[] = [
   { label: "My College", href: "/college", shortLabel: "C" },
   { label: "Departments", href: "/college/departments", shortLabel: "D" },
   { label: "Academics", href: "/college/academics", shortLabel: "A" },
   { label: "Courses", href: "/college/courses", shortLabel: "C" },
   { label: "Projects", href: "/college/projects", shortLabel: "P" },
+  { label: "Placements", href: "/college/placements", shortLabel: "P" },
   { label: "People", href: "/college/people", shortLabel: "P" },
   { label: "Domains", href: "/college/domains", shortLabel: "D" },
 ];
@@ -91,6 +106,10 @@ function getMembershipWorkspaces(context: RequestContext) {
 
   if (hasMembershipRole(context, "MENTOR")) {
     pushUnique(items, mentorItems);
+  }
+
+  if (hasMembershipRole(context, "TPO")) {
+    pushUnique(items, tpoItems);
   }
 
   return items;
@@ -126,11 +145,17 @@ export function getShellRoleLabel(context: RequestContext) {
 
   return context.membership.roles
     .map((role) =>
-      role
-        .toLowerCase()
-        .split("_")
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(" "),
+      role === "TPO"
+        ? "TPO"
+        : role
+            .toLowerCase()
+            .split("_")
+            .map(
+              (part) =>
+                part.charAt(0).toUpperCase() +
+                part.slice(1),
+            )
+            .join(" "),
     )
     .join(" · ");
 }

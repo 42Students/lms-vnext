@@ -43,6 +43,7 @@ describe("authenticated shell model", () => {
       "Academics",
       "Courses",
       "Projects",
+      "Placements",
       "People",
       "Domains",
     ]);
@@ -61,6 +62,7 @@ describe("authenticated shell model", () => {
       "Academics",
       "Courses",
       "Projects",
+      "Placements",
       "People",
       "Domains",
     ]);
@@ -84,6 +86,11 @@ describe("authenticated shell model", () => {
       {
         label: "My Projects",
         href: "/learn/projects",
+        shortLabel: "P",
+      },
+      {
+        label: "Placements",
+        href: "/learn/placements",
         shortLabel: "P",
       },
     ]);
@@ -137,6 +144,7 @@ describe("authenticated shell model", () => {
       "Academics",
       "Courses",
       "Projects",
+      "Placements",
       "People",
       "Domains",
     ]);
@@ -159,7 +167,25 @@ describe("authenticated shell model", () => {
       "Dashboard",
       "My Courses",
       "My Projects",
+      "Placements",
       "Teaching Courses",
     ]);
   });
+  it("gives TPO memberships the placement command center", () => {
+    const shellContext = context(["FACULTY", "TPO"]);
+
+    expect(
+      getShellNavigation(shellContext).map(
+        (item) => item.label,
+      ),
+    ).toEqual([
+      "Dashboard",
+      "Teaching Courses",
+      "Placement Operations",
+    ]);
+    expect(getShellRoleLabel(shellContext)).toBe(
+      "Faculty · TPO",
+    );
+  });
+
 });
