@@ -97,6 +97,20 @@ export async function listPlacementJobs(
     .orderBy(asc(placementJobs.title));
 }
 
+export async function getPlacementJob(
+  context: RequestContext,
+  jobIdInput: string,
+) {
+  const jobId =
+    placementJobIdSchema.parse(jobIdInput);
+  const job = await loadJob(jobId);
+  await requirePlacementManageScope(
+    context,
+    job.collegeId,
+  );
+  return job;
+}
+
 export async function createPlacementJob(
   context: RequestContext,
   rawInput: CreatePlacementJobInput,

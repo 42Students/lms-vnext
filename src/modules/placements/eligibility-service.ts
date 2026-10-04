@@ -350,6 +350,87 @@ async function validateEligibilityAcademicScope(
   }
 }
 
+export async function getJobEligibilityPolicy(
+  context: RequestContext,
+  jobIdInput: string,
+) {
+  const jobId =
+    placementJobIdSchema.parse(jobIdInput);
+  const job = await loadJob(jobId);
+  requirePermission(context, "placements.manage", {
+    collegeId: job.collegeId,
+  });
+
+  const [policy] = await getDb()
+    .select()
+    .from(placementJobEligibilityPolicies)
+    .where(
+      eq(
+        placementJobEligibilityPolicies.jobId,
+        jobId,
+      ),
+    )
+    .limit(1);
+
+  if (!policy) {
+    return {
+      jobId,
+      allowedProgramIds: [] as string[],
+      allowedCohortIds: [] as string[],
+      minCgpa: null as number | null,
+      maxActiveBacklogs: null as number | null,
+      maxPastBacklogs: null as number | null,
+      minTenthPercentage: null as number | null,
+      minTwelfthPercentage: null as number | null,
+      minDiplomaPercentage: null as number | null,
+      minUndergraduatePercentage:
+        null as number | null,
+      maxGapYears: null as number | null,
+      allowedPassingYears: [] as number[],
+      missingEvidencePolicy:
+        "ALLOW_WITH_FLAG" as const,
+      updatedAt: null as Date | null,
+    };
+  }
+
+  return {
+    jobId: policy.jobId,
+    allowedProgramIds:
+      policy.allowedProgramIds,
+    allowedCohortIds:
+      policy.allowedCohortIds,
+    minCgpa: unscaleHundredths(
+      policy.minCgpaHundredths,
+    ),
+    maxActiveBacklogs:
+      policy.maxActiveBacklogs,
+    maxPastBacklogs:
+      policy.maxPastBacklogs,
+    minTenthPercentage:
+      unscaleHundredths(
+        policy.minTenthPctBasisPoints,
+      ),
+    minTwelfthPercentage:
+      unscaleHundredths(
+        policy.minTwelfthPctBasisPoints,
+      ),
+    minDiplomaPercentage:
+      unscaleHundredths(
+        policy.minDiplomaPctBasisPoints,
+      ),
+    minUndergraduatePercentage:
+      unscaleHundredths(
+        policy.minUndergraduatePctBasisPoints,
+      ),
+    maxGapYears: policy.maxGapYears,
+    allowedPassingYears:
+      policy.allowedPassingYears,
+    missingEvidencePolicy:
+      policy.missingEvidencePolicy,
+    updatedAt: policy.updatedAt,
+  };
+}
+
 export async function upsertJobEligibilityPolicy(
   context: RequestContext,
   jobIdInput: string,

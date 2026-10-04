@@ -1,8 +1,11 @@
 import { PageHeader } from "@/components/ui/page-header";
 import type { RequestContext } from "@/modules/identity/context";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
+import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
+import { getPlacementJob } from "@/modules/placements/job-service";
 import { listPlacementScreeningQueue } from "@/modules/placements/screening-service";
+import { PlacementDraftEditForm } from "./placement-draft-edit-form";
 import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
 import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
 import {
@@ -19,12 +22,19 @@ export async function PlacementDriveWorkspace({
   jobId: string;
   eyebrow: string;
 }) {
-  const [driveDay, evaluation, screening] =
-    await Promise.all([
-      getPlacementDriveDay(context, jobId),
-      getPlacementEvaluationConfig(context, jobId),
-      listPlacementScreeningQueue(context, jobId),
-    ]);
+  const [
+    driveDay,
+    evaluation,
+    screening,
+    job,
+    eligibilityPolicy,
+  ] = await Promise.all([
+    getPlacementDriveDay(context, jobId),
+    getPlacementEvaluationConfig(context, jobId),
+    listPlacementScreeningQueue(context, jobId),
+    getPlacementJob(context, jobId),
+    getJobEligibilityPolicy(context, jobId),
+  ]);
 
   const controlData: PlacementDriveControlData = {
     jobId,
@@ -123,6 +133,71 @@ export async function PlacementDriveWorkspace({
           " · live placement workspace"
         }
       />
+      {job.status === "DRAFT" ? (
+        <PlacementDraftEditForm
+          value={{
+            job: {
+              id: job.id,
+              title: job.title,
+              description: job.description,
+              employmentType:
+                job.employmentType as
+                  | "FULL_TIME"
+                  | "INTERNSHIP"
+                  | "CONTRACT",
+              workMode:
+                job.workMode as
+                  | "ONSITE"
+                  | "HYBRID"
+                  | "REMOTE",
+              locations: job.locations,
+              openings: job.openings,
+              minimumAnnualCtcInr:
+                job.minimumAnnualCtcInr,
+              maximumAnnualCtcInr:
+                job.maximumAnnualCtcInr,
+              applicationMode:
+                job.applicationMode as
+                  | "INTERNAL"
+                  | "HYBRID"
+                  | "EXTERNAL_ONLY",
+              externalApplicationUrl:
+                job.externalApplicationUrl,
+              applicationDeadline:
+                job.applicationDeadline?.toISOString() ??
+                null,
+            },
+            policy: {
+              allowedProgramIds:
+                eligibilityPolicy.allowedProgramIds,
+              allowedCohortIds:
+                eligibilityPolicy.allowedCohortIds,
+              minCgpa:
+                eligibilityPolicy.minCgpa,
+              maxActiveBacklogs:
+                eligibilityPolicy.maxActiveBacklogs,
+              maxPastBacklogs:
+                eligibilityPolicy.maxPastBacklogs,
+              minTenthPercentage:
+                eligibilityPolicy.minTenthPercentage,
+              minTwelfthPercentage:
+                eligibilityPolicy.minTwelfthPercentage,
+              minDiplomaPercentage:
+                eligibilityPolicy.minDiplomaPercentage,
+              minUndergraduatePercentage:
+                eligibilityPolicy.minUndergraduatePercentage,
+              maxGapYears:
+                eligibilityPolicy.maxGapYears,
+              allowedPassingYears:
+                eligibilityPolicy.allowedPassingYears,
+              missingEvidencePolicy:
+                eligibilityPolicy.missingEvidencePolicy as
+                  | "ALLOW_WITH_FLAG"
+                  | "REQUIRE_COMPLETE",
+            },
+          }}
+        />
+      ) : null}
       <PlacementJobLifecycleControls
         jobId={jobId}
         status={
