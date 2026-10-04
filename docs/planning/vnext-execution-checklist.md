@@ -473,12 +473,12 @@ Do not implement archive until downstream dependency rules are understood.
 - [ ] create department
 - [ ] onboard college admin
 - [ ] college admin login
-- [ ] college admin sees only own college
+- [x] college admin sees only own college — deterministic browser acceptance verifies own-college UI and hides the sibling college
 - [ ] college admin creates department
 - [ ] college admin onboards faculty
 - [ ] college admin onboards learner
-- [ ] person with two memberships can switch
-- [ ] cross-college URL/request tampering denied
+- [x] person with two memberships can switch — deterministic browser acceptance switches the shared Faculty identity A → B → A and verifies Course isolation
+- [x] cross-college URL/request tampering denied — browser-authenticated direct cross-college Department API read returns FORBIDDEN
 - [ ] suspended membership denied
 - [ ] logout works
 - [ ] session restoration works
