@@ -568,7 +568,7 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] applications — tenant-safe learner apply/withdraw lifecycle with eligibility snapshot and immutable status history
 - [x] screening — manager queue, learner-safe decisions, ordered round lifecycle and staged/applied round results
 - [x] evaluation config — atomic idempotent round-plan replacement over the canonical round model; locks once execution starts
-- [ ] drive day
+- [x] drive day — tenant-safe operational command center with candidate progression, round readiness and attention queues
 - [ ] TPO operations
 - [ ] HR operations
 - [x] greenfield decision: no legacy placement data migration required
