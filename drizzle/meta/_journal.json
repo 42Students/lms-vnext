@@ -239,6 +239,13 @@
       "when": 1791243000000,
       "tag": "0033_attendance_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1791246600000,
+      "tag": "0034_course_discussions",
+      "breakpoints": true
     }
   ]
 }
