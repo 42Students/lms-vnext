@@ -638,7 +638,7 @@ The legacy LMS is not active and no traffic/data cutover is required.
 
 - [x] legacy data migration/cutover retired for greenfield launch
 - [ ] intended vNext feature scope complete
-- [ ] permissions validated
+- [~] centralized permission matrix is exhaustively actor-mapped and tenant-boundary/adversarial coverage is implemented; final launch validation waits for CI runner recovery and production-auth smoke
 - [ ] critical regression tests green
 - [ ] user acceptance complete
 - [ ] production infrastructure ready

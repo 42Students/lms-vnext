@@ -120,6 +120,17 @@ export function can(
     return hasRecruiterGrant(context, resource);
   }
 
+  if (
+    permission === "system-role.manage" ||
+    permission === "project-template.manage"
+  ) {
+    return (
+      isSuperAdmin(context) &&
+      !context.adminScope?.organizationId &&
+      !context.adminScope?.collegeId
+    );
+  }
+
   if (isSuperAdmin(context)) {
     return isInsideAdminScope(context, resource);
   }
