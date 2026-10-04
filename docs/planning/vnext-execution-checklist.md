@@ -185,11 +185,11 @@ Legend:
 - [x] POST API
 - [x] PATCH API
 - [x] unit validation tests
-- [ ] college archive service
-- [ ] college archive dependency policy
-- [ ] college archive API
+- [x] college archive service
+- [x] college archive dependency policy
+- [x] college archive API
 - [x] Colleges UI
-- [ ] college E2E flow
+- [x] college E2E flow
 - [x] DB integration tests
 
 Do not implement archive until downstream dependency rules are understood.
@@ -467,21 +467,21 @@ Do not implement archive until downstream dependency rules are understood.
 # T. Core E2E acceptance flow
 
 - [x] pre-browser PostgreSQL acceptance rehearsal for tenant/admin/people/membership isolation
-- [ ] superadmin login
-- [ ] create organization
-- [ ] create college
-- [ ] create department
-- [ ] onboard college admin
-- [ ] college admin login
+- [~] superadmin login — deterministic E2E auth harness is green in code; live Identity Platform login remains tracked in section E
+- [x] create organization
+- [x] create college
+- [x] create department
+- [x] onboard college admin
+- [~] college admin login — deterministic E2E auth harness is covered; live Identity Platform login remains tracked in section E
 - [x] college admin sees only own college — deterministic browser acceptance verifies own-college UI and hides the sibling college
-- [ ] college admin creates department
-- [ ] college admin onboards faculty
-- [ ] college admin onboards learner
+- [x] college admin creates department
+- [x] college admin onboards faculty
+- [x] college admin onboards learner
 - [x] person with two memberships can switch — deterministic browser acceptance switches the shared Faculty identity A → B → A and verifies Course isolation
 - [x] cross-college URL/request tampering denied — browser-authenticated direct cross-college Department API read returns FORBIDDEN
-- [ ] suspended membership denied
-- [ ] logout works
-- [ ] session restoration works
+- [x] suspended membership denied
+- [x] logout works
+- [~] session restoration works — deterministic authenticated reload is covered; live Identity Platform session restoration remains dependency-blocked
 
 Core platform should not be declared complete until this passes.
 
@@ -574,8 +574,8 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] greenfield decision: no legacy placement data migration required
 - [~] canonical multi-role drive / role-option aggregate — role options, exact role-bound applications, learner feed and shared manager surfaces implemented; CI runner verification pending
 - [~] learner requests/exceptions with atomic approved effects — withdrawal, progressed-round reschedule and offer-extension effects plus learner/manager UI and drive-day exception visibility implemented; CI runner verification pending
-- [~] tests — placement domain coverage plus learner/TPO/recruiter browser acceptance baseline is implemented; multi-role and learner-request regression coverage added, but current GitHub Actions jobs are not acquiring a runner
-- [~] UI — learner, manager and recruiter/HR operational surfaces now include multi-role drives plus learner requests/exceptions; implementation is functionally complete pending CI/browser verification
+- [~] tests — placement domain coverage plus learner/TPO/recruiter browser acceptance baseline is implemented; multi-role and learner-request integration coverage plus learner-withdrawal browser regression are authored, but current GitHub Actions jobs are not acquiring a runner
+- [~] UI — learner, manager and recruiter/HR operational surfaces now include multi-role drives plus learner requests/exceptions; request browser regression is authored and implementation is functionally complete pending CI execution
 
 ---
 

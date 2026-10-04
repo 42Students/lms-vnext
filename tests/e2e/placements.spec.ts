@@ -680,6 +680,193 @@ test.describe("Placements browser regression", () => {
     ).toBeVisible();
   });
 
+  test("learner withdrawal request is approved through the manager queue", async ({
+    page,
+    context,
+  }) => {
+    test.setTimeout(90_000);
+    const unique =
+      "request-" + Date.now().toString();
+
+    await authenticate(
+      context,
+      "seed-shared-faculty",
+      SEED_IDS.facultyCollegeAMembership,
+    );
+
+    const title =
+      await createPublishedOpportunity(
+        page,
+        unique,
+      );
+
+    await authenticate(
+      context,
+      "seed-learner",
+      SEED_IDS.learnerCollegeAMembership,
+    );
+    await page.goto("/learn/placements");
+
+    const opportunity = page
+      .getByRole("article")
+      .filter({ hasText: title });
+    await expect(opportunity).toBeVisible();
+
+    const applyResponse =
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(
+            "/applications",
+          ) &&
+          response.request().method() ===
+            "POST",
+      );
+    await opportunity
+      .getByRole("button", {
+        name: "Apply in LMS",
+      })
+      .click();
+    expect((await applyResponse).ok()).toBe(
+      true,
+    );
+
+    page.once("dialog", async (dialog) => {
+      expect(dialog.type()).toBe("prompt");
+      await dialog.accept(
+        "Accepted another opportunity",
+      );
+    });
+    const requestResponse =
+      page.waitForResponse(
+        (response) =>
+          response.url().endsWith(
+            "/api/placements/requests",
+          ) &&
+          response.request().method() ===
+            "POST",
+      );
+    await opportunity
+      .getByRole("button", {
+        name: "Request withdrawal",
+      })
+      .click();
+    expect(
+      (await requestResponse).ok(),
+    ).toBe(true);
+
+    const learnerRequests = page
+      .getByRole("heading", {
+        name: "Requests & exceptions",
+      })
+      .locator("..")
+      .locator("..");
+    const pendingRequest =
+      learnerRequests
+        .getByRole("article")
+        .filter({
+          hasText:
+            "Application Withdrawal",
+        })
+        .first();
+    await expect(
+      pendingRequest.getByText(
+        "Pending",
+        { exact: true },
+      ),
+    ).toBeVisible();
+
+    await authenticate(
+      context,
+      "seed-shared-faculty",
+      SEED_IDS.facultyCollegeAMembership,
+    );
+    await page.goto("/tpo/placements");
+
+    const jobRow = page
+      .locator("div")
+      .filter({ hasText: title })
+      .filter({
+        has: page.getByRole("link", {
+          name: "Open drive",
+        }),
+      })
+      .last();
+    await jobRow
+      .getByRole("link", {
+        name: "Open drive",
+      })
+      .click();
+
+    const requestCard = page
+      .getByRole("article")
+      .filter({
+        hasText:
+          "Application Withdrawal",
+      })
+      .filter({
+        hasText: "Seed Learner",
+      })
+      .first();
+    await expect(requestCard).toBeVisible();
+
+    const approveResponse =
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(
+            "/api/placements/requests/",
+          ) &&
+          response.url().endsWith(
+            "/actions",
+          ) &&
+          response.request().method() ===
+            "POST",
+      );
+    await requestCard
+      .getByRole("button", {
+        name: "Approve",
+      })
+      .click();
+    expect(
+      (await approveResponse).ok(),
+    ).toBe(true);
+
+    await authenticate(
+      context,
+      "seed-learner",
+      SEED_IDS.learnerCollegeAMembership,
+    );
+    await page.goto("/learn/placements");
+
+    const withdrawnOpportunity = page
+      .getByRole("article")
+      .filter({ hasText: title });
+    await expect(
+      withdrawnOpportunity.getByText(
+        "Withdrawn",
+        { exact: true },
+      ),
+    ).toBeVisible();
+
+    const approvedRequest = page
+      .getByRole("heading", {
+        name: "Requests & exceptions",
+      })
+      .locator("..")
+      .locator("..")
+      .getByRole("article")
+      .filter({
+        hasText:
+          "Application Withdrawal",
+      })
+      .first();
+    await expect(
+      approvedRequest.getByText(
+        "Approved",
+        { exact: true },
+      ),
+    ).toBeVisible();
+  });
+
   test("recruiter uses explicit employer grants and stages results for TPO review", async ({
     page,
     context,
