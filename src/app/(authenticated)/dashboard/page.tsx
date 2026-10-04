@@ -1,11 +1,16 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { MembershipChooser } from "@/components/auth/membership-chooser";
+import {
+  getMembershipDashboardWorkspaces,
+} from "@/components/dashboard/membership-dashboard-model";
+import {
+  getShellRoleLabel,
+} from "@/components/shell/shell-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   hasActiveRecruiter,
-  hasMembershipRole,
   isSuperAdmin,
   type RequestContext,
 } from "@/modules/identity/context";
@@ -19,6 +24,12 @@ import { listMembershipChoices } from "@/modules/identity/context-service";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
+import {
+  getPlacementTpoOperations,
+} from "@/modules/placements/tpo-operations-service";
+import {
+  listMyProjectInstances,
+} from "@/modules/projects/member-service";
 
 function MetricCard({
   label,
@@ -141,7 +152,45 @@ async function SuperAdminDashboard({
   );
 }
 
-async function CollegeAdminDashboard({
+async function RecruiterDashboard({
+  context,
+}: {
+  context: RequestContext;
+}) {
+  const jobs =
+    await listOwnRecruiterPlacementJobs(
+      context,
+    );
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Employer Recruiter"
+        title={context.recruiter?.companyName ?? "Hiring dashboard"}
+        description="Your hiring workspace is limited to explicit college-employer grants. College-private relationship notes and placement-cell controls remain hidden."
+      />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MetricCard
+          label="Granted colleges"
+          value={
+            context.recruiter?.grants.length ??
+            0
+          }
+          description="Colleges that explicitly granted this employer account access."
+          href="/hr/placements"
+        />
+        <MetricCard
+          label="Visible opportunities"
+          value={jobs.length}
+          description="Published or closed opportunities for your exact employer grants."
+          href="/hr/placements"
+        />
+      </div>
+    </div>
+  );
+}
+
+async function MembershipDashboard({
   context,
 }: {
   context: RequestContext;
@@ -151,101 +200,257 @@ async function CollegeAdminDashboard({
     return (
       <EmptyState
         title="Select a college"
-        description="Choose an active college membership to open the College Admin workspace."
+        description="Choose an active college membership to open your role workspaces."
       />
     );
   }
 
-  const [colleges, departments, people] = await Promise.all([
-    listColleges(context, membership.organizationId),
-    listDepartments(context, membership.collegeId),
-    listCollegePeopleWithRuntime(context, {
-      collegeId: membership.collegeId,
-      limit: 1,
-      offset: 0,
-    }),
+  const workspaces =
+    getMembershipDashboardWorkspaces(
+      context,
+    );
+  const hasWorkspace = (
+    workspace:
+      (typeof workspaces)[number],
+  ) => workspaces.includes(workspace);
+
+  const [
+    adminData,
+    facultyCourses,
+    learnerCourses,
+    projectRows,
+    placementOperations,
+    recruiterJobs,
+  ] = await Promise.all([
+    hasWorkspace("COLLEGE_ADMIN")
+      ? Promise.all([
+          listColleges(
+            context,
+            membership.organizationId,
+          ),
+          listDepartments(
+            context,
+            membership.collegeId,
+          ),
+          listCollegePeopleWithRuntime(
+            context,
+            {
+              collegeId:
+                membership.collegeId,
+              limit: 1,
+              offset: 0,
+            },
+          ),
+        ])
+      : Promise.resolve(null),
+    hasWorkspace("FACULTY")
+      ? listFacultyCourseDeliveries(
+          context,
+        )
+      : Promise.resolve(null),
+    hasWorkspace("LEARNER")
+      ? listLearnerCourseDeliveries(
+          context,
+        )
+      : Promise.resolve(null),
+    hasWorkspace("MENTOR")
+      ? listMyProjectInstances(context)
+      : Promise.resolve(null),
+    hasWorkspace("TPO")
+      ? getPlacementTpoOperations(
+          context,
+          membership.collegeId,
+        )
+      : Promise.resolve(null),
+    hasActiveRecruiter(context)
+      ? listOwnRecruiterPlacementJobs(
+          context,
+        )
+      : Promise.resolve(null),
   ]);
-  const college = colleges[0];
+
+  const mentorProjects =
+    projectRows?.filter(
+      (row) =>
+        row.memberRole === "MENTOR",
+    ) ?? null;
+  const primaryMentorships =
+    mentorProjects?.filter(
+      (row) => row.isPrimaryMentor,
+    ).length ?? 0;
+  const roleLabel =
+    getShellRoleLabel(context);
+  const college =
+    adminData?.[0][0] ?? null;
+  const departments =
+    adminData?.[1] ?? null;
+  const people =
+    adminData?.[2] ?? null;
+
+  if (
+    workspaces.length === 0 &&
+    !hasActiveRecruiter(context)
+  ) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="College access"
+          title="No workspace role assigned"
+          description="Your membership is active, but it does not currently carry a Learner, Faculty, Mentor, TPO or College Admin workspace role."
+        />
+        <EmptyState
+          title="No role workspace is available"
+          description="Ask a College Admin to review the roles on this membership."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="College Admin"
-        title={college?.name ?? "College overview"}
-        description="Your operational view is restricted to the active college membership."
+        eyebrow={roleLabel}
+        title={
+          college &&
+          workspaces.length === 1 &&
+          !hasActiveRecruiter(context)
+            ? college.name
+            : "Workspace dashboard"
+        }
+        description="Your active roles share one landing page. Every count and destination remains scoped through the same authenticated membership and permission rules."
       />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <MetricCard
-          label="College"
-          value={college?.code ?? "—"}
-          description={college?.name ?? "Active college"}
-          href="/college"
-        />
-        <MetricCard
-          label="Departments"
-          value={departments.length}
-          description="Active departments in your college."
-          href="/college/departments"
-        />
-        <MetricCard
-          label="People"
-          value={people.pagination.total}
-          description="Canonical memberships managed by your college."
-          href="/college/people"
-        />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {college ? (
+          <MetricCard
+            label="College"
+            value={college.code}
+            description={college.name}
+            href="/college"
+          />
+        ) : null}
+
+        {departments ? (
+          <MetricCard
+            label="Departments"
+            value={departments.length}
+            description="Active departments in your college."
+            href="/college/departments"
+          />
+        ) : null}
+
+        {people ? (
+          <MetricCard
+            label="People"
+            value={people.pagination.total}
+            description="Canonical memberships managed by your college."
+            href="/college/people"
+          />
+        ) : null}
+
+        {facultyCourses ? (
+          <MetricCard
+            label="Teaching Courses"
+            value={facultyCourses.length}
+            description="Exact Section Course deliveries assigned to this Faculty membership."
+            href="/teach/courses"
+          />
+        ) : null}
+
+        {mentorProjects ? (
+          <MetricCard
+            label="Mentoring Projects"
+            value={mentorProjects.length}
+            description={
+              mentorProjects.length > 0
+                ? `${primaryMentorships} primary mentorship${primaryMentorships === 1 ? "" : "s"} in this college.`
+                : "Projects appear when this Mentor membership is assigned to a team."
+            }
+            href="/mentor/projects"
+          />
+        ) : null}
+
+        {placementOperations ? (
+          <>
+            <MetricCard
+              label="Live Placement Jobs"
+              value={
+                placementOperations.summary
+                  .publishedJobs
+              }
+              description="Published opportunities currently operated by the placement cell."
+              href="/tpo/placements"
+            />
+            <MetricCard
+              label="Needs Attention"
+              value={
+                placementOperations.summary
+                  .jobsNeedingAttention
+              }
+              description="Placement jobs with unresolved screening, scheduling, result or offer work."
+              href="/tpo/placements"
+            />
+          </>
+        ) : null}
+
+        {learnerCourses ? (
+          <MetricCard
+            label="Active Courses"
+            value={learnerCourses.length}
+            description="Courses currently delivered to your active learner Section."
+            href="/learn/courses"
+          />
+        ) : null}
+
+        {recruiterJobs ? (
+          <>
+            <MetricCard
+              label="Recruiter Colleges"
+              value={
+                context.recruiter?.grants
+                  .length ?? 0
+              }
+              description="Colleges that explicitly granted this employer account access."
+              href="/hr/placements"
+            />
+            <MetricCard
+              label="Hiring Opportunities"
+              value={recruiterJobs.length}
+              description="Opportunities visible through your exact employer grants."
+              href="/hr/placements"
+            />
+          </>
+        ) : null}
       </div>
     </div>
   );
 }
 
 export default async function DashboardPage() {
-  const context = await getCurrentRequestContext();
+  const context =
+    await getCurrentRequestContext();
 
   if (isSuperAdmin(context)) {
-    return <SuperAdminDashboard context={context} />;
-  }
-
-  if (
-    !context.membership &&
-    hasActiveRecruiter(context)
-  ) {
-    const jobs =
-      await listOwnRecruiterPlacementJobs(
-        context,
-      );
-
     return (
-      <div className="space-y-6">
-        <PageHeader
-          eyebrow="Employer Recruiter"
-          title={context.recruiter?.companyName ?? "Hiring dashboard"}
-          description="Your hiring workspace is limited to explicit college-employer grants. College-private relationship notes and placement-cell controls remain hidden."
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <MetricCard
-            label="Granted colleges"
-            value={
-              context.recruiter?.grants.length ??
-              0
-            }
-            description="Colleges that explicitly granted this employer account access."
-            href="/hr/placements"
-          />
-          <MetricCard
-            label="Visible opportunities"
-            value={jobs.length}
-            description="Published or closed opportunities for your exact employer grants."
-            href="/hr/placements"
-          />
-        </div>
-      </div>
+      <SuperAdminDashboard
+        context={context}
+      />
     );
   }
 
   if (!context.membership) {
-    const memberships = await listMembershipChoices(
-      context.user.identityUid,
-    );
+    if (hasActiveRecruiter(context)) {
+      return (
+        <RecruiterDashboard
+          context={context}
+        />
+      );
+    }
+
+    const memberships =
+      await listMembershipChoices(
+        context.user.identityUid,
+      );
 
     return (
       <div className="space-y-6">
@@ -254,106 +459,16 @@ export default async function DashboardPage() {
           title="Choose your college"
           description="One canonical account can belong to multiple colleges. Choose the membership you want to use for this session."
         />
-        <MembershipChooser memberships={memberships} />
-      </div>
-    );
-  }
-
-  if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
-    return <CollegeAdminDashboard context={context} />;
-  }
-
-  if (hasMembershipRole(context, "FACULTY")) {
-    const courses =
-      await listFacultyCourseDeliveries(context);
-
-    return (
-      <div className="space-y-6">
-        <PageHeader
-          eyebrow="Faculty"
-          title="Teaching dashboard"
-          description="Open the exact Section Course deliveries assigned to your active faculty membership."
+        <MembershipChooser
+          memberships={memberships}
         />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <MetricCard
-            label="Teaching Courses"
-            value={courses.length}
-            description="Active Course Section deliveries where you have a teaching assignment."
-            href="/teach/courses"
-          />
-          <section className="rounded-xl border border-border bg-surface p-5">
-            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              Teaching scope
-            </p>
-            <p className="mt-3 text-lg font-semibold text-foreground">
-              Exact delivery access
-            </p>
-            <p className="mt-2 text-sm leading-6 text-body">
-              Course content and assessments are scoped through your active teaching assignments, not a client-selected class or faculty id.
-            </p>
-            <Link
-              href="/teach/courses"
-              className="mt-4 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
-            >
-              View Teaching Courses →
-            </Link>
-          </section>
-        </div>
-      </div>
-    );
-  }
-
-  if (hasMembershipRole(context, "LEARNER")) {
-    const courses =
-      await listLearnerCourseDeliveries(context);
-
-    return (
-      <div className="space-y-6">
-        <PageHeader
-          eyebrow="Learner"
-          title="Learning dashboard"
-          description="Continue your active Section Courses from one place."
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <MetricCard
-            label="Active Courses"
-            value={courses.length}
-            description="Courses currently delivered to your active Section."
-            href="/learn/courses"
-          />
-          <section className="rounded-xl border border-border bg-surface p-5">
-            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              Continue learning
-            </p>
-            <p className="mt-3 text-lg font-semibold text-foreground">
-              Open My Courses
-            </p>
-            <p className="mt-2 text-sm leading-6 text-body">
-              Course progress now combines lesson content, assignment submissions and quiz attempts.
-            </p>
-            <Link
-              href="/learn/courses"
-              className="mt-4 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
-            >
-              View Courses →
-            </Link>
-          </section>
-        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="Core platform"
-        title="Dashboard"
-        description="Your canonical identity and active membership are ready."
-      />
-      <EmptyState
-        title="Your workspace is coming with the next domain phase"
-        description="Learner, Faculty, Mentor and TPO experiences will be added with Academics, Courses, Projects and Placements rather than duplicating placeholder admin workflows."
-      />
-    </div>
+    <MembershipDashboard
+      context={context}
+    />
   );
 }
