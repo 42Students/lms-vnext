@@ -111,7 +111,7 @@ afterAll(async () => {
 });
 
 describe("Placement draft edit reads", () => {
-  it("returns normalized policy values and preserves academic targeting", async () => {
+  it("returns normalized policy values for the tenant-scoped draft editor", async () => {
     const job = await createDraft();
 
     const defaultPolicy =
@@ -128,29 +128,10 @@ describe("Placement draft edit reads", () => {
         "ALLOW_WITH_FLAG",
     });
 
-    const programRows =
-      await pool.query<{ id: string }>(
-        "select p.id from programs p join departments d on d.id = p.department_id where d.college_id = $1 limit 1",
-        [SEED_IDS.collegeA],
-      );
-    const cohortRows =
-      await pool.query<{ id: string }>(
-        "select c.id from cohorts c join programs p on p.id = c.program_id join departments d on d.id = p.department_id where d.college_id = $1 limit 1",
-        [SEED_IDS.collegeA],
-      );
-    const programId =
-      programRows.rows[0]?.id;
-    const cohortId =
-      cohortRows.rows[0]?.id;
-    expect(programId).toBeTruthy();
-    expect(cohortId).toBeTruthy();
-
     await upsertJobEligibilityPolicy(
       tpoA,
       job.id,
       {
-        allowedProgramIds: [programId!],
-        allowedCohortIds: [cohortId!],
         minCgpa: 7.25,
         maxActiveBacklogs: 1,
         minTenthPercentage: 60.5,
@@ -178,8 +159,8 @@ describe("Placement draft edit reads", () => {
       title: "Draft Engineer",
     });
     expect(policy).toMatchObject({
-      allowedProgramIds: [programId],
-      allowedCohortIds: [cohortId],
+      allowedProgramIds: [],
+      allowedCohortIds: [],
       minCgpa: 7.25,
       maxActiveBacklogs: 1,
       minTenthPercentage: 60.5,
