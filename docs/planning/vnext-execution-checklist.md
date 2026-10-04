@@ -642,7 +642,7 @@ The legacy LMS is not active and no traffic/data cutover is required.
 - [ ] critical regression tests green
 - [ ] user acceptance complete
 - [ ] production infrastructure ready
-- [ ] launch plan
+- [x] launch plan — greenfield production gates, evidence record, bootstrap sequence, rollback triggers and monitoring are documented in `docs/operations/launch-plan.md`
 - [ ] application/database rollback plan validated
 - [ ] launch
 - [ ] monitor launch window
