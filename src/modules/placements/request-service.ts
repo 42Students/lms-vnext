@@ -3,6 +3,9 @@ import {
   asc,
   desc,
   eq,
+  inArray,
+  lt,
+  ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -20,6 +23,7 @@ import {
   placementJobs,
   placementLearnerRequests,
   placementOffers,
+  placementRoundResults,
   users,
 } from "@/db/schema";
 import {
@@ -175,6 +179,103 @@ function scopeKeyFor(
   return \`OFFER_EXTENSION:\${input.applicationId}:\${input.offerId}\`;
 }
 
+async function assertRoundParticipation(
+  db: PlacementRequestWriter,
+  applicationId: string,
+  round: typeof placementJobRounds.$inferSelect,
+) {
+  const [screening] = await db
+    .select({
+      status:
+        placementApplicationScreenings.status,
+    })
+    .from(placementApplicationScreenings)
+    .where(
+      eq(
+        placementApplicationScreenings.applicationId,
+        applicationId,
+      ),
+    )
+    .limit(1);
+
+  if (
+    !screening ||
+    screening.status !== "SHORTLISTED"
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_EFFECT_INVALID",
+    );
+  }
+
+  const previousRounds = await db
+    .select({
+      id: placementJobRounds.id,
+    })
+    .from(placementJobRounds)
+    .where(
+      and(
+        eq(
+          placementJobRounds.jobId,
+          round.jobId,
+        ),
+        lt(
+          placementJobRounds.sequence,
+          round.sequence,
+        ),
+        ne(
+          placementJobRounds.status,
+          "CANCELLED",
+        ),
+        ne(placementJobRounds.kind, "TALK"),
+      ),
+    );
+
+  if (previousRounds.length === 0) return;
+
+  const results = await db
+    .select({
+      roundId: placementRoundResults.roundId,
+      outcome: placementRoundResults.outcome,
+    })
+    .from(placementRoundResults)
+    .where(
+      and(
+        eq(
+          placementRoundResults.applicationId,
+          applicationId,
+        ),
+        eq(
+          placementRoundResults.status,
+          "APPLIED",
+        ),
+        inArray(
+          placementRoundResults.roundId,
+          previousRounds.map(
+            (item) => item.id,
+          ),
+        ),
+      ),
+    );
+
+  const passed = new Set(
+    results
+      .filter(
+        (item) => item.outcome === "PASS",
+      )
+      .map((item) => item.roundId),
+  );
+
+  if (
+    previousRounds.some(
+      (item) => !passed.has(item.id),
+    )
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_EFFECT_INVALID",
+    );
+  }
+}
+
 async function validateRequestTarget(
   input: ReturnType<
     typeof createPlacementRequestInputSchema.parse
@@ -188,6 +289,36 @@ async function validateRequestTarget(
     throw new PlacementsServiceError(
       "PLACEMENT_REQUEST_EFFECT_INVALID",
     );
+  }
+
+  if (
+    input.requestType ===
+    "APPLICATION_WITHDRAWAL"
+  ) {
+    const [activeOffer] = await getDb()
+      .select({
+        id: placementOffers.id,
+      })
+      .from(placementOffers)
+      .where(
+        and(
+          eq(
+            placementOffers.applicationId,
+            application.application.id,
+          ),
+          inArray(
+            placementOffers.status,
+            ["ISSUED", "ACCEPTED"],
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (activeOffer) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_EFFECT_INVALID",
+      );
+    }
   }
 
   if (input.requestType === "ROUND_RESCHEDULE") {
@@ -211,6 +342,11 @@ async function validateRequestTarget(
         "PLACEMENT_REQUEST_EFFECT_INVALID",
       );
     }
+    await assertRoundParticipation(
+      getDb(),
+      application.application.id,
+      round,
+    );
   }
 
   if (input.requestType === "OFFER_EXTENSION") {
@@ -381,6 +517,31 @@ export async function createPlacementRequest(
       "PLACEMENT_REQUEST_CONFLICT",
     );
   }
+
+  const sameTarget =
+    existing.requestType === input.requestType &&
+    existing.roundId ===
+      (input.requestType === "ROUND_RESCHEDULE"
+        ? input.roundId
+        : null) &&
+    existing.offerId ===
+      (input.requestType === "OFFER_EXTENSION"
+        ? input.offerId
+        : null);
+  const samePayload =
+    JSON.stringify(
+      existing.effectPayload ?? {},
+    ) === JSON.stringify(effectPayload);
+
+  if (
+    !sameTarget ||
+    existing.reason !== input.reason ||
+    !samePayload
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_CONFLICT",
+    );
+  }
   return existing;
 }
 
@@ -466,6 +627,31 @@ async function applyApprovedEffect(
     request.requestType ===
     "APPLICATION_WITHDRAWAL"
   ) {
+    const [activeOffer] = await db
+      .select({
+        id: placementOffers.id,
+      })
+      .from(placementOffers)
+      .where(
+        and(
+          eq(
+            placementOffers.applicationId,
+            application.id,
+          ),
+          inArray(
+            placementOffers.status,
+            ["ISSUED", "ACCEPTED"],
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (activeOffer) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_EFFECT_INVALID",
+      );
+    }
+
     const [updated] = await db
       .update(placementApplications)
       .set({
@@ -557,6 +743,12 @@ async function applyApprovedEffect(
         "PLACEMENT_REQUEST_EFFECT_INVALID",
       );
     }
+
+    await assertRoundParticipation(
+      db,
+      application.id,
+      round,
+    );
 
     const effect = parseRescheduleEffect(
       request.effectPayload,
@@ -966,61 +1158,9 @@ export async function getLearnerPlacementRequestWorkspace(
   const membership = requireLearner(context);
   const db = getDb();
 
-  const [requests, applications, rounds, offers] =
+  const [requests, rounds, offers] =
     await Promise.all([
       listOwnPlacementRequests(context),
-      db
-        .select({
-          applicationId:
-            placementApplications.id,
-          roleTitle:
-            placementJobRoleOptions.title,
-          jobTitle: placementJobs.title,
-          companyName:
-            placementCompanies.name,
-        })
-        .from(placementApplications)
-        .innerJoin(
-          placementJobRoleOptions,
-          eq(
-            placementJobRoleOptions.id,
-            placementApplications.roleOptionId,
-          ),
-        )
-        .innerJoin(
-          placementJobs,
-          eq(
-            placementJobs.id,
-            placementApplications.jobId,
-          ),
-        )
-        .innerJoin(
-          placementCompanyRelationships,
-          eq(
-            placementCompanyRelationships.id,
-            placementJobs.companyRelationshipId,
-          ),
-        )
-        .innerJoin(
-          placementCompanies,
-          eq(
-            placementCompanies.id,
-            placementCompanyRelationships.companyId,
-          ),
-        )
-        .where(
-          and(
-            eq(
-              placementApplications.membershipId,
-              membership.id,
-            ),
-            eq(
-              placementApplications.status,
-              "SUBMITTED",
-            ),
-          ),
-        )
-        .orderBy(asc(placementCompanies.name)),
       db
         .select({
           applicationId:
@@ -1181,7 +1321,6 @@ export async function getLearnerPlacementRequestWorkspace(
 
   return {
     requests,
-    applications,
     rounds,
     offers,
   };

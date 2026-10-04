@@ -573,9 +573,9 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] HR operations — canonical recruiter identity/profile, exact college-employer grants, privacy-safe recruiter workspace and staged-result workflow
 - [x] greenfield decision: no legacy placement data migration required
 - [~] canonical multi-role drive / role-option aggregate — role options, exact role-bound applications, learner feed and shared manager surfaces implemented; CI runner verification pending
-- [ ] learner requests/exceptions with atomic approved effects
-- [~] tests — placement domain coverage plus learner/TPO/recruiter browser acceptance baseline is implemented; multi-role regression coverage added, but current GitHub Actions jobs are not acquiring a runner
-- [~] UI — learner, manager and recruiter/HR operational surfaces now include multi-role drives; learner requests/exceptions remain before Placements can be declared fully closed
+- [~] learner requests/exceptions with atomic approved effects — withdrawal, progressed-round reschedule and offer-extension effects plus learner/manager UI and drive-day exception visibility implemented; CI runner verification pending
+- [~] tests — placement domain coverage plus learner/TPO/recruiter browser acceptance baseline is implemented; multi-role and learner-request regression coverage added, but current GitHub Actions jobs are not acquiring a runner
+- [~] UI — learner, manager and recruiter/HR operational surfaces now include multi-role drives plus learner requests/exceptions; implementation is functionally complete pending CI/browser verification
 
 ---
 

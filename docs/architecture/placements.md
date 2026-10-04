@@ -142,7 +142,11 @@ Offers are durable records separate from application status. Acceptance, withdra
 
 ### Requests and exceptions
 
-Learner requests cover withdrawal, reschedule, absence dispute, correction, offer extension and other approved categories. Approval must atomically execute the requested domain effect or fail; an APPROVED request with no effect is invalid.
+The current greenfield request model implements three concrete learner-governed exception types: application withdrawal, candidate-specific round reschedule and offer-deadline extension. Requests are learner self-scoped and manager decisions remain tenant-scoped. A pending request is unique per logical target so retries are idempotent only when the submitted payload is identical.
+
+Approval and the requested domain effect run in the same database transaction. Withdrawal approval writes application status/history, round-reschedule approval creates or replaces an exact application+round schedule exception without moving the shared round, and offer-extension approval updates the issued offer expiry. A request cannot become APPROVED when its target is stale, the learner has not progressed to the requested round, an application withdrawal conflicts with an active offer, or the effect itself cannot be applied. Rejection/cancellation never mutates the target domain record.
+
+Learner and manager workspaces expose request history and decision state. Drive-day views surface candidate-specific schedule exceptions beside the shared round schedule so operational staff do not accidentally use the wrong time.
 
 ### Employer CRM
 
