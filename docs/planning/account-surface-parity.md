@@ -73,7 +73,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Project Delivery | project detail | vNext project workspace | Submission workflow exists; exact parity pending. | PARTIAL |
 | Project Activity | project detail | vNext project workspace | Verify history/activity equivalence. | PARTIAL |
 | Notifications feed | `/learn/notifications` | `/notifications` | Shared route exists; legacy announcement/personal feed behavior must be audited, not assumed. | PARTIAL |
-| Self Profile | `/learn/profile` | admin profile tooling only | Self-service learner profile + academic/placement record missing. | MISSING |
+| Self Profile | `/learn/profile` | `/learn/profile` | Rich self-service profile, validated identity/contact/social/address sections, repeatable career/education sections, placement preferences and authoritative academic evidence are implemented; profile image/resume/identity-file storage and final browser/CI verification remain. | PARTIAL |
 | `/learn` redirect | `/learn` | not required for greenfield bookmarks | Legacy redirect-only route; no user job lost. | RETIRED |
 
 ---
