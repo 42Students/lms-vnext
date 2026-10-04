@@ -19,7 +19,10 @@ import {
   hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
+import {
+  AuthorizationError,
+  can,
+} from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import {
@@ -217,10 +220,43 @@ export async function stagePlacementRoundResult(
     );
   const { round, job } =
     await loadRoundContext(roundId);
-  await requirePlacementManageScope(
+  const managerCanStage = can(
     context,
-    job.collegeId,
+    "placements.manage",
+    { collegeId: job.collegeId },
   );
+  const recruiterCanStage =
+    !managerCanStage &&
+    can(
+      context,
+      "placements.recruiter.result.stage",
+      {
+        collegeId: job.collegeId,
+        placementCompanyRelationshipId:
+          job.companyRelationshipId,
+      },
+    );
+
+  if (!managerCanStage && !recruiterCanStage) {
+    if (context.recruiter) {
+      throw new AuthorizationError(
+        "placements.recruiter.result.stage",
+      );
+    }
+    await requirePlacementManageScope(
+      context,
+      job.collegeId,
+    );
+  }
+
+  if (
+    recruiterCanStage &&
+    input.internalComment != null
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_RECRUITER_INTERNAL_COMMENT_FORBIDDEN",
+    );
+  }
 
   if (round.kind === "TALK") {
     throw new PlacementsServiceError(
@@ -380,7 +416,7 @@ export async function stagePlacementRoundResult(
           input.candidateMessage ?? null,
         internalComment:
           input.internalComment ?? null,
-        source: "TPO",
+        source: recruiterCanStage ? "HR" : "TPO",
         status: "STAGED",
         submittedByUserId: context.user.id,
         submittedAt: now,

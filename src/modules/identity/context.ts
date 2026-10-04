@@ -25,10 +25,28 @@ export type AdminScope = {
   collegeId: string | null;
 };
 
+export type RecruiterGrant = {
+  id: string;
+  organizationId: string;
+  collegeId: string;
+  collegeName: string;
+  companyRelationshipId: string;
+};
+
+export type RecruiterContext = {
+  userId: string;
+  companyId: string;
+  companyName: string;
+  title: string | null;
+  status: "ACTIVE";
+  grants: readonly RecruiterGrant[];
+};
+
 export type RequestContext = {
   user: AuthenticatedUser;
   membership: ActiveMembership | null;
   adminScope?: AdminScope | null;
+  recruiter?: RecruiterContext | null;
 };
 
 export function isSuperAdmin(context: RequestContext | null | undefined) {
@@ -56,5 +74,16 @@ export function hasActiveMembership(
     context &&
       context.user.platformStatus === "ACTIVE" &&
       context.membership?.status === "ACTIVE",
+  );
+}
+
+
+export function hasActiveRecruiter(
+  context: RequestContext | null | undefined,
+) {
+  return Boolean(
+    context &&
+      context.user.platformStatus === "ACTIVE" &&
+      context.recruiter?.status === "ACTIVE",
   );
 }

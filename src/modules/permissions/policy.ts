@@ -1,5 +1,6 @@
 import {
   hasActiveMembership,
+  hasActiveRecruiter,
   hasMembershipRole,
   isSuperAdmin,
   type RequestContext,
@@ -21,6 +22,8 @@ export type PlatformPermission =
   | "projects.manage"
   | "placements.read"
   | "placements.manage"
+  | "placements.recruiter.read"
+  | "placements.recruiter.result.stage"
   | "project-template.manage"
   | "project-template.assign"
   | "people.manage"
@@ -31,6 +34,7 @@ export type PlatformPermission =
 export type ResourceScope = {
   organizationId?: string | null;
   collegeId?: string | null;
+  placementCompanyRelationshipId?: string | null;
 };
 
 function isInsideAdminScope(
@@ -73,6 +77,28 @@ function isSameMembershipOrganization(
   );
 }
 
+function hasRecruiterGrant(
+  context: RequestContext,
+  resource: ResourceScope,
+) {
+  if (
+    !hasActiveRecruiter(context) ||
+    !resource.collegeId ||
+    !resource.placementCompanyRelationshipId
+  ) {
+    return false;
+  }
+
+  return Boolean(
+    context.recruiter?.grants.some(
+      (grant) =>
+        grant.collegeId === resource.collegeId &&
+        grant.companyRelationshipId ===
+          resource.placementCompanyRelationshipId,
+    ),
+  );
+}
+
 export function can(
   context: RequestContext | null | undefined,
   permission: PlatformPermission,
@@ -84,6 +110,13 @@ export function can(
 
   if (permission === "admin-scope.select") {
     return isSuperAdmin(context);
+  }
+
+  if (
+    permission === "placements.recruiter.read" ||
+    permission === "placements.recruiter.result.stage"
+  ) {
+    return hasRecruiterGrant(context, resource);
   }
 
   if (isSuperAdmin(context)) {

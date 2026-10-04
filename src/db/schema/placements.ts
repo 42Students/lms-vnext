@@ -126,6 +126,118 @@ export const placementCompanyRelationships = pgTable(
 );
 
 
+export const placementRecruiterProfiles = pgTable(
+  "placement_recruiter_profiles",
+  {
+    userId: uuid("user_id")
+      .primaryKey()
+      .references(() => users.id, { onDelete: "restrict" }),
+    companyId: uuid("company_id")
+      .notNull()
+      .references(() => placementCompanies.id, {
+        onDelete: "restrict",
+      }),
+    title: varchar("title", { length: 160 }),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("ACTIVE"),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    archivedAt: timestamp("archived_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("placement_recruiter_profiles_company_status_idx").on(
+      table.companyId,
+      table.status,
+    ),
+    check(
+      "placement_recruiter_profiles_status_ck",
+      sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
+    ),
+    check(
+      "placement_recruiter_profiles_archive_shape_ck",
+      sql`(${table.status} = 'ARCHIVED') = (${table.archivedAt} is not null)`,
+    ),
+  ],
+);
+
+export const placementRecruiterCollegeGrants = pgTable(
+  "placement_recruiter_college_grants",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    recruiterUserId: uuid("recruiter_user_id")
+      .notNull()
+      .references(() => placementRecruiterProfiles.userId, {
+        onDelete: "restrict",
+      }),
+    companyRelationshipId: uuid("company_relationship_id")
+      .notNull()
+      .references(() => placementCompanyRelationships.id, {
+        onDelete: "restrict",
+      }),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("ACTIVE"),
+    grantedByUserId: uuid("granted_by_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    revokedByUserId: uuid("revoked_by_user_id").references(
+      () => users.id,
+      { onDelete: "restrict" },
+    ),
+    revokedAt: timestamp("revoked_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("placement_recruiter_college_grants_active_uq")
+      .on(
+        table.recruiterUserId,
+        table.companyRelationshipId,
+      )
+      .where(sql`${table.status} = 'ACTIVE'`),
+    index("placement_recruiter_college_grants_recruiter_status_idx").on(
+      table.recruiterUserId,
+      table.status,
+    ),
+    index("placement_recruiter_college_grants_relationship_status_idx").on(
+      table.companyRelationshipId,
+      table.status,
+    ),
+    check(
+      "placement_recruiter_college_grants_status_ck",
+      sql`${table.status} in ('ACTIVE', 'REVOKED')`,
+    ),
+    check(
+      "placement_recruiter_college_grants_lifecycle_ck",
+      sql`(${table.status} = 'ACTIVE' and ${table.revokedByUserId} is null and ${table.revokedAt} is null)
+        or (${table.status} = 'REVOKED' and ${table.revokedByUserId} is not null and ${table.revokedAt} is not null)`,
+    ),
+  ],
+);
 export const placementCandidatePreferences = pgTable(
   "placement_candidate_preferences",
   {

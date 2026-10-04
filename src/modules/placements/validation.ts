@@ -60,6 +60,36 @@ export type UpdatePlacementCompanyRelationshipInput = z.infer<
 >;
 
 
+export const placementRecruiterGrantIdSchema =
+  z.string().uuid();
+
+export const placementRecruiterGrantInputSchema =
+  z
+    .object({
+      companyRelationshipId:
+        placementCompanyRelationshipIdSchema,
+      email: z
+        .string()
+        .trim()
+        .toLowerCase()
+        .email()
+        .max(320),
+      title: z
+        .string()
+        .trim()
+        .min(1)
+        .max(160)
+        .nullable()
+        .optional(),
+    })
+    .strict();
+
+export type PlacementRecruiterGrantInput =
+  z.input<
+    typeof placementRecruiterGrantInputSchema
+  >;
+
+
 export const placementEmploymentTypes = [
   "FULL_TIME",
   "INTERNSHIP",

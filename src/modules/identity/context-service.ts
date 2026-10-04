@@ -1,15 +1,20 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   colleges,
   membershipRoles,
   organizations,
+  placementCompanies,
+  placementCompanyRelationships,
+  placementRecruiterCollegeGrants,
+  placementRecruiterProfiles,
   systemRoles as systemRolesTable,
   users,
 } from "@/db/schema";
 import type {
   AdminScope,
+  RecruiterContext,
   RequestContext,
 } from "@/modules/identity/context";
 import type {
@@ -75,6 +80,99 @@ async function findSystemRoles(userId: string): Promise<SystemRole[]> {
   return rows.map((row) => row.role);
 }
 
+async function findRecruiterContext(
+  userId: string,
+): Promise<RecruiterContext | null> {
+  const db = getDb();
+
+  const [profile] = await db
+    .select({
+      userId: placementRecruiterProfiles.userId,
+      companyId: placementRecruiterProfiles.companyId,
+      companyName: placementCompanies.name,
+      title: placementRecruiterProfiles.title,
+    })
+    .from(placementRecruiterProfiles)
+    .innerJoin(
+      placementCompanies,
+      eq(
+        placementCompanies.id,
+        placementRecruiterProfiles.companyId,
+      ),
+    )
+    .where(
+      and(
+        eq(placementRecruiterProfiles.userId, userId),
+        eq(placementRecruiterProfiles.status, "ACTIVE"),
+        eq(placementCompanies.status, "ACTIVE"),
+      ),
+    )
+    .limit(1);
+
+  if (!profile) return null;
+
+  const grants = await db
+    .select({
+      id: placementRecruiterCollegeGrants.id,
+      organizationId: colleges.organizationId,
+      collegeId: colleges.id,
+      collegeName: colleges.name,
+      companyRelationshipId:
+        placementCompanyRelationships.id,
+    })
+    .from(placementRecruiterCollegeGrants)
+    .innerJoin(
+      placementCompanyRelationships,
+      eq(
+        placementCompanyRelationships.id,
+        placementRecruiterCollegeGrants.companyRelationshipId,
+      ),
+    )
+    .innerJoin(
+      colleges,
+      eq(
+        colleges.id,
+        placementCompanyRelationships.collegeId,
+      ),
+    )
+    .innerJoin(
+      organizations,
+      eq(organizations.id, colleges.organizationId),
+    )
+    .where(
+      and(
+        eq(
+          placementRecruiterCollegeGrants.recruiterUserId,
+          userId,
+        ),
+        eq(
+          placementRecruiterCollegeGrants.status,
+          "ACTIVE",
+        ),
+        eq(
+          placementCompanyRelationships.status,
+          "ACTIVE",
+        ),
+        eq(
+          placementCompanyRelationships.companyId,
+          profile.companyId,
+        ),
+        eq(colleges.status, "ACTIVE"),
+        eq(organizations.status, "ACTIVE"),
+      ),
+    )
+    .orderBy(asc(colleges.name));
+
+  return {
+    userId: profile.userId,
+    companyId: profile.companyId,
+    companyName: profile.companyName,
+    title: profile.title,
+    status: "ACTIVE",
+    grants,
+  };
+}
+
 async function findMembershipRoles(
   membershipId: string,
 ): Promise<MembershipRole[]> {
@@ -101,7 +199,10 @@ export async function resolveRequestContext(
     throw new ContextResolutionError("USER_DISABLED");
   }
 
-  const assignedSystemRoles = await findSystemRoles(user.id);
+  const [assignedSystemRoles, recruiter] = await Promise.all([
+    findSystemRoles(user.id),
+    findRecruiterContext(user.id),
+  ]);
 
   if (!input.activeMembershipId) {
     return {
@@ -113,6 +214,7 @@ export async function resolveRequestContext(
       },
       membership: null,
       adminScope: input.adminScope ?? null,
+      recruiter,
     };
   }
 
@@ -166,6 +268,7 @@ export async function resolveRequestContext(
       roles,
     },
     adminScope: input.adminScope ?? null,
+    recruiter,
   };
 }
 
