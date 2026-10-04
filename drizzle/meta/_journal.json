@@ -204,6 +204,13 @@
       "when": 1791029200000,
       "tag": "0028_activity_notifications_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791132000000,
+      "tag": "0029_placements_p10_role_options",
+      "breakpoints": true
     }
   ]
 }

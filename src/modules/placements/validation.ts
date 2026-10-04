@@ -366,6 +366,96 @@ export type UpdatePlacementJobInput = z.input<
   typeof updatePlacementJobInputSchema
 >;
 
+export const placementRoleOptionIdSchema =
+  z.string().uuid();
+
+const placementRoleOptionFieldsSchema = z
+  .object({
+    title: z.string().trim().min(2).max(200),
+    employmentType: z.enum(
+      placementEmploymentTypes,
+    ),
+    workMode: z.enum(
+      placementJobWorkModes,
+    ),
+    locations: distinctTextList(20, 120)
+      .optional()
+      .default([]),
+    openings: z
+      .number()
+      .int()
+      .positive()
+      .max(100_000)
+      .nullable()
+      .optional(),
+    minimumAnnualCtcInr: z
+      .number()
+      .int()
+      .min(0)
+      .max(100_000_000)
+      .nullable()
+      .optional(),
+    maximumAnnualCtcInr: z
+      .number()
+      .int()
+      .min(0)
+      .max(100_000_000)
+      .nullable()
+      .optional(),
+  })
+  .strict();
+
+function validateRoleOptionCtc(
+  value: {
+    minimumAnnualCtcInr?: number | null;
+    maximumAnnualCtcInr?: number | null;
+  },
+  ctx: z.RefinementCtx,
+) {
+  if (
+    value.minimumAnnualCtcInr != null &&
+    value.maximumAnnualCtcInr != null &&
+    value.maximumAnnualCtcInr <
+      value.minimumAnnualCtcInr
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["maximumAnnualCtcInr"],
+      message:
+        "Maximum CTC must be greater than or equal to minimum CTC",
+    });
+  }
+}
+
+export const createPlacementRoleOptionInputSchema =
+  placementRoleOptionFieldsSchema.superRefine(
+    validateRoleOptionCtc,
+  );
+
+export const updatePlacementRoleOptionInputSchema =
+  placementRoleOptionFieldsSchema
+    .partial()
+    .strict()
+    .superRefine((value, ctx) => {
+      if (Object.keys(value).length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Provide at least one role option field",
+        });
+      }
+      validateRoleOptionCtc(value, ctx);
+    });
+
+export type CreatePlacementRoleOptionInput =
+  z.input<
+    typeof createPlacementRoleOptionInputSchema
+  >;
+export type UpdatePlacementRoleOptionInput =
+  z.input<
+    typeof updatePlacementRoleOptionInputSchema
+  >;
+
 
 const percentageSchema = z
   .number()
@@ -542,6 +632,8 @@ export const placementApplicationChannels = [
 export const createPlacementApplicationInputSchema =
   z
     .object({
+      roleOptionId:
+        placementRoleOptionIdSchema.optional(),
       channel: z
         .enum(placementApplicationChannels)
         .optional(),

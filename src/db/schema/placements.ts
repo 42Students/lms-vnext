@@ -511,6 +511,101 @@ export const placementJobs = pgTable(
 );
 
 
+
+export const placementJobRoleOptions = pgTable(
+  "placement_job_role_options",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobId: uuid("job_id")
+      .notNull()
+      .references(() => placementJobs.id, {
+        onDelete: "cascade",
+      }),
+    title: text("title").notNull(),
+    employmentType: varchar("employment_type", {
+      length: 24,
+    }).notNull(),
+    workMode: varchar("work_mode", {
+      length: 24,
+    }).notNull(),
+    locations: text("locations")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    openings: integer("openings"),
+    minimumAnnualCtcInr: integer(
+      "minimum_annual_ctc_inr",
+    ),
+    maximumAnnualCtcInr: integer(
+      "maximum_annual_ctc_inr",
+    ),
+    isPrimary: boolean("is_primary")
+      .notNull()
+      .default(false),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("ACTIVE"),
+    archivedAt: timestamp("archived_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "placement_job_role_options_job_title_uq",
+    )
+      .on(table.jobId, table.title)
+      .where(
+        sql`${table.status} = 'ACTIVE'`,
+      ),
+    uniqueIndex(
+      "placement_job_role_options_primary_uq",
+    )
+      .on(table.jobId)
+      .where(
+        sql`${table.isPrimary} = true and ${table.status} = 'ACTIVE'`,
+      ),
+    index(
+      "placement_job_role_options_job_status_idx",
+    ).on(table.jobId, table.status),
+    check(
+      "placement_job_role_options_status_ck",
+      sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
+    ),
+    check(
+      "placement_job_role_options_employment_type_ck",
+      sql`${table.employmentType} in ('FULL_TIME', 'INTERNSHIP', 'CONTRACT')`,
+    ),
+    check(
+      "placement_job_role_options_work_mode_ck",
+      sql`${table.workMode} in ('ONSITE', 'HYBRID', 'REMOTE')`,
+    ),
+    check(
+      "placement_job_role_options_openings_ck",
+      sql`${table.openings} is null or ${table.openings} > 0`,
+    ),
+    check(
+      "placement_job_role_options_ctc_ck",
+      sql`(${table.minimumAnnualCtcInr} is null or ${table.minimumAnnualCtcInr} >= 0)
+        and (${table.maximumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} >= 0)
+        and (${table.minimumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} >= ${table.minimumAnnualCtcInr})`,
+    ),
+    check(
+      "placement_job_role_options_archive_shape_ck",
+      sql`(${table.status} = 'ARCHIVED') = (${table.archivedAt} is not null)`,
+    ),
+  ],
+);
+
 export const placementCandidateAcademicEvidence = pgTable(
   "placement_candidate_academic_evidence",
   {
@@ -738,6 +833,11 @@ export const placementApplications = pgTable(
       .references(() => placementJobs.id, {
         onDelete: "restrict",
       }),
+    roleOptionId: uuid("role_option_id")
+      .notNull()
+      .references(() => placementJobRoleOptions.id, {
+        onDelete: "restrict",
+      }),
     membershipId: uuid("membership_id")
       .notNull()
       .references(() => collegeMemberships.id, {
@@ -774,7 +874,10 @@ export const placementApplications = pgTable(
   },
   (table) => [
     uniqueIndex(
-      "placement_applications_job_membership_uq",
+      "placement_applications_role_membership_uq",
+    ).on(table.roleOptionId, table.membershipId),
+    index(
+      "placement_applications_job_membership_idx",
     ).on(table.jobId, table.membershipId),
     index("placement_applications_job_status_idx").on(
       table.jobId,
