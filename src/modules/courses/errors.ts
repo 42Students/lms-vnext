@@ -71,7 +71,10 @@ export type CoursesServiceErrorCode =
   | "QUIZ_MAX_ATTEMPTS_REACHED"
   | "QUIZ_ATTEMPT_CONFLICT"
   | "QUIZ_ANSWER_INVALID"
-  | "QUIZ_RESULTS_NOT_VISIBLE";
+  | "QUIZ_RESULTS_NOT_VISIBLE"
+  | "DISCUSSION_MESSAGE_NOT_FOUND"
+  | "DISCUSSION_POST_ACCESS_DENIED"
+  | "DISCUSSION_MODERATION_ACCESS_DENIED";
 
 export class CoursesServiceError extends Error {
   constructor(
