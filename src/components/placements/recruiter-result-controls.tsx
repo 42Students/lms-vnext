@@ -379,7 +379,7 @@ export function RecruiterResultControls({
 
                           {applied ? (
                             <p className="m-0 text-sm text-muted-foreground">
-                              The placement team applied this result. It is now part of the learner's official progression.
+                              The placement team applied this result. It is now part of the learner&apos;s official progression.
                             </p>
                           ) : canStage ? (
                             <div className="grid gap-3 lg:grid-cols-2">
