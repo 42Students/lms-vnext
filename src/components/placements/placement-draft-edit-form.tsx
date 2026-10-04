@@ -21,6 +21,23 @@ type WorkMode =
   | "HYBRID"
   | "REMOTE";
 
+export type PlacementAcademicTargetingOptions = {
+  programs: Array<{
+    id: string;
+    name: string;
+    code: string;
+    departmentName: string;
+  }>;
+  cohorts: Array<{
+    id: string;
+    name: string;
+    code: string;
+    programId: string;
+    programName: string;
+    status: string;
+  }>;
+};
+
 export type PlacementDraftEditValue = {
   job: {
     id: string;
@@ -124,8 +141,10 @@ async function requestJson(
 
 export function PlacementDraftEditForm({
   value,
+  academicOptions,
 }: {
   value: PlacementDraftEditValue;
+  academicOptions: PlacementAcademicTargetingOptions;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -137,6 +156,36 @@ export function PlacementDraftEditForm({
   ] = useState<ApplicationMode>(
     value.job.applicationMode,
   );
+  const [
+    selectedProgramIds,
+    setSelectedProgramIds,
+  ] = useState<string[]>(
+    value.policy.allowedProgramIds,
+  );
+  const [
+    selectedCohortIds,
+    setSelectedCohortIds,
+  ] = useState<string[]>(
+    value.policy.allowedCohortIds,
+  );
+
+  function toggleId(
+    value: string,
+    current: string[],
+    setCurrent: (
+      next:
+        | string[]
+        | ((previous: string[]) => string[]),
+    ) => void,
+  ) {
+    setCurrent(
+      current.includes(value)
+        ? current.filter(
+            (item) => item !== value,
+          )
+        : [...current, value],
+    );
+  }
 
   async function submit(
     event: FormEvent<HTMLFormElement>,
@@ -220,9 +269,9 @@ export function PlacementDraftEditForm({
         "PUT",
         {
           allowedProgramIds:
-            value.policy.allowedProgramIds,
+            selectedProgramIds,
           allowedCohortIds:
-            value.policy.allowedCohortIds,
+            selectedCohortIds,
           minCgpa: nullableDecimal(
             String(
               data.get("minCgpa") ?? "",
@@ -503,8 +552,105 @@ export function PlacementDraftEditForm({
             Eligibility rules
           </h3>
           <p className="mt-1 text-xs leading-5 text-body">
-            Existing program/cohort targeting is preserved by this editor.
+            Leave programs and cohorts unselected to keep the opportunity college-wide.
           </p>
+
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <fieldset className="rounded-lg border border-border bg-muted p-4">
+              <legend className="px-1 text-xs font-semibold text-body">
+                Eligible programs
+              </legend>
+              {academicOptions.programs.length === 0 ? (
+                <p className="m-0 text-sm text-muted-foreground">
+                  No active programs are available in this college yet.
+                </p>
+              ) : (
+                <div className="grid gap-2">
+                  {academicOptions.programs.map(
+                    (program) => (
+                      <label
+                        key={program.id}
+                        className="flex items-start gap-2 text-sm text-body"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedProgramIds.includes(
+                            program.id,
+                          )}
+                          onChange={() =>
+                            toggleId(
+                              program.id,
+                              selectedProgramIds,
+                              setSelectedProgramIds,
+                            )
+                          }
+                        />
+                        <span>
+                          <span className="font-semibold text-foreground">
+                            {program.name}
+                          </span>
+                          <span className="block text-xs text-muted-foreground">
+                            {program.code} ·{" "}
+                            {program.departmentName}
+                          </span>
+                        </span>
+                      </label>
+                    ),
+                  )}
+                </div>
+              )}
+            </fieldset>
+
+            <fieldset className="rounded-lg border border-border bg-muted p-4">
+              <legend className="px-1 text-xs font-semibold text-body">
+                Eligible cohorts
+              </legend>
+              <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
+                Cohort selection narrows eligibility further when used with program selection.
+              </p>
+              {academicOptions.cohorts.length === 0 ? (
+                <p className="m-0 text-sm text-muted-foreground">
+                  No active or planned cohorts are available yet.
+                </p>
+              ) : (
+                <div className="grid gap-2">
+                  {academicOptions.cohorts.map(
+                    (cohort) => (
+                      <label
+                        key={cohort.id}
+                        className="flex items-start gap-2 text-sm text-body"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedCohortIds.includes(
+                            cohort.id,
+                          )}
+                          onChange={() =>
+                            toggleId(
+                              cohort.id,
+                              selectedCohortIds,
+                              setSelectedCohortIds,
+                            )
+                          }
+                        />
+                        <span>
+                          <span className="font-semibold text-foreground">
+                            {cohort.name}
+                          </span>
+                          <span className="block text-xs text-muted-foreground">
+                            {cohort.code} ·{" "}
+                            {cohort.programName} ·{" "}
+                            {cohort.status}
+                          </span>
+                        </span>
+                      </label>
+                    ),
+                  )}
+                </div>
+              )}
+            </fieldset>
+          </div>
+
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ["minCgpa", "Minimum CGPA", value.policy.minCgpa, "0.01"],

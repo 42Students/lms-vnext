@@ -35,8 +35,28 @@ type EvaluationRound = {
   status: string;
 };
 
+type EligibilityReview = {
+  status:
+    | "ELIGIBLE"
+    | "ELIGIBLE_WITH_MISSING_EVIDENCE"
+    | "NEEDS_DATA"
+    | "INELIGIBLE";
+  checks: Array<{
+    criterion: string;
+    status: "PASS" | "FAIL" | "MISSING";
+    actual: string | number | null;
+    required: string | number;
+    detail: string;
+  }>;
+  override: {
+    decision: "INCLUDE" | "EXCLUDE";
+    reason: string;
+  } | null;
+};
+
 type ScreeningItem = {
   applicationId: string;
+  membershipId: string;
   status: "PENDING" | "HOLD" | "SHORTLISTED" | "REJECTED";
   candidateMessage: string | null;
   internalReason: string | null;
@@ -150,15 +170,22 @@ function toLocalInput(value: string | null) {
 
 async function mutate(
   url: string,
-  method: "POST" | "PUT",
-  body: unknown,
+  method: "POST" | "PUT" | "DELETE",
+  body?: unknown,
 ) {
   const response = await fetch(url, {
     method,
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(body),
+    headers:
+      body === undefined
+        ? undefined
+        : {
+            "content-type":
+              "application/json",
+          },
+    body:
+      body === undefined
+        ? undefined
+        : JSON.stringify(body),
   });
   const payload = (await response
     .json()
@@ -221,6 +248,17 @@ export function PlacementDriveControls({
         ]),
       ),
     );
+  const [
+    eligibilityReviews,
+    setEligibilityReviews,
+  ] = useState<
+    Record<string, EligibilityReview>
+  >({});
+  const [
+    overrideReasons,
+    setOverrideReasons,
+  ] = useState<Record<string, string>>({});
+
   const [scheduleDrafts, setScheduleDrafts] =
     useState<Record<string, ScheduleDraft>>(
       Object.fromEntries(
@@ -400,6 +438,122 @@ export function PlacementDriveControls({
       );
     } catch (error) {
       failure("Screening update failed", error);
+    } finally {
+      setPendingKey(null);
+    }
+  }
+
+  async function loadEligibility(
+    membershipId: string,
+  ) {
+    const key =
+      "eligibility:" + membershipId;
+    setPendingKey(key);
+    try {
+      const response = await fetch(
+        `/api/placements/jobs/${data.jobId}/eligibility/${membershipId}`,
+      );
+      const payload = (await response
+        .json()
+        .catch(() => null)) as
+        | {
+            eligibility?: EligibilityReview;
+            error?: string;
+          }
+        | null;
+      if (
+        !response.ok ||
+        !payload?.eligibility
+      ) {
+        throw new Error(
+          payload?.error ??
+            "Eligibility review could not be loaded.",
+        );
+      }
+      setEligibilityReviews(
+        (current) => ({
+          ...current,
+          [membershipId]:
+            payload.eligibility!,
+        }),
+      );
+    } catch (error) {
+      failure(
+        "Could not load eligibility",
+        error,
+      );
+    } finally {
+      setPendingKey(null);
+    }
+  }
+
+  async function setEligibilityDecision(
+    membershipId: string,
+    decision: "INCLUDE" | "EXCLUDE",
+  ) {
+    const reason =
+      overrideReasons[membershipId]?.trim() ??
+      "";
+    if (!reason) {
+      failure(
+        "Override reason required",
+        new Error(
+          "Every manual eligibility override requires a reason",
+        ),
+      );
+      return;
+    }
+
+    const key =
+      "override:" +
+      membershipId +
+      ":" +
+      decision;
+    setPendingKey(key);
+    try {
+      await mutate(
+        `/api/placements/jobs/${data.jobId}/eligibility/${membershipId}`,
+        "PUT",
+        { decision, reason },
+      );
+      await loadEligibility(membershipId);
+      success(
+        decision === "INCLUDE"
+          ? "Candidate included"
+          : "Candidate excluded",
+        "The reasoned manual override is now part of the eligibility decision.",
+      );
+    } catch (error) {
+      failure(
+        "Eligibility override failed",
+        error,
+      );
+    } finally {
+      setPendingKey(null);
+    }
+  }
+
+  async function revokeEligibilityDecision(
+    membershipId: string,
+  ) {
+    const key =
+      "override-revoke:" + membershipId;
+    setPendingKey(key);
+    try {
+      await mutate(
+        `/api/placements/jobs/${data.jobId}/eligibility/${membershipId}`,
+        "DELETE",
+      );
+      await loadEligibility(membershipId);
+      success(
+        "Override removed",
+        "Eligibility is back to the deterministic academic rules.",
+      );
+    } catch (error) {
+      failure(
+        "Could not remove override",
+        error,
+      );
     } finally {
       setPendingKey(null);
     }
@@ -705,6 +859,190 @@ export function PlacementDriveControls({
                         item.candidate.phoneE164 ??
                         "No contact on profile"}
                     </p>
+
+                    <div className="mt-3 rounded-lg border border-border bg-muted p-3">
+                      {eligibilityReviews[
+                        item.membershipId
+                      ] ? (
+                        <>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                              Eligibility
+                            </span>
+                            <StatusBadge
+                              tone={
+                                eligibilityReviews[
+                                  item.membershipId
+                                ]!.status ===
+                                "ELIGIBLE"
+                                  ? "success"
+                                  : eligibilityReviews[
+                                        item.membershipId
+                                      ]!.status ===
+                                      "INELIGIBLE"
+                                    ? "error"
+                                    : "warning"
+                              }
+                            >
+                              {humanize(
+                                eligibilityReviews[
+                                  item.membershipId
+                                ]!.status,
+                              )}
+                            </StatusBadge>
+                          </div>
+
+                          {eligibilityReviews[
+                            item.membershipId
+                          ]!.override ? (
+                            <p className="mt-2 text-xs leading-5 text-body">
+                              Manual{" "}
+                              {eligibilityReviews[
+                                item.membershipId
+                              ]!.override!.decision.toLowerCase()}
+                              :{" "}
+                              {
+                                eligibilityReviews[
+                                  item.membershipId
+                                ]!.override!.reason
+                              }
+                            </p>
+                          ) : null}
+
+                          {eligibilityReviews[
+                            item.membershipId
+                          ]!.checks.some(
+                            (check) =>
+                              check.status !== "PASS",
+                          ) ? (
+                            <div className="mt-2 grid gap-1">
+                              {eligibilityReviews[
+                                item.membershipId
+                              ]!.checks
+                                .filter(
+                                  (check) =>
+                                    check.status !==
+                                    "PASS",
+                                )
+                                .map((check) => (
+                                  <p
+                                    key={
+                                      check.criterion
+                                    }
+                                    className="m-0 text-xs leading-5 text-body"
+                                  >
+                                    <span className="font-semibold text-foreground">
+                                      {
+                                        check.criterion
+                                      }
+                                    </span>
+                                    :{" "}
+                                    {check.status ===
+                                    "MISSING"
+                                      ? "missing"
+                                      : `${String(
+                                          check.actual,
+                                        )} vs ${String(
+                                          check.required,
+                                        )}`}
+                                  </p>
+                                ))}
+                            </div>
+                          ) : null}
+
+                          <div className="mt-3 grid gap-2">
+                            <input
+                              className={inputClass}
+                              maxLength={1000}
+                              value={
+                                overrideReasons[
+                                  item.membershipId
+                                ] ?? ""
+                              }
+                              onChange={(event) =>
+                                setOverrideReasons(
+                                  (current) => ({
+                                    ...current,
+                                    [item.membershipId]:
+                                      event.target
+                                        .value,
+                                  }),
+                                )
+                              }
+                              placeholder="Required reason for manual include/exclude"
+                            />
+                            <div className="flex flex-wrap gap-2">
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                disabled={
+                                  pendingKey !==
+                                  null
+                                }
+                                onClick={() =>
+                                  setEligibilityDecision(
+                                    item.membershipId,
+                                    "INCLUDE",
+                                  )
+                                }
+                              >
+                                Force include
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                disabled={
+                                  pendingKey !==
+                                  null
+                                }
+                                onClick={() =>
+                                  setEligibilityDecision(
+                                    item.membershipId,
+                                    "EXCLUDE",
+                                  )
+                                }
+                              >
+                                Force exclude
+                              </Button>
+                              {eligibilityReviews[
+                                item.membershipId
+                              ]!.override ? (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  disabled={
+                                    pendingKey !==
+                                    null
+                                  }
+                                  onClick={() =>
+                                    revokeEligibilityDecision(
+                                      item.membershipId,
+                                    )
+                                  }
+                                >
+                                  Remove override
+                                </Button>
+                              ) : null}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          disabled={
+                            pendingKey !== null
+                          }
+                          onClick={() =>
+                            loadEligibility(
+                              item.membershipId,
+                            )
+                          }
+                        >
+                          Review eligibility
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   {terminal ? (
                     <p className="m-0 text-sm text-muted-foreground">

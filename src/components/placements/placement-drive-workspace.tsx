@@ -1,4 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { listCohorts } from "@/modules/academics/cohort-service";
+import { listPrograms } from "@/modules/academics/program-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
@@ -36,6 +38,27 @@ export async function PlacementDriveWorkspace({
     getJobEligibilityPolicy(context, jobId),
   ]);
 
+  const programs =
+    job.status === "DRAFT"
+      ? await listPrograms(
+          context,
+          job.collegeId,
+        )
+      : [];
+
+  const cohortGroups =
+    job.status === "DRAFT"
+      ? await Promise.all(
+          programs.map(async (program) => ({
+            program,
+            cohorts: await listCohorts(
+              context,
+              program.id,
+            ),
+          })),
+        )
+      : [];
+
   const controlData: PlacementDriveControlData = {
     jobId,
     jobStatus: driveDay.job.status,
@@ -57,6 +80,8 @@ export async function PlacementDriveWorkspace({
     },
     screening: screening.map((item) => ({
       applicationId: item.application.id,
+      membershipId:
+        item.candidate.membershipId,
       status:
         item.screening.status as PlacementDriveControlData["screening"][number]["status"],
       candidateMessage:
@@ -135,6 +160,35 @@ export async function PlacementDriveWorkspace({
       />
       {job.status === "DRAFT" ? (
         <PlacementDraftEditForm
+          academicOptions={{
+            programs: programs.map(
+              (program) => ({
+                id: program.id,
+                name: program.name,
+                code: program.code,
+                departmentName:
+                  program.departmentName,
+              }),
+            ),
+            cohorts: cohortGroups.flatMap(
+              ({ program, cohorts }) =>
+                cohorts
+                  .filter(
+                    (cohort) =>
+                      cohort.status !==
+                      "ARCHIVED",
+                  )
+                  .map((cohort) => ({
+                    id: cohort.id,
+                    name: cohort.name,
+                    code: cohort.code,
+                    programId: program.id,
+                    programName:
+                      program.name,
+                    status: cohort.status,
+                  })),
+            ),
+          }}
           value={{
             job: {
               id: job.id,
