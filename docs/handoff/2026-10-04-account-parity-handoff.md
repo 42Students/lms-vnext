@@ -12,11 +12,16 @@ Use **clone-first, redesign-later** for Learner, Faculty, Mentor, College Admin,
 
 Recreate every meaningful legacy page, tab, section, action, modal and workflow, but implement with the vNext architecture. Nothing disappears silently.
 
-Detailed tracker: `docs/planning/account-surface-parity.md`.
+Surface/status tracker: `docs/planning/account-surface-parity.md`.
 Mechanical route backstop: `docs/planning/legacy-ui-route-manifest.md`.
-Detailed counter: `npm run parity:status`.
+Detailed per-page index: `docs/parity/README.md`.
+Counters:
+- `npm run parity:status` — 323-row master surface matrix
+- `npm run parity:pages` — granular page/section/action/modal/state checklists
 
 **Route audit result:** 210 candidate real account/shared/public/ops/error routes checked against matrix v2; **0 unmatched** at the frozen legacy SHA.
+
+**Detailed page-audit baseline:** the eight files under `docs/parity/` contain **1,517 detailed closure checks** at initial creation: 9 explicitly checked (primarily proven retired redirects plus the already-fixed late-assignment rule) and 1,508 deliberately open pending exact vNext-vs-legacy verification. **This is an audit workload count, not an estimate that the LMS is only 0.59% implemented.** Existing vNext workspaces may satisfy many checks once each is verified.
 
 **2026-10-04 deep audit:** matrix v1 was not exhaustive. Matrix v2 now explicitly includes hidden TPO Companies/Profile/More, public recruiter/company-share/auth/AI-grading flows, operational tracker surfaces, redirects/artifacts, specialized notification behavior, and decomposed TPO/HR/Super-Admin/Project sub-workflows. Do not work from an older matrix copy.
 
@@ -28,10 +33,10 @@ Learner → Faculty → Mentor → College Admin → Super Admin → TPO → HR/
 
 - fetch latest `lms-vnext/main` and `lms2-fe/prod-2026`;
 - preserve parallel work; never force-push;
-- read AGENTS, master plan, execution checklist, account parity matrix and legacy route manifest;
-- start at the first unresolved row for the active account;
-- inspect the exact legacy page before implementing it;
-- update the parity matrix in the same commit;
+- read AGENTS, master plan, execution checklist, account parity matrix, legacy route manifest, `docs/parity/README.md` and the active account's detailed page spec;
+- start at the first unresolved detailed page/workflow check for the active account, using the master row as the high-level status;
+- inspect the exact legacy route **and its supporting component(s)** before implementing it;
+- update the parity matrix and detailed page spec in the same commit;
 - keep tenant authorization centralized;
 - never call authored tests “green” unless CI actually executes them.
 
@@ -53,12 +58,12 @@ Recent CI runs fail before any job steps start (no runner/steps). This is a veri
 
 ## Immediate implementation sequence
 
-Start Learner with surfaces already backed by vNext data:
-1. Class Schedule.
-2. Learner self Profile.
+Start Learner with `docs/parity/learner.md` as the closure contract:
+1. Class Schedule — close its schedule source, filters/navigation, session detail, loading/empty/error, timezone, authorization and mobile checks.
+2. Learner self Profile — use the explicit profile section/upload/edit checklist; do not treat a basic identity form as profile parity.
 3. Attendance/Course Attendance.
 4. Course Discussions.
-5. Placement subpages + Career Calendar.
+5. Placement subpages + Career Calendar, including their documented modals/drawers/filters/actions.
 6. Exact Course and Project section parity.
 
 Closed in Learner parity batch 1:

@@ -50,3 +50,16 @@ A page is not complete because its route renders. A page is complete only when e
 - Do not check a box for code that exists but has not been compared against the legacy user job.
 - Do not check a box for authored tests if they did not actually run.
 - If legacy `prod-2026` moves materially, update the route manifest, master matrix and affected page specs before unrelated parity work.
+
+
+## Initial audit baseline
+
+At creation, these eight account/shared specs contained:
+
+- **1,517 total detailed closure checks**
+- **9 evidence-backed checked items**
+- **1,508 deliberately open checks**
+
+This is an **audit workload**, not an implementation-completion percentage. Much of vNext already exists in consolidated workspaces; an item remains unchecked until the exact legacy user job has been compared and proven.
+
+Final page parity requires `npm run parity:pages` to report zero open checks.

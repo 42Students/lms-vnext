@@ -1006,19 +1006,29 @@ AI should call explicit domain services/tools, not unrestricted SQL.
 
 Goal: recreate every meaningful user-facing surface from the current LMS for all seven accounts before broad navigation/UI redesign.
 
-Detailed source of truth: `docs/planning/account-surface-parity.md`.
+Parity sources of truth:
+- surface/status matrix: `docs/planning/account-surface-parity.md`
+- frozen mechanical route backstop: `docs/planning/legacy-ui-route-manifest.md`
+- detailed page/workflow contracts: `docs/parity/README.md` + the account files under `docs/parity/`
 
 Rules:
 - legacy frontend is the behavior/product oracle, not a code template;
-- every page/tab/section/action/workflow must be accounted for;
-- MISSING and VERIFY are launch blockers;
-- update parity documentation in the same commit that closes a surface;
+- every page/tab/section/card/action/form/filter/modal/drawer/state/permission-sensitive workflow must be accounted for;
+- MISSING, VERIFY, PARTIAL and BLOCKED remain launch blockers until resolved/accepted through the documented classification process;
+- a master-matrix DONE row is not deeply closed while its required detailed page contract still has open checks;
+- update the master matrix and detailed page spec in the same commit that closes behavior;
 - implement with vNext architecture and centralized authorization;
-- after parity reaches 100%, navigation/UI consolidation becomes a separate product pass.
+- after both parity layers reach 100% closure, navigation/UI consolidation becomes a separate product pass.
 
 Execution order: Learner → Faculty → Mentor → College Admin → Super Admin → TPO → HR/Recruiter → shared blockers → final fresh legacy diff.
 
-Definition of done: zero MISSING/VERIFY rows, no PARTIAL row hiding unfinished behavior, intentional removals documented, final route/navigation/section diff complete and critical browser parity regressions green.
+Definition of done:
+- `npm run parity:status` has zero PARTIAL / MISSING / VERIFY / BLOCKED rows;
+- `npm run parity:pages` has zero open detailed checks;
+- every DONE/REDESIGNED master row has a closed detailed contract;
+- intentional removals/redesigns have written rationale;
+- final fresh route/navigation/section/action/modal diff against latest legacy `prod-2026` is complete;
+- critical browser/role/tenant regression coverage has actually executed green.
 
 ---
 

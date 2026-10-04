@@ -70,3 +70,53 @@ After matrix v2 was written, the frozen route manifest was checked back against 
 - unmatched after tightening exact route references: **0**
 
 This is route-level completeness for the audited legacy SHA. It does not replace section/action/workflow auditing, which remains encoded as PARTIAL/MISSING rows.
+
+
+## Second-layer page/workflow audit
+
+The route-complete master matrix still left one failure mode: a page could be represented while an internal tab, button, form, modal, drawer, filter, empty state or permission-sensitive workflow was forgotten.
+
+A second layer was therefore added under `docs/parity/`:
+
+- Learner
+- Faculty
+- Mentor
+- College Admin
+- Super Admin
+- TPO
+- HR / Recruiter
+- Shared / public / operational
+
+The specs were built by reading the actual legacy route files **and the components they render**. They enumerate, page by page:
+- sections/tabs/cards/KPIs;
+- primary and secondary actions;
+- forms and validation;
+- filters/search/sort/pagination/URL state;
+- modals/drawers/popovers/confirmation flows;
+- loading/empty/error/stale/partial-data states;
+- role/tenant/read-only boundaries;
+- destructive consequences/audit/history;
+- responsive/mobile behavior;
+- regression coverage.
+
+Initial detailed inventory: **1,517 closure checks** across the eight specs. 9 were already evidence-backed as checked at creation and 1,508 were intentionally left open until exact vNext comparison. That raw ratio must never be presented as overall LMS implementation completeness.
+
+Examples of hidden work now made explicit include:
+- Learner Applications detail/history/company-preview/withdrawal/offer-confirmation modals;
+- Learner Interviews detail/reschedule/summary/withdrawal flows;
+- Learner Profile's full resume/identity/experience/education/skills/projects/certifications/achievements/languages/extracurricular/hobbies/job-preferences surface;
+- College Admin Batch Students + Move Student modals;
+- College Admin recurring Class schedule modal and attendance Session/Record correction modals;
+- Student Group lock/remove/add/rule-preview/apply/history workflows;
+- Super Admin DNS verification/primary-domain destructive confirmation, Module Access drawers and access trace, HR Account detail/access/session controls;
+- TPO Leads table/board/companies, import/invite/not-now/prepared-message overlays;
+- TPO Drive publish/reject/send-back/extend/cancel/share/messages workflows;
+- TPO Settings' ten operational sections and Reports' ten report types;
+- HR Drive round/applicant/slot/result/selection/message workflows;
+- recruiter invite, company applicant sharing, auth handoff, AI grading and Tracker operations.
+
+## Second-layer release gate
+
+`npm run parity:pages` counts these checkboxes. Final parity requires **zero open detailed checks** in addition to a blocker-free master matrix.
+
+A page is never complete merely because the route renders.

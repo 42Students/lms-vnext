@@ -74,11 +74,13 @@ Until account parity is closed, `42Students/lms2-fe@prod-2026` is the user-facin
 
 For every legacy page, tab, section, card, modal, action and meaningful workflow:
 1. classify the route in `docs/planning/legacy-ui-route-manifest.md` and inventory the user job in `docs/planning/account-surface-parity.md`;
-2. recreate the user-visible capability in vNext before redesigning it away;
-3. implement it with the vNext architecture — do not paste legacy Pages Router, Redux, Ant Design or service-layer code;
-4. preserve tenant/role safety and add regression coverage where practical;
-5. classify intentional deviations explicitly as REDESIGNED or RETIRED with a reason.
+2. open the matching account spec under `docs/parity/` and account for the page's sections, tabs, actions, forms, filters, modals, drawers, states, permissions, responsive behavior and regression coverage;
+3. recreate the user-visible capability in vNext before redesigning it away;
+4. implement it with the vNext architecture — do not paste legacy Pages Router, Redux, Ant Design or service-layer code;
+5. update the master matrix and the detailed page checklist in the same implementation commit;
+6. preserve tenant/role safety and add regression coverage where practical;
+7. classify intentional deviations explicitly as REDESIGNED or RETIRED with a reason.
 
 No legacy surface may disappear silently. A consolidated vNext workspace does not automatically count as page parity when the legacy product had a distinct daily-use surface. First reach parity; then consolidate/redesign as a separate pass.
 
-Do not call LMS vNext feature-complete while `npm run parity:status` reports PARTIAL, MISSING, VERIFY or BLOCKED rows, or while any account parity checkbox remains open. Refresh the frozen legacy route manifest when `lms2-fe/prod-2026` materially moves.
+Do not call LMS vNext feature-complete while `npm run parity:status` reports PARTIAL, MISSING, VERIFY or BLOCKED rows, while `npm run parity:pages` reports any open detailed checks, or while any account parity checkbox remains open. A master-matrix DONE row is not deeply closed if its corresponding `docs/parity/*.md` contract still has unresolved required behavior. Refresh the frozen legacy route manifest and affected page specs when `lms2-fe/prod-2026` materially moves.

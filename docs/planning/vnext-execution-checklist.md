@@ -662,6 +662,10 @@ Detailed route/section/action truth: `docs/planning/account-surface-parity.md`. 
 - [x] frozen legacy route manifest committed for the audited `prod-2026` SHA
 - [x] redirect stubs, accidental Pages-Router component routes and test-only surfaces classified explicitly
 - [x] composite TPO / HR / Super Admin / Projects surfaces decomposed so umbrella rows cannot hide work
+- [x] detailed per-page parity specs committed for Learner, Faculty, Mentor, College Admin, Super Admin, TPO and HR / Recruiter
+- [x] detailed shared/public/ops parity spec committed
+- [x] page specs explicitly enumerate sections/tabs/cards, actions, forms, filters, modals/drawers/popovers, loading/empty/error/stale states, permissions, responsive behavior and regression gates
+- [x] detailed page checklist counter added — `npm run parity:pages` / `npm run parity:pages -- --json`
 - [ ] Learner page + section + action parity complete
 - [ ] Faculty page + section + action parity complete
 - [ ] Mentor page + section + action parity complete
@@ -674,7 +678,9 @@ Detailed route/section/action truth: `docs/planning/account-surface-parity.md`. 
 - [ ] zero VERIFY rows in parity matrix
 - [ ] no PARTIAL row hides an unfinished user job
 - [ ] `npm run parity:status` has zero PARTIAL / MISSING / VERIFY / BLOCKED rows
-- [ ] final fresh route/navigation/section diff against latest legacy `prod-2026`
+- [ ] `npm run parity:pages` has zero open detailed page/workflow checks
+- [ ] every master DONE / REDESIGNED row has its required detailed page contract closed
+- [ ] final fresh route/navigation/section/action/modal diff against latest legacy `prod-2026`
 - [ ] critical seven-account browser parity regression suite green
 
 ---
@@ -686,6 +692,8 @@ Before coding:
 - [ ] read handoff
 - [ ] read master plan
 - [ ] read this checklist
+- [ ] read `docs/planning/account-surface-parity.md`
+- [ ] read `docs/parity/README.md` and the active account's detailed page spec
 - [ ] inspect current HEAD
 - [ ] inspect latest CI
 - [ ] identify first unchecked relevant item
@@ -715,14 +723,15 @@ The next chat should start here:
 
 ```text
 NEXT: Account-surface parity closure
-1. read docs/planning/account-surface-parity.md
+1. read docs/planning/account-surface-parity.md, docs/parity/README.md and the active account's docs/parity/<account>.md
 2. fetch latest lms2-fe/prod-2026 and lms-vnext/main
-3. continue the first MISSING/PARTIAL/VERIFY row in the active account
-4. preserve legacy page/section/action behavior before broad redesign
-5. implement with vNext architecture and centralized authorization
-6. add regression coverage and update the parity row in the same commit
-7. continue until zero MISSING and zero VERIFY rows remain
-8. mark GCP/Identity/Storage dependencies BLOCKED and continue non-cloud parity work
+3. continue the first unresolved page/workflow checklist item in the active account, using the master MISSING/PARTIAL/VERIFY row as context
+4. reopen the exact legacy route and supporting component(s) before coding; the page spec is a map, not a substitute for source
+5. implement the full required page slice with vNext architecture and centralized authorization — including its required forms/filters/modals/drawers/states, not just the route
+6. add regression coverage and update both the master parity row and detailed page checklist in the same commit
+7. run npm run parity:status and npm run parity:pages for progress truth
+8. continue until parity:status has zero blockers AND parity:pages has zero open checks
+9. mark GCP/Identity/Storage dependencies BLOCKED and continue non-cloud parity work
 ```
 
 If cloud provisioning cannot proceed because account/project access is unavailable, do not redesign the stack. Continue with code-side preparation or another non-blocked checklist dependency.

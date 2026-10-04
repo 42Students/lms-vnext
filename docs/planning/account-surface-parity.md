@@ -4,9 +4,12 @@
 **Legacy UI oracle:** `42Students/lms2-fe@prod-2026`  
 **Legacy audited SHA:** `38cdd38e592a6f416c8e8e99ce36438f548ed577`  
 **vNext audit baseline:** `d972ebdf4563d34a059d59c4268e1f37911925fa`  
-**Mechanical route inventory:** `docs/planning/legacy-ui-route-manifest.md`
+**Mechanical route inventory:** `docs/planning/legacy-ui-route-manifest.md`  
+**Detailed page/workflow specs:** `docs/parity/README.md`
 
-This matrix is the **behavioral source of truth** for clone-first / redesign-later. The route manifest is the mechanical backstop.
+This matrix is the **surface-level behavioral source of truth** for clone-first / redesign-later. The route manifest is the mechanical backstop. The account files under `docs/parity/` are the second-level closure contracts for every page's sections, tabs, actions, forms, filters, modals, drawers, states, permissions, responsive behavior and regression coverage.
+
+A row may be marked DONE only when its user job is implemented **and** the required detailed page contract is closed.
 
 ## Audit result
 
@@ -36,6 +39,8 @@ A route existing is not enough. Closure includes sections/tabs/cards, primary an
 ---
 
 # 1. Learner
+
+Detailed page contract: `docs/parity/learner.md`.
 
 | Surface | Legacy route/section | vNext mapping | Audit note | Status |
 | --- | --- | --- | --- | --- |
@@ -75,6 +80,8 @@ A route existing is not enough. Closure includes sections/tabs/cards, primary an
 
 # 2. Faculty
 
+Detailed page contract: `docs/parity/faculty.md`.
+
 | Surface | Legacy route/section | vNext mapping | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Courses list | `/teacher/courses` | `/teach/courses` | Teaching list exists. | DONE |
@@ -100,6 +107,8 @@ A route existing is not enough. Closure includes sections/tabs/cards, primary an
 
 # 3. Mentor
 
+Detailed page contract: `docs/parity/mentor.md`.
+
 | Surface | Legacy route/section | vNext mapping | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Mentor landing / Projects-disabled state | `/mentor` | no equivalent landing | Legacy conditionally opens Projects or explains Projects is unavailable and links Notifications. | MISSING |
@@ -123,6 +132,8 @@ A route existing is not enough. Closure includes sections/tabs/cards, primary an
 ---
 
 # 4. College Admin
+
+Detailed page contract: `docs/parity/college-admin.md`.
 
 ## 4.1 Operations
 
@@ -225,6 +236,8 @@ Parent detail route: `/college-admin/projects/workspaces/[workspaceId]`.
 ---
 
 # 5. Super Admin
+
+Detailed page contract: `docs/parity/super-admin.md`.
 
 Super Admin must not inherit College Admin parity only by prose. Shared surfaces are explicit below and are global/scoped as appropriate.
 
@@ -342,6 +355,8 @@ Parent detail route: `/superadmin/projects/workspaces/[workspaceId]`.
 
 # 6. TPO
 
+Detailed page contract: `docs/parity/tpo.md`.
+
 ## 6.1 Home / CRM / Students
 
 | Surface | Legacy | vNext | Audit note | Status |
@@ -442,6 +457,8 @@ Settings parity includes unsaved-change protection and all create/edit/remove/re
 
 # 7. HR / Recruiter
 
+Detailed page contract: `docs/parity/hr.md`.
+
 ## 7.1 Home / Drives
 
 | Surface | Legacy | vNext | Audit note | Status |
@@ -482,6 +499,8 @@ Settings parity includes unsaved-change protection and all create/edit/remove/re
 
 # 8. Shared / public / cross-account product surfaces
 
+Detailed page contract: `docs/parity/shared-public-ops.md`.
+
 These were absent from matrix v1 and are now explicit.
 
 | Surface | Legacy | vNext | Audit note | Status |
@@ -501,6 +520,8 @@ These were absent from matrix v1 and are now explicit.
 
 # 9. Operational / QA surfaces
 
+Detailed page contract: `docs/parity/shared-public-ops.md`.
+
 | Surface | Legacy | Audit note | Status |
 | --- | --- | --- | --- |
 | Issue Report | `/tracker` | No vNext equivalent. Decide whether 42 Tracker remains separate/legacy or is migrated. | VERIFY |
@@ -512,6 +533,8 @@ These were absent from matrix v1 and are now explicit.
 ---
 
 # 10. Public marketing surfaces
+
+Detailed page contract: `docs/parity/shared-public-ops.md`.
 
 These are outside the seven authenticated accounts but cannot remain unclassified.
 
@@ -556,13 +579,15 @@ Important rules:
 Parity cannot close until all are true:
 
 1. `npm run parity:status` reports zero PARTIAL, MISSING, VERIFY and BLOCKED rows.
-2. Every account product route in `legacy-ui-route-manifest.md` is represented here.
-3. Every legacy navigation destination is represented here.
-4. Every composite page with tabs/sections has explicit subrows; umbrella rows alone are insufficient.
-5. Every meaningful deep-link/modal/drawer action is implemented or explicitly REDESIGNED/RETIRED.
-6. Redirect stubs/artifact routes are classified and not mistaken for product requirements.
-7. The legacy baseline SHA is refreshed and diffed immediately before final parity sign-off.
-8. Critical role/tenant/browser regression coverage executes successfully; authored-but-unrun tests are not “green”.
+2. `npm run parity:pages` reports zero open detailed page checks.
+3. Every master DONE/REDESIGNED row has its required `docs/parity/*.md` contract closed or an explicit documented reason why a detailed item is not applicable.
+4. Every account product route in `legacy-ui-route-manifest.md` is represented here.
+5. Every legacy navigation destination is represented here.
+6. Every composite page with tabs/sections has explicit subrows; umbrella rows alone are insufficient.
+7. Every meaningful deep-link/modal/drawer action is implemented or explicitly REDESIGNED/RETIRED.
+8. Redirect stubs/artifact routes are classified and not mistaken for product requirements.
+9. The legacy baseline SHA is refreshed and diffed immediately before final parity sign-off.
+10. Critical role/tenant/browser regression coverage executes successfully; authored-but-unrun tests are not “green”.
 
 # 14. Execution order after this audit
 

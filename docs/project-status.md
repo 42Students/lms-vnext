@@ -46,3 +46,28 @@ npm run parity:status -- --json
 ```
 
 This parses `docs/planning/account-surface-parity.md`. DONE, REDESIGNED and RETIRED are resolved. PARTIAL, MISSING, VERIFY and BLOCKED are release blockers. The frozen mechanical route inventory lives in `docs/planning/legacy-ui-route-manifest.md`.
+
+
+## Detailed per-page parity
+
+The master surface matrix is intentionally not granular enough to prove every page's internal behavior. The second-level contracts live in `docs/parity/*.md`.
+
+Run:
+
+```bash
+npm run parity:pages
+```
+
+Machine-readable:
+
+```bash
+npm run parity:pages -- --json
+```
+
+At initial creation, the eight detailed specs contained **1,517 closure checks**: 9 checked and 1,508 open. This is **not a percentage of implemented LMS code**. It is a deliberately strict audit workload: existing vNext work may satisfy an item only after it is compared against the legacy page and the checkbox is closed with evidence.
+
+Release parity requires both:
+- `npm run parity:status` — zero PARTIAL / MISSING / VERIFY / BLOCKED rows;
+- `npm run parity:pages` — zero open detailed checks.
+
+A master DONE/REDESIGNED row must not hide open required checks in its detailed page contract.
