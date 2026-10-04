@@ -55,6 +55,12 @@ const tpo: RequestContext = {
 
 async function cleanup() {
   await pool.query(
+    "delete from in_app_notifications",
+  );
+  await pool.query(
+    "delete from activity_events",
+  );
+  await pool.query(
     "delete from placement_joining_history",
   );
   await pool.query(
@@ -265,6 +271,33 @@ describe("Placement P9 seasons", () => {
 
     expect(nextJob.seasonId).toBe(
       next.id,
+    );
+
+    const lifecycleEvents =
+      await pool.query<{
+        event_type: string;
+      }>(
+        `select event_type
+           from activity_events
+          where subject_id = any($1::text[])
+          order by occurred_at asc`,
+        [[
+          job.id,
+          SEED_IDS.placementSeasonA,
+          next.id,
+        ]],
+      );
+    expect(
+      lifecycleEvents.rows.map(
+        (row) => row.event_type,
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "placements.job.published",
+        "placements.job.closed",
+        "placements.season.closed",
+        "placements.season.started",
+      ]),
     );
 
     const seasons =

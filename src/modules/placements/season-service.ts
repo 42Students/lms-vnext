@@ -5,6 +5,8 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   colleges,
   placementJobs,
@@ -142,6 +144,30 @@ export async function createPlacementSeason(
       })
       .returning();
 
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_SEASON_STARTED,
+        collegeId: season.collegeId,
+        subjectType: "placement_season",
+        subjectId: season.id,
+        subjectLabel: season.name,
+        summary:
+          `Placement season ${season.name} started`,
+        metadata: {
+          code: season.code,
+          startDate: season.startDate,
+          endDate: season.endDate,
+        },
+        groupKey:
+          `placement-season:${season.id}`,
+        dedupeKey:
+          `placement-season:${season.id}:started`,
+      },
+    );
+
     return season;
   });
 }
@@ -269,6 +295,31 @@ export async function closePlacementSeason(
         "PLACEMENT_SEASON_NOT_ACTIVE",
       );
     }
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_SEASON_CLOSED,
+        collegeId: closed.collegeId,
+        subjectType: "placement_season",
+        subjectId: closed.id,
+        subjectLabel: closed.name,
+        summary:
+          `Placement season ${closed.name} closed`,
+        metadata: {
+          code: closed.code,
+          closedAt:
+            closed.closedAt?.toISOString() ??
+            null,
+        },
+        groupKey:
+          `placement-season:${closed.id}`,
+        dedupeKey:
+          `placement-season:${closed.id}:closed`,
+      },
+    );
 
     return closed;
   });

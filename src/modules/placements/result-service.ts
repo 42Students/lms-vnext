@@ -8,6 +8,8 @@ import {
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementApplications,
   placementApplicationScreenings,
@@ -619,6 +621,34 @@ export async function applyPlacementRoundResult(
         "PLACEMENT_RESULT_NOT_FOUND",
       );
     }
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_RESULT_APPLIED,
+        collegeId: current.job.collegeId,
+        subjectType:
+          "placement_result",
+        subjectId: applied.id,
+        subjectLabel: current.round.name,
+        summary:
+          `${current.round.name} result applied for ${current.job.title}`,
+        metadata: {
+          jobId: current.job.id,
+          roundId: current.round.id,
+          applicationId:
+            current.application.id,
+          outcome: applied.outcome,
+        },
+        groupKey:
+          `placement-job:${current.job.id}:results`,
+        dedupeKey:
+          `placement-result:${applied.id}:applied`,
+      },
+    );
+
     return applied;
   });
 }

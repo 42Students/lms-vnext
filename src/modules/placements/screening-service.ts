@@ -5,6 +5,8 @@ import {
   eq,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   placementApplications,
@@ -388,6 +390,34 @@ export async function decidePlacementScreening(
           input.internalReason ?? null,
         actorUserId: context.user.id,
       });
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_SCREENING_DECIDED,
+        collegeId: current.job.collegeId,
+        subjectType:
+          "placement_application",
+        subjectId: applicationId,
+        subjectLabel:
+          current.candidate.displayName,
+        summary:
+          `Screening set to ${input.decision} for ${current.job.title}`,
+        metadata: {
+          jobId: current.job.id,
+          fromStatus: from,
+          toStatus: input.decision,
+          membershipId:
+            current.candidate.membershipId,
+        },
+        groupKey:
+          `placement-job:${current.job.id}:screening`,
+        dedupeKey:
+          `placement-screening:${applicationId}:${from.toLowerCase()}-${input.decision.toLowerCase()}`,
+      },
+    );
 
     return updated;
   });

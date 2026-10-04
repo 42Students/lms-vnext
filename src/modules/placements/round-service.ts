@@ -7,6 +7,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementJobRoundEvents,
   placementJobRounds,
@@ -407,6 +409,32 @@ export async function actOnPlacementRound(
           eventType: "COMPLETED",
           actorUserId: context.user.id,
         });
+
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PLACEMENTS_ROUND_COMPLETED,
+          collegeId: current.job.collegeId,
+          subjectType:
+            "placement_round",
+          subjectId: updated.id,
+          subjectLabel: updated.name,
+          summary:
+            `${updated.name} completed for ${current.job.title}`,
+          metadata: {
+            jobId: current.job.id,
+            sequence: updated.sequence,
+            kind: updated.kind,
+          },
+          groupKey:
+            `placement-job:${current.job.id}:rounds`,
+          dedupeKey:
+            `placement-round:${updated.id}:completed`,
+        },
+      );
+
       return updated;
     });
   }

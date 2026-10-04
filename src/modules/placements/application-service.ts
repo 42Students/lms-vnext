@@ -5,6 +5,8 @@ import {
   eq,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   placementApplications,
@@ -322,6 +324,31 @@ export async function applyToPlacementJob(
           applicationId: application.id,
         });
 
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICATION_SUBMITTED,
+          collegeId: job.collegeId,
+          subjectType:
+            "placement_application",
+          subjectId: application.id,
+          subjectLabel: job.title,
+          summary:
+            `Application submitted for ${job.title}`,
+          metadata: {
+            jobId: job.id,
+            membershipId: membership.id,
+            channel,
+          },
+          groupKey:
+            `placement-job:${job.id}:applications`,
+          dedupeKey:
+            `placement-application:${application.id}:submitted`,
+        },
+      );
+
       return application;
     },
   );
@@ -528,6 +555,30 @@ export async function withdrawPlacementApplication(
           toStatus: "WITHDRAWN",
           actorUserId: context.user.id,
         });
+
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICATION_WITHDRAWN,
+          collegeId: row.job.collegeId,
+          subjectType:
+            "placement_application",
+          subjectId: application.id,
+          subjectLabel: row.job.title,
+          summary:
+            `Application withdrawn from ${row.job.title}`,
+          metadata: {
+            jobId: row.job.id,
+            membershipId: membership.id,
+          },
+          groupKey:
+            `placement-job:${row.job.id}:applications`,
+          dedupeKey:
+            `placement-application:${application.id}:withdrawn`,
+        },
+      );
 
       return application;
     },

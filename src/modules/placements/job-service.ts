@@ -1,5 +1,7 @@
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementCompanyRelationships,
   placementCompanies,
@@ -296,16 +298,59 @@ export async function publishPlacementJob(
     );
   }
 
-  const [published] = await getDb()
-    .update(placementJobs)
-    .set({
-      status: "PUBLISHED",
-      publishedAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .where(eq(placementJobs.id, jobId))
-    .returning();
-  return published;
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const now = new Date();
+    const [published] = await tx
+      .update(placementJobs)
+      .set({
+        status: "PUBLISHED",
+        publishedAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(placementJobs.id, jobId),
+          eq(
+            placementJobs.status,
+            "DRAFT",
+          ),
+        ),
+      )
+      .returning();
+
+    if (!published) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_JOB_NOT_PUBLISHABLE",
+      );
+    }
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_PUBLISHED,
+        collegeId: published.collegeId,
+        subjectType: "placement_job",
+        subjectId: published.id,
+        subjectLabel: published.title,
+        summary:
+          `${published.title} published`,
+        metadata: {
+          seasonId: published.seasonId,
+          companyRelationshipId:
+            published.companyRelationshipId,
+        },
+        groupKey:
+          `placement-job:${published.id}`,
+        dedupeKey:
+          `placement-job:${published.id}:published`,
+      },
+    );
+
+    return published;
+  });
 }
 
 export async function closePlacementJob(
@@ -324,13 +369,56 @@ export async function closePlacementJob(
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
   }
 
-  const now = new Date();
-  const [closed] = await getDb()
-    .update(placementJobs)
-    .set({ status: "CLOSED", closedAt: now, updatedAt: now })
-    .where(eq(placementJobs.id, jobId))
-    .returning();
-  return closed;
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const now = new Date();
+    const [closed] = await tx
+      .update(placementJobs)
+      .set({
+        status: "CLOSED",
+        closedAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(placementJobs.id, jobId),
+          eq(
+            placementJobs.status,
+            "PUBLISHED",
+          ),
+        ),
+      )
+      .returning();
+
+    if (!closed) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_JOB_NOT_CLOSABLE",
+      );
+    }
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_CLOSED,
+        collegeId: closed.collegeId,
+        subjectType: "placement_job",
+        subjectId: closed.id,
+        subjectLabel: closed.title,
+        summary: `${closed.title} closed`,
+        metadata: {
+          seasonId: closed.seasonId,
+        },
+        groupKey:
+          `placement-job:${closed.id}`,
+        dedupeKey:
+          `placement-job:${closed.id}:closed`,
+      },
+    );
+
+    return closed;
+  });
 }
 
 export async function archivePlacementJob(
