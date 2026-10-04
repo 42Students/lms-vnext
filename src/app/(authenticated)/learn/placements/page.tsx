@@ -63,6 +63,21 @@ export default async function LearnerPlacementsPage() {
           row.job.applicationDeadline?.toISOString() ??
           null,
       },
+      roleOption: {
+        id: row.roleOption.id,
+        title: row.roleOption.title,
+        employmentType:
+          row.roleOption.employmentType,
+        workMode: row.roleOption.workMode,
+        locations: row.roleOption.locations,
+        openings: row.roleOption.openings,
+        minimumAnnualCtcInr:
+          row.roleOption.minimumAnnualCtcInr,
+        maximumAnnualCtcInr:
+          row.roleOption.maximumAnnualCtcInr,
+        isPrimary:
+          row.roleOption.isPrimary,
+      },
       company: row.company,
       application: row.application
         ? {

@@ -8,10 +8,12 @@ import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-co
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { listPlacementOfferCandidates } from "@/modules/placements/offer-service";
 import { listPlacementScreeningQueue } from "@/modules/placements/screening-service";
+import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
 import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
 import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
 import { PlacementOfferControls } from "./placement-offer-controls";
+import { PlacementRoleOptions } from "./placement-role-options";
 import {
   PlacementDriveControls,
   type PlacementDriveControlData,
@@ -33,6 +35,7 @@ export async function PlacementDriveWorkspace({
     job,
     eligibilityPolicy,
     offerCandidates,
+    roleOptions,
   ] = await Promise.all([
     getPlacementDriveDay(context, jobId),
     getPlacementEvaluationConfig(context, jobId),
@@ -40,6 +43,10 @@ export async function PlacementDriveWorkspace({
     getPlacementJob(context, jobId),
     getJobEligibilityPolicy(context, jobId),
     listPlacementOfferCandidates(
+      context,
+      jobId,
+    ),
+    listPlacementRoleOptions(
       context,
       jobId,
     ),
@@ -91,6 +98,8 @@ export async function PlacementDriveWorkspace({
         item.candidate.membershipId,
       status:
         item.screening.status as PlacementDriveControlData["screening"][number]["status"],
+      roleTitle:
+        item.roleOption.title,
       candidateMessage:
         item.screening.candidateMessage,
       internalReason:
@@ -121,6 +130,7 @@ export async function PlacementDriveWorkspace({
         (participant) => ({
           applicationId:
             participant.applicationId,
+          roleTitle: participant.roleTitle,
           displayName: participant.displayName,
           email: participant.email,
           result: participant.result
@@ -259,6 +269,25 @@ export async function PlacementDriveWorkspace({
           }}
         />
       ) : null}
+      <PlacementRoleOptions
+        jobId={jobId}
+        jobStatus={job.status}
+        roles={roleOptions.map((role) => ({
+          id: role.id,
+          title: role.title,
+          employmentType:
+            role.employmentType,
+          workMode: role.workMode,
+          locations: role.locations,
+          openings: role.openings,
+          minimumAnnualCtcInr:
+            role.minimumAnnualCtcInr,
+          maximumAnnualCtcInr:
+            role.maximumAnnualCtcInr,
+          isPrimary: role.isPrimary,
+          status: role.status,
+        }))}
+      />
       <PlacementJobLifecycleControls
         jobId={jobId}
         status={
@@ -284,6 +313,8 @@ export async function PlacementDriveWorkspace({
             displayName:
               item.displayName,
             email: item.email,
+            roleTitle:
+              item.roleTitle,
             offerReady:
               item.offerReady,
             offer: item.offer

@@ -28,6 +28,17 @@ export type LearnerPlacementJobItem = {
     externalApplicationUrl: string | null;
     applicationDeadline: string | null;
   };
+  roleOption: {
+    id: string;
+    title: string;
+    employmentType: string;
+    workMode: string;
+    locations: string[];
+    openings: number | null;
+    minimumAnnualCtcInr: number | null;
+    maximumAnnualCtcInr: number | null;
+    isPrimary: boolean;
+  };
   company: {
     id: string;
     name: string;
@@ -150,7 +161,7 @@ function JobActions({
   const { showToast } = useToast();
   const [pendingAction, setPendingAction] =
     useState<string | null>(null);
-  const { job, application } = item;
+  const { job, roleOption, application } = item;
 
   async function apply(
     channel: "INTERNAL" | "EXTERNAL",
@@ -161,12 +172,18 @@ function JobActions({
         `/api/placements/jobs/${job.id}/applications`,
         channel === "EXTERNAL"
           ? {
+              roleOptionId: roleOption.id,
               channel,
               externalConfirmation: true,
             }
           : job.applicationMode === "HYBRID"
-            ? { channel }
-            : {},
+            ? {
+                roleOptionId: roleOption.id,
+                channel,
+              }
+            : {
+                roleOptionId: roleOption.id,
+              },
       );
       showToast({
         tone: "success",
@@ -344,7 +361,7 @@ export function LearnerPlacementJobs({
 
         return (
           <article
-            key={item.job.id}
+            key={item.roleOption.id}
             className="rounded-xl border border-border bg-surface p-5"
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -353,8 +370,14 @@ export function LearnerPlacementJobs({
                   {item.company.name}
                 </p>
                 <h2 className="mt-1 text-xl font-semibold text-foreground">
-                  {item.job.title}
+                  {item.roleOption.title}
                 </h2>
+                {item.roleOption.title !==
+                item.job.title ? (
+                  <p className="mt-1 text-xs font-semibold text-muted-foreground">
+                    Drive · {item.job.title}
+                  </p>
+                ) : null}
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
                   {item.job.description}
                 </p>
@@ -374,8 +397,13 @@ export function LearnerPlacementJobs({
                   Work
                 </p>
                 <p className="mt-1 font-semibold text-body">
-                  {humanize(item.job.employmentType)} ·{" "}
-                  {humanize(item.job.workMode)}
+                  {humanize(
+                    item.roleOption.employmentType,
+                  )}{" "}
+                  ·{" "}
+                  {humanize(
+                    item.roleOption.workMode,
+                  )}
                 </p>
               </div>
               <div>
@@ -383,8 +411,8 @@ export function LearnerPlacementJobs({
                   Location
                 </p>
                 <p className="mt-1 font-semibold text-body">
-                  {item.job.locations.length
-                    ? item.job.locations.join(", ")
+                  {item.roleOption.locations.length
+                    ? item.roleOption.locations.join(", ")
                     : "Not specified"}
                 </p>
               </div>
@@ -394,8 +422,10 @@ export function LearnerPlacementJobs({
                 </p>
                 <p className="mt-1 font-semibold text-body">
                   {formatCtc(
-                    item.job.minimumAnnualCtcInr,
-                    item.job.maximumAnnualCtcInr,
+                    item.roleOption
+                      .minimumAnnualCtcInr,
+                    item.roleOption
+                      .maximumAnnualCtcInr,
                   )}
                 </p>
               </div>

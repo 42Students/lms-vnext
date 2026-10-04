@@ -58,6 +58,7 @@ type EligibilityReview = {
 type ScreeningItem = {
   applicationId: string;
   membershipId: string;
+  roleTitle: string;
   status: "PENDING" | "HOLD" | "SHORTLISTED" | "REJECTED";
   candidateMessage: string | null;
   internalReason: string | null;
@@ -82,6 +83,7 @@ type DriveRound = {
   resultsDueAt: string | null;
   participants: Array<{
     applicationId: string;
+    roleTitle: string;
     displayName: string | null;
     email: string | null;
     result: {
@@ -841,6 +843,9 @@ export function PlacementDriveControls({
                           .displayName ??
                           "Learner"}
                       </p>
+                      <StatusBadge tone="neutral">
+                        {item.roleTitle}
+                      </StatusBadge>
                       <StatusBadge
                         tone={
                           item.status ===

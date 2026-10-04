@@ -25,6 +25,7 @@ export type PlacementOfferCandidateItem = {
   applicationId: string;
   displayName: string | null;
   email: string | null;
+  roleTitle: string;
   offerReady: boolean;
   offer: {
     id: string;
@@ -100,6 +101,7 @@ export function PlacementOfferControls({
           {
             roleTitle:
               item.offer?.roleTitle ??
+              item.roleTitle ??
               jobTitle,
             annualCtcInr:
               item.offer?.annualCtcInr?.toString() ??
@@ -361,6 +363,7 @@ export function PlacementOfferControls({
                         "Candidate"}
                     </p>
                     <p className="mt-1 text-sm text-body">
+                      {item.roleTitle} ·{" "}
                       {item.email ??
                         "No email on profile"}
                     </p>
