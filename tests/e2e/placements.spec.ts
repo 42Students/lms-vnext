@@ -111,6 +111,18 @@ async function createPublishedOpportunity(
         response.request().method() ===
           "POST",
     );
+  const publishResponse =
+    page.waitForResponse(
+      (response) =>
+        response.url().includes(
+          "/api/placements/jobs/",
+        ) &&
+        response.url().endsWith(
+          "/status",
+        ) &&
+        response.request().method() ===
+          "POST",
+    );
 
   await page
     .getByRole("button", {
@@ -121,13 +133,20 @@ async function createPublishedOpportunity(
   expect((await createJobResponse).ok()).toBe(
     true,
   );
+  expect((await publishResponse).ok()).toBe(
+    true,
+  );
+  await page.waitForURL(
+    /\/tpo\/placements\/jobs\//,
+    { timeout: 20_000 },
+  );
 
   await expect(
     page.getByRole("heading", {
       level: 1,
       name: title,
     }),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 20_000 });
   await expect(
     page.getByText("PUBLISHED", {
       exact: true,
