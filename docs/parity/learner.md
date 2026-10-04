@@ -458,28 +458,28 @@ Audited legacy sections:
 - partial-section failure behavior using all-settled loading.
 
 Closure checklist:
-- [ ] User summary/profile image is self-service where legacy allows.
-- [ ] Profile completeness is calculated and refreshed after edits.
-- [ ] Resume upload/import/remove, validation and old-file cleanup are supported.
-- [ ] Contacts edit flow is implemented.
-- [ ] Social profiles edit flow is implemented.
-- [ ] Address edit flow is implemented.
-- [ ] Personal details edit flow is implemented.
-- [ ] Identity edit flow is implemented.
-- [ ] Aadhaar/PAN file upload/import/replace behavior is supported with safe storage.
-- [ ] Experience add/edit/delete is implemented.
-- [ ] Education add/edit/delete is implemented.
-- [ ] Skills add/edit/delete/proficiency is implemented.
-- [ ] Projects add/edit/delete is implemented.
-- [ ] Certifications add/edit/delete is implemented.
-- [ ] Achievements add/edit/delete is implemented.
-- [ ] Languages add/edit/delete is implemented.
-- [ ] Extracurricular add/edit/delete is implemented.
-- [ ] Hobbies edit behavior is implemented.
-- [ ] Metadata edit behavior is implemented.
-- [ ] Job Preferences edit behavior is implemented.
-- [ ] Placement Academic Record is shown and authoritative.
-- [ ] A failure in one optional profile section does not blank the entire page.
+- [ ] User summary is implemented; profile-image self-service remains BLOCKED on Cloud Storage.
+- [x] Profile completeness is calculated and refreshed after edits.
+- [ ] Resume upload/import/remove, validation and old-file cleanup remain BLOCKED on Cloud Storage.
+- [x] Contacts edit flow is implemented.
+- [x] Social profiles edit flow is implemented.
+- [x] Address edit flow is implemented.
+- [x] Personal details edit flow is implemented.
+- [x] Identity edit flow is implemented.
+- [ ] Aadhaar/PAN file upload/import/replace remains BLOCKED on secure Cloud Storage; validated masked identity-number editing is implemented.
+- [x] Experience add/edit/delete is implemented.
+- [x] Education add/edit/delete is implemented.
+- [x] Skills add/edit/delete/proficiency is implemented.
+- [x] Projects add/edit/delete is implemented.
+- [x] Certifications add/edit/delete is implemented.
+- [x] Achievements add/edit/delete is implemented.
+- [x] Languages add/edit/delete is implemented.
+- [x] Extracurricular add/edit/delete is implemented.
+- [x] Hobbies edit behavior is implemented.
+- [x] Metadata edit behavior is implemented.
+- [x] Job Preferences edit behavior is implemented.
+- [x] Placement Academic Record is shown and authoritative.
+- [x] A failure in one optional profile section does not blank the entire page.
 - [ ] Loading skeleton, hard-error retry and visibility-refresh behavior are verified.
-- [ ] Role redirect/fence behavior is server-safe.
-- [ ] Storage-backed items are marked BLOCKED until Cloud Storage is live rather than silently omitted.
+- [x] Role redirect/fence behavior is server-safe.
+- [x] Storage-backed items are marked BLOCKED until Cloud Storage is live rather than silently omitted.
