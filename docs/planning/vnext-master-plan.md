@@ -38,7 +38,7 @@ PHASE 7  Academics core                        DONE
 PHASE 8  Courses / learning                    ACTIVE
 PHASE 9  Projects                              DONE
 PHASE 10 Placements / TPO / HR                 ACTIVE
-PHASE 11 Activity / notifications / analytics  PENDING
+PHASE 11 Activity / notifications / analytics  DONE
 PHASE 12 AI capabilities                       PENDING
 PHASE 13 Production cutover / retirement       PENDING
 ```
@@ -909,6 +909,9 @@ AI features come later after deterministic workflows exist.
 ---
 
 # 14. Phase 11 — Activity, notifications and analytics
+
+## Status
+DONE in the deterministic application layer. GCP observability wiring remains a production-environment concern, not a missing activity-domain feature.
 
 ## Goal
 Make operational visibility a platform primitive.

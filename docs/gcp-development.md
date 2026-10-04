@@ -46,6 +46,8 @@ The runtime accepts exactly one database strategy and fails closed on partial or
 
 ## Runtime service account
 
+The reviewed least-privilege identity split and provisioning-time checks are recorded in `docs/operations/iam-review.md`.
+
 Create a dedicated runtime identity such as `lms-vnext-dev-runtime@<PROJECT_ID>.iam.gserviceaccount.com`.
 
 Grant only what the running application needs:

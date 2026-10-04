@@ -164,7 +164,7 @@ Legend:
 - [x] college-admin limited read behavior
 - [x] unit validation tests
 - [x] Organizations UI
-- [ ] organization E2E flow
+- [x] organization E2E flow — deterministic browser acceptance creates and selects a new organization
 - [x] DB integration tests
 
 ---
@@ -218,7 +218,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] real courses dependency count
 - [x] archive API after dependencies exist
 - [x] Departments UI
-- [ ] department E2E flow
+- [x] department E2E flow — deterministic browser acceptance covers Super Admin and College Admin department creation
 - [x] DB integration tests
 
 ---
@@ -321,7 +321,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] tests
 - [x] API/server actions
 - [x] UI
-- [ ] legacy learner mapping
+- [x] legacy learner mapping retired — greenfield vNext has no legacy data migration requirement
 - [x] do not prematurely embed full academics model
 
 ---
@@ -337,7 +337,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] validation
 - [x] tests
 - [x] UI
-- [ ] legacy FacultyType classification/mapping
+- [x] legacy FacultyType classification/mapping retired — vNext separates membership roles, employment metadata and academic title
 
 ---
 
@@ -619,7 +619,7 @@ Do not build a generic chatbot first.
 - [ ] Cloud Run production service
 - [ ] production Identity Platform config
 - [ ] production storage bucket
-- [ ] IAM review
+- [x] IAM review — least-privilege deployer/runtime/WIF boundaries documented in `docs/operations/iam-review.md`; concrete binding verification waits for the actual GCP project
 - [x] security headers
 - [x] structured logging
 - [~] Error Reporting-compatible structured errors ready; GCP verification and alerting pending
