@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { LearnerPlacementAcademicEvidence } from "@/components/placements/learner-placement-academic-evidence";
 import {
   LearnerPlacementJobs,
   type LearnerPlacementJobItem,
@@ -12,6 +13,7 @@ import { LearnerPlacementPreferences } from "@/components/placements/learner-pla
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
+import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 
@@ -22,12 +24,17 @@ export default async function LearnerPlacementsPage() {
     redirect("/dashboard");
   }
 
-  const [rows, preferences, journeyRows] =
-    await Promise.all([
-      listLearnerPlacementJobs(context),
-      getCandidatePreferences(context),
-      getLearnerPlacementJourney(context),
-    ]);
+  const [
+    rows,
+    preferences,
+    journeyRows,
+    academicEvidence,
+  ] = await Promise.all([
+    listLearnerPlacementJobs(context),
+    getCandidatePreferences(context),
+    getLearnerPlacementJourney(context),
+    getOwnAcademicEvidence(context),
+  ]);
 
   const items: LearnerPlacementJobItem[] =
     rows.map((row) => ({
@@ -105,6 +112,43 @@ export default async function LearnerPlacementsPage() {
 
       <LearnerPlacementJourney
         items={journey}
+      />
+
+      <LearnerPlacementAcademicEvidence
+        evidence={{
+          cgpa:
+            academicEvidence?.cgpa ?? null,
+          activeBacklogs:
+            academicEvidence?.activeBacklogs ??
+            null,
+          pastBacklogs:
+            academicEvidence?.pastBacklogs ??
+            null,
+          tenthPercentage:
+            academicEvidence?.tenthPercentage ??
+            null,
+          twelfthPercentage:
+            academicEvidence?.twelfthPercentage ??
+            null,
+          diplomaPercentage:
+            academicEvidence?.diplomaPercentage ??
+            null,
+          undergraduatePercentage:
+            academicEvidence?.undergraduatePercentage ??
+            null,
+          gapYears:
+            academicEvidence?.gapYears ?? null,
+          isLateralEntry:
+            academicEvidence?.isLateralEntry ??
+            false,
+          passingYear:
+            academicEvidence?.passingYear ?? null,
+          source:
+            (academicEvidence?.source as
+              | "SELF"
+              | "VERIFIED"
+              | undefined) ?? null,
+        }}
       />
 
       <LearnerPlacementPreferences
