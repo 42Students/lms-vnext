@@ -171,12 +171,12 @@ function scopeKeyFor(
     input.requestType ===
     "APPLICATION_WITHDRAWAL"
   ) {
-    return \`APPLICATION_WITHDRAWAL:\${input.applicationId}\`;
+    return `APPLICATION_WITHDRAWAL:${input.applicationId}`;
   }
   if (input.requestType === "ROUND_RESCHEDULE") {
-    return \`ROUND_RESCHEDULE:\${input.applicationId}:\${input.roundId}\`;
+    return `ROUND_RESCHEDULE:${input.applicationId}:${input.roundId}`;
   }
-  return \`OFFER_EXTENSION:\${input.applicationId}:\${input.offerId}\`;
+  return `OFFER_EXTENSION:${input.applicationId}:${input.offerId}`;
 }
 
 async function assertRoundParticipation(
@@ -469,7 +469,7 @@ export async function createPlacementRequest(
         subjectId: request.id,
         subjectLabel: current.roleOption.title,
         summary:
-          \`\${input.requestType} request submitted for \${current.roleOption.title}\`,
+          `${input.requestType} request submitted for ${current.roleOption.title}`,
         metadata: {
           requestType: input.requestType,
           applicationId: current.application.id,
@@ -484,9 +484,9 @@ export async function createPlacementRequest(
               : null,
         },
         groupKey:
-          \`placement-job:\${current.job.id}:requests\`,
+          `placement-job:${current.job.id}:requests`,
         dedupeKey:
-          \`placement-request:\${request.id}:submitted\`,
+          `placement-request:${request.id}:submitted`,
       },
     );
 
@@ -700,16 +700,16 @@ async function applyApprovedEffect(
         subjectId: application.id,
         subjectLabel: job.title,
         summary:
-          \`Application withdrawal approved for \${job.title}\`,
+          `Application withdrawal approved for ${job.title}`,
         metadata: {
           jobId: job.id,
           requestId: request.id,
           membershipId: application.membershipId,
         },
         groupKey:
-          \`placement-job:\${job.id}:applications\`,
+          `placement-job:${job.id}:applications`,
         dedupeKey:
-          \`placement-application:\${application.id}:withdrawn\`,
+          `placement-application:${application.id}:withdrawn`,
       },
     );
     return;
@@ -966,7 +966,7 @@ export async function actOnPlacementRequest(
         subjectId: request.id,
         subjectLabel: current.job.title,
         summary:
-          \`\${request.requestType} request \${nextStatus.toLowerCase()} for \${current.job.title}\`,
+          `${request.requestType} request ${nextStatus.toLowerCase()} for ${current.job.title}`,
         metadata: {
           requestType: request.requestType,
           status: nextStatus,
@@ -977,9 +977,9 @@ export async function actOnPlacementRequest(
           offerId: request.offerId,
         },
         groupKey:
-          \`placement-job:\${current.job.id}:requests\`,
+          `placement-job:${current.job.id}:requests`,
         dedupeKey:
-          \`placement-request:\${request.id}:\${nextStatus.toLowerCase()}\`,
+          `placement-request:${request.id}:${nextStatus.toLowerCase()}`,
       },
     );
 

@@ -1526,7 +1526,7 @@ export const placementLearnerRequests = pgTable(
     reason: text("reason").notNull(),
     effectPayload: jsonb("effect_payload")
       .notNull()
-      .default(sql\`'{}'::jsonb\`),
+      .default(sql`'{}'::jsonb`),
     status: varchar("status", { length: 24 })
       .notNull()
       .default("PENDING"),
@@ -1557,7 +1557,7 @@ export const placementLearnerRequests = pgTable(
   (table) => [
     uniqueIndex("placement_learner_requests_pending_scope_uq")
       .on(table.scopeKey)
-      .where(sql\`${table.status} = 'PENDING'\`),
+      .where(sql`${table.status} = 'PENDING'`),
     index("placement_learner_requests_application_status_idx").on(
       table.applicationId,
       table.status,
@@ -1570,26 +1570,26 @@ export const placementLearnerRequests = pgTable(
     ),
     check(
       "placement_learner_requests_type_ck",
-      sql\`${table.requestType} in ('APPLICATION_WITHDRAWAL', 'ROUND_RESCHEDULE', 'OFFER_EXTENSION')\`,
+      sql`${table.requestType} in ('APPLICATION_WITHDRAWAL', 'ROUND_RESCHEDULE', 'OFFER_EXTENSION')`,
     ),
     check(
       "placement_learner_requests_status_ck",
-      sql\`${table.status} in ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED')\`,
+      sql`${table.status} in ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED')`,
     ),
     check(
       "placement_learner_requests_reason_ck",
-      sql\`length(trim(${table.reason})) >= 3\`,
+      sql`length(trim(${table.reason})) >= 3`,
     ),
     check(
       "placement_learner_requests_target_shape_ck",
-      sql\`(${table.requestType} = 'APPLICATION_WITHDRAWAL' and ${table.roundId} is null and ${table.offerId} is null)
+      sql`(${table.requestType} = 'APPLICATION_WITHDRAWAL' and ${table.roundId} is null and ${table.offerId} is null)
         or (${table.requestType} = 'ROUND_RESCHEDULE' and ${table.roundId} is not null and ${table.offerId} is null)
-        or (${table.requestType} = 'OFFER_EXTENSION' and ${table.roundId} is null and ${table.offerId} is not null)\`,
+        or (${table.requestType} = 'OFFER_EXTENSION' and ${table.roundId} is null and ${table.offerId} is not null)`,
     ),
     check(
       "placement_learner_requests_lifecycle_ck",
-      sql\`(${table.status} = 'PENDING' and ${table.decidedByUserId} is null and ${table.decidedAt} is null)
-        or (${table.status} in ('APPROVED', 'REJECTED', 'CANCELLED') and ${table.decidedByUserId} is not null and ${table.decidedAt} is not null)\`,
+      sql`(${table.status} = 'PENDING' and ${table.decidedByUserId} is null and ${table.decidedAt} is null)
+        or (${table.status} in ('APPROVED', 'REJECTED', 'CANCELLED') and ${table.decidedByUserId} is not null and ${table.decidedAt} is not null)`,
     ),
   ],
 );
@@ -1647,12 +1647,12 @@ export const placementApplicationRoundExceptions = pgTable(
     ),
     check(
       "placement_application_round_exceptions_mode_ck",
-      sql\`${table.mode} in ('ON_CAMPUS', 'VIRTUAL')\`,
+      sql`${table.mode} in ('ON_CAMPUS', 'VIRTUAL')`,
     ),
     check(
       "placement_application_round_exceptions_delivery_ck",
-      sql\`(${table.mode} = 'ON_CAMPUS' and coalesce(length(trim(${table.venue})), 0) > 0 and ${table.meetingUrl} is null)
-        or (${table.mode} = 'VIRTUAL' and coalesce(length(trim(${table.meetingUrl})), 0) > 0 and ${table.venue} is null)\`,
+      sql`(${table.mode} = 'ON_CAMPUS' and coalesce(length(trim(${table.venue})), 0) > 0 and ${table.meetingUrl} is null)
+        or (${table.mode} = 'VIRTUAL' and coalesce(length(trim(${table.meetingUrl})), 0) > 0 and ${table.venue} is null)`,
     ),
   ],
 );
