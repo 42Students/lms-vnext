@@ -572,8 +572,8 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] TPO operations — cross-job prioritized work queue, upcoming rounds and operational metrics
 - [~] HR operations — external recruiter identity boundary confirmed from architecture + legacy safety model; schema/session implementation pending generated migration
 - [x] greenfield decision: no legacy placement data migration required
-- [~] tests — placement domain coverage is CI-green through TPO operations; learner feed/navigation coverage added with UI batch, remaining HR/full browser acceptance pending
-- [~] UI — learner opportunity/apply workspace plus TPO/College Admin/Super Admin command center, screening decisions, evaluation-plan editing, round scheduling/lifecycle and staged/applied result controls implemented; broader browser acceptance and HR surfaces pending
+- [~] tests — placement domain coverage is CI-green through operational drive controls; learner feed/journey privacy coverage added, remaining HR/full placement browser acceptance pending
+- [~] UI — learner journey/preferences/opportunity workspace plus TPO/College Admin/Super Admin command center, screening decisions, evaluation-plan editing, round scheduling/lifecycle and staged/applied result controls implemented; broader browser acceptance and HR surfaces pending
 
 ---
 

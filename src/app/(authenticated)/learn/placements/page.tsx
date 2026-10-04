@@ -4,26 +4,39 @@ import {
   LearnerPlacementJobs,
   type LearnerPlacementJobItem,
 } from "@/components/placements/learner-placement-jobs";
+import {
+  LearnerPlacementJourney,
+  type LearnerPlacementJourneyItem,
+} from "@/components/placements/learner-placement-journey";
+import { LearnerPlacementPreferences } from "@/components/placements/learner-placement-preferences";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
+import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 
 export default async function LearnerPlacementsPage() {
-  const context = await getCurrentRequestContext();
+  const context =
+    await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) {
     redirect("/dashboard");
   }
 
-  const rows = await listLearnerPlacementJobs(
-    context,
-  );
+  const [rows, preferences, journeyRows] =
+    await Promise.all([
+      listLearnerPlacementJobs(context),
+      getCandidatePreferences(context),
+      getLearnerPlacementJourney(context),
+    ]);
+
   const items: LearnerPlacementJobItem[] =
     rows.map((row) => ({
       job: {
         id: row.job.id,
         title: row.job.title,
         description: row.job.description,
-        employmentType: row.job.employmentType,
+        employmentType:
+          row.job.employmentType,
         workMode: row.job.workMode,
         locations: row.job.locations,
         openings: row.job.openings,
@@ -55,14 +68,79 @@ export default async function LearnerPlacementsPage() {
       canApply: row.canApply,
     }));
 
+  const journey: LearnerPlacementJourneyItem[] =
+    journeyRows.map((row) => ({
+      applicationId: row.applicationId,
+      jobTitle: row.job.title,
+      companyName: row.company.name,
+      applicationStatus:
+        row.applicationStatus,
+      channel: row.channel,
+      submittedAt: row.submittedAt,
+      withdrawnAt: row.withdrawnAt,
+      screening: row.screening,
+      results: row.results.map(
+        (result) => ({
+          resultId: result.resultId,
+          roundSequence:
+            result.roundSequence,
+          roundName: result.roundName,
+          outcome: result.outcome,
+          scorePercent:
+            result.scorePercent,
+          candidateMessage:
+            result.candidateMessage,
+          appliedAt: result.appliedAt,
+        }),
+      ),
+    }));
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <PageHeader
         eyebrow="Learner"
         title="Placements"
-        description="Live opportunities for your college with explainable eligibility and your exact application state."
+        description="Your placement journey, preferences and live college opportunities in one workspace."
       />
-      <LearnerPlacementJobs items={items} />
+
+      <LearnerPlacementJourney
+        items={journey}
+      />
+
+      <LearnerPlacementPreferences
+        preferences={{
+          preferredRoleTitles:
+            preferences.preferredRoleTitles,
+          preferredLocations:
+            preferences.preferredLocations,
+          preferredEmploymentTypes:
+            preferences.preferredEmploymentTypes,
+          preferredWorkMode:
+            preferences.preferredWorkMode,
+          shiftPreference:
+            preferences.shiftPreference,
+          minimumAnnualCtcInr:
+            preferences.minimumAnnualCtcInr,
+          relocationPreference:
+            preferences.relocationPreference,
+          notifyMatchingJobs:
+            preferences.notifyMatchingJobs,
+          notifyApplicationUpdates:
+            preferences.notifyApplicationUpdates,
+        }}
+      />
+
+      <section className="space-y-3">
+        <div>
+          <h2 className="m-0 text-base font-semibold text-foreground">
+            Live opportunities
+          </h2>
+          <p className="mt-1 text-sm text-body">
+            Published jobs for your college with explainable eligibility and exact application state.
+          </p>
+        </div>
+        <LearnerPlacementJobs items={items} />
+      </section>
     </div>
   );
 }
