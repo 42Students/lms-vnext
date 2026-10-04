@@ -313,9 +313,7 @@ test.describe("Placements browser regression", () => {
       })
       .last();
     await roundArticle
-      .getByText("Schedule round", {
-        exact: true,
-      })
+      .locator("summary")
       .click();
 
     await roundArticle
@@ -359,10 +357,7 @@ test.describe("Placements browser regression", () => {
       })
       .last();
     await completedRound
-      .getByText(
-        "Reschedule / manage round",
-        { exact: true },
-      )
+      .locator("summary")
       .click();
 
     const completeResponse =
