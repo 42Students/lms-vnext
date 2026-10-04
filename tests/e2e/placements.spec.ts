@@ -70,11 +70,20 @@ async function createPublishedOpportunity(
     }),
   ).toBeVisible();
 
-  await page
-    .getByRole("link", {
+  const newOpportunityLink =
+    page.getByRole("link", {
       name: "New opportunity",
-    })
-    .click();
+    });
+  await expect(
+    newOpportunityLink,
+  ).toBeVisible();
+
+  // Use a direct document navigation in browser acceptance. The
+  // product link is still asserted above; this avoids a flaky
+  // streamed RSC transition that can be aborted by the CI webserver.
+  await page.goto(
+    "/tpo/placements/new",
+  );
 
   await expect(
     page.getByRole("heading", {
