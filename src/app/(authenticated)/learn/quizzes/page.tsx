@@ -1,56 +1,5 @@
-import { getCurrentRequestContext } from "@/auth/request-context";
-import {
-  LearnerAssessmentOverview,
-  type LearnerQuizOverviewItem,
-} from "@/components/courses/learner-assessment-overview";
-import { PageHeader } from "@/components/ui/page-header";
-import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
+import { redirect } from "next/navigation";
 
-export default async function LearnerQuizzesPage() {
-  const context =
-    await getCurrentRequestContext();
-  const overview =
-    await getLearnerAssessmentOverview(
-      context,
-    );
-
-  const items: LearnerQuizOverviewItem[] =
-    overview.quizzes.map((quiz) => ({
-      kind: "QUIZ",
-      id: quiz.id,
-      deliveryId: quiz.deliveryId,
-      courseId: quiz.courseId,
-      courseName: quiz.courseName,
-      courseCode: quiz.courseCode,
-      lessonName: quiz.lessonName,
-      title: quiz.title,
-      description: quiz.description,
-      dueAt:
-        quiz.dueAt?.toISOString() ?? null,
-      maxAttempts: quiz.maxAttempts,
-      totalPoints: quiz.totalPoints,
-      status: quiz.status,
-      resultsPublished:
-        quiz.resultsPublished,
-      attemptsUsed: quiz.attemptsUsed,
-      attemptsRemaining:
-        quiz.attemptsRemaining,
-      progressStatus:
-        quiz.progress.status,
-    }));
-
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="Learner"
-        title="All Quizzes"
-        description="Every published quiz across your active Courses, with attempt and result status."
-      />
-      <LearnerAssessmentOverview
-        courses={overview.courses}
-        items={items}
-        kind="QUIZ"
-      />
-    </div>
-  );
+export default function LearnerQuizzesAliasPage() {
+  redirect("/learn/allQuizzes");
 }

@@ -21,7 +21,7 @@ export default async function LearnerProjectsPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Learner"
-        title="My Projects"
+        title="Projects"
         description="Your active Project workspaces, team responsibilities and final delivery progress."
       />
       <ProjectList

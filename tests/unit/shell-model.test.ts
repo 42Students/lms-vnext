@@ -75,51 +75,15 @@ describe("authenticated shell model", () => {
     const shellContext = context(["LEARNER"]);
 
     expect(getShellNavigation(shellContext)).toEqual([
-      {
-        label: "Dashboard",
-        href: "/dashboard",
-        shortLabel: "D",
-      },
-      {
-        label: "My Courses",
-        href: "/learn/courses",
-        shortLabel: "C",
-      },
-      {
-        label: "Quizzes",
-        href: "/learn/quizzes",
-        shortLabel: "Q",
-      },
-      {
-        label: "Assignments",
-        href: "/learn/assignments",
-        shortLabel: "A",
-      },
-      {
-        label: "Class Schedule",
-        href: "/learn/calendar",
-        shortLabel: "S",
-      },
-      {
-        label: "Attendance",
-        href: "/learn/attendance",
-        shortLabel: "T",
-      },
-      {
-        label: "My Projects",
-        href: "/learn/projects",
-        shortLabel: "P",
-      },
-      {
-        label: "Placements",
-        href: "/learn/placements",
-        shortLabel: "P",
-      },
-      {
-        label: "Profile",
-        href: "/learn/profile",
-        shortLabel: "R",
-      },
+      { label: "Courses", href: "/learn/courses", shortLabel: "C", icon: "/assets/images/common/courses.svg", activeIcon: "/assets/images/common/course.svg" },
+      { label: "Quizzes", href: "/learn/allQuizzes", shortLabel: "Q", icon: "/assets/images/common/quiz.svg", activeIcon: "/assets/images/common/quiz-active.svg" },
+      { label: "Assignments", href: "/learn/allAssignments", shortLabel: "A", icon: "/assets/images/common/assignment.svg", activeIcon: "/assets/images/common/assignment-active.svg" },
+      { label: "Class Schedule", href: "/learn/calendar", shortLabel: "S", icon: "/assets/images/common/calender.svg" },
+      { label: "Attendance", href: "/learn/attendance", shortLabel: "T", icon: "/assets/images/common/attendance.svg" },
+      { label: "My Placements", href: "/learn/my-placements", shortLabel: "P", icon: "/assets/images/common/book-open.svg" },
+      { label: "Projects", href: "/learn/projects", shortLabel: "P", icon: "/assets/images/common/folder.svg" },
+      { label: "Notifications", href: "/learn/notifications", shortLabel: "N", icon: "/assets/images/common/notification.svg" },
+      { label: "Profile", href: "/learn/profile", shortLabel: "R", icon: "/assets/images/common/myAccount.svg" },
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Learner",
@@ -199,13 +163,14 @@ describe("authenticated shell model", () => {
       ),
     ).toEqual([
       "Dashboard",
-      "My Courses",
+      "Courses",
       "Quizzes",
       "Assignments",
       "Class Schedule",
       "Attendance",
-      "My Projects",
-      "Placements",
+      "My Placements",
+      "Projects",
+      "Notifications",
       "Profile",
       "Teaching Courses",
     ]);

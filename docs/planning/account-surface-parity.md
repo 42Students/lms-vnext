@@ -47,22 +47,22 @@ Detailed page contract: `docs/parity/learner.md`.
 | Courses list | `/learn/courses` | `/learn/courses` | Active Section deliveries and progress cards exist. | DONE |
 | Course Overview | course `home` tab | embedded course workspace | Exact legacy overview sections/actions still need audit. | PARTIAL |
 | Learning Path | course `roadmap` tab | course workspace | Ordered lessons/content/assessments + continue learning. | DONE |
-| Course Attendance | course `attendanceDetail` | none | Course-level attendance detail missing. | MISSING |
-| Course Discussions | course `discussions` | none | Classroom discussion workflow missing. | MISSING |
-| All Assignments | `/learn/allAssignments` | `/learn/assignments` | Dedicated aggregate page, filtering/status/deep links; late submissions aligned with legacy. | DONE |
-| All Quizzes | `/learn/allQuizzes` | `/learn/quizzes` | Dedicated aggregate page, filtering/status/deep links. | DONE |
+| Course Attendance | course `attendanceDetail` | same legacy tab route shell | Course-level attendance detail missing. | MISSING |
+| Course Discussions | course `discussions` | same legacy tab route shell | Classroom discussion workflow missing. | MISSING |
+| All Assignments | `/learn/allAssignments` | `/learn/allAssignments` | Dedicated aggregate page, filtering/status/deep links; late submissions aligned with legacy. | DONE |
+| All Quizzes | `/learn/allQuizzes` | `/learn/allQuizzes` | Dedicated aggregate page, filtering/status/deep links. | DONE |
 | Standalone quiz attempt UX | `/quiz` | inline course quiz control | Question navigation/error/result parity still needs comparison. | PARTIAL |
 | Class Schedule | `/learn/calendar` | `/learn/calendar` | Course-aware Section schedule, Week/Month/Day navigation, filtering, today/next-three cues, learner-safe scope and mobile list fallback implemented; final browser/CI verification remains. | PARTIAL |
 | Attendance summary | `/learn/attendance` | `/learn/attendance` | Overall + per-Course attendance, policy threshold, held/marked/unmarked semantics, month/course navigation, desktop/mobile records and tenant-safe learner scope are implemented; final executed CI/browser verification remains. | PARTIAL |
-| Placements dashboard | `/learn/my-placements` | `/learn/placements` | Core journey exists; legacy subnavigation and sections incomplete. | PARTIAL |
-| Applications | `/learn/my-placements/applications` | journey data | Dedicated applications worklist missing. | MISSING |
-| Assessments | `/learn/my-placements/assessments` | round data | Dedicated assessment queue/status missing. | MISSING |
-| Interviews | `/learn/my-placements/interviews` | round data | Dedicated interview queue/status missing. | MISSING |
-| Career Calendar | `/learn/my-placements/calendar` | none | Placement events calendar missing. | MISSING |
-| Jobs list | `/learn/my-placements/jobs` | placements feed | Exact browse/filter surface incomplete. | PARTIAL |
-| Job detail | `/learn/my-placements/jobs/[jobId]` | none | Dedicated opportunity/eligibility/detail surface missing. | MISSING |
-| Placement Cell | `/learn/my-placements/placement` | none | Placement-cell information/support surface missing. | MISSING |
-| Placement Rules | `/learn/my-placements/rules` | none | Learner-facing rules/policy surface missing. | MISSING |
+| Placements dashboard | `/learn/my-placements` | `/learn/my-placements` | Core journey exists; legacy subnavigation and sections incomplete. | PARTIAL |
+| Applications | `/learn/my-placements/applications` | same legacy route shell + journey data | Dedicated applications worklist missing. | MISSING |
+| Assessments | `/learn/my-placements/assessments` | same legacy route shell | Dedicated assessment queue/status missing. | MISSING |
+| Interviews | `/learn/my-placements/interviews` | same legacy route shell | Dedicated interview queue/status missing. | MISSING |
+| Career Calendar | `/learn/my-placements/calendar` | same legacy route shell | Placement events calendar missing. | MISSING |
+| Jobs list | `/learn/my-placements/jobs` | same legacy route + placements feed | Exact browse/filter surface incomplete. | PARTIAL |
+| Job detail | `/learn/my-placements/jobs/[jobId]` | same legacy route shell | Dedicated opportunity/eligibility/detail surface missing. | MISSING |
+| Placement Cell | `/learn/my-placements/placement` | same legacy route shell | Placement-cell information/support surface missing. | MISSING |
+| Placement Rules | `/learn/my-placements/rules` | same legacy route shell | Learner-facing rules/policy surface missing. | MISSING |
 | Projects list | `/learn/projects` | same semantic route | Core list exists. | DONE |
 | Project Overview | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
 | Project Team | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
@@ -72,7 +72,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Project Meetings | project detail | vNext project workspace | Request/read behavior exists; exact parity pending. | PARTIAL |
 | Project Delivery | project detail | vNext project workspace | Submission workflow exists; exact parity pending. | PARTIAL |
 | Project Activity | project detail | vNext project workspace | Verify history/activity equivalence. | PARTIAL |
-| Notifications feed | `/learn/notifications` | `/notifications` | Shared route exists; legacy announcement/personal feed behavior must be audited, not assumed. | PARTIAL |
+| Notifications feed | `/learn/notifications` | `/learn/notifications` | Shared route exists; legacy announcement/personal feed behavior must be audited, not assumed. | PARTIAL |
 | Self Profile | `/learn/profile` | `/learn/profile` | Rich self-service profile, validated identity/contact/social/address sections, repeatable career/education sections, placement preferences and authoritative academic evidence are implemented; profile image/resume/identity-file storage and final browser/CI verification remain. | PARTIAL |
 | `/learn` redirect | `/learn` | not required for greenfield bookmarks | Legacy redirect-only route; no user job lost. | RETIRED |
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cx } from "@/lib/class-names";
@@ -47,13 +48,25 @@ export function SidebarNav({
             <span
               aria-hidden="true"
               className={cx(
-                "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold",
-                active
-                  ? "bg-primary text-on-primary"
-                  : "bg-muted text-muted-foreground group-hover:bg-surface group-hover:text-primary-text",
+                "flex h-7 w-7 shrink-0 items-center justify-center text-xs font-bold",
+                item.icon
+                  ? ""
+                  : active
+                    ? "rounded-md bg-primary text-on-primary"
+                    : "rounded-md bg-muted text-muted-foreground group-hover:bg-surface group-hover:text-primary-text",
               )}
             >
-              {item.shortLabel}
+              {item.icon ? (
+                <Image
+                  src={active ? item.activeIcon ?? item.icon : item.icon}
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="h-5 w-5 object-contain"
+                />
+              ) : (
+                item.shortLabel
+              )}
             </span>
             <span>{item.label}</span>
           </Link>

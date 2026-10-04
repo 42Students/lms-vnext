@@ -2,6 +2,12 @@
 
 Legacy navigation: Courses, Quizzes, Assignments, Class Schedule, Attendance, My Placements, Projects, Notifications, Profile.
 
+## Clone-first learner naming and route lock
+
+The legacy learner information architecture is canonical in vNext. Use the exact legacy sidebar labels and canonical routes before deeper page reconstruction. Do not rename learner surfaces to vNext alternatives such as "My Courses", "/learn/quizzes", "/learn/assignments", "/learn/placements", or a shared "/notifications" entry. Those older vNext routes may exist only as compatibility redirects.
+
+Layer-0/Layer-1 shell parity materializes the sidebar, legacy route tree and nested Course/Placement/Project navigation. It does **not** close the deeper checklists below; each page still needs section/action/modal/state/backend verification.
+
 ## Page: Courses list
 **Legacy route:** `/learn/courses`  
 **vNext:** `/learn/courses`
@@ -85,7 +91,7 @@ Legacy contract:
 
 ## Page: All Assignments
 **Legacy:** `/learn/allAssignments`  
-**vNext:** `/learn/assignments`
+**vNext:** `/learn/allAssignments`
 
 Legacy contract audited from `AssignmentsContent`:
 - page header;
@@ -113,7 +119,7 @@ Legacy contract audited from `AssignmentsContent`:
 
 ## Page: All Quizzes
 **Legacy:** `/learn/allQuizzes`  
-**vNext:** `/learn/quizzes`
+**vNext:** `/learn/allQuizzes`
 
 Legacy contract:
 - aggregate published quizzes across courses;

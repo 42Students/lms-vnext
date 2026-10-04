@@ -25,7 +25,7 @@ export default async function LearnerCoursesPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Learner"
-        title="My Courses"
+        title="Courses"
         description="Your current Section courses, progress and the next useful learning action in each course."
       />
       <LearnerCourseList rows={rows} />

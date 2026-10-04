@@ -9,6 +9,8 @@ export type ShellNavItem = {
   label: string;
   href: string;
   shortLabel: string;
+  icon?: string;
+  activeIcon?: string;
 };
 
 const dashboard: ShellNavItem = {
@@ -33,44 +35,61 @@ const superAdminItems: ShellNavItem[] = [
 
 const learnerItems: ShellNavItem[] = [
   {
-    label: "My Courses",
+    label: "Courses",
     href: "/learn/courses",
     shortLabel: "C",
+    icon: "/assets/images/common/courses.svg",
+    activeIcon: "/assets/images/common/course.svg",
   },
   {
     label: "Quizzes",
-    href: "/learn/quizzes",
+    href: "/learn/allQuizzes",
     shortLabel: "Q",
+    icon: "/assets/images/common/quiz.svg",
+    activeIcon: "/assets/images/common/quiz-active.svg",
   },
   {
     label: "Assignments",
-    href: "/learn/assignments",
+    href: "/learn/allAssignments",
     shortLabel: "A",
+    icon: "/assets/images/common/assignment.svg",
+    activeIcon: "/assets/images/common/assignment-active.svg",
   },
   {
     label: "Class Schedule",
     href: "/learn/calendar",
     shortLabel: "S",
+    icon: "/assets/images/common/calender.svg",
   },
   {
     label: "Attendance",
     href: "/learn/attendance",
     shortLabel: "T",
+    icon: "/assets/images/common/attendance.svg",
   },
   {
-    label: "My Projects",
+    label: "My Placements",
+    href: "/learn/my-placements",
+    shortLabel: "P",
+    icon: "/assets/images/common/book-open.svg",
+  },
+  {
+    label: "Projects",
     href: "/learn/projects",
     shortLabel: "P",
+    icon: "/assets/images/common/folder.svg",
   },
   {
-    label: "Placements",
-    href: "/learn/placements",
-    shortLabel: "P",
+    label: "Notifications",
+    href: "/learn/notifications",
+    shortLabel: "N",
+    icon: "/assets/images/common/notification.svg",
   },
   {
     label: "Profile",
     href: "/learn/profile",
     shortLabel: "R",
+    icon: "/assets/images/common/myAccount.svg",
   },
 ];
 
@@ -154,6 +173,19 @@ function getMembershipWorkspaces(context: RequestContext) {
 export function getShellNavigation(context: RequestContext) {
   if (isSuperAdmin(context)) {
     return superAdminItems;
+  }
+
+  // Clone-first parity: a learner-only membership gets the exact legacy
+  // learner sidebar contract — no generic Dashboard row and no vNext-only
+  // renaming. Multi-role memberships remain additive until their account
+  // switch/navigation contract is migrated in its own parity pass.
+  if (
+    context.membership &&
+    context.membership.roles.length === 1 &&
+    hasMembershipRole(context, "LEARNER") &&
+    !hasActiveRecruiter(context)
+  ) {
+    return learnerItems;
   }
 
   const items: ShellNavItem[] = [dashboard];
