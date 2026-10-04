@@ -62,6 +62,11 @@ const learnerItems: ShellNavItem[] = [
     href: "/learn/placements",
     shortLabel: "P",
   },
+  {
+    label: "Profile",
+    href: "/learn/profile",
+    shortLabel: "R",
+  },
 ];
 
 const facultyItems: ShellNavItem[] = [
