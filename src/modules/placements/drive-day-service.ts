@@ -11,6 +11,7 @@ import {
   placementApplicationScreenings,
   placementCompanies,
   placementCompanyRelationships,
+  placementJobRoleOptions,
   placementJobRounds,
   placementJobs,
   placementRoundResults,
@@ -97,6 +98,11 @@ export async function getPlacementDriveDay(
           application: placementApplications,
           screening:
             placementApplicationScreenings,
+          roleOption: {
+            id: placementJobRoleOptions.id,
+            title:
+              placementJobRoleOptions.title,
+          },
           candidate: {
             membershipId: collegeMemberships.id,
             membershipStatus:
@@ -113,6 +119,13 @@ export async function getPlacementDriveDay(
           eq(
             placementApplicationScreenings.applicationId,
             placementApplications.id,
+          ),
+        )
+        .innerJoin(
+          placementJobRoleOptions,
+          eq(
+            placementJobRoleOptions.id,
+            placementApplications.roleOptionId,
           ),
         )
         .innerJoin(
@@ -232,6 +245,10 @@ export async function getPlacementDriveDay(
         );
         return {
           applicationId: candidate.application.id,
+          roleOptionId:
+            candidate.roleOption.id,
+          roleTitle:
+            candidate.roleOption.title,
           membershipId:
             candidate.candidate.membershipId,
           membershipStatus:

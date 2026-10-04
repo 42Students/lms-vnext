@@ -666,6 +666,8 @@ export async function listOwnAppliedPlacementResults(
   return getDb()
     .select({
       resultId: placementRoundResults.id,
+      applicationId:
+        placementApplications.id,
       jobId: placementJobs.id,
       roundId: placementJobRounds.id,
       roundSequence: placementJobRounds.sequence,

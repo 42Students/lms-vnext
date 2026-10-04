@@ -9,6 +9,7 @@ import {
   placementApplications,
   placementCompanyRelationships,
   placementCompanies,
+  placementJobRoleOptions,
   placementJobs,
 } from "@/db/schema";
 import {
@@ -40,6 +41,7 @@ export async function listLearnerPlacementJobs(
   const rows = await getDb()
     .select({
       job: placementJobs,
+      roleOption: placementJobRoleOptions,
       company: {
         id: placementCompanies.id,
         name: placementCompanies.name,
@@ -61,6 +63,19 @@ export async function listLearnerPlacementJobs(
     })
     .from(placementJobs)
     .innerJoin(
+      placementJobRoleOptions,
+      and(
+        eq(
+          placementJobRoleOptions.jobId,
+          placementJobs.id,
+        ),
+        eq(
+          placementJobRoleOptions.status,
+          "ACTIVE",
+        ),
+      ),
+    )
+    .innerJoin(
       placementCompanyRelationships,
       eq(
         placementCompanyRelationships.id,
@@ -78,8 +93,8 @@ export async function listLearnerPlacementJobs(
       placementApplications,
       and(
         eq(
-          placementApplications.jobId,
-          placementJobs.id,
+          placementApplications.roleOptionId,
+          placementJobRoleOptions.id,
         ),
         eq(
           placementApplications.membershipId,
@@ -108,7 +123,13 @@ export async function listLearnerPlacementJobs(
     .orderBy(
       asc(placementJobs.applicationDeadline),
       asc(placementJobs.title),
+      asc(placementJobRoleOptions.title),
     );
+
+  const eligibilityByJob = new Map<
+    string,
+    Promise<PlacementEligibilityResult>
+  >();
 
   return Promise.all(
     rows.map(async (row) => {
@@ -116,18 +137,32 @@ export async function listLearnerPlacementJobs(
         row.application?.id
           ? row.application
           : null;
-      const eligibility: PlacementEligibilityResult =
-        application
-          ? {
-              status:
-                application.eligibilityStatus as PlacementEligibilityResult["status"],
-              checks: [],
-              override: null,
-            }
-          : await evaluatePlacementEligibility(
-            context,
+      let eligibility: PlacementEligibilityResult;
+
+      if (application) {
+        eligibility = {
+          status:
+            application.eligibilityStatus as PlacementEligibilityResult["status"],
+          checks: [],
+          override: null,
+        };
+      } else {
+        let pending =
+          eligibilityByJob.get(row.job.id);
+        if (!pending) {
+          pending =
+            evaluatePlacementEligibility(
+              context,
+              row.job.id,
+            );
+          eligibilityByJob.set(
             row.job.id,
+            pending,
           );
+        }
+        eligibility = await pending;
+      }
+
       const deadlinePassed = Boolean(
         row.job.applicationDeadline &&
           row.job.applicationDeadline.getTime() <
@@ -136,6 +171,7 @@ export async function listLearnerPlacementJobs(
 
       return {
         job: row.job,
+        roleOption: row.roleOption,
         company: row.company,
         application,
         eligibility,

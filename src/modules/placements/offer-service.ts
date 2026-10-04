@@ -20,6 +20,7 @@ import {
   placementJoiningHistory,
   placementJoiningOutcomes,
   placementJobRounds,
+  placementJobRoleOptions,
   placementJobs,
   placementOffers,
   placementOfferStatusHistory,
@@ -1170,6 +1171,10 @@ export async function listPlacementOfferCandidates(
             placementApplications.id,
           membershipId:
             collegeMemberships.id,
+          roleOptionId:
+            placementJobRoleOptions.id,
+          roleTitle:
+            placementJobRoleOptions.title,
           displayName: users.displayName,
           email: users.email,
         })
@@ -1179,6 +1184,13 @@ export async function listPlacementOfferCandidates(
           eq(
             placementApplicationScreenings.applicationId,
             placementApplications.id,
+          ),
+        )
+        .innerJoin(
+          placementJobRoleOptions,
+          eq(
+            placementJobRoleOptions.id,
+            placementApplications.roleOptionId,
           ),
         )
         .innerJoin(

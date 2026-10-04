@@ -15,6 +15,7 @@ import {
   placementCompanyRelationships,
   placementCompanies,
   placementJobs,
+  placementJobRoleOptions,
   users,
 } from "@/db/schema";
 import {
@@ -60,6 +61,73 @@ function requireLearnerMembership(
     throw new AuthorizationError("placements.read");
   }
   return context.membership;
+}
+
+async function resolveApplicationRoleOption(
+  jobId: string,
+  roleOptionId: string | undefined,
+) {
+  const db = getDb();
+
+  if (roleOptionId) {
+    const [role] = await db
+      .select()
+      .from(placementJobRoleOptions)
+      .where(
+        and(
+          eq(
+            placementJobRoleOptions.id,
+            roleOptionId,
+          ),
+          eq(
+            placementJobRoleOptions.jobId,
+            jobId,
+          ),
+          eq(
+            placementJobRoleOptions.status,
+            "ACTIVE",
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (!role) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_ROLE_OPTION_NOT_FOUND",
+      );
+    }
+    return role;
+  }
+
+  const roles = await db
+    .select()
+    .from(placementJobRoleOptions)
+    .where(
+      and(
+        eq(
+          placementJobRoleOptions.jobId,
+          jobId,
+        ),
+        eq(
+          placementJobRoleOptions.status,
+          "ACTIVE",
+        ),
+      ),
+    )
+    .orderBy(
+      desc(
+        placementJobRoleOptions.isPrimary,
+      ),
+      asc(placementJobRoleOptions.createdAt),
+    );
+
+  if (roles.length === 1) {
+    return roles[0]!;
+  }
+
+  throw new PlacementsServiceError(
+    "PLACEMENT_ROLE_OPTION_REQUIRED",
+  );
 }
 
 function resolveApplicationChannel(
@@ -115,6 +183,7 @@ async function loadApplicationDetails(
   const [row] = await getDb()
     .select({
       application: placementApplications,
+      roleOption: placementJobRoleOptions,
       job: placementJobs,
       company: {
         id: placementCompanies.id,
@@ -134,6 +203,13 @@ async function loadApplicationDetails(
       eq(
         placementJobs.id,
         placementApplications.jobId,
+      ),
+    )
+    .innerJoin(
+      placementJobRoleOptions,
+      eq(
+        placementJobRoleOptions.id,
+        placementApplications.roleOptionId,
       ),
     )
     .innerJoin(
@@ -238,6 +314,11 @@ export async function applyToPlacementJob(
     );
   }
 
+  const roleOption =
+    await resolveApplicationRoleOption(
+      job.id,
+      input.roleOptionId,
+    );
   const channel = resolveApplicationChannel(
     job.applicationMode,
     input,
@@ -256,7 +337,10 @@ export async function applyToPlacementJob(
     .from(placementApplications)
     .where(
       and(
-        eq(placementApplications.jobId, job.id),
+        eq(
+          placementApplications.roleOptionId,
+          roleOption.id,
+        ),
         eq(
           placementApplications.membershipId,
           membership.id,
@@ -295,6 +379,7 @@ export async function applyToPlacementJob(
         .insert(placementApplications)
         .values({
           jobId: job.id,
+          roleOptionId: roleOption.id,
           membershipId: membership.id,
           channel,
           eligibilityStatus: eligibility.status,
@@ -334,11 +419,12 @@ export async function applyToPlacementJob(
           subjectType:
             "placement_application",
           subjectId: application.id,
-          subjectLabel: job.title,
+          subjectLabel: roleOption.title,
           summary:
-            `Application submitted for ${job.title}`,
+            `Application submitted for ${roleOption.title}`,
           metadata: {
             jobId: job.id,
+            roleOptionId: roleOption.id,
             membershipId: membership.id,
             channel,
           },
@@ -360,7 +446,10 @@ export async function applyToPlacementJob(
     .from(placementApplications)
     .where(
       and(
-        eq(placementApplications.jobId, job.id),
+        eq(
+          placementApplications.roleOptionId,
+          roleOption.id,
+        ),
         eq(
           placementApplications.membershipId,
           membership.id,
@@ -390,6 +479,7 @@ export async function listOwnPlacementApplications(
   return getDb()
     .select({
       application: placementApplications,
+      roleOption: placementJobRoleOptions,
       job: placementJobs,
       company: {
         id: placementCompanies.id,
@@ -402,6 +492,13 @@ export async function listOwnPlacementApplications(
       eq(
         placementJobs.id,
         placementApplications.jobId,
+      ),
+    )
+    .innerJoin(
+      placementJobRoleOptions,
+      eq(
+        placementJobRoleOptions.id,
+        placementApplications.roleOptionId,
       ),
     )
     .innerJoin(
@@ -441,6 +538,7 @@ export async function listPlacementJobApplications(
   return getDb()
     .select({
       application: placementApplications,
+      roleOption: placementJobRoleOptions,
       candidate: {
         membershipId: collegeMemberships.id,
         userId: users.id,
@@ -450,6 +548,13 @@ export async function listPlacementJobApplications(
       },
     })
     .from(placementApplications)
+    .innerJoin(
+      placementJobRoleOptions,
+      eq(
+        placementJobRoleOptions.id,
+        placementApplications.roleOptionId,
+      ),
+    )
     .innerJoin(
       collegeMemberships,
       eq(
@@ -566,11 +671,13 @@ export async function withdrawPlacementApplication(
           subjectType:
             "placement_application",
           subjectId: application.id,
-          subjectLabel: row.job.title,
+          subjectLabel: row.roleOption.title,
           summary:
-            `Application withdrawn from ${row.job.title}`,
+            `Application withdrawn from ${row.roleOption.title}`,
           metadata: {
             jobId: row.job.id,
+            roleOptionId:
+              row.roleOption.id,
             membershipId: membership.id,
           },
           groupKey:

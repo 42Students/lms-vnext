@@ -8,6 +8,7 @@ import {
   placementApplicationScreenings,
   placementCompanyRelationships,
   placementCompanies,
+  placementJobRoleOptions,
   placementJobs,
 } from "@/db/schema";
 import {
@@ -41,7 +42,9 @@ export async function getLearnerPlacementJourney(
             placementApplicationScreenings,
           job: {
             id: placementJobs.id,
-            title: placementJobs.title,
+            title:
+              placementJobRoleOptions.title,
+            driveTitle: placementJobs.title,
           },
           company: {
             id: placementCompanies.id,
@@ -61,6 +64,13 @@ export async function getLearnerPlacementJourney(
           eq(
             placementJobs.id,
             placementApplications.jobId,
+          ),
+        )
+        .innerJoin(
+          placementJobRoleOptions,
+          eq(
+            placementJobRoleOptions.id,
+            placementApplications.roleOptionId,
           ),
         )
         .innerJoin(
@@ -91,16 +101,18 @@ export async function getLearnerPlacementJourney(
       listOwnAppliedPlacementResults(context),
     ]);
 
-  const resultsByJob = new Map<
+  const resultsByApplication = new Map<
     string,
     typeof results
   >();
   for (const result of results) {
     const current =
-      resultsByJob.get(result.jobId) ?? [];
+      resultsByApplication.get(
+        result.applicationId,
+      ) ?? [];
     current.push(result);
-    resultsByJob.set(
-      result.jobId,
+    resultsByApplication.set(
+      result.applicationId,
       current,
     );
   }
@@ -134,7 +146,9 @@ export async function getLearnerPlacementJourney(
           : null,
       },
       results:
-        resultsByJob.get(row.job.id) ?? [],
+        resultsByApplication.get(
+          row.application.id,
+        ) ?? [],
     };
   });
 }

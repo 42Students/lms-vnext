@@ -12,6 +12,7 @@ import {
   placementApplications,
   placementApplicationScreeningHistory,
   placementApplicationScreenings,
+  placementJobRoleOptions,
   placementJobs,
   users,
 } from "@/db/schema";
@@ -41,6 +42,7 @@ async function loadScreeningDetails(
     .select({
       screening: placementApplicationScreenings,
       application: placementApplications,
+      roleOption: placementJobRoleOptions,
       job: placementJobs,
       candidate: {
         membershipId: collegeMemberships.id,
@@ -63,6 +65,13 @@ async function loadScreeningDetails(
       eq(
         placementJobs.id,
         placementApplications.jobId,
+      ),
+    )
+    .innerJoin(
+      placementJobRoleOptions,
+      eq(
+        placementJobRoleOptions.id,
+        placementApplications.roleOptionId,
       ),
     )
     .innerJoin(
@@ -164,6 +173,7 @@ export async function listPlacementScreeningQueue(
     .select({
       screening: placementApplicationScreenings,
       application: placementApplications,
+      roleOption: placementJobRoleOptions,
       candidate: {
         membershipId: collegeMemberships.id,
         userId: users.id,
@@ -178,6 +188,13 @@ export async function listPlacementScreeningQueue(
       eq(
         placementApplications.id,
         placementApplicationScreenings.applicationId,
+      ),
+    )
+    .innerJoin(
+      placementJobRoleOptions,
+      eq(
+        placementJobRoleOptions.id,
+        placementApplications.roleOptionId,
       ),
     )
     .innerJoin(
@@ -404,9 +421,11 @@ export async function decidePlacementScreening(
         subjectLabel:
           current.candidate.displayName,
         summary:
-          `Screening set to ${input.decision} for ${current.job.title}`,
+          `Screening set to ${input.decision} for ${current.roleOption.title}`,
         metadata: {
           jobId: current.job.id,
+          roleOptionId:
+            current.roleOption.id,
           fromStatus: from,
           toStatus: input.decision,
           membershipId:
