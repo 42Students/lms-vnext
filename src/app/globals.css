@@ -60,23 +60,57 @@
   --lms-sidebar-active: rgba(38, 186, 199, 0.15);
   --lms-focus-ring: rgba(38, 186, 199, 0.2);
 
+  /*
+   * shadcn/ui semantic compatibility.
+   * These aliases intentionally resolve back to the canonical LMS palette.
+   * Never let shadcn init replace these with its default palette.
+   */
   --background: var(--lms-page-background);
   --foreground: var(--lms-foreground);
+  --card: var(--lms-surface);
+  --card-foreground: var(--lms-foreground);
+  --popover: var(--lms-surface);
+  --popover-foreground: var(--lms-foreground);
+  --primary: var(--lms-primary);
+  --primary-foreground: var(--lms-white);
+  --secondary: var(--lms-neutral-50);
+  --secondary-foreground: var(--lms-foreground);
+  --muted: var(--lms-neutral-100);
+  --muted-foreground: var(--lms-muted-text);
+  --accent: var(--lms-primary-subtle);
+  --accent-foreground: var(--lms-primary-text);
+  --destructive: var(--lms-error);
+  --border: var(--lms-border);
+  --input: var(--lms-border);
+  --ring: var(--lms-primary);
+  --radius: 0.625rem;
 }
 
 @theme inline {
-  --color-background: var(--lms-page-background);
-  --color-foreground: var(--lms-foreground);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-surface: var(--lms-surface);
-  --color-on-primary: var(--lms-white);
-  --color-primary: var(--lms-primary);
+  --color-on-primary: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--lms-primary-hover);
   --color-primary-text: var(--lms-primary-text);
   --color-primary-subtle: var(--lms-primary-subtle);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-body: var(--lms-body-text);
-  --color-muted: var(--lms-neutral-100);
-  --color-muted-foreground: var(--lms-muted-text);
-  --color-border: var(--lms-border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
   --color-success: var(--lms-success);
   --color-warning: var(--lms-warning);
   --color-error: var(--lms-error);

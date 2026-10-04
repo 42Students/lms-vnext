@@ -418,11 +418,11 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] inventory exact hex/RGB/RGBA/CSS-variable values for brand, navigation, surfaces, text, borders, actions and semantic states
 - [x] document legacy -> vNext semantic color-token mapping
 - [x] implement centralized vNext tokens using the exact canonical legacy colors
-- [~] Tailwind baseline is mapped to LMS tokens; re-verify shadcn defaults when shadcn is installed
+- [x] Tailwind + shadcn semantic baseline is mapped to exact LMS tokens; regression tests prevent default shadcn palette imports from replacing LMS colors
 - [x] complete shell/common-component color parity review before closing first UI batch
 - [x] treat palette mismatches as implementation defects, not deferred polish
 
-- [ ] install/configure shadcn/ui
+- [x] configure shadcn/ui CLI contract for Tailwind v4/RSC via `components.json`; semantic shadcn tokens are mapped onto exact LMS palette tokens and existing custom primitives stay authoritative until a concrete registry component is needed
 - [x] common Button
 - [x] Input
 - [x] Select
