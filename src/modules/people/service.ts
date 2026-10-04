@@ -77,10 +77,16 @@ export type CollegePeoplePage = {
   };
 };
 
+export type PersonOnboardingMutationContext = {
+  context: RequestContext;
+  organizationId: string;
+};
+
 export interface PeopleRepository {
   loadActiveCollege(collegeId: string): Promise<PeopleTargetCollege | null>;
   persistPersonMembership(
     input: PersistPersonMembershipInput,
+    mutation: PersonOnboardingMutationContext,
   ): Promise<OnboardedPerson>;
 }
 
@@ -127,14 +133,24 @@ export async function onboardPerson(
     dependencies.identityDirectory,
   );
 
-  return dependencies.repository.persistPersonMembership({
-    identityUid: identity.uid,
-    phoneE164: input.phoneE164,
-    email: input.email ?? identity.email ?? undefined,
-    displayName: input.displayName,
-    collegeId: college.id,
-    roles: input.roles,
-  });
+  return dependencies.repository.persistPersonMembership(
+    {
+      identityUid: identity.uid,
+      phoneE164: input.phoneE164,
+      email:
+        input.email ??
+        identity.email ??
+        undefined,
+      displayName: input.displayName,
+      collegeId: college.id,
+      roles: input.roles,
+    },
+    {
+      context,
+      organizationId:
+        college.organizationId,
+    },
+  );
 }
 
 export async function listCollegePeople(

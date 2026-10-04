@@ -33,6 +33,7 @@ import type {
   PeopleRepository,
   PersistPersonMembershipInput,
   PersonMembershipView,
+  PersonOnboardingMutationContext,
 } from "./service";
 
 function isUniqueViolation(error: unknown) {
@@ -189,6 +190,7 @@ export const drizzlePeopleRepository:
 
   async persistPersonMembership(
     input: PersistPersonMembershipInput,
+    mutation: PersonOnboardingMutationContext,
   ): Promise<OnboardedPerson> {
     const db = getDb();
 
@@ -370,8 +372,46 @@ export const drizzlePeopleRepository:
         const roleRows = await tx
           .select({ role: membershipRoles.role })
           .from(membershipRoles)
-          .where(eq(membershipRoles.membershipId, membership.id))
+          .where(
+            eq(
+              membershipRoles.membershipId,
+              membership.id,
+            ),
+          )
           .orderBy(asc(membershipRoles.role));
+        const roles = roleRows.map(
+          (row) => row.role,
+        );
+
+        await recordActivityEventInTransaction(
+          tx,
+          mutation.context,
+          {
+            eventType:
+              ACTIVITY_EVENT_TYPES.IDENTITY_PERSON_ONBOARDED,
+            collegeId: membership.collegeId,
+            organizationId:
+              mutation.organizationId,
+            subjectType:
+              "college_membership",
+            subjectId: membership.id,
+            subjectLabel:
+              user.displayName ??
+              input.displayName,
+            summary:
+              `${user.displayName ?? input.displayName} onboarded`,
+            metadata: {
+              userId: user.id,
+              membershipId:
+                membership.id,
+              roles,
+            },
+            groupKey:
+              `college:${membership.collegeId}:onboarding`,
+            dedupeKey:
+              `person-onboarded:${membership.id}`,
+          },
+        );
 
         return {
           user,
@@ -379,7 +419,7 @@ export const drizzlePeopleRepository:
             id: membership.id,
             collegeId: membership.collegeId,
             status: "ACTIVE",
-            roles: roleRows.map((row) => row.role),
+            roles,
           },
         };
       });

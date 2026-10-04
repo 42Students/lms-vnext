@@ -215,6 +215,24 @@ describe("people and memberships against PostgreSQL", () => {
       users: 1,
       memberships: 1,
     });
+
+    const onboardingEvents =
+      await pool.query<{
+        event_type: string;
+      }>(
+        `select event_type
+           from activity_events
+          where dedupe_key = $1`,
+        [
+          `person-onboarded:${first.membership.id}`,
+        ],
+      );
+    expect(onboardingEvents.rows).toEqual([
+      {
+        event_type:
+          "identity.person.onboarded",
+      },
+    ]);
   });
 
   it("lets the same canonical user join a second college and isolates lifecycle state", async () => {
