@@ -92,6 +92,16 @@ async function createPublishedOpportunity(
     }),
   ).toBeVisible();
 
+  const newEmployerButton =
+    page.getByRole("button", {
+      name: "New employer",
+    });
+  if (
+    await newEmployerButton.isVisible()
+  ) {
+    await newEmployerButton.click();
+  }
+
   await page
     .getByLabel("Company name")
     .fill(`E2E Placement Co ${unique}`);
