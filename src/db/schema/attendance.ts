@@ -51,11 +51,11 @@ export const attendancePolicies = pgTable(
   (table) => [
     check(
       "attendance_policies_threshold_ck",
-      sql\`\${table.eligibilityThresholdPercent} between 1 and 100\`,
+      sql`${table.eligibilityThresholdPercent} between 1 and 100\`,
     ),
     check(
       "attendance_policies_correction_window_ck",
-      sql\`\${table.correctionWindowHours} between 1 and 168\`,
+      sql`${table.correctionWindowHours} between 1 and 168\`,
     ),
   ],
 );
@@ -93,16 +93,16 @@ export const attendanceSessions = pgTable(
     ).on(table.status, table.updatedAt),
     check(
       "attendance_sessions_status_ck",
-      sql\`\${table.status} in ('UNMARKED', 'MARKED')\`,
+      sql`${table.status} in ('UNMARKED', 'MARKED')\`,
     ),
     check(
       "attendance_sessions_lifecycle_ck",
-      sql\`(\${table.status} = 'UNMARKED'
-          and \${table.markedByUserId} is null
-          and \${table.markedAt} is null)
-        or (\${table.status} = 'MARKED'
-          and \${table.markedByUserId} is not null
-          and \${table.markedAt} is not null)\`,
+      sql`(${table.status} = 'UNMARKED'
+          and ${table.markedByUserId} is null
+          and ${table.markedAt} is null)
+        or (${table.status} = 'MARKED'
+          and ${table.markedByUserId} is not null
+          and ${table.markedAt} is not null)\`,
     ),
   ],
 );
@@ -164,7 +164,7 @@ export const attendanceRecords = pgTable(
     ),
     check(
       "attendance_records_status_ck",
-      sql\`\${table.status} in ('PRESENT', 'ABSENT', 'EXCUSED', 'MEDICAL', 'LATE')\`,
+      sql`${table.status} in ('PRESENT', 'ABSENT', 'EXCUSED', 'MEDICAL', 'LATE')\`,
     ),
   ],
 );
