@@ -4,6 +4,7 @@ import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
 import { listPlacementScreeningQueue } from "@/modules/placements/screening-service";
 import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
+import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
 import {
   PlacementDriveControls,
   type PlacementDriveControlData,
@@ -120,6 +121,16 @@ export async function PlacementDriveWorkspace({
         description={
           driveDay.job.company.name +
           " · live placement workspace"
+        }
+      />
+      <PlacementJobLifecycleControls
+        jobId={jobId}
+        status={
+          driveDay.job.status as
+            | "DRAFT"
+            | "PUBLISHED"
+            | "CLOSED"
+            | "ARCHIVED"
         }
       />
       <PlacementDriveDayOverview
