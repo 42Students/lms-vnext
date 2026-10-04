@@ -232,6 +232,13 @@
       "when": 1791239400000,
       "tag": "0032_learner_profile_document",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1791243000000,
+      "tag": "0033_attendance_foundation",
+      "breakpoints": true
     }
   ]
 }
