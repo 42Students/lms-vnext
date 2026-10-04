@@ -17,6 +17,7 @@ async function main() {
     dbLib,
     seedData,
     dbClient,
+    dbSchema,
     programService,
     periodService,
     cohortService,
@@ -35,6 +36,7 @@ async function main() {
     import("./db-lib"),
     import("./db-seed-data"),
     import("../src/db/client"),
+    import("../src/db/schema"),
     import("../src/modules/academics/program-service"),
     import("../src/modules/academics/period-service"),
     import("../src/modules/academics/cohort-service"),
@@ -55,6 +57,16 @@ async function main() {
   await dbLib.seedDatabase(databaseUrl);
 
   const ids = seedData.SEED_IDS;
+  await dbClient
+    .getDb()
+    .insert(dbSchema.membershipRoles)
+    .values({
+      membershipId:
+        ids.facultyCollegeAMembership,
+      role: "TPO",
+    })
+    .onConflictDoNothing();
+
   const collegeAdmin: RequestContext = {
     user: {
       id: ids.collegeAdminUser,
@@ -99,7 +111,7 @@ async function main() {
       collegeId: ids.collegeA,
       organizationId: ids.organization,
       status: "ACTIVE",
-      roles: ["FACULTY", "MENTOR"],
+      roles: ["FACULTY", "MENTOR", "TPO"],
     },
   };
 
@@ -355,7 +367,7 @@ async function main() {
     );
 
     process.stdout.write(
-      "Deterministic Course + Project browser E2E fixtures applied.\n",
+      "Deterministic Course + Project + Placement browser E2E fixtures applied.\n",
     );
   } finally {
     await dbClient.closeDatabaseConnection();
