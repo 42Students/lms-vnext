@@ -564,15 +564,15 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] companies/employers — canonical global employer identity + college-private relationship/trust/owner lifecycle
 - [x] candidate preferences — learner self-scoped typed matching preferences + notification choices
 - [x] jobs — tenant-scoped draft/publish/close/archive lifecycle with employer relationship boundary
-- [~] eligibility — explainable academic evidence/rules/overrides coded; CI verification pending
+- [x] eligibility — explainable academic evidence/rules/overrides with regression coverage verified by full CI
 - [x] applications — tenant-safe learner apply/withdraw lifecycle with eligibility snapshot and immutable status history
 - [x] screening — manager queue, learner-safe decisions, ordered round lifecycle and staged/applied round results
 - [x] evaluation config — atomic idempotent round-plan replacement over the canonical round model; locks once execution starts
 - [x] drive day — tenant-safe operational command center with candidate progression, round readiness and attention queues
-- [ ] TPO operations
+- [x] TPO operations — cross-job prioritized work queue, upcoming rounds and operational metrics
 - [ ] HR operations
 - [x] greenfield decision: no legacy placement data migration required
-- [~] tests — placement domain coverage is in place through evaluation config; remaining operational/UI acceptance still pending
+- [~] tests — placement domain coverage is CI-green through TPO operations; remaining HR/UI acceptance still pending
 - [ ] UI
 
 ---
