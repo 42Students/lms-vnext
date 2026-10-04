@@ -39,7 +39,7 @@ PHASE 8  Courses / learning                    ACTIVE
 PHASE 9  Projects                              DONE
 PHASE 10 Placements / TPO / HR                 ACTIVE
 PHASE 11 Activity / notifications / analytics  DONE
-PHASE 12 AI capabilities                       PENDING
+PHASE 12 AI capabilities                       FOUNDATION ACTIVE / VERTEX-BLOCKED
 PHASE 13 Production cutover / retirement       PENDING
 ```
 
@@ -959,6 +959,9 @@ Do not add a separate analytics database early.
 ---
 
 # 15. Phase 12 — AI capabilities
+
+## Status
+FOUNDATION ACTIVE. Provider abstraction, prompt versioning, structured telemetry, explicit authorized domain tools and deterministic evaluation cases are implemented. The Vertex adapter and model-quality evaluation remain blocked on the real GCP project/model configuration.
 
 ## Goal
 Use AI as domain tooling, not a generic chatbot.

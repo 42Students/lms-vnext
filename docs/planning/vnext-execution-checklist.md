@@ -596,15 +596,15 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 
 # AA. AI capabilities
 
-- [ ] `src/ai` provider abstraction
-- [ ] Vertex AI provider
-- [ ] explicit domain tools
-- [ ] authorization on every tool
-- [ ] evaluation cases
-- [ ] prompt/version tracking
-- [ ] cost metrics
-- [ ] latency metrics
-- [ ] cross-tenant leakage tests
+- [x] `src/ai` provider abstraction
+- [ ] Vertex AI provider — waits for the actual GCP project/model configuration; provider-neutral runtime is ready
+- [~] explicit domain tools — first authorized Placement operations, Project readiness and learner Course progress tools are implemented; expand only with concrete AI use cases
+- [x] authorization on every tool — central executor carries `RequestContext` into canonical domain services; no unrestricted SQL/data bypass
+- [~] evaluation cases — deterministic tool-selection/forbidden-behavior catalog is committed; model-quality execution waits for Vertex
+- [x] prompt/version tracking — named/versioned prompt catalog committed in source
+- [~] cost metrics — provider result/telemetry contract records provider-reported or calculated cost micros; real observations wait for Vertex
+- [x] latency metrics — provider runtime measures success/error latency and emits structured telemetry without prompt payloads
+- [x] cross-tenant leakage tests — AI placement tool integration coverage proves tenant/role checks remain authoritative
 
 Do not build a generic chatbot first.
 
