@@ -18,6 +18,28 @@ function priorityTone(priority: string): "error" | "warning" | "info" {
 function formatWhen(value: Date, timezone: string | null) {
   return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? "Asia/Kolkata" }).format(value);
 }
+function conversion(value: number, previous: number) {
+  if (previous <= 0) return "—";
+  return new Intl.NumberFormat("en-IN", {
+    style: "percent",
+    maximumFractionDigits: 1,
+  }).format(value / previous);
+}
+function FunnelMetric({
+  label,
+  value,
+  previous,
+}: {
+  label: string;
+  value: number;
+  previous?: number;
+}) {
+  return <div className="min-w-0">
+    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
+    <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
+    <p className="mt-1 text-xs text-body">{previous === undefined ? "Season total" : `${conversion(value, previous)} from previous stage`}</p>
+  </div>;
+}
 export function PlacementOperationsOverview({ operations, basePath }: { operations: Operations; basePath: string }) {
   return <div className="space-y-6">
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -26,6 +48,19 @@ export function PlacementOperationsOverview({ operations, basePath }: { operatio
       <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
       <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Jobs with an unresolved operational action." />
     </div>
+    <section className="rounded-xl border border-border bg-surface">
+      <div className="border-b border-border px-5 py-4">
+        <h2 className="m-0 text-base font-semibold text-foreground">Placement funnel</h2>
+        <p className="mt-1 text-sm text-body">{operations.analytics.season ? `${operations.analytics.season.name} · durable season-to-date conversion` : "Start a placement season to establish a durable funnel baseline."}</p>
+      </div>
+      <div className="grid gap-5 px-5 py-5 sm:grid-cols-2 xl:grid-cols-5">
+        <FunnelMetric label="Applications" value={operations.analytics.funnel.applications} />
+        <FunnelMetric label="Shortlisted" value={operations.analytics.funnel.shortlisted} previous={operations.analytics.funnel.applications} />
+        <FunnelMetric label="Offered" value={operations.analytics.funnel.offered} previous={operations.analytics.funnel.shortlisted} />
+        <FunnelMetric label="Accepted" value={operations.analytics.funnel.accepted} previous={operations.analytics.funnel.offered} />
+        <FunnelMetric label="Joined" value={operations.analytics.funnel.joined} previous={operations.analytics.funnel.accepted} />
+      </div>
+    </section>
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>

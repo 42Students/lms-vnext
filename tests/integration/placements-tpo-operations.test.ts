@@ -91,6 +91,12 @@ const roundId =
 
 async function cleanup() {
   await pool.query(
+    "delete from in_app_notifications",
+  );
+  await pool.query(
+    "delete from activity_events",
+  );
+  await pool.query(
     "delete from placement_round_results",
   );
   await pool.query(
@@ -271,6 +277,25 @@ describe("Placement TPO operations", () => {
         SEED_IDS.collegeA,
         new Date("2026-10-19T00:00:00.000Z"),
       );
+
+    expect(operations.analytics).toMatchObject({
+      season: {
+        id: SEED_IDS.placementSeasonA,
+      },
+      jobs: {
+        total: 3,
+        draft: 1,
+        published: 2,
+        closed: 0,
+      },
+      funnel: {
+        applications: 2,
+        shortlisted: 1,
+        offered: 0,
+        accepted: 0,
+        joined: 0,
+      },
+    });
 
     expect(operations.summary).toMatchObject({
       totalJobs: 3,

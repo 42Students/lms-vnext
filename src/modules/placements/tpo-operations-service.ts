@@ -1,21 +1,27 @@
 import {
   and,
   asc,
+  desc,
   eq,
   isNull,
   ne,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementApplications,
+  placementApplicationScreeningHistory,
   placementApplicationScreenings,
   placementCompanies,
   placementCompanyRelationships,
   placementJobRounds,
   placementJobs,
+  placementJoiningHistory,
   placementJoiningOutcomes,
   placementOffers,
+  placementOfferStatusHistory,
   placementRoundResults,
+  placementSeasons,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
@@ -44,6 +50,150 @@ export async function getPlacementTpoOperations(
   );
 
   const db = getDb();
+  const [analyticsSeason] = await db
+    .select({
+      id: placementSeasons.id,
+      name: placementSeasons.name,
+      code: placementSeasons.code,
+      status: placementSeasons.status,
+      startDate: placementSeasons.startDate,
+      endDate: placementSeasons.endDate,
+    })
+    .from(placementSeasons)
+    .where(
+      eq(
+        placementSeasons.collegeId,
+        collegeId,
+      ),
+    )
+    .orderBy(
+      desc(placementSeasons.startDate),
+      desc(placementSeasons.createdAt),
+    )
+    .limit(1);
+
+  const analytics = analyticsSeason
+    ? await Promise.all([
+        db
+          .select({
+            totalJobs:
+              sql<number>`count(*)::int`,
+            draftJobs:
+              sql<number>`count(*) filter (where ${placementJobs.status} = 'DRAFT')::int`,
+            publishedJobs:
+              sql<number>`count(*) filter (where ${placementJobs.status} = 'PUBLISHED')::int`,
+            closedJobs:
+              sql<number>`count(*) filter (where ${placementJobs.status} = 'CLOSED')::int`,
+          })
+          .from(placementJobs)
+          .where(
+            and(
+              eq(
+                placementJobs.collegeId,
+                collegeId,
+              ),
+              eq(
+                placementJobs.seasonId,
+                analyticsSeason.id,
+              ),
+              isNull(
+                placementJobs.archivedAt,
+              ),
+            ),
+          ),
+        db
+          .select({
+            applications:
+              sql<number>`count(distinct ${placementApplications.id})::int`,
+            shortlisted:
+              sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplicationScreeningHistory.toStatus} = 'SHORTLISTED')::int`,
+          })
+          .from(placementApplications)
+          .innerJoin(
+            placementJobs,
+            eq(
+              placementJobs.id,
+              placementApplications.jobId,
+            ),
+          )
+          .leftJoin(
+            placementApplicationScreeningHistory,
+            eq(
+              placementApplicationScreeningHistory.applicationId,
+              placementApplications.id,
+            ),
+          )
+          .where(
+            and(
+              eq(
+                placementJobs.collegeId,
+                collegeId,
+              ),
+              eq(
+                placementJobs.seasonId,
+                analyticsSeason.id,
+              ),
+              isNull(
+                placementJobs.archivedAt,
+              ),
+            ),
+          ),
+        db
+          .select({
+            offered:
+              sql<number>`count(distinct ${placementOffers.applicationId})::int`,
+            accepted:
+              sql<number>`count(distinct ${placementOffers.applicationId}) filter (where ${placementOfferStatusHistory.toStatus} = 'ACCEPTED')::int`,
+            joined:
+              sql<number>`count(distinct ${placementOffers.applicationId}) filter (where ${placementJoiningHistory.toStatus} = 'JOINED')::int`,
+          })
+          .from(placementOffers)
+          .innerJoin(
+            placementApplications,
+            eq(
+              placementApplications.id,
+              placementOffers.applicationId,
+            ),
+          )
+          .innerJoin(
+            placementJobs,
+            eq(
+              placementJobs.id,
+              placementApplications.jobId,
+            ),
+          )
+          .leftJoin(
+            placementOfferStatusHistory,
+            eq(
+              placementOfferStatusHistory.offerId,
+              placementOffers.id,
+            ),
+          )
+          .leftJoin(
+            placementJoiningHistory,
+            eq(
+              placementJoiningHistory.offerId,
+              placementOffers.id,
+            ),
+          )
+          .where(
+            and(
+              eq(
+                placementJobs.collegeId,
+                collegeId,
+              ),
+              eq(
+                placementJobs.seasonId,
+                analyticsSeason.id,
+              ),
+              isNull(
+                placementJobs.archivedAt,
+              ),
+            ),
+          ),
+      ])
+    : null;
+
   const [jobs, applications, rounds, resultRows, offerRows] =
     await Promise.all([
       db
@@ -497,8 +647,66 @@ export async function getPlacementTpoOperations(
     )
     .slice(0, 20);
 
+  const [
+    jobAnalytics,
+    applicationAnalytics,
+    offerAnalytics,
+  ] = analytics ?? [null, null, null];
+
   return {
     collegeId,
+    analytics: {
+      season: analyticsSeason ?? null,
+      jobs: {
+        total:
+          Number(
+            jobAnalytics?.[0]?.totalJobs ??
+              0,
+          ),
+        draft:
+          Number(
+            jobAnalytics?.[0]?.draftJobs ??
+              0,
+          ),
+        published:
+          Number(
+            jobAnalytics?.[0]?.publishedJobs ??
+              0,
+          ),
+        closed:
+          Number(
+            jobAnalytics?.[0]?.closedJobs ??
+              0,
+          ),
+      },
+      funnel: {
+        applications:
+          Number(
+            applicationAnalytics?.[0]
+              ?.applications ?? 0,
+          ),
+        shortlisted:
+          Number(
+            applicationAnalytics?.[0]
+              ?.shortlisted ?? 0,
+          ),
+        offered:
+          Number(
+            offerAnalytics?.[0]
+              ?.offered ?? 0,
+          ),
+        accepted:
+          Number(
+            offerAnalytics?.[0]
+              ?.accepted ?? 0,
+          ),
+        joined:
+          Number(
+            offerAnalytics?.[0]
+              ?.joined ?? 0,
+          ),
+      },
+    },
     summary: {
       totalJobs: jobs.length,
       draftJobs: jobs.filter(
