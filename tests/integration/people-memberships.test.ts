@@ -45,7 +45,7 @@ const email = "integration.people@example.com";
 
 const superAdmin: RequestContext = {
   user: {
-    id: "integration-superadmin",
+    id: SEED_IDS.superAdminUser,
     identityUid: "integration-superadmin-identity",
     platformStatus: "ACTIVE",
     systemRoles: ["SUPER_ADMIN"],
@@ -114,6 +114,12 @@ function createIdentityDirectory() {
 }
 
 async function cleanupPerson() {
+  await pool.query(
+    "delete from in_app_notifications",
+  );
+  await pool.query(
+    "delete from activity_events where subject_type = 'college_membership'",
+  );
   await pool.query(
     `delete from membership_roles
      where membership_id in (
@@ -256,6 +262,19 @@ describe("people and memberships against PostgreSQL", () => {
     );
     expect(roles).toEqual(["FACULTY", "MENTOR", "TPO"]);
 
+    const repeatedRoles =
+      await addMembershipRole(
+        superAdmin,
+        collegeB.membership.id,
+        { role: "TPO" },
+        drizzlePeopleRepository,
+      );
+    expect(repeatedRoles).toEqual([
+      "FACULTY",
+      "MENTOR",
+      "TPO",
+    ]);
+
     const suspended = await updateMembershipLifecycle(
       superAdmin,
       collegeA.membership.id,
@@ -286,6 +305,38 @@ describe("people and memberships against PostgreSQL", () => {
       drizzlePeopleRepository,
     );
     expect(reactivated.membership.status).toBe("ACTIVE");
+
+    const activity = await pool.query<{
+      event_type: string;
+      subject_id: string;
+    }>(
+      `select event_type, subject_id
+         from activity_events
+        where subject_id in ($1, $2)
+        order by occurred_at asc`,
+      [
+        collegeA.membership.id,
+        collegeB.membership.id,
+      ],
+    );
+    expect(
+      activity.rows.map(
+        (row) => row.event_type,
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "identity.membership.roles_changed",
+        "identity.membership.suspended",
+        "identity.membership.reactivated",
+      ]),
+    );
+    expect(
+      activity.rows.filter(
+        (row) =>
+          row.event_type ===
+          "identity.membership.roles_changed",
+      ),
+    ).toHaveLength(1);
 
     const collegeAPeople = await listCollegePeople(
       superAdmin,

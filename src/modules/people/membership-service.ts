@@ -10,6 +10,11 @@ import {
   type MembershipLifecycleInput,
 } from "./validation";
 
+export type MembershipMutationContext = {
+  context: RequestContext;
+  person: PersonMembershipView;
+};
+
 export interface MembershipManagementRepository {
   loadMembershipDetail(
     membershipId: string,
@@ -17,14 +22,17 @@ export interface MembershipManagementRepository {
   addMembershipRole(
     membershipId: string,
     role: MembershipRole,
+    mutation: MembershipMutationContext,
   ): Promise<MembershipRole[]>;
   removeMembershipRole(
     membershipId: string,
     role: MembershipRole,
+    mutation: MembershipMutationContext,
   ): Promise<MembershipRole[]>;
   transitionMembershipLifecycle(
     membershipId: string,
     input: MembershipLifecycleInput,
+    mutation: MembershipMutationContext,
   ): Promise<PersonMembershipView>;
 }
 
@@ -85,7 +93,11 @@ export async function addMembershipRole(
   );
   requireMutableRoleMembership(person);
 
-  return repository.addMembershipRole(person.membership.id, input.role);
+  return repository.addMembershipRole(
+    person.membership.id,
+    input.role,
+    { context, person },
+  );
 }
 
 export async function removeMembershipRole(
@@ -106,6 +118,7 @@ export async function removeMembershipRole(
   return repository.removeMembershipRole(
     person.membership.id,
     input.role,
+    { context, person },
   );
 }
 
@@ -126,5 +139,6 @@ export async function updateMembershipLifecycle(
   return repository.transitionMembershipLifecycle(
     person.membership.id,
     input,
+    { context, person },
   );
 }

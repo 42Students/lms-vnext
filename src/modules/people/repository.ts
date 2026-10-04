@@ -10,6 +10,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   colleges,
@@ -466,18 +468,106 @@ export const drizzlePeopleRepository:
     return loadMembershipDetailFromDb(membershipId);
   },
 
-  async addMembershipRole(membershipId, role) {
+  async addMembershipRole(
+    membershipId,
+    role,
+    mutation,
+  ) {
     const db = getDb();
-    await db
-      .insert(membershipRoles)
-      .values({ membershipId, role })
-      .onConflictDoNothing();
+    return db.transaction(async (tx) => {
+      const currentRows = await tx
+        .select({
+          role: membershipRoles.role,
+        })
+        .from(membershipRoles)
+        .where(
+          eq(
+            membershipRoles.membershipId,
+            membershipId,
+          ),
+        )
+        .orderBy(asc(membershipRoles.role))
+        .for("update");
+      const currentRoles = currentRows.map(
+        (row) => row.role,
+      );
 
-    const roles = await loadRolesByMembership([membershipId]);
-    return roles.get(membershipId) ?? [];
+      if (currentRoles.includes(role)) {
+        return currentRoles;
+      }
+
+      const [inserted] = await tx
+        .insert(membershipRoles)
+        .values({ membershipId, role })
+        .onConflictDoNothing()
+        .returning({
+          role: membershipRoles.role,
+        });
+
+      if (!inserted) {
+        const concurrentRows = await tx
+          .select({
+            role: membershipRoles.role,
+          })
+          .from(membershipRoles)
+          .where(
+            eq(
+              membershipRoles.membershipId,
+              membershipId,
+            ),
+          )
+          .orderBy(
+            asc(membershipRoles.role),
+          );
+        return concurrentRows.map(
+          (row) => row.role,
+        );
+      }
+
+      const nextRoles = [
+        ...currentRoles,
+        inserted.role,
+      ].sort();
+
+      await recordActivityEventInTransaction(
+        tx,
+        mutation.context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.IDENTITY_ROLES_CHANGED,
+          collegeId:
+            mutation.person.membership
+              .collegeId,
+          organizationId:
+            mutation.person.organizationId,
+          subjectType:
+            "college_membership",
+          subjectId: membershipId,
+          subjectLabel:
+            mutation.person.user
+              .displayName,
+          summary:
+            `${mutation.person.user.displayName} gained the ${role} role`,
+          metadata: {
+            userId:
+              mutation.person.user.id,
+            addedRole: role,
+            roles: nextRoles,
+          },
+          groupKey:
+            `membership:${membershipId}:roles`,
+        },
+      );
+
+      return nextRoles;
+    });
   },
 
-  async removeMembershipRole(membershipId, role) {
+  async removeMembershipRole(
+    membershipId,
+    role,
+    mutation,
+  ) {
     const db = getDb();
 
     return db.transaction(async (tx) => {
@@ -502,16 +592,56 @@ export const drizzlePeopleRepository:
         .delete(membershipRoles)
         .where(
           and(
-            eq(membershipRoles.membershipId, membershipId),
-            eq(membershipRoles.role, role),
+            eq(
+              membershipRoles.membershipId,
+              membershipId,
+            ),
+            eq(
+              membershipRoles.role,
+              role,
+            ),
           ),
         );
+
+      await recordActivityEventInTransaction(
+        tx,
+        mutation.context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.IDENTITY_ROLES_CHANGED,
+          collegeId:
+            mutation.person.membership
+              .collegeId,
+          organizationId:
+            mutation.person.organizationId,
+          subjectType:
+            "college_membership",
+          subjectId: membershipId,
+          subjectLabel:
+            mutation.person.user
+              .displayName,
+          summary:
+            `${mutation.person.user.displayName} lost the ${role} role`,
+          metadata: {
+            userId:
+              mutation.person.user.id,
+            removedRole: role,
+            roles: nextRoles,
+          },
+          groupKey:
+            `membership:${membershipId}:roles`,
+        },
+      );
 
       return nextRoles;
     });
   },
 
-  async transitionMembershipLifecycle(membershipId, input) {
+  async transitionMembershipLifecycle(
+    membershipId,
+    input,
+    mutation,
+  ) {
     const db = getDb();
 
     await db.transaction(async (tx) => {
@@ -546,7 +676,60 @@ export const drizzlePeopleRepository:
           ...patch,
           updatedAt: new Date(),
         })
-        .where(eq(collegeMemberships.id, membershipId));
+        .where(
+          eq(
+            collegeMemberships.id,
+            membershipId,
+          ),
+        );
+
+      const eventType =
+        input.action === "SUSPEND"
+          ? ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_SUSPENDED
+          : input.action ===
+              "REACTIVATE"
+            ? ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_REACTIVATED
+            : ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_ENDED;
+      const actionLabel =
+        input.action === "SUSPEND"
+          ? "suspended"
+          : input.action ===
+              "REACTIVATE"
+            ? "reactivated"
+            : "ended";
+
+      await recordActivityEventInTransaction(
+        tx,
+        mutation.context,
+        {
+          eventType,
+          collegeId:
+            mutation.person.membership
+              .collegeId,
+          organizationId:
+            mutation.person.organizationId,
+          subjectType:
+            "college_membership",
+          subjectId: membershipId,
+          subjectLabel:
+            mutation.person.user
+              .displayName,
+          summary:
+            `${mutation.person.user.displayName} membership ${actionLabel}`,
+          metadata: {
+            userId:
+              mutation.person.user.id,
+            fromStatus: current.status,
+            toStatus: patch.status,
+            reason:
+              input.action === "SUSPEND"
+                ? input.reason
+                : null,
+          },
+          groupKey:
+            `membership:${membershipId}:lifecycle`,
+        },
+      );
     });
 
     const updated = await loadMembershipDetailFromDb(membershipId);
