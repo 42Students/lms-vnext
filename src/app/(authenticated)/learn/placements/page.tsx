@@ -11,6 +11,7 @@ import {
 } from "@/components/placements/learner-placement-journey";
 import { LearnerPlacementPreferences } from "@/components/placements/learner-placement-preferences";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
+import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
@@ -18,6 +19,7 @@ import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
+import { listOwnPlacementLearnerRequests } from "@/modules/placements/request-service";
 
 export default async function LearnerPlacementsPage() {
   const context =
@@ -32,12 +34,16 @@ export default async function LearnerPlacementsPage() {
     journeyRows,
     academicEvidence,
     offerRows,
+    requestRows,
   ] = await Promise.all([
     listLearnerPlacementJobs(context),
     getCandidatePreferences(context),
     getLearnerPlacementJourney(context),
     getOwnAcademicEvidence(context),
     listOwnPlacementOffers(context),
+    listOwnPlacementLearnerRequests(
+      context,
+    ),
   ]);
 
   const items: LearnerPlacementJobItem[] =
@@ -154,6 +160,36 @@ export default async function LearnerPlacementsPage() {
               }
             : null,
         }))}
+      />
+
+      <LearnerPlacementRequests
+        requests={requestRows.map(
+          (row) => ({
+            requestId:
+              row.request.id,
+            applicationId:
+              row.request.applicationId,
+            jobTitle: row.job.title,
+            requestType:
+              row.request.requestType,
+            status:
+              row.request.status,
+            reason:
+              row.request.reason,
+            decisionReason:
+              row.request.decisionReason,
+            requestedPayload:
+              row.request.requestedPayload,
+            createdAt:
+              row.request.createdAt.toISOString(),
+            effectAppliedAt:
+              row.request.effectAppliedAt?.toISOString() ??
+              null,
+            cancelledAt:
+              row.request.cancelledAt?.toISOString() ??
+              null,
+          }),
+        )}
       />
 
       <LearnerPlacementJourney

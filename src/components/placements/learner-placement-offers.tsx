@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 
 export type LearnerPlacementOfferItem = {
@@ -71,6 +74,20 @@ export function LearnerPlacementOffers({
   const { showToast } = useToast();
   const [pendingId, setPendingId] =
     useState<string | null>(null);
+  const [
+    extensionOffer,
+    setExtensionOffer,
+  ] = useState<
+    LearnerPlacementOfferItem | null
+  >(null);
+  const [
+    requestedExpiry,
+    setRequestedExpiry,
+  ] = useState("");
+  const [
+    extensionReason,
+    setExtensionReason,
+  ] = useState("");
 
   async function respond(
     offerId: string,
@@ -133,6 +150,78 @@ export function LearnerPlacementOffers({
         tone: "error",
         title:
           "Could not update offer",
+        description:
+          error instanceof Error
+            ? humanize(error.message)
+            : "Please try again.",
+      });
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  async function requestExtension() {
+    if (
+      !extensionOffer ||
+      !requestedExpiry ||
+      !extensionReason.trim()
+    ) {
+      return;
+    }
+
+    setPendingId(
+      extensionOffer.offerId,
+    );
+    try {
+      const response = await fetch(
+        "/api/placements/requests/me",
+        {
+          method: "POST",
+          headers: {
+            "content-type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            applicationId:
+              extensionOffer.applicationId,
+            requestType:
+              "OFFER_EXTENSION",
+            offerId:
+              extensionOffer.offerId,
+            reason:
+              extensionReason.trim(),
+            requestedExpiresAt:
+              new Date(
+                requestedExpiry,
+              ).toISOString(),
+          }),
+        },
+      );
+      const payload = await response
+        .json()
+        .catch(() => null);
+      if (!response.ok) {
+        throw new Error(
+          payload?.error ??
+            "PLACEMENT_REQUEST_FAILED",
+        );
+      }
+
+      setExtensionOffer(null);
+      setRequestedExpiry("");
+      setExtensionReason("");
+      showToast({
+        tone: "success",
+        title: "Extension requested",
+        description:
+          "Your current offer remains unchanged until the placement team approves the request.",
+      });
+      router.refresh();
+    } catch (error) {
+      showToast({
+        tone: "error",
+        title:
+          "Could not request extension",
         description:
           error instanceof Error
             ? humanize(error.message)
@@ -278,6 +367,28 @@ export function LearnerPlacementOffers({
                 >
                   Decline offer
                 </Button>
+                {item.expiresAt ? (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={
+                      pendingId !== null
+                    }
+                    onClick={() => {
+                      setExtensionOffer(
+                        item,
+                      );
+                      setRequestedExpiry(
+                        "",
+                      );
+                      setExtensionReason(
+                        "",
+                      );
+                    }}
+                  >
+                    Request extension
+                  </Button>
+                ) : null}
               </div>
             ) : null}
 
@@ -309,6 +420,98 @@ export function LearnerPlacementOffers({
           </article>
         ))}
       </div>
+
+      <Dialog
+        open={extensionOffer !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setExtensionOffer(null);
+            setRequestedExpiry("");
+            setExtensionReason("");
+          }
+        }}
+        title="Request offer extension"
+        description={
+          extensionOffer
+            ? `Ask the placement team to extend the response deadline for ${extensionOffer.roleTitle}.`
+            : ""
+        }
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              disabled={pendingId !== null}
+              onClick={() =>
+                setExtensionOffer(null)
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={
+                pendingId !== null ||
+                !requestedExpiry ||
+                !extensionReason.trim()
+              }
+              onClick={
+                requestExtension
+              }
+            >
+              {pendingId
+                ? "Requesting…"
+                : "Send request"}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="offer-extension-expiry"
+              className="mb-1.5 block text-xs font-semibold text-body"
+            >
+              Requested response deadline
+            </label>
+            <Input
+              id="offer-extension-expiry"
+              type="datetime-local"
+              value={requestedExpiry}
+              onChange={(event) =>
+                setRequestedExpiry(
+                  event.target.value,
+                )
+              }
+            />
+            {extensionOffer?.expiresAt ? (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Current deadline:{" "}
+                {formatWhen(
+                  extensionOffer.expiresAt,
+                )}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label
+              htmlFor="offer-extension-reason"
+              className="mb-1.5 block text-xs font-semibold text-body"
+            >
+              Reason
+            </label>
+            <Textarea
+              id="offer-extension-reason"
+              value={extensionReason}
+              onChange={(event) =>
+                setExtensionReason(
+                  event.target.value,
+                )
+              }
+              maxLength={2000}
+              placeholder="Explain why you need more time."
+            />
+          </div>
+        </div>
+      </Dialog>
     </section>
   );
 }
