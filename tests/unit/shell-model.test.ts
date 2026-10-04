@@ -110,6 +110,11 @@ describe("authenticated shell model", () => {
         href: "/learn/placements",
         shortLabel: "P",
       },
+      {
+        label: "Profile",
+        href: "/learn/profile",
+        shortLabel: "R",
+      },
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Learner",
@@ -195,6 +200,7 @@ describe("authenticated shell model", () => {
       "Class Schedule",
       "My Projects",
       "Placements",
+      "Profile",
       "Teaching Courses",
     ]);
   });
