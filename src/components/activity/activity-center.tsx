@@ -1,0 +1,181 @@
+import Link from "next/link";
+import { StatusBadge } from "@/components/ui/status-badge";
+
+export type ActivityCenterGroup = {
+  key: string;
+  count: number;
+  latest: {
+    event: {
+      id: string;
+      module: string;
+      eventType: string;
+      importance: string;
+      subjectType: string;
+      subjectId: string;
+      subjectLabel: string | null;
+      summary: string;
+      occurredAt: string;
+    };
+    actor: {
+      id: string | null;
+      displayName: string | null;
+      email: string | null;
+    } | null;
+  };
+  earliest: {
+    event: {
+      occurredAt: string;
+    };
+  };
+};
+
+function humanize(value: string) {
+  return value
+    .toLowerCase()
+    .split("_")
+    .join(" ")
+    .split(".")
+    .join(" ");
+}
+
+function formatWhen(value: string) {
+  return new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+  }).format(new Date(value));
+}
+
+function tone(
+  importance: string,
+):
+  | "neutral"
+  | "info"
+  | "success"
+  | "warning"
+  | "error" {
+  if (importance === "CRITICAL") {
+    return "error";
+  }
+  if (importance === "HIGH") {
+    return "warning";
+  }
+  if (importance === "LOW") {
+    return "neutral";
+  }
+  return "info";
+}
+
+export function ActivityCenter({
+  groups,
+  nextHref,
+}: {
+  groups: readonly ActivityCenterGroup[];
+  nextHref: string | null;
+}) {
+  if (groups.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-surface p-8 text-center">
+        <p className="m-0 font-semibold text-foreground">
+          No meaningful activity matches these filters.
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Technical request noise is intentionally excluded from this center.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-3">
+        {groups.map((group) => {
+          const item = group.latest;
+          return (
+            <article
+              key={
+                group.key +
+                ":" +
+                item.event.id
+              }
+              className="rounded-xl border border-border bg-surface p-5"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusBadge
+                      tone={tone(
+                        item.event
+                          .importance,
+                      )}
+                    >
+                      {humanize(
+                        item.event
+                          .importance,
+                      )}
+                    </StatusBadge>
+                    <StatusBadge>
+                      {humanize(
+                        item.event.module,
+                      )}
+                    </StatusBadge>
+                    {group.count > 1 ? (
+                      <span className="text-xs font-semibold text-muted-foreground">
+                        {group.count} related events
+                      </span>
+                    ) : null}
+                  </div>
+                  <h2 className="mt-3 text-base font-semibold text-foreground">
+                    {item.event.summary}
+                  </h2>
+                  <p className="mt-1 text-sm text-body">
+                    {item.event.subjectLabel ??
+                      humanize(
+                        item.event
+                          .subjectType,
+                      )}
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {item.actor
+                      ?.displayName ??
+                      item.actor?.email ??
+                      "System"}{" "}
+                    ·{" "}
+                    {formatWhen(
+                      item.event
+                        .occurredAt,
+                    )}
+                    {group.count > 1
+                      ? " · grouped from " +
+                        formatWhen(
+                          group.earliest
+                            .event
+                            .occurredAt,
+                        )
+                      : ""}
+                  </p>
+                </div>
+                <span className="max-w-full break-all text-xs text-muted-foreground">
+                  {humanize(
+                    item.event.eventType,
+                  )}
+                </span>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      {nextHref ? (
+        <div className="flex justify-center">
+          <Link
+            href={nextHref}
+            className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+          >
+            Older activity
+          </Link>
+        </div>
+      ) : null}
+    </div>
+  );
+}

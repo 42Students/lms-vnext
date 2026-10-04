@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,13 @@ export function AccountActions() {
   }
 
   return (
-    <div className="text-right">
+    <div className="flex items-center gap-1 text-right">
+      <Link
+        href="/notifications"
+        className="inline-flex min-h-9 items-center justify-center rounded-md px-3 text-sm font-semibold text-foreground transition hover:bg-muted"
+      >
+        Notifications
+      </Link>
       <Button
         variant="ghost"
         size="sm"

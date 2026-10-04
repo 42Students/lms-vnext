@@ -13,3 +13,4 @@ export * from "./assessments";
 export * from "./quizzes";
 export * from "./projects";
 export * from "./placements";
+export * from "./activity";

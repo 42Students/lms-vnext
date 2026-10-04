@@ -28,6 +28,7 @@ const superAdminItems: ShellNavItem[] = [
   { label: "Placements", href: "/admin/placements", shortLabel: "P" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
+  { label: "Activity", href: "/activity", shortLabel: "A" },
 ];
 
 const learnerItems: ShellNavItem[] = [
@@ -89,6 +90,7 @@ const collegeAdminItems: ShellNavItem[] = [
   { label: "Placements", href: "/college/placements", shortLabel: "P" },
   { label: "People", href: "/college/people", shortLabel: "P" },
   { label: "Domains", href: "/college/domains", shortLabel: "D" },
+  { label: "Activity", href: "/activity", shortLabel: "A" },
 ];
 
 function pushUnique(

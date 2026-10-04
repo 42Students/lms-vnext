@@ -13,6 +13,7 @@ import { AcademicsServiceError } from "@/modules/academics/errors";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { PlacementsServiceError } from "@/modules/placements/errors";
+import { ActivityServiceError } from "@/modules/activity/errors";
 import { logError } from "@/observability/logger";
 
 export function apiErrorResponse(error: unknown) {
@@ -215,6 +216,23 @@ export function apiErrorResponse(error: unknown) {
     return NextResponse.json(
       { error: error.code },
       { status: notFound.has(error.code) ? 404 : 409 },
+    );
+  }
+
+  if (error instanceof ActivityServiceError) {
+    const notFound = new Set([
+      "ACTIVITY_SCOPE_NOT_FOUND",
+      "ACTIVITY_EVENT_NOT_FOUND",
+      "NOTIFICATION_NOT_FOUND",
+      "NOTIFICATION_RECIPIENT_NOT_FOUND",
+    ]);
+    return NextResponse.json(
+      { error: error.code },
+      {
+        status: notFound.has(error.code)
+          ? 404
+          : 409,
+      },
     );
   }
 

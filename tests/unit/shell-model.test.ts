@@ -46,6 +46,7 @@ describe("authenticated shell model", () => {
       "Placements",
       "People",
       "Domains",
+      "Activity",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe("Super Admin");
   });
@@ -65,6 +66,7 @@ describe("authenticated shell model", () => {
       "Placements",
       "People",
       "Domains",
+      "Activity",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe("College Admin");
   });
@@ -97,6 +99,12 @@ describe("authenticated shell model", () => {
     expect(getShellRoleLabel(shellContext)).toBe(
       "Learner",
     );
+    expect(
+      getShellNavigation(shellContext).some(
+        (item) =>
+          item.href === "/activity",
+      ),
+    ).toBe(false);
   });
 
   it("gives faculty teaching navigation without admin navigation", () => {
@@ -147,6 +155,7 @@ describe("authenticated shell model", () => {
       "Placements",
       "People",
       "Domains",
+      "Activity",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "College Admin · Faculty · Mentor",

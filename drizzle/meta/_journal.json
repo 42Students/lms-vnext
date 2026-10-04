@@ -197,6 +197,13 @@
       "when": 1791028600000,
       "tag": "0027_placements_p9_seasons",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1791029200000,
+      "tag": "0028_activity_notifications_foundation",
+      "breakpoints": true
     }
   ]
 }

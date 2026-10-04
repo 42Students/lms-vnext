@@ -24,6 +24,7 @@ export type PlatformPermission =
   | "placements.manage"
   | "placements.recruiter.read"
   | "placements.recruiter.result.stage"
+  | "activity.read"
   | "project-template.manage"
   | "project-template.assign"
   | "people.manage"
@@ -150,6 +151,18 @@ export function can(
           hasMembershipRole(context, "TPO") ||
           hasMembershipRole(context, "COLLEGE_ADMIN")) &&
         isSameMembershipCollege(context, resource)
+      );
+
+    case "activity.read":
+      return (
+        hasMembershipRole(
+          context,
+          "COLLEGE_ADMIN",
+        ) &&
+        isSameMembershipCollege(
+          context,
+          resource,
+        )
       );
 
     case "system-role.manage":
