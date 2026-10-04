@@ -24,6 +24,7 @@ import { listMembershipChoices } from "@/modules/identity/context-service";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
+import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import {
   getPlacementTpoOperations,
 } from "@/modules/placements/tpo-operations-service";
@@ -220,6 +221,7 @@ async function MembershipDashboard({
     learnerCourses,
     projectRows,
     placementOperations,
+    learnerPlacementJobs,
     recruiterJobs,
   ] = await Promise.all([
     hasWorkspace("COLLEGE_ADMIN")
@@ -253,13 +255,19 @@ async function MembershipDashboard({
           context,
         )
       : Promise.resolve(null),
-    hasWorkspace("MENTOR")
+    hasWorkspace("MENTOR") ||
+    hasWorkspace("LEARNER")
       ? listMyProjectInstances(context)
       : Promise.resolve(null),
     hasWorkspace("TPO")
       ? getPlacementTpoOperations(
           context,
           membership.collegeId,
+        )
+      : Promise.resolve(null),
+    hasWorkspace("LEARNER")
+      ? listLearnerPlacementJobs(
+          context,
         )
       : Promise.resolve(null),
     hasActiveRecruiter(context)
@@ -270,10 +278,19 @@ async function MembershipDashboard({
   ]);
 
   const mentorProjects =
-    projectRows?.filter(
-      (row) =>
-        row.memberRole === "MENTOR",
-    ) ?? null;
+    hasWorkspace("MENTOR")
+      ? projectRows?.filter(
+          (row) =>
+            row.memberRole === "MENTOR",
+        ) ?? []
+      : null;
+  const learnerProjects =
+    hasWorkspace("LEARNER")
+      ? projectRows?.filter(
+          (row) =>
+            row.memberRole === "LEARNER",
+        ) ?? []
+      : null;
   const primaryMentorships =
     mentorProjects?.filter(
       (row) => row.isPrimaryMentor,
@@ -399,6 +416,24 @@ async function MembershipDashboard({
             value={learnerCourses.length}
             description="Courses currently delivered to your active learner Section."
             href="/learn/courses"
+          />
+        ) : null}
+
+        {learnerProjects ? (
+          <MetricCard
+            label="My Projects"
+            value={learnerProjects.length}
+            description="Project workspaces where this Learner membership is an active team member."
+            href="/learn/projects"
+          />
+        ) : null}
+
+        {learnerPlacementJobs ? (
+          <MetricCard
+            label="Placement Opportunities"
+            value={learnerPlacementJobs.length}
+            description="Placement opportunities currently visible to this Learner membership."
+            href="/learn/placements"
           />
         ) : null}
 

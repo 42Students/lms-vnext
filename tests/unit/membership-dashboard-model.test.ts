@@ -7,15 +7,14 @@ import {
   getMembershipDashboardWorkspaces,
 } from "@/components/dashboard/membership-dashboard-model";
 import type {
+  MembershipRole,
+} from "@/modules/identity/constants";
+import type {
   RequestContext,
 } from "@/modules/identity/context";
 
 function context(
-  roles: RequestContext["membership"] extends infer T
-    ? T extends { roles: infer R }
-      ? R
-      : never
-    : never,
+  roles: readonly MembershipRole[],
   status:
     | "ACTIVE"
     | "SUSPENDED" = "ACTIVE",
