@@ -6,6 +6,8 @@ import {
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   projectInstances,
   projectReleases,
@@ -287,6 +289,34 @@ export async function createProjectInstance(
             })),
         );
       }
+
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_CREATED,
+          collegeId: college.id,
+          organizationId:
+            college.organizationId,
+          subjectType: "project",
+          subjectId: project.id,
+          subjectLabel: project.title,
+          summary:
+            `Project ${project.title} created`,
+          metadata: {
+            projectId: project.id,
+            slug: project.slug,
+            templateId: project.templateId,
+            templateVersionId:
+              project.templateVersionId,
+          },
+          groupKey:
+            `project:${project.id}`,
+          dedupeKey:
+            `project:${project.id}:created`,
+        },
+      );
 
       return project;
     });

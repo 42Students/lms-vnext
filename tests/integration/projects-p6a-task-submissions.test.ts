@@ -340,6 +340,24 @@ describe("Projects P6A task submissions", () => {
         SEED_IDS.learnerCollegeAMembership,
     });
 
+    const activity =
+      await pool.query<{
+        event_type: string;
+      }>(
+        `select event_type
+           from activity_events
+          where dedupe_key = $1`,
+        [
+          `project-task-submission:${submission.id}:submitted`,
+        ],
+      );
+    expect(activity.rows).toEqual([
+      {
+        event_type:
+          "projects.task.submitted",
+      },
+    ]);
+
     const workspace =
       await getProjectInstanceWorkspace(
         learner,

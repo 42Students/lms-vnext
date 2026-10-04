@@ -5,6 +5,8 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   projectEvaluationItems,
   projectEvaluations,
@@ -144,6 +146,38 @@ export async function createProjectEvaluation(
           })),
         )
         .returning();
+
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PROJECTS_EVALUATION_RECORDED,
+          collegeId: scope.collegeId,
+          organizationId:
+            scope.organizationId,
+          subjectType:
+            "project_evaluation",
+          subjectId: evaluation.id,
+          subjectLabel:
+            scope.project.title,
+          summary:
+            `Evaluation recorded for ${scope.project.title}`,
+          metadata: {
+            projectId: scope.project.id,
+            submissionId:
+              evaluation.submissionId,
+            totalScore:
+              evaluation.totalScore,
+            maxScore:
+              evaluation.maxScore,
+          },
+          groupKey:
+            `project:${scope.project.id}:evaluations`,
+          dedupeKey:
+            `project-evaluation:${evaluation.id}:recorded`,
+        },
+      );
 
       return { evaluation, items };
     });

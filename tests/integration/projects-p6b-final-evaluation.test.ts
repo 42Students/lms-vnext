@@ -572,6 +572,24 @@ describe("Projects P6B final delivery and evaluation", () => {
     });
     expect(created.items).toHaveLength(2);
 
+    const activity =
+      await pool.query<{
+        event_type: string;
+      }>(
+        `select event_type
+           from activity_events
+          where dedupe_key = $1`,
+        [
+          `project-evaluation:${created.evaluation.id}:recorded`,
+        ],
+      );
+    expect(activity.rows).toEqual([
+      {
+        event_type:
+          "projects.evaluation.recorded",
+      },
+    ]);
+
     await expect(
       createProjectEvaluation(
         collegeAdmin,

@@ -6,6 +6,8 @@ import {
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   projectSprints,
   projectTasks,
@@ -194,6 +196,35 @@ export async function submitProjectTask(
           note: input.note ?? null,
         })
         .returning();
+
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PROJECTS_TASK_SUBMITTED,
+          collegeId: scope.collegeId,
+          organizationId:
+            scope.organizationId,
+          subjectType:
+            "project_task_submission",
+          subjectId: submission.id,
+          subjectLabel: task.title,
+          summary:
+            `${task.title} submitted for review`,
+          metadata: {
+            projectId: scope.project.id,
+            taskId: task.id,
+            version: submission.version,
+            membershipId:
+              context.membership!.id,
+          },
+          groupKey:
+            `project:${scope.project.id}:task-submissions`,
+          dedupeKey:
+            `project-task-submission:${submission.id}:submitted`,
+        },
+      );
 
       return submission;
     });

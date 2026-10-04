@@ -206,6 +206,24 @@ describe("Projects P3 deterministic materialization", () => {
         },
       );
 
+    const createdEvent =
+      await pool.query<{
+        event_type: string;
+      }>(
+        `select event_type
+           from activity_events
+          where dedupe_key = $1`,
+        [
+          `project:${firstProject.id}:created`,
+        ],
+      );
+    expect(createdEvent.rows).toEqual([
+      {
+        event_type:
+          "projects.project.created",
+      },
+    ]);
+
     const firstWorkspace =
       await getProjectInstanceWorkspace(
         collegeAdmin,
