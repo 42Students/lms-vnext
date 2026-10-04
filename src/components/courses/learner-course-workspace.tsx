@@ -471,14 +471,22 @@ export function LearnerCourseWorkspace({
         title={workspace.course.name}
         description={`${workspace.course.code} · Your exact Section learning workspace.`}
         actions={
-          workspace.nextItem ? (
+          <div className="flex flex-wrap gap-2">
             <Link
-              href={`/learn/courses/${deliveryId}#item-${workspace.nextItem.kind}-${workspace.nextItem.itemId}`}
-              className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              href={`/learn/attendance?deliveryId=${deliveryId}`}
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             >
-              Continue learning
+              Attendance
             </Link>
-          ) : null
+            {workspace.nextItem ? (
+              <Link
+                href={`/learn/courses/${deliveryId}#item-${workspace.nextItem.kind}-${workspace.nextItem.itemId}`}
+                className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              >
+                Continue learning
+              </Link>
+            ) : null}
+          </div>
         }
       />
 
