@@ -53,6 +53,9 @@ import {
 import {
   getLearnerClassSchedule,
 } from "@/modules/academics/learner-schedule-service";
+import {
+  getLearnerAttendanceWorkspace,
+} from "@/modules/attendance/learner-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -845,6 +848,26 @@ describe("academics A2 against PostgreSQL", () => {
       code: "SCHEDULE_COURSE_DELIVERY_MISMATCH",
     });
 
+    await pool.query(
+      `insert into attendance_sessions
+        (schedule_event_id, status, marked_by_user_id, marked_at)
+       values ($1, 'MARKED', $2, now())`,
+      [
+        event.id,
+        SEED_IDS.collegeAdminUser,
+      ],
+    );
+    await pool.query(
+      `insert into attendance_records
+        (schedule_event_id, membership_id, status, marked_by_user_id, note)
+       values ($1, $2, 'ABSENT', $3, 'A2 learner absence')`,
+      [
+        event.id,
+        SEED_IDS.learnerCollegeAMembership,
+        SEED_IDS.collegeAdminUser,
+      ],
+    );
+
     const schedule =
       await getLearnerClassSchedule(learner);
 
@@ -865,6 +888,32 @@ describe("academics A2 against PostgreSQL", () => {
         courseId: course.id,
       }),
     ]);
+
+    const attendance =
+      await getLearnerAttendanceWorkspace(
+        learner,
+      );
+    expect(attendance.records).toEqual([
+      expect.objectContaining({
+        id: event.id,
+        deliveryId: delivery.id,
+        courseId: course.id,
+        status: "ABSENT",
+      }),
+    ]);
+    expect(attendance.overall).toMatchObject({
+      heldSessions: 1,
+      markedSessions: 1,
+      present: 0,
+      absent: 1,
+      percentage: 0,
+    });
+
+    await expect(
+      getLearnerAttendanceWorkspace(
+        faculty,
+      ),
+    ).rejects.toBeDefined();
 
     await expect(
       getLearnerClassSchedule(faculty),
