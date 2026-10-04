@@ -345,9 +345,11 @@ test.describe("Placements browser regression", () => {
     ).toBe(true);
 
     await expect(
-      page.getByText("SCHEDULED", {
-        exact: true,
-      }),
+      page
+        .getByText("SCHEDULED", {
+          exact: true,
+        })
+        .first(),
     ).toBeVisible();
 
     const completedRound = page
