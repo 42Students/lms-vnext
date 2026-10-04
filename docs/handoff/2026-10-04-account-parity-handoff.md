@@ -16,6 +16,8 @@ Detailed tracker: `docs/planning/account-surface-parity.md`.
 Mechanical route backstop: `docs/planning/legacy-ui-route-manifest.md`.
 Detailed counter: `npm run parity:status`.
 
+**Route audit result:** 210 candidate real account/shared/public/ops/error routes checked against matrix v2; **0 unmatched** at the frozen legacy SHA.
+
 **2026-10-04 deep audit:** matrix v1 was not exhaustive. Matrix v2 now explicitly includes hidden TPO Companies/Profile/More, public recruiter/company-share/auth/AI-grading flows, operational tracker surfaces, redirects/artifacts, specialized notification behavior, and decomposed TPO/HR/Super-Admin/Project sub-workflows. Do not work from an older matrix copy.
 
 ## Continuation order

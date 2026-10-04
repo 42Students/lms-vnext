@@ -60,3 +60,13 @@ The exhaustive file-by-file classification is in `docs/planning/legacy-ui-route-
 `npm run parity:status` now counts every terminal matrix status. Parity release closure requires zero PARTIAL, MISSING, VERIFY and BLOCKED rows.
 
 This audit does **not** mean no future legacy change can add a surface. Final sign-off still requires a fresh diff against the latest `prod-2026`.
+
+
+## Final negative route-coverage check
+
+After matrix v2 was written, the frozen route manifest was checked back against the matrix in the opposite direction: every route classified as account product, shared product, operational tool, public marketing or error surface had to have a textual matrix/accounting footprint.
+
+- candidate real routes checked: **210**
+- unmatched after tightening exact route references: **0**
+
+This is route-level completeness for the audited legacy SHA. It does not replace section/action/workflow auditing, which remains encoded as PARTIAL/MISSING rows.
