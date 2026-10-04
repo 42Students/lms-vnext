@@ -18,11 +18,13 @@ import {
   renameOrganization,
 } from "@/modules/organizations/service";
 import {
+  archiveCollege,
   createCollege,
   listColleges,
   updateCollege,
 } from "@/modules/colleges/service";
 import {
+  archiveDepartment,
   createDepartment,
   listDepartments,
   renameDepartment,
@@ -181,9 +183,49 @@ describe("core admin domains against PostgreSQL", () => {
     );
 
     await expect(
-      archiveOrganization(superAdmin, organization.id),
+      archiveOrganization(
+        superAdmin,
+        organization.id,
+      ),
     ).rejects.toMatchObject({
       code: "ORGANIZATION_HAS_COLLEGES",
+    });
+
+    await expect(
+      archiveCollege(
+        superAdmin,
+        college.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "COLLEGE_HAS_DEPENDENCIES",
+      usage: expect.objectContaining({
+        departments: 1,
+      }),
+    });
+
+    await archiveDepartment(
+      superAdmin,
+      department.id,
+    );
+
+    await expect(
+      archiveCollege(
+        superAdmin,
+        college.id,
+      ),
+    ).resolves.toMatchObject({
+      id: college.id,
+      status: "ARCHIVED",
+    });
+
+    await expect(
+      archiveOrganization(
+        superAdmin,
+        organization.id,
+      ),
+    ).resolves.toMatchObject({
+      id: organization.id,
+      status: "ARCHIVED",
     });
   });
 
@@ -226,6 +268,26 @@ describe("core admin domains against PostgreSQL", () => {
         name: "Cross Tenant Department",
       }),
     ).rejects.toBeInstanceOf(AuthorizationError);
+
+    await expect(
+      archiveCollege(
+        seededCollegeAdmin,
+        SEED_IDS.collegeA,
+        async () => ({
+          memberships: 0,
+          departments: 0,
+          academicPeriods: 0,
+          projectTemplateAssignments: 0,
+          projects: 0,
+          placementRelationships: 0,
+          placementSeasons: 0,
+          placementJobs: 0,
+          tenantDomains: 0,
+        }),
+      ),
+    ).rejects.toBeInstanceOf(
+      AuthorizationError,
+    );
   });
 
   it("returns domain conflicts for case-insensitive duplicates", async () => {

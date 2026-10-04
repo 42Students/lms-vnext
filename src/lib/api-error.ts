@@ -6,6 +6,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { DepartmentHasDependenciesError } from "@/modules/departments/archive-policy";
 import { DepartmentServiceError } from "@/modules/departments/service";
 import { OrganizationServiceError } from "@/modules/organizations/service";
+import { CollegeHasDependenciesError } from "@/modules/colleges/archive-policy";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { PeopleServiceError } from "@/modules/people/errors";
 import { TenantDomainServiceError } from "@/modules/tenant-domains/service";
@@ -88,6 +89,20 @@ export function apiErrorResponse(error: unknown) {
     return NextResponse.json(
       { error: error.code },
       { status },
+    );
+  }
+
+  if (
+    error instanceof
+    CollegeHasDependenciesError
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          "COLLEGE_HAS_DEPENDENCIES",
+        usage: error.usage,
+      },
+      { status: 409 },
     );
   }
 

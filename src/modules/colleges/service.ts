@@ -1,6 +1,25 @@
-import { and, asc, eq, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  eq,
+  isNull,
+  ne,
+  sql,
+} from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { colleges, organizations } from "@/db/schema";
+import {
+  academicPeriods,
+  collegeMemberships,
+  colleges,
+  departments,
+  organizations,
+  placementCompanyRelationships,
+  placementJobs,
+  placementSeasons,
+  projectInstances,
+  projectTemplateCollegeAssignments,
+  tenantDomains,
+} from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   hasMembershipRole,
@@ -10,6 +29,10 @@ import {
   AuthorizationError,
   requirePermission,
 } from "@/modules/permissions/policy";
+import {
+  assertCollegeCanArchive,
+  type CollegeUsage,
+} from "./archive-policy";
 import {
   collegeIdSchema,
   collegeOrganizationIdSchema,
@@ -240,6 +263,200 @@ export async function listColleges(
     .limit(1);
 }
 
+export async function resolveCollegeUsage(
+  collegeId: string,
+): Promise<CollegeUsage> {
+  const db = getDb();
+
+  const [
+    membershipRows,
+    departmentRows,
+    academicPeriodRows,
+    templateAssignmentRows,
+    projectRows,
+    placementRelationshipRows,
+    placementSeasonRows,
+    placementJobRows,
+    tenantDomainRows,
+  ] = await Promise.all([
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(collegeMemberships)
+      .where(
+        and(
+          eq(
+            collegeMemberships.collegeId,
+            collegeId,
+          ),
+          ne(
+            collegeMemberships.status,
+            "ENDED",
+          ),
+        ),
+      ),
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(departments)
+      .where(
+        and(
+          eq(departments.collegeId, collegeId),
+          isNull(departments.archivedAt),
+        ),
+      ),
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(academicPeriods)
+      .where(
+        and(
+          eq(
+            academicPeriods.collegeId,
+            collegeId,
+          ),
+          ne(
+            academicPeriods.status,
+            "CLOSED",
+          ),
+        ),
+      ),
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(
+        projectTemplateCollegeAssignments,
+      )
+      .where(
+        and(
+          eq(
+            projectTemplateCollegeAssignments.collegeId,
+            collegeId,
+          ),
+          isNull(
+            projectTemplateCollegeAssignments.revokedAt,
+          ),
+        ),
+      ),
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(projectInstances)
+      .where(
+        and(
+          eq(
+            projectInstances.collegeId,
+            collegeId,
+          ),
+          ne(
+            projectInstances.status,
+            "ARCHIVED",
+          ),
+        ),
+      ),
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(
+        placementCompanyRelationships,
+      )
+      .where(
+        and(
+          eq(
+            placementCompanyRelationships.collegeId,
+            collegeId,
+          ),
+          eq(
+            placementCompanyRelationships.status,
+            "ACTIVE",
+          ),
+        ),
+      ),
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(placementSeasons)
+      .where(
+        and(
+          eq(
+            placementSeasons.collegeId,
+            collegeId,
+          ),
+          eq(
+            placementSeasons.status,
+            "ACTIVE",
+          ),
+        ),
+      ),
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(placementJobs)
+      .where(
+        and(
+          eq(
+            placementJobs.collegeId,
+            collegeId,
+          ),
+          ne(
+            placementJobs.status,
+            "ARCHIVED",
+          ),
+        ),
+      ),
+    db
+      .select({
+        count: sql<number>`count(*)::int`,
+      })
+      .from(tenantDomains)
+      .where(
+        eq(
+          tenantDomains.collegeId,
+          collegeId,
+        ),
+      ),
+  ]);
+
+  return {
+    memberships: Number(
+      membershipRows[0]?.count ?? 0,
+    ),
+    departments: Number(
+      departmentRows[0]?.count ?? 0,
+    ),
+    academicPeriods: Number(
+      academicPeriodRows[0]?.count ?? 0,
+    ),
+    projectTemplateAssignments: Number(
+      templateAssignmentRows[0]?.count ?? 0,
+    ),
+    projects: Number(
+      projectRows[0]?.count ?? 0,
+    ),
+    placementRelationships: Number(
+      placementRelationshipRows[0]?.count ??
+        0,
+    ),
+    placementSeasons: Number(
+      placementSeasonRows[0]?.count ?? 0,
+    ),
+    placementJobs: Number(
+      placementJobRows[0]?.count ?? 0,
+    ),
+    tenantDomains: Number(
+      tenantDomainRows[0]?.count ?? 0,
+    ),
+  };
+}
+
 export async function createCollege(
   context: RequestContext,
   rawInput: CreateCollegeInput,
@@ -306,4 +523,64 @@ export async function updateCollege(
   }
 
   return updated;
+}
+
+
+export async function archiveCollege(
+  context: RequestContext,
+  collegeIdInput: string,
+  resolveUsage: (
+    collegeId: string,
+  ) => Promise<CollegeUsage> =
+    resolveCollegeUsage,
+) {
+  const collegeId =
+    collegeIdSchema.parse(collegeIdInput);
+  const college =
+    await loadActiveCollege(collegeId);
+
+  if (!isSuperAdmin(context)) {
+    throw new AuthorizationError(
+      "college.manage",
+    );
+  }
+
+  requirePermission(context, "college.manage", {
+    organizationId:
+      college.organizationId,
+    collegeId: college.id,
+  });
+
+  const usage = await resolveUsage(collegeId);
+  assertCollegeCanArchive(usage);
+
+  const archivedAt = new Date();
+  const [archived] = await getDb()
+    .update(colleges)
+    .set({
+      status: "ARCHIVED",
+      updatedAt: archivedAt,
+    })
+    .where(
+      and(
+        eq(colleges.id, collegeId),
+        eq(colleges.status, "ACTIVE"),
+      ),
+    )
+    .returning({
+      id: colleges.id,
+      organizationId:
+        colleges.organizationId,
+      name: colleges.name,
+      code: colleges.code,
+      status: colleges.status,
+    });
+
+  if (!archived) {
+    throw new CollegeServiceError(
+      "COLLEGE_NOT_FOUND",
+    );
+  }
+
+  return archived;
 }

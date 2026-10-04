@@ -1,5 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeCreateForm } from "@/components/admin/college-create-form";
+import { CollegeArchiveButton } from "@/components/admin/college-archive-button";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import {
   DataTable,
@@ -47,7 +48,15 @@ const columns: DataTableColumn<CollegeRow>[] = [
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
     cell: (college) => (
-      <CollegeEditDialog college={college} />
+      <div className="flex justify-end gap-2">
+        <CollegeEditDialog
+          college={college}
+        />
+        <CollegeArchiveButton
+          collegeId={college.id}
+          name={college.name}
+        />
+      </div>
     ),
   },
 ];
