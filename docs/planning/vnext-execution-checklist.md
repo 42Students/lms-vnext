@@ -212,11 +212,11 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] POST API
 - [x] PATCH API
 - [x] unit tests
-- [~] archive API intentionally deferred
-- [ ] real programs dependency count
-- [ ] real faculty dependency count
-- [ ] real courses dependency count
-- [ ] archive API after dependencies exist
+- [x] archive API with server-side dependency guard
+- [x] real programs dependency count
+- [x] real faculty dependency count
+- [x] real courses dependency count
+- [x] archive API after dependencies exist
 - [x] Departments UI
 - [ ] department E2E flow
 - [x] DB integration tests
@@ -289,7 +289,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] role mutation tests
 - [x] API routes
 - [x] UI controls
-- [ ] future activity event
+- [x] activity event
 
 ---
 
@@ -306,7 +306,7 @@ Do not implement archive until downstream dependency rules are understood.
 - [x] API routes
 - [x] tests
 - [x] UI controls
-- [ ] future activity event
+- [x] activity event
 
 ---
 
@@ -570,25 +570,27 @@ The core PostgreSQL acceptance rehearsal is green. Browser login/E2E remains blo
 - [x] evaluation config — atomic idempotent round-plan replacement over the canonical round model; locks once execution starts
 - [x] drive day — tenant-safe operational command center with candidate progression, round readiness and attention queues
 - [x] TPO operations — cross-job prioritized work queue, upcoming rounds and operational metrics
-- [~] HR operations — external recruiter identity boundary confirmed from architecture + legacy safety model; schema/session implementation pending generated migration
+- [x] HR operations — canonical recruiter identity/profile, exact college-employer grants, privacy-safe recruiter workspace and staged-result workflow
 - [x] greenfield decision: no legacy placement data migration required
-- [~] tests — placement domain coverage plus learner/TPO end-to-end browser acceptance are CI-green; remaining HR browser acceptance pending
-- [~] UI — learner journey/preferences/academic-evidence/opportunity workspace plus manager opportunity creation + draft editing with program/cohort + numeric eligibility targeting, employer reuse/create + college-private trust/owner/archive CRM controls, on-demand eligibility review/reasoned overrides, college-verified candidate evidence, publish/close/archive lifecycle, command center, screening decisions, evaluation-plan editing, round scheduling/lifecycle and staged/applied result controls implemented; HR surfaces pending
+- [ ] canonical multi-role drive / role-option aggregate
+- [ ] learner requests/exceptions with atomic approved effects
+- [x] tests — placement domain coverage plus learner/TPO/recruiter browser acceptance are CI-green
+- [~] UI — learner, manager and recruiter/HR operational surfaces are implemented; multi-role drive options and learner requests/exceptions remain before Placements can be declared fully closed
 
 ---
 
 # Z. Activity / notifications / analytics
 
-- [ ] activity event schema
-- [ ] domain event recording helper
-- [ ] meaningful event taxonomy
-- [ ] activity center queries
-- [ ] filters
-- [ ] grouping/noise reduction
-- [ ] notification model
-- [ ] notification delivery
-- [ ] analytics queries
-- [ ] performance review before adding new infra
+- [x] activity event schema
+- [x] domain event recording helper with transaction-aware writer
+- [x] meaningful event taxonomy
+- [x] activity center queries
+- [x] filters
+- [x] grouping/noise reduction
+- [x] notification model
+- [x] notification delivery with placement offer issuance wired transactionally
+- [x] PostgreSQL-first season placement funnel analytics
+- [x] performance review: existing season/job/application/offer indexes support current funnel queries; retain PostgreSQL and add no Redis/analytics datastore yet
 
 ---
 
