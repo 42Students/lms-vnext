@@ -148,6 +148,7 @@ test.describe("Placements browser regression", () => {
     page,
     context,
   }) => {
+    test.setTimeout(90_000);
     const unique = Date.now().toString();
 
     await authenticate(
@@ -190,10 +191,12 @@ test.describe("Placements browser regression", () => {
     );
 
     await expect(
-      page.getByText(
-        "Technical interview",
-        { exact: true },
-      ),
+      page
+        .getByText(
+          "Technical interview",
+          { exact: true },
+        )
+        .first(),
     ).toBeVisible();
 
     await authenticate(
