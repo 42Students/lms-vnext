@@ -3,6 +3,7 @@ import {
   asc,
   eq,
   ilike,
+  inArray,
   isNull,
   or,
 } from "drizzle-orm";
@@ -12,6 +13,8 @@ import {
   membershipRoles,
   placementCompanies,
   placementCompanyRelationships,
+  placementJobs,
+  users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
@@ -138,6 +141,87 @@ export async function listPlacementCompanies(
       ),
     )
     .orderBy(asc(placementCompanies.name));
+}
+
+export async function listPlacementRelationshipOwners(
+  context: RequestContext,
+  collegeIdInput: string,
+) {
+  const collegeId =
+    createPlacementCompanyInputSchema.shape.collegeId.parse(
+      collegeIdInput,
+    );
+  await requirePlacementManageScope(
+    context,
+    collegeId,
+  );
+
+  const rows = await getDb()
+    .select({
+      membershipId: collegeMemberships.id,
+      displayName: users.displayName,
+      email: users.email,
+      role: membershipRoles.role,
+    })
+    .from(collegeMemberships)
+    .innerJoin(
+      membershipRoles,
+      eq(
+        membershipRoles.membershipId,
+        collegeMemberships.id,
+      ),
+    )
+    .innerJoin(
+      users,
+      eq(users.id, collegeMemberships.userId),
+    )
+    .where(
+      and(
+        eq(
+          collegeMemberships.collegeId,
+          collegeId,
+        ),
+        eq(
+          collegeMemberships.status,
+          "ACTIVE",
+        ),
+        inArray(membershipRoles.role, [
+          "TPO",
+          "COLLEGE_ADMIN",
+        ]),
+      ),
+    )
+    .orderBy(asc(users.displayName));
+
+  const owners = new Map<
+    string,
+    {
+      membershipId: string;
+      displayName: string | null;
+      email: string | null;
+      roles: string[];
+    }
+  >();
+
+  for (const row of rows) {
+    const current = owners.get(
+      row.membershipId,
+    );
+    if (current) {
+      if (!current.roles.includes(row.role)) {
+        current.roles.push(row.role);
+      }
+      continue;
+    }
+    owners.set(row.membershipId, {
+      membershipId: row.membershipId,
+      displayName: row.displayName,
+      email: row.email,
+      roles: [row.role],
+    });
+  }
+
+  return [...owners.values()];
 }
 
 export async function createPlacementCompany(
@@ -330,6 +414,26 @@ export async function archivePlacementCompanyRelationship(
 
   if (current.relationship.status === "ARCHIVED") {
     return current;
+  }
+
+  const [dependentJob] = await getDb()
+    .select({ id: placementJobs.id })
+    .from(placementJobs)
+    .where(
+      and(
+        eq(
+          placementJobs.companyRelationshipId,
+          relationshipId,
+        ),
+        isNull(placementJobs.archivedAt),
+      ),
+    )
+    .limit(1);
+
+  if (dependentJob) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_COMPANY_RELATIONSHIP_HAS_JOBS",
+    );
   }
 
   const now = new Date();

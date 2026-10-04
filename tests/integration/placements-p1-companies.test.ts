@@ -13,8 +13,13 @@ import {
   archivePlacementCompanyRelationship,
   createPlacementCompany,
   listPlacementCompanies,
+  listPlacementRelationshipOwners,
   updatePlacementCompanyRelationship,
 } from "@/modules/placements/company-service";
+import {
+  archivePlacementJob,
+  createPlacementJob,
+} from "@/modules/placements/job-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -82,6 +87,9 @@ const scopedSuperAdminB: RequestContext = {
 };
 
 async function cleanup() {
+  await pool.query(
+    "delete from placement_jobs",
+  );
   await pool.query(
     "delete from placement_company_relationships",
   );
@@ -183,6 +191,82 @@ describe("Placements P1 companies and employer relationships", () => {
         name: "Cross College",
       }),
     ).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
+  it("lists valid relationship owners and blocks employer archive while jobs still depend on it", async () => {
+    await expect(
+      listPlacementRelationshipOwners(
+        tpo,
+        SEED_IDS.collegeA,
+      ),
+    ).resolves.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          membershipId:
+            SEED_IDS.facultyCollegeAMembership,
+          roles: expect.arrayContaining([
+            "TPO",
+          ]),
+        }),
+        expect.objectContaining({
+          membershipId:
+            SEED_IDS.collegeAdminMembership,
+          roles: expect.arrayContaining([
+            "COLLEGE_ADMIN",
+          ]),
+        }),
+      ]),
+    );
+
+    const created = await createPlacementCompany(
+      tpo,
+      {
+        collegeId: SEED_IDS.collegeA,
+        name: "Archive Guard Employer",
+        primaryDomain:
+          "archive-guard.example",
+      },
+    );
+    const job = await createPlacementJob(
+      tpo,
+      {
+        collegeId: SEED_IDS.collegeA,
+        companyRelationshipId:
+          created.relationship.id,
+        title: "Archive Guard Role",
+        description:
+          "Relationship must remain active while this job exists.",
+        employmentType: "FULL_TIME",
+        workMode: "ONSITE",
+        applicationMode: "INTERNAL",
+      },
+    );
+
+    await expect(
+      archivePlacementCompanyRelationship(
+        tpo,
+        created.relationship.id,
+      ),
+    ).rejects.toMatchObject({
+      code:
+        "PLACEMENT_COMPANY_RELATIONSHIP_HAS_JOBS",
+    });
+
+    await archivePlacementJob(
+      tpo,
+      job.id,
+    );
+
+    await expect(
+      archivePlacementCompanyRelationship(
+        tpo,
+        created.relationship.id,
+      ),
+    ).resolves.toMatchObject({
+      relationship: {
+        status: "ARCHIVED",
+      },
+    });
   });
 
   it("supports tenant-private trust and owner state without mutating canonical identity", async () => {

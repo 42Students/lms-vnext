@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { PlacementOperationsOverview } from "@/components/placements/placement-operations-overview";
+import { PlacementOperationsWorkspace } from "@/components/placements/placement-operations-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
-import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 
 export default async function TpoPlacementsPage() {
   const context = await getCurrentRequestContext();
@@ -14,11 +13,6 @@ export default async function TpoPlacementsPage() {
   ) {
     redirect("/dashboard");
   }
-  const operations =
-    await getPlacementTpoOperations(
-      context,
-      context.membership.collegeId,
-    );
   return (
     <div className="space-y-6">
       <PageHeader
@@ -34,8 +28,9 @@ export default async function TpoPlacementsPage() {
           </Link>
         }
       />
-      <PlacementOperationsOverview
-        operations={operations}
+      <PlacementOperationsWorkspace
+        context={context}
+        collegeId={context.membership.collegeId}
         basePath="/tpo/placements"
       />
     </div>

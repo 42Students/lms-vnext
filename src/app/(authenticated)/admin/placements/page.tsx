@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { PlacementOperationsOverview } from "@/components/placements/placement-operations-overview";
+import { PlacementOperationsWorkspace } from "@/components/placements/placement-operations-workspace";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 
 export default async function AdminPlacementsPage() {
   const context = await getCurrentRequestContext();
@@ -24,11 +23,6 @@ export default async function AdminPlacementsPage() {
       </div>
     );
   }
-  const operations =
-    await getPlacementTpoOperations(
-      context,
-      collegeId,
-    );
   return (
     <div className="space-y-6">
       <PageHeader
@@ -44,8 +38,9 @@ export default async function AdminPlacementsPage() {
           </Link>
         }
       />
-      <PlacementOperationsOverview
-        operations={operations}
+      <PlacementOperationsWorkspace
+        context={context}
+        collegeId={collegeId}
         basePath="/admin/placements"
       />
     </div>
