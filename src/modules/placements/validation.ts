@@ -756,6 +756,35 @@ export type ReorderPlacementRoundsInput =
   >;
 
 
+export const placementEvaluationConfigRoundSchema =
+  z
+    .object({
+      id: placementRoundIdSchema,
+      ...placementRoundDefinitionFields,
+    })
+    .strict();
+
+export const placementEvaluationConfigInputSchema =
+  z
+    .object({
+      rounds: z
+        .array(placementEvaluationConfigRoundSchema)
+        .max(50)
+        .refine(
+          (rounds) =>
+            new Set(rounds.map((round) => round.id)).size ===
+            rounds.length,
+          "Round IDs must be unique",
+        ),
+    })
+    .strict();
+
+export type PlacementEvaluationConfigInput =
+  z.input<
+    typeof placementEvaluationConfigInputSchema
+  >;
+
+
 export const placementResultIdSchema =
   z.string().uuid();
 
