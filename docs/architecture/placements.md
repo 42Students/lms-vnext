@@ -98,6 +98,8 @@ One canonical drive root represents an employer hiring process. One drive may ex
 
 The learner-facing Jobs surface is a view over eligible published role opportunities; it is not a second job data model.
 
+Current vNext implementation keeps `placement_jobs` as the durable drive root and compatibility projection for the primary role, while `placement_job_role_options` stores the exact active/archived role options. Creating a drive creates one primary role atomically, draft edits keep that primary role synchronized, and additional roles are managed independently before publish. Every application stores an exact `role_option_id`; the legacy no-role apply shape remains compatible only when a drive has exactly one active role. Eligibility and round configuration stay drive-scoped, while screening, results, offers and learner timelines retain application/role identity.
+
 A drive owns:
 
 - company relationship
