@@ -191,6 +191,72 @@ export type CandidatePreferencesInput = z.input<
 >;
 
 
+export const placementSeasonIdSchema =
+  z.string().uuid();
+
+const placementCalendarDateSchema = z
+  .string()
+  .regex(
+    /^\d{4}-\d{2}-\d{2}$/,
+    "Use YYYY-MM-DD",
+  )
+  .refine((value) => {
+    const parsed = new Date(
+      value + "T00:00:00Z",
+    );
+    return (
+      !Number.isNaN(parsed.getTime()) &&
+      parsed
+        .toISOString()
+        .slice(0, 10) === value
+    );
+  }, "Use a valid calendar date");
+
+export const createPlacementSeasonInputSchema =
+  z
+    .object({
+      collegeId: z.string().uuid(),
+      name: z
+        .string()
+        .trim()
+        .min(2)
+        .max(160),
+      code: z
+        .string()
+        .trim()
+        .min(2)
+        .max(64),
+      startDate:
+        placementCalendarDateSchema,
+      endDate:
+        placementCalendarDateSchema,
+    })
+    .strict()
+    .superRefine((value, ctx) => {
+      if (
+        value.endDate < value.startDate
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["endDate"],
+          message:
+            "Season end date must be on or after the start date",
+        });
+      }
+    });
+
+export const placementSeasonActionInputSchema =
+  z
+    .object({
+      action: z.literal("CLOSE"),
+    })
+    .strict();
+
+export type CreatePlacementSeasonInput =
+  z.input<
+    typeof createPlacementSeasonInputSchema
+  >;
+
 export const placementJobIdSchema = z.string().uuid();
 
 export const placementJobStatuses = [
@@ -217,6 +283,10 @@ const optionalHttpUrlSchema = httpUrlSchema.nullable().optional();
 const placementJobFieldsSchema = z
   .object({
     collegeId: z.string().uuid(),
+    seasonId: z
+      .string()
+      .uuid()
+      .optional(),
     companyRelationshipId: z.string().uuid(),
     title: z.string().trim().min(2).max(200),
     description: z.string().trim().min(1).max(20_000),
@@ -262,6 +332,7 @@ export const updatePlacementJobInputSchema =
   placementJobFieldsSchema
     .omit({
       collegeId: true,
+      seasonId: true,
       companyRelationshipId: true,
     })
     .partial()

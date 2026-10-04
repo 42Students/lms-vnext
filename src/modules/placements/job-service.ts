@@ -4,9 +4,13 @@ import {
   placementCompanyRelationships,
   placementCompanies,
   placementJobs,
+  placementSeasons,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
+import {
+  requirePlacementJobSeasonActive,
+} from "./season-service";
 import { requirePlacementManageScope } from "./scope";
 import {
   createPlacementJobInputSchema,
@@ -75,8 +79,23 @@ export async function listPlacementJobs(
     .select({
       job: placementJobs,
       company: placementCompanies,
+      season: {
+        id: placementSeasons.id,
+        name: placementSeasons.name,
+        code: placementSeasons.code,
+        status: placementSeasons.status,
+        startDate: placementSeasons.startDate,
+        endDate: placementSeasons.endDate,
+      },
     })
     .from(placementJobs)
+    .innerJoin(
+      placementSeasons,
+      eq(
+        placementSeasons.id,
+        placementJobs.seasonId,
+      ),
+    )
     .innerJoin(
       placementCompanyRelationships,
       eq(
@@ -121,28 +140,75 @@ export async function createPlacementJob(
     input.collegeId,
     input.companyRelationshipId,
   );
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const seasonConditions = [
+      eq(
+        placementSeasons.collegeId,
+        input.collegeId,
+      ),
+      eq(
+        placementSeasons.status,
+        "ACTIVE",
+      ),
+    ];
+    if (input.seasonId) {
+      seasonConditions.push(
+        eq(
+          placementSeasons.id,
+          input.seasonId,
+        ),
+      );
+    }
 
-  const [job] = await getDb()
-    .insert(placementJobs)
-    .values({
-      collegeId: input.collegeId,
-      companyRelationshipId: input.companyRelationshipId,
-      title: input.title,
-      description: input.description,
-      employmentType: input.employmentType,
-      workMode: input.workMode,
-      locations: input.locations,
-      openings: input.openings ?? null,
-      minimumAnnualCtcInr: input.minimumAnnualCtcInr ?? null,
-      maximumAnnualCtcInr: input.maximumAnnualCtcInr ?? null,
-      applicationMode: input.applicationMode,
-      externalApplicationUrl: input.externalApplicationUrl ?? null,
-      applicationDeadline: input.applicationDeadline ?? null,
-      createdByUserId: context.user.id,
-    })
-    .returning();
+    const [season] = await tx
+      .select({
+        id: placementSeasons.id,
+      })
+      .from(placementSeasons)
+      .where(and(...seasonConditions))
+      .for("update")
+      .limit(1);
 
-  return job;
+    if (!season) {
+      throw new PlacementsServiceError(
+        input.seasonId
+          ? "PLACEMENT_SEASON_NOT_ACTIVE"
+          : "PLACEMENT_SEASON_REQUIRED",
+      );
+    }
+
+    const [job] = await tx
+      .insert(placementJobs)
+      .values({
+        collegeId: input.collegeId,
+        seasonId: season.id,
+        companyRelationshipId:
+          input.companyRelationshipId,
+        title: input.title,
+        description: input.description,
+        employmentType:
+          input.employmentType,
+        workMode: input.workMode,
+        locations: input.locations,
+        openings: input.openings ?? null,
+        minimumAnnualCtcInr:
+          input.minimumAnnualCtcInr ?? null,
+        maximumAnnualCtcInr:
+          input.maximumAnnualCtcInr ?? null,
+        applicationMode:
+          input.applicationMode,
+        externalApplicationUrl:
+          input.externalApplicationUrl ?? null,
+        applicationDeadline:
+          input.applicationDeadline ?? null,
+        createdByUserId:
+          context.user.id,
+      })
+      .returning();
+
+    return job;
+  });
 }
 
 export async function updatePlacementJob(
@@ -154,6 +220,10 @@ export async function updatePlacementJob(
   const input = updatePlacementJobInputSchema.parse(rawInput);
   const current = await loadJob(jobId);
   await requirePlacementManageScope(context, current.collegeId);
+
+  await requirePlacementJobSeasonActive(
+    current,
+  );
 
   if (current.status !== "DRAFT") {
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
@@ -206,6 +276,10 @@ export async function publishPlacementJob(
   const current = await loadJob(jobId);
   await requirePlacementManageScope(context, current.collegeId);
 
+  await requirePlacementJobSeasonActive(
+    current,
+  );
+
   if (current.status !== "DRAFT") {
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_PUBLISHABLE");
   }
@@ -241,6 +315,10 @@ export async function closePlacementJob(
   const jobId = placementJobIdSchema.parse(jobIdInput);
   const current = await loadJob(jobId);
   await requirePlacementManageScope(context, current.collegeId);
+
+  await requirePlacementJobSeasonActive(
+    current,
+  );
 
   if (current.status !== "PUBLISHED") {
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");

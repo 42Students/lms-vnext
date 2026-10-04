@@ -210,6 +210,31 @@ async function upsertCoreSeed(client: PoolClient) {
   }
 
   await client.query(
+    `INSERT INTO placement_seasons
+       (id, college_id, name, code, start_date, end_date, status, created_by_user_id)
+     VALUES
+       ($1, $3, 'Seed 2026-27 Placements', 'SEED-2026-27-A', '2026-07-01', '2027-06-30', 'ACTIVE', $5),
+       ($2, $4, 'Seed 2026-27 Placements', 'SEED-2026-27-B', '2026-07-01', '2027-06-30', 'ACTIVE', $5)
+     ON CONFLICT (id) DO UPDATE
+     SET college_id = EXCLUDED.college_id,
+         name = EXCLUDED.name,
+         code = EXCLUDED.code,
+         start_date = EXCLUDED.start_date,
+         end_date = EXCLUDED.end_date,
+         status = 'ACTIVE',
+         closed_by_user_id = null,
+         closed_at = null,
+         updated_at = now()`,
+    [
+      ids.placementSeasonA,
+      ids.placementSeasonB,
+      ids.collegeA,
+      ids.collegeB,
+      ids.collegeAdminUser,
+    ],
+  );
+
+  await client.query(
     `INSERT INTO system_roles (id, user_id, role)
      VALUES ($1, $2, 'SUPER_ADMIN')
      ON CONFLICT (user_id, role) DO NOTHING`,

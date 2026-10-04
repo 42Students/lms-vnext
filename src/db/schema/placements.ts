@@ -318,6 +318,94 @@ export const placementCandidatePreferences = pgTable(
 );
 
 
+export const placementSeasons = pgTable(
+  "placement_seasons",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, {
+        onDelete: "restrict",
+      }),
+    name: text("name").notNull(),
+    code: varchar("code", { length: 64 }).notNull(),
+    startDate: date("start_date", {
+      mode: "string",
+    }).notNull(),
+    endDate: date("end_date", {
+      mode: "string",
+    }).notNull(),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("ACTIVE"),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    closedByUserId: uuid("closed_by_user_id").references(
+      () => users.id,
+      { onDelete: "restrict" },
+    ),
+    closedAt: timestamp("closed_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "placement_seasons_college_code_uq",
+    ).on(
+      table.collegeId,
+      sql`lower(${table.code})`,
+    ),
+    uniqueIndex(
+      "placement_seasons_active_college_uq",
+    )
+      .on(table.collegeId)
+      .where(
+        sql`${table.status} = 'ACTIVE'`,
+      ),
+    index(
+      "placement_seasons_college_status_idx",
+    ).on(
+      table.collegeId,
+      table.status,
+      table.startDate,
+    ),
+    check(
+      "placement_seasons_name_ck",
+      sql`length(trim(${table.name})) > 0 and length(trim(${table.code})) > 0`,
+    ),
+    check(
+      "placement_seasons_dates_ck",
+      sql`${table.endDate} >= ${table.startDate}`,
+    ),
+    check(
+      "placement_seasons_status_ck",
+      sql`${table.status} in ('ACTIVE', 'CLOSED')`,
+    ),
+    check(
+      "placement_seasons_lifecycle_ck",
+      sql`(${table.status} = 'ACTIVE'
+          and ${table.closedByUserId} is null
+          and ${table.closedAt} is null)
+        or (${table.status} = 'CLOSED'
+          and ${table.closedByUserId} is not null
+          and ${table.closedAt} is not null)`,
+    ),
+  ],
+);
+
 export const placementJobs = pgTable(
   "placement_jobs",
   {
@@ -325,6 +413,11 @@ export const placementJobs = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
+    seasonId: uuid("season_id")
+      .notNull()
+      .references(() => placementSeasons.id, {
+        onDelete: "restrict",
+      }),
     companyRelationshipId: uuid("company_relationship_id")
       .notNull()
       .references(() => placementCompanyRelationships.id, {
@@ -368,6 +461,10 @@ export const placementJobs = pgTable(
   (table) => [
     index("placement_jobs_college_status_idx").on(
       table.collegeId,
+      table.status,
+    ),
+    index("placement_jobs_season_status_idx").on(
+      table.seasonId,
       table.status,
     ),
     index("placement_jobs_relationship_idx").on(

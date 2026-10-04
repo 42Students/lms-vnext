@@ -5,9 +5,11 @@ import {
 } from "@/modules/placements/company-service";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { listPlacementRecruiterGrants } from "@/modules/placements/recruiter-service";
+import { listPlacementSeasons } from "@/modules/placements/season-service";
 import { PlacementEmployerRelationships } from "./placement-employer-relationships";
 import { PlacementRecruiterAccess } from "./placement-recruiter-access";
 import { PlacementOperationsOverview } from "./placement-operations-overview";
+import { PlacementSeasonManager } from "./placement-season-manager";
 
 export async function PlacementOperationsWorkspace({
   context,
@@ -23,6 +25,7 @@ export async function PlacementOperationsWorkspace({
     relationships,
     owners,
     recruiterGrants,
+    seasons,
   ] = await Promise.all([
     getPlacementTpoOperations(
       context,
@@ -40,6 +43,10 @@ export async function PlacementOperationsWorkspace({
       context,
       collegeId,
     ),
+    listPlacementSeasons(
+      context,
+      collegeId,
+    ),
   ]);
 
   return (
@@ -47,6 +54,20 @@ export async function PlacementOperationsWorkspace({
       <PlacementOperationsOverview
         operations={operations}
         basePath={basePath}
+      />
+      <PlacementSeasonManager
+        collegeId={collegeId}
+        seasons={seasons.map((season) => ({
+          id: season.id,
+          name: season.name,
+          code: season.code,
+          startDate: season.startDate,
+          endDate: season.endDate,
+          status:
+            season.status as
+              | "ACTIVE"
+              | "CLOSED",
+        }))}
       />
       <PlacementEmployerRelationships
         relationships={relationships.map(

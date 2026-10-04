@@ -274,6 +274,15 @@ export async function decidePlacementScreening(
     current.job.collegeId,
   );
 
+  if (
+    current.job.status === "CLOSED" ||
+    current.job.status === "ARCHIVED"
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_JOB_READ_ONLY",
+    );
+  }
+
   if (current.application.status !== "SUBMITTED") {
     throw new PlacementsServiceError(
       "PLACEMENT_SCREENING_APPLICATION_INACTIVE",

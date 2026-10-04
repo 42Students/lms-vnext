@@ -4,6 +4,7 @@ import { listCohorts } from "@/modules/academics/cohort-service";
 import { listPrograms } from "@/modules/academics/program-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { listPlacementCompanies } from "@/modules/placements/company-service";
+import { listPlacementSeasons } from "@/modules/placements/season-service";
 
 export async function PlacementJobCreateWorkspace({
   context,
@@ -16,13 +17,17 @@ export async function PlacementJobCreateWorkspace({
   eyebrow: string;
   basePath: string;
 }) {
-  const [companies, programs] =
+  const [companies, programs, seasons] =
     await Promise.all([
       listPlacementCompanies(
         context,
         collegeId,
       ),
       listPrograms(
+        context,
+        collegeId,
+      ),
+      listPlacementSeasons(
         context,
         collegeId,
       ),
@@ -47,6 +52,13 @@ export async function PlacementJobCreateWorkspace({
       />
       <PlacementJobCreateForm
         collegeId={collegeId}
+        activeSeason={
+          seasons.find(
+            (season) =>
+              season.status ===
+              "ACTIVE",
+          ) ?? null
+        }
         basePath={basePath}
         academicOptions={{
           programs: programs.map(

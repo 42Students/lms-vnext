@@ -237,6 +237,15 @@ export async function stagePlacementRoundResult(
       },
     );
 
+  if (
+    job.status === "CLOSED" ||
+    job.status === "ARCHIVED"
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_JOB_READ_ONLY",
+    );
+  }
+
   if (!managerCanStage && !recruiterCanStage) {
     if (context.recruiter) {
       throw new AuthorizationError(
@@ -497,6 +506,15 @@ export async function applyPlacementRoundResult(
     context,
     current.job.collegeId,
   );
+
+  if (
+    current.job.status === "CLOSED" ||
+    current.job.status === "ARCHIVED"
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_JOB_READ_ONLY",
+    );
+  }
 
   if (current.result.status === "APPLIED") {
     return current.result;

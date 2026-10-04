@@ -25,6 +25,14 @@ export type PlacementAcademicTargetingChoice = {
   }>;
 };
 
+export type PlacementSeasonChoice = {
+  id: string;
+  name: string;
+  code: string;
+  startDate: string;
+  endDate: string;
+};
+
 export type PlacementCompanyChoice = {
   relationshipId: string;
   name: string;
@@ -101,11 +109,13 @@ function nullableInteger(
 
 export function PlacementJobCreateForm({
   collegeId,
+  activeSeason,
   companies,
   academicOptions,
   basePath,
 }: {
   collegeId: string;
+  activeSeason: PlacementSeasonChoice | null;
   companies: readonly PlacementCompanyChoice[];
   academicOptions: PlacementAcademicTargetingChoice;
   basePath: string;
@@ -162,6 +172,12 @@ export function PlacementJobCreateForm({
     setPending(true);
 
     try {
+      if (!activeSeason) {
+        throw new Error(
+          "Start an active placement season before creating an opportunity",
+        );
+      }
+
       const data = new FormData(
         event.currentTarget,
       );
@@ -226,6 +242,7 @@ export function PlacementJobCreateForm({
         "POST",
         {
           collegeId,
+          seasonId: activeSeason.id,
           companyRelationshipId:
             relationshipId,
           title: String(
@@ -417,6 +434,35 @@ export function PlacementJobCreateForm({
       onSubmit={submit}
       className="space-y-6"
     >
+      <section className="rounded-xl border border-border bg-surface">
+        <div className="border-b border-border px-5 py-4">
+          <h2 className="m-0 text-base font-semibold text-foreground">
+            Placement season
+          </h2>
+          <p className="mt-1 text-sm text-body">
+            Every drive belongs to the current operating season. Historical seasons remain read-only.
+          </p>
+        </div>
+        <div className="p-5">
+          {activeSeason ? (
+            <>
+              <p className="m-0 font-semibold text-foreground">
+                {activeSeason.name}
+              </p>
+              <p className="mt-1 text-sm text-body">
+                {activeSeason.code} ·{" "}
+                {activeSeason.startDate} to{" "}
+                {activeSeason.endDate}
+              </p>
+            </>
+          ) : (
+            <p className="m-0 text-sm font-semibold text-danger">
+              No active placement season. Start one from Placement Operations before creating a drive.
+            </p>
+          )}
+        </div>
+      </section>
+
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
           <h2 className="m-0 text-base font-semibold text-foreground">
@@ -915,7 +961,9 @@ export function PlacementJobCreateForm({
         </label>
         <Button
           type="submit"
-          disabled={pending}
+          disabled={
+            pending || !activeSeason
+          }
         >
           {pending
             ? "Creating…"
