@@ -235,7 +235,7 @@ test.describe("Core tenant browser acceptance", () => {
 
     await page.goto("/admin/organizations");
     await page
-      .getByLabel("Organization name")
+      .locator("#organization-name")
       .fill(organizationName);
     await page
       .getByRole("button", {
@@ -250,15 +250,15 @@ test.describe("Core tenant browser acceptance", () => {
 
     await page.goto("/admin/colleges");
     await page
-      .getByLabel("Organization")
+      .locator("#college-organization")
       .selectOption({
         label: organizationName,
       });
     await page
-      .getByLabel("College name")
+      .locator("#college-name")
       .fill(collegeName);
     await page
-      .getByLabel("Code")
+      .locator("#college-code")
       .fill(collegeCode);
     await page
       .getByRole("button", {
@@ -292,7 +292,7 @@ test.describe("Core tenant browser acceptance", () => {
 
     await page.goto("/admin/departments");
     await page
-      .getByLabel("Department name")
+      .locator("#department-name")
       .fill(superDepartment);
     await page
       .getByRole("button", {
@@ -339,7 +339,7 @@ test.describe("Core tenant browser acceptance", () => {
 
     await page.goto("/college/departments");
     await page
-      .getByLabel("Department name")
+      .locator("#department-name")
       .fill(adminDepartment);
     await page
       .getByRole("button", {
