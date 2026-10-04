@@ -53,7 +53,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | All Quizzes | `/learn/allQuizzes` | `/learn/quizzes` | Dedicated aggregate page, filtering/status/deep links. | DONE |
 | Standalone quiz attempt UX | `/quiz` | inline course quiz control | Question navigation/error/result parity still needs comparison. | PARTIAL |
 | Class Schedule | `/learn/calendar` | `/learn/calendar` | Course-aware Section schedule, Week/Month/Day navigation, filtering, today/next-three cues, learner-safe scope and mobile list fallback implemented; final browser/CI verification remains. | PARTIAL |
-| Attendance summary | `/learn/attendance` | none | Learner-wide attendance view missing. | MISSING |
+| Attendance summary | `/learn/attendance` | `/learn/attendance` | Overall + per-Course attendance, policy threshold, held/marked/unmarked semantics, month/course navigation, desktop/mobile records and tenant-safe learner scope are implemented; final executed CI/browser verification remains. | PARTIAL |
 | Placements dashboard | `/learn/my-placements` | `/learn/placements` | Core journey exists; legacy subnavigation and sections incomplete. | PARTIAL |
 | Applications | `/learn/my-placements/applications` | journey data | Dedicated applications worklist missing. | MISSING |
 | Assessments | `/learn/my-placements/assessments` | round data | Dedicated assessment queue/status missing. | MISSING |
