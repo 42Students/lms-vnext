@@ -114,6 +114,54 @@ function createIdentityDirectory(
 
 async function cleanupAcceptanceRows() {
   await pool.query(
+    `delete from in_app_notifications
+     where event_id in (
+       select ae.id
+       from activity_events ae
+       where ae.actor_user_id in (
+         select id
+         from users
+         where identity_uid like $1
+       )
+       or ae.actor_membership_id in (
+         select cm.id
+         from college_memberships cm
+         join users u on u.id = cm.user_id
+         where u.identity_uid like $1
+       )
+       or ae.subject_id in (
+         select cm.id::text
+         from college_memberships cm
+         join users u on u.id = cm.user_id
+         where u.identity_uid like $1
+       )
+     )`,
+    [`${identityPrefix}%`],
+  );
+
+  await pool.query(
+    `delete from activity_events
+     where actor_user_id in (
+       select id
+       from users
+       where identity_uid like $1
+     )
+     or actor_membership_id in (
+       select cm.id
+       from college_memberships cm
+       join users u on u.id = cm.user_id
+       where u.identity_uid like $1
+     )
+     or subject_id in (
+       select cm.id::text
+       from college_memberships cm
+       join users u on u.id = cm.user_id
+       where u.identity_uid like $1
+     )`,
+    [`${identityPrefix}%`],
+  );
+
+  await pool.query(
     `delete from learner_profiles
      where membership_id in (
        select cm.id
