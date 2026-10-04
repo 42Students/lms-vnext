@@ -34,7 +34,8 @@ export async function PlacementDriveWorkspace({
       rounds: evaluation.rounds.map((round) => ({
         id: round.id,
         sequence: round.sequence,
-        kind: round.kind,
+        kind:
+          round.kind as PlacementDriveControlData["evaluation"]["rounds"][number]["kind"],
         name: round.name,
         whatToBring: round.whatToBring,
         platform: round.platform,
@@ -45,7 +46,8 @@ export async function PlacementDriveWorkspace({
     },
     screening: screening.map((item) => ({
       applicationId: item.application.id,
-      status: item.screening.status,
+      status:
+        item.screening.status as PlacementDriveControlData["screening"][number]["status"],
       candidateMessage:
         item.screening.candidateMessage,
       internalReason:
@@ -59,13 +61,15 @@ export async function PlacementDriveWorkspace({
     rounds: driveDay.rounds.map((round) => ({
       id: round.id,
       sequence: round.sequence,
-      kind: round.kind,
+      kind:
+        round.kind as PlacementDriveControlData["rounds"][number]["kind"],
       name: round.name,
       status: round.status,
       scheduledAt:
         round.scheduledAt?.toISOString() ?? null,
       timezone: round.timezone,
-      mode: round.mode,
+      mode:
+        round.mode as PlacementDriveControlData["rounds"][number]["mode"],
       venue: round.venue,
       meetingUrl: round.meetingUrl,
       resultsDueAt:
@@ -82,13 +86,21 @@ export async function PlacementDriveWorkspace({
                 status:
                   participant.result.status,
                 outcome:
-                  participant.result.outcome,
+                  participant.result.outcome as PlacementDriveControlData["rounds"][number]["participants"][number]["result"] extends infer Result
+                    ? Result extends { outcome: infer Outcome }
+                      ? Outcome
+                      : never
+                    : never,
                 waitlistRank:
                   participant.result.waitlistRank,
                 scorePercent:
                   participant.result.scorePercent,
                 reasonCategory:
-                  participant.result.reasonCategory,
+                  participant.result.reasonCategory as PlacementDriveControlData["rounds"][number]["participants"][number]["result"] extends infer Result
+                    ? Result extends { reasonCategory: infer Category }
+                      ? Category
+                      : never
+                    : never,
                 candidateMessage:
                   participant.result.candidateMessage,
                 internalComment:
