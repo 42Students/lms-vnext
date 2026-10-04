@@ -481,29 +481,25 @@ test.describe("Placements browser regression", () => {
       true,
     );
 
-    const offerSection = page
-      .getByRole("heading", {
-        name: "Offers & joining",
-      })
-      .locator("..")
-      .locator("..");
-    await expect(offerSection).toBeVisible();
+    await page.reload();
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: title,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Offer ready", {
+        exact: true,
+      }),
+    ).toBeVisible();
 
-    const offerCandidate = offerSection
-      .locator("div")
-      .filter({ hasText: "Seed Learner" })
-      .filter({
-        has: page.getByRole("button", {
-          name: "Issue offer",
-        }),
-      })
-      .last();
-    await offerCandidate
+    await page
       .getByLabel(
         "Offer annual CTC for Seed Learner",
       )
       .fill("1200000");
-    await offerCandidate
+    await page
       .getByLabel(
         "Offer joining date for Seed Learner",
       )
@@ -521,7 +517,7 @@ test.describe("Placements browser regression", () => {
           response.request().method() ===
             "POST",
       );
-    await offerCandidate
+    await page
       .getByRole("button", {
         name: "Issue offer",
       })
