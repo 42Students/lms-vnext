@@ -61,7 +61,7 @@ Recent CI runs fail before any job steps start (no runner/steps). This is a veri
 Start Learner with `docs/parity/learner.md` as the closure contract:
 1. Class Schedule — close its schedule source, filters/navigation, session detail, loading/empty/error, timezone, authorization and mobile checks.
 2. Learner self Profile — use the explicit profile section/upload/edit checklist; do not treat a basic identity form as profile parity.
-3. Attendance/Course Attendance.
+3. Finish Attendance/Course Attendance browser/CI verification; implementation and reusable attendance foundation are committed.
 4. Course Discussions.
 5. Placement subpages + Career Calendar, including their documented modals/drawers/filters/actions.
 6. Exact Course and Project section parity.
