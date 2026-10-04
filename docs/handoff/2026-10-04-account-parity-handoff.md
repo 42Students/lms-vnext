@@ -36,13 +36,16 @@ Recent CI runs fail before any job steps start (no runner/steps). This is a veri
 ## Immediate implementation sequence
 
 Start Learner with surfaces already backed by vNext data:
-1. Global Assignments.
-2. Global Quizzes.
-3. Class Schedule.
-4. Learner self Profile.
-5. Attendance/Course Attendance.
-6. Course Discussions.
-7. Placement subpages + Career Calendar.
-8. Exact Course and Project section parity.
+1. Class Schedule.
+2. Learner self Profile.
+3. Attendance/Course Attendance.
+4. Course Discussions.
+5. Placement subpages + Career Calendar.
+6. Exact Course and Project section parity.
+
+Closed in Learner parity batch 1:
+- Global Assignments
+- Global Quizzes
+- legacy-compatible late assignment submission behavior
 
 Then move immediately to Faculty.

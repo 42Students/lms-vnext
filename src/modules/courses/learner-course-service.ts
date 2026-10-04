@@ -596,11 +596,11 @@ export async function getLearnerCourseWorkspace(
       );
       if (!lesson) continue;
 
+      // Legacy LMS parity: overdue assignments remain actionable.
+      // Only quizzes use MISSED to mean the attempt window is closed.
       const progress = assessmentProgress(
         row.submittedAt,
-        !row.submittedAt &&
-          Boolean(row.dueAt) &&
-          row.dueAt!.getTime() < now,
+        false,
       );
 
       lesson.assignments.push({

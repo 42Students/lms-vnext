@@ -41,8 +41,8 @@ Legacy navigation: Courses, Quizzes, Assignments, Class Schedule, Attendance, My
 | Learning Path | course tab `roadmap` | embedded workspace | DONE |
 | Course Attendance | course tab `attendanceDetail` | none | MISSING |
 | Course Discussions | course tab `discussions` | none | MISSING |
-| Global Assignments | `/learn/allAssignments` | none | MISSING |
-| Global Quizzes | `/learn/allQuizzes` | none | MISSING |
+| Global Assignments | `/learn/allAssignments` | `/learn/assignments` | DONE |
+| Global Quizzes | `/learn/allQuizzes` | `/learn/quizzes` | DONE |
 | Class Schedule | `/learn/calendar` | no learner page | MISSING |
 | Attendance summary | `/learn/attendance` | none | MISSING |
 | Placements dashboard | `/learn/my-placements` | `/learn/placements` | PARTIAL |
@@ -61,6 +61,8 @@ Legacy navigation: Courses, Quizzes, Assignments, Class Schedule, Attendance, My
 | Quiz-taking/result behavior | `/quiz` + course flow | inline controls | PARTIAL |
 
 Project detail parity must explicitly check legacy Overview, Team, Sprints/Board, Resources, Delivery and Activity behavior.
+
+**Learner closure note — 2026-10-04:** Global Assignments and Global Quizzes now have dedicated vNext pages with course filtering, summary metrics, learner state labels and deep links to the actionable Course item. Assignment behavior was also corrected to match the legacy LMS: a published overdue assignment remains submittable; the due date marks lateness/urgency rather than hard-closing learner submission.
 
 ---
 

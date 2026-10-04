@@ -482,7 +482,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
     });
   });
 
-  it("enforces one-shot submission, deadline and assignment audience", async () => {
+  it("enforces one-shot submission, keeps published late work submittable, and checks assignment audience", async () => {
     const structure = await createStructure();
     const assignment =
       await createCourseAssignment(
@@ -565,6 +565,47 @@ describe("courses C4A assignments against PostgreSQL", () => {
       ),
     ).rejects.toMatchObject({
       code: "ASSIGNMENT_HAS_SUBMISSIONS",
+    });
+
+    const late =
+      await createCourseAssignment(
+        collegeAdmin,
+        {
+          lessonId: structure.lesson.id,
+          title: "C4A Late Submission Task",
+          dueAt:
+            "2027-12-02T12:00:00.000Z",
+          maxPoints: 5,
+          sequence: 2,
+        },
+      );
+    await transitionCourseAssignment(
+      collegeAdmin,
+      late.id,
+      { action: "PUBLISH" },
+    );
+    await pool.query(
+      "update course_assignments set due_at = $1 where id = $2",
+      ["2020-01-01T12:00:00.000Z", late.id],
+    );
+
+    const lateSubmission =
+      await submitCourseAssignment(
+        learner,
+        late.id,
+        {
+          deliveryId:
+            structure.deliveryA.id,
+          submissionType: "TEXT",
+          textContent:
+            "Late but still accepted",
+        },
+      );
+
+    expect(lateSubmission).toMatchObject({
+      assignmentId: late.id,
+      membershipId:
+        SEED_IDS.learnerCollegeAMembership,
     });
 
     const expired =

@@ -179,15 +179,9 @@ export async function submitCourseAssignment(
       input.deliveryId,
     );
 
-  if (
-    assignment.dueAt &&
-    assignment.dueAt.getTime() < Date.now()
-  ) {
-    throw new CoursesServiceError(
-      "ASSIGNMENT_DEADLINE_PASSED",
-    );
-  }
-
+  // Legacy LMS parity: the due date is an urgency/late marker, not a hard
+  // submission gate. A published assignment remains submittable until its
+  // lifecycle is explicitly changed.
   try {
     const [created] = await getDb()
       .insert(assignmentSubmissions)

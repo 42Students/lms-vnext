@@ -268,6 +268,10 @@ function AssignmentCard({
       progressStatus:
         assignment.progress.status,
     });
+  const overdue =
+    !assignment.submissionId &&
+    Boolean(assignment.dueAt) &&
+    assignment.dueAt!.getTime() < Date.now();
 
   return (
     <article
@@ -281,13 +285,19 @@ function AssignmentCard({
               Assignment
             </StatusBadge>
             <StatusBadge
-              tone={progressTone(
-                assignment.progress.status,
-              )}
+              tone={
+                overdue
+                  ? "warning"
+                  : progressTone(
+                      assignment.progress.status,
+                    )
+              }
             >
-              {progressLabel(
-                assignment.progress.status,
-              )}
+              {overdue
+                ? "Overdue"
+                : progressLabel(
+                    assignment.progress.status,
+                  )}
             </StatusBadge>
           </div>
           <h3 className="mt-2 text-base font-semibold text-foreground">
@@ -340,10 +350,9 @@ function AssignmentCard({
         <p className="mt-4 text-xs font-semibold text-muted-foreground">
           Submitted. Grade is not published yet.
         </p>
-      ) : assignment.progress.status ===
-        "MISSED" ? (
-        <p className="mt-4 text-xs font-semibold text-error">
-          The submission window has closed.
+      ) : overdue ? (
+        <p className="mt-4 text-xs font-semibold text-warning">
+          Due date passed · late submission is still allowed.
         </p>
       ) : null}
 
