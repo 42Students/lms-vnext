@@ -922,3 +922,153 @@ export type StagePlacementRoundResultInput =
   z.input<
     typeof stagePlacementRoundResultInputSchema
   >;
+
+
+export const placementOfferIdSchema =
+  z.string().uuid();
+
+const placementDateSchema = z
+  .string()
+  .regex(
+    /^\d{4}-\d{2}-\d{2}$/,
+    "Use YYYY-MM-DD",
+  )
+  .refine((value) => {
+    const date = new Date(
+      value + "T00:00:00Z",
+    );
+    return (
+      !Number.isNaN(date.getTime()) &&
+      date
+        .toISOString()
+        .slice(0, 10) === value
+    );
+  }, "Use a valid date");
+
+export const issuePlacementOfferInputSchema =
+  z
+    .object({
+      roleTitle: z
+        .string()
+        .trim()
+        .min(2)
+        .max(200),
+      annualCtcInr: z
+        .number()
+        .int()
+        .min(0)
+        .max(100_000_000)
+        .nullable()
+        .optional(),
+      joiningDate:
+        placementDateSchema
+          .nullable()
+          .optional(),
+      expiresAt: z.coerce
+        .date()
+        .nullable()
+        .optional(),
+    })
+    .strict();
+
+export const placementOfferActionSchema =
+  z.discriminatedUnion("action", [
+    z
+      .object({
+        action: z.literal("ACCEPT"),
+      })
+      .strict(),
+    z
+      .object({
+        action: z.literal("DECLINE"),
+        reason: z
+          .string()
+          .trim()
+          .min(1)
+          .max(2000)
+          .nullable()
+          .optional(),
+      })
+      .strict(),
+    z
+      .object({
+        action: z.literal("WITHDRAW"),
+        reason: z
+          .string()
+          .trim()
+          .min(1)
+          .max(2000),
+      })
+      .strict(),
+  ]);
+
+export const placementJoiningOutcomeInputSchema =
+  z
+    .object({
+      status: z.enum([
+        "JOINED",
+        "DID_NOT_JOIN",
+        "DEFERRED",
+      ]),
+      joiningDate:
+        placementDateSchema
+          .nullable()
+          .optional(),
+      reason: z
+        .string()
+        .trim()
+        .min(1)
+        .max(2000)
+        .nullable()
+        .optional(),
+      correctionReason: z
+        .string()
+        .trim()
+        .min(1)
+        .max(2000)
+        .nullable()
+        .optional(),
+    })
+    .strict()
+    .superRefine((value, ctx) => {
+      if (
+        (value.status === "JOINED" ||
+          value.status === "DEFERRED") &&
+        !value.joiningDate
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["joiningDate"],
+          message:
+            "Joining date is required for joined or deferred outcomes",
+        });
+      }
+
+      if (
+        (value.status ===
+          "DID_NOT_JOIN" ||
+          value.status ===
+            "DEFERRED") &&
+        !value.reason
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["reason"],
+          message:
+            "Reason is required for this joining outcome",
+        });
+      }
+    });
+
+export type IssuePlacementOfferInput =
+  z.input<
+    typeof issuePlacementOfferInputSchema
+  >;
+export type PlacementOfferActionInput =
+  z.input<
+    typeof placementOfferActionSchema
+  >;
+export type PlacementJoiningOutcomeInput =
+  z.input<
+    typeof placementJoiningOutcomeInputSchema
+  >;

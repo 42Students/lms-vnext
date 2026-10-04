@@ -191,7 +191,7 @@ test.describe("Placements browser regression", () => {
     page,
     context,
   }) => {
-    test.setTimeout(90_000);
+    test.setTimeout(120_000);
     const unique = Date.now().toString();
 
     await authenticate(
@@ -481,6 +481,55 @@ test.describe("Placements browser regression", () => {
       true,
     );
 
+    const offerSection = page
+      .getByRole("heading", {
+        name: "Offers & joining",
+      })
+      .locator("..")
+      .locator("..");
+    await expect(offerSection).toBeVisible();
+
+    const offerCandidate = offerSection
+      .locator("div")
+      .filter({ hasText: "Seed Learner" })
+      .filter({
+        has: page.getByRole("button", {
+          name: "Issue offer",
+        }),
+      })
+      .last();
+    await offerCandidate
+      .getByLabel(
+        "Offer annual CTC for Seed Learner",
+      )
+      .fill("1200000");
+    await offerCandidate
+      .getByLabel(
+        "Offer joining date for Seed Learner",
+      )
+      .fill("2027-01-10");
+
+    const issueOfferResponse =
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(
+            "/applications/",
+          ) &&
+          response.url().endsWith(
+            "/offers",
+          ) &&
+          response.request().method() ===
+            "POST",
+      );
+    await offerCandidate
+      .getByRole("button", {
+        name: "Issue offer",
+      })
+      .click();
+    expect(
+      (await issueOfferResponse).ok(),
+    ).toBe(true);
+
     await authenticate(
       context,
       "seed-learner",
@@ -507,6 +556,121 @@ test.describe("Placements browser regression", () => {
       journey.getByText("88%", {
         exact: true,
       }),
+    ).toBeVisible();
+
+    const learnerOffer = page
+      .getByRole("article")
+      .filter({
+        hasText: "₹12,00,000",
+      })
+      .filter({
+        has: page.getByRole("button", {
+          name: "Accept offer",
+        }),
+      });
+    await expect(learnerOffer).toBeVisible();
+
+    const acceptOfferResponse =
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(
+            "/api/placements/offers/",
+          ) &&
+          response.url().endsWith(
+            "/actions",
+          ) &&
+          response.request().method() ===
+            "POST",
+      );
+    await learnerOffer
+      .getByRole("button", {
+        name: "Accept offer",
+      })
+      .click();
+    expect(
+      (await acceptOfferResponse).ok(),
+    ).toBe(true);
+    await expect(
+      learnerOffer.getByText(
+        "Accepted",
+        { exact: true },
+      ),
+    ).toBeVisible();
+
+    await authenticate(
+      context,
+      "seed-shared-faculty",
+      SEED_IDS.facultyCollegeAMembership,
+    );
+    await page.goto("/tpo/placements");
+    const offerJobRow = page
+      .locator("div")
+      .filter({ hasText: title })
+      .filter({
+        has: page.getByRole("link", {
+          name: "Open drive",
+        }),
+      })
+      .last();
+    await offerJobRow
+      .getByRole("link", {
+        name: "Open drive",
+      })
+      .click();
+
+    const acceptedCandidate = page
+      .getByRole("heading", {
+        name: "Offers & joining",
+      })
+      .locator("..")
+      .locator("..")
+      .locator("div")
+      .filter({ hasText: "Seed Learner" })
+      .filter({
+        has: page.getByRole("button", {
+          name: "Record joining outcome",
+        }),
+      })
+      .last();
+
+    await acceptedCandidate
+      .getByLabel(
+        "Joining outcome date for Seed Learner",
+      )
+      .fill("2027-01-10");
+
+    const joiningResponse =
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(
+            "/api/placements/offers/",
+          ) &&
+          response.url().endsWith(
+            "/joining",
+          ) &&
+          response.request().method() ===
+            "PUT",
+      );
+    await acceptedCandidate
+      .getByRole("button", {
+        name: "Record joining outcome",
+      })
+      .click();
+    expect(
+      (await joiningResponse).ok(),
+    ).toBe(true);
+
+    await authenticate(
+      context,
+      "seed-learner",
+      SEED_IDS.learnerCollegeAMembership,
+    );
+    await page.goto("/learn/placements");
+    await expect(
+      page.getByText(
+        "Joining Joined",
+        { exact: true },
+      ),
     ).toBeVisible();
   });
 

@@ -208,6 +208,7 @@ export function apiErrorResponse(error: unknown) {
       "PLACEMENT_SCREENING_NOT_FOUND",
       "PLACEMENT_ROUND_NOT_FOUND",
       "PLACEMENT_RESULT_NOT_FOUND",
+      "PLACEMENT_OFFER_NOT_FOUND",
     ]);
 
     return NextResponse.json(

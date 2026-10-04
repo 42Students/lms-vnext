@@ -10,12 +10,14 @@ import {
   type LearnerPlacementJourneyItem,
 } from "@/components/placements/learner-placement-journey";
 import { LearnerPlacementPreferences } from "@/components/placements/learner-placement-preferences";
+import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
 import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
+import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 
 export default async function LearnerPlacementsPage() {
   const context =
@@ -29,11 +31,13 @@ export default async function LearnerPlacementsPage() {
     preferences,
     journeyRows,
     academicEvidence,
+    offerRows,
   ] = await Promise.all([
     listLearnerPlacementJobs(context),
     getCandidatePreferences(context),
     getLearnerPlacementJourney(context),
     getOwnAcademicEvidence(context),
+    listOwnPlacementOffers(context),
   ]);
 
   const items: LearnerPlacementJobItem[] =
@@ -108,6 +112,48 @@ export default async function LearnerPlacementsPage() {
         eyebrow="Learner"
         title="Placements"
         description="Your placement journey, preferences and live college opportunities in one workspace."
+      />
+
+      <LearnerPlacementOffers
+        offers={offerRows.map((row) => ({
+          offerId: row.offer.id,
+          applicationId:
+            row.offer.applicationId,
+          companyName:
+            row.company.name,
+          jobTitle: row.job.title,
+          roleTitle:
+            row.offer.roleTitle,
+          status:
+            row.offer.status as
+              | "ISSUED"
+              | "ACCEPTED"
+              | "DECLINED"
+              | "WITHDRAWN",
+          annualCtcInr:
+            row.offer.annualCtcInr,
+          joiningDate:
+            row.offer.joiningDate,
+          expiresAt:
+            row.offer.expiresAt?.toISOString() ??
+            null,
+          issuedAt:
+            row.offer.issuedAt.toISOString(),
+          joining: row.joining
+            ? {
+                status:
+                  row.joining.status as
+                    | "PENDING"
+                    | "JOINED"
+                    | "DID_NOT_JOIN"
+                    | "DEFERRED",
+                joiningDate:
+                  row.joining.joiningDate,
+                reason:
+                  row.joining.reason,
+              }
+            : null,
+        }))}
       />
 
       <LearnerPlacementJourney

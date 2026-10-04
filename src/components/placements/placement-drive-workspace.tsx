@@ -6,10 +6,12 @@ import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
 import { getPlacementJob } from "@/modules/placements/job-service";
+import { listPlacementOfferCandidates } from "@/modules/placements/offer-service";
 import { listPlacementScreeningQueue } from "@/modules/placements/screening-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
 import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
 import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
+import { PlacementOfferControls } from "./placement-offer-controls";
 import {
   PlacementDriveControls,
   type PlacementDriveControlData,
@@ -30,12 +32,17 @@ export async function PlacementDriveWorkspace({
     screening,
     job,
     eligibilityPolicy,
+    offerCandidates,
   ] = await Promise.all([
     getPlacementDriveDay(context, jobId),
     getPlacementEvaluationConfig(context, jobId),
     listPlacementScreeningQueue(context, jobId),
     getPlacementJob(context, jobId),
     getJobEligibilityPolicy(context, jobId),
+    listPlacementOfferCandidates(
+      context,
+      jobId,
+    ),
   ]);
 
   const programs =
@@ -267,6 +274,56 @@ export async function PlacementDriveWorkspace({
       />
       <PlacementDriveControls
         data={controlData}
+      />
+      <PlacementOfferControls
+        jobTitle={job.title}
+        candidates={offerCandidates.map(
+          (item) => ({
+            applicationId:
+              item.applicationId,
+            displayName:
+              item.displayName,
+            email: item.email,
+            offerReady:
+              item.offerReady,
+            offer: item.offer
+              ? {
+                  id: item.offer.id,
+                  status:
+                    item.offer.status as
+                      | "ISSUED"
+                      | "ACCEPTED"
+                      | "DECLINED"
+                      | "WITHDRAWN",
+                  roleTitle:
+                    item.offer.roleTitle,
+                  annualCtcInr:
+                    item.offer.annualCtcInr,
+                  joiningDate:
+                    item.offer.joiningDate,
+                  expiresAt:
+                    item.offer.expiresAt?.toISOString() ??
+                    null,
+                  issuedAt:
+                    item.offer.issuedAt.toISOString(),
+                }
+              : null,
+            joining: item.joining
+              ? {
+                  status:
+                    item.joining.status as
+                      | "PENDING"
+                      | "JOINED"
+                      | "DID_NOT_JOIN"
+                      | "DEFERRED",
+                  joiningDate:
+                    item.joining.joiningDate,
+                  reason:
+                    item.joining.reason,
+                }
+              : null,
+          }),
+        )}
       />
     </div>
   );

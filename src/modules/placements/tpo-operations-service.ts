@@ -13,6 +13,8 @@ import {
   placementCompanyRelationships,
   placementJobRounds,
   placementJobs,
+  placementJoiningOutcomes,
+  placementOffers,
   placementRoundResults,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -42,7 +44,7 @@ export async function getPlacementTpoOperations(
   );
 
   const db = getDb();
-  const [jobs, applications, rounds, resultRows] =
+  const [jobs, applications, rounds, resultRows, offerRows] =
     await Promise.all([
       db
         .select({
@@ -157,6 +159,45 @@ export async function getPlacementTpoOperations(
             ),
           ),
         ),
+      db
+        .select({
+          offer: placementOffers,
+          joining: placementJoiningOutcomes,
+          jobId: placementApplications.jobId,
+        })
+        .from(placementOffers)
+        .innerJoin(
+          placementApplications,
+          eq(
+            placementApplications.id,
+            placementOffers.applicationId,
+          ),
+        )
+        .innerJoin(
+          placementJobs,
+          eq(
+            placementJobs.id,
+            placementApplications.jobId,
+          ),
+        )
+        .leftJoin(
+          placementJoiningOutcomes,
+          eq(
+            placementJoiningOutcomes.offerId,
+            placementOffers.id,
+          ),
+        )
+        .where(
+          and(
+            eq(
+              placementJobs.collegeId,
+              collegeId,
+            ),
+            isNull(
+              placementJobs.archivedAt,
+            ),
+          ),
+        ),
     ]);
 
   const applicationsByJob = new Map<
@@ -197,6 +238,17 @@ export async function getPlacementTpoOperations(
     resultsByJob.set(row.jobId, list);
   }
 
+  const offersByJob = new Map<
+    string,
+    typeof offerRows
+  >();
+  for (const row of offerRows) {
+    const list =
+      offersByJob.get(row.jobId) ?? [];
+    list.push(row);
+    offersByJob.set(row.jobId, list);
+  }
+
   const workQueue: Array<{
     priority: QueuePriority;
     code: string;
@@ -213,6 +265,8 @@ export async function getPlacementTpoOperations(
       roundsByJob.get(job.id) ?? [];
     const jobResults =
       resultsByJob.get(job.id) ?? [];
+    const jobOffers =
+      offersByJob.get(job.id) ?? [];
     const pendingScreening =
       jobApplications.filter(
         ({ screening }) =>
@@ -241,6 +295,20 @@ export async function getPlacementTpoOperations(
     ).length;
     const completedRounds = jobRounds.filter(
       (round) => round.status === "COMPLETED",
+    ).length;
+    const issuedOffers = jobOffers.filter(
+      ({ offer }) =>
+        offer.status === "ISSUED",
+    ).length;
+    const acceptedPendingJoining =
+      jobOffers.filter(
+        ({ offer, joining }) =>
+          offer.status === "ACCEPTED" &&
+          joining?.status === "PENDING",
+      ).length;
+    const joinedOffers = jobOffers.filter(
+      ({ joining }) =>
+        joining?.status === "JOINED",
     ).length;
 
     const pushQueue = (
@@ -295,6 +363,16 @@ export async function getPlacementTpoOperations(
       "RESULTS_AWAITING_APPLY",
       stagedResults,
     );
+    pushQueue(
+      "MEDIUM",
+      "OFFERS_AWAITING_RESPONSE",
+      issuedOffers,
+    );
+    pushQueue(
+      "MEDIUM",
+      "JOINING_OUTCOME_PENDING",
+      acceptedPendingJoining,
+    );
 
     const nextScheduledRound =
       jobRounds
@@ -335,6 +413,9 @@ export async function getPlacementTpoOperations(
         completedRounds,
         stagedResults,
         appliedResults,
+        issuedOffers,
+        acceptedPendingJoining,
+        joinedOffers,
       },
       nextScheduledRound: nextScheduledRound
         ? {
@@ -439,6 +520,21 @@ export async function getPlacementTpoOperations(
       stagedResults: resultRows.filter(
         ({ result }) =>
           result.status === "STAGED",
+      ).length,
+      issuedOffers: offerRows.filter(
+        ({ offer }) =>
+          offer.status === "ISSUED",
+      ).length,
+      acceptedPendingJoining:
+        offerRows.filter(
+          ({ offer, joining }) =>
+            offer.status === "ACCEPTED" &&
+            joining?.status ===
+              "PENDING",
+        ).length,
+      joinedOffers: offerRows.filter(
+        ({ joining }) =>
+          joining?.status === "JOINED",
       ).length,
       activeDrives: rounds.filter(
         ({ round }) =>

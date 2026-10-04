@@ -422,7 +422,7 @@ describe("Placement P7 recruiter identity and grants", () => {
         "PLACEMENT_RECRUITER_INTERNAL_COMMENT_FORBIDDEN",
     });
 
-    const staged =
+    const hrStaged =
       await stagePlacementRoundResult(
         recruiter,
         round.id,
@@ -432,9 +432,41 @@ describe("Placement P7 recruiter identity and grants", () => {
           scorePercent: 90,
         },
       );
-    expect(staged).toMatchObject({
+    expect(hrStaged).toMatchObject({
       status: "STAGED",
       source: "HR",
+    });
+
+    const staged =
+      await stagePlacementRoundResult(
+        tpo,
+        round.id,
+        {
+          applicationId: application.id,
+          outcome: "PASS",
+          scorePercent: 91,
+          internalComment:
+            "Placement-team approved update",
+        },
+      );
+    expect(staged).toMatchObject({
+      status: "STAGED",
+      source: "TPO",
+    });
+
+    await expect(
+      stagePlacementRoundResult(
+        recruiter,
+        round.id,
+        {
+          applicationId: application.id,
+          outcome: "PASS",
+          scorePercent: 92,
+        },
+      ),
+    ).rejects.toMatchObject({
+      code:
+        "PLACEMENT_RECRUITER_RESULT_CONFLICT",
     });
 
     await expect(
@@ -458,7 +490,7 @@ describe("Placement P7 recruiter identity and grants", () => {
       ),
     ).resolves.toMatchObject({
       status: "APPLIED",
-      source: "HR",
+      source: "TPO",
     });
   });
 });

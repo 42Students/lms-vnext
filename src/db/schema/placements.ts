@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   check,
+  date,
   index,
   integer,
   jsonb,
@@ -1143,6 +1144,261 @@ export const placementRoundResults = pgTable(
           and ${table.appliedByUserId} is null
           and ${table.appliedAt} is null
           and ${table.supersededAt} is not null)`,
+    ),
+  ],
+);
+
+
+export const placementOffers = pgTable(
+  "placement_offers",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    applicationId: uuid("application_id")
+      .notNull()
+      .references(() => placementApplications.id, {
+        onDelete: "restrict",
+      }),
+    version: integer("version").notNull(),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("ISSUED"),
+    roleTitle: text("role_title").notNull(),
+    annualCtcInr: integer("annual_ctc_inr"),
+    joiningDate: date("joining_date", {
+      mode: "string",
+    }),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+    }),
+    issuedByUserId: uuid("issued_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    issuedAt: timestamp("issued_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    respondedByUserId: uuid(
+      "responded_by_user_id",
+    ).references(() => users.id, {
+      onDelete: "restrict",
+    }),
+    respondedAt: timestamp("responded_at", {
+      withTimezone: true,
+    }),
+    withdrawnByUserId: uuid(
+      "withdrawn_by_user_id",
+    ).references(() => users.id, {
+      onDelete: "restrict",
+    }),
+    withdrawnAt: timestamp("withdrawn_at", {
+      withTimezone: true,
+    }),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex(
+      "placement_offers_application_version_uq",
+    ).on(table.applicationId, table.version),
+    uniqueIndex(
+      "placement_offers_active_application_uq",
+    )
+      .on(table.applicationId)
+      .where(
+        sql`${table.status} in ('ISSUED', 'ACCEPTED')`,
+      ),
+    index(
+      "placement_offers_application_status_idx",
+    ).on(table.applicationId, table.status),
+    check(
+      "placement_offers_version_ck",
+      sql`${table.version} > 0`,
+    ),
+    check(
+      "placement_offers_status_ck",
+      sql`${table.status} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN')`,
+    ),
+    check(
+      "placement_offers_role_title_ck",
+      sql`length(trim(${table.roleTitle})) > 0`,
+    ),
+    check(
+      "placement_offers_ctc_ck",
+      sql`${table.annualCtcInr} is null or ${table.annualCtcInr} >= 0`,
+    ),
+    check(
+      "placement_offers_expiry_ck",
+      sql`${table.expiresAt} is null or ${table.expiresAt} > ${table.issuedAt}`,
+    ),
+    check(
+      "placement_offers_lifecycle_ck",
+      sql`(${table.status} = 'ISSUED'
+          and ${table.respondedByUserId} is null
+          and ${table.respondedAt} is null
+          and ${table.withdrawnByUserId} is null
+          and ${table.withdrawnAt} is null)
+        or (${table.status} in ('ACCEPTED', 'DECLINED')
+          and ${table.respondedByUserId} is not null
+          and ${table.respondedAt} is not null
+          and ${table.withdrawnByUserId} is null
+          and ${table.withdrawnAt} is null)
+        or (${table.status} = 'WITHDRAWN'
+          and ${table.withdrawnByUserId} is not null
+          and ${table.withdrawnAt} is not null)`,
+    ),
+  ],
+);
+
+export const placementOfferStatusHistory = pgTable(
+  "placement_offer_status_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    offerId: uuid("offer_id")
+      .notNull()
+      .references(() => placementOffers.id, {
+        onDelete: "restrict",
+      }),
+    fromStatus: varchar("from_status", {
+      length: 24,
+    }),
+    toStatus: varchar("to_status", {
+      length: 24,
+    }).notNull(),
+    actorUserId: uuid("actor_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    reason: text("reason"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index(
+      "placement_offer_status_history_offer_idx",
+    ).on(table.offerId, table.createdAt),
+    check(
+      "placement_offer_status_history_status_ck",
+      sql`(${table.fromStatus} is null or ${table.fromStatus} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN'))
+        and ${table.toStatus} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN')`,
+    ),
+    check(
+      "placement_offer_status_history_transition_ck",
+      sql`(${table.fromStatus} is null and ${table.toStatus} = 'ISSUED')
+        or (${table.fromStatus} = 'ISSUED' and ${table.toStatus} in ('ACCEPTED', 'DECLINED', 'WITHDRAWN'))
+        or (${table.fromStatus} = 'ACCEPTED' and ${table.toStatus} = 'WITHDRAWN')`,
+    ),
+  ],
+);
+
+export const placementJoiningOutcomes = pgTable(
+  "placement_joining_outcomes",
+  {
+    offerId: uuid("offer_id")
+      .primaryKey()
+      .references(() => placementOffers.id, {
+        onDelete: "restrict",
+      }),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("PENDING"),
+    joiningDate: date("joining_date", {
+      mode: "string",
+    }),
+    reason: text("reason"),
+    recordedByUserId: uuid(
+      "recorded_by_user_id",
+    ).references(() => users.id, {
+      onDelete: "restrict",
+    }),
+    recordedAt: timestamp("recorded_at", {
+      withTimezone: true,
+    }),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index(
+      "placement_joining_outcomes_status_idx",
+    ).on(table.status, table.updatedAt),
+    check(
+      "placement_joining_outcomes_status_ck",
+      sql`${table.status} in ('PENDING', 'JOINED', 'DID_NOT_JOIN', 'DEFERRED')`,
+    ),
+    check(
+      "placement_joining_outcomes_shape_ck",
+      sql`(${table.status} = 'PENDING'
+          and ${table.joiningDate} is null
+          and ${table.reason} is null
+          and ${table.recordedByUserId} is null
+          and ${table.recordedAt} is null)
+        or (${table.status} = 'JOINED'
+          and ${table.joiningDate} is not null
+          and ${table.recordedByUserId} is not null
+          and ${table.recordedAt} is not null)
+        or (${table.status} = 'DID_NOT_JOIN'
+          and coalesce(length(trim(${table.reason})), 0) > 0
+          and ${table.recordedByUserId} is not null
+          and ${table.recordedAt} is not null)
+        or (${table.status} = 'DEFERRED'
+          and ${table.joiningDate} is not null
+          and coalesce(length(trim(${table.reason})), 0) > 0
+          and ${table.recordedByUserId} is not null
+          and ${table.recordedAt} is not null)`,
+    ),
+  ],
+);
+
+export const placementJoiningHistory = pgTable(
+  "placement_joining_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    offerId: uuid("offer_id")
+      .notNull()
+      .references(() => placementOffers.id, {
+        onDelete: "restrict",
+      }),
+    fromStatus: varchar("from_status", {
+      length: 24,
+    }).notNull(),
+    toStatus: varchar("to_status", {
+      length: 24,
+    }).notNull(),
+    joiningDate: date("joining_date", {
+      mode: "string",
+    }),
+    reason: text("reason"),
+    actorUserId: uuid("actor_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index(
+      "placement_joining_history_offer_idx",
+    ).on(table.offerId, table.createdAt),
+    check(
+      "placement_joining_history_status_ck",
+      sql`${table.fromStatus} in ('PENDING', 'JOINED', 'DID_NOT_JOIN', 'DEFERRED')
+        and ${table.toStatus} in ('JOINED', 'DID_NOT_JOIN', 'DEFERRED')`,
     ),
   ],
 );

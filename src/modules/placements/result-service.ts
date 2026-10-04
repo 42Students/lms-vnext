@@ -353,6 +353,15 @@ export async function stagePlacementRoundResult(
       );
     }
     if (
+      recruiterCanStage &&
+      current?.status === "STAGED" &&
+      current.source !== "HR"
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_RECRUITER_RESULT_CONFLICT",
+      );
+    }
+    if (
       current?.status === "STAGED" &&
       sameStagedResult(current, input)
     ) {
