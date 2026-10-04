@@ -155,6 +155,7 @@ export function apiErrorResponse(error: unknown) {
       "ASSIGNMENT_SUBMISSION_NOT_FOUND",
       "QUIZ_NOT_FOUND",
       "QUIZ_ATTEMPT_NOT_FOUND",
+      "DISCUSSION_MESSAGE_NOT_FOUND",
     ]);
 
     const forbidden = new Set([
@@ -162,6 +163,8 @@ export function apiErrorResponse(error: unknown) {
       "FACULTY_TEACHING_SCOPE_REQUIRED",
       "LEARNER_ENROLLMENT_SCOPE_REQUIRED",
       "LEARNER_PROGRESS_ACCESS_DENIED",
+      "DISCUSSION_POST_ACCESS_DENIED",
+      "DISCUSSION_MODERATION_ACCESS_DENIED",
     ]);
     const badRequest = new Set([
       "CONTENT_TYPE_SHAPE_INVALID",
