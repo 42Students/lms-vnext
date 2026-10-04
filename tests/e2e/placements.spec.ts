@@ -533,10 +533,15 @@ test.describe("Placements browser regression", () => {
     );
     await page.goto("/learn/placements");
 
-    const journey = page
+    const journeySection = page
+      .getByRole("heading", {
+        name: "My placement journey",
+      })
+      .locator("..")
+      .locator("..");
+    const journey = journeySection
       .getByRole("article")
-      .filter({ hasText: title })
-      .first();
+      .filter({ hasText: title });
     await expect(
       journey.getByText(
         "Technical interview",
