@@ -29,3 +29,20 @@ Two completion measures are reported:
 The practical percentage is directional, not a release gate. Production launch remains governed by the explicit production/launch checklist and runbooks.
 
 When a batch changes checklist state, update the checklist in the same commit. Future progress reports should prefer this command over manually recounting checkboxes or reusing percentages from older chats.
+
+
+## Detailed account-surface parity
+
+The execution checklist intentionally tracks parity at the account/release-gate level. For the detailed page/section/action inventory run:
+
+```bash
+npm run parity:status
+```
+
+Machine-readable:
+
+```bash
+npm run parity:status -- --json
+```
+
+This parses `docs/planning/account-surface-parity.md`. DONE, REDESIGNED and RETIRED are resolved. PARTIAL, MISSING, VERIFY and BLOCKED are release blockers. The frozen mechanical route inventory lives in `docs/planning/legacy-ui-route-manifest.md`.

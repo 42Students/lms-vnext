@@ -73,7 +73,7 @@ Never preserve a bug merely because production currently behaves that way.
 Until account parity is closed, `42Students/lms2-fe@prod-2026` is the user-facing product oracle for Learner, Faculty, Mentor, College Admin, Super Admin, TPO and HR/Recruiter.
 
 For every legacy page, tab, section, card, modal, action and meaningful workflow:
-1. inventory it in `docs/planning/account-surface-parity.md`;
+1. classify the route in `docs/planning/legacy-ui-route-manifest.md` and inventory the user job in `docs/planning/account-surface-parity.md`;
 2. recreate the user-visible capability in vNext before redesigning it away;
 3. implement it with the vNext architecture — do not paste legacy Pages Router, Redux, Ant Design or service-layer code;
 4. preserve tenant/role safety and add regression coverage where practical;
@@ -81,4 +81,4 @@ For every legacy page, tab, section, card, modal, action and meaningful workflow
 
 No legacy surface may disappear silently. A consolidated vNext workspace does not automatically count as page parity when the legacy product had a distinct daily-use surface. First reach parity; then consolidate/redesign as a separate pass.
 
-Do not call LMS vNext feature-complete while the parity matrix contains MISSING or VERIFY items, or while any account parity checkbox remains open.
+Do not call LMS vNext feature-complete while `npm run parity:status` reports PARTIAL, MISSING, VERIFY or BLOCKED rows, or while any account parity checkbox remains open. Refresh the frozen legacy route manifest when `lms2-fe/prod-2026` materially moves.

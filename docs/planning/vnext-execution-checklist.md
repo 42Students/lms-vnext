@@ -658,6 +658,10 @@ Detailed route/section/action truth: `docs/planning/account-surface-parity.md`. 
 
 - [x] clone-first / redesign-later strategy locked
 - [x] initial seven-account legacy route inventory committed
+- [x] deep parity-matrix audit against all legacy page routes + navigation destinations + composite/deep-link workflows
+- [x] frozen legacy route manifest committed for the audited `prod-2026` SHA
+- [x] redirect stubs, accidental Pages-Router component routes and test-only surfaces classified explicitly
+- [x] composite TPO / HR / Super Admin / Projects surfaces decomposed so umbrella rows cannot hide work
 - [ ] Learner page + section + action parity complete
 - [ ] Faculty page + section + action parity complete
 - [ ] Mentor page + section + action parity complete
@@ -669,6 +673,7 @@ Detailed route/section/action truth: `docs/planning/account-surface-parity.md`. 
 - [ ] zero MISSING rows in parity matrix
 - [ ] zero VERIFY rows in parity matrix
 - [ ] no PARTIAL row hides an unfinished user job
+- [ ] `npm run parity:status` has zero PARTIAL / MISSING / VERIFY / BLOCKED rows
 - [ ] final fresh route/navigation/section diff against latest legacy `prod-2026`
 - [ ] critical seven-account browser parity regression suite green
 

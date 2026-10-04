@@ -13,6 +13,10 @@ Use **clone-first, redesign-later** for Learner, Faculty, Mentor, College Admin,
 Recreate every meaningful legacy page, tab, section, action, modal and workflow, but implement with the vNext architecture. Nothing disappears silently.
 
 Detailed tracker: `docs/planning/account-surface-parity.md`.
+Mechanical route backstop: `docs/planning/legacy-ui-route-manifest.md`.
+Detailed counter: `npm run parity:status`.
+
+**2026-10-04 deep audit:** matrix v1 was not exhaustive. Matrix v2 now explicitly includes hidden TPO Companies/Profile/More, public recruiter/company-share/auth/AI-grading flows, operational tracker surfaces, redirects/artifacts, specialized notification behavior, and decomposed TPO/HR/Super-Admin/Project sub-workflows. Do not work from an older matrix copy.
 
 ## Continuation order
 
@@ -22,7 +26,7 @@ Learner → Faculty → Mentor → College Admin → Super Admin → TPO → HR/
 
 - fetch latest `lms-vnext/main` and `lms2-fe/prod-2026`;
 - preserve parallel work; never force-push;
-- read AGENTS, master plan, execution checklist and account parity matrix;
+- read AGENTS, master plan, execution checklist, account parity matrix and legacy route manifest;
 - start at the first unresolved row for the active account;
 - inspect the exact legacy page before implementing it;
 - update the parity matrix in the same commit;
@@ -32,6 +36,18 @@ Learner → Faculty → Mentor → College Admin → Super Admin → TPO → HR/
 ## Current CI boundary
 
 Recent CI runs fail before any job steps start (no runner/steps). This is a verification blocker, not a reason to stop non-cloud parity implementation.
+
+## Audit corrections that future chats must preserve
+
+- Mentor Courses/Contacts/Quizzes/File Explorer/Profile are legacy redirect stubs, not missing product pages.
+- Faculty File Explorer is a legacy redirect stub.
+- HR `/hr/colleges` is a retired redirect; college choosing happens on HR Home.
+- TPO Companies, TPO Profile and TPO More are real surfaces and are now tracked.
+- Shared Notifications does not automatically close role-specific notification parity.
+- TPO Settings has ten tracked sections; TPO Reports has ten named report types.
+- TPO and HR drive details are tracked tab/action-by-tab/action.
+- Super Admin Tenant Setup/Settings/Module Access/HR Accounts and Admin Project workspaces are decomposed explicitly.
+- Public/shared surfaces such as `/hr-invite`, `/company-share`, `/auth/handoff`, `/ai-grading`, tracker, marketing/legal and error pages cannot disappear silently.
 
 ## Immediate implementation sequence
 
