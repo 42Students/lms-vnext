@@ -8,6 +8,9 @@ import {
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { deliverInAppNotificationInTransaction } from "@/modules/activity/notification-service";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   placementApplications,
@@ -379,6 +382,72 @@ export async function issuePlacementOffer(
         actorUserId: context.user.id,
       });
 
+    const [recipient] = await tx
+      .select({
+        userId: collegeMemberships.userId,
+      })
+      .from(collegeMemberships)
+      .where(
+        and(
+          eq(
+            collegeMemberships.id,
+            current.application.membershipId,
+          ),
+          eq(
+            collegeMemberships.collegeId,
+            current.job.collegeId,
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (!recipient) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_APPLICATION_NOT_FOUND",
+      );
+    }
+
+    const event =
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_ISSUED,
+          collegeId: current.job.collegeId,
+          subjectType: "placement_offer",
+          subjectId: offer.id,
+          subjectLabel: input.roleTitle,
+          summary:
+            `Offer issued for ${current.job.title}`,
+          metadata: {
+            jobId: current.job.id,
+            applicationId:
+              current.application.id,
+            membershipId:
+              current.application.membershipId,
+            roleTitle: input.roleTitle,
+            version: offer.version,
+          },
+          groupKey:
+            `placement-job:${current.job.id}:offers`,
+          dedupeKey:
+            `placement-offer:${offer.id}:issued`,
+        },
+      );
+
+    await deliverInAppNotificationInTransaction(
+      tx,
+      event.id,
+      [recipient.userId],
+      {
+        title: "Placement offer received",
+        body:
+          `You received a ${input.roleTitle} offer for ${current.job.title}. Review and respond to it.`,
+        actionHref: "/learn/placements",
+      },
+    );
+
     return offer;
   });
 }
@@ -514,6 +583,31 @@ export async function actOnPlacementOffer(
         })
         .onConflictDoNothing();
 
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
+          collegeId: current.job.collegeId,
+          subjectType: "placement_offer",
+          subjectId: updated.id,
+          subjectLabel: updated.roleTitle,
+          summary:
+            `Offer accepted for ${current.job.title}`,
+          metadata: {
+            jobId: current.job.id,
+            applicationId:
+              current.application.id,
+            response: "ACCEPTED",
+          },
+          groupKey:
+            `placement-job:${current.job.id}:offers`,
+          dedupeKey:
+            `placement-offer:${updated.id}:accepted`,
+        },
+      );
+
       return updated;
     }
 
@@ -569,6 +663,31 @@ export async function actOnPlacementOffer(
           reason:
             input.reason ?? null,
         });
+
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
+          collegeId: current.job.collegeId,
+          subjectType: "placement_offer",
+          subjectId: updated.id,
+          subjectLabel: updated.roleTitle,
+          summary:
+            `Offer declined for ${current.job.title}`,
+          metadata: {
+            jobId: current.job.id,
+            applicationId:
+              current.application.id,
+            response: "DECLINED",
+          },
+          groupKey:
+            `placement-job:${current.job.id}:offers`,
+          dedupeKey:
+            `placement-offer:${updated.id}:declined`,
+        },
+      );
 
       return updated;
     }
@@ -637,6 +756,31 @@ export async function actOnPlacementOffer(
           context.user.id,
         reason: input.reason,
       });
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
+        collegeId: current.job.collegeId,
+        subjectType: "placement_offer",
+        subjectId: updated.id,
+        subjectLabel: updated.roleTitle,
+        summary:
+          `Offer withdrawn for ${current.job.title}`,
+        metadata: {
+          jobId: current.job.id,
+          applicationId:
+            current.application.id,
+          response: "WITHDRAWN",
+        },
+        groupKey:
+          `placement-job:${current.job.id}:offers`,
+        dedupeKey:
+          `placement-offer:${updated.id}:withdrawn`,
+      },
+    );
 
     return updated;
   });
@@ -777,6 +921,35 @@ export async function recordPlacementJoiningOutcome(
         actorUserId:
           context.user.id,
       });
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_JOINING_RECORDED,
+        collegeId: current.job.collegeId,
+        subjectType:
+          "placement_joining",
+        subjectId: offerId,
+        subjectLabel:
+          current.offer.roleTitle,
+        summary:
+          `Joining outcome set to ${input.status} for ${current.job.title}`,
+        metadata: {
+          jobId: current.job.id,
+          applicationId:
+            current.application.id,
+          offerId,
+          fromStatus: joining.status,
+          toStatus: input.status,
+          joiningDate:
+            nextJoiningDate,
+        },
+        groupKey:
+          `placement-job:${current.job.id}:joining`,
+      },
+    );
 
     return updated;
   });

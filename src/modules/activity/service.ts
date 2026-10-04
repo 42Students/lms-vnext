@@ -35,6 +35,11 @@ import {
   type ActivityModule,
 } from "./taxonomy";
 
+type ActivityWriter = Pick<
+  ReturnType<typeof getDb>,
+  "select" | "insert"
+>;
+
 const activityFilterSchema = z
   .object({
     collegeId: z.string().uuid().optional(),
@@ -135,13 +140,14 @@ function moduleForEventType(
 }
 
 async function resolveEventScope(
+  db: ActivityWriter,
   input: Pick<
     RecordActivityEventInput,
     "collegeId" | "organizationId"
   >,
 ) {
   if (input.collegeId) {
-    const [college] = await getDb()
+    const [college] = await db
       .select({
         id: colleges.id,
         organizationId:
@@ -176,7 +182,7 @@ async function resolveEventScope(
   }
 
   if (input.organizationId) {
-    const [organization] = await getDb()
+    const [organization] = await db
       .select({ id: organizations.id })
       .from(organizations)
       .where(
@@ -204,7 +210,8 @@ async function resolveEventScope(
   };
 }
 
-export async function recordActivityEvent(
+async function writeActivityEvent(
+  db: ActivityWriter,
   context: RequestContext,
   rawInput: RecordActivityEventInput,
 ) {
@@ -237,7 +244,7 @@ export async function recordActivityEvent(
     .max(1000)
     .parse(rawInput.summary);
   const scope =
-    await resolveEventScope(rawInput);
+    await resolveEventScope(db, rawInput);
 
   const actorMembershipId =
     hasActiveMembership(context) &&
@@ -278,7 +285,7 @@ export async function recordActivityEvent(
       new Date(),
   };
 
-  const [created] = await getDb()
+  const [created] = await db
     .insert(activityEvents)
     .values(values)
     .onConflictDoNothing()
@@ -287,7 +294,7 @@ export async function recordActivityEvent(
   if (created) return created;
 
   if (values.dedupeKey) {
-    const [existing] = await getDb()
+    const [existing] = await db
       .select()
       .from(activityEvents)
       .where(
@@ -302,6 +309,29 @@ export async function recordActivityEvent(
 
   throw new ActivityServiceError(
     "ACTIVITY_EVENT_NOT_FOUND",
+  );
+}
+
+export async function recordActivityEvent(
+  context: RequestContext,
+  rawInput: RecordActivityEventInput,
+) {
+  return writeActivityEvent(
+    getDb(),
+    context,
+    rawInput,
+  );
+}
+
+export async function recordActivityEventInTransaction(
+  tx: ActivityWriter,
+  context: RequestContext,
+  rawInput: RecordActivityEventInput,
+) {
+  return writeActivityEvent(
+    tx,
+    context,
+    rawInput,
   );
 }
 

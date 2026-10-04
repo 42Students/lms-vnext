@@ -15,6 +15,11 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { ActivityServiceError } from "./errors";
 
+type NotificationWriter = Pick<
+  ReturnType<typeof getDb>,
+  "select" | "insert"
+>;
+
 const deliverySchema = z
   .object({
     title: z
@@ -40,7 +45,8 @@ const deliverySchema = z
 export type InAppNotificationDeliveryInput =
   z.input<typeof deliverySchema>;
 
-export async function deliverInAppNotification(
+async function writeInAppNotification(
+  db: NotificationWriter,
   eventId: string,
   userIdsInput: readonly string[],
   rawInput: InAppNotificationDeliveryInput,
@@ -68,7 +74,7 @@ export async function deliverInAppNotification(
 
   const [[event], recipients] =
     await Promise.all([
-      getDb()
+      db
         .select({
           id: activityEvents.id,
         })
@@ -80,7 +86,7 @@ export async function deliverInAppNotification(
           ),
         )
         .limit(1),
-      getDb()
+      db
         .select({
           id: users.id,
           platformStatus:
@@ -111,7 +117,7 @@ export async function deliverInAppNotification(
     .map((user) => user.id);
 
   if (active.length > 0) {
-    await getDb()
+    await db
       .insert(inAppNotifications)
       .values(
         active.map((userId) => ({
@@ -132,6 +138,33 @@ export async function deliverInAppNotification(
       recipients.length -
       active.length,
   };
+}
+
+export async function deliverInAppNotification(
+  eventId: string,
+  userIdsInput: readonly string[],
+  rawInput: InAppNotificationDeliveryInput,
+) {
+  return writeInAppNotification(
+    getDb(),
+    eventId,
+    userIdsInput,
+    rawInput,
+  );
+}
+
+export async function deliverInAppNotificationInTransaction(
+  tx: NotificationWriter,
+  eventId: string,
+  userIdsInput: readonly string[],
+  rawInput: InAppNotificationDeliveryInput,
+) {
+  return writeInAppNotification(
+    tx,
+    eventId,
+    userIdsInput,
+    rawInput,
+  );
 }
 
 export async function listOwnNotifications(

@@ -80,6 +80,12 @@ const learner: RequestContext = {
 
 async function cleanup() {
   await pool.query(
+    "delete from in_app_notifications",
+  );
+  await pool.query(
+    "delete from activity_events",
+  );
+  await pool.query(
     "delete from placement_joining_history",
   );
   await pool.query(
@@ -292,6 +298,30 @@ describe("Placement P8 offers and joining", () => {
       );
     expect(repeated.id).toBe(issued.id);
 
+    const issuedEvents =
+      await pool.query<{ id: string }>(
+        "select id from activity_events where dedupe_key = $1",
+        [
+          `placement-offer:${issued.id}:issued`,
+        ],
+      );
+    expect(issuedEvents.rowCount).toBe(1);
+
+    const notifications =
+      await pool.query<{ id: string }>(
+        `select n.id
+           from in_app_notifications n
+           inner join activity_events e
+             on e.id = n.event_id
+          where n.user_id = $1
+            and e.dedupe_key = $2`,
+        [
+          SEED_IDS.learnerUser,
+          `placement-offer:${issued.id}:issued`,
+        ],
+      );
+    expect(notifications.rowCount).toBe(1);
+
     await expect(
       issuePlacementOffer(
         tpo,
@@ -376,6 +406,28 @@ describe("Placement P8 offers and joining", () => {
       status: "JOINED",
       joiningDate: "2027-02-03",
     });
+
+    const lifecycleEvents =
+      await pool.query<{
+        event_type: string;
+      }>(
+        `select event_type
+           from activity_events
+          where subject_id = $1
+          order by occurred_at asc`,
+        [issued.id],
+      );
+    expect(
+      lifecycleEvents.rows.map(
+        (row) => row.event_type,
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "placements.offer.issued",
+        "placements.offer.responded",
+        "placements.joining.recorded",
+      ]),
+    );
 
     await expect(
       actOnPlacementOffer(
