@@ -358,9 +358,15 @@ test.describe("Placements browser regression", () => {
         hasText: "Technical interview",
       })
       .last();
-    await completedRound
-      .locator("summary")
-      .click();
+    const completeButton =
+      completedRound.getByRole("button", {
+        name: "Complete round",
+      });
+    if (!(await completeButton.isVisible())) {
+      await completedRound
+        .locator("summary")
+        .click();
+    }
 
     const completeResponse =
       page.waitForResponse(
@@ -374,11 +380,7 @@ test.describe("Placements browser regression", () => {
           response.request().method() ===
             "POST",
       );
-    await completedRound
-      .getByRole("button", {
-        name: "Complete round",
-      })
-      .click();
+    await completeButton.click();
     expect(
       (await completeResponse).ok(),
     ).toBe(true);
