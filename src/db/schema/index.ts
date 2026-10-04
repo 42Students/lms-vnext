@@ -16,3 +16,5 @@ export * from "./placements";
 export * from "./activity";
 
 export * from "./attendance";
+
+export * from "./discussions";
