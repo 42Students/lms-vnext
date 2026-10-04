@@ -122,9 +122,11 @@ async function onboardBrowserPerson(
   const payload = await response.json();
 
   await expect(
-    page.getByText(input.displayName, {
-      exact: true,
-    }),
+    page
+      .getByRole("table")
+      .getByText(input.displayName, {
+        exact: true,
+      }),
   ).toBeVisible();
 
   return {
@@ -243,9 +245,11 @@ test.describe("Core tenant browser acceptance", () => {
       })
       .click();
     await expect(
-      page.getByText(organizationName, {
-        exact: true,
-      }),
+      page
+        .getByRole("table")
+        .getByText(organizationName, {
+          exact: true,
+        }),
     ).toBeVisible();
 
     await page.goto("/admin/colleges");
@@ -266,9 +270,11 @@ test.describe("Core tenant browser acceptance", () => {
       })
       .click();
     await expect(
-      page.getByText(collegeName, {
-        exact: true,
-      }),
+      page
+        .getByRole("table")
+        .getByText(collegeName, {
+          exact: true,
+        }),
     ).toBeVisible();
 
     const scope =
@@ -300,9 +306,11 @@ test.describe("Core tenant browser acceptance", () => {
       })
       .click();
     await expect(
-      page.getByText(superDepartment, {
-        exact: true,
-      }),
+      page
+        .getByRole("table")
+        .getByText(superDepartment, {
+          exact: true,
+        }),
     ).toBeVisible();
 
     await page.goto("/admin/people");
@@ -347,9 +355,11 @@ test.describe("Core tenant browser acceptance", () => {
       })
       .click();
     await expect(
-      page.getByText(adminDepartment, {
-        exact: true,
-      }),
+      page
+        .getByRole("table")
+        .getByText(adminDepartment, {
+          exact: true,
+        }),
     ).toBeVisible();
 
     await page.goto("/college/people");
