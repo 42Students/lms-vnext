@@ -1500,6 +1500,163 @@ export const placementOfferStatusHistory = pgTable(
   ],
 );
 
+
+
+export const placementLearnerRequests = pgTable(
+  "placement_learner_requests",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    applicationId: uuid("application_id")
+      .notNull()
+      .references(() => placementApplications.id, {
+        onDelete: "restrict",
+      }),
+    requestType: varchar("request_type", {
+      length: 40,
+    }).notNull(),
+    roundId: uuid("round_id").references(
+      () => placementJobRounds.id,
+      { onDelete: "restrict" },
+    ),
+    offerId: uuid("offer_id").references(
+      () => placementOffers.id,
+      { onDelete: "restrict" },
+    ),
+    scopeKey: text("scope_key").notNull(),
+    reason: text("reason").notNull(),
+    effectPayload: jsonb("effect_payload")
+      .notNull()
+      .default(sql\`'{}'::jsonb\`),
+    status: varchar("status", { length: 24 })
+      .notNull()
+      .default("PENDING"),
+    requestedByUserId: uuid("requested_by_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "restrict",
+      }),
+    requestedAt: timestamp("requested_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    decidedByUserId: uuid("decided_by_user_id").references(
+      () => users.id,
+      { onDelete: "restrict" },
+    ),
+    decidedAt: timestamp("decided_at", {
+      withTimezone: true,
+    }),
+    decisionNote: text("decision_note"),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("placement_learner_requests_pending_scope_uq")
+      .on(table.scopeKey)
+      .where(sql\`${table.status} = 'PENDING'\`),
+    index("placement_learner_requests_application_status_idx").on(
+      table.applicationId,
+      table.status,
+      table.requestedAt,
+    ),
+    index("placement_learner_requests_type_status_idx").on(
+      table.requestType,
+      table.status,
+      table.requestedAt,
+    ),
+    check(
+      "placement_learner_requests_type_ck",
+      sql\`${table.requestType} in ('APPLICATION_WITHDRAWAL', 'ROUND_RESCHEDULE', 'OFFER_EXTENSION')\`,
+    ),
+    check(
+      "placement_learner_requests_status_ck",
+      sql\`${table.status} in ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED')\`,
+    ),
+    check(
+      "placement_learner_requests_reason_ck",
+      sql\`length(trim(${table.reason})) >= 3\`,
+    ),
+    check(
+      "placement_learner_requests_target_shape_ck",
+      sql\`(${table.requestType} = 'APPLICATION_WITHDRAWAL' and ${table.roundId} is null and ${table.offerId} is null)
+        or (${table.requestType} = 'ROUND_RESCHEDULE' and ${table.roundId} is not null and ${table.offerId} is null)
+        or (${table.requestType} = 'OFFER_EXTENSION' and ${table.roundId} is null and ${table.offerId} is not null)\`,
+    ),
+    check(
+      "placement_learner_requests_lifecycle_ck",
+      sql\`(${table.status} = 'PENDING' and ${table.decidedByUserId} is null and ${table.decidedAt} is null)
+        or (${table.status} in ('APPROVED', 'REJECTED', 'CANCELLED') and ${table.decidedByUserId} is not null and ${table.decidedAt} is not null)\`,
+    ),
+  ],
+);
+
+export const placementApplicationRoundExceptions = pgTable(
+  "placement_application_round_exceptions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    applicationId: uuid("application_id")
+      .notNull()
+      .references(() => placementApplications.id, {
+        onDelete: "restrict",
+      }),
+    roundId: uuid("round_id")
+      .notNull()
+      .references(() => placementJobRounds.id, {
+        onDelete: "restrict",
+      }),
+    requestId: uuid("request_id")
+      .notNull()
+      .references(() => placementLearnerRequests.id, {
+        onDelete: "restrict",
+      }),
+    scheduledAt: timestamp("scheduled_at", {
+      withTimezone: true,
+    }).notNull(),
+    timezone: varchar("timezone", {
+      length: 64,
+    }).notNull(),
+    mode: varchar("mode", { length: 24 }).notNull(),
+    venue: text("venue"),
+    meetingUrl: text("meeting_url"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("placement_application_round_exceptions_scope_uq").on(
+      table.applicationId,
+      table.roundId,
+    ),
+    uniqueIndex("placement_application_round_exceptions_request_uq").on(
+      table.requestId,
+    ),
+    index("placement_application_round_exceptions_round_idx").on(
+      table.roundId,
+      table.scheduledAt,
+    ),
+    check(
+      "placement_application_round_exceptions_mode_ck",
+      sql\`${table.mode} in ('ON_CAMPUS', 'VIRTUAL')\`,
+    ),
+    check(
+      "placement_application_round_exceptions_delivery_ck",
+      sql\`(${table.mode} = 'ON_CAMPUS' and coalesce(length(trim(${table.venue})), 0) > 0 and ${table.meetingUrl} is null)
+        or (${table.mode} = 'VIRTUAL' and coalesce(length(trim(${table.meetingUrl})), 0) > 0 and ${table.venue} is null)\`,
+    ),
+  ],
+);
+
 export const placementJoiningOutcomes = pgTable(
   "placement_joining_outcomes",
   {

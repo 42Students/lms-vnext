@@ -211,6 +211,13 @@
       "when": 1791132000000,
       "tag": "0029_placements_p10_role_options",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1791135600000,
+      "tag": "0030_placements_p11_requests",
+      "breakpoints": true
     }
   ]
 }

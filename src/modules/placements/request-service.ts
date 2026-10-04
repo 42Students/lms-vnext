@@ -1,0 +1,1188 @@
+import {
+  and,
+  asc,
+  desc,
+  eq,
+} from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import {
+  collegeMemberships,
+  placementApplicationRoundExceptions,
+  placementApplications,
+  placementApplicationScreenings,
+  placementApplicationStatusHistory,
+  placementCompanies,
+  placementCompanyRelationships,
+  placementJobRoleOptions,
+  placementJobRounds,
+  placementJobs,
+  placementLearnerRequests,
+  placementOffers,
+  users,
+} from "@/db/schema";
+import {
+  hasMembershipRole,
+  type RequestContext,
+} from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { PlacementsServiceError } from "./errors";
+import { requirePlacementManageScope } from "./scope";
+import {
+  createPlacementRequestInputSchema,
+  placementJobIdSchema,
+  placementRequestActionSchema,
+  placementRequestIdSchema,
+  type CreatePlacementRequestInput,
+  type PlacementRequestActionInput,
+} from "./validation";
+
+type PlacementRequestWriter = Pick<
+  ReturnType<typeof getDb>,
+  "select" | "insert" | "update"
+>;
+
+type RescheduleEffect = {
+  scheduledAt: string;
+  timezone: string;
+  mode: "ON_CAMPUS" | "VIRTUAL";
+  venue: string | null;
+  meetingUrl: string | null;
+};
+
+type OfferExtensionEffect = {
+  requestedExpiresAt: string;
+};
+
+function requireLearner(context: RequestContext) {
+  if (
+    !context.membership ||
+    !hasMembershipRole(context, "LEARNER")
+  ) {
+    throw new AuthorizationError("placements.read");
+  }
+  return context.membership;
+}
+
+async function loadApplicationContext(
+  applicationId: string,
+) {
+  const [row] = await getDb()
+    .select({
+      application: placementApplications,
+      roleOption: placementJobRoleOptions,
+      job: placementJobs,
+      company: placementCompanies,
+    })
+    .from(placementApplications)
+    .innerJoin(
+      placementJobRoleOptions,
+      eq(
+        placementJobRoleOptions.id,
+        placementApplications.roleOptionId,
+      ),
+    )
+    .innerJoin(
+      placementJobs,
+      eq(
+        placementJobs.id,
+        placementApplications.jobId,
+      ),
+    )
+    .innerJoin(
+      placementCompanyRelationships,
+      eq(
+        placementCompanyRelationships.id,
+        placementJobs.companyRelationshipId,
+      ),
+    )
+    .innerJoin(
+      placementCompanies,
+      eq(
+        placementCompanies.id,
+        placementCompanyRelationships.companyId,
+      ),
+    )
+    .where(
+      eq(
+        placementApplications.id,
+        applicationId,
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_APPLICATION_NOT_FOUND",
+    );
+  }
+  return row;
+}
+
+async function loadRequestContext(requestId: string) {
+  const [row] = await getDb()
+    .select({
+      request: placementLearnerRequests,
+      application: placementApplications,
+      job: placementJobs,
+    })
+    .from(placementLearnerRequests)
+    .innerJoin(
+      placementApplications,
+      eq(
+        placementApplications.id,
+        placementLearnerRequests.applicationId,
+      ),
+    )
+    .innerJoin(
+      placementJobs,
+      eq(
+        placementJobs.id,
+        placementApplications.jobId,
+      ),
+    )
+    .where(
+      eq(
+        placementLearnerRequests.id,
+        requestId,
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_NOT_FOUND",
+    );
+  }
+  return row;
+}
+
+function scopeKeyFor(
+  input: ReturnType<
+    typeof createPlacementRequestInputSchema.parse
+  >,
+) {
+  if (
+    input.requestType ===
+    "APPLICATION_WITHDRAWAL"
+  ) {
+    return \`APPLICATION_WITHDRAWAL:\${input.applicationId}\`;
+  }
+  if (input.requestType === "ROUND_RESCHEDULE") {
+    return \`ROUND_RESCHEDULE:\${input.applicationId}:\${input.roundId}\`;
+  }
+  return \`OFFER_EXTENSION:\${input.applicationId}:\${input.offerId}\`;
+}
+
+async function validateRequestTarget(
+  input: ReturnType<
+    typeof createPlacementRequestInputSchema.parse
+  >,
+  application: Awaited<
+    ReturnType<typeof loadApplicationContext>
+  >,
+  now: Date,
+) {
+  if (application.application.status !== "SUBMITTED") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_EFFECT_INVALID",
+    );
+  }
+
+  if (input.requestType === "ROUND_RESCHEDULE") {
+    const [round] = await getDb()
+      .select()
+      .from(placementJobRounds)
+      .where(
+        eq(placementJobRounds.id, input.roundId),
+      )
+      .limit(1);
+    if (!round || round.jobId !== application.job.id) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_TARGET_MISMATCH",
+      );
+    }
+    if (
+      round.status !== "SCHEDULED" ||
+      input.scheduledAt.getTime() <= now.getTime()
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_EFFECT_INVALID",
+      );
+    }
+  }
+
+  if (input.requestType === "OFFER_EXTENSION") {
+    const [offer] = await getDb()
+      .select()
+      .from(placementOffers)
+      .where(eq(placementOffers.id, input.offerId))
+      .limit(1);
+    if (
+      !offer ||
+      offer.applicationId !== application.application.id
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_TARGET_MISMATCH",
+      );
+    }
+    if (
+      offer.status !== "ISSUED" ||
+      !offer.expiresAt ||
+      input.requestedExpiresAt.getTime() <=
+        offer.expiresAt.getTime() ||
+      input.requestedExpiresAt.getTime() <=
+        now.getTime()
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_EFFECT_INVALID",
+      );
+    }
+  }
+}
+
+function effectPayloadFor(
+  input: ReturnType<
+    typeof createPlacementRequestInputSchema.parse
+  >,
+) {
+  if (input.requestType === "ROUND_RESCHEDULE") {
+    return {
+      scheduledAt: input.scheduledAt.toISOString(),
+      timezone: input.timezone,
+      mode: input.mode,
+      venue:
+        input.mode === "ON_CAMPUS"
+          ? input.venue ?? null
+          : null,
+      meetingUrl:
+        input.mode === "VIRTUAL"
+          ? input.meetingUrl ?? null
+          : null,
+    } satisfies RescheduleEffect;
+  }
+  if (input.requestType === "OFFER_EXTENSION") {
+    return {
+      requestedExpiresAt:
+        input.requestedExpiresAt.toISOString(),
+    } satisfies OfferExtensionEffect;
+  }
+  return {};
+}
+
+export async function createPlacementRequest(
+  context: RequestContext,
+  rawInput: CreatePlacementRequestInput,
+) {
+  const membership = requireLearner(context);
+  const input =
+    createPlacementRequestInputSchema.parse(
+      rawInput,
+    );
+  const current = await loadApplicationContext(
+    input.applicationId,
+  );
+
+  if (
+    current.application.membershipId !== membership.id ||
+    current.job.collegeId !== membership.collegeId
+  ) {
+    throw new AuthorizationError("placements.read");
+  }
+
+  const now = new Date();
+  await validateRequestTarget(input, current, now);
+  const scopeKey = scopeKeyFor(input);
+  const effectPayload = effectPayloadFor(input);
+  const db = getDb();
+
+  const created = await db.transaction(async (tx) => {
+    const [request] = await tx
+      .insert(placementLearnerRequests)
+      .values({
+        applicationId: current.application.id,
+        requestType: input.requestType,
+        roundId:
+          input.requestType === "ROUND_RESCHEDULE"
+            ? input.roundId
+            : null,
+        offerId:
+          input.requestType === "OFFER_EXTENSION"
+            ? input.offerId
+            : null,
+        scopeKey,
+        reason: input.reason,
+        effectPayload,
+        requestedByUserId: context.user.id,
+        requestedAt: now,
+      })
+      .onConflictDoNothing()
+      .returning();
+
+    if (!request) return null;
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_REQUEST_SUBMITTED,
+        collegeId: current.job.collegeId,
+        subjectType: "placement_request",
+        subjectId: request.id,
+        subjectLabel: current.roleOption.title,
+        summary:
+          \`\${input.requestType} request submitted for \${current.roleOption.title}\`,
+        metadata: {
+          requestType: input.requestType,
+          applicationId: current.application.id,
+          jobId: current.job.id,
+          roundId:
+            input.requestType === "ROUND_RESCHEDULE"
+              ? input.roundId
+              : null,
+          offerId:
+            input.requestType === "OFFER_EXTENSION"
+              ? input.offerId
+              : null,
+        },
+        groupKey:
+          \`placement-job:\${current.job.id}:requests\`,
+        dedupeKey:
+          \`placement-request:\${request.id}:submitted\`,
+      },
+    );
+
+    return request;
+  });
+
+  if (created) return created;
+
+  const [existing] = await db
+    .select()
+    .from(placementLearnerRequests)
+    .where(
+      and(
+        eq(
+          placementLearnerRequests.scopeKey,
+          scopeKey,
+        ),
+        eq(
+          placementLearnerRequests.status,
+          "PENDING",
+        ),
+      ),
+    )
+    .limit(1);
+
+  if (!existing) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_CONFLICT",
+    );
+  }
+  return existing;
+}
+
+function parseRescheduleEffect(
+  payload: unknown,
+): RescheduleEffect {
+  const value = payload as Partial<RescheduleEffect>;
+  if (
+    typeof value.scheduledAt !== "string" ||
+    typeof value.timezone !== "string" ||
+    (value.mode !== "ON_CAMPUS" &&
+      value.mode !== "VIRTUAL") ||
+    (value.mode === "ON_CAMPUS" &&
+      typeof value.venue !== "string") ||
+    (value.mode === "VIRTUAL" &&
+      typeof value.meetingUrl !== "string")
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_EFFECT_INVALID",
+    );
+  }
+  return {
+    scheduledAt: value.scheduledAt,
+    timezone: value.timezone,
+    mode: value.mode,
+    venue:
+      value.mode === "ON_CAMPUS"
+        ? value.venue ?? null
+        : null,
+    meetingUrl:
+      value.mode === "VIRTUAL"
+        ? value.meetingUrl ?? null
+        : null,
+  };
+}
+
+function parseOfferExtensionEffect(
+  payload: unknown,
+): OfferExtensionEffect {
+  const value =
+    payload as Partial<OfferExtensionEffect>;
+  if (typeof value.requestedExpiresAt !== "string") {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_EFFECT_INVALID",
+    );
+  }
+  return {
+    requestedExpiresAt:
+      value.requestedExpiresAt,
+  };
+}
+
+async function applyApprovedEffect(
+  db: PlacementRequestWriter,
+  context: RequestContext,
+  request: typeof placementLearnerRequests.$inferSelect,
+  job: typeof placementJobs.$inferSelect,
+  now: Date,
+) {
+  const [application] = await db
+    .select()
+    .from(placementApplications)
+    .where(
+      eq(
+        placementApplications.id,
+        request.applicationId,
+      ),
+    )
+    .for("update")
+    .limit(1);
+
+  if (
+    !application ||
+    application.jobId !== job.id ||
+    application.status !== "SUBMITTED"
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_EFFECT_INVALID",
+    );
+  }
+
+  if (
+    request.requestType ===
+    "APPLICATION_WITHDRAWAL"
+  ) {
+    const [updated] = await db
+      .update(placementApplications)
+      .set({
+        status: "WITHDRAWN",
+        withdrawnAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(
+            placementApplications.id,
+            application.id,
+          ),
+          eq(
+            placementApplications.status,
+            "SUBMITTED",
+          ),
+        ),
+      )
+      .returning();
+
+    if (!updated) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_EFFECT_INVALID",
+      );
+    }
+
+    await db
+      .insert(placementApplicationStatusHistory)
+      .values({
+        applicationId: application.id,
+        fromStatus: "SUBMITTED",
+        toStatus: "WITHDRAWN",
+        actorUserId: context.user.id,
+        reason: request.reason,
+      });
+
+    await recordActivityEventInTransaction(
+      db,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICATION_WITHDRAWN,
+        collegeId: job.collegeId,
+        subjectType: "placement_application",
+        subjectId: application.id,
+        subjectLabel: job.title,
+        summary:
+          \`Application withdrawal approved for \${job.title}\`,
+        metadata: {
+          jobId: job.id,
+          requestId: request.id,
+          membershipId: application.membershipId,
+        },
+        groupKey:
+          \`placement-job:\${job.id}:applications\`,
+        dedupeKey:
+          \`placement-application:\${application.id}:withdrawn\`,
+      },
+    );
+    return;
+  }
+
+  if (request.requestType === "ROUND_RESCHEDULE") {
+    if (!request.roundId) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_TARGET_MISMATCH",
+      );
+    }
+
+    const [round] = await db
+      .select()
+      .from(placementJobRounds)
+      .where(
+        eq(
+          placementJobRounds.id,
+          request.roundId,
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (
+      !round ||
+      round.jobId !== job.id ||
+      round.status !== "SCHEDULED"
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_EFFECT_INVALID",
+      );
+    }
+
+    const effect = parseRescheduleEffect(
+      request.effectPayload,
+    );
+    const scheduledAt = new Date(effect.scheduledAt);
+    if (
+      Number.isNaN(scheduledAt.getTime()) ||
+      scheduledAt.getTime() <= now.getTime()
+    ) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_EFFECT_INVALID",
+      );
+    }
+
+    await db
+      .insert(placementApplicationRoundExceptions)
+      .values({
+        applicationId: application.id,
+        roundId: round.id,
+        requestId: request.id,
+        scheduledAt,
+        timezone: effect.timezone,
+        mode: effect.mode,
+        venue: effect.venue,
+        meetingUrl: effect.meetingUrl,
+      })
+      .onConflictDoUpdate({
+        target: [
+          placementApplicationRoundExceptions.applicationId,
+          placementApplicationRoundExceptions.roundId,
+        ],
+        set: {
+          requestId: request.id,
+          scheduledAt,
+          timezone: effect.timezone,
+          mode: effect.mode,
+          venue: effect.venue,
+          meetingUrl: effect.meetingUrl,
+          updatedAt: now,
+        },
+      });
+    return;
+  }
+
+  if (!request.offerId) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_TARGET_MISMATCH",
+    );
+  }
+
+  const [offer] = await db
+    .select()
+    .from(placementOffers)
+    .where(
+      eq(placementOffers.id, request.offerId),
+    )
+    .for("update")
+    .limit(1);
+
+  if (
+    !offer ||
+    offer.applicationId !== application.id ||
+    offer.status !== "ISSUED" ||
+    !offer.expiresAt
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_EFFECT_INVALID",
+    );
+  }
+
+  const effect = parseOfferExtensionEffect(
+    request.effectPayload,
+  );
+  const requestedExpiresAt = new Date(
+    effect.requestedExpiresAt,
+  );
+  if (
+    Number.isNaN(requestedExpiresAt.getTime()) ||
+    requestedExpiresAt.getTime() <= now.getTime() ||
+    requestedExpiresAt.getTime() <=
+      offer.expiresAt.getTime()
+  ) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_REQUEST_EFFECT_INVALID",
+    );
+  }
+
+  await db
+    .update(placementOffers)
+    .set({
+      expiresAt: requestedExpiresAt,
+      updatedAt: now,
+    })
+    .where(eq(placementOffers.id, offer.id));
+}
+
+export async function actOnPlacementRequest(
+  context: RequestContext,
+  requestIdInput: string,
+  rawInput: PlacementRequestActionInput,
+) {
+  const requestId =
+    placementRequestIdSchema.parse(
+      requestIdInput,
+    );
+  const input =
+    placementRequestActionSchema.parse(
+      rawInput,
+    );
+  const current =
+    await loadRequestContext(requestId);
+
+  if (input.action === "CANCEL") {
+    const membership = requireLearner(context);
+    if (
+      membership.id !==
+        current.application.membershipId ||
+      membership.collegeId !== current.job.collegeId
+    ) {
+      throw new AuthorizationError("placements.read");
+    }
+  } else {
+    await requirePlacementManageScope(
+      context,
+      current.job.collegeId,
+    );
+  }
+
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const [request] = await tx
+      .select()
+      .from(placementLearnerRequests)
+      .where(
+        eq(
+          placementLearnerRequests.id,
+          requestId,
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!request) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_NOT_FOUND",
+      );
+    }
+    if (request.status !== "PENDING") {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_INVALID_STATE",
+      );
+    }
+
+    const now = new Date();
+    let nextStatus:
+      | "APPROVED"
+      | "REJECTED"
+      | "CANCELLED";
+
+    if (input.action === "APPROVE") {
+      await applyApprovedEffect(
+        tx,
+        context,
+        request,
+        current.job,
+        now,
+      );
+      nextStatus = "APPROVED";
+    } else if (input.action === "REJECT") {
+      nextStatus = "REJECTED";
+    } else {
+      nextStatus = "CANCELLED";
+    }
+
+    const [updated] = await tx
+      .update(placementLearnerRequests)
+      .set({
+        status: nextStatus,
+        decidedByUserId: context.user.id,
+        decidedAt: now,
+        decisionNote:
+          input.action === "CANCEL"
+            ? null
+            : input.note ?? null,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(
+            placementLearnerRequests.id,
+            request.id,
+          ),
+          eq(
+            placementLearnerRequests.status,
+            "PENDING",
+          ),
+        ),
+      )
+      .returning();
+
+    if (!updated) {
+      throw new PlacementsServiceError(
+        "PLACEMENT_REQUEST_INVALID_STATE",
+      );
+    }
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PLACEMENTS_REQUEST_DECIDED,
+        collegeId: current.job.collegeId,
+        subjectType: "placement_request",
+        subjectId: request.id,
+        subjectLabel: current.job.title,
+        summary:
+          \`\${request.requestType} request \${nextStatus.toLowerCase()} for \${current.job.title}\`,
+        metadata: {
+          requestType: request.requestType,
+          status: nextStatus,
+          applicationId:
+            current.application.id,
+          jobId: current.job.id,
+          roundId: request.roundId,
+          offerId: request.offerId,
+        },
+        groupKey:
+          \`placement-job:\${current.job.id}:requests\`,
+        dedupeKey:
+          \`placement-request:\${request.id}:\${nextStatus.toLowerCase()}\`,
+      },
+    );
+
+    return updated;
+  });
+}
+
+function requestListQuery() {
+  return getDb()
+    .select({
+      request: placementLearnerRequests,
+      application: placementApplications,
+      roleOption: placementJobRoleOptions,
+      job: {
+        id: placementJobs.id,
+        title: placementJobs.title,
+        collegeId: placementJobs.collegeId,
+      },
+      company: {
+        id: placementCompanies.id,
+        name: placementCompanies.name,
+      },
+      round: {
+        id: placementJobRounds.id,
+        name: placementJobRounds.name,
+        scheduledAt:
+          placementJobRounds.scheduledAt,
+        timezone: placementJobRounds.timezone,
+        mode: placementJobRounds.mode,
+        venue: placementJobRounds.venue,
+        meetingUrl:
+          placementJobRounds.meetingUrl,
+      },
+      offer: {
+        id: placementOffers.id,
+        roleTitle: placementOffers.roleTitle,
+        expiresAt: placementOffers.expiresAt,
+        status: placementOffers.status,
+      },
+      exception:
+        placementApplicationRoundExceptions,
+      candidate: {
+        membershipId: collegeMemberships.id,
+        displayName: users.displayName,
+        email: users.email,
+      },
+    })
+    .from(placementLearnerRequests)
+    .innerJoin(
+      placementApplications,
+      eq(
+        placementApplications.id,
+        placementLearnerRequests.applicationId,
+      ),
+    )
+    .innerJoin(
+      placementJobRoleOptions,
+      eq(
+        placementJobRoleOptions.id,
+        placementApplications.roleOptionId,
+      ),
+    )
+    .innerJoin(
+      placementJobs,
+      eq(
+        placementJobs.id,
+        placementApplications.jobId,
+      ),
+    )
+    .innerJoin(
+      placementCompanyRelationships,
+      eq(
+        placementCompanyRelationships.id,
+        placementJobs.companyRelationshipId,
+      ),
+    )
+    .innerJoin(
+      placementCompanies,
+      eq(
+        placementCompanies.id,
+        placementCompanyRelationships.companyId,
+      ),
+    )
+    .innerJoin(
+      collegeMemberships,
+      eq(
+        collegeMemberships.id,
+        placementApplications.membershipId,
+      ),
+    )
+    .innerJoin(
+      users,
+      eq(users.id, collegeMemberships.userId),
+    )
+    .leftJoin(
+      placementJobRounds,
+      eq(
+        placementJobRounds.id,
+        placementLearnerRequests.roundId,
+      ),
+    )
+    .leftJoin(
+      placementOffers,
+      eq(
+        placementOffers.id,
+        placementLearnerRequests.offerId,
+      ),
+    )
+    .leftJoin(
+      placementApplicationRoundExceptions,
+      eq(
+        placementApplicationRoundExceptions.requestId,
+        placementLearnerRequests.id,
+      ),
+    );
+}
+
+export async function listOwnPlacementRequests(
+  context: RequestContext,
+) {
+  const membership = requireLearner(context);
+  return requestListQuery()
+    .where(
+      eq(
+        placementApplications.membershipId,
+        membership.id,
+      ),
+    )
+    .orderBy(
+      desc(
+        placementLearnerRequests.requestedAt,
+      ),
+    );
+}
+
+export async function listPlacementJobRequests(
+  context: RequestContext,
+  jobIdInput: string,
+) {
+  const jobId =
+    placementJobIdSchema.parse(jobIdInput);
+  const [job] = await getDb()
+    .select()
+    .from(placementJobs)
+    .where(eq(placementJobs.id, jobId))
+    .limit(1);
+
+  if (!job) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_JOB_NOT_FOUND",
+    );
+  }
+  await requirePlacementManageScope(
+    context,
+    job.collegeId,
+  );
+
+  return requestListQuery()
+    .where(
+      eq(
+        placementApplications.jobId,
+        job.id,
+      ),
+    )
+    .orderBy(
+      asc(placementLearnerRequests.status),
+      desc(
+        placementLearnerRequests.requestedAt,
+      ),
+    );
+}
+
+export async function getLearnerPlacementRequestWorkspace(
+  context: RequestContext,
+) {
+  const membership = requireLearner(context);
+  const db = getDb();
+
+  const [requests, applications, rounds, offers] =
+    await Promise.all([
+      listOwnPlacementRequests(context),
+      db
+        .select({
+          applicationId:
+            placementApplications.id,
+          roleTitle:
+            placementJobRoleOptions.title,
+          jobTitle: placementJobs.title,
+          companyName:
+            placementCompanies.name,
+        })
+        .from(placementApplications)
+        .innerJoin(
+          placementJobRoleOptions,
+          eq(
+            placementJobRoleOptions.id,
+            placementApplications.roleOptionId,
+          ),
+        )
+        .innerJoin(
+          placementJobs,
+          eq(
+            placementJobs.id,
+            placementApplications.jobId,
+          ),
+        )
+        .innerJoin(
+          placementCompanyRelationships,
+          eq(
+            placementCompanyRelationships.id,
+            placementJobs.companyRelationshipId,
+          ),
+        )
+        .innerJoin(
+          placementCompanies,
+          eq(
+            placementCompanies.id,
+            placementCompanyRelationships.companyId,
+          ),
+        )
+        .where(
+          and(
+            eq(
+              placementApplications.membershipId,
+              membership.id,
+            ),
+            eq(
+              placementApplications.status,
+              "SUBMITTED",
+            ),
+          ),
+        )
+        .orderBy(asc(placementCompanies.name)),
+      db
+        .select({
+          applicationId:
+            placementApplications.id,
+          roundId: placementJobRounds.id,
+          roundName: placementJobRounds.name,
+          sequence:
+            placementJobRounds.sequence,
+          scheduledAt:
+            placementJobRounds.scheduledAt,
+          timezone:
+            placementJobRounds.timezone,
+          mode: placementJobRounds.mode,
+          venue: placementJobRounds.venue,
+          meetingUrl:
+            placementJobRounds.meetingUrl,
+          roleTitle:
+            placementJobRoleOptions.title,
+          companyName:
+            placementCompanies.name,
+          exception:
+            placementApplicationRoundExceptions,
+        })
+        .from(placementApplications)
+        .innerJoin(
+          placementApplicationScreenings,
+          eq(
+            placementApplicationScreenings.applicationId,
+            placementApplications.id,
+          ),
+        )
+        .innerJoin(
+          placementJobRoleOptions,
+          eq(
+            placementJobRoleOptions.id,
+            placementApplications.roleOptionId,
+          ),
+        )
+        .innerJoin(
+          placementJobs,
+          eq(
+            placementJobs.id,
+            placementApplications.jobId,
+          ),
+        )
+        .innerJoin(
+          placementJobRounds,
+          eq(
+            placementJobRounds.jobId,
+            placementJobs.id,
+          ),
+        )
+        .innerJoin(
+          placementCompanyRelationships,
+          eq(
+            placementCompanyRelationships.id,
+            placementJobs.companyRelationshipId,
+          ),
+        )
+        .innerJoin(
+          placementCompanies,
+          eq(
+            placementCompanies.id,
+            placementCompanyRelationships.companyId,
+          ),
+        )
+        .leftJoin(
+          placementApplicationRoundExceptions,
+          and(
+            eq(
+              placementApplicationRoundExceptions.applicationId,
+              placementApplications.id,
+            ),
+            eq(
+              placementApplicationRoundExceptions.roundId,
+              placementJobRounds.id,
+            ),
+          ),
+        )
+        .where(
+          and(
+            eq(
+              placementApplications.membershipId,
+              membership.id,
+            ),
+            eq(
+              placementApplications.status,
+              "SUBMITTED",
+            ),
+            eq(
+              placementApplicationScreenings.status,
+              "SHORTLISTED",
+            ),
+            eq(
+              placementJobRounds.status,
+              "SCHEDULED",
+            ),
+          ),
+        )
+        .orderBy(
+          asc(placementJobRounds.scheduledAt),
+        ),
+      db
+        .select({
+          applicationId:
+            placementApplications.id,
+          offerId: placementOffers.id,
+          roleTitle:
+            placementOffers.roleTitle,
+          companyName:
+            placementCompanies.name,
+          expiresAt:
+            placementOffers.expiresAt,
+        })
+        .from(placementOffers)
+        .innerJoin(
+          placementApplications,
+          eq(
+            placementApplications.id,
+            placementOffers.applicationId,
+          ),
+        )
+        .innerJoin(
+          placementJobs,
+          eq(
+            placementJobs.id,
+            placementApplications.jobId,
+          ),
+        )
+        .innerJoin(
+          placementCompanyRelationships,
+          eq(
+            placementCompanyRelationships.id,
+            placementJobs.companyRelationshipId,
+          ),
+        )
+        .innerJoin(
+          placementCompanies,
+          eq(
+            placementCompanies.id,
+            placementCompanyRelationships.companyId,
+          ),
+        )
+        .where(
+          and(
+            eq(
+              placementApplications.membershipId,
+              membership.id,
+            ),
+            eq(
+              placementOffers.status,
+              "ISSUED",
+            ),
+          ),
+        )
+        .orderBy(asc(placementOffers.expiresAt)),
+    ]);
+
+  return {
+    requests,
+    applications,
+    rounds,
+    offers,
+  };
+}

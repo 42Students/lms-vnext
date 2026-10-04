@@ -1235,3 +1235,109 @@ export type PlacementJoiningOutcomeInput =
   z.input<
     typeof placementJoiningOutcomeInputSchema
   >;
+
+
+export const placementRequestIdSchema =
+  z.string().uuid();
+
+const placementRequestReasonSchema = z
+  .string()
+  .trim()
+  .min(3)
+  .max(2000);
+
+export const createPlacementRequestInputSchema =
+  z
+    .discriminatedUnion("requestType", [
+      z
+        .object({
+          requestType: z.literal("APPLICATION_WITHDRAWAL"),
+          applicationId: placementApplicationIdSchema,
+          reason: placementRequestReasonSchema,
+        })
+        .strict(),
+      z
+        .object({
+          requestType: z.literal("ROUND_RESCHEDULE"),
+          applicationId: placementApplicationIdSchema,
+          roundId: placementRoundIdSchema,
+          reason: placementRequestReasonSchema,
+          scheduledAt: z.coerce.date(),
+          timezone: z.string().trim().min(1).max(64),
+          mode: z.enum(["ON_CAMPUS", "VIRTUAL"]),
+          venue: z.string().trim().min(1).max(500).nullable().optional(),
+          meetingUrl: z.string().url().max(2000).nullable().optional(),
+        })
+        .strict(),
+      z
+        .object({
+          requestType: z.literal("OFFER_EXTENSION"),
+          applicationId: placementApplicationIdSchema,
+          offerId: placementOfferIdSchema,
+          reason: placementRequestReasonSchema,
+          requestedExpiresAt: z.coerce.date(),
+        })
+        .strict(),
+    ])
+    .superRefine((value, ctx) => {
+      if (
+        value.requestType === "ROUND_RESCHEDULE" &&
+        value.mode === "ON_CAMPUS" &&
+        !value.venue
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["venue"],
+          message:
+            "Venue is required for an on-campus reschedule",
+        });
+      }
+      if (
+        value.requestType === "ROUND_RESCHEDULE" &&
+        value.mode === "VIRTUAL" &&
+        !value.meetingUrl
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["meetingUrl"],
+          message:
+            "Meeting URL is required for a virtual reschedule",
+        });
+      }
+    });
+
+export const placementRequestActionSchema =
+  z.discriminatedUnion("action", [
+    z
+      .object({
+        action: z.literal("APPROVE"),
+        note: z
+          .string()
+          .trim()
+          .min(1)
+          .max(2000)
+          .nullable()
+          .optional(),
+      })
+      .strict(),
+    z
+      .object({
+        action: z.literal("REJECT"),
+        note: z
+          .string()
+          .trim()
+          .min(3)
+          .max(2000),
+      })
+      .strict(),
+    z
+      .object({
+        action: z.literal("CANCEL"),
+      })
+      .strict(),
+  ]);
+
+export type CreatePlacementRequestInput =
+  z.input<typeof createPlacementRequestInputSchema>;
+export type PlacementRequestActionInput =
+  z.input<typeof placementRequestActionSchema>;
