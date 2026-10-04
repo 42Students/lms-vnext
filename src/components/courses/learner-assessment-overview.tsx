@@ -131,6 +131,7 @@ function quizState(
     return {
       label: "Results published",
       tone: "success" as const,
+      action: "Open quiz",
     };
   }
 
@@ -138,6 +139,7 @@ function quizState(
     return {
       label: "Submitted",
       tone: "info" as const,
+      action: "Open quiz",
     };
   }
 
@@ -145,12 +147,14 @@ function quizState(
     return {
       label: "Missed",
       tone: "error" as const,
+      action: "Open quiz",
     };
   }
 
   return {
     label: "Not attempted",
     tone: "neutral" as const,
+    action: "Open quiz",
   };
 }
 
@@ -348,10 +352,7 @@ export function LearnerAssessmentOverview({
                       href={href}
                       className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
                     >
-                      {item.kind ===
-                      "ASSIGNMENT"
-                        ? state.action
-                        : "Open quiz"}
+                      {state.action}
                     </Link>
                   </div>
                 </div>
