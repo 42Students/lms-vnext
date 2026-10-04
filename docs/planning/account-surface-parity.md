@@ -50,14 +50,14 @@ A route existing is not enough. Closure includes sections/tabs/cards, primary an
 | Class Schedule | `/learn/calendar` | none | Month/week/day + course filtering/upcoming/today behavior missing. | MISSING |
 | Attendance summary | `/learn/attendance` | none | Learner-wide attendance view missing. | MISSING |
 | Placements dashboard | `/learn/my-placements` | `/learn/placements` | Core journey exists; legacy subnavigation and sections incomplete. | PARTIAL |
-| Applications | `.../applications` | journey data | Dedicated applications worklist missing. | MISSING |
-| Assessments | `.../assessments` | round data | Dedicated assessment queue/status missing. | MISSING |
-| Interviews | `.../interviews` | round data | Dedicated interview queue/status missing. | MISSING |
-| Career Calendar | `.../calendar` | none | Placement events calendar missing. | MISSING |
-| Jobs list | `.../jobs` | placements feed | Exact browse/filter surface incomplete. | PARTIAL |
-| Job detail | `.../jobs/[jobId]` | none | Dedicated opportunity/eligibility/detail surface missing. | MISSING |
-| Placement Cell | `.../placement` | none | Placement-cell information/support surface missing. | MISSING |
-| Placement Rules | `.../rules` | none | Learner-facing rules/policy surface missing. | MISSING |
+| Applications | `/learn/my-placements/applications` | journey data | Dedicated applications worklist missing. | MISSING |
+| Assessments | `/learn/my-placements/assessments` | round data | Dedicated assessment queue/status missing. | MISSING |
+| Interviews | `/learn/my-placements/interviews` | round data | Dedicated interview queue/status missing. | MISSING |
+| Career Calendar | `/learn/my-placements/calendar` | none | Placement events calendar missing. | MISSING |
+| Jobs list | `/learn/my-placements/jobs` | placements feed | Exact browse/filter surface incomplete. | PARTIAL |
+| Job detail | `/learn/my-placements/jobs/[jobId]` | none | Dedicated opportunity/eligibility/detail surface missing. | MISSING |
+| Placement Cell | `/learn/my-placements/placement` | none | Placement-cell information/support surface missing. | MISSING |
+| Placement Rules | `/learn/my-placements/rules` | none | Learner-facing rules/policy surface missing. | MISSING |
 | Projects list | `/learn/projects` | same semantic route | Core list exists. | DONE |
 | Project Overview | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
 | Project Team | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
@@ -156,9 +156,9 @@ A route existing is not enough. Closure includes sections/tabs/cards, primary an
 | Courses | `/college-admin/courses` | `/college/courses` | Core list exists. | DONE |
 | Course detail | `/college-admin/courses/[id]` | offering workspace | Exact section/action parity pending. | PARTIAL |
 | Lessons aggregate | `/college-admin/lessons` | offering workspace | Dedicated aggregate surface missing. | PARTIAL |
-| Video aggregate | `lesson-content?type=video` | offering workspace | Dedicated surface incomplete; signed storage blocked. | PARTIAL |
-| Resources aggregate | `lesson-content?type=resources` | offering workspace | Dedicated surface parity pending. | PARTIAL |
-| Live Classes aggregate | `lesson-content?type=live-classes` | offering workspace | Dedicated surface parity pending. | PARTIAL |
+| Video aggregate | `/college-admin/lesson-content?type=video` | offering workspace | Dedicated surface incomplete; signed storage blocked. | PARTIAL |
+| Resources aggregate | `/college-admin/lesson-content?type=resources` | offering workspace | Dedicated surface parity pending. | PARTIAL |
+| Live Classes aggregate | `/college-admin/lesson-content?type=live-classes` | offering workspace | Dedicated surface parity pending. | PARTIAL |
 | Assignments aggregate | `/college-admin/assignments` | offering workspace | Dedicated aggregate missing; file upload BLOCKED. | PARTIAL |
 | Quizzes aggregate | `/college-admin/quizzes` | offering workspace | Dedicated aggregate missing. | PARTIAL |
 | Course Progress | `/college-admin/course-progress` | course progress data | Monitoring surface missing. | PARTIAL |
@@ -178,32 +178,36 @@ A route existing is not enough. Closure includes sections/tabs/cards, primary an
 
 | Surface | Legacy | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
-| Drives landing | `/college-admin/jobs` + `/jobs/all` | placements operations | Exact tabs/filters parity pending. | PARTIAL |
+| Drives landing | `/college-admin/jobs` + `/college-admin/jobs/all` | placements operations | Exact tabs/filters parity pending. | PARTIAL |
 | Drive Overview | job detail | vNext job workspace | Core exists; exact overview pending. | PARTIAL |
-| Applications | `.../applications` | embedded job workspace | Dedicated workflow parity pending. | PARTIAL |
-| Interviews | `.../interviews` | rounds | Dedicated interview surface pending. | PARTIAL |
-| Shortlisted | `.../shortlisted` | screening state | Dedicated shortlist surface pending. | PARTIAL |
-| Job Settings | `.../settings` | lifecycle/edit controls | Exact settings surface pending. | PARTIAL |
+| Applications | `/college-admin/jobs/[jobId]/applications` | embedded job workspace | Dedicated workflow parity pending. | PARTIAL |
+| Interviews | `/college-admin/jobs/[jobId]/interviews` | rounds | Dedicated interview surface pending. | PARTIAL |
+| Shortlisted | `/college-admin/jobs/[jobId]/shortlisted` | screening state | Dedicated shortlist surface pending. | PARTIAL |
+| Job Settings | `/college-admin/jobs/[jobId]/settings` | lifecycle/edit controls | Exact settings surface pending. | PARTIAL |
 | Companies | `/college-admin/companies` | employer relationships | Dedicated company surface pending. | PARTIAL |
 | Hiring Analytics | `/college-admin/hiring-dashboard` | funnel analytics | Exact analytics page pending. | PARTIAL |
 | Placement Cell / TPO workspace | sidebar link to `/tpo/home` | admin placement operations | Must inherit TPO parity relevant to acting-as-TPO behavior. | PARTIAL |
 
 ## 4.6 Projects — list/aggregate
 
+Legacy group landing: `/college-admin/projects`.
+
 | Surface | Legacy | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
-| Workspaces list | `projects/workspaces` | `/college/projects` | Core list exists; exact list actions pending. | PARTIAL |
-| At Risk | `projects/at-risk` | none | Missing cross-project operational aggregate. | MISSING |
-| Readiness | `projects/readiness` | none | Missing aggregate. | MISSING |
-| Submissions | `projects/submissions` | none | Missing aggregate. | MISSING |
-| Templates catalogue | `projects/templates` | templates available during create | Dedicated catalogue missing. | PARTIAL |
-| Template detail | `projects/templates/[templateId]` | no dedicated detail | Missing/partial read-only detail. | PARTIAL |
-| Project Audit | `projects/audit` | none | Missing cross-project audit. | MISSING |
-| Create Workspace | `workspaces/new` | creation control/dialog | User job exists; route form may later be REDESIGNED after exact action audit. | PARTIAL |
-| Reassign Mentor | `workspaces/reassign-mentor` | team controls | Bulk reassign workflow missing. | PARTIAL |
-| Deleted Workspaces | `workspaces/deleted` | none | Explicit product decision required; previous legacy audit questioned this UX. | VERIFY |
+| Workspaces list | `/college-admin/projects/workspaces` | `/college/projects` | Core list exists; exact list actions pending. | PARTIAL |
+| At Risk | `/college-admin/projects/at-risk` | none | Missing cross-project operational aggregate. | MISSING |
+| Readiness | `/college-admin/projects/readiness` | none | Missing aggregate. | MISSING |
+| Submissions | `/college-admin/projects/submissions` | none | Missing aggregate. | MISSING |
+| Templates catalogue | `/college-admin/projects/templates` | templates available during create | Dedicated catalogue missing. | PARTIAL |
+| Template detail | `/college-admin/projects/templates/[templateId]` | no dedicated detail | Missing/partial read-only detail. | PARTIAL |
+| Project Audit | `/college-admin/projects/audit` | none | Missing cross-project audit. | MISSING |
+| Create Workspace | `/college-admin/projects/workspaces/new` | creation control/dialog | User job exists; route form may later be REDESIGNED after exact action audit. | PARTIAL |
+| Reassign Mentor | `/college-admin/projects/workspaces/reassign-mentor` | team controls | Bulk reassign workflow missing. | PARTIAL |
+| Deleted Workspaces | `/college-admin/projects/workspaces/deleted` | none | Explicit product decision required; previous legacy audit questioned this UX. | VERIFY |
 
 ## 4.7 Projects — workspace sections
+
+Parent detail route: `/college-admin/projects/workspaces/[workspaceId]`.
 
 | Surface | Legacy section route | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
@@ -247,6 +251,8 @@ Super Admin must not inherit College Admin parity only by prose. Shared surfaces
 
 ## 5.2 Tenant Settings groups
 
+Parent route: `/superadmin/settings`.
+
 | Surface | Legacy group | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Platform & auth settings | base/global host, cookie, IP allowlist, OTP | deployment/auth config only | No equivalent admin settings surface. | MISSING |
@@ -283,37 +289,41 @@ Every row below is Super-Admin scoped, even if College Admin has the same user j
 | Faculty Assignment | `/superadmin/faculty-assignment` | PARTIAL |
 | Students | `/superadmin/students` | PARTIAL |
 | People Directory | `/superadmin/people` | PARTIAL |
-| Drives / all drives | `/superadmin/jobs*` | PARTIAL |
-| Drive Applications | job subroute | PARTIAL |
-| Drive Interviews | job subroute | PARTIAL |
-| Drive Shortlisted | job subroute | PARTIAL |
-| Drive Settings | job subroute | PARTIAL |
+| Drives / all drives | `/superadmin/jobs` + `/superadmin/jobs/all` + `/superadmin/jobs/[jobId]` | PARTIAL |
+| Drive Applications | `/superadmin/jobs/[jobId]/applications` | PARTIAL |
+| Drive Interviews | `/superadmin/jobs/[jobId]/interviews` | PARTIAL |
+| Drive Shortlisted | `/superadmin/jobs/[jobId]/shortlisted` | PARTIAL |
+| Drive Settings | `/superadmin/jobs/[jobId]/settings` | PARTIAL |
 | Companies | `/superadmin/companies` | PARTIAL |
 | Placement Interview Calendar | `/superadmin/calendar` | MISSING |
 | Hiring Analytics | `/superadmin/hiring-dashboard` | PARTIAL |
 
 ## 5.4 Projects — aggregate/template
 
+Projects landing route: `/superadmin/projects`.
+
 | Surface | Legacy | Status |
 | --- | --- | --- |
-| Templates list | `projects/templates` | MISSING |
-| New Template | `projects/templates/new` | MISSING |
-| Template Overview | template detail/overview | MISSING |
-| Template Sprints | template sprints | MISSING |
-| Template Tasks | template tasks | MISSING |
-| Template Resources | template resources | MISSING |
-| Template Colleges | template colleges | MISSING |
-| Template Versions | template versions | MISSING |
-| Workspaces list | `projects/workspaces` | PARTIAL |
-| At Risk | `projects/at-risk` | MISSING |
-| Readiness | `projects/readiness` | MISSING |
-| Submissions | `projects/submissions` | MISSING |
-| Project Audit | `projects/audit` | MISSING |
-| Create Workspace | `workspaces/new` | PARTIAL |
-| Reassign Mentor | `workspaces/reassign-mentor` | PARTIAL |
-| Deleted Workspaces | `workspaces/deleted` | VERIFY |
+| Templates list | `/superadmin/projects/templates` | MISSING |
+| New Template | `/superadmin/projects/templates/new` | MISSING |
+| Template Overview | `/superadmin/projects/templates/[templateId]` + `/overview` | MISSING |
+| Template Sprints | `/superadmin/projects/templates/[templateId]/sprints` | MISSING |
+| Template Tasks | `/superadmin/projects/templates/[templateId]/tasks` | MISSING |
+| Template Resources | `/superadmin/projects/templates/[templateId]/resources` | MISSING |
+| Template Colleges | `/superadmin/projects/templates/[templateId]/colleges` | MISSING |
+| Template Versions | `/superadmin/projects/templates/[templateId]/versions` | MISSING |
+| Workspaces list | `/superadmin/projects/workspaces` | PARTIAL |
+| At Risk | `/superadmin/projects/at-risk` | MISSING |
+| Readiness | `/superadmin/projects/readiness` | MISSING |
+| Submissions | `/superadmin/projects/submissions` | MISSING |
+| Project Audit | `/superadmin/projects/audit` | MISSING |
+| Create Workspace | `/superadmin/projects/workspaces/new` | PARTIAL |
+| Reassign Mentor | `/superadmin/projects/workspaces/reassign-mentor` | PARTIAL |
+| Deleted Workspaces | `/superadmin/projects/workspaces/deleted` | VERIFY |
 
 ## 5.5 Projects — workspace sections
+
+Parent detail route: `/superadmin/projects/workspaces/[workspaceId]`.
 
 | Surface | Legacy section | Status |
 | --- | --- | --- |
@@ -359,7 +369,7 @@ Every row below is Super-Admin scoped, even if College Admin has the same user j
 | --- | --- | --- | --- |
 | Drives list | `/tpo/drives` | placement operations | PARTIAL |
 | New Drive | `/tpo/drives/new` | `/tpo/placements/new` | DONE |
-| Edit Drive | `.../[jobId]/edit` | embedded controls | PARTIAL |
+| Edit Drive | `/tpo/drives/[jobId]/edit` | embedded controls | PARTIAL |
 | Overview tab | drive detail | vNext job workspace | PARTIAL |
 | Applicants tab | drive detail | vNext job workspace | PARTIAL |
 | Rounds tab | drive detail | vNext job workspace | PARTIAL |
