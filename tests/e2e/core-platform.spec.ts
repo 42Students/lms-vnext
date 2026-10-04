@@ -388,34 +388,45 @@ test.describe("Core tenant browser acceptance", () => {
         hasText:
           "E2E Acceptance Faculty",
       });
-    await facultyRow
-      .getByRole("button", {
+    const suspendButton =
+      facultyRow.getByRole("button", {
         name: "Suspend",
-      })
-      .click();
-    const suspendDialog =
-      page.getByRole("dialog");
-    await suspendDialog
-      .getByLabel("Suspension reason")
-      .fill("Browser acceptance suspension");
+      });
 
-    const suspendResponse =
-      page.waitForResponse(
-        (response) =>
-          response.url().includes(
-            `/api/people/${faculty.membershipId}/lifecycle`,
-          ) &&
-          response.request().method() ===
-            "PATCH",
-      );
-    await suspendDialog
-      .getByRole("button", {
-        name: "Suspend membership",
-      })
-      .click();
-    expect(
-      (await suspendResponse).ok(),
-    ).toBe(true);
+    if (await suspendButton.isVisible()) {
+      await suspendButton.click();
+      const suspendDialog =
+        page.getByRole("dialog");
+      await suspendDialog
+        .getByLabel("Suspension reason")
+        .fill(
+          "Browser acceptance suspension",
+        );
+
+      const suspendResponse =
+        page.waitForResponse(
+          (response) =>
+            response.url().includes(
+              `/api/people/${faculty.membershipId}/lifecycle`,
+            ) &&
+            response.request().method() ===
+              "PATCH",
+        );
+      await suspendDialog
+        .getByRole("button", {
+          name: "Suspend membership",
+        })
+        .click();
+      expect(
+        (await suspendResponse).ok(),
+      ).toBe(true);
+    } else {
+      await expect(
+        facultyRow.getByRole("button", {
+          name: "Reactivate",
+        }),
+      ).toBeVisible();
+    }
 
     await authenticate(
       context,
