@@ -113,13 +113,14 @@ test.describe("Core tenant browser acceptance", () => {
         name: "Colleges",
       }),
     ).toBeVisible();
+    const collegesTable = page.getByRole("table");
     await expect(
-      page.getByText("Seed College A", {
+      collegesTable.getByText("Seed College A", {
         exact: true,
       }),
     ).toBeVisible();
     await expect(
-      page.getByText("Seed College B", {
+      collegesTable.getByText("Seed College B", {
         exact: true,
       }),
     ).toHaveCount(0);
