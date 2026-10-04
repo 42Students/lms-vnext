@@ -592,10 +592,15 @@ test.describe("Placements browser regression", () => {
       (await acceptOfferResponse).ok(),
     ).toBe(true);
     await expect(
-      learnerOffer.getByText(
-        "Accepted",
-        { exact: true },
-      ),
+      page
+        .getByRole("article")
+        .filter({
+          hasText: "₹12,00,000",
+        })
+        .getByText(
+          "Accepted",
+          { exact: true },
+        ),
     ).toBeVisible();
 
     await authenticate(
