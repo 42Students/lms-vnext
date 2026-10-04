@@ -41,6 +41,18 @@ import {
   listSectionScheduleEvents,
   updateSectionScheduleEvent,
 } from "@/modules/academics/schedule-service";
+import {
+  createCourse,
+} from "@/modules/courses/course-service";
+import {
+  createCourseOffering,
+} from "@/modules/courses/offering-service";
+import {
+  createCourseSectionDelivery,
+} from "@/modules/courses/delivery-service";
+import {
+  getLearnerClassSchedule,
+} from "@/modules/academics/learner-schedule-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -71,6 +83,22 @@ const collegeAdmin: RequestContext = {
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
     roles: ["COLLEGE_ADMIN"],
+  },
+};
+
+const learner: RequestContext = {
+  user: {
+    id: SEED_IDS.learnerUser,
+    identityUid: "seed-learner",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.learnerCollegeAMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["LEARNER"],
   },
 };
 
@@ -110,6 +138,19 @@ const secondLearner = {
 
 async function cleanupA2() {
   await pool.query(
+    `delete from course_section_deliveries
+     where offering_id in (
+       select co.id
+       from course_offerings co
+       join courses c on c.id = co.course_id
+       where c.code like 'A2-SCHED-%'
+     )
+     and id not in (
+       select delivery_id
+       from section_schedule_event_courses
+     )`,
+  );
+  await pool.query(
     `delete from section_schedule_events
      where section_id in (
        select s.id
@@ -148,6 +189,26 @@ async function cleanupA2() {
        from programs
        where code like 'A2-%'
      )`,
+  );
+
+  await pool.query(
+    `delete from course_section_deliveries
+     where offering_id in (
+       select co.id
+       from course_offerings co
+       join courses c on c.id = co.course_id
+       where c.code like 'A2-SCHED-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_offerings
+     where course_id in (
+       select id from courses
+       where code like 'A2-SCHED-%'
+     )`,
+  );
+  await pool.query(
+    "delete from courses where code like 'A2-SCHED-%'",
   );
 
   await pool.query(
@@ -687,6 +748,129 @@ describe("academics A2 against PostgreSQL", () => {
         id: assignment.id,
       }),
     ]);
+  });
+
+
+  it("links scheduled classes to an exact Course delivery and exposes only the learner's active Section schedule", async () => {
+    const structure = await createStructure();
+
+    const enrollment =
+      await createLearnerProgramEnrollment(
+        collegeAdmin,
+        {
+          membershipId:
+            SEED_IDS.learnerCollegeAMembership,
+          programId: structure.program.id,
+          cohortId: structure.cohort.id,
+        },
+      );
+
+    await assignLearnerToSection(
+      collegeAdmin,
+      {
+        learnerEnrollmentId: enrollment.id,
+        sectionId: structure.sectionA.id,
+      },
+    );
+
+    const course = await createCourse(
+      collegeAdmin,
+      {
+        departmentId: SEED_IDS.departmentA,
+        name: "A2 Schedule Course",
+        code: "A2-SCHED-COURSE",
+      },
+    );
+    const offering =
+      await createCourseOffering(
+        collegeAdmin,
+        {
+          courseId: course.id,
+          cohortId: structure.cohort.id,
+          academicPeriodId:
+            structure.period1.id,
+          type: "CORE",
+          credits: 3,
+          displayOrder: 0,
+        },
+      );
+    const delivery =
+      await createCourseSectionDelivery(
+        collegeAdmin,
+        {
+          offeringId: offering.id,
+          sectionId: structure.sectionA.id,
+        },
+      );
+    const otherDelivery =
+      await createCourseSectionDelivery(
+        collegeAdmin,
+        {
+          offeringId: offering.id,
+          sectionId: structure.sectionB.id,
+        },
+      );
+
+    const event =
+      await createSectionScheduleEvent(
+        collegeAdmin,
+        {
+          sectionId: structure.sectionA.id,
+          deliveryId: delivery.id,
+          facultyMembershipId:
+            SEED_IDS.facultyCollegeAMembership,
+          title: "A2 Data Structures",
+          startsAt:
+            "2026-10-05T04:30:00.000Z",
+          endsAt:
+            "2026-10-05T05:30:00.000Z",
+          location: "Room A2",
+        },
+      );
+
+    await expect(
+      createSectionScheduleEvent(
+        collegeAdmin,
+        {
+          sectionId: structure.sectionA.id,
+          deliveryId: otherDelivery.id,
+          title: "A2 Wrong Section Course",
+          startsAt:
+            "2026-10-06T04:30:00.000Z",
+          endsAt:
+            "2026-10-06T05:30:00.000Z",
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "SCHEDULE_COURSE_DELIVERY_MISMATCH",
+    });
+
+    const schedule =
+      await getLearnerClassSchedule(learner);
+
+    expect(schedule.events).toEqual([
+      expect.objectContaining({
+        id: event.id,
+        sectionId: structure.sectionA.id,
+        deliveryId: delivery.id,
+        courseId: course.id,
+        courseName: "A2 Schedule Course",
+        facultyName: expect.any(String),
+        location: "Room A2",
+      }),
+    ]);
+    expect(schedule.courses).toEqual([
+      expect.objectContaining({
+        deliveryId: delivery.id,
+        courseId: course.id,
+      }),
+    ]);
+
+    await expect(
+      getLearnerClassSchedule(faculty),
+    ).rejects.toMatchObject({
+      code: "LEARNER_SCHEDULE_ACCESS_DENIED",
+    });
   });
 
   it("keeps section schedule events inside period and faculty tenant boundaries", async () => {

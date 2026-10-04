@@ -21,7 +21,10 @@ import { AcademicsServiceError } from "./errors";
 import { listLearnerProgramEnrollments } from "./enrollment-service";
 import { listSectionFacultyAssignments } from "./faculty-assignment-service";
 import { listSectionRoster } from "./roster-service";
-import { listSectionScheduleEvents } from "./schedule-service";
+import {
+  listSectionScheduleCourseChoices,
+  listSectionScheduleEvents,
+} from "./schedule-service";
 import { loadSectionScope } from "./scope";
 import { sectionIdSchema } from "./validation";
 
@@ -134,6 +137,7 @@ export async function getSectionOperationsWorkspace(
     scheduleEvents,
     learnerChoices,
     facultyChoices,
+    courseChoices,
   ] = await Promise.all([
     listLearnerProgramEnrollments(
       context,
@@ -152,6 +156,10 @@ export async function getSectionOperationsWorkspace(
     ),
     listRoleChoices(scope.collegeId, "LEARNER"),
     listRoleChoices(scope.collegeId, "FACULTY"),
+    listSectionScheduleCourseChoices(
+      context,
+      sectionId,
+    ),
   ]);
 
   return {
@@ -163,5 +171,6 @@ export async function getSectionOperationsWorkspace(
     scheduleEvents,
     learnerChoices,
     facultyChoices,
+    courseChoices,
   };
 }

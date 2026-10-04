@@ -160,14 +160,15 @@ Legacy contract:
 - session details;
 - loading/empty/error.
 
-- [ ] Derive schedule only from learner's active section(s); no arbitrary section-id access.
-- [ ] Calendar/date navigation is implemented.
-- [ ] Course/class filters match legacy.
-- [ ] Session title/time/course/faculty/location details are represented.
-- [ ] Today/upcoming cues are equivalent.
-- [ ] Loading/no-sessions/error states are implemented.
-- [ ] Timezone/date handling is verified.
-- [ ] Mobile calendar/list fallback is verified.
+- [x] Derive schedule only from learner's active section(s); no arbitrary section-id access.
+- [x] Calendar/date navigation is implemented.
+- [x] Course/class filters match legacy.
+- [x] Session title/time/course/faculty/location details are represented.
+- [x] Today/upcoming cues are equivalent.
+- [x] Loading/no-sessions/error states are implemented.
+- [x] Timezone/date handling is implemented with browser-local calendar grouping and offset-aware persisted timestamps.
+- [ ] Mobile calendar/list fallback is browser-verified.
+- [ ] Regression coverage executes successfully.
 
 ## Page: Attendance Summary
 **Legacy:** `/learn/attendance`

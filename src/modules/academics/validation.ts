@@ -214,6 +214,7 @@ export const createSectionScheduleEventInputSchema =
       sectionId: sectionIdSchema,
       facultyMembershipId:
         membershipIdSchema.nullable().optional(),
+      deliveryId: z.string().uuid().nullable().optional(),
       title: academicNameSchema,
       description: z
         .string()
@@ -246,6 +247,7 @@ export const updateSectionScheduleEventInputSchema =
     .object({
       facultyMembershipId:
         membershipIdSchema.nullable().optional(),
+      deliveryId: z.string().uuid().nullable().optional(),
       title: academicNameSchema.optional(),
       description: z
         .string()

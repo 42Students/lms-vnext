@@ -2,13 +2,22 @@ import {
   and,
   asc,
   eq,
+  isNull,
+  leftJoin,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  collegeMemberships,
+  courseOfferings,
+  courseSectionDeliveries,
+  courses,
+  sectionScheduleEventCourses,
   sectionScheduleEvents,
+  users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { loadCourseSectionDeliveryScope } from "@/modules/courses/scope";
 import { AcademicsServiceError } from "./errors";
 import {
   loadAcademicsMembership,
@@ -80,6 +89,74 @@ async function validateFacultyForSection(
   }
 }
 
+async function validateDeliveryForSection(
+  deliveryId: string | null | undefined,
+  sectionId: string,
+) {
+  if (!deliveryId) {
+    return;
+  }
+
+  const delivery =
+    await loadCourseSectionDeliveryScope(deliveryId);
+
+  if (delivery.sectionId !== sectionId) {
+    throw new AcademicsServiceError(
+      "SCHEDULE_COURSE_DELIVERY_MISMATCH",
+    );
+  }
+}
+
+export async function listSectionScheduleCourseChoices(
+  context: RequestContext,
+  sectionIdInput: string,
+) {
+  const sectionId =
+    sectionIdSchema.parse(sectionIdInput);
+  const section = await loadSectionScope(sectionId);
+
+  requirePermission(context, "courses.read", {
+    organizationId: section.organizationId,
+    collegeId: section.collegeId,
+  });
+
+  return getDb()
+    .select({
+      deliveryId: courseSectionDeliveries.id,
+      courseId: courses.id,
+      courseName: courses.name,
+      courseCode: courses.code,
+    })
+    .from(courseSectionDeliveries)
+    .innerJoin(
+      courseOfferings,
+      and(
+        eq(
+          courseOfferings.id,
+          courseSectionDeliveries.offeringId,
+        ),
+        eq(courseOfferings.status, "ACTIVE"),
+      ),
+    )
+    .innerJoin(
+      courses,
+      and(
+        eq(courses.id, courseOfferings.courseId),
+        eq(courses.status, "ACTIVE"),
+      ),
+    )
+    .where(
+      and(
+        eq(
+          courseSectionDeliveries.sectionId,
+          sectionId,
+        ),
+        isNull(courseSectionDeliveries.endedAt),
+      ),
+    )
+    .orderBy(asc(courses.name));
+}
+
 export async function listSectionScheduleEvents(
   context: RequestContext,
   sectionIdInput: string,
@@ -96,8 +173,63 @@ export async function listSectionScheduleEvents(
   const db = getDb();
 
   return db
-    .select()
+    .select({
+      id: sectionScheduleEvents.id,
+      sectionId: sectionScheduleEvents.sectionId,
+      facultyMembershipId:
+        sectionScheduleEvents.facultyMembershipId,
+      facultyName: users.displayName,
+      deliveryId:
+        sectionScheduleEventCourses.deliveryId,
+      courseId: courses.id,
+      courseName: courses.name,
+      courseCode: courses.code,
+      title: sectionScheduleEvents.title,
+      description: sectionScheduleEvents.description,
+      startsAt: sectionScheduleEvents.startsAt,
+      endsAt: sectionScheduleEvents.endsAt,
+      location: sectionScheduleEvents.location,
+      status: sectionScheduleEvents.status,
+      createdAt: sectionScheduleEvents.createdAt,
+      updatedAt: sectionScheduleEvents.updatedAt,
+    })
     .from(sectionScheduleEvents)
+    .leftJoin(
+      sectionScheduleEventCourses,
+      eq(
+        sectionScheduleEventCourses.scheduleEventId,
+        sectionScheduleEvents.id,
+      ),
+    )
+    .leftJoin(
+      courseSectionDeliveries,
+      eq(
+        courseSectionDeliveries.id,
+        sectionScheduleEventCourses.deliveryId,
+      ),
+    )
+    .leftJoin(
+      courseOfferings,
+      eq(
+        courseOfferings.id,
+        courseSectionDeliveries.offeringId,
+      ),
+    )
+    .leftJoin(
+      courses,
+      eq(courses.id, courseOfferings.courseId),
+    )
+    .leftJoin(
+      collegeMemberships,
+      eq(
+        collegeMemberships.id,
+        sectionScheduleEvents.facultyMembershipId,
+      ),
+    )
+    .leftJoin(
+      users,
+      eq(users.id, collegeMemberships.userId),
+    )
     .where(
       eq(
         sectionScheduleEvents.sectionId,
@@ -137,10 +269,16 @@ export async function createSectionScheduleEvent(
     );
   }
 
-  await validateFacultyForSection(
-    input.facultyMembershipId,
-    section.collegeId,
-  );
+  await Promise.all([
+    validateFacultyForSection(
+      input.facultyMembershipId,
+      section.collegeId,
+    ),
+    validateDeliveryForSection(
+      input.deliveryId,
+      input.sectionId,
+    ),
+  ]);
 
   const startsAt = new Date(input.startsAt);
   const endsAt = new Date(input.endsAt);
@@ -151,21 +289,32 @@ export async function createSectionScheduleEvent(
   );
 
   const db = getDb();
-  const [created] = await db
-    .insert(sectionScheduleEvents)
-    .values({
-      sectionId: input.sectionId,
-      facultyMembershipId:
-        input.facultyMembershipId ?? null,
-      title: input.title,
-      description: input.description ?? null,
-      startsAt,
-      endsAt,
-      location: input.location ?? null,
-    })
-    .returning();
+  return db.transaction(async (tx) => {
+    const [created] = await tx
+      .insert(sectionScheduleEvents)
+      .values({
+        sectionId: input.sectionId,
+        facultyMembershipId:
+          input.facultyMembershipId ?? null,
+        title: input.title,
+        description: input.description ?? null,
+        startsAt,
+        endsAt,
+        location: input.location ?? null,
+      })
+      .returning();
 
-  return created;
+    if (input.deliveryId) {
+      await tx
+        .insert(sectionScheduleEventCourses)
+        .values({
+          scheduleEventId: created!.id,
+          deliveryId: input.deliveryId,
+        });
+    }
+
+    return created!;
+  });
 }
 
 export async function updateSectionScheduleEvent(
@@ -204,14 +353,20 @@ export async function updateSectionScheduleEvent(
     );
   }
 
-  if (
+  await Promise.all([
     input.facultyMembershipId !== undefined
-  ) {
-    await validateFacultyForSection(
-      input.facultyMembershipId,
-      scope.collegeId,
-    );
-  }
+      ? validateFacultyForSection(
+          input.facultyMembershipId,
+          scope.collegeId,
+        )
+      : Promise.resolve(),
+    input.deliveryId !== undefined
+      ? validateDeliveryForSection(
+          input.deliveryId,
+          scope.sectionId,
+        )
+      : Promise.resolve(),
+  ]);
 
   const startsAt = input.startsAt
     ? new Date(input.startsAt)
@@ -227,51 +382,74 @@ export async function updateSectionScheduleEvent(
   );
 
   const db = getDb();
-  const [updated] = await db
-    .update(sectionScheduleEvents)
-    .set({
-      ...(input.facultyMembershipId !==
-      undefined
-        ? {
-            facultyMembershipId:
-              input.facultyMembershipId,
-          }
-        : {}),
-      ...(input.title !== undefined
-        ? { title: input.title }
-        : {}),
-      ...(input.description !== undefined
-        ? { description: input.description }
-        : {}),
-      ...(input.startsAt !== undefined
-        ? { startsAt }
-        : {}),
-      ...(input.endsAt !== undefined
-        ? { endsAt }
-        : {}),
-      ...(input.location !== undefined
-        ? { location: input.location }
-        : {}),
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(sectionScheduleEvents.id, eventId),
-        eq(
-          sectionScheduleEvents.status,
-          "SCHEDULED",
+
+  return db.transaction(async (tx) => {
+    const [updated] = await tx
+      .update(sectionScheduleEvents)
+      .set({
+        ...(input.facultyMembershipId !==
+        undefined
+          ? {
+              facultyMembershipId:
+                input.facultyMembershipId,
+            }
+          : {}),
+        ...(input.title !== undefined
+          ? { title: input.title }
+          : {}),
+        ...(input.description !== undefined
+          ? { description: input.description }
+          : {}),
+        ...(input.startsAt !== undefined
+          ? { startsAt }
+          : {}),
+        ...(input.endsAt !== undefined
+          ? { endsAt }
+          : {}),
+        ...(input.location !== undefined
+          ? { location: input.location }
+          : {}),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(sectionScheduleEvents.id, eventId),
+          eq(
+            sectionScheduleEvents.status,
+            "SCHEDULED",
+          ),
         ),
-      ),
-    )
-    .returning();
+      )
+      .returning();
 
-  if (!updated) {
-    throw new AcademicsServiceError(
-      "SCHEDULE_EVENT_NOT_FOUND",
-    );
-  }
+    if (!updated) {
+      throw new AcademicsServiceError(
+        "SCHEDULE_EVENT_NOT_FOUND",
+      );
+    }
 
-  return updated;
+    if (input.deliveryId !== undefined) {
+      await tx
+        .delete(sectionScheduleEventCourses)
+        .where(
+          eq(
+            sectionScheduleEventCourses.scheduleEventId,
+            eventId,
+          ),
+        );
+
+      if (input.deliveryId) {
+        await tx
+          .insert(sectionScheduleEventCourses)
+          .values({
+            scheduleEventId: eventId,
+            deliveryId: input.deliveryId,
+          });
+      }
+    }
+
+    return updated;
+  });
 }
 
 export async function cancelSectionScheduleEvent(

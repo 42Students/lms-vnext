@@ -48,6 +48,11 @@ const learnerItems: ShellNavItem[] = [
     shortLabel: "A",
   },
   {
+    label: "Class Schedule",
+    href: "/learn/calendar",
+    shortLabel: "S",
+  },
+  {
     label: "My Projects",
     href: "/learn/projects",
     shortLabel: "P",

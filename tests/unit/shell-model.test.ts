@@ -96,6 +96,11 @@ describe("authenticated shell model", () => {
         shortLabel: "A",
       },
       {
+        label: "Class Schedule",
+        href: "/learn/calendar",
+        shortLabel: "S",
+      },
+      {
         label: "My Projects",
         href: "/learn/projects",
         shortLabel: "P",
@@ -187,6 +192,7 @@ describe("authenticated shell model", () => {
       "My Courses",
       "Quizzes",
       "Assignments",
+      "Class Schedule",
       "My Projects",
       "Placements",
       "Teaching Courses",

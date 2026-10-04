@@ -218,6 +218,13 @@
       "when": 1791135600000,
       "tag": "0030_placements_p11_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1791235800000,
+      "tag": "0031_schedule_course_links",
+      "breakpoints": true
     }
   ]
 }

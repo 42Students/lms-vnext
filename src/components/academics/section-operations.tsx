@@ -51,9 +51,21 @@ type FacultyAssignment = {
   endedAt: string | null;
 };
 
+type CourseChoice = {
+  deliveryId: string;
+  courseId: string;
+  courseName: string;
+  courseCode: string;
+};
+
 type ScheduleEvent = {
   id: string;
   facultyMembershipId: string | null;
+  facultyName: string | null;
+  deliveryId: string | null;
+  courseId: string | null;
+  courseName: string | null;
+  courseCode: string | null;
   title: string;
   description: string | null;
   startsAt: string;
@@ -131,6 +143,7 @@ export function SectionOperations({
   scheduleEvents,
   learnerChoices,
   facultyChoices,
+  courseChoices,
 }: {
   section: {
     id: string;
@@ -156,6 +169,7 @@ export function SectionOperations({
   scheduleEvents: readonly ScheduleEvent[];
   learnerChoices: readonly Choice[];
   facultyChoices: readonly Choice[];
+  courseChoices: readonly CourseChoice[];
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -173,6 +187,8 @@ export function SectionOperations({
       "ADVISOR",
     );
   const [eventFacultyId, setEventFacultyId] =
+    useState("");
+  const [eventDeliveryId, setEventDeliveryId] =
     useState("");
   const [eventTitle, setEventTitle] =
     useState("");
@@ -425,7 +441,15 @@ export function SectionOperations({
             {row.title}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {row.location || "No location"}
+            {[
+              row.courseName
+                ? `${row.courseName}${row.courseCode ? ` · ${row.courseCode}` : ""}`
+                : "General Section event",
+              row.facultyName || null,
+              row.location || "No location",
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </p>
         </div>
       ),
@@ -759,11 +783,11 @@ export function SectionOperations({
             Section schedule
           </h2>
           <p className="mt-1 text-sm text-body">
-            Generic Section calendar for {section.startDate} → {section.endDate}. Course meetings will extend this in the Courses phase.
+            Section calendar for {section.startDate} → {section.endDate}. Link teaching sessions to a Course delivery so learner and Faculty calendars can filter and deep-link safely.
           </p>
         </div>
 
-        <div className="grid gap-3 rounded-xl border border-border bg-surface p-5 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-3 rounded-xl border border-border bg-surface p-5 md:grid-cols-2 xl:grid-cols-6">
           <div>
             <label
               htmlFor="schedule-title"
@@ -832,6 +856,35 @@ export function SectionOperations({
           </div>
           <div>
             <label
+              htmlFor="schedule-course"
+              className="mb-1.5 block text-xs font-semibold text-body"
+            >
+              Course · optional
+            </label>
+            <Select
+              id="schedule-course"
+              value={eventDeliveryId}
+              onChange={(event) =>
+                setEventDeliveryId(
+                  event.target.value,
+                )
+              }
+            >
+              <option value="">
+                General Section event
+              </option>
+              {courseChoices.map((choice) => (
+                <option
+                  key={choice.deliveryId}
+                  value={choice.deliveryId}
+                >
+                  {choice.courseName} · {choice.courseCode}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <label
               htmlFor="schedule-faculty"
               className="mb-1.5 block text-xs font-semibold text-body"
             >
@@ -859,7 +912,7 @@ export function SectionOperations({
               ))}
             </Select>
           </div>
-          <div className="md:col-span-2 xl:col-span-5">
+          <div className="md:col-span-2 xl:col-span-6">
             <Button
               disabled={
                 pending ||
@@ -877,6 +930,8 @@ export function SectionOperations({
                         sectionId: section.id,
                         facultyMembershipId:
                           eventFacultyId || null,
+                        deliveryId:
+                          eventDeliveryId || null,
                         title: eventTitle,
                         startsAt: new Date(
                           eventStart,
@@ -896,6 +951,7 @@ export function SectionOperations({
                     setEventEnd("");
                     setEventLocation("");
                     setEventFacultyId("");
+                    setEventDeliveryId("");
                   },
                 )
               }

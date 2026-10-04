@@ -13,6 +13,7 @@ import {
 import {
   academicPeriods,
   cohorts,
+  sectionScheduleEvents,
   sections,
 } from "./academics";
 import { departments } from "./departments";
@@ -185,6 +186,32 @@ export const courseSectionDeliveries = pgTable(
     ),
     index("course_section_deliveries_offering_idx").on(
       table.offeringId,
+    ),
+  ],
+);
+
+export const sectionScheduleEventCourses = pgTable(
+  "section_schedule_event_courses",
+  {
+    scheduleEventId: uuid("schedule_event_id")
+      .primaryKey()
+      .references(() => sectionScheduleEvents.id, {
+        onDelete: "cascade",
+      }),
+    deliveryId: uuid("delivery_id")
+      .notNull()
+      .references(() => courseSectionDeliveries.id, {
+        onDelete: "restrict",
+      }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("section_schedule_event_courses_delivery_idx").on(
+      table.deliveryId,
     ),
   ],
 );
