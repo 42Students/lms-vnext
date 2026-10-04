@@ -123,7 +123,9 @@ Once live browser authentication exists, production smoke coverage must addition
 - one representative admin read/write flow
 - logout/session restoration
 
-Until that exists, do not mark production smoke tests complete.
+The committed `npm run smoke:authenticated` harness verifies an already-authenticated real session, membership resolution, dashboard restoration and optional own-college/cross-college read assertions without enabling the E2E bypass. The interactive Identity Platform login/provider and representative authenticated write still require live-environment validation.
+
+Until those live checks exist, do not mark production smoke tests complete.
 
 ## Deployment record
 

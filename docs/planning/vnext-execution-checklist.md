@@ -627,7 +627,7 @@ Do not build a generic chatbot first.
 - [x] migration deployment procedure
 - [x] rollback procedure
 - [x] runbook
-- [~] public runtime/deployment smoke automated; authenticated production smoke waits for live Identity Platform
+- [~] public runtime/deployment smoke automated; real-session authenticated smoke harness now verifies membership resolution, dashboard restoration and optional tenant-isolation reads, while interactive Identity Platform login/provider + representative write still await the live environment
 - [~] read-only hot-workflow load harness committed for learner + operational API mixes with p95/error thresholds; production baseline run waits for live infrastructure and an approved authenticated test account
 
 ---
