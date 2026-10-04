@@ -387,6 +387,7 @@ export async function actOnPlacementOffer(
   context: RequestContext,
   offerIdInput: string,
   rawInput: PlacementOfferActionInput,
+  now: Date = new Date(),
 ) {
   const offerId =
     placementOfferIdSchema.parse(
@@ -414,7 +415,6 @@ export async function actOnPlacementOffer(
     );
   }
 
-  const now = new Date();
   if (
     input.action !== "WITHDRAW" &&
     current.offer.expiresAt &&

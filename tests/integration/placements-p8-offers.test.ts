@@ -509,21 +509,19 @@ describe("Placement P8 offers and joining", () => {
         {
           roleTitle: "Engineer",
           expiresAt: new Date(
-            Date.now() + 60_000,
+            "2026-11-01T00:00:00.000Z",
           ),
         },
       );
-
-    await pool.query(
-      "update placement_offers set expires_at = now() - interval '1 minute' where id = $1",
-      [expired.id],
-    );
 
     await expect(
       actOnPlacementOffer(
         learner,
         expired.id,
         { action: "ACCEPT" },
+        new Date(
+          "2026-11-02T00:00:00.000Z",
+        ),
       ),
     ).rejects.toMatchObject({
       code:
