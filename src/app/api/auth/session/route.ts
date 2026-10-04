@@ -3,6 +3,10 @@ import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
 import { ADMIN_SCOPE_COOKIE_NAME } from "@/auth/admin-scope";
 import {
+  E2E_IDENTITY_COOKIE_NAME,
+  E2E_SECRET_COOKIE_NAME,
+} from "@/auth/e2e-identity";
+import {
   MEMBERSHIP_COOKIE_NAME,
   SESSION_COOKIE_NAME,
   SESSION_MAX_AGE_SECONDS,
@@ -109,6 +113,20 @@ export async function DELETE(request: Request) {
     maxAge: 0,
   });
   response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+  response.cookies.set(E2E_IDENTITY_COOKIE_NAME, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+  response.cookies.set(E2E_SECRET_COOKIE_NAME, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

@@ -2,6 +2,7 @@ import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
 import { firebaseIdentityDirectory } from "./firebase-identity-directory";
+import { e2eIdentityDirectory } from "./e2e-identity-directory";
 import {
   addMembershipRole,
   listMembershipRoles,
@@ -22,12 +23,24 @@ import {
   onboardPerson,
 } from "./service";
 
+function runtimeIdentityDirectory() {
+  if (
+    process.env.NODE_ENV !== "production" &&
+    process.env.E2E_AUTH_ENABLED === "true"
+  ) {
+    return e2eIdentityDirectory;
+  }
+
+  return firebaseIdentityDirectory;
+}
+
 export function onboardPersonWithRuntime(
   context: RequestContext,
   rawInput: unknown,
 ) {
   return onboardPerson(context, rawInput, {
-    identityDirectory: firebaseIdentityDirectory,
+    identityDirectory:
+      runtimeIdentityDirectory(),
     repository: drizzlePeopleRepository,
   });
 }

@@ -2,6 +2,7 @@ import {
   expect,
   test,
   type BrowserContext,
+  type Page,
 } from "@playwright/test";
 import {
   E2E_IDENTITY_COOKIE_NAME,
@@ -53,6 +54,85 @@ async function authenticate(
   }
 
   await context.addCookies(cookies);
+}
+
+type OnboardedBrowserPerson = {
+  identityUid: string;
+  membershipId: string;
+};
+
+async function onboardBrowserPerson(
+  page: Page,
+  input: {
+    displayName: string;
+    phone: string;
+    email: string;
+    role:
+      | "College Admin"
+      | "Faculty"
+      | "Learner";
+  },
+): Promise<OnboardedBrowserPerson> {
+  await page
+    .getByRole("button", {
+      name: "Onboard person",
+    })
+    .first()
+    .click();
+
+  const dialog = page.getByRole("dialog");
+  await dialog
+    .getByLabel("Display name")
+    .fill(input.displayName);
+  await dialog
+    .getByLabel("Phone")
+    .fill(input.phone);
+  await dialog
+    .getByLabel("Email · optional")
+    .fill(input.email);
+
+  const learner =
+    dialog.getByLabel("Learner");
+  if (input.role !== "Learner") {
+    await learner.uncheck();
+    await dialog
+      .getByLabel(input.role)
+      .check();
+  }
+
+  const responsePromise =
+    page.waitForResponse(
+      (response) =>
+        response.url().endsWith(
+          "/api/people/onboard",
+        ) &&
+        response.request().method() ===
+          "POST",
+    );
+
+  await dialog
+    .getByRole("button", {
+      name: "Onboard person",
+    })
+    .click();
+
+  const response =
+    await responsePromise;
+  expect(response.ok()).toBe(true);
+  const payload = await response.json();
+
+  await expect(
+    page.getByText(input.displayName, {
+      exact: true,
+    }),
+  ).toBeVisible();
+
+  return {
+    identityUid:
+      payload.person.user.identityUid,
+    membershipId:
+      payload.person.membership.id,
+  };
 }
 
 test.describe("Core tenant browser acceptance", () => {
@@ -124,6 +204,259 @@ test.describe("Core tenant browser acceptance", () => {
         exact: true,
       }),
     ).toHaveCount(0);
+  });
+
+  test("runs tenant creation, scoped administration, onboarding, lifecycle denial, session restoration and logout", async ({
+    page,
+    context,
+  }) => {
+    const organizationName =
+      "E2E Acceptance Organization";
+    const collegeName =
+      "E2E Acceptance College";
+    const collegeCode = "E2E-ACCEPT";
+    const superDepartment =
+      "E2E Super Department";
+    const adminDepartment =
+      "E2E College Admin Department";
+
+    await authenticate(
+      context,
+      "seed-superadmin",
+    );
+
+    await page.goto("/dashboard");
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Platform overview",
+      }),
+    ).toBeVisible();
+
+    await page.goto("/admin/organizations");
+    await page
+      .getByLabel("Organization name")
+      .fill(organizationName);
+    await page
+      .getByRole("button", {
+        name: "Create organization",
+      })
+      .click();
+    await expect(
+      page.getByText(organizationName, {
+        exact: true,
+      }),
+    ).toBeVisible();
+
+    await page.goto("/admin/colleges");
+    await page
+      .getByLabel("Organization")
+      .selectOption({
+        label: organizationName,
+      });
+    await page
+      .getByLabel("College name")
+      .fill(collegeName);
+    await page
+      .getByLabel("Code")
+      .fill(collegeCode);
+    await page
+      .getByRole("button", {
+        name: "Create college",
+      })
+      .click();
+    await expect(
+      page.getByText(collegeName, {
+        exact: true,
+      }),
+    ).toBeVisible();
+
+    const scope =
+      page.getByLabel("Super Admin scope");
+    const scopeResponse =
+      page.waitForResponse(
+        (response) =>
+          response.url().endsWith(
+            "/api/auth/admin-scope",
+          ) &&
+          response.request().method() ===
+            "POST",
+      );
+    await scope.selectOption({
+      label:
+        `${organizationName} · ${collegeName}`,
+    });
+    expect((await scopeResponse).ok()).toBe(
+      true,
+    );
+
+    await page.goto("/admin/departments");
+    await page
+      .getByLabel("Department name")
+      .fill(superDepartment);
+    await page
+      .getByRole("button", {
+        name: "Create department",
+      })
+      .click();
+    await expect(
+      page.getByText(superDepartment, {
+        exact: true,
+      }),
+    ).toBeVisible();
+
+    await page.goto("/admin/people");
+    const collegeAdmin =
+      await onboardBrowserPerson(page, {
+        displayName:
+          "E2E Acceptance College Admin",
+        phone: "+919100000101",
+        email:
+          "e2e.acceptance.admin@example.com",
+        role: "College Admin",
+      });
+
+    await authenticate(
+      context,
+      collegeAdmin.identityUid,
+      collegeAdmin.membershipId,
+    );
+    await page.goto("/dashboard");
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: collegeName,
+      }),
+    ).toBeVisible();
+
+    await page.reload();
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: collegeName,
+      }),
+    ).toBeVisible();
+
+    await page.goto("/college/departments");
+    await page
+      .getByLabel("Department name")
+      .fill(adminDepartment);
+    await page
+      .getByRole("button", {
+        name: "Create department",
+      })
+      .click();
+    await expect(
+      page.getByText(adminDepartment, {
+        exact: true,
+      }),
+    ).toBeVisible();
+
+    await page.goto("/college/people");
+    const faculty =
+      await onboardBrowserPerson(page, {
+        displayName:
+          "E2E Acceptance Faculty",
+        phone: "+919100000102",
+        email:
+          "e2e.acceptance.faculty@example.com",
+        role: "Faculty",
+      });
+    const learner =
+      await onboardBrowserPerson(page, {
+        displayName:
+          "E2E Acceptance Learner",
+        phone: "+919100000103",
+        email:
+          "e2e.acceptance.learner@example.com",
+        role: "Learner",
+      });
+
+    const facultyRow = page
+      .getByRole("row")
+      .filter({
+        hasText:
+          "E2E Acceptance Faculty",
+      });
+    await facultyRow
+      .getByRole("button", {
+        name: "Suspend",
+      })
+      .click();
+    const suspendDialog =
+      page.getByRole("dialog");
+    await suspendDialog
+      .getByLabel("Suspension reason")
+      .fill("Browser acceptance suspension");
+
+    const suspendResponse =
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(
+            `/api/people/${faculty.membershipId}/lifecycle`,
+          ) &&
+          response.request().method() ===
+            "PATCH",
+      );
+    await suspendDialog
+      .getByRole("button", {
+        name: "Suspend membership",
+      })
+      .click();
+    expect(
+      (await suspendResponse).ok(),
+    ).toBe(true);
+
+    await authenticate(
+      context,
+      faculty.identityUid,
+      faculty.membershipId,
+    );
+    await page.goto("/dashboard");
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Choose another active college",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(
+        "Your previously selected college membership is no longer active.",
+        { exact: false },
+      ),
+    ).toBeVisible();
+
+    await authenticate(
+      context,
+      learner.identityUid,
+      learner.membershipId,
+    );
+    await page.goto("/dashboard");
+    await expect(
+      page.getByRole("button", {
+        name: "Sign out",
+      }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", {
+        name: "Sign out",
+      })
+      .click();
+
+    await expect(page).toHaveURL(
+      `${baseUrl}/`,
+    );
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "LMS vNext",
+      }),
+    ).toBeVisible();
+
+    await page.goto("/dashboard");
+    await expect(page).toHaveURL(
+      `${baseUrl}/`,
+    );
   });
 
   test("College Admin stays inside the active college on UI and direct API reads", async ({
