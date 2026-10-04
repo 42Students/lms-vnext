@@ -176,8 +176,6 @@ export function can(
         )
       );
 
-    case "system-role.manage":
-    case "project-template.manage":
     case "project-template.assign":
       return false;
 

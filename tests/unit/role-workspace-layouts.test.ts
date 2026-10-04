@@ -31,7 +31,7 @@ describe("role workspace route guards", () => {
             roleLayout.path,
           ),
           "utf8",
-        );
+        ).replace(/\r\n/g, "\n");
 
       expect(content).toContain(
         "getCurrentRequestContext",

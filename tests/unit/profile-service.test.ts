@@ -13,6 +13,10 @@ import {
   type ProfileRepository,
 } from "@/modules/people/profile-service";
 import type { PersonMembershipView } from "@/modules/people/service";
+import {
+  emptyLearnerProfileDocument,
+  type LearnerProfileDocument,
+} from "@/modules/people/profile-validation";
 
 const collegeA = "7f8e7b00-8503-4a2d-a222-fdfe8eb55ac0";
 const collegeB = "b14f1d5a-97d4-4dfa-989a-5c9bbf713cde";
@@ -128,6 +132,26 @@ class FakeProfileRepository implements ProfileRepository {
       membershipId,
       rollNumber: input.rollNumber ?? null,
       registrationNumber: input.registrationNumber ?? null,
+      profileDocument:
+        existing?.profileDocument ?? emptyLearnerProfileDocument,
+      createdAt: existing?.createdAt ?? now,
+      updatedAt: now,
+    };
+    this.learnerProfiles.set(membershipId, profile);
+    return profile;
+  }
+
+  async upsertLearnerProfileDocument(
+    membershipId: string,
+    document: LearnerProfileDocument,
+  ) {
+    const existing = this.learnerProfiles.get(membershipId);
+    const now = new Date("2026-10-02T12:00:00Z");
+    const profile: LearnerProfileView = {
+      membershipId,
+      rollNumber: existing?.rollNumber ?? null,
+      registrationNumber: existing?.registrationNumber ?? null,
+      profileDocument: document,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
     };

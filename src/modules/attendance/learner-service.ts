@@ -214,9 +214,13 @@ export async function getLearnerAttendanceWorkspace(
       courseId: row.courseId!,
       courseName: row.courseName!,
       courseCode: row.courseCode!,
+      sessionStatus:
+        row.sessionStatus as LearnerAttendanceRow["sessionStatus"],
+      recordStatus:
+        row.recordStatus as LearnerAttendanceRow["recordStatus"],
     }));
 
-  const courses = deliveries.map(
+  const courseList = deliveries.map(
     (delivery) => ({
       deliveryId: delivery.deliveryId,
       courseId: delivery.courseId,
@@ -228,7 +232,7 @@ export async function getLearnerAttendanceWorkspace(
     }),
   );
 
-  const summaries = courses.map(
+  const summaries = courseList.map(
     (course) => {
       const courseRows = records.filter(
         (record) =>
@@ -246,7 +250,7 @@ export async function getLearnerAttendanceWorkspace(
 
   return {
     policy: policy ?? DEFAULT_POLICY,
-    courses,
+    courses: courseList,
     records: records.map((record) => ({
       ...record,
       status:

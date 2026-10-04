@@ -60,3 +60,11 @@ export function resourceInteractionState(input: {
       input.progressStatus !== "COMPLETED",
   };
 }
+
+export function isAssignmentOverdue(
+  submissionId: string | null | undefined,
+  dueAt: Date | null | undefined,
+  nowMs: number = Date.now(),
+) {
+  return !submissionId && Boolean(dueAt) && dueAt!.getTime() < nowMs;
+}

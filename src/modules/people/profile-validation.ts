@@ -75,7 +75,7 @@ const calendarDateValue = z
   .refine(
     (value) => {
       if (value === "") return true;
-      if (!/^d{4}-d{2}-d{2}$/.test(value)) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
         return false;
       }
       const parsed = new Date(
@@ -189,11 +189,11 @@ const identitySchema = z
       .string()
       .trim()
       .transform((value) =>
-        value.replace(/[-s]/g, ""),
+        value.replace(/[-\s]/g, ""),
       )
       .refine(
         (value) =>
-          value === "" || /^d{12}$/.test(value),
+          value === "" || /^\d{12}$/.test(value),
         "Aadhaar number must be 12 digits",
       )
       .default(""),
@@ -461,14 +461,15 @@ export const learnerProfileDocumentSchema = z
     hobbies: z
       .array(z.string().trim().min(1).max(120))
       .max(50)
-      .transform((values) => [
-        ...new Map(
-          values.map((value) => [
-            value.toLocaleLowerCase("en"),
-            value,
-          ]),
-        ).values(),
-      ])
+      .transform((values) => {
+        const seen = new Set<string>();
+        return values.filter((value) => {
+          const key = value.toLocaleLowerCase("en");
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      })
       .default([]),
     metadata: z
       .array(metadataEntrySchema)

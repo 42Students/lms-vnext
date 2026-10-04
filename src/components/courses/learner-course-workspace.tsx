@@ -8,6 +8,7 @@ import { ResourceProgressControl } from "./resource-progress-control";
 import { LearnerYouTubePlayer } from "./learner-youtube-player";
 import {
   assignmentInteractionState,
+  isAssignmentOverdue,
   resourceInteractionState,
 } from "./learner-interaction-model";
 import {
@@ -268,10 +269,10 @@ function AssignmentCard({
       progressStatus:
         assignment.progress.status,
     });
-  const overdue =
-    !assignment.submissionId &&
-    Boolean(assignment.dueAt) &&
-    assignment.dueAt!.getTime() < Date.now();
+  const overdue = isAssignmentOverdue(
+    assignment.submissionId,
+    assignment.dueAt,
+  );
 
   return (
     <article

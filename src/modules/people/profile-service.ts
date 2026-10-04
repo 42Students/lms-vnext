@@ -195,7 +195,7 @@ function requireOwnLearnerMembership(
     context.membership.status !== "ACTIVE" ||
     !hasMembershipRole(context, "LEARNER")
   ) {
-    throw new AuthorizationError("people.read");
+    throw new AuthorizationError("academics.read");
   }
 
   return context.membership;

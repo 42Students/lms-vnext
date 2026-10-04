@@ -3,7 +3,6 @@ import {
   asc,
   eq,
   isNull,
-  leftJoin,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {

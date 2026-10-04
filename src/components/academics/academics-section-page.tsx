@@ -77,6 +77,7 @@ export async function AcademicsSectionPage({
         )}
         learnerChoices={workspace.learnerChoices}
         facultyChoices={workspace.facultyChoices}
+        courseChoices={workspace.courseChoices}
       />
     </div>
   );
