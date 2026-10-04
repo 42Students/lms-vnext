@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
+import { PlacementCandidateEvidenceEditor } from "./placement-candidate-evidence-editor";
 
 type RoundKind =
   | "TALK"
@@ -1042,6 +1043,17 @@ export function PlacementDriveControls({
                           Review eligibility
                         </Button>
                       )}
+
+                      <PlacementCandidateEvidenceEditor
+                        membershipId={
+                          item.membershipId
+                        }
+                        onSaved={() =>
+                          loadEligibility(
+                            item.membershipId,
+                          )
+                        }
+                      />
                     </div>
                   </div>
                   {terminal ? (

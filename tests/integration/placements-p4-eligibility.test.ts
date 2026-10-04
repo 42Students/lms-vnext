@@ -14,6 +14,7 @@ import {
 } from "@/modules/placements/job-service";
 import {
   evaluatePlacementEligibility,
+  getManagedAcademicEvidence,
   setEligibilityOverride,
   upsertJobEligibilityPolicy,
   upsertOwnAcademicEvidence,
@@ -221,6 +222,68 @@ describe("Placement P4 eligibility", () => {
     ).rejects.toMatchObject({
       code: "PLACEMENT_ACADEMIC_EVIDENCE_VERIFIED",
     });
+  });
+
+  it("lets managers read normalized candidate evidence only inside their placement tenant", async () => {
+    await upsertOwnAcademicEvidence(learner, {
+      cgpa: 8.15,
+      activeBacklogs: 1,
+      tenthPercentage: 82.75,
+      twelfthPercentage: 79.5,
+      gapYears: 0,
+      passingYear: 2026,
+    });
+
+    await expect(
+      getManagedAcademicEvidence(
+        tpo,
+        SEED_IDS.learnerCollegeAMembership,
+      ),
+    ).resolves.toMatchObject({
+      membershipId:
+        SEED_IDS.learnerCollegeAMembership,
+      source: "SELF",
+      cgpa: 8.15,
+      activeBacklogs: 1,
+      tenthPercentage: 82.75,
+      twelfthPercentage: 79.5,
+      passingYear: 2026,
+    });
+
+    await upsertVerifiedAcademicEvidence(
+      tpo,
+      SEED_IDS.learnerCollegeAMembership,
+      {
+        cgpa: 8.25,
+        activeBacklogs: 0,
+        tenthPercentage: 83,
+        twelfthPercentage: 80,
+        gapYears: 0,
+        passingYear: 2026,
+      },
+    );
+
+    await expect(
+      getManagedAcademicEvidence(
+        tpo,
+        SEED_IDS.learnerCollegeAMembership,
+      ),
+    ).resolves.toMatchObject({
+      source: "VERIFIED",
+      cgpa: 8.25,
+      activeBacklogs: 0,
+      tenthPercentage: 83,
+      twelfthPercentage: 80,
+    });
+
+    await expect(
+      getManagedAcademicEvidence(
+        tpo,
+        otherMembership.id,
+      ),
+    ).rejects.toThrow(
+      "Missing permission: placements.manage",
+    );
   });
 
   it("supports explicit reasoned overrides without deleting underlying evidence", async () => {

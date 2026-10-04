@@ -157,21 +157,12 @@ function evidenceValues(
   };
 }
 
-export async function getOwnAcademicEvidence(
-  context: RequestContext,
+function academicEvidenceView(
+  row:
+    | typeof placementCandidateAcademicEvidence.$inferSelect
+    | null
+    | undefined,
 ) {
-  const membership = requireSelfLearner(context);
-  const [row] = await getDb()
-    .select()
-    .from(placementCandidateAcademicEvidence)
-    .where(
-      eq(
-        placementCandidateAcademicEvidence.membershipId,
-        membership.id,
-      ),
-    )
-    .limit(1);
-
   if (!row) return null;
   return {
     ...row,
@@ -189,6 +180,71 @@ export async function getOwnAcademicEvidence(
       row.undergraduatePctBasisPoints,
     ),
   };
+}
+
+export async function getOwnAcademicEvidence(
+  context: RequestContext,
+) {
+  const membership = requireSelfLearner(context);
+  const [row] = await getDb()
+    .select()
+    .from(placementCandidateAcademicEvidence)
+    .where(
+      eq(
+        placementCandidateAcademicEvidence.membershipId,
+        membership.id,
+      ),
+    )
+    .limit(1);
+
+  return academicEvidenceView(row);
+}
+
+export async function getManagedAcademicEvidence(
+  context: RequestContext,
+  membershipId: string,
+) {
+  const membership = await getDb()
+    .select({
+      id: collegeMemberships.id,
+      collegeId: collegeMemberships.collegeId,
+    })
+    .from(collegeMemberships)
+    .where(
+      eq(
+        collegeMemberships.id,
+        membershipId,
+      ),
+    )
+    .limit(1)
+    .then((rows) => rows[0] ?? null);
+
+  if (!membership) {
+    throw new PlacementsServiceError(
+      "PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND",
+    );
+  }
+
+  requirePermission(context, "placements.manage", {
+    collegeId: membership.collegeId,
+  });
+  await loadLearnerMembership(
+    membership.collegeId,
+    membership.id,
+  );
+
+  const [row] = await getDb()
+    .select()
+    .from(placementCandidateAcademicEvidence)
+    .where(
+      eq(
+        placementCandidateAcademicEvidence.membershipId,
+        membership.id,
+      ),
+    )
+    .limit(1);
+
+  return academicEvidenceView(row);
 }
 
 export async function upsertOwnAcademicEvidence(
