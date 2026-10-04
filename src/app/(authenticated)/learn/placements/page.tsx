@@ -11,6 +11,7 @@ import {
 } from "@/components/placements/learner-placement-journey";
 import { LearnerPlacementPreferences } from "@/components/placements/learner-placement-preferences";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
+import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
@@ -18,6 +19,7 @@ import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
+import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 
 export default async function LearnerPlacementsPage() {
   const context =
@@ -32,12 +34,14 @@ export default async function LearnerPlacementsPage() {
     journeyRows,
     academicEvidence,
     offerRows,
+    requestWorkspace,
   ] = await Promise.all([
     listLearnerPlacementJobs(context),
     getCandidatePreferences(context),
     getLearnerPlacementJourney(context),
     getOwnAcademicEvidence(context),
     listOwnPlacementOffers(context),
+    getLearnerPlacementRequestWorkspace(context),
   ]);
 
   const items: LearnerPlacementJobItem[] =
@@ -169,6 +173,88 @@ export default async function LearnerPlacementsPage() {
               }
             : null,
         }))}
+      />
+
+      <LearnerPlacementRequests
+        requests={requestWorkspace.requests.map(
+          (row) => ({
+            id: row.request.id,
+            requestType:
+              row.request.requestType as
+                | "APPLICATION_WITHDRAWAL"
+                | "ROUND_RESCHEDULE"
+                | "OFFER_EXTENSION",
+            status:
+              row.request.status as
+                | "PENDING"
+                | "APPROVED"
+                | "REJECTED"
+                | "CANCELLED",
+            reason: row.request.reason,
+            decisionNote:
+              row.request.decisionNote,
+            requestedAt:
+              row.request.requestedAt.toISOString(),
+            decidedAt:
+              row.request.decidedAt?.toISOString() ??
+              null,
+            roleTitle:
+              row.roleOption.title,
+            jobTitle: row.job.title,
+            companyName: row.company.name,
+            roundName:
+              row.round?.name ?? null,
+            offerRoleTitle:
+              row.offer?.roleTitle ?? null,
+            effectPayload:
+              (row.request.effectPayload ??
+                {}) as Record<
+                string,
+                unknown
+              >,
+          }),
+        )}
+        rounds={requestWorkspace.rounds.map(
+          (row) => ({
+            applicationId:
+              row.applicationId,
+            roundId: row.roundId,
+            roundName: row.roundName,
+            sequence: row.sequence,
+            roleTitle: row.roleTitle,
+            companyName:
+              row.companyName,
+            scheduledAt:
+              row.scheduledAt?.toISOString() ??
+              null,
+            timezone: row.timezone,
+            mode: row.mode,
+            venue: row.venue,
+            meetingUrl: row.meetingUrl,
+            exception: row.exception
+              ? {
+                  scheduledAt:
+                    row.exception.scheduledAt.toISOString(),
+                  timezone:
+                    row.exception.timezone,
+                  mode:
+                    row.exception.mode,
+                  venue:
+                    row.exception.venue,
+                  meetingUrl:
+                    row.exception.meetingUrl,
+                }
+              : null,
+          }),
+        )}
+        offers={requestWorkspace.offers.map(
+          (row) => ({
+            ...row,
+            expiresAt:
+              row.expiresAt?.toISOString() ??
+              null,
+          }),
+        )}
       />
 
       <LearnerPlacementJourney

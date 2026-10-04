@@ -8,12 +8,14 @@ import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-co
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { listPlacementOfferCandidates } from "@/modules/placements/offer-service";
 import { listPlacementScreeningQueue } from "@/modules/placements/screening-service";
+import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
 import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
 import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
 import { PlacementOfferControls } from "./placement-offer-controls";
 import { PlacementRoleOptions } from "./placement-role-options";
+import { PlacementRequestQueue } from "./placement-request-queue";
 import {
   PlacementDriveControls,
   type PlacementDriveControlData,
@@ -36,6 +38,7 @@ export async function PlacementDriveWorkspace({
     eligibilityPolicy,
     offerCandidates,
     roleOptions,
+    placementRequests,
   ] = await Promise.all([
     getPlacementDriveDay(context, jobId),
     getPlacementEvaluationConfig(context, jobId),
@@ -47,6 +50,10 @@ export async function PlacementDriveWorkspace({
       jobId,
     ),
     listPlacementRoleOptions(
+      context,
+      jobId,
+    ),
+    listPlacementJobRequests(
       context,
       jobId,
     ),
@@ -287,6 +294,51 @@ export async function PlacementDriveWorkspace({
           isPrimary: role.isPrimary,
           status: role.status,
         }))}
+      />
+      <PlacementRequestQueue
+        requests={placementRequests.map(
+          (row) => ({
+            id: row.request.id,
+            requestType:
+              row.request.requestType as
+                | "APPLICATION_WITHDRAWAL"
+                | "ROUND_RESCHEDULE"
+                | "OFFER_EXTENSION",
+            status:
+              row.request.status as
+                | "PENDING"
+                | "APPROVED"
+                | "REJECTED"
+                | "CANCELLED",
+            reason: row.request.reason,
+            decisionNote:
+              row.request.decisionNote,
+            requestedAt:
+              row.request.requestedAt.toISOString(),
+            candidateName:
+              row.candidate.displayName,
+            candidateEmail:
+              row.candidate.email,
+            roleTitle:
+              row.roleOption.title,
+            roundName:
+              row.round?.name ?? null,
+            roundScheduledAt:
+              row.round?.scheduledAt?.toISOString() ??
+              null,
+            offerRoleTitle:
+              row.offer?.roleTitle ?? null,
+            offerExpiresAt:
+              row.offer?.expiresAt?.toISOString() ??
+              null,
+            effectPayload:
+              (row.request.effectPayload ??
+                {}) as Record<
+                string,
+                unknown
+              >,
+          }),
+        )}
       />
       <PlacementJobLifecycleControls
         jobId={jobId}

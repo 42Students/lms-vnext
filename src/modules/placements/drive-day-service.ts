@@ -7,6 +7,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  placementApplicationRoundExceptions,
   placementApplications,
   placementApplicationScreenings,
   placementCompanies,
@@ -75,8 +76,12 @@ export async function getPlacementDriveDay(
   );
 
   const db = getDb();
-  const [rounds, candidates, currentResultRows] =
-    await Promise.all([
+  const [
+    rounds,
+    candidates,
+    currentResultRows,
+    roundExceptions,
+  ] = await Promise.all([
       db
         .select()
         .from(placementJobRounds)
@@ -172,7 +177,41 @@ export async function getPlacementDriveDay(
             ),
           ),
         ),
+      db
+        .select({
+          exception:
+            placementApplicationRoundExceptions,
+        })
+        .from(
+          placementApplicationRoundExceptions,
+        )
+        .innerJoin(
+          placementApplications,
+          eq(
+            placementApplications.id,
+            placementApplicationRoundExceptions.applicationId,
+          ),
+        )
+        .where(
+          eq(
+            placementApplications.jobId,
+            job.id,
+          ),
+        ),
     ]);
+
+  const exceptionByRoundApplication =
+    new Map(
+      roundExceptions.map(
+        (item) => [
+          resultKey(
+            item.exception.roundId,
+            item.exception.applicationId,
+          ),
+          item.exception,
+        ],
+      ),
+    );
 
   const currentResults = new Map(
     currentResultRows.map(({ result }) => [
@@ -243,6 +282,13 @@ export async function getPlacementDriveDay(
             candidate.application.id,
           ),
         );
+        const scheduleException =
+          exceptionByRoundApplication.get(
+            resultKey(
+              round.id,
+              candidate.application.id,
+            ),
+          ) ?? null;
         return {
           applicationId: candidate.application.id,
           roleOptionId:
@@ -258,6 +304,7 @@ export async function getPlacementDriveDay(
             candidate.candidate.displayName,
           email: candidate.candidate.email,
           phoneE164: candidate.candidate.phoneE164,
+          scheduleException,
           result: result
             ? {
                 id: result.id,
