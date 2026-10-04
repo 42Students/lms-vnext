@@ -628,7 +628,7 @@ Do not build a generic chatbot first.
 - [x] rollback procedure
 - [x] runbook
 - [~] public runtime/deployment smoke automated; authenticated production smoke waits for live Identity Platform
-- [ ] load tests on hot workflows
+- [~] read-only hot-workflow load harness committed for learner + operational API mixes with p95/error thresholds; production baseline run waits for live infrastructure and an approved authenticated test account
 
 ---
 

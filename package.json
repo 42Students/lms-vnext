@@ -22,7 +22,8 @@
     "db:test:prepare": "tsx scripts/db-test-prepare.ts",
     "test:db": "vitest run --config vitest.db.config.ts",
     "smoke:public": "node scripts/smoke-public.mjs",
-    "db:e2e:prepare": "node --conditions=react-server ./node_modules/tsx/dist/cli.mjs scripts/db-e2e-prepare.ts"
+    "db:e2e:prepare": "node --conditions=react-server ./node_modules/tsx/dist/cli.mjs scripts/db-e2e-prepare.ts",
+    "test:load:reads": "tsx scripts/load-read.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",
