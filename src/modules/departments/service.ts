@@ -8,9 +8,13 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  collegeMemberships,
   colleges,
+  courses,
   departments,
+  facultyProfiles,
   organizations,
+  programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -42,6 +46,79 @@ export class DepartmentServiceError extends Error {
 export type DepartmentUsageResolver = (
   departmentId: string,
 ) => Promise<DepartmentUsage>;
+
+export async function resolveDepartmentUsage(
+  departmentId: string,
+): Promise<DepartmentUsage> {
+  const db = getDb();
+  const [programRows, facultyRows, courseRows] =
+    await Promise.all([
+      db
+        .select({
+          count: sql<number>`count(*)::int`,
+        })
+        .from(programs)
+        .where(
+          and(
+            eq(
+              programs.departmentId,
+              departmentId,
+            ),
+            eq(programs.status, "ACTIVE"),
+          ),
+        ),
+      db
+        .select({
+          count: sql<number>`count(*)::int`,
+        })
+        .from(facultyProfiles)
+        .innerJoin(
+          collegeMemberships,
+          eq(
+            collegeMemberships.id,
+            facultyProfiles.membershipId,
+          ),
+        )
+        .where(
+          and(
+            eq(
+              facultyProfiles.primaryDepartmentId,
+              departmentId,
+            ),
+            ne(
+              collegeMemberships.status,
+              "ENDED",
+            ),
+          ),
+        ),
+      db
+        .select({
+          count: sql<number>`count(*)::int`,
+        })
+        .from(courses)
+        .where(
+          and(
+            eq(
+              courses.departmentId,
+              departmentId,
+            ),
+            eq(courses.status, "ACTIVE"),
+          ),
+        ),
+    ]);
+
+  return {
+    programs: Number(
+      programRows[0]?.count ?? 0,
+    ),
+    faculty: Number(
+      facultyRows[0]?.count ?? 0,
+    ),
+    courses: Number(
+      courseRows[0]?.count ?? 0,
+    ),
+  };
+}
 
 async function loadActiveCollegeScope(collegeId: string) {
   const db = getDb();
@@ -268,7 +345,8 @@ export async function renameDepartment(
 export async function archiveDepartment(
   context: RequestContext,
   departmentIdInput: string,
-  resolveUsage: DepartmentUsageResolver,
+  resolveUsage: DepartmentUsageResolver =
+    resolveDepartmentUsage,
 ) {
   const departmentId = departmentIdSchema.parse(departmentIdInput);
   const scope = await loadActiveDepartmentScope(departmentId);

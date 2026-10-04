@@ -20,6 +20,8 @@ export function DepartmentActions({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] =
+    useState(false);
   const [nextName, setNextName] = useState(name);
   const [pending, startTransition] = useTransition();
 
@@ -56,8 +58,65 @@ export function DepartmentActions({
     });
   }
 
+  function archive() {
+    startTransition(async () => {
+      const response = await fetch(
+        `/api/departments/${departmentId}`,
+        { method: "DELETE" },
+      );
+      const payload =
+        await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const usage = payload?.usage as
+          | {
+              programs?: number;
+              faculty?: number;
+              courses?: number;
+            }
+          | undefined;
+        const dependencies = usage
+          ? [
+              usage.programs
+                ? `${usage.programs} active program(s)`
+                : null,
+              usage.faculty
+                ? `${usage.faculty} faculty assignment(s)`
+                : null,
+              usage.courses
+                ? `${usage.courses} active course(s)`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(", ")
+          : "";
+
+        showToast({
+          tone: "error",
+          title: "Archive blocked",
+          description:
+            payload?.error ===
+              "DEPARTMENT_HAS_DEPENDENCIES"
+              ? `Move or archive its dependencies first${dependencies ? `: ${dependencies}` : "."}`
+              : "The department could not be archived.",
+        });
+        return;
+      }
+
+      setArchiveOpen(false);
+      showToast({
+        tone: "success",
+        title: "Department archived",
+        description:
+          `${name} is no longer active.`,
+      });
+      router.refresh();
+    });
+  }
+
   return (
     <>
+      <div className="flex flex-wrap gap-2">
       <Button
         variant="secondary"
         size="sm"
@@ -68,6 +127,14 @@ export function DepartmentActions({
       >
         Rename
       </Button>
+      <Button
+        variant="danger"
+        size="sm"
+        onClick={() => setArchiveOpen(true)}
+      >
+        Archive
+      </Button>
+      </div>
       <Dialog
         open={open}
         onOpenChange={setOpen}
@@ -109,6 +176,40 @@ export function DepartmentActions({
           }
           maxLength={255}
         />
+      </Dialog>
+      <Dialog
+        open={archiveOpen}
+        onOpenChange={setArchiveOpen}
+        title="Archive department"
+        description={`Archive ${name}? This is allowed only when it has no active programs, faculty assignments, or courses.`}
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              disabled={pending}
+              onClick={() =>
+                setArchiveOpen(false)
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              disabled={pending}
+              onClick={archive}
+            >
+              {pending
+                ? "Archiving…"
+                : "Archive department"}
+            </Button>
+          </>
+        }
+      >
+        <p className="m-0 text-sm text-body">
+          Existing dependencies are checked
+          server-side immediately before the
+          archive is applied.
+        </p>
       </Dialog>
     </>
   );

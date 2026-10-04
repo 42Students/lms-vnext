@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { SessionAuthenticationError } from "@/auth/session";
 import { ContextResolutionError } from "@/modules/identity/context-service";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { DepartmentHasDependenciesError } from "@/modules/departments/archive-policy";
 import { DepartmentServiceError } from "@/modules/departments/service";
 import { OrganizationServiceError } from "@/modules/organizations/service";
 import { CollegeServiceError } from "@/modules/colleges/service";
@@ -48,6 +49,20 @@ export function apiErrorResponse(error: unknown) {
     return NextResponse.json(
       { error: "FORBIDDEN" },
       { status: 403 },
+    );
+  }
+
+  if (
+    error instanceof
+    DepartmentHasDependenciesError
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          "DEPARTMENT_HAS_DEPENDENCIES",
+        usage: error.usage,
+      },
+      { status: 409 },
     );
   }
 
