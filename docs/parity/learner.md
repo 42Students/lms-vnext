@@ -80,7 +80,7 @@ Legacy contract:
 - [ ] Discussion read model exists.
 - [ ] Create/reply actions match legacy permissions.
 - [ ] Author/time/thread context is preserved.
-- [ ] Empty/loading/error states are implemented.
+- [x] Empty/loading/error states are implemented.
 - [ ] Cross-class isolation is tested.
 
 ## Page: All Assignments
@@ -173,12 +173,13 @@ Legacy contract:
 ## Page: Attendance Summary
 **Legacy:** `/learn/attendance`
 
-- [ ] Overall attendance summary exists.
-- [ ] Per-course attendance breakdown exists.
-- [ ] Eligibility/threshold messaging matches configured policy where legacy shows it.
-- [ ] Present/absent/session totals are correct.
+- [x] Overall attendance summary exists.
+- [x] Per-course attendance breakdown exists.
+- [x] Eligibility/threshold messaging matches configured policy where legacy shows it.
+- [x] Present/absent/session totals are correct.
 - [ ] Empty/loading/error states are implemented.
-- [ ] Learner view is read-only and tenant scoped.
+- [x] Learner view is read-only and tenant scoped.
+- [ ] Attendance regression coverage is authored but must actually execute successfully in CI/browser verification.
 
 # My Placements
 
