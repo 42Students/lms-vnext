@@ -13,8 +13,10 @@ import { drizzleProfileRepository } from "./profile-repository";
 import {
   getFacultyProfile,
   getLearnerProfile,
+  getOwnLearnerProfile,
   upsertFacultyProfile,
   upsertLearnerProfile,
+  upsertOwnLearnerProfileDocument,
 } from "./profile-service";
 import { drizzlePeopleRepository } from "./repository";
 import {
@@ -156,6 +158,27 @@ export function upsertFacultyProfileWithRuntime(
   return upsertFacultyProfile(
     context,
     membershipId,
+    rawInput,
+    drizzleProfileRepository,
+  );
+}
+
+
+export function getOwnLearnerProfileWithRuntime(
+  context: RequestContext,
+) {
+  return getOwnLearnerProfile(
+    context,
+    drizzleProfileRepository,
+  );
+}
+
+export function upsertOwnLearnerProfileDocumentWithRuntime(
+  context: RequestContext,
+  rawInput: unknown,
+) {
+  return upsertOwnLearnerProfileDocument(
+    context,
     rawInput,
     drizzleProfileRepository,
   );

@@ -12,7 +12,9 @@ import { drizzleProfileRepository } from "@/modules/people/profile-repository";
 import {
   getFacultyProfile,
   getLearnerProfile,
+  getOwnLearnerProfile,
   upsertFacultyProfile,
+  upsertOwnLearnerProfileDocument,
 } from "@/modules/people/profile-service";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -41,6 +43,22 @@ const superAdmin: RequestContext = {
   membership: null,
 };
 
+const learner: RequestContext = {
+  user: {
+    id: SEED_IDS.learnerUser,
+    identityUid: "seed-learner",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.learnerCollegeAMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["LEARNER"],
+  },
+};
+
 const collegeAAdmin: RequestContext = {
   user: {
     id: SEED_IDS.collegeAdminUser,
@@ -57,6 +75,13 @@ const collegeAAdmin: RequestContext = {
   },
 };
 
+async function resetLearnerProfileDocument() {
+  await pool.query(
+    "update learner_profiles set profile_document = '{}'::jsonb where membership_id = $1",
+    [SEED_IDS.learnerCollegeAMembership],
+  );
+}
+
 async function cleanupCollegeBFacultyProfile() {
   await pool.query(
     "delete from faculty_profiles where membership_id = $1",
@@ -66,10 +91,12 @@ async function cleanupCollegeBFacultyProfile() {
 
 beforeEach(async () => {
   await cleanupCollegeBFacultyProfile();
+  await resetLearnerProfileDocument();
 });
 
 afterAll(async () => {
   await cleanupCollegeBFacultyProfile();
+  await resetLearnerProfileDocument();
   await pool.end();
   await closeDatabaseConnection();
 });
@@ -87,6 +114,82 @@ describe("learner and faculty profiles against PostgreSQL", () => {
       rollNumber: "SEED-L-001",
       registrationNumber: "SEED-REG-001",
     });
+  });
+
+
+  it("lets the active learner load and update only their own validated profile document", async () => {
+    const initial =
+      await getOwnLearnerProfile(
+        learner,
+        drizzleProfileRepository,
+      );
+
+    expect(initial.person.membership.id).toBe(
+      SEED_IDS.learnerCollegeAMembership,
+    );
+    expect(
+      initial.profile.profileDocument.skills,
+    ).toEqual([]);
+
+    const updated =
+      await upsertOwnLearnerProfileDocument(
+        learner,
+        {
+          headline:
+            "Backend engineer interested in distributed systems",
+          contacts: {
+            alternatePhone: "+91 9876543210",
+            contactEmail:
+              "learner.profile@example.com",
+          },
+          socialProfiles: {
+            githubUrl:
+              "https://github.com/example",
+          },
+          personalDetails: {
+            gender: "Prefer not to say",
+            dateOfBirth: "2002-01-02",
+            bloodGroup: "O+",
+          },
+          identity: {
+            aadhaarNumber: "123412341234",
+            panNumber: "ABCDE1234F",
+          },
+          skills: [
+            {
+              id: "11111111-1111-4111-8111-111111111111",
+              name: "Java",
+              proficiency: "Advanced",
+            },
+          ],
+          hobbies: ["Reading", "reading"],
+        },
+        drizzleProfileRepository,
+      );
+
+    expect(updated.profileDocument).toMatchObject({
+      headline:
+        "Backend engineer interested in distributed systems",
+      identity: {
+        aadhaarNumber: "123412341234",
+        panNumber: "ABCDE1234F",
+      },
+      hobbies: ["Reading"],
+    });
+
+    const reloaded =
+      await getOwnLearnerProfile(
+        learner,
+        drizzleProfileRepository,
+      );
+    expect(
+      reloaded.profile.profileDocument.skills,
+    ).toEqual([
+      expect.objectContaining({
+        name: "Java",
+        proficiency: "Advanced",
+      }),
+    ]);
   });
 
   it("persists a faculty profile only with a department from its own college", async () => {

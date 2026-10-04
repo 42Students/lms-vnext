@@ -8,6 +8,10 @@ import {
   learnerProfiles,
 } from "@/db/schema";
 import { drizzlePeopleRepository } from "./repository";
+import {
+  emptyLearnerProfileDocument,
+  learnerProfileDocumentSchema,
+} from "./profile-validation";
 import type {
   FacultyProfileView,
   LearnerProfileView,
@@ -29,7 +33,15 @@ export const drizzleProfileRepository: ProfileRepository = {
       .where(eq(learnerProfiles.membershipId, membershipId))
       .limit(1);
 
-    return profile ?? null;
+    return profile
+      ? {
+          ...profile,
+          profileDocument:
+            learnerProfileDocumentSchema.parse(
+              profile.profileDocument ?? {},
+            ),
+        }
+      : null;
   },
 
   async upsertLearnerProfile(
@@ -58,7 +70,49 @@ export const drizzleProfileRepository: ProfileRepository = {
       throw new Error("Learner profile upsert returned no row");
     }
 
-    return profile;
+    return {
+      ...profile,
+      profileDocument:
+        learnerProfileDocumentSchema.parse(
+          profile.profileDocument ??
+            emptyLearnerProfileDocument,
+        ),
+    };
+  },
+
+  async upsertLearnerProfileDocument(
+    membershipId,
+    document,
+  ): Promise<LearnerProfileView> {
+    const db = getDb();
+    const [profile] = await db
+      .insert(learnerProfiles)
+      .values({
+        membershipId,
+        profileDocument: document,
+      })
+      .onConflictDoUpdate({
+        target: learnerProfiles.membershipId,
+        set: {
+          profileDocument: document,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+
+    if (!profile) {
+      throw new Error(
+        "Learner profile document upsert returned no row",
+      );
+    }
+
+    return {
+      ...profile,
+      profileDocument:
+        learnerProfileDocumentSchema.parse(
+          profile.profileDocument,
+        ),
+    };
   },
 
   async loadFacultyProfile(

@@ -225,6 +225,13 @@
       "when": 1791235800000,
       "tag": "0031_schedule_course_links",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1791239400000,
+      "tag": "0032_learner_profile_document",
+      "breakpoints": true
     }
   ]
 }

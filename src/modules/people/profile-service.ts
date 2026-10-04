@@ -1,10 +1,19 @@
-import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import {
+  hasMembershipRole,
+  type RequestContext,
+} from "@/modules/identity/context";
+import {
+  AuthorizationError,
+  requirePermission,
+} from "@/modules/permissions/policy";
 import { PeopleServiceError } from "./errors";
 import {
+  emptyLearnerProfileDocument,
   facultyProfileInputSchema,
+  learnerProfileDocumentSchema,
   learnerProfileInputSchema,
   type FacultyProfileInput,
+  type LearnerProfileDocument,
   type LearnerProfileInput,
 } from "./profile-validation";
 import type { PersonMembershipView } from "./service";
@@ -14,6 +23,7 @@ export type LearnerProfileView = {
   membershipId: string;
   rollNumber: string | null;
   registrationNumber: string | null;
+  profileDocument: LearnerProfileDocument;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -37,6 +47,10 @@ export interface ProfileRepository {
   upsertLearnerProfile(
     membershipId: string,
     input: LearnerProfileInput,
+  ): Promise<LearnerProfileView>;
+  upsertLearnerProfileDocument(
+    membershipId: string,
+    document: LearnerProfileDocument,
   ): Promise<LearnerProfileView>;
   loadFacultyProfile(
     membershipId: string,
@@ -169,5 +183,71 @@ export async function upsertFacultyProfile(
   return repository.upsertFacultyProfile(
     person.membership.id,
     input,
+  );
+}
+
+
+function requireOwnLearnerMembership(
+  context: RequestContext,
+) {
+  if (
+    !context.membership ||
+    context.membership.status !== "ACTIVE" ||
+    !hasMembershipRole(context, "LEARNER")
+  ) {
+    throw new AuthorizationError("people.read");
+  }
+
+  return context.membership;
+}
+
+export async function getOwnLearnerProfile(
+  context: RequestContext,
+  repository: ProfileRepository,
+) {
+  const membership =
+    requireOwnLearnerMembership(context);
+  const person = await repository.loadMembershipDetail(
+    membership.id,
+  );
+
+  if (!person) {
+    throw new PeopleServiceError(
+      "MEMBERSHIP_NOT_FOUND",
+    );
+  }
+
+  const profile =
+    await repository.loadLearnerProfile(
+      membership.id,
+    );
+
+  return {
+    person,
+    profile: profile ?? {
+      membershipId: membership.id,
+      rollNumber: null,
+      registrationNumber: null,
+      profileDocument:
+        emptyLearnerProfileDocument,
+      createdAt: new Date(0),
+      updatedAt: new Date(0),
+    },
+  };
+}
+
+export async function upsertOwnLearnerProfileDocument(
+  context: RequestContext,
+  rawInput: unknown,
+  repository: ProfileRepository,
+) {
+  const membership =
+    requireOwnLearnerMembership(context);
+  const document =
+    learnerProfileDocumentSchema.parse(rawInput);
+
+  return repository.upsertLearnerProfileDocument(
+    membership.id,
+    document,
   );
 }

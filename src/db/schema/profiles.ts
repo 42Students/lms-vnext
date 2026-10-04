@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import {
   index,
+  jsonb,
   pgTable,
   timestamp,
   uuid,
@@ -14,6 +16,10 @@ export const learnerProfiles = pgTable("learner_profiles", {
     .references(() => collegeMemberships.id, { onDelete: "restrict" }),
   rollNumber: varchar("roll_number", { length: 128 }),
   registrationNumber: varchar("registration_number", { length: 128 }),
+  profileDocument: jsonb("profile_document")
+    .$type<Record<string, unknown>>()
+    .notNull()
+    .default(sql`'{}'::jsonb`),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
