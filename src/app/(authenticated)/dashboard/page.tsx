@@ -4,6 +4,7 @@ import { MembershipChooser } from "@/components/auth/membership-chooser";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
+  hasActiveRecruiter,
   hasMembershipRole,
   isSuperAdmin,
   type RequestContext,
@@ -17,6 +18,7 @@ import {
 import { listMembershipChoices } from "@/modules/identity/context-service";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
+import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 
 function MetricCard({
   label,
@@ -201,6 +203,43 @@ export default async function DashboardPage() {
 
   if (isSuperAdmin(context)) {
     return <SuperAdminDashboard context={context} />;
+  }
+
+  if (
+    !context.membership &&
+    hasActiveRecruiter(context)
+  ) {
+    const jobs =
+      await listOwnRecruiterPlacementJobs(
+        context,
+      );
+
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Employer Recruiter"
+          title={context.recruiter?.companyName ?? "Hiring dashboard"}
+          description="Your hiring workspace is limited to explicit college-employer grants. College-private relationship notes and placement-cell controls remain hidden."
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <MetricCard
+            label="Granted colleges"
+            value={
+              context.recruiter?.grants.length ??
+              0
+            }
+            description="Colleges that explicitly granted this employer account access."
+            href="/hr/placements"
+          />
+          <MetricCard
+            label="Visible opportunities"
+            value={jobs.length}
+            description="Published or closed opportunities for your exact employer grants."
+            href="/hr/placements"
+          />
+        </div>
+      </div>
+    );
   }
 
   if (!context.membership) {

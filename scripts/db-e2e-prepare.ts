@@ -67,6 +67,17 @@ async function main() {
     })
     .onConflictDoNothing();
 
+  await dbClient
+    .getDb()
+    .insert(dbSchema.users)
+    .values({
+      id: "60000000-0000-4000-8000-000000000002",
+      identityUid: "seed-placement-recruiter-e2e",
+      email: "recruiter-e2e@example.com",
+      displayName: "E2E Recruiter",
+    })
+    .onConflictDoNothing();
+
   const collegeAdmin: RequestContext = {
     user: {
       id: ids.collegeAdminUser,

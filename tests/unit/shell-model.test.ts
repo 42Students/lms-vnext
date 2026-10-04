@@ -171,6 +171,45 @@ describe("authenticated shell model", () => {
       "Teaching Courses",
     ]);
   });
+  it("gives recruiter-only identities the shared hiring workspace without a fake membership", () => {
+    const shellContext: RequestContext = {
+      ...context(null),
+      recruiter: {
+        userId: "recruiter-1",
+        companyId: "company-1",
+        companyName: "Example Employer",
+        title: "Talent Partner",
+        status: "ACTIVE",
+        grants: [
+          {
+            id: "grant-1",
+            organizationId: "organization-1",
+            collegeId: "college-1",
+            collegeName: "College One",
+            companyRelationshipId:
+              "relationship-1",
+          },
+        ],
+      },
+    };
+
+    expect(getShellNavigation(shellContext)).toEqual([
+      {
+        label: "Dashboard",
+        href: "/dashboard",
+        shortLabel: "D",
+      },
+      {
+        label: "Hiring Workspace",
+        href: "/hr/placements",
+        shortLabel: "H",
+      },
+    ]);
+    expect(getShellRoleLabel(shellContext)).toBe(
+      "Employer Recruiter",
+    );
+  });
+
   it("gives TPO memberships the placement command center", () => {
     const shellContext = context(["FACULTY", "TPO"]);
 

@@ -67,9 +67,13 @@ export function AppShell({
           <p className="m-0 text-xs font-semibold text-muted-foreground">
             {getShellRoleLabel(context)}
           </p>
-          {currentMembership || selectedScopeLabel ? (
+          {currentMembership ||
+          selectedScopeLabel ||
+          context.recruiter ? (
             <p className="mt-1 truncate text-sm font-semibold text-body">
-              {currentMembership?.collegeName ?? selectedScopeLabel}
+              {currentMembership?.collegeName ??
+                selectedScopeLabel ??
+                context.recruiter?.companyName}
             </p>
           ) : null}
         </div>
@@ -89,7 +93,9 @@ export function AppShell({
                     ? currentMembership.collegeName
                     : superAdmin
                       ? selectedScopeLabel ?? "Platform administration"
-                      : "Choose an active college"}
+                      : context.recruiter
+                        ? context.recruiter.companyName
+                        : "Choose an active college"}
                 </p>
               </div>
             </div>
@@ -99,6 +105,15 @@ export function AppShell({
                   choices={adminScopeChoices}
                   scope={context.adminScope}
                 />
+              ) : memberships.length > 0 ? (
+                <MembershipSwitcher
+                  memberships={memberships}
+                  activeMembershipId={context.membership?.id ?? null}
+                />
+              ) : context.recruiter ? (
+                <p className="m-0 hidden text-xs font-semibold text-muted-foreground sm:block">
+                  Employer access
+                </p>
               ) : (
                 <MembershipSwitcher
                   memberships={memberships}

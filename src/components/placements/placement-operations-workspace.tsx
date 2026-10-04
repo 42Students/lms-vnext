@@ -4,7 +4,9 @@ import {
   listPlacementRelationshipOwners,
 } from "@/modules/placements/company-service";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
+import { listPlacementRecruiterGrants } from "@/modules/placements/recruiter-service";
 import { PlacementEmployerRelationships } from "./placement-employer-relationships";
+import { PlacementRecruiterAccess } from "./placement-recruiter-access";
 import { PlacementOperationsOverview } from "./placement-operations-overview";
 
 export async function PlacementOperationsWorkspace({
@@ -20,6 +22,7 @@ export async function PlacementOperationsWorkspace({
     operations,
     relationships,
     owners,
+    recruiterGrants,
   ] = await Promise.all([
     getPlacementTpoOperations(
       context,
@@ -30,6 +33,10 @@ export async function PlacementOperationsWorkspace({
       collegeId,
     ),
     listPlacementRelationshipOwners(
+      context,
+      collegeId,
+    ),
+    listPlacementRecruiterGrants(
       context,
       collegeId,
     ),
@@ -57,6 +64,31 @@ export async function PlacementOperationsWorkspace({
           }),
         )}
         owners={owners}
+      />
+      <PlacementRecruiterAccess
+        relationships={relationships.map(
+          (item) => ({
+            relationshipId:
+              item.relationshipId,
+            name: item.name,
+          }),
+        )}
+        grants={recruiterGrants.map(
+          (grant) => ({
+            grantId: grant.grantId,
+            recruiterUserId:
+              grant.recruiterUserId,
+            companyRelationshipId:
+              grant.companyRelationshipId,
+            companyId: grant.companyId,
+            companyName:
+              grant.companyName,
+            displayName:
+              grant.displayName,
+            email: grant.email,
+            title: grant.title,
+          }),
+        )}
       />
     </div>
   );

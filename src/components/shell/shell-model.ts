@@ -1,4 +1,5 @@
 import {
+  hasActiveRecruiter,
   hasMembershipRole,
   isSuperAdmin,
   type RequestContext,
@@ -71,6 +72,14 @@ const tpoItems: ShellNavItem[] = [
   },
 ];
 
+const recruiterItems: ShellNavItem[] = [
+  {
+    label: "Hiring Workspace",
+    href: "/hr/placements",
+    shortLabel: "H",
+  },
+];
+
 const collegeAdminItems: ShellNavItem[] = [
   { label: "My College", href: "/college", shortLabel: "C" },
   { label: "Departments", href: "/college/departments", shortLabel: "D" },
@@ -122,6 +131,10 @@ export function getShellNavigation(context: RequestContext) {
 
   const items: ShellNavItem[] = [dashboard];
 
+  if (hasActiveRecruiter(context)) {
+    pushUnique(items, recruiterItems);
+  }
+
   // Membership roles are additive. A College Admin may also teach,
   // mentor or learn, so those workspaces must not disappear merely
   // because the membership also carries COLLEGE_ADMIN.
@@ -140,11 +153,13 @@ export function getShellRoleLabel(context: RequestContext) {
   }
 
   if (!context.membership) {
-    return "Select membership";
+    return hasActiveRecruiter(context)
+      ? "Employer Recruiter"
+      : "Select membership";
   }
 
-  return context.membership.roles
-    .map((role) =>
+  const labels = context.membership.roles.map(
+    (role) =>
       role === "TPO"
         ? "TPO"
         : role
@@ -156,6 +171,11 @@ export function getShellRoleLabel(context: RequestContext) {
                 part.slice(1),
             )
             .join(" "),
-    )
-    .join(" · ");
+  );
+
+  if (hasActiveRecruiter(context)) {
+    labels.push("Employer Recruiter");
+  }
+
+  return labels.join(" · ");
 }
