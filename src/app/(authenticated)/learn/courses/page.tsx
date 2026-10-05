@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import {
   getLearnerCourseWorkspace,
   listLearnerCourseDeliveries,
+  listLearnerCourseInstructors,
 } from "@/modules/courses/learner-course-service";
 
 export default async function LearnerCoursesPage() {
@@ -18,10 +19,16 @@ export default async function LearnerCoursesPage() {
 
   const rows: LearnerCourseListRow[] = await Promise.all(
     courses.map(async (course) => {
-      const workspace = await getLearnerCourseWorkspace(
-        context,
-        course.deliveryId,
-      );
+      const [workspace, instructors] = await Promise.all([
+        getLearnerCourseWorkspace(
+          context,
+          course.deliveryId,
+        ),
+        listLearnerCourseInstructors(
+          context,
+          course.deliveryId,
+        ),
+      ]);
 
       return {
         course: {
@@ -41,6 +48,9 @@ export default async function LearnerCoursesPage() {
           periodStartDate: course.periodStartDate,
           periodEndDate: course.periodEndDate,
         },
+        instructorNames: instructors.map(
+          (instructor) => instructor.name,
+        ),
         summary: {
           overallPercent: workspace.summary.overallPercent,
           itemsCompleted: workspace.summary.itemsCompleted,

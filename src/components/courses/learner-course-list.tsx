@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 
+const PAGE_SIZE = 48;
+
 export type LearnerCourseListRow = {
   course: {
     deliveryId: string;
@@ -23,6 +25,7 @@ export type LearnerCourseListRow = {
     periodStartDate: string;
     periodEndDate: string;
   };
+  instructorNames: string[];
   summary: {
     overallPercent: number;
     itemsCompleted: number;
@@ -85,6 +88,7 @@ export function LearnerCourseList({
   const [periodId, setPeriodId] = useState(periods[0]?.id ?? "");
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
+  const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE);
 
   const periodRows = useMemo(
     () =>
@@ -154,6 +158,7 @@ export function LearnerCourseList({
                 onChange={(event) => {
                   setPeriodId(event.target.value);
                   setQuery("");
+                  setVisibleLimit(PAGE_SIZE);
                 }}
                 className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
                 aria-label="Select semester"
@@ -170,7 +175,10 @@ export function LearnerCourseList({
               Search courses
               <input
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setVisibleLimit(PAGE_SIZE);
+                }}
                 placeholder="Search courses…"
                 className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
               />
@@ -190,9 +198,10 @@ export function LearnerCourseList({
                 <button
                   key={value}
                   type="button"
-                  onClick={() =>
-                    setTypeFilter(value as "all" | "core" | "elective")
-                  }
+                  onClick={() => {
+                    setTypeFilter(value as "all" | "core" | "elective");
+                    setVisibleLimit(PAGE_SIZE);
+                  }}
                   className={
                     typeFilter === value
                       ? "rounded-md bg-surface px-3 py-2 text-sm font-semibold text-primary-text shadow-sm"
@@ -242,91 +251,127 @@ export function LearnerCourseList({
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {visibleRows.map((row) => {
-            const elective =
-              String(row.course.offeringType).toUpperCase() === "ELECTIVE";
-            return (
-              <Link
-                key={row.course.deliveryId}
-                href={`/learn/courses/${row.course.deliveryId}/home`}
-                className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-              >
-                <div className="flex min-h-24 items-end bg-primary-subtle px-5 py-4">
-                  <div className="flex w-full items-end justify-between gap-3">
-                    <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
-                      {row.course.courseCode}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {row.readOnly ? (
-                        <StatusBadge tone="neutral">Past semester</StatusBadge>
-                      ) : null}
-                      {elective ? (
-                        <StatusBadge tone="info">Elective</StatusBadge>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
+        <>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {visibleRows.slice(0, visibleLimit).map((row, index, renderedRows) => {
+              const elective =
+                String(row.course.offeringType).toUpperCase() === "ELECTIVE";
+              const previousElective =
+                index > 0 &&
+                String(renderedRows[index - 1]?.course.offeringType).toUpperCase() === "ELECTIVE";
+              const startsElectiveGroup =
+                typeFilter === "all" &&
+                elective &&
+                !previousElective &&
+                coreCount > 0;
 
-                <div className="flex flex-1 flex-col p-5">
-                  <h2 className="m-0 line-clamp-2 text-lg font-semibold text-foreground">
-                    {row.course.courseName}
-                  </h2>
-                  <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-body">
-                    {row.course.courseDescription ??
-                      "Course learning workspace for your class."}
-                  </p>
-
-                  <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    <span className="rounded-full bg-muted px-2.5 py-1">
-                      {row.course.sectionName}
-                    </span>
-                    {row.course.credits ? (
-                      <span className="rounded-full bg-muted px-2.5 py-1">
-                        {row.course.credits} Credits
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <div className="mt-auto pt-5">
-                    <div className="mb-2 flex items-center justify-between gap-3">
-                      <span className="text-xs font-semibold text-body">
-                        Progress
-                      </span>
-                      <span className="text-xs font-bold text-foreground">
-                        {row.summary.overallPercent}%
-                      </span>
+              return (
+                <div
+                  key={row.course.deliveryId}
+                  className={startsElectiveGroup ? "md:col-span-2 xl:col-span-3" : ""}
+                >
+                  {startsElectiveGroup ? (
+                    <h2 className="mb-3 mt-2 text-base font-semibold text-foreground">
+                      Electives
+                    </h2>
+                  ) : null}
+                  <Link
+                    href={`/learn/courses/${row.course.deliveryId}/home`}
+                    className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                  >
+                    <div className="flex min-h-24 items-end bg-primary-subtle px-5 py-4">
+                      <div className="flex w-full items-end justify-between gap-3">
+                        <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
+                          {row.course.courseCode}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {row.readOnly ? (
+                            <StatusBadge tone="neutral">Past semester</StatusBadge>
+                          ) : null}
+                          {elective ? (
+                            <StatusBadge tone="info">Elective</StatusBadge>
+                          ) : null}
+                        </div>
+                      </div>
                     </div>
-                    <div
-                      className="h-2 overflow-hidden rounded-full bg-muted"
-                      role="progressbar"
-                      aria-label="Course progress"
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-valuenow={row.summary.overallPercent}
-                    >
-                      <div
-                        className="h-full rounded-full bg-primary"
-                        style={{ width: `${row.summary.overallPercent}%` }}
-                      />
-                    </div>
-                    <div className="mt-4 flex items-center justify-between gap-3">
-                      <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground">
-                        {nextLabel(row)}
+
+                    <div className="flex flex-1 flex-col p-5">
+                      <h2 className="m-0 line-clamp-2 text-lg font-semibold text-foreground">
+                        {row.course.courseName}
+                      </h2>
+                      <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-body">
+                        {row.course.courseDescription ??
+                          "Course learning workspace for your class."}
                       </p>
-                      <span
-                        aria-hidden="true"
-                        className="text-lg text-primary-text transition-transform group-hover:translate-x-0.5"
-                      >
-                        →
-                      </span>
+                      <p className="mt-3 text-xs font-semibold text-muted-foreground">
+                        Instructor: {row.instructorNames.length > 0
+                          ? row.instructorNames.join(", ")
+                          : "Not assigned"}
+                      </p>
+
+                      <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                        <span className="rounded-full bg-muted px-2.5 py-1">
+                          {row.course.sectionName}
+                        </span>
+                        {row.course.credits ? (
+                          <span className="rounded-full bg-muted px-2.5 py-1">
+                            {row.course.credits} Credits
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <div className="mt-auto pt-5">
+                        <div className="mb-2 flex items-center justify-between gap-3">
+                          <span className="text-xs font-semibold text-body">
+                            Progress
+                          </span>
+                          <span className="text-xs font-bold text-foreground">
+                            {row.summary.overallPercent}%
+                          </span>
+                        </div>
+                        <div
+                          className="h-2 overflow-hidden rounded-full bg-muted"
+                          role="progressbar"
+                          aria-label="Course progress"
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-valuenow={row.summary.overallPercent}
+                        >
+                          <div
+                            className="h-full rounded-full bg-primary"
+                            style={{ width: `${row.summary.overallPercent}%` }}
+                          />
+                        </div>
+                        <div className="mt-4 flex items-center justify-between gap-3">
+                          <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground">
+                            {nextLabel(row)}
+                          </p>
+                          <span
+                            aria-hidden="true"
+                            className="text-lg text-primary-text transition-transform group-hover:translate-x-0.5"
+                          >
+                            →
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
-              </Link>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+          {visibleRows.length > visibleLimit ? (
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => setVisibleLimit((value) => value + PAGE_SIZE)}
+                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+              >
+                Show more courses ({visibleRows.length - visibleLimit} remaining)
+              </button>
+            </div>
+          ) : null}
+        </>
       )}
     </div>
   );

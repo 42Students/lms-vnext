@@ -17,8 +17,12 @@ Layer-0/Layer-1 shell parity materializes the sidebar, legacy route tree and nes
 **vNext:** `/learn/courses`
 
 Legacy contract:
-- course cards for the learner's enrolled/active courses;
-- course name/code/context and progress/continue-learning signal;
+- course cards for the learner's enrolled/active and historical semesters;
+- program/semester metrics and semester switcher;
+- Regular/Elective filter, search and 48-card show-more behavior;
+- course name/code, instructor, section, credits and elective context;
+- legacy course thumbnail with fallback image;
+- progress/continue-learning signal in vNext;
 - navigation into course detail;
 - shape-matched loading, empty and request-failure states.
 
@@ -28,6 +32,8 @@ Closure checklist:
 - [x] Course click/deep-link behavior lands on the correct delivery/course context.
 - [x] Loading, empty and error states are explicitly implemented.
 - [x] Unauthorized/non-learner access is fenced server-side.
+- [x] Instructor, mixed Electives grouping and 48-card show-more behavior are implemented.
+- [ ] Legacy thumbnail/fallback-image parity remains open because the vNext Course domain has no canonical image field yet.
 - [ ] Mobile card/list behavior is browser-verified.
 - [x] Historical semester courses remain browseable and are explicitly read-only.
 - [ ] Regression coverage executes successfully.

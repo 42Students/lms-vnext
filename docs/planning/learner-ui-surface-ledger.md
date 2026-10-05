@@ -74,25 +74,32 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L1-001 | Page title/naming = Courses | Courses page | Courses page | FIXED |
-| L1-002 | Program context | Courses listing | Courses page header/filter | FIXED |
-| L1-003 | Semester selector | Courses listing | semester selector | FIXED |
-| L1-004 | Historical semester browsing | Courses listing | includeHistorical | FIXED |
-| L1-005 | Past-semester read-only signal | Courses listing | cards/detail | FIXED |
-| L1-006 | Regular vs Electives filter | Courses listing | course type filter | FIXED |
-| L1-007 | Search courses | Courses listing | search input | FIXED |
-| L1-008 | Course card name/code | Courses cards | learner course cards | FIXED |
-| L1-009 | Section/class metadata | Courses cards | learner course cards | FIXED |
-| L1-010 | Credits metadata | Courses cards | learner course cards | FIXED |
-| L1-011 | Elective badge | Courses cards | learner course cards | FIXED |
-| L1-012 | Course progress | Courses cards | learner course cards | FIXED |
-| L1-013 | Continue/next-learning cue | Courses cards | learner course cards | FIXED |
-| L1-014 | Card click opens Overview | Courses cards | `/[deliveryId]/home` | FIXED |
-| L1-015 | First-run/no-courses empty state | Courses list | learner list | FIXED |
-| L1-016 | Filtered-empty state | Courses list | learner list | FIXED |
-| L1-017 | Loading skeleton | Courses list | route loading | FIXED |
-| L1-018 | Request/error state + retry/back | Courses list | route error | FIXED |
+| L1-001 | Page title/naming = Courses | Courses page | Courses page | CLOSED |
+| L1-002 | Program context | Courses listing | Courses page header/filter | CLOSED |
+| L1-003 | Semester selector | Courses listing | semester selector | CLOSED |
+| L1-004 | Historical semester browsing | Courses listing | includeHistorical | CLOSED |
+| L1-005 | Past-semester read-only signal | Courses listing | cards/detail | CLOSED |
+| L1-006 | Regular vs Electives filter | Courses listing | course type filter | CLOSED |
+| L1-007 | Search courses | Courses listing | search input | CLOSED |
+| L1-008 | Course card name/code | Courses cards | learner course cards | CLOSED |
+| L1-009 | Section/class metadata | Courses cards | learner course cards | CLOSED |
+| L1-010 | Credits metadata | Courses cards | learner course cards | CLOSED |
+| L1-011 | Elective badge | Courses cards | learner course cards | CLOSED |
+| L1-012 | Course progress | Courses cards | learner course cards | CLOSED |
+| L1-013 | Continue/next-learning cue | Courses cards | learner course cards | CLOSED |
+| L1-014 | Card click opens Overview | Courses cards | `/[deliveryId]/home` | CLOSED |
+| L1-015 | First-run/no-courses empty state | Courses list | learner list | CLOSED |
+| L1-016 | Filtered-empty state | Courses list | learner list | CLOSED |
+| L1-017 | Loading skeleton | Courses list | route loading | CLOSED |
+| L1-018 | Request/error state + retry/back | Courses list | route error | CLOSED |
 | L1-019 | Mobile card/filter behavior | Courses list responsive UI | learner list | UNCHECKED |
+| L1-020 | Instructor name on learner course card | CoursesContent learner card | learner course cards | FIXED |
+| L1-021 | Course thumbnail + fallback image | CoursesContent CourseImage | no canonical course-image field yet | GAP |
+| L1-022 | Electives group heading in mixed All view | CoursesContent | learner course list | FIXED |
+| L1-023 | Show-more pagination after 48 cards | CoursesContent PAGE_SIZE | learner course list | FIXED |
+| L1-024 | Malformed/incomplete legacy record warning | CoursesContent | normalized vNext relational model | REDESIGNED |
+| L1-025 | Invalid credit warning/exclusion | CoursesContent | typed non-negative vNext credit model | REDESIGNED |
+| L1-026 | Semester fetch retry/fallback message | CoursesContent | server-loaded accessible semester set | REDESIGNED |
 
 ## L2 — Course detail shell and Overview
 

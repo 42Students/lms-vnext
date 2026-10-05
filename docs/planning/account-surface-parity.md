@@ -45,7 +45,7 @@ Detailed page contract: `docs/parity/learner.md`.
 
 | Surface | Legacy route/section | vNext mapping | Audit note | Status |
 | --- | --- | --- | --- | --- |
-| Courses list | `/learn/courses` | `/learn/courses` | Active Section deliveries and progress cards exist. | DONE |
+| Courses list | `/learn/courses` | `/learn/courses` | Semester/history, filters, instructor context, progress, elective grouping and large-list behavior are implemented; legacy course-thumbnail field and final mobile/browser verification remain open. | PARTIAL |
 | Course Overview | course `home` tab | same legacy tab route | About/takeaways, faculty/class context, next action, progress and recent course updates are implemented; authoring-side parity is tracked with Faculty. | DONE |
 | Learning Path | course `roadmap` tab | course workspace | Ordered lessons/content/assessments + continue learning. | DONE |
 | Course Attendance | course `attendanceDetail` | same legacy tab route | Dedicated read-only summary, threshold, session detail, responsive states and exact learner delivery scope are implemented. | DONE |
