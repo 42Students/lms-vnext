@@ -287,50 +287,50 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L9-001 | Page title = Class Schedule | ClassScheduleContent | schedule page | UNCHECKED |
-| L9-002 | Today metric | ClassScheduleContent | learner schedule | UNCHECKED |
-| L9-003 | Next class metric | ClassScheduleContent | learner schedule | UNCHECKED |
-| L9-004 | Next classes preview | ClassScheduleContent | learner schedule | UNCHECKED |
-| L9-005 | Month view | CalendarEvents | learner schedule | FIXED |
-| L9-006 | Week view | CalendarEvents | learner schedule | FIXED |
-| L9-007 | Day view | CalendarEvents | learner schedule | FIXED |
-| L9-008 | Previous navigation | ClassScheduleContent | learner schedule | FIXED |
-| L9-009 | Today navigation | ClassScheduleContent | learner schedule | FIXED |
-| L9-010 | Next navigation | ClassScheduleContent | learner schedule | FIXED |
-| L9-011 | Course filters | ClassScheduleContent | learner schedule | FIXED |
-| L9-012 | Event title/time | CalendarEvents | event card | FIXED |
-| L9-013 | Course/faculty/location/section context | CalendarEvents | event card | FIXED |
-| L9-014 | Event link to course | CalendarEvents | event card | FIXED |
-| L9-015 | No schedule state | ClassScheduleContent | EmptyState | FIXED |
-| L9-016 | Filtered-empty view state | CalendarEvents | EmptyState | FIXED |
-| L9-017 | Load error vs true empty | ClassScheduleContent | page/service | UNCHECKED |
-| L9-018 | Browser-local date grouping | CalendarEvents | schedule model | FIXED |
-| L9-019 | Mobile agenda/list fallback | CalendarMobileList | learner schedule | UNCHECKED |
+| L9-001 | Page title = Class Schedule | ClassScheduleContent | schedule page | CLOSED |
+| L9-002 | Today metric | ClassScheduleContent | learner schedule | CLOSED |
+| L9-003 | Next class metric | ClassScheduleContent | learner schedule | CLOSED |
+| L9-004 | Next classes preview | ClassScheduleContent | learner schedule | CLOSED |
+| L9-005 | Month view | CalendarEvents | learner schedule | CLOSED |
+| L9-006 | Week view | CalendarEvents | learner schedule | CLOSED |
+| L9-007 | Day view | CalendarEvents | learner schedule | CLOSED |
+| L9-008 | Previous navigation | ClassScheduleContent | learner schedule | CLOSED |
+| L9-009 | Today navigation | ClassScheduleContent | learner schedule | CLOSED |
+| L9-010 | Next navigation | ClassScheduleContent | learner schedule | CLOSED |
+| L9-011 | Course filters | ClassScheduleContent | learner schedule | CLOSED |
+| L9-012 | Event title/time | CalendarEvents | event card | CLOSED |
+| L9-013 | Course/faculty/location/section context | CalendarEvents | event card | CLOSED |
+| L9-014 | Event link to course | CalendarEvents | event card | CLOSED |
+| L9-015 | No schedule state | ClassScheduleContent | EmptyState | CLOSED |
+| L9-016 | Filtered-empty view state | CalendarEvents | EmptyState | CLOSED |
+| L9-017 | Load error vs true empty | ClassScheduleContent | page/service | CLOSED |
+| L9-018 | Browser-local date grouping | CalendarEvents | schedule model | CLOSED |
+| L9-019 | Mobile agenda/list fallback | CalendarMobileList | learner schedule | FIXED |
 
 ## L10 — Attendance summary: `/learn/attendance`
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L10-001 | Page title = Attendance | AttendanceContent | attendance page | FIXED |
-| L10-002 | Course selector | AttendanceContent | attendance workspace | FIXED |
-| L10-003 | Prevent raw course-id flash | AttendanceContent | selector hydration | UNCHECKED |
-| L10-004 | Previous month | AttendanceContent | attendance workspace | FIXED |
-| L10-005 | Direct month/year picker | AttendanceContent | month input | FIXED |
-| L10-006 | Next month | AttendanceContent | attendance workspace | FIXED |
-| L10-007 | Total/Held metric | AttendanceContent | metric | FIXED |
-| L10-008 | Present metric | AttendanceContent | metric | FIXED |
-| L10-009 | Absent metric | AttendanceContent | metric | FIXED |
-| L10-010 | Attendance percentage | AttendanceContent | metric | FIXED |
-| L10-011 | College threshold/eligibility signal | AttendanceContent | threshold card | FIXED |
-| L10-012 | Per-course overview | AttendanceContent | overview cards | FIXED |
-| L10-013 | Desktop date/day/time/status table | AttendanceContent | table | FIXED |
+| L10-001 | Page title = Attendance | AttendanceContent | attendance page | CLOSED |
+| L10-002 | Course selector | AttendanceContent | attendance workspace | CLOSED |
+| L10-003 | Prevent raw course-id flash | AttendanceContent | server-resolved course choices eliminate client hydration flash | REDESIGNED |
+| L10-004 | Previous month | AttendanceContent | attendance workspace | CLOSED |
+| L10-005 | Direct month/year picker | AttendanceContent | month input | CLOSED |
+| L10-006 | Next month | AttendanceContent | attendance workspace | CLOSED |
+| L10-007 | Total/Held metric | AttendanceContent | metric | CLOSED |
+| L10-008 | Present metric | AttendanceContent | metric | CLOSED |
+| L10-009 | Absent metric | AttendanceContent | metric | CLOSED |
+| L10-010 | Attendance percentage | AttendanceContent | metric | CLOSED |
+| L10-011 | College threshold/eligibility signal | AttendanceContent | threshold card | CLOSED |
+| L10-012 | Per-course overview | AttendanceContent | overview cards | CLOSED |
+| L10-013 | Desktop date/day/time/status table | AttendanceContent | table | CLOSED |
 | L10-014 | Mobile attendance list | AttendanceContent | cards | FIXED |
-| L10-015 | Select-course empty state | AttendanceContent | initial state | UNCHECKED |
-| L10-016 | No-records selected-month state | AttendanceContent | EmptyState | FIXED |
-| L10-017 | Request failure is not shown as empty | AttendanceContent | error state | UNCHECKED |
-| L10-018 | Retry attendance load | AttendanceContent | retry behavior | UNCHECKED |
-| L10-019 | Loading skeleton | AttendanceContent | loading state | UNCHECKED |
-| L10-020 | Learner read-only / tenant scope | attendance APIs | service | FIXED |
+| L10-015 | Select-course empty state | AttendanceContent | first valid course auto-selected; no transient unselected state | REDESIGNED |
+| L10-016 | No-records selected-month state | AttendanceContent | EmptyState | CLOSED |
+| L10-017 | Request failure is not shown as empty | AttendanceContent | error state | CLOSED |
+| L10-018 | Retry attendance load | AttendanceContent | retry behavior | CLOSED |
+| L10-019 | Loading skeleton | AttendanceContent | loading state | CLOSED |
+| L10-020 | Learner read-only / tenant scope | attendance APIs | service | CLOSED |
 
 ## L11 — My Placements home: `/learn/my-placements`
 

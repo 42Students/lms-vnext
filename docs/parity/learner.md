@@ -185,8 +185,10 @@ Legacy contract:
 - [x] Today/upcoming cues are equivalent.
 - [x] Loading/no-sessions/error states are implemented.
 - [x] Timezone/date handling is implemented with browser-local calendar grouping and offset-aware persisted timestamps.
-- [ ] Mobile calendar/list fallback is browser-verified.
-- [ ] Regression coverage executes successfully.
+- [x] Mobile agenda/list fallback is implemented in the responsive component; final browser verification remains.
+- [x] Schedule route has explicit loading and retryable error boundaries, distinct from true empty/filtered-empty states.
+- [x] Event links land directly on Course Overview without an intermediate redirect.
+- [ ] Regression coverage executes successfully in CI/browser.
 
 ## Page: Attendance Summary
 **Legacy:** `/learn/attendance`
@@ -195,7 +197,9 @@ Legacy contract:
 - [x] Per-course attendance breakdown exists.
 - [x] Eligibility/threshold messaging matches configured policy where legacy shows it.
 - [x] Present/absent/session totals are correct.
-- [ ] Empty/loading/error states are implemented.
+- [x] Empty/loading/error states are implemented; route failure is explicitly distinct from a zero-record month and exposes Retry.
+- [x] Server-resolved course choices eliminate the legacy raw-course-id hydration flash and auto-select the first valid course.
+- [x] Desktop table and responsive mobile attendance cards are implemented; final browser verification remains.
 - [x] Learner view is read-only and tenant scoped.
 - [ ] Attendance regression coverage is authored but must actually execute successfully in CI/browser verification.
 

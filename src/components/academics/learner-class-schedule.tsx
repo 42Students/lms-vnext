@@ -155,7 +155,7 @@ function EventCard({
 
   return event.deliveryId ? (
     <Link
-      href={`/learn/courses/${event.deliveryId}`}
+      href={`/learn/courses/${event.deliveryId}/home`}
       className="block rounded-lg outline-none transition hover:-translate-y-px hover:shadow-sm focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       {content}

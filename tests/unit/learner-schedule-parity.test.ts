@@ -48,5 +48,27 @@ describe("learner class schedule parity surface", () => {
     expect(component).toContain(
       "/learn/courses/",
     );
+    expect(component).toContain(
+      'event.deliveryId}/home',
+    );
+    expect(component).toContain(
+      'aria-label="Next upcoming classes"',
+    );
+    expect(component).toContain(
+      'className="mt-5 space-y-4 md:hidden"',
+    );
+  });
+  it("keeps loading/error boundaries separate from true empty schedule", () => {
+    for (const file of ["loading.tsx", "error.tsx"]) {
+      expect(
+        fs.existsSync(
+          path.join(
+            process.cwd(),
+            "src/app/(authenticated)/learn/calendar",
+            file,
+          ),
+        ),
+      ).toBe(true);
+    }
   });
 });
