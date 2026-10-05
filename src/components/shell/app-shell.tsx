@@ -13,12 +13,13 @@ import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
 import { ToastProvider } from "@/components/ui/toast";
+import { getLearnerShellAccess } from "@/modules/module-access/learner-shell-access";
 import {
   getShellNavigation,
   getShellRoleLabel,
 } from "./shell-model";
 
-export function AppShell({
+export async function AppShell({
   context,
   memberships,
   adminScopeChoices,
@@ -29,9 +30,15 @@ export function AppShell({
   adminScopeChoices: AdminScopeChoices | null;
   children: ReactNode;
 }) {
-  const navigation = getShellNavigation(context);
   const superAdmin = isSuperAdmin(context);
   const learner = hasMembershipRole(context, "LEARNER");
+  const learnerAccess = learner
+    ? await getLearnerShellAccess(context)
+    : null;
+  const navigation = getShellNavigation(
+    context,
+    learnerAccess,
+  );
   const currentMembership = context.membership
     ? memberships.find(
         (membership) => membership.id === context.membership?.id,

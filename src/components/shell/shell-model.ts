@@ -5,6 +5,11 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 
+export type LearnerNavigationAccess = {
+  projectsEnabled: boolean;
+  placementsEnabled: boolean;
+};
+
 export type ShellNavItem = {
   label: string;
   href: string;
@@ -158,11 +163,36 @@ function pushUnique(
   }
 }
 
-function getMembershipWorkspaces(context: RequestContext) {
+function getLearnerItems(
+  access?: LearnerNavigationAccess | null,
+) {
+  if (!access) return learnerItems;
+
+  return learnerItems.filter((item) => {
+    if (
+      item.href === "/learn/projects" &&
+      !access.projectsEnabled
+    ) {
+      return false;
+    }
+    if (
+      item.href === "/learn/my-placements" &&
+      !access.placementsEnabled
+    ) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function getMembershipWorkspaces(
+  context: RequestContext,
+  learnerAccess?: LearnerNavigationAccess | null,
+) {
   const items: ShellNavItem[] = [];
 
   if (hasMembershipRole(context, "LEARNER")) {
-    pushUnique(items, learnerItems);
+    pushUnique(items, getLearnerItems(learnerAccess));
   }
 
   if (hasMembershipRole(context, "FACULTY")) {
@@ -180,7 +210,10 @@ function getMembershipWorkspaces(context: RequestContext) {
   return items;
 }
 
-export function getShellNavigation(context: RequestContext) {
+export function getShellNavigation(
+  context: RequestContext,
+  learnerAccess?: LearnerNavigationAccess | null,
+) {
   if (isSuperAdmin(context)) {
     return superAdminItems;
   }
@@ -195,7 +228,7 @@ export function getShellNavigation(context: RequestContext) {
     hasMembershipRole(context, "LEARNER") &&
     !hasActiveRecruiter(context)
   ) {
-    return learnerItems;
+    return getLearnerItems(learnerAccess);
   }
 
   const items: ShellNavItem[] = [dashboard];
@@ -207,7 +240,10 @@ export function getShellNavigation(context: RequestContext) {
   // Membership roles are additive. A College Admin may also teach,
   // mentor or learn, so those workspaces must not disappear merely
   // because the membership also carries COLLEGE_ADMIN.
-  pushUnique(items, getMembershipWorkspaces(context));
+  pushUnique(
+    items,
+    getMembershipWorkspaces(context, learnerAccess),
+  );
 
   if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
     pushUnique(items, collegeAdminItems);

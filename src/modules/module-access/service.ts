@@ -1,0 +1,327 @@
+import {
+  and,
+  eq,
+  inArray,
+  isNull,
+  or,
+} from "drizzle-orm";
+import { getDb } from "@/db/client";
+import {
+  cohorts,
+  departments,
+  learnerProgramEnrollments,
+  moduleAccessRules,
+  programs,
+  sectionEnrollments,
+  sections,
+} from "@/db/schema";
+import {
+  hasMembershipRole,
+  type RequestContext,
+} from "@/modules/identity/context";
+
+export const OPTIONAL_MODULE_KEYS = [
+  "projects",
+  "placements",
+  "electives",
+] as const;
+
+export type OptionalModuleKey =
+  (typeof OPTIONAL_MODULE_KEYS)[number];
+
+export type ModuleAccessScopeType =
+  | "MEMBERSHIP"
+  | "SECTION"
+  | "COHORT"
+  | "PROGRAM"
+  | "DEPARTMENT"
+  | "COLLEGE"
+  | "ORGANIZATION"
+  | "GLOBAL";
+
+export type ModuleAccessScope = {
+  scopeType: ModuleAccessScopeType;
+  scopeId: string | null;
+};
+
+export type ModuleAccessRule = {
+  scopeType: string;
+  scopeId: string | null;
+  module: string;
+  enabled: boolean;
+  locked: boolean;
+};
+
+export type ModuleAccessResolution = {
+  enabled: boolean;
+  level: ModuleAccessScopeType | "DEFAULT";
+  scopeId: string | null;
+  locked: boolean;
+};
+
+export type OptionalModuleAccess = Record<
+  OptionalModuleKey,
+  ModuleAccessResolution
+>;
+
+const DEFAULTS: Record<OptionalModuleKey, boolean> = {
+  projects: true,
+  placements: false,
+  electives: true,
+};
+
+const BELOW_COLLEGE = new Set<ModuleAccessScopeType>([
+  "MEMBERSHIP",
+  "SECTION",
+  "COHORT",
+  "PROGRAM",
+  "DEPARTMENT",
+]);
+
+function levelIgnored(
+  module: OptionalModuleKey,
+  scopeType: ModuleAccessScopeType,
+) {
+  return module === "placements" && BELOW_COLLEGE.has(scopeType);
+}
+
+function pairKey(
+  scopeType: string,
+  scopeId: string | null,
+  module: string,
+) {
+  return `${scopeType}|${scopeId ?? ""}|${module}`;
+}
+
+export function resolveModuleAccessFromRules(
+  chain: readonly ModuleAccessScope[],
+  rules: readonly ModuleAccessRule[],
+): OptionalModuleAccess {
+  const byPair = new Map(
+    rules.map((rule) => [
+      pairKey(rule.scopeType, rule.scopeId, rule.module),
+      rule,
+    ]),
+  );
+
+  const resolveOne = (
+    module: OptionalModuleKey,
+  ): ModuleAccessResolution => {
+    for (let index = chain.length - 1; index >= 0; index -= 1) {
+      const scope = chain[index];
+      if (levelIgnored(module, scope.scopeType)) continue;
+      const rule = byPair.get(
+        pairKey(scope.scopeType, scope.scopeId, module),
+      );
+      if (rule?.locked) {
+        return {
+          enabled: rule.enabled,
+          level: scope.scopeType,
+          scopeId: scope.scopeId,
+          locked: true,
+        };
+      }
+    }
+
+    for (const scope of chain) {
+      if (levelIgnored(module, scope.scopeType)) continue;
+      const rule = byPair.get(
+        pairKey(scope.scopeType, scope.scopeId, module),
+      );
+      if (rule) {
+        return {
+          enabled: rule.enabled,
+          level: scope.scopeType,
+          scopeId: scope.scopeId,
+          locked: false,
+        };
+      }
+    }
+
+    return {
+      enabled: DEFAULTS[module],
+      level: "DEFAULT",
+      scopeId: null,
+      locked: false,
+    };
+  };
+
+  return {
+    projects: resolveOne("projects"),
+    placements: resolveOne("placements"),
+    electives: resolveOne("electives"),
+  };
+}
+
+function pushScope(
+  chain: ModuleAccessScope[],
+  scopeType: ModuleAccessScopeType,
+  scopeId: string | null | undefined,
+) {
+  if (scopeType !== "GLOBAL" && !scopeId) return;
+  if (
+    chain.some(
+      (item) =>
+        item.scopeType === scopeType &&
+        item.scopeId === (scopeId ?? null),
+    )
+  ) {
+    return;
+  }
+  chain.push({ scopeType, scopeId: scopeId ?? null });
+}
+
+export async function buildModuleAccessChain(
+  context: RequestContext,
+): Promise<ModuleAccessScope[]> {
+  const chain: ModuleAccessScope[] = [];
+  const membership = context.membership;
+
+  if (membership && hasMembershipRole(context, "LEARNER")) {
+    pushScope(chain, "MEMBERSHIP", membership.id);
+
+    const db = getDb();
+    const [enrollment] = await db
+      .select({
+        id: learnerProgramEnrollments.id,
+        programId: learnerProgramEnrollments.programId,
+        cohortId: learnerProgramEnrollments.cohortId,
+      })
+      .from(learnerProgramEnrollments)
+      .where(
+        and(
+          eq(learnerProgramEnrollments.membershipId, membership.id),
+          eq(learnerProgramEnrollments.status, "ACTIVE"),
+        ),
+      )
+      .limit(1);
+
+    let sectionId: string | null = null;
+    let cohortId = enrollment?.cohortId ?? null;
+    let programId = enrollment?.programId ?? null;
+
+    if (enrollment) {
+      const [section] = await db
+        .select({
+          sectionId: sectionEnrollments.sectionId,
+          cohortId: sections.cohortId,
+        })
+        .from(sectionEnrollments)
+        .innerJoin(
+          sections,
+          eq(sections.id, sectionEnrollments.sectionId),
+        )
+        .where(
+          and(
+            eq(
+              sectionEnrollments.learnerEnrollmentId,
+              enrollment.id,
+            ),
+            eq(sectionEnrollments.status, "ACTIVE"),
+          ),
+        )
+        .limit(1);
+
+      if (section) {
+        sectionId = section.sectionId;
+        cohortId = section.cohortId;
+      }
+    }
+
+    if (cohortId) {
+      const [cohort] = await db
+        .select({ programId: cohorts.programId })
+        .from(cohorts)
+        .where(eq(cohorts.id, cohortId))
+        .limit(1);
+      if (cohort) programId = cohort.programId;
+    }
+
+    let departmentId: string | null = null;
+    if (programId) {
+      const [program] = await db
+        .select({ departmentId: programs.departmentId })
+        .from(programs)
+        .where(eq(programs.id, programId))
+        .limit(1);
+      departmentId = program?.departmentId ?? null;
+    }
+
+    if (departmentId) {
+      const [department] = await db
+        .select({ collegeId: departments.collegeId })
+        .from(departments)
+        .where(eq(departments.id, departmentId))
+        .limit(1);
+
+      if (department && department.collegeId !== membership.collegeId) {
+        sectionId = null;
+        cohortId = null;
+        programId = null;
+        departmentId = null;
+      }
+    }
+
+    pushScope(chain, "SECTION", sectionId);
+    pushScope(chain, "COHORT", cohortId);
+    pushScope(chain, "PROGRAM", programId);
+    pushScope(chain, "DEPARTMENT", departmentId);
+  }
+
+  const collegeId =
+    membership?.collegeId ?? context.adminScope?.collegeId ?? null;
+  const organizationId =
+    membership?.organizationId ??
+    context.adminScope?.organizationId ??
+    null;
+
+  pushScope(chain, "COLLEGE", collegeId);
+  pushScope(chain, "ORGANIZATION", organizationId);
+  pushScope(chain, "GLOBAL", null);
+
+  return chain;
+}
+
+export async function resolveOptionalModuleAccessForChain(
+  chain: readonly ModuleAccessScope[],
+): Promise<OptionalModuleAccess> {
+  const ids = chain
+    .map((scope) => scope.scopeId)
+    .filter((value): value is string => value !== null);
+
+  const scopeCondition =
+    ids.length > 0
+      ? or(
+          isNull(moduleAccessRules.scopeId),
+          inArray(moduleAccessRules.scopeId, ids),
+        )
+      : isNull(moduleAccessRules.scopeId);
+
+  const rules = await getDb()
+    .select({
+      scopeType: moduleAccessRules.scopeType,
+      scopeId: moduleAccessRules.scopeId,
+      module: moduleAccessRules.module,
+      enabled: moduleAccessRules.enabled,
+      locked: moduleAccessRules.locked,
+    })
+    .from(moduleAccessRules)
+    .where(
+      and(
+        inArray(
+          moduleAccessRules.module,
+          [...OPTIONAL_MODULE_KEYS],
+        ),
+        scopeCondition,
+      ),
+    );
+
+  return resolveModuleAccessFromRules(chain, rules);
+}
+
+export async function resolveOptionalModuleAccess(
+  context: RequestContext,
+) {
+  const chain = await buildModuleAccessChain(context);
+  return resolveOptionalModuleAccessForChain(chain);
+}

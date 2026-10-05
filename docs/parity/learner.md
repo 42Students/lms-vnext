@@ -1,3 +1,7 @@
+## 2026-10-05 current-oracle L0 re-audit
+
+The current production learner sidebar does not expose Projects/Placements statically. Projects follows hierarchical optional-module access; Placements additionally requires the college-level paid-module switch and learner placement eligibility (learner/class/batch in legacy, membership/section/cohort in vNext). vNext now models and resolves both layers and feeds them into the shared shell with optional links failing closed when current access cannot be trusted. Conditional Drive Day is still open because its coordinator producer and learner workspace are not yet cloned.
+
 # Learner — Detailed Page Parity Spec
 
 > **Freshness gate:** this detailed spec contains historical checks from the earlier oracle. Current Learner final verification is governed by `docs/planning/clone-parity-protocol.md` + `docs/planning/learner-family-verification.md`. Current observed legacy FE/BE heads are newer than the original spec baseline; checked boxes are not final-release proof until the matching family is VERIFIED.

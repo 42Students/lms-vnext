@@ -243,4 +243,46 @@ describe("authenticated shell model", () => {
     expect(hrefs).not.toContain("/learn/projects/example");
   });
 
+  it("hides learner Projects and Placements when current access says they are unavailable", () => {
+    const navigation = getShellNavigation(
+      context(["LEARNER"]),
+      {
+        projectsEnabled: false,
+        placementsEnabled: false,
+      },
+    );
+
+    expect(
+      navigation.map((item) => item.label),
+    ).toEqual([
+      "Courses",
+      "Quizzes",
+      "Assignments",
+      "Class Schedule",
+      "Attendance",
+      "Notifications",
+      "Profile",
+    ]);
+  });
+
+  it("filters only learner-owned optional links on mixed-role memberships", () => {
+    const navigation = getShellNavigation(
+      context(["LEARNER", "FACULTY"]),
+      {
+        projectsEnabled: true,
+        placementsEnabled: false,
+      },
+    );
+
+    expect(
+      navigation.map((item) => item.label),
+    ).toContain("Projects");
+    expect(
+      navigation.map((item) => item.label),
+    ).not.toContain("My Placements");
+    expect(
+      navigation.map((item) => item.label),
+    ).toContain("Teaching Courses");
+  });
+
 });

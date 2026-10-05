@@ -606,3 +606,8 @@ Within a page:
 4. add authorization/regression coverage;
 5. update only the exact rows actually closed;
 6. continue without broad redesign until parity is complete.
+
+
+### Learner shell access re-audit — 2026-10-05
+
+Current-oracle re-audit found that Learner Projects and Placements cannot be static shell links. vNext now carries persisted hierarchical optional-module decisions plus learner placement participation resolution into the shared shell. The implementation gap for conditional Projects/Placements visibility is fixed, while family verification remains open until the corresponding admin/TPO producer workflows and browser evidence are complete. Conditional learner Drive Day remains explicitly open.

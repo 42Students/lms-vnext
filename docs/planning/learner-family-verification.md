@@ -25,7 +25,7 @@ Because the oracle moved materially, every family starts `STALE` here even if so
 
 | Family | Scope | Status | Verified FE SHA | Verified BE SHA | vNext SHA | Source audit | Tests executed | Browser desktop | Browser mobile | Producer→consumer | Exceptions/notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| L0 | Shell/navigation | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
+| L0 | Shell/navigation | IN_PROGRESS | `008d113ddd9f515df65ae7fe90dba360938314f6` | `ed1377b744088f2ec759895658105c494337ba30` | current implementation commit | Sidebar, feature hook/filter, FeatureFlagController, ModuleAccessResolver and PlacementEligibilityService inspected | unit coverage authored; CI pending | pending | pending | BLOCKED: module/eligibility producer UI + Drive Day producer/consumer not cloned yet | L0-011/L0-012 fixed; L0-013 remains GAP |
 | L1 | Courses list | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
 | L2 | Course detail/Overview | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
 | L3 | Learning Path | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |

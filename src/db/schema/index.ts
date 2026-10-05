@@ -18,3 +18,6 @@ export * from "./activity";
 export * from "./attendance";
 
 export * from "./discussions";
+
+export * from "./module-access";
+export * from "./placement-access";

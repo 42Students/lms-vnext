@@ -1,0 +1,63 @@
+import { sql } from "drizzle-orm";
+import {
+  check,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
+import { colleges } from "./colleges";
+import { users } from "./users";
+
+export const placementEligibilityDecisions = pgTable(
+  "placement_eligibility_decisions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    scopeType: varchar("scope_type", { length: 24 }).notNull(),
+    scopeId: uuid("scope_id").notNull(),
+    status: varchar("status", { length: 24 }).notNull(),
+    reason: text("reason"),
+    note: text("note"),
+    decidedByUserId: uuid("decided_by_user_id").references(
+      () => users.id,
+      { onDelete: "restrict" },
+    ),
+    decidedAt: timestamp("decided_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("placement_eligibility_decisions_scope_uq").on(
+      table.scopeType,
+      table.scopeId,
+    ),
+    index("placement_eligibility_decisions_college_idx").on(
+      table.collegeId,
+      table.scopeType,
+    ),
+    check(
+      "placement_eligibility_decisions_scope_ck",
+      sql`${table.scopeType} in ('MEMBERSHIP', 'SECTION', 'COHORT')`,
+    ),
+    check(
+      "placement_eligibility_decisions_status_ck",
+      sql`${table.status} in ('ELIGIBLE', 'INELIGIBLE')`,
+    ),
+    check(
+      "placement_eligibility_decisions_reason_ck",
+      sql`${table.status} = 'ELIGIBLE' or length(trim(coalesce(${table.reason}, ''))) > 0`,
+    ),
+  ],
+);

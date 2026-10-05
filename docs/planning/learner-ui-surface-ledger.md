@@ -66,8 +66,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L0-008 | Sidebar label + route: Projects | `/learn/projects` | same | CLOSED |
 | L0-009 | Sidebar label + route: Notifications | `/learn/notifications` | same | CLOSED |
 | L0-010 | Sidebar label + route: Profile | `/learn/profile` | same | CLOSED |
-| L0-011 | Projects feature-flag visibility | Sidebar feature filtering | learner shell | GAP |
-| L0-012 | Placements feature-flag visibility | Sidebar feature filtering | learner shell | GAP |
+| L0-011 | Projects feature-flag visibility | Sidebar feature filtering | learner shell | FIXED |
+| L0-012 | Placements feature-flag visibility | Sidebar feature filtering | learner shell | FIXED |
 | L0-013 | Conditional Drive Day sidebar item | Sidebar + `getDriveDayMine` | no learner route yet | GAP |
 | L0-014 | Active sidebar highlight across nested routes | Sidebar | learner shell | CLOSED |
 | L0-015 | Learner mobile sidebar/open-close behavior | Sidebar | learner shell | FIXED |
@@ -806,3 +806,10 @@ Learner is not complete until all of the following are true:
 - `npm run parity:learner`, `npm run parity:pages`, and `npm run parity:status` are recorded in the final Learner closure commit/handoff.
 
 After Learner closes, move to Faculty using the same ledger pattern. Do not start a broad redesign pass before Learner parity closes.
+
+
+### L0 current-oracle re-audit note — 2026-10-05
+
+Against FE `008d113ddd9f515df65ae7fe90dba360938314f6` + BE `ed1377b744088f2ec759895658105c494337ba30`, vNext now has persisted optional-module decisions with the legacy precedence/lock semantics, Placements' college-only module switch, and the learner Placement eligibility ladder (membership → section → cohort, equivalent to legacy learner → class → batch). The learner shell consumes those results fail-closed for optional links while keeping core navigation available.
+
+L0-011/L0-012 are `FIXED`, not `CLOSED`: CI/browser evidence plus the admin/TPO producer workflows for writing these decisions still need to be completed. L0-013 Drive Day remains a real gap because coordinator assignment and the learner Drive Day workspace are not yet present.
