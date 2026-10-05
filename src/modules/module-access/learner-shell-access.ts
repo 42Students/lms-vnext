@@ -7,10 +7,12 @@ import {
   resolveOptionalModuleAccessForChain,
 } from "@/modules/module-access/service";
 import { resolveLearnerPlacementParticipation } from "@/modules/placements/access-service";
+import { hasStudentCoordinatorAssignmentToday } from "@/modules/placements/drive-day-coordinator-service";
 
 export type LearnerShellAccess = {
   projectsEnabled: boolean;
   placementsEnabled: boolean;
+  driveDayEnabled: boolean;
 };
 
 export async function getLearnerShellAccess(
@@ -22,24 +24,33 @@ export async function getLearnerShellAccess(
     const chain = await buildModuleAccessChain(context);
     const modules =
       await resolveOptionalModuleAccessForChain(chain);
-    const placementParticipation =
+    const [
+      placementParticipation,
+      driveDayEnabled,
+    ] = await Promise.all([
       modules.placements.enabled
-        ? await resolveLearnerPlacementParticipation(
+        ? resolveLearnerPlacementParticipation(
             context,
             chain,
           )
-        : null;
+        : Promise.resolve(null),
+      hasStudentCoordinatorAssignmentToday(
+        context,
+      ),
+    ]);
 
     return {
       projectsEnabled: modules.projects.enabled,
       placementsEnabled:
         modules.placements.enabled &&
         placementParticipation?.status === "ELIGIBLE",
+      driveDayEnabled,
     };
   } catch {
     return {
       projectsEnabled: false,
       placementsEnabled: false,
+      driveDayEnabled: false,
     };
   }
 }

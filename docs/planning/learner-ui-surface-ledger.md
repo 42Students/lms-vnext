@@ -68,7 +68,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L0-010 | Sidebar label + route: Profile | `/learn/profile` | same | CLOSED |
 | L0-011 | Projects feature-flag visibility | Sidebar feature filtering | learner shell | FIXED |
 | L0-012 | Placements feature-flag visibility | Sidebar feature filtering | learner shell | FIXED |
-| L0-013 | Conditional Drive Day sidebar item | Sidebar + `getDriveDayMine` | no learner route yet | GAP |
+| L0-013 | Conditional Drive Day sidebar item | Sidebar + `getDriveDayMine` | coordinator assignment + learner Drive Day workspace | FIXED |
 | L0-014 | Active sidebar highlight across nested routes | Sidebar | learner shell | CLOSED |
 | L0-015 | Learner mobile sidebar/open-close behavior | Sidebar | learner shell | FIXED |
 | L0-016 | Learner topbar/account switch/sign-out behavior | shared shell | authenticated shell | FIXED |
@@ -780,12 +780,12 @@ The old learner sidebar can dynamically expose `Drive Day` but the actual route 
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L31-001 | Detect learner's Drive Day assignment | Sidebar + `getDriveDayMine` | drive-day service | UNCHECKED |
-| L31-002 | Conditional sidebar item only when assigned | Sidebar | learner shell | GAP |
-| L31-003 | Learner-safe Drive Day landing | `/tpo/drive-day` | no learner page | GAP |
-| L31-004 | Assigned drive/round context | Drive Day page | learner-safe view | UNCHECKED |
-| L31-005 | Learner cannot see/manage TPO-only controls | Drive Day page | policy/UI | UNCHECKED |
-| L31-006 | Not-assigned access denied/empty | Drive Day page | learner-safe view | UNCHECKED |
+| L31-001 | Detect learner's Drive Day assignment | Sidebar + `getDriveDayMine` | `hasStudentCoordinatorAssignmentToday` | FIXED |
+| L31-002 | Conditional sidebar item only when assigned | Sidebar | learner shell | FIXED |
+| L31-003 | Learner-safe Drive Day landing | `/tpo/drive-day` | `/tpo/drive-day` | FIXED |
+| L31-004 | Assigned drive/round context | Drive Day page | assigned round cards + restricted roster | FIXED |
+| L31-005 | Learner cannot see/manage TPO-only controls | Drive Day page | coordinator access policy + Present/Absent-only UI | FIXED |
+| L31-006 | Not-assigned access denied/empty | Drive Day page | assignment-gated service | FIXED |
 
 ---
 
@@ -812,4 +812,4 @@ After Learner closes, move to Faculty using the same ledger pattern. Do not star
 
 Against FE `008d113ddd9f515df65ae7fe90dba360938314f6` + BE `ed1377b744088f2ec759895658105c494337ba30`, vNext now has persisted optional-module decisions with the legacy precedence/lock semantics, Placements' college-only module switch, and the learner Placement eligibility ladder (membership → section → cohort, equivalent to legacy learner → class → batch). The learner shell consumes those results fail-closed for optional links while keeping core navigation available.
 
-L0-011/L0-012 are `FIXED`, not `CLOSED`: CI/browser evidence plus the admin/TPO producer workflows for writing these decisions still need to be completed. L0-013 Drive Day remains a real gap because coordinator assignment and the learner Drive Day workspace are not yet present.
+L0-011 through L0-013 are now implemented at the consumer/domain level and remain `FIXED`, not `CLOSED`: CI/browser evidence is still unavailable and producer UIs must be verified in their owning admin/TPO families. Drive Day now has persisted dated coordinator assignments, applicant-conflict prevention, learner-only conditional navigation, an assigned-round landing, and a restricted roster that hides contact/result controls and permits only Present/Absent for student coordinators.

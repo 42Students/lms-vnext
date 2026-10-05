@@ -25,7 +25,7 @@ Because the oracle moved materially, every family starts `STALE` here even if so
 
 | Family | Scope | Status | Verified FE SHA | Verified BE SHA | vNext SHA | Source audit | Tests executed | Browser desktop | Browser mobile | Producer→consumer | Exceptions/notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| L0 | Shell/navigation | IN_PROGRESS | `008d113ddd9f515df65ae7fe90dba360938314f6` | `ed1377b744088f2ec759895658105c494337ba30` | current implementation commit | Sidebar, feature hook/filter, FeatureFlagController, ModuleAccessResolver and PlacementEligibilityService inspected | unit coverage authored; CI pending | pending | pending | BLOCKED: module/eligibility producer UI + Drive Day producer/consumer not cloned yet | L0-011/L0-012 fixed; L0-013 remains GAP |
+| L0 | Shell/navigation | IN_PROGRESS | `008d113ddd9f515df65ae7fe90dba360938314f6` | `ed1377b744088f2ec759895658105c494337ba30` | current implementation commit | Sidebar, feature hook/filter, FeatureFlagController, ModuleAccessResolver, PlacementEligibilityService, TpoTeamService and Drive Day controller/service inspected | unit coverage authored; CI runner unavailable | pending | pending | backend producer contracts present; exact owning TPO/admin producer UIs remain for their parity families | L0-011 through L0-013 fixed; desktop/mobile browser evidence still required before VERIFIED |
 | L1 | Courses list | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
 | L2 | Course detail/Overview | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
 | L3 | Learning Path | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
@@ -56,7 +56,7 @@ Because the oracle moved materially, every family starts `STALE` here even if so
 | L28 | Final Delivery | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
 | L29 | Notifications | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
 | L30 | Profile | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
-| L31 | Conditional Drive Day | STALE | — | — | — | pending | pending | pending | pending | pending | Reverify against current/final oracle |
+| L31 | Conditional Drive Day | IN_PROGRESS | `008d113ddd9f515df65ae7fe90dba360938314f6` | `ed1377b744088f2ec759895658105c494337ba30` | current implementation commit | Sidebar, `getDriveDayMine`, TpoTeamService coordinator rules, Drive Day landing/roster and attendance restrictions inspected | shell/date unit coverage authored; CI runner unavailable | pending | pending | coordinator assignment APIs/domain implemented; exact TPO Settings Team producer UI remains in TPO parity | L31-001..006 implementation fixed; browser/mobile + producer UI evidence required before VERIFIED |
 
 ## Evidence required to change STALE/UNVERIFIED → VERIFIED
 

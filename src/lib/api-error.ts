@@ -135,7 +135,13 @@ export function apiErrorResponse(error: unknown) {
 
     return NextResponse.json(
       { error: error.code },
-      { status: notFound.has(error.code) ? 404 : 409 },
+      {
+        status: notFound.has(error.code)
+          ? 404
+          : forbidden.has(error.code)
+            ? 403
+            : 409,
+      },
     );
   }
 
@@ -247,11 +253,23 @@ export function apiErrorResponse(error: unknown) {
       "PLACEMENT_RESULT_NOT_FOUND",
       "PLACEMENT_OFFER_NOT_FOUND",
       "PLACEMENT_REQUEST_NOT_FOUND",
+      "PLACEMENT_COORDINATOR_ASSIGNMENT_NOT_FOUND",
+      "PLACEMENT_DRIVE_DAY_CANDIDATE_NOT_FOUND",
+    ]);
+    const forbidden = new Set([
+      "PLACEMENT_DRIVE_DAY_ACCESS_DENIED",
+      "PLACEMENT_DRIVE_DAY_ATTENDANCE_FORBIDDEN",
     ]);
 
     return NextResponse.json(
       { error: error.code },
-      { status: notFound.has(error.code) ? 404 : 409 },
+      {
+        status: notFound.has(error.code)
+          ? 404
+          : forbidden.has(error.code)
+            ? 403
+            : 409,
+      },
     );
   }
 

@@ -285,4 +285,32 @@ describe("authenticated shell model", () => {
     ).toContain("Teaching Courses");
   });
 
+  it("adds Drive Day only for a learner with a current coordinator assignment", () => {
+    const navigation = getShellNavigation(
+      context(["LEARNER"]),
+      {
+        projectsEnabled: true,
+        placementsEnabled: false,
+        driveDayEnabled: true,
+      },
+    );
+
+    expect(
+      navigation.map((item) => item.label),
+    ).toEqual([
+      "Courses",
+      "Quizzes",
+      "Assignments",
+      "Class Schedule",
+      "Attendance",
+      "Projects",
+      "Notifications",
+      "Profile",
+      "Drive Day",
+    ]);
+    expect(
+      navigation.at(-1)?.href,
+    ).toBe("/tpo/drive-day");
+  });
+
 });

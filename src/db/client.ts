@@ -104,6 +104,8 @@ export async function checkDatabaseConnection() {
       inAppNotifications: string | null;
       moduleAccessRules: string | null;
       placementEligibilityDecisions: string | null;
+      placementDriveDayCoordinatorAssignments: string | null;
+      placementRoundAttendance: string | null;
     }>(
       `select
          to_regclass('public.organizations')::text as organizations,
@@ -150,7 +152,9 @@ export async function checkDatabaseConnection() {
          to_regclass('public.activity_events')::text as "activityEvents",
          to_regclass('public.in_app_notifications')::text as "inAppNotifications",
          to_regclass('public.module_access_rules')::text as "moduleAccessRules",
-         to_regclass('public.placement_eligibility_decisions')::text as "placementEligibilityDecisions"`,
+         to_regclass('public.placement_eligibility_decisions')::text as "placementEligibilityDecisions",
+         to_regclass('public.placement_drive_day_coordinator_assignments')::text as "placementDriveDayCoordinatorAssignments",
+         to_regclass('public.placement_round_attendance')::text as "placementRoundAttendance"`,
     );
 
     const schema = result.rows[0];
@@ -199,7 +203,9 @@ export async function checkDatabaseConnection() {
       !schema.activityEvents ||
       !schema.inAppNotifications ||
       !schema.moduleAccessRules ||
-      !schema.placementEligibilityDecisions
+      !schema.placementEligibilityDecisions ||
+      !schema.placementDriveDayCoordinatorAssignments ||
+      !schema.placementRoundAttendance
     ) {
       throw new Error(
         "Database schema is not fully migrated",

@@ -253,6 +253,13 @@
       "when": 1791250200000,
       "tag": "0035_learner_module_access",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1791253800000,
+      "tag": "0036_drive_day_coordinators",
+      "breakpoints": true
     }
   ]
 }

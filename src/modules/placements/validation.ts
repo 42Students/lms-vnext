@@ -1341,3 +1341,45 @@ export type CreatePlacementRequestInput =
   z.input<typeof createPlacementRequestInputSchema>;
 export type PlacementRequestActionInput =
   z.input<typeof placementRequestActionSchema>;
+
+export const placementDriveDayCoordinatorInputSchema =
+  z
+    .object({
+      learnerMembershipId: z.string().uuid(),
+      onDate: placementCalendarDateSchema,
+    })
+    .strict();
+
+export const placementDriveDayAttendanceStatuses = [
+  "PRESENT",
+  "IN_INTERVIEW",
+  "DONE",
+  "ABSENT",
+] as const;
+
+export const placementDriveDayAttendanceInputSchema =
+  z
+    .object({
+      applicationId:
+        placementApplicationIdSchema,
+      status: z.enum(
+        placementDriveDayAttendanceStatuses,
+      ),
+      room: z
+        .string()
+        .trim()
+        .min(1)
+        .max(160)
+        .nullable()
+        .optional(),
+    })
+    .strict();
+
+export type PlacementDriveDayCoordinatorInput =
+  z.input<
+    typeof placementDriveDayCoordinatorInputSchema
+  >;
+export type PlacementDriveDayAttendanceInput =
+  z.input<
+    typeof placementDriveDayAttendanceInputSchema
+  >;

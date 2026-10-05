@@ -8,6 +8,7 @@ import {
 export type LearnerNavigationAccess = {
   projectsEnabled: boolean;
   placementsEnabled: boolean;
+  driveDayEnabled?: boolean;
 };
 
 export type ShellNavItem = {
@@ -168,7 +169,7 @@ function getLearnerItems(
 ) {
   if (!access) return learnerItems;
 
-  return learnerItems.filter((item) => {
+  const items = learnerItems.filter((item) => {
     if (
       item.href === "/learn/projects" &&
       !access.projectsEnabled
@@ -183,6 +184,20 @@ function getLearnerItems(
     }
     return true;
   });
+
+  if (access.driveDayEnabled) {
+    return [
+      ...items,
+      {
+        label: "Drive Day",
+        href: "/tpo/drive-day",
+        shortLabel: "D",
+        group: "career" as const,
+      },
+    ];
+  }
+
+  return items;
 }
 
 function getMembershipWorkspaces(
