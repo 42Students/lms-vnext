@@ -22,11 +22,14 @@ export default async function LearnerQuizzesPage() {
       courseId: quiz.courseId,
       courseName: quiz.courseName,
       courseCode: quiz.courseCode,
+      lessonId: quiz.lessonId,
       lessonName: quiz.lessonName,
       title: quiz.title,
       description: quiz.description,
       dueAt:
         quiz.dueAt?.toISOString() ?? null,
+      createdAt:
+        quiz.createdAt.toISOString(),
       maxAttempts: quiz.maxAttempts,
       totalPoints: quiz.totalPoints,
       status: quiz.status,

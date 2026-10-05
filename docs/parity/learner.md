@@ -116,16 +116,17 @@ Legacy contract audited from `AssignmentsContent`:
 - metrics/summary pills;
 - loading skeleton, request error, zero-assignments and filtered-empty states.
 
-- [ ] Aggregate list includes every published assignment in learner scope.
-- [ ] Course filter behaves like legacy and resets pagination appropriately.
-- [ ] Pagination/large-list behavior is verified.
-- [ ] Due-date and all learner state labels are equivalent.
+- [x] Aggregate list includes every published assignment in learner scope.
+- [x] Course filter behaves like legacy and resets pagination appropriately.
+- [x] Legacy 20-row pagination behavior is implemented.
+- [x] Created/due metadata and Not submitted / Due soon / Overdue / Submitted / Submitted late / Graded labels are represented.
 - [x] Published overdue assignments remain submittable.
-- [ ] Submission/view interaction has full legacy field/validation parity.
-- [ ] Grade visibility is masked until published.
-- [ ] Metrics are semantically equivalent, not misleading page-only counts.
-- [ ] Loading/error/first-run/filtered-empty states are verified.
-- [ ] Deep link from aggregate list to actionable assignment is verified.
+- [ ] Legacy assignment submission/view drawer is still missing from the aggregate page; vNext currently deep-links to the exact Learning Path item.
+- [ ] Exact drawer text/link/file field parity remains open with the drawer.
+- [x] Grade visibility is masked until published.
+- [x] Metrics use the full aggregate set rather than page-only counts.
+- [x] Loading/error/first-run/filtered-empty states are implemented.
+- [x] Deep link identifies the exact lesson + assignment under the Assessments filter.
 - [ ] Mobile behavior is verified.
 
 ## Page: All Quizzes
@@ -140,12 +141,12 @@ Legacy contract:
 - primary open/take/view-result action;
 - loading/error/empty states.
 
-- [ ] Aggregate list scope matches legacy.
-- [ ] Course filter and pagination match.
-- [ ] Not attempted / attempted / missed / result-published states are verified.
-- [ ] Attempt limit and close/deadline behavior match.
-- [ ] Deep link opens the correct quiz.
-- [ ] Loading/error/empty/filtered-empty states are verified.
+- [x] Aggregate list scope matches legacy published/closed learner quiz scope.
+- [x] Course filter and 20-row pagination are implemented.
+- [x] Not attempted / attempted / missed / result-published states are represented.
+- [x] Attempt limit and close/deadline behavior are represented.
+- [x] Deep link opens the exact quiz + delivery in the standalone attempt/review flow.
+- [x] Loading/error/empty/filtered-empty states are implemented.
 - [ ] Mobile behavior is verified.
 
 ## Page: Standalone Quiz Attempt

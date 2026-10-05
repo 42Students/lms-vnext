@@ -26,6 +26,8 @@ export default async function LearnerAssignmentsPage() {
           assignment.courseName,
         courseCode:
           assignment.courseCode,
+        lessonId:
+          assignment.lessonId,
         lessonName:
           assignment.lessonName,
         title: assignment.title,
@@ -34,6 +36,8 @@ export default async function LearnerAssignmentsPage() {
         dueAt:
           assignment.dueAt?.toISOString() ??
           null,
+        createdAt:
+          assignment.createdAt.toISOString(),
         maxPoints: assignment.maxPoints,
         submissionId:
           assignment.submissionId,

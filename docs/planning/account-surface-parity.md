@@ -50,8 +50,8 @@ Detailed page contract: `docs/parity/learner.md`.
 | Learning Path | course `roadmap` tab | course workspace | Ordered lessons/content/assessments + continue learning. | DONE |
 | Course Attendance | course `attendanceDetail` | same legacy tab route | Dedicated read-only summary, threshold, session detail, responsive states and exact learner delivery scope are implemented. | DONE |
 | Course Discussions | course `discussions` | same legacy tab route | Delivery-scoped feed, post/delete-own, pinned display, polling and explicit loading/empty/error states are implemented. | DONE |
-| All Assignments | `/learn/allAssignments` | `/learn/allAssignments` | Dedicated aggregate page, filtering/status/deep links; late submissions aligned with legacy. | DONE |
-| All Quizzes | `/learn/allQuizzes` | `/learn/allQuizzes` | Dedicated aggregate page, filtering/status/deep links. | DONE |
+| All Assignments | `/learn/allAssignments` | `/learn/allAssignments` | Aggregate scope, filter, legacy 20-row pagination, status labels, created/due metadata, grade masking and exact lesson deep links are implemented; legacy submission/view drawer and mobile verification remain. | PARTIAL |
+| All Quizzes | `/learn/allQuizzes` | `/learn/allQuizzes` | Aggregate scope, filter, legacy-sized pagination, attempt/result states and exact standalone quiz deep links are implemented; mobile verification remains. | PARTIAL |
 | Standalone quiz attempt UX | `/quiz` | inline course quiz control | Question navigation/error/result parity still needs comparison. | PARTIAL |
 | Class Schedule | `/learn/calendar` | `/learn/calendar` | Course-aware Section schedule, Week/Month/Day navigation, filtering, today/next-three cues, learner-safe scope and mobile list fallback implemented; final browser/CI verification remains. | PARTIAL |
 | Attendance summary | `/learn/attendance` | `/learn/attendance` | Overall + per-Course attendance, policy threshold, held/marked/unmarked semantics, month/course navigation, desktop/mobile records and tenant-safe learner scope are implemented; final executed CI/browser verification remains. | PARTIAL |

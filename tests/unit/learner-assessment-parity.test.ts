@@ -71,4 +71,42 @@ describe("learner assessment parity pages", () => {
     expect(attempt).toContain("review=true");
     expect(overview).toContain("/quiz?quizId=");
   });
+  it("keeps legacy aggregate assessment mechanics", () => {
+    const overview = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        "src/components/courses/learner-assessment-overview.tsx",
+      ),
+      "utf8",
+    );
+
+    expect(overview).toContain("Submitted late");
+    expect(overview).toContain("PAGE_SIZE = 20");
+    expect(overview).toContain("Page {currentPage} of {totalPages}");
+    expect(overview).toContain("filter=assessments");
+    expect(overview).toContain("lesson=");
+    expect(overview).toContain("Created ");
+    expect(overview).toContain("View Result");
+  });
+
+  it("keeps explicit aggregate loading and error boundaries", () => {
+    for (const family of ["allAssignments", "allQuizzes"]) {
+      expect(
+        fs.existsSync(
+          path.join(
+            process.cwd(),
+            `src/app/(authenticated)/learn/${family}/loading.tsx`,
+          ),
+        ),
+      ).toBe(true);
+      expect(
+        fs.existsSync(
+          path.join(
+            process.cwd(),
+            `src/app/(authenticated)/learn/${family}/error.tsx`,
+          ),
+        ),
+      ).toBe(true);
+    }
+  });
 });

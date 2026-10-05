@@ -21,10 +21,12 @@ type CommonItem = {
   courseId: string;
   courseName: string;
   courseCode: string;
+  lessonId: string;
   lessonName: string;
   title: string;
   description: string | null;
   dueAt: string | null;
+  createdAt: string;
 };
 
 export type LearnerAssignmentOverviewItem =
@@ -81,8 +83,17 @@ function assignmentState(
   }
 
   if (item.submittedAt) {
+    const due = item.dueAt ? new Date(item.dueAt).getTime() : null;
+    const submitted = new Date(item.submittedAt).getTime();
+    const submittedLate = Boolean(
+      due &&
+      Number.isFinite(submitted) &&
+      submitted > due,
+    );
     return {
-      label: "Submitted · awaiting grade",
+      label: submittedLate
+        ? "Submitted late · awaiting grade"
+        : "Submitted · awaiting grade",
       tone: "info" as const,
       action: "View",
     };
@@ -131,7 +142,7 @@ function quizState(
     return {
       label: "Results published",
       tone: "success" as const,
-      action: "Open quiz",
+      action: "View Result",
     };
   }
 
@@ -177,6 +188,8 @@ function Metric({
   );
 }
 
+const PAGE_SIZE = 20;
+
 export function LearnerAssessmentOverview({
   courses,
   items,
@@ -188,6 +201,7 @@ export function LearnerAssessmentOverview({
 }) {
   const [courseId, setCourseId] =
     useState("");
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(
     () =>
@@ -198,6 +212,16 @@ export function LearnerAssessmentOverview({
           )
         : items,
     [courseId, items],
+  );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filtered.length / PAGE_SIZE),
+  );
+  const currentPage = Math.min(page, totalPages);
+  const paged = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
   );
 
   const completed = items.filter((item) =>
@@ -255,9 +279,10 @@ export function LearnerAssessmentOverview({
           </span>
           <Select
             value={courseId}
-            onChange={(event) =>
-              setCourseId(event.target.value)
-            }
+            onChange={(event) => {
+              setCourseId(event.target.value);
+              setPage(1);
+            }}
           >
             <option value="">
               All courses
@@ -288,7 +313,7 @@ export function LearnerAssessmentOverview({
               : "Quiz list"
           }
         >
-          {filtered.map((item) => {
+          {paged.map((item) => {
             const state =
               item.kind === "ASSIGNMENT"
                 ? assignmentState(item)
@@ -296,7 +321,7 @@ export function LearnerAssessmentOverview({
             const href =
               item.kind === "QUIZ"
                 ? `/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${item.progressStatus === "COMPLETED" || item.progressStatus === "MISSED" || item.status === "CLOSED" ? "&review=true" : ""}`
-                : `/learn/courses/${item.deliveryId}/roadmap?filter=assignments&content=${encodeURIComponent(item.id)}`;
+                : `/learn/courses/${item.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`;
 
             return (
               <article
@@ -333,6 +358,9 @@ export function LearnerAssessmentOverview({
                       {item.lessonName}
                     </p>
                     <p className="mt-2 text-xs text-muted-foreground">
+                      {item.kind === "ASSIGNMENT"
+                        ? `Created ${formatDate(item.createdAt)} · `
+                        : ""}
                       {item.dueAt
                         ? `Due ${formatDate(item.dueAt)}`
                         : "No deadline"}
@@ -364,6 +392,33 @@ export function LearnerAssessmentOverview({
           })}
         </div>
       )}
+
+      {filtered.length > PAGE_SIZE ? (
+        <nav
+          aria-label={kind === "ASSIGNMENT" ? "Assignment pages" : "Quiz pages"}
+          className="flex flex-wrap items-center justify-center gap-3"
+        >
+          <button
+            type="button"
+            disabled={currentPage <= 1}
+            onClick={() => setPage((value) => Math.max(1, value - 1))}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="text-sm font-semibold text-body">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            type="button"
+            disabled={currentPage >= totalPages}
+            onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Next
+          </button>
+        </nav>
+      ) : null}
     </div>
   );
 }

@@ -574,6 +574,7 @@ export async function getLearnerCourseWorkspace(
     title: string;
     description: string | null;
     dueAt: Date | null;
+    createdAt: Date;
     maxPoints: number;
     sequence: number;
     submissionId: string | null;
@@ -592,6 +593,7 @@ export async function getLearnerCourseWorkspace(
     title: string;
     description: string | null;
     dueAt: Date | null;
+    createdAt: Date;
     maxAttempts: number;
     totalPoints: number;
     sequence: number;
@@ -714,6 +716,7 @@ export async function getLearnerCourseWorkspace(
         description:
           courseAssignments.description,
         dueAt: courseAssignments.dueAt,
+        createdAt: courseAssignments.createdAt,
         maxPoints: courseAssignments.maxPoints,
         sequence: courseAssignments.sequence,
         submissionId:
@@ -792,6 +795,7 @@ export async function getLearnerCourseWorkspace(
         title: row.title,
         description: row.description,
         dueAt: row.dueAt,
+        createdAt: row.createdAt,
         maxPoints: row.maxPoints,
         sequence: row.sequence,
         submissionId: row.submissionId,
@@ -822,6 +826,7 @@ export async function getLearnerCourseWorkspace(
         title: courseQuizzes.title,
         description: courseQuizzes.description,
         dueAt: courseQuizzes.dueAt,
+        createdAt: courseQuizzes.createdAt,
         maxAttempts:
           courseQuizzes.maxAttempts,
         totalPoints: courseQuizzes.totalPoints,
@@ -940,6 +945,7 @@ export async function getLearnerCourseWorkspace(
         title: row.title,
         description: row.description,
         dueAt: row.dueAt,
+        createdAt: row.createdAt,
         maxAttempts: row.maxAttempts,
         totalPoints: row.totalPoints,
         sequence: row.sequence,

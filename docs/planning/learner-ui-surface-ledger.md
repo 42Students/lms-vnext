@@ -105,28 +105,34 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L2-001 | Course detail default redirect to Overview | course index | course detail | FIXED |
-| L2-002 | Exact learner tabs: Overview / Learning Path / Attendance / Discussions | `courseTabList` | learner course tabs | FIXED |
-| L2-003 | Blueprint hidden for Learner | `courseTabList` | learner course tabs | FIXED |
-| L2-004 | Students hidden for Learner | `courseTabList` | learner course tabs | FIXED |
-| L2-005 | Back to Courses | course shell | course detail header | FIXED |
-| L2-006 | About this course | Home | Overview | FIXED |
-| L2-007 | What you'll learn / learning-path summary | Home | Overview | FIXED |
-| L2-008 | Faculty/teacher context | Home | Overview | FIXED |
-| L2-009 | Section + semester context | Home | Overview | FIXED |
-| L2-010 | Credits/elective context | Home | Overview | FIXED |
-| L2-011 | Next action priority: due assessment → live session → continue lesson | Home widgets | Overview | FIXED |
+| L2-001 | Course detail default redirect to Overview | course index | course detail | CLOSED |
+| L2-002 | Exact learner tabs: Overview / Learning Path / Attendance / Discussions | `courseTabList` | learner course tabs | CLOSED |
+| L2-003 | Blueprint hidden for Learner | `courseTabList` | learner course tabs | CLOSED |
+| L2-004 | Students hidden for Learner | `courseTabList` | learner course tabs | CLOSED |
+| L2-005 | Back to Courses | course shell | course detail header | CLOSED |
+| L2-006 | About this course | Home | Overview | GAP |
+| L2-007 | What you'll learn / learning-path summary | Home | Overview | GAP |
+| L2-008 | Faculty/teacher context | Home | Overview | CLOSED |
+| L2-009 | Section + semester context | Home | Overview | CLOSED |
+| L2-010 | Credits/elective context | Home | Overview | CLOSED |
+| L2-011 | Next action priority: due assessment → live session → continue lesson | Home widgets | Overview | GAP |
 | L2-012 | Overall progress metric | Home | Overview | FIXED |
 | L2-013 | Lesson progress metric | Home | Overview | FIXED |
 | L2-014 | Assignment progress metric | Home | Overview | FIXED |
 | L2-015 | Quiz progress metric | Home | Overview | FIXED |
-| L2-016 | Unified recent course updates | Home activity/widgets | Overview | FIXED |
+| L2-016 | Unified recent course updates | Home activity/widgets | Overview | GAP |
 | L2-017 | Course-team update links to Discussions | Home activity/widgets | Overview | FIXED |
 | L2-018 | Assessment/live update links to exact item | Home activity/widgets | Overview | FIXED |
-| L2-019 | Historical course Overview read-only messaging | course history | Overview | FIXED |
-| L2-020 | Course not-found/access handling | course route | course detail | FIXED |
-| L2-021 | Course loading/error state | course route | course detail | FIXED |
+| L2-019 | Historical course Overview read-only messaging | course history | Overview | CLOSED |
+| L2-020 | Course not-found/access handling | course route | course detail | CLOSED |
+| L2-021 | Course loading/error state | course route | course detail | CLOSED |
 | L2-022 | Overview mobile behavior | Home responsive | Overview | UNCHECKED |
+| L2-023 | Authored introduction content | InThisCourseSection introduction_content | Course domain has description only | GAP |
+| L2-024 | Authored rich HTML overview + sanitization | InThisCourseSection html_content | Course domain has no rich overview field | GAP |
+| L2-025 | Authored takeaways list | InThisCourseSection takeaways | vNext currently derives lesson names | GAP |
+| L2-026 | Long overview Read more / Show less | InThisCourseSection | Overview | GAP |
+| L2-027 | Partial course-details/progress widget warning state | Home | Overview | GAP |
+| L2-028 | Announcement body preview + Read more / Show less | UnifiedActivityList | discussion-backed update feed | GAP |
 
 ## L3 — Learning Path
 
@@ -205,51 +211,51 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L6-001 | Page title = Assignments | AssignmentsContent | aggregate page | UNCHECKED |
-| L6-002 | Aggregate learner assignment scope | AssignmentsContent/API | learner assessment service | UNCHECKED |
-| L6-003 | Course filter | AssignmentsContent | aggregate component | UNCHECKED |
-| L6-004 | Pagination | AssignmentsContent | aggregate component | UNCHECKED |
-| L6-005 | Course metadata | AssignmentsContent | cards/rows | UNCHECKED |
-| L6-006 | Created/due metadata | AssignmentsContent | cards/rows | UNCHECKED |
-| L6-007 | Not submitted state | AssignmentsContent | state mapping | UNCHECKED |
-| L6-008 | Due soon state | AssignmentsContent | state mapping | UNCHECKED |
-| L6-009 | Overdue + late allowed state | AssignmentsContent | state mapping | FIXED |
-| L6-010 | Submitted state | AssignmentsContent | state mapping | UNCHECKED |
-| L6-011 | Submitted late state | AssignmentsContent | state mapping | UNCHECKED |
-| L6-012 | Graded state | AssignmentsContent | state mapping | UNCHECKED |
-| L6-013 | View/submit primary action | AssignmentsContent | aggregate component | UNCHECKED |
-| L6-014 | Submission/view drawer parity | AssignmentsContent | vNext interaction | UNCHECKED |
-| L6-015 | Submission text/link/file fields | AssignmentsContent | submission form | UNCHECKED |
-| L6-016 | Grade masked until publish | AssignmentsContent | learner service | UNCHECKED |
-| L6-017 | Metrics/summary pills | AssignmentsContent | aggregate metrics | UNCHECKED |
-| L6-018 | Loading skeleton | AssignmentsContent | aggregate page | UNCHECKED |
-| L6-019 | Request failure/retry | AssignmentsContent | aggregate page | UNCHECKED |
-| L6-020 | Zero assignments | AssignmentsContent | EmptyState | UNCHECKED |
-| L6-021 | Filtered empty | AssignmentsContent | EmptyState | UNCHECKED |
-| L6-022 | Deep link exact assignment | AssignmentsContent | roadmap query | UNCHECKED |
+| L6-001 | Page title = All Assignments | AssignmentsContent | aggregate page | CLOSED |
+| L6-002 | Aggregate learner assignment scope | AssignmentsContent/API | learner assessment service | CLOSED |
+| L6-003 | Course filter | AssignmentsContent | aggregate component | CLOSED |
+| L6-004 | Pagination | AssignmentsContent | aggregate component | CLOSED |
+| L6-005 | Course metadata | AssignmentsContent | cards/rows | CLOSED |
+| L6-006 | Created/due metadata | AssignmentsContent | cards/rows | CLOSED |
+| L6-007 | Not submitted state | AssignmentsContent | state mapping | CLOSED |
+| L6-008 | Due soon state | AssignmentsContent | state mapping | CLOSED |
+| L6-009 | Overdue + late allowed state | AssignmentsContent | state mapping | CLOSED |
+| L6-010 | Submitted state | AssignmentsContent | state mapping | CLOSED |
+| L6-011 | Submitted late state | AssignmentsContent | state mapping | CLOSED |
+| L6-012 | Graded state | AssignmentsContent | state mapping | CLOSED |
+| L6-013 | View/submit primary action | AssignmentsContent | aggregate component | CLOSED |
+| L6-014 | Submission/view drawer parity | AssignmentsContent | vNext interaction | GAP |
+| L6-015 | Submission text/link/file fields | AssignmentsContent | submission form | GAP |
+| L6-016 | Grade masked until publish | AssignmentsContent | learner service | CLOSED |
+| L6-017 | Metrics/summary pills | AssignmentsContent | aggregate metrics | CLOSED |
+| L6-018 | Loading skeleton | AssignmentsContent | aggregate page | CLOSED |
+| L6-019 | Request failure/retry | AssignmentsContent | aggregate page | CLOSED |
+| L6-020 | Zero assignments | AssignmentsContent | EmptyState | CLOSED |
+| L6-021 | Filtered empty | AssignmentsContent | EmptyState | CLOSED |
+| L6-022 | Deep link exact assignment | AssignmentsContent | roadmap query | CLOSED |
 | L6-023 | Mobile assignment cards/drawer | AssignmentsContent responsive | aggregate page | UNCHECKED |
 
 ## L7 — All Quizzes: `/learn/allQuizzes`
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L7-001 | Page title = Quizzes | QuizzesContent | aggregate page | UNCHECKED |
-| L7-002 | Aggregate published quiz scope | QuizzesContent/API | learner assessment service | UNCHECKED |
-| L7-003 | Course filter | QuizzesContent | aggregate component | UNCHECKED |
-| L7-004 | Pagination | QuizzesContent | aggregate component | UNCHECKED |
-| L7-005 | Not attempted state | QuizzesContent | state mapping | UNCHECKED |
-| L7-006 | Attempted state | QuizzesContent | state mapping | UNCHECKED |
-| L7-007 | Missed state | QuizzesContent | state mapping | UNCHECKED |
-| L7-008 | Result-published state | QuizzesContent | state mapping | UNCHECKED |
-| L7-009 | Due/close timing | QuizzesContent | aggregate rows | UNCHECKED |
-| L7-010 | Attempt count/limit | QuizzesContent | aggregate rows | UNCHECKED |
-| L7-011 | Take Quiz action | QuizzesContent | `/quiz?quizId=...` | FIXED |
-| L7-012 | View Result action | QuizzesContent | standalone review | FIXED |
-| L7-013 | Correct delivery in deep link | QuizzesContent | quiz URL | FIXED |
-| L7-014 | Loading skeleton | QuizzesContent | aggregate page | UNCHECKED |
-| L7-015 | Request failure/retry | QuizzesContent | aggregate page | UNCHECKED |
-| L7-016 | Zero quizzes | QuizzesContent | EmptyState | UNCHECKED |
-| L7-017 | Filtered empty | QuizzesContent | EmptyState | UNCHECKED |
+| L7-001 | Page title = All Quizzes | QuizzesContent | aggregate page | CLOSED |
+| L7-002 | Aggregate published quiz scope | QuizzesContent/API | learner assessment service | CLOSED |
+| L7-003 | Course filter | QuizzesContent | aggregate component | CLOSED |
+| L7-004 | Pagination | QuizzesContent | aggregate component | CLOSED |
+| L7-005 | Not attempted state | QuizzesContent | state mapping | CLOSED |
+| L7-006 | Attempted state | QuizzesContent | state mapping | CLOSED |
+| L7-007 | Missed state | QuizzesContent | state mapping | CLOSED |
+| L7-008 | Result-published state | QuizzesContent | state mapping | CLOSED |
+| L7-009 | Due/close timing | QuizzesContent | aggregate rows | CLOSED |
+| L7-010 | Attempt count/limit | QuizzesContent | aggregate rows | CLOSED |
+| L7-011 | Take Quiz action | QuizzesContent | `/quiz?quizId=...` | CLOSED |
+| L7-012 | View Result action | QuizzesContent | standalone review | CLOSED |
+| L7-013 | Correct delivery in deep link | QuizzesContent | quiz URL | CLOSED |
+| L7-014 | Loading skeleton | QuizzesContent | aggregate page | CLOSED |
+| L7-015 | Request failure/retry | QuizzesContent | aggregate page | CLOSED |
+| L7-016 | Zero quizzes | QuizzesContent | EmptyState | CLOSED |
+| L7-017 | Filtered empty | QuizzesContent | EmptyState | CLOSED |
 | L7-018 | Mobile quiz list | QuizzesContent responsive | aggregate page | UNCHECKED |
 
 ## L8 — Standalone Quiz Attempt: `/quiz`
