@@ -1,5 +1,11 @@
 # Legacy UI Route Manifest — frozen parity baseline
 
+> **STALE FOR FINAL CLOSURE — 2026-10-05**
+>
+> This frozen manifest is still useful historical evidence but is no longer current. Current observed `lms2-fe/prod-2026` is `008d113ddd9f515df65ae7fe90dba360938314f6`, 115 commits ahead of this manifest's source SHA. Real routes added since this snapshot include `/college-admin/verification`, `/superadmin/verification`, `/tpo/verification`, `/tpo/batches`, and `/tpo/batches/[batchId]`.
+>
+> Do not use this file for final cutover closure until it is regenerated/re-audited against the frozen cutover oracle. See `docs/planning/clone-parity-protocol.md`.
+
 **Legacy repository:** `42Students/lms2-fe`  
 **Branch:** `prod-2026`  
 **Audited SHA:** `38cdd38e592a6f416c8e8e99ce36438f548ed577`  

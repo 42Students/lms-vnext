@@ -1,5 +1,7 @@
 # Learner — Detailed Page Parity Spec
 
+> **Freshness gate:** this detailed spec contains historical checks from the earlier oracle. Current Learner final verification is governed by `docs/planning/clone-parity-protocol.md` + `docs/planning/learner-family-verification.md`. Current observed legacy FE/BE heads are newer than the original spec baseline; checked boxes are not final-release proof until the matching family is VERIFIED.
+
 Legacy navigation: Courses, Quizzes, Assignments, Class Schedule, Attendance, My Placements, Projects, Notifications, Profile.
 
 **Operational execution ledger:** `docs/planning/learner-ui-surface-ledger.md`.

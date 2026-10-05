@@ -1,5 +1,9 @@
 # Learner UI Surface Parity Ledger
 
+> **Freshness warning — 2026-10-05:** the original Learner ledger baseline is now stale for final release. Current observed legacy heads are FE `008d113ddd9f515df65ae7fe90dba360938314f6` and BE `ed1377b744088f2ec759895658105c494337ba30`. Historical `CLOSED` rows remain useful evidence, but no family is final-release valid until `docs/planning/learner-family-verification.md` is `VERIFIED` for that family against the current/frozen oracle.
+>
+> Read `docs/planning/clone-parity-protocol.md` before continuing.
+
 > Operational source of truth for the Learner account parity pass.
 >
 > **Workflow:** inspect legacy `lms2-fe/prod-2026` + relevant `lms/prod-2026` behavior → compare the exact vNext surface → record every gap → fix it → add/adjust regression coverage → re-check parity → mark the row `CLOSED`.
@@ -15,7 +19,7 @@
 - vNext branch: `42Students/lms-vnext@main`
 - Ledger introduced after vNext SHA: `6b602390d1b3d2e577991ce8698ea6f0eb2940f5`
 
-Refresh the three heads before each new parity batch. If either legacy `prod-2026` head moved, re-read the affected legacy surface before closing it.
+Refresh the three heads before each new parity batch. If either legacy `prod-2026` head moved, diff the family from its last verified SHA, mark affected family evidence `STALE`, and re-audit it. Row-level `CLOSED` is historical evidence; final release additionally requires family-level `VERIFIED` evidence.
 
 ## Status vocabulary
 
@@ -418,6 +422,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L13-013 | Not-eligible state | DriveEligibilityPanel | job detail | FIXED |
 | L13-014 | Not-found/access handling | job route | job detail | FIXED |
 | L13-015 | Back to Drives/navigation | job detail | job detail | UNCHECKED |
+| L13-016 | Application uses the Profile resume; no per-drive resume upload | jobDetailProfileResumeOnly.test.jsx | learner job detail/application | GAP |
 
 ## L14 — Applications
 
@@ -748,8 +753,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-021 | Hobbies edit | hobbies | profile workspace | FIXED |
 | L30-022 | Metadata section | metadata | profile workspace | FIXED |
 | L30-023 | Publications/awards legacy handling | profile subcomponents | profile workspace | UNCHECKED |
-| L30-024 | Job preferences | jobPreferences | profile workspace | FIXED |
-| L30-025 | Placement academic record | PlacementsAcademicRecord | profile workspace | FIXED |
+| L30-024 | Job Preferences must be absent from learner Profile | learnerProfileSectionsRemoved.test.jsx / About | vNext currently renders Job Preferences | GAP |
+| L30-025 | Placement Academic Record must be absent from learner Profile | learnerProfileSectionsRemoved.test.jsx | vNext currently renders Placement Academic Record | GAP |
 | L30-026 | Contact deep-link scroll | profile query section | profile workspace | UNCHECKED |
 | L30-027 | Connect-accounts deep-link scroll | profile query section | profile workspace | UNCHECKED |
 | L30-028 | Optional-section partial failure isolation | profile load | allSettled | FIXED |
@@ -758,6 +763,16 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-031 | Visibility refresh | profile route | profile page | UNCHECKED |
 | L30-032 | Role fence/redirect | profile route | server context | FIXED |
 | L30-033 | Mobile profile cards/forms | profile responsive | profile workspace | UNCHECKED |
+| L30-034 | Profile Verification card | ProfileVerificationCard | no vNext verification domain/UI | GAP |
+| L30-035 | Education verification missing/ready/submitted/verified/sent-back states | ProfileVerificationCard | no vNext equivalent | GAP |
+| L30-036 | Identity verification missing/ready/submitted/verified/sent-back states | ProfileVerificationCard | no vNext equivalent | GAP |
+| L30-037 | Send / resend changed Education or Identity for verification | ProfileVerificationCard | no vNext equivalent | GAP |
+| L30-038 | Verified profile badge + verified-by/date | ProfileVerificationCard | no vNext equivalent | GAP |
+| L30-039 | Sent-back reason and change-needed guidance | ProfileVerificationCard | no vNext equivalent | GAP |
+| L30-040 | Changed-since-verification / update-pending semantics | ProfileVerificationCard | no vNext equivalent | GAP |
+| L30-041 | Education marksheet upload/replace/view, PDF/JPG/PNG ≤5 MB | MarksheetUpload + private docs | no vNext verification/private-doc flow | GAP |
+| L30-042 | Aadhaar/PAN private document upload/view tied to Identity verification | identity + PrivateDocLink | no vNext verification/private-doc flow | GAP |
+| L30-043 | Verification status refresh while page remains visible | ProfileVerificationCard polling | no vNext equivalent | GAP |
 
 ## L31 — Conditional Drive Day learner entry
 

@@ -13,11 +13,24 @@ export const LEARNER_SURFACE_STATUSES = [
   "RETIRED",
 ] as const;
 
+export const LEARNER_FAMILY_STATUSES = [
+  "UNVERIFIED",
+  "IN_PROGRESS",
+  "VERIFIED",
+  "STALE",
+  "BLOCKED",
+] as const;
+
 export type LearnerSurfaceStatus =
   (typeof LEARNER_SURFACE_STATUSES)[number];
+export type LearnerFamilyStatus =
+  (typeof LEARNER_FAMILY_STATUSES)[number];
 
 const statusSet = new Set<string>(
   LEARNER_SURFACE_STATUSES,
+);
+const familyStatusSet = new Set<string>(
+  LEARNER_FAMILY_STATUSES,
 );
 const resolvedSet = new Set<LearnerSurfaceStatus>([
   "CLOSED",
@@ -84,18 +97,78 @@ export function parseLearnerSurfaceLedger(
   };
 }
 
+export function parseLearnerFamilyVerification(
+  markdown: string,
+) {
+  const rows: Array<{
+    family: string;
+    scope: string;
+    status: LearnerFamilyStatus;
+  }> = [];
+
+  for (const line of markdown.split("\n")) {
+    if (!/^\| L\d+ \|/.test(line.trim())) continue;
+    const cells = line
+      .trim()
+      .slice(1, -1)
+      .split("|")
+      .map((cell) => cell.trim());
+    const status = cells[2]?.toUpperCase();
+    if (!status || !familyStatusSet.has(status)) continue;
+    rows.push({
+      family: cells[0] ?? "",
+      scope: cells[1] ?? "",
+      status: status as LearnerFamilyStatus,
+    });
+  }
+
+  const counts = Object.fromEntries(
+    LEARNER_FAMILY_STATUSES.map((status) => [
+      status,
+      rows.filter((row) => row.status === status)
+        .length,
+    ]),
+  ) as Record<LearnerFamilyStatus, number>;
+
+  return {
+    total: rows.length,
+    verified: rows.filter((row) => row.status === "VERIFIED").length,
+    counts,
+    next:
+      rows.find((row) => row.status !== "VERIFIED") ?? null,
+    rows,
+  };
+}
+
 export function runLearnerSurfaceStatus() {
-  const filePath = path.join(
+  const ledgerPath = path.join(
     process.cwd(),
     "docs/planning/learner-ui-surface-ledger.md",
   );
-  const report = parseLearnerSurfaceLedger(
-    fs.readFileSync(filePath, "utf8"),
+  const familyPath = path.join(
+    process.cwd(),
+    "docs/planning/learner-family-verification.md",
   );
+  const report = parseLearnerSurfaceLedger(
+    fs.readFileSync(ledgerPath, "utf8"),
+  );
+  const families = parseLearnerFamilyVerification(
+    fs.readFileSync(familyPath, "utf8"),
+  );
+  const releaseReady =
+    report.unresolved === 0 &&
+    families.total > 0 &&
+    families.verified === families.total;
+
+  const payload = {
+    ...report,
+    familyVerification: families,
+    releaseReady,
+  };
 
   if (process.argv.includes("--json")) {
     process.stdout.write(
-      JSON.stringify(report, null, 2) + "\n",
+      JSON.stringify(payload, null, 2) + "\n",
     );
     return;
   }
@@ -104,17 +177,27 @@ export function runLearnerSurfaceStatus() {
     [
       "LMS vNext Learner UI surface parity",
       "",
-      `Resolved: ${report.resolved}/${report.total} (${report.percentResolved}%)`,
-      `Unresolved: ${report.unresolved}`,
+      `Surface rows resolved: ${report.resolved}/${report.total} (${report.percentResolved}%)`,
+      `Surface rows unresolved: ${report.unresolved}`,
       "",
       ...LEARNER_SURFACE_STATUSES.map(
         (status) =>
           `${status}: ${report.counts[status]}`,
       ),
       "",
+      `Families VERIFIED: ${families.verified}/${families.total}`,
+      ...LEARNER_FAMILY_STATUSES.map(
+        (status) =>
+          `Family ${status}: ${families.counts[status]}`,
+      ),
+      "",
+      `Release-ready Learner parity: ${releaseReady ? "YES" : "NO"}`,
       report.next
-        ? `Next: ${report.next.id} — ${report.next.surface} [${report.next.status}]`
-        : "Next: Learner surface ledger resolved",
+        ? `Next surface: ${report.next.id} — ${report.next.surface} [${report.next.status}]`
+        : "Next surface: all ledger rows resolved",
+      families.next
+        ? `Next family evidence: ${families.next.family} — ${families.next.scope} [${families.next.status}]`
+        : "Next family evidence: all families VERIFIED",
       "",
     ].join("\n"),
   );

@@ -1,12 +1,16 @@
 # LMS vNext — Account Surface Parity Matrix v2
 
+> **Freshness gate — 2026-10-05:** this matrix was built against FE `38cdd38e...`, while current observed FE is `008d113...` and BE is `ed1377b...`. The matrix is still useful for work tracking but is not final cutover proof until `docs/planning/clone-parity-protocol.md` is satisfied, the route manifest is refreshed, and family evidence is VERIFIED against the frozen oracle.
+
 **Audit date:** 2026-10-04  
 **Legacy UI oracle:** `42Students/lms2-fe@prod-2026`  
 **Legacy audited SHA:** `38cdd38e592a6f416c8e8e99ce36438f548ed577`  
 **vNext audit baseline:** `d972ebdf4563d34a059d59c4268e1f37911925fa`  
 **Mechanical route inventory:** `docs/planning/legacy-ui-route-manifest.md`  
 **Detailed page/workflow specs:** `docs/parity/README.md`  
-**Learner operational ledger:** `docs/planning/learner-ui-surface-ledger.md`
+**Learner operational ledger:** `docs/planning/learner-ui-surface-ledger.md`  
+**Learner family evidence:** `docs/planning/learner-family-verification.md`  
+**No-surprise clone gate:** `docs/planning/clone-parity-protocol.md`
 
 This matrix is the **surface-level behavioral source of truth** for clone-first / redesign-later. The route manifest is the mechanical backstop. The account files under `docs/parity/` are the second-level closure contracts for every page's sections, tabs, actions, forms, filters, modals, drawers, states, permissions, responsive behavior and regression coverage.
 
@@ -74,7 +78,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Project Delivery | project detail | vNext project workspace | Submission workflow exists; exact parity pending. | PARTIAL |
 | Project Activity | project detail | vNext project workspace | Verify history/activity equivalence. | PARTIAL |
 | Notifications feed | `/learn/notifications` | `/learn/notifications` | Shared route exists; legacy announcement/personal feed behavior must be audited, not assumed. | PARTIAL |
-| Self Profile | `/learn/profile` | `/learn/profile` | Rich self-service profile, validated identity/contact/social/address sections, repeatable career/education sections, placement preferences and authoritative academic evidence are implemented; profile image/resume/identity-file storage and final browser/CI verification remain. | PARTIAL |
+| Self Profile | `/learn/profile` | `/learn/profile` | Current oracle drift: legacy removed Job Preferences/Placement Academic Record from learner Profile and added Education/Identity Profile Verification, marksheets/private documents, send-back/update-pending states and verified badge metadata. vNext still has removed cards and lacks verification. | PARTIAL |
 | `/learn` redirect | `/learn` | not required for greenfield bookmarks | Legacy redirect-only route; no user job lost. | RETIRED |
 
 ---

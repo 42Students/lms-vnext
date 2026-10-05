@@ -1,6 +1,6 @@
 # LMS vNext — Current Handoff
 
-> **2026-10-05 parity directive:** account/page parity is the highest-priority non-cloud work and a release gate. For Learner, the operational queue is `docs/planning/learner-ui-surface-ledger.md`: check exact legacy parity → record gaps → fix → re-check → close rows one by one. Also read `docs/planning/account-surface-parity.md`. Clone the legacy product surface first using clean vNext architecture; redesign/consolidate only after parity is explicitly closed.
+> **2026-10-05 no-surprise parity directive:** account/page parity is the highest-priority non-cloud work and a release gate. Read `docs/planning/clone-parity-protocol.md` first. For Learner, use `docs/planning/learner-ui-surface-ledger.md` for surface work and `docs/planning/learner-family-verification.md` for freshness/evidence. Clone the current legacy product as-is using clean vNext architecture; redesign/consolidate only after parity is proven or explicitly approved.
 
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
@@ -34,6 +34,20 @@ Current audited legacy baseline when this mode was introduced:
 - vNext before ledger commit: `6b602390d1b3d2e577991ce8698ea6f0eb2940f5`
 
 Always refresh these heads before closing rows.
+
+
+### Current oracle drift — release blocker
+
+The original Learner audit baseline is stale for final sign-off.
+
+Current observed heads on 2026-10-05:
+- `lms2-fe/prod-2026`: `008d113ddd9f515df65ae7fe90dba360938314f6`
+- `lms/prod-2026`: `ed1377b744088f2ec759895658105c494337ba30`
+- vNext before the no-surprise protocol: `db6f3c0db7ae4d2402211b1a65650de499b97c69`
+
+The old FE baseline is 115 commits behind current `prod-2026`. Material changes include learner Profile Verification/private marksheets, learner Profile section removals, placement/module-access behavior, project semantics and new account routes. The frozen route manifest is therefore stale.
+
+No Learner family is release-valid until its row in `docs/planning/learner-family-verification.md` is VERIFIED. Run `npm run parity:clone-gate`; it must remain blocking until the final frozen-oracle sweep passes.
 
 ### Greenfield data decision — locked
 

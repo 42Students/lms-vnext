@@ -1,5 +1,7 @@
 # LMS vNext — Account Parity Continuation Handoff
 
+> **2026-10-05 freshness correction:** the legacy baseline below is no longer current. Read `docs/planning/clone-parity-protocol.md` and `docs/planning/parity-oracle.json`. Current observed FE is `008d113ddd9f515df65ae7fe90dba360938314f6` and BE is `ed1377b744088f2ec759895658105c494337ba30`. The route manifest and earlier closure evidence must be refreshed before final sign-off.
+
 **Date:** 2026-10-04  
 **Repository:** `42Students/lms-vnext`  
 **Branch:** `main`  
@@ -31,7 +33,8 @@ Learner → Faculty → Mentor → College Admin → Super Admin → TPO → HR/
 
 ## Every future chat must
 
-- fetch latest `lms-vnext/main` and `lms2-fe/prod-2026`;
+- fetch latest `lms-vnext/main`, `lms2-fe/prod-2026` and `lms/prod-2026`;
+- if legacy moved, diff from the last family-verified SHA and mark affected family evidence STALE;
 - preserve parallel work; never force-push;
 - read AGENTS, master plan, execution checklist, account parity matrix, legacy route manifest, `docs/parity/README.md` and the active account's detailed page spec;
 - start at the first unresolved detailed page/workflow check for the active account, using the master row as the high-level status;

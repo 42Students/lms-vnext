@@ -5,6 +5,8 @@
 **Legacy oracle:** `42Students/lms2-fe@prod-2026`  
 **Frozen baseline for this audit:** `38cdd38e592a6f416c8e8e99ce36438f548ed577`
 
+**Freshness warning:** this page-spec inventory was created against FE `38cdd38e592a6f416c8e8e99ce36438f548ed577`. Current observed FE is `008d113ddd9f515df65ae7fe90dba360938314f6`; use `docs/planning/clone-parity-protocol.md` and family evidence records before treating any checked item as final cutover proof.
+
 The master route/surface matrix is `docs/planning/account-surface-parity.md`. These files are the **second level of truth** beneath it.
 
 ## Files
@@ -32,7 +34,11 @@ A master-matrix row may not be considered deeply closed until its page spec has 
 8. permissions, role fences, tenant/college scope and read-only states;
 9. destructive-action consequences and audit/history where applicable;
 10. responsive/mobile behavior that changes the user workflow;
-11. regression coverage.
+11. regression coverage;
+12. upstream producer → consumer workflow dependency;
+13. browser history/session/local-storage/polling behavior where used;
+14. file/private-document behavior;
+15. exact legacy FE/BE SHA evidence plus desktop/mobile verification where required.
 
 Each closure item uses a markdown checkbox. Run:
 
@@ -41,7 +47,7 @@ npm run parity:pages
 npm run parity:pages -- --json
 ```
 
-A page is not complete because its route renders. A page is complete only when every required checkbox is checked, or the item is explicitly replaced by a documented REDESIGNED/RETIRED decision in the master matrix.
+A page is not complete because its route renders. A page is only release-valid when every required checkbox is checked **and** its family evidence is VERIFIED against the current/frozen oracle. REDESIGNED/RETIRED decisions must satisfy the no-surprise protocol and cannot silently remove a daily-use feature.
 
 ## Implementation discipline
 

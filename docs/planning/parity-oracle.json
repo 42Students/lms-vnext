@@ -1,0 +1,26 @@
+{
+  "observedAt": "2026-10-05",
+  "legacyFrontend": {
+    "repository": "42Students/lms2-fe",
+    "branch": "prod-2026",
+    "currentObservedSha": "008d113ddd9f515df65ae7fe90dba360938314f6",
+    "frozenRouteManifestSha": "38cdd38e592a6f416c8e8e99ce36438f548ed577",
+    "routeManifestFresh": false
+  },
+  "legacyBackend": {
+    "repository": "42Students/lms",
+    "branch": "prod-2026",
+    "currentObservedSha": "ed1377b744088f2ec759895658105c494337ba30",
+    "previousLearnerAuditSha": "36f93fc49dc93bfc8ad9f499a1247fbf7f98a1a9"
+  },
+  "vnext": {
+    "repository": "42Students/lms-vnext",
+    "branch": "main",
+    "protocolIntroducedAfterSha": "db6f3c0db7ae4d2402211b1a65650de499b97c69"
+  },
+  "releaseGate": {
+    "oracleFrozenForCutover": false,
+    "legacyDriftReviewed": false,
+    "allFamilyEvidenceVerified": false
+  }
+}

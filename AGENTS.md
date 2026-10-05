@@ -47,7 +47,7 @@ For each legacy feature:
 6. migrate data separately
 7. cut over only after reconciliation
 
-Never preserve a bug merely because production currently behaves that way.
+During clone parity, never silently change user-visible legacy behavior merely because it appears buggy. Record the behavior first. Security, privacy or data-corruption defects may be corrected immediately, but the deviation must be documented as a parity exception. Non-critical product quirks should be preserved until parity is proven or the user explicitly approves a redesign.
 
 ## UI visual identity rules
 
@@ -86,9 +86,25 @@ No legacy surface may disappear silently. A consolidated vNext workspace does no
 Do not call LMS vNext feature-complete while `npm run parity:status` reports PARTIAL, MISSING, VERIFY or BLOCKED rows, while `npm run parity:pages` reports any open detailed checks, or while any account parity checkbox remains open. A master-matrix DONE row is not deeply closed if its corresponding `docs/parity/*.md` contract still has unresolved required behavior. Refresh the frozen legacy route manifest and affected page specs when `lms2-fe/prod-2026` materially moves.
 
 
+
+
+## No-surprise clone protocol — highest parity authority
+
+Read `docs/planning/clone-parity-protocol.md` before account parity work. It is the release gate above the route manifest, master matrix, detailed page specs and account ledgers.
+
+Key rules:
+- exact legacy FE/BE SHAs are evidence, not branch names;
+- a family-level verification record is required in addition to surface checkboxes;
+- when legacy `prod-2026` materially moves, affected family evidence becomes STALE even if individual rows remain historically CLOSED;
+- source comparison alone cannot close browser-sensitive UI;
+- consumer UI cannot be final-verified if the upstream producer workflow is missing;
+- REDESIGNED/RETIRED cannot hide a daily-use feature;
+- final cutover freezes exact legacy oracle SHAs and re-diffs every earlier family against that frozen oracle;
+- `npm run parity:clone-gate` must report READY: YES before vNext may be called an as-is replacement.
+
 ## Learner parity execution ledger — mandatory workflow
 
-For Learner work, `docs/planning/learner-ui-surface-ledger.md` is the operational queue. It is intentionally more granular than the route manifest or the prose parity spec.
+For Learner work, `docs/planning/learner-ui-surface-ledger.md` is the operational queue and `docs/planning/learner-family-verification.md` is the freshness/evidence gate above it. It is intentionally more granular than the route manifest or the prose parity spec.
 
 Every coding chat working on Learner parity must:
 1. read the ledger before editing;
@@ -99,6 +115,8 @@ Every coding chat working on Learner parity must:
 6. move a row through `UNCHECKED → AUDITING → GAP → FIXED → CLOSED` as appropriate;
 7. mark `CLOSED` only after a second legacy-vNext comparison and required regression/browser verification;
 8. update the ledger and affected parity docs in the same commit as the implementation;
-9. hand off the current row ID + next unresolved row when chat context is ending.
+9. update the matching family verification row with exact legacy FE/BE SHA, vNext SHA, source/test/browser/cross-role evidence before marking a family VERIFIED;
+10. if legacy moved since that family was verified, mark the family STALE and diff old verified SHA → current SHA;
+11. hand off the current row ID + next unresolved row when chat context is ending.
 
-Run `npm run parity:learner` for the machine-counted Learner ledger status. `FIXED` is not closed; `BLOCKED` is not closed.
+Run `npm run parity:learner` for the machine-counted Learner ledger + family-evidence status. `FIXED` is not closed; `BLOCKED` and `STALE` are not release-ready.
