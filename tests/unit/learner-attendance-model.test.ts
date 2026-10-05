@@ -65,6 +65,41 @@ describe("learner attendance model", () => {
     ).toBe("PRESENT");
   });
 
+  it("keeps future scheduled classes out of held/attendance math", () => {
+    const now = new Date("2026-10-05T06:00:00Z");
+    const future = row({
+      startsAt: new Date("2026-10-06T04:30:00Z"),
+      endsAt: new Date("2026-10-06T05:30:00Z"),
+      sessionStatus: null,
+      recordStatus: null,
+    });
+
+    expect(
+      learnerAttendanceStatus(future, now),
+    ).toBe("SCHEDULED");
+
+    expect(
+      summarizeLearnerAttendance(
+        [
+          row({
+            startsAt: new Date("2026-10-01T04:30:00Z"),
+            sessionStatus: "MARKED",
+            recordStatus: null,
+          }),
+          future,
+        ],
+        now,
+      ),
+    ).toEqual({
+      heldSessions: 1,
+      markedSessions: 1,
+      unmarkedSessions: 0,
+      present: 1,
+      absent: 0,
+      percentage: 100,
+    });
+  });
+
   it("excludes unmarked sessions from the attendance denominator", () => {
     const summary =
       summarizeLearnerAttendance([

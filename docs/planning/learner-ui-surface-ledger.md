@@ -170,25 +170,33 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L3-030 | Empty learning path | syllabus | EmptyState | FIXED |
 | L3-031 | Partial lesson/no-items state | syllabus | lesson state | FIXED |
 | L3-032 | Learning Path mobile behavior | syllabus responsive | learner workspace | UNCHECKED |
+| L3-033 | Current lesson + completed/in-progress lesson status | syllabus roadmap cards | learner workspace | GAP |
+| L3-034 | Per-lesson content-type breakdown/counts | syllabus roadmap cards | learner workspace | GAP |
+| L3-035 | Assignment due / overdue and expired-quiz row cues | syllabus roadmap rows | learner workspace | GAP |
+| L3-036 | Video/YouTube watched percentage on roadmap row | syllabus roadmap rows | learner workspace | GAP |
+| L3-037 | Roadmap content viewer/drawer interaction parity | syllabus content modal + assignment drawer | inline learner cards/players | GAP |
 
 ## L4 — Course Attendance tab
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L4-001 | Course attendance summary | Attendance tab | course attendance | FIXED |
-| L4-002 | Classes held count | Attendance tab | metric | FIXED |
-| L4-003 | Present count | Attendance tab | metric | FIXED |
-| L4-004 | Absent count | Attendance tab | metric | FIXED |
-| L4-005 | Percentage | Attendance tab | metric | FIXED |
-| L4-006 | Threshold signal | Attendance tab/policy | threshold card | FIXED |
-| L4-007 | Unmarked sessions explanation | Attendance tab | summary | FIXED |
-| L4-008 | Session date/time | Attendance tab | table/cards | FIXED |
-| L4-009 | Faculty/location context | Attendance tab | table/cards | FIXED |
-| L4-010 | Present/Absent/Late/etc badge | Attendance tab | status badge | FIXED |
-| L4-011 | No attendance state | Attendance tab | EmptyState | FIXED |
-| L4-012 | Learner cannot mutate attendance | legacy learner permissions | server/service | FIXED |
-| L4-013 | Historical course attendance readable | old semesters | course attendance | FIXED |
-| L4-014 | Mobile attendance cards | Attendance tab responsive | course attendance | UNCHECKED |
+| L4-001 | Course attendance summary | Attendance tab | course attendance | CLOSED |
+| L4-002 | Classes held count | Attendance tab | metric | CLOSED |
+| L4-003 | Present count | Attendance tab | metric | CLOSED |
+| L4-004 | Absent count | Attendance tab | metric | CLOSED |
+| L4-005 | Percentage | Attendance tab | metric | CLOSED |
+| L4-006 | Threshold signal | Attendance tab/policy | threshold card | CLOSED |
+| L4-007 | Unmarked sessions explanation | Attendance tab | summary | CLOSED |
+| L4-008 | Session date/time | Attendance tab | table/cards | CLOSED |
+| L4-009 | Faculty/location context | Attendance tab | table/cards | CLOSED |
+| L4-010 | Present/Absent/Late/etc badge | Attendance tab | status badge | CLOSED |
+| L4-011 | No attendance state | Attendance tab | EmptyState | CLOSED |
+| L4-012 | Learner cannot mutate attendance | legacy learner permissions | server/service | CLOSED |
+| L4-013 | Historical course attendance readable | old semesters | course attendance | CLOSED |
+| L4-014 | Mobile attendance cards | Attendance tab responsive | course attendance | FIXED |
+| L4-015 | Previous / direct month picker / next month | StudentAttendanceView + CourseAttendeeHeaderFilters | Course Attendance month controls | CLOSED |
+| L4-016 | Future classes display as Scheduled, not Present | StudentAttendanceView | attendance status model + Course Attendance | CLOSED |
+| L4-017 | Threshold headroom / recovery guidance | StudentAttendanceView attendanceHeadroom | Course Attendance threshold card | CLOSED |
 
 ## L5 — Course Discussions tab
 
@@ -206,6 +214,11 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L5-010 | Load error/retry | Classroom | retry state | FIXED |
 | L5-011 | Historical discussion read-only | old course | `canPost=false` | FIXED |
 | L5-012 | Mobile discussion behavior | Classroom responsive | discussion component | UNCHECKED |
+| L5-013 | Consecutive-message sender grouping | Classroom buildFeed | learner discussion feed | GAP |
+| L5-014 | Initial load lands at newest message | Classroom scroll-to-bottom behavior | learner discussion feed | GAP |
+| L5-015 | New-message unseen counter while reading history | Classroom unseenCount | learner discussion feed | GAP |
+| L5-016 | Multiple pinned-message count/context | Classroom pin strip | learner discussion feed | GAP |
+| L5-017 | Persistent discussion invitation/help cue | Classroom composer copy | learner discussion feed | GAP |
 
 ## L6 — All Assignments: `/learn/allAssignments`
 

@@ -5,7 +5,6 @@ import {
   asc,
   eq,
   inArray,
-  lte,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -101,8 +100,6 @@ export async function getLearnerAttendanceWorkspace(
   const deliveryIds = deliveries.map(
     (delivery) => delivery.deliveryId,
   );
-  const now = new Date();
-
   const rows = await getDb()
     .select({
       id: sectionScheduleEvents.id,
@@ -137,10 +134,6 @@ export async function getLearnerAttendanceWorkspace(
         eq(
           sectionScheduleEvents.status,
           "SCHEDULED",
-        ),
-        lte(
-          sectionScheduleEvents.startsAt,
-          now,
         ),
       ),
     )

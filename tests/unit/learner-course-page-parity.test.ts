@@ -87,6 +87,11 @@ describe("learner Course page parity contract", () => {
 
     expect(attendance).not.toContain("onChangeAttendance");
     expect(attendance).toContain("Attendance threshold");
+    expect(attendance).toContain('type="month"');
+    expect(attendance).toContain("Previous month");
+    expect(attendance).toContain("Next month");
+    expect(attendance).toContain("SCHEDULED");
+    expect(attendance).toContain("attendanceHeadroom");
     expect(discussion).toContain('method: "POST"');
     expect(discussion).toContain('method: "DELETE"');
     expect(discussion).toContain("No messages yet");

@@ -41,7 +41,8 @@ type RecordRow = {
     | "EXCUSED"
     | "MEDICAL"
     | "LATE"
-    | "NOT_MARKED";
+    | "NOT_MARKED"
+    | "SCHEDULED";
 };
 
 type Summary = {
@@ -122,7 +123,10 @@ function isPresent(
 function summarize(
   rows: readonly RecordRow[],
 ) {
-  const marked = rows.filter(
+  const held = rows.filter(
+    (row) => row.status !== "SCHEDULED",
+  );
+  const marked = held.filter(
     (row) => row.status !== "NOT_MARKED",
   );
   const present = marked.filter(
@@ -131,10 +135,10 @@ function summarize(
   const absent = marked.length - present;
 
   return {
-    heldSessions: rows.length,
+    heldSessions: held.length,
     markedSessions: marked.length,
     unmarkedSessions:
-      rows.length - marked.length,
+      held.length - marked.length,
     present,
     absent,
     percentage:
@@ -170,6 +174,9 @@ function statusTone(
   }
   if (status === "NOT_MARKED") {
     return "warning" as const;
+  }
+  if (status === "SCHEDULED") {
+    return "neutral" as const;
   }
   return "error" as const;
 }

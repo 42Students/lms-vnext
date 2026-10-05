@@ -81,10 +81,14 @@ Legacy contract:
 - no-data and error states.
 
 - [x] Course-level attendance domain exists.
-- [x] Attendance summary and percentage are implemented.
+- [x] Attendance summary and percentage are month-scoped like legacy.
+- [x] Previous/direct month picker/next navigation is implemented.
+- [x] Future classes remain visible as Scheduled and are excluded from held/percentage math.
+- [x] Threshold messaging includes legacy-style can-miss / must-attend recovery guidance.
 - [x] Session/day detail is implemented.
-- [x] No-data/error/loading states are implemented.
+- [x] No-data/error/loading states are implemented through the Course route boundary.
 - [x] Learner cannot mutate attendance.
+- [ ] Responsive mobile cards are implemented but await browser verification.
 
 ### Discussions tab
 Legacy contract:

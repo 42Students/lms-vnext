@@ -4,7 +4,8 @@ export type LearnerAttendanceStatus =
   | "EXCUSED"
   | "MEDICAL"
   | "LATE"
-  | "NOT_MARKED";
+  | "NOT_MARKED"
+  | "SCHEDULED";
 
 export type LearnerAttendanceRow = {
   id: string;
@@ -32,9 +33,14 @@ export type LearnerAttendanceRow = {
 export function learnerAttendanceStatus(
   row: Pick<
     LearnerAttendanceRow,
-    "sessionStatus" | "recordStatus"
+    "startsAt" | "sessionStatus" | "recordStatus"
   >,
+  now = new Date(),
 ): LearnerAttendanceStatus {
+  if (row.startsAt.getTime() > now.getTime()) {
+    return "SCHEDULED";
+  }
+
   if (row.sessionStatus !== "MARKED") {
     return "NOT_MARKED";
   }
@@ -50,9 +56,13 @@ export function isAttendancePresent(
 
 export function summarizeLearnerAttendance(
   rows: readonly LearnerAttendanceRow[],
+  now = new Date(),
 ) {
-  const statuses = rows.map(
-    learnerAttendanceStatus,
+  const heldRows = rows.filter(
+    (row) => row.startsAt.getTime() <= now.getTime(),
+  );
+  const statuses = heldRows.map(
+    (row) => learnerAttendanceStatus(row, now),
   );
   const marked = statuses.filter(
     (status) => status !== "NOT_MARKED",
@@ -69,7 +79,7 @@ export function summarizeLearnerAttendance(
       : null;
 
   return {
-    heldSessions: rows.length,
+    heldSessions: heldRows.length,
     markedSessions: marked.length,
     unmarkedSessions:
       statuses.length - marked.length,
