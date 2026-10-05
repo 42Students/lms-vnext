@@ -45,10 +45,10 @@ Detailed page contract: `docs/parity/learner.md`.
 | Surface | Legacy route/section | vNext mapping | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Courses list | `/learn/courses` | `/learn/courses` | Active Section deliveries and progress cards exist. | DONE |
-| Course Overview | course `home` tab | embedded course workspace | Exact legacy overview sections/actions still need audit. | PARTIAL |
+| Course Overview | course `home` tab | same legacy tab route | About/takeaways, faculty/class context, next action, progress and recent course updates are implemented; authoring-side parity is tracked with Faculty. | DONE |
 | Learning Path | course `roadmap` tab | course workspace | Ordered lessons/content/assessments + continue learning. | DONE |
-| Course Attendance | course `attendanceDetail` | same legacy tab route shell | Course-level attendance detail missing. | MISSING |
-| Course Discussions | course `discussions` | same legacy tab route shell | Classroom discussion workflow missing. | MISSING |
+| Course Attendance | course `attendanceDetail` | same legacy tab route | Dedicated read-only summary, threshold, session detail, responsive states and exact learner delivery scope are implemented. | DONE |
+| Course Discussions | course `discussions` | same legacy tab route | Delivery-scoped feed, post/delete-own, pinned display, polling and explicit loading/empty/error states are implemented. | DONE |
 | All Assignments | `/learn/allAssignments` | `/learn/allAssignments` | Dedicated aggregate page, filtering/status/deep links; late submissions aligned with legacy. | DONE |
 | All Quizzes | `/learn/allQuizzes` | `/learn/allQuizzes` | Dedicated aggregate page, filtering/status/deep links. | DONE |
 | Standalone quiz attempt UX | `/quiz` | inline course quiz control | Question navigation/error/result parity still needs comparison. | PARTIAL |

@@ -1,6 +1,7 @@
 import {
   and,
   eq,
+  inArray,
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -76,6 +77,7 @@ async function hasLearnerDeliveryAccess(
       typeof loadCourseSectionDeliveryScope
     >
   >,
+  includeHistorical = false,
 ) {
   if (
     !context.membership ||
@@ -100,10 +102,15 @@ async function hasLearnerDeliveryAccess(
           learnerProgramEnrollments.membershipId,
           context.membership.id,
         ),
-        eq(
-          learnerProgramEnrollments.status,
-          "ACTIVE",
-        ),
+        includeHistorical
+          ? inArray(
+              learnerProgramEnrollments.status,
+              ["ACTIVE", "COMPLETED"],
+            )
+          : eq(
+              learnerProgramEnrollments.status,
+              "ACTIVE",
+            ),
         eq(
           sectionEnrollments.sectionId,
           delivery.sectionId,
@@ -112,10 +119,15 @@ async function hasLearnerDeliveryAccess(
           sectionEnrollments.academicPeriodId,
           delivery.academicPeriodId,
         ),
-        eq(
-          sectionEnrollments.status,
-          "ACTIVE",
-        ),
+        includeHistorical
+          ? inArray(
+              sectionEnrollments.status,
+              ["ACTIVE", "COMPLETED"],
+            )
+          : eq(
+              sectionEnrollments.status,
+              "ACTIVE",
+            ),
       ),
     )
     .limit(1);
@@ -127,9 +139,17 @@ export async function requireLearningReadAccess(
   context: RequestContext,
   offeringId: string,
   deliveryId?: string | null,
+  options: {
+    includeHistorical?: boolean;
+  } = {},
 ): Promise<LearningAccessMode> {
+  const includeHistorical =
+    options.includeHistorical ?? false;
   const offering =
-    await loadCourseOfferingScope(offeringId);
+    await loadCourseOfferingScope(
+      offeringId,
+      includeHistorical,
+    );
   const resource = {
     organizationId: offering.organizationId,
     collegeId: offering.collegeId,
@@ -138,6 +158,7 @@ export async function requireLearningReadAccess(
   const delivery = deliveryId
     ? await loadCourseSectionDeliveryScope(
         deliveryId,
+        includeHistorical,
       )
     : null;
 
@@ -180,6 +201,7 @@ export async function requireLearningReadAccess(
     await hasLearnerDeliveryAccess(
       context,
       delivery,
+      includeHistorical,
     )
   ) {
     return "LEARNER";

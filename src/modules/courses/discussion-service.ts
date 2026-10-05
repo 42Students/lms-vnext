@@ -26,18 +26,21 @@ const createDiscussionMessageSchema = z.object({
 async function discussionAccess(
   context: RequestContext,
   deliveryIdInput: string,
+  includeHistorical = false,
 ) {
   const deliveryId =
     deliveryIdSchema.parse(deliveryIdInput);
   const delivery =
     await loadCourseSectionDeliveryScope(
       deliveryId,
+      includeHistorical,
     );
   const mode =
     await requireLearningReadAccess(
       context,
       delivery.offeringId,
       deliveryId,
+      { includeHistorical },
     );
 
   return {
@@ -80,7 +83,19 @@ export async function listCourseDiscussionMessages(
     await discussionAccess(
       context,
       deliveryIdInput,
+      true,
     );
+
+  let canPost = true;
+  try {
+    await discussionAccess(
+      context,
+      deliveryIdInput,
+      false,
+    );
+  } catch {
+    canPost = false;
+  }
 
   const rows = await getDb()
     .select({
@@ -126,6 +141,7 @@ export async function listCourseDiscussionMessages(
 
   return {
     accessMode: mode,
+    canPost,
     messages: rows.map((row) => ({
       ...row,
       isMine:

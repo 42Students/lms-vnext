@@ -51,12 +51,16 @@ export function quizInteractionState(input: {
 export function resourceInteractionState(input: {
   type: string;
   externalUrl: string | null;
+  storageKey?: string | null;
   progressStatus: ProgressStatus;
 }) {
   return {
     canMarkComplete:
       input.type === "RESOURCE" &&
-      Boolean(input.externalUrl) &&
+      Boolean(
+        input.externalUrl ||
+          input.storageKey,
+      ) &&
       input.progressStatus !== "COMPLETED",
   };
 }

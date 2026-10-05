@@ -57,10 +57,19 @@ function requireLearner(
 
 export async function getLearnerAttendanceWorkspace(
   context: RequestContext,
+  options: {
+    includeHistorical?: boolean;
+  } = {},
 ) {
   const membership = requireLearner(context);
   const deliveries =
-    await listLearnerCourseDeliveries(context);
+    await listLearnerCourseDeliveries(
+      context,
+      {
+        includeHistorical:
+          options.includeHistorical ?? false,
+      },
+    );
 
   const [policy] = await getDb()
     .select({

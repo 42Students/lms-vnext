@@ -33,7 +33,14 @@ import {
 import {
   getLearnerCourseWorkspace,
   listLearnerCourseDeliveries,
+  listLearnerCourseInstructors,
 } from "@/modules/courses/learner-course-service";
+import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assignment-service";
+import {
+  createCourseDiscussionMessage,
+  deleteCourseDiscussionMessage,
+  listCourseDiscussionMessages,
+} from "@/modules/courses/discussion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -286,6 +293,16 @@ async function createStructure() {
         sectionId: sectionB.id,
       },
     );
+  await createCourseTeachingAssignment(
+    collegeAdmin,
+    {
+      deliveryId: deliveryA.id,
+      membershipId:
+        SEED_IDS.facultyCollegeAMembership,
+      role: "PRIMARY",
+    },
+  );
+
   const enrollment =
     await createLearnerProgramEnrollment(
       collegeAdmin,
@@ -296,13 +313,14 @@ async function createStructure() {
         cohortId: cohort.id,
       },
     );
-  await assignLearnerToSection(
-    collegeAdmin,
-    {
-      learnerEnrollmentId: enrollment.id,
-      sectionId: sectionA.id,
-    },
-  );
+  const sectionEnrollment =
+    await assignLearnerToSection(
+      collegeAdmin,
+      {
+        learnerEnrollmentId: enrollment.id,
+        sectionId: sectionA.id,
+      },
+    );
 
   const path = await createLearningPath(
     collegeAdmin,
@@ -378,6 +396,8 @@ async function createStructure() {
     offering,
     deliveryA,
     deliveryB,
+    sectionEnrollment,
+    period,
     path,
     lesson,
     resource,
@@ -410,7 +430,23 @@ describe("courses C3 learner progress against PostgreSQL", () => {
         deliveryId: structure.deliveryA.id,
         offeringId: structure.offering.id,
         courseId: structure.course.id,
+        programName: "C3 Computer Science",
+        programCode: "C3-PROGRAM",
         learningPathStatus: "PUBLISHED",
+      }),
+    ]);
+
+    const instructors =
+      await listLearnerCourseInstructors(
+        learner,
+        structure.deliveryA.id,
+      );
+
+    expect(instructors).toEqual([
+      expect.objectContaining({
+        membershipId:
+          SEED_IDS.facultyCollegeAMembership,
+        role: "PRIMARY",
       }),
     ]);
 
@@ -573,6 +609,197 @@ describe("courses C3 learner progress against PostgreSQL", () => {
       contentsTotal: 2,
     });
     expect(complete.nextContent).toBeNull();
+  });
+
+  it("keeps scheduled content locked and Course discussions isolated to the learner's delivery", async () => {
+    const structure = await createStructure();
+
+    const futureLiveClass =
+      await createLessonContent(
+        collegeAdmin,
+        {
+          lessonId: structure.lesson.id,
+          deliveryId: structure.deliveryA.id,
+          contentType: "LIVE_CLASS",
+          title: "C3 Future Live Class",
+          externalUrl:
+            "https://meet.example.com/c3-future",
+          startsAt:
+            "2099-01-01T10:00:00+05:30",
+          endsAt:
+            "2099-01-01T11:00:00+05:30",
+          sequence: 3,
+        },
+      );
+    await transitionLessonContent(
+      collegeAdmin,
+      futureLiveClass.id,
+      { action: "PUBLISH" },
+    );
+
+    const workspace =
+      await getLearnerCourseWorkspace(
+        learner,
+        structure.deliveryA.id,
+      );
+    const future =
+      workspace.lessons[0]?.contents.find(
+        (item) =>
+          item.id === futureLiveClass.id,
+      );
+
+    expect(future).toMatchObject({
+      availability: "SCHEDULED",
+      externalUrl: null,
+      storageKey: null,
+    });
+
+    await expect(
+      saveLearnerContentProgress(
+        learner,
+        futureLiveClass.id,
+        {
+          deliveryId: structure.deliveryA.id,
+          completed: true,
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "CONTENT_NOT_STARTED",
+    });
+
+    const created =
+      await createCourseDiscussionMessage(
+        learner,
+        structure.deliveryA.id,
+        {
+          messageText: "C3 learner question",
+        },
+      );
+
+    const discussion =
+      await listCourseDiscussionMessages(
+        learner,
+        structure.deliveryA.id,
+      );
+
+    expect(discussion.messages).toEqual([
+      expect.objectContaining({
+        id: created.id,
+        messageText: "C3 learner question",
+        isMine: true,
+      }),
+    ]);
+
+    await expect(
+      listCourseDiscussionMessages(
+        learner,
+        structure.deliveryB.id,
+      ),
+    ).rejects.toMatchObject({
+      code:
+        "LEARNER_ENROLLMENT_SCOPE_REQUIRED",
+    });
+
+    await deleteCourseDiscussionMessage(
+      learner,
+      created.id,
+    );
+
+    await expect(
+      listCourseDiscussionMessages(
+        learner,
+        structure.deliveryA.id,
+      ),
+    ).resolves.toMatchObject({
+      messages: [],
+    });
+  });
+
+  it("keeps completed-semester Courses readable but blocks new learner mutations", async () => {
+    const structure = await createStructure();
+
+    await pool.query(
+      `update section_enrollments
+       set status = 'COMPLETED'
+       where id = $1`,
+      [structure.sectionEnrollment.id],
+    );
+    await pool.query(
+      `update academic_periods
+       set status = 'CLOSED'
+       where id = $1`,
+      [structure.period.id],
+    );
+    await pool.query(
+      `update course_section_deliveries
+       set ended_at = now()
+       where id = $1`,
+      [structure.deliveryA.id],
+    );
+
+    await expect(
+      listLearnerCourseDeliveries(learner),
+    ).resolves.toEqual([]);
+
+    const history =
+      await listLearnerCourseDeliveries(
+        learner,
+        { includeHistorical: true },
+      );
+
+    expect(history).toEqual([
+      expect.objectContaining({
+        deliveryId: structure.deliveryA.id,
+        sectionEnrollmentStatus: "COMPLETED",
+        periodStatus: "CLOSED",
+      }),
+    ]);
+
+    await expect(
+      getLearnerCourseWorkspace(
+        learner,
+        structure.deliveryA.id,
+      ),
+    ).resolves.toMatchObject({
+      course: {
+        id: structure.course.id,
+      },
+      delivery: {
+        id: structure.deliveryA.id,
+      },
+    });
+
+    const historicalDiscussion =
+      await listCourseDiscussionMessages(
+        learner,
+        structure.deliveryA.id,
+      );
+    expect(historicalDiscussion.canPost).toBe(false);
+
+    await expect(
+      createCourseDiscussionMessage(
+        learner,
+        structure.deliveryA.id,
+        {
+          messageText: "Should not post",
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "SECTION_DELIVERY_NOT_ACTIVE",
+    });
+
+    await expect(
+      saveLearnerContentProgress(
+        learner,
+        structure.resource.id,
+        {
+          deliveryId: structure.deliveryA.id,
+          completed: true,
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "SECTION_DELIVERY_NOT_ACTIVE",
+    });
   });
 
   it("rejects progress outside the learner audience and enforces database uniqueness", async () => {

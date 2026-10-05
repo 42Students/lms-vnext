@@ -13,18 +13,22 @@ import {
   academicPeriods,
   assignmentSubmissions,
   courseAssignments,
+  collegeMemberships,
   courseLearningPaths,
   courseLessons,
   courseOfferings,
   courseQuizzes,
   courseSectionDeliveries,
+  courseTeachingAssignments,
   courses,
   learnerContentProgress,
   learnerProgramEnrollments,
   lessonContents,
+  programs,
   quizAttempts,
   sectionEnrollments,
   sections,
+  users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "./errors";
@@ -60,9 +64,14 @@ function requireLearnerMembership(
 
 export async function listLearnerCourseDeliveries(
   context: RequestContext,
+  options: {
+    includeHistorical?: boolean;
+  } = {},
 ) {
   const membership =
     requireLearnerMembership(context);
+  const includeHistorical =
+    options.includeHistorical ?? false;
 
   return getDb()
     .select({
@@ -82,6 +91,9 @@ export async function listLearnerCourseDeliveries(
       academicPeriodId: academicPeriods.id,
       academicPeriodName:
         academicPeriods.name,
+      programId: programs.id,
+      programName: programs.name,
+      programCode: programs.code,
       periodStartDate:
         academicPeriods.startDate,
       periodEndDate: academicPeriods.endDate,
@@ -89,6 +101,14 @@ export async function listLearnerCourseDeliveries(
         courseLearningPaths.id,
       learningPathStatus:
         courseLearningPaths.status,
+      deliveryEndedAt:
+        courseSectionDeliveries.endedAt,
+      sectionEnrollmentStatus:
+        sectionEnrollments.status,
+      programEnrollmentStatus:
+        learnerProgramEnrollments.status,
+      periodStatus:
+        academicPeriods.status,
     })
     .from(sectionEnrollments)
     .innerJoin(
@@ -96,6 +116,13 @@ export async function listLearnerCourseDeliveries(
       eq(
         learnerProgramEnrollments.id,
         sectionEnrollments.learnerEnrollmentId,
+      ),
+    )
+    .innerJoin(
+      programs,
+      eq(
+        programs.id,
+        learnerProgramEnrollments.programId,
       ),
     )
     .innerJoin(
@@ -107,42 +134,63 @@ export async function listLearnerCourseDeliveries(
     )
     .innerJoin(
       courseSectionDeliveries,
-      and(
-        eq(
-          courseSectionDeliveries.sectionId,
-          sections.id,
-        ),
-        isNull(
-          courseSectionDeliveries.endedAt,
-        ),
-      ),
+      includeHistorical
+        ? eq(
+            courseSectionDeliveries.sectionId,
+            sections.id,
+          )
+        : and(
+            eq(
+              courseSectionDeliveries.sectionId,
+              sections.id,
+            ),
+            isNull(
+              courseSectionDeliveries.endedAt,
+            ),
+          ),
     )
     .innerJoin(
       courseOfferings,
-      and(
-        eq(
-          courseOfferings.id,
-          courseSectionDeliveries.offeringId,
-        ),
-        eq(
-          courseOfferings.academicPeriodId,
-          sectionEnrollments.academicPeriodId,
-        ),
-        eq(
-          courseOfferings.status,
-          "ACTIVE",
-        ),
-      ),
+      includeHistorical
+        ? and(
+            eq(
+              courseOfferings.id,
+              courseSectionDeliveries.offeringId,
+            ),
+            eq(
+              courseOfferings.academicPeriodId,
+              sectionEnrollments.academicPeriodId,
+            ),
+          )
+        : and(
+            eq(
+              courseOfferings.id,
+              courseSectionDeliveries.offeringId,
+            ),
+            eq(
+              courseOfferings.academicPeriodId,
+              sectionEnrollments.academicPeriodId,
+            ),
+            eq(
+              courseOfferings.status,
+              "ACTIVE",
+            ),
+          ),
     )
     .innerJoin(
       courses,
-      and(
-        eq(
-          courses.id,
-          courseOfferings.courseId,
-        ),
-        eq(courses.status, "ACTIVE"),
-      ),
+      includeHistorical
+        ? eq(
+            courses.id,
+            courseOfferings.courseId,
+          )
+        : and(
+            eq(
+              courses.id,
+              courseOfferings.courseId,
+            ),
+            eq(courses.status, "ACTIVE"),
+          ),
     )
     .innerJoin(
       academicPeriods,
@@ -170,15 +218,30 @@ export async function listLearnerCourseDeliveries(
           learnerProgramEnrollments.membershipId,
           membership.id,
         ),
-        eq(
-          learnerProgramEnrollments.status,
-          "ACTIVE",
-        ),
-        eq(
-          sectionEnrollments.status,
-          "ACTIVE",
-        ),
-        eq(sections.status, "ACTIVE"),
+        includeHistorical
+          ? inArray(
+              learnerProgramEnrollments.status,
+              ["ACTIVE", "COMPLETED"],
+            )
+          : eq(
+              learnerProgramEnrollments.status,
+              "ACTIVE",
+            ),
+        includeHistorical
+          ? inArray(
+              sectionEnrollments.status,
+              ["ACTIVE", "COMPLETED"],
+            )
+          : eq(
+              sectionEnrollments.status,
+              "ACTIVE",
+            ),
+        includeHistorical
+          ? inArray(
+              sections.status,
+              ["ACTIVE", "ARCHIVED"],
+            )
+          : eq(sections.status, "ACTIVE"),
       ),
     )
     .orderBy(
@@ -186,6 +249,81 @@ export async function listLearnerCourseDeliveries(
       asc(courseOfferings.displayOrder),
       asc(courses.name),
     );
+}
+
+export async function listLearnerCourseInstructors(
+  context: RequestContext,
+  deliveryIdInput: string,
+) {
+  const membership = requireLearnerMembership(context);
+  const deliveryId =
+    courseSectionDeliveryIdSchema.parse(deliveryIdInput);
+  const delivery =
+    await loadCourseSectionDeliveryScope(
+      deliveryId,
+      true,
+    );
+  const access = await requireLearningReadAccess(
+    context,
+    delivery.offeringId,
+    deliveryId,
+    { includeHistorical: true },
+  );
+
+  if (access !== "LEARNER") {
+    throw new CoursesServiceError(
+      "LEARNER_PROGRESS_ACCESS_DENIED",
+    );
+  }
+
+  const rows = await getDb()
+    .select({
+      membershipId: courseTeachingAssignments.membershipId,
+      role: courseTeachingAssignments.role,
+      name: users.displayName,
+      endedAt: courseTeachingAssignments.endedAt,
+    })
+    .from(courseTeachingAssignments)
+    .innerJoin(
+      collegeMemberships,
+      eq(
+        collegeMemberships.id,
+        courseTeachingAssignments.membershipId,
+      ),
+    )
+    .innerJoin(
+      users,
+      eq(users.id, collegeMemberships.userId),
+    )
+    .where(
+      and(
+        eq(
+          courseTeachingAssignments.deliveryId,
+          deliveryId,
+        ),
+        eq(
+          collegeMemberships.collegeId,
+          membership.collegeId,
+        ),
+      ),
+    )
+    .orderBy(
+      asc(courseTeachingAssignments.role),
+      asc(users.displayName),
+    );
+
+  const active = rows.filter(
+    (row) => !row.endedAt,
+  );
+  const visible = active.length > 0
+    ? active
+    : rows;
+
+  return visible.map((row) => ({
+    membershipId: row.membershipId,
+    role: row.role,
+    name: row.name,
+  }));
 }
 
 type AssessmentProgressStatus =
@@ -233,12 +371,14 @@ export async function getLearnerCourseWorkspace(
   const delivery =
     await loadCourseSectionDeliveryScope(
       deliveryId,
+      true,
     );
   const access =
     await requireLearningReadAccess(
       context,
       delivery.offeringId,
       deliveryId,
+      { includeHistorical: true },
     );
 
   if (access !== "LEARNER") {
@@ -249,8 +389,9 @@ export async function getLearnerCourseWorkspace(
 
   const course = await loadCourseScope(
     delivery.courseId,
+    true,
   );
-  const [path] = await getDb()
+  let [path] = await getDb()
     .select()
     .from(courseLearningPaths)
     .where(
@@ -266,6 +407,28 @@ export async function getLearnerCourseWorkspace(
       ),
     )
     .limit(1);
+
+  if (!path && delivery.endedAt) {
+    [path] = await getDb()
+      .select()
+      .from(courseLearningPaths)
+      .where(
+        and(
+          eq(
+            courseLearningPaths.offeringId,
+            delivery.offeringId,
+          ),
+          eq(
+            courseLearningPaths.status,
+            "ARCHIVED",
+          ),
+        ),
+      )
+      .orderBy(
+        desc(courseLearningPaths.updatedAt),
+      )
+      .limit(1);
+  }
 
   if (!path) {
     return {
@@ -397,6 +560,10 @@ export async function getLearnerCourseWorkspace(
     startsAt: Date | null;
     endsAt: Date | null;
     sequence: number;
+    availability:
+      | "SCHEDULED"
+      | "AVAILABLE"
+      | "ENDED";
     progress: ReturnType<
       typeof buildLearnerProgressView
     >;
@@ -463,6 +630,7 @@ export async function getLearnerCourseWorkspace(
     string,
     LessonItem
   >();
+  const now = Date.now();
 
   for (const row of rows) {
     let lesson = lessons.get(row.lessonId);
@@ -484,18 +652,35 @@ export async function getLearnerCourseWorkspace(
       continue;
     }
 
+    const contentAvailability =
+      row.contentStartsAt &&
+      row.contentStartsAt.getTime() > now
+        ? "SCHEDULED"
+        : row.contentType === "LIVE_CLASS" &&
+            row.contentEndsAt &&
+            row.contentEndsAt.getTime() < now
+          ? "ENDED"
+          : "AVAILABLE";
+
     lesson.contents.push({
       id: row.contentId,
       type: row.contentType!,
       title: row.contentTitle!,
       notes: row.contentNotes,
-      externalUrl: row.contentExternalUrl,
-      storageKey: row.contentStorageKey,
+      externalUrl:
+        contentAvailability === "AVAILABLE"
+          ? row.contentExternalUrl
+          : null,
+      storageKey:
+        contentAvailability === "AVAILABLE"
+          ? row.contentStorageKey
+          : null,
       durationSeconds:
         row.contentDurationSeconds,
       startsAt: row.contentStartsAt,
       endsAt: row.contentEndsAt,
       sequence: row.contentSequence!,
+      availability: contentAvailability,
       progress: buildLearnerProgressView(
         {
           id: row.contentId,
@@ -519,7 +704,6 @@ export async function getLearnerCourseWorkspace(
   const lessonIds = lessonList.map(
     (lesson) => lesson.id,
   );
-  const now = Date.now();
 
   if (lessonIds.length > 0) {
     const assignments = await getDb()
@@ -912,13 +1096,24 @@ export async function getLearnerCourseWorkspace(
     ) ?? null;
 
   const nextItem =
-    allItems.find(
-      ({ item }) =>
-        item.progress.status ===
-        "NOT_STARTED" ||
-        item.progress.status ===
-          "IN_PROGRESS",
-    ) ?? null;
+    allItems.find(({ lesson, item }) => {
+      if (
+        item.progress.status !== "NOT_STARTED" &&
+        item.progress.status !== "IN_PROGRESS"
+      ) {
+        return false;
+      }
+
+      if (item.kind !== "CONTENT") {
+        return true;
+      }
+
+      const content = lesson.contents.find(
+        (candidate) => candidate.id === item.id,
+      );
+
+      return content?.availability === "AVAILABLE";
+    }) ?? null;
 
   return {
     course: {

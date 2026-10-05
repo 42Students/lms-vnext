@@ -1,76 +1,60 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import {
-  getLearnerCourseWorkspace,
-  listLearnerCourseDeliveries,
-} from "@/modules/courses/learner-course-service";
-
-type Course = Awaited<
-  ReturnType<
-    typeof listLearnerCourseDeliveries
-  >
->[number];
-
-type Workspace = Awaited<
-  ReturnType<
-    typeof getLearnerCourseWorkspace
-  >
->;
 
 export type LearnerCourseListRow = {
-  course: Course;
-  workspace: Workspace;
+  course: {
+    deliveryId: string;
+    courseId: string;
+    courseName: string;
+    courseCode: string;
+    courseDescription: string | null;
+    offeringType: string;
+    credits: number | null;
+    sectionName: string;
+    sectionCode: string;
+    academicPeriodId: string;
+    academicPeriodName: string;
+    programName: string;
+    programCode: string;
+    periodStartDate: string;
+    periodEndDate: string;
+  };
+  summary: {
+    overallPercent: number;
+    itemsCompleted: number;
+    itemsTotal: number;
+  };
+  readOnly: boolean;
+  learningPathReady: boolean;
+  nextItem: {
+    lessonId: string;
+    lessonName: string;
+    kind: "CONTENT" | "ASSIGNMENT" | "QUIZ";
+    itemId: string;
+    title: string;
+  } | null;
 };
 
-function ProgressBar({
-  value,
-}: {
-  value: number;
-}) {
-  return (
-    <div
-      className="h-2 overflow-hidden rounded-full bg-muted"
-      role="progressbar"
-      aria-label="Course progress"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={value}
-    >
-      <div
-        className="h-full rounded-full bg-primary transition-[width]"
-        style={{ width: `${value}%` }}
-      />
-    </div>
-  );
-}
-
-function nextLabel(
-  workspace: Workspace,
-) {
-  if (!workspace.learningPath) {
-    return "Learning path not published";
+function nextLabel(row: LearnerCourseListRow) {
+  if (row.readOnly) return "View course";
+  if (!row.learningPathReady) return "Learning path not published";
+  if (!row.nextItem) {
+    return row.summary.itemsTotal === 0
+      ? "No learning items yet"
+      : "Course work complete";
   }
 
-  if (!workspace.nextItem) {
-    if (workspace.summary.itemsTotal === 0) {
-      return "No learning items yet";
-    }
-
-    if (workspace.summary.itemsMissed > 0) {
-      return "No remaining actionable items";
-    }
-
-    return "Course work complete";
-  }
-
-  switch (workspace.nextItem.kind) {
-    case "CONTENT":
-      return `Continue · ${workspace.nextItem.title}`;
+  switch (row.nextItem.kind) {
     case "ASSIGNMENT":
-      return `Assignment · ${workspace.nextItem.title}`;
+      return `Assignment · ${row.nextItem.title}`;
     case "QUIZ":
-      return `Quiz · ${workspace.nextItem.title}`;
+      return `Quiz · ${row.nextItem.title}`;
+    default:
+      return `Continue · ${row.nextItem.title}`;
   }
 }
 
@@ -79,89 +63,271 @@ export function LearnerCourseList({
 }: {
   rows: readonly LearnerCourseListRow[];
 }) {
+  const periods = useMemo(() => {
+    const map = new Map<string, {
+      id: string;
+      name: string;
+      startDate: string;
+    }>();
+    for (const row of rows) {
+      map.set(row.course.academicPeriodId, {
+        id: row.course.academicPeriodId,
+        name: row.course.academicPeriodName,
+        startDate: row.course.periodStartDate,
+      });
+    }
+    return [...map.values()].sort(
+      (left, right) =>
+        String(right.startDate).localeCompare(String(left.startDate)),
+    );
+  }, [rows]);
+
+  const [periodId, setPeriodId] = useState(periods[0]?.id ?? "");
+  const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
+
+  const periodRows = useMemo(
+    () =>
+      rows.filter(
+        (row) => !periodId || row.course.academicPeriodId === periodId,
+      ),
+    [rows, periodId],
+  );
+
+  const coreCount = periodRows.filter(
+    (row) => String(row.course.offeringType).toUpperCase() !== "ELECTIVE",
+  ).length;
+  const electiveCount = periodRows.length - coreCount;
+
+  const visibleRows = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    return periodRows
+      .filter((row) => {
+        const elective =
+          String(row.course.offeringType).toUpperCase() === "ELECTIVE";
+        if (typeFilter === "core" && elective) return false;
+        if (typeFilter === "elective" && !elective) return false;
+        if (!needle) return true;
+        return [
+          row.course.courseName,
+          row.course.courseCode,
+          row.course.programName,
+          row.course.sectionName,
+          row.course.academicPeriodName,
+        ].some((value) => value.toLowerCase().includes(needle));
+      })
+      .sort((left, right) => {
+        const leftElective =
+          String(left.course.offeringType).toUpperCase() === "ELECTIVE";
+        const rightElective =
+          String(right.course.offeringType).toUpperCase() === "ELECTIVE";
+        if (leftElective !== rightElective) return leftElective ? 1 : -1;
+        return left.course.courseName.localeCompare(right.course.courseName);
+      });
+  }, [periodRows, query, typeFilter]);
+
   if (rows.length === 0) {
     return (
       <EmptyState
-        title="No active Courses yet"
-        description="Courses will appear here when your active Section has a Course delivery for the current academic period."
+        title="No courses found"
+        description="Courses will appear here when your class, batch and semester have active course assignments."
       />
     );
   }
 
+  const selectedPeriod =
+    periods.find((period) => period.id === periodId) ?? periods[0];
+  const totalCredits = periodRows.reduce(
+    (sum, row) => sum + (row.course.credits ?? 0),
+    0,
+  );
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {rows.map(({ course, workspace }) => {
-        const progress =
-          workspace.summary.overallPercent;
-        const ready =
-          workspace.learningPath !== null;
-
-        return (
-          <Link
-            key={course.deliveryId}
-            href={`/learn/courses/${course.deliveryId}`}
-            className="group flex min-h-64 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-                  {course.courseCode}
-                </p>
-                <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
-                  {course.courseName}
-                </h2>
-              </div>
-              <StatusBadge
-                tone={ready ? "success" : "warning"}
+    <div className="space-y-5">
+      <section className="rounded-xl border border-border bg-surface p-4">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-xs font-semibold text-body">
+              Semester
+              <select
+                value={periodId}
+                onChange={(event) => {
+                  setPeriodId(event.target.value);
+                  setQuery("");
+                }}
+                className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                aria-label="Select semester"
               >
-                {ready ? "Ready" : "Preparing"}
-              </StatusBadge>
-            </div>
+                {periods.map((period) => (
+                  <option key={period.id} value={period.id}>
+                    {period.name}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-            <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-5 text-body">
-              {course.courseDescription ??
-                "Course learning workspace for your active Section."}
-            </p>
+            <label className="text-xs font-semibold text-body">
+              Search courses
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search courses…"
+                className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+              />
+            </label>
+          </div>
 
-            <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-              <span className="rounded-full bg-muted px-2.5 py-1">
-                {course.academicPeriodName}
-              </span>
-              <span className="rounded-full bg-muted px-2.5 py-1">
-                {course.sectionName}
-              </span>
-              {course.credits ? (
-                <span className="rounded-full bg-muted px-2.5 py-1">
-                  {course.credits} credits
-                </span>
-              ) : null}
-            </div>
-
-            <div className="mt-auto pt-5">
-              <div className="mb-2 flex items-center justify-between gap-3">
-                <span className="text-xs font-semibold text-body">
-                  Progress
-                </span>
-                <span className="text-xs font-bold text-foreground">
-                  {progress}%
-                </span>
-              </div>
-              <ProgressBar value={progress} />
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground">
-                  {nextLabel(workspace)}
-                </p>
-                <span
-                  aria-hidden="true"
-                  className="text-lg text-primary-text transition-transform group-hover:translate-x-0.5"
+          {electiveCount > 0 ? (
+            <div
+              className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface-subtle p-1"
+              aria-label="Filter by course type"
+            >
+              {[
+                ["all", `All ${periodRows.length}`],
+                ["core", `Regular ${coreCount}`],
+                ["elective", `Electives ${electiveCount}`],
+              ].map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() =>
+                    setTypeFilter(value as "all" | "core" | "elective")
+                  }
+                  className={
+                    typeFilter === value
+                      ? "rounded-md bg-surface px-3 py-2 text-sm font-semibold text-primary-text shadow-sm"
+                      : "rounded-md px-3 py-2 text-sm font-semibold text-body hover:text-primary-text"
+                  }
                 >
-                  →
-                </span>
-              </div>
+                  {label}
+                </button>
+              ))}
             </div>
-          </Link>
-        );
-      })}
+          ) : null}
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
+          {periodRows[0]?.course.programName ? (
+            <span className="rounded-full bg-muted px-3 py-1.5">
+              {periodRows[0].course.programName}
+            </span>
+          ) : null}
+          {selectedPeriod ? (
+            <span className="rounded-full bg-muted px-3 py-1.5">
+              {selectedPeriod.name}
+            </span>
+          ) : null}
+          <span className="rounded-full bg-muted px-3 py-1.5">
+            {periodRows.length} {periodRows.length === 1 ? "Course" : "Courses"}
+          </span>
+          {totalCredits > 0 ? (
+            <span className="rounded-full bg-muted px-3 py-1.5">
+              {totalCredits} Credits
+            </span>
+          ) : null}
+        </div>
+      </section>
+
+      {visibleRows.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
+          <h2 className="m-0 text-base font-semibold text-foreground">
+            {query.trim()
+              ? `No courses match “${query.trim()}”`
+              : typeFilter === "elective"
+                ? "No electives to show right now."
+                : "No regular courses to show right now."}
+          </h2>
+          <p className="mt-2 text-sm text-body">
+            Change the semester, course type or search to see other courses.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {visibleRows.map((row) => {
+            const elective =
+              String(row.course.offeringType).toUpperCase() === "ELECTIVE";
+            return (
+              <Link
+                key={row.course.deliveryId}
+                href={`/learn/courses/${row.course.deliveryId}/home`}
+                className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              >
+                <div className="flex min-h-24 items-end bg-primary-subtle px-5 py-4">
+                  <div className="flex w-full items-end justify-between gap-3">
+                    <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
+                      {row.course.courseCode}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {row.readOnly ? (
+                        <StatusBadge tone="neutral">Past semester</StatusBadge>
+                      ) : null}
+                      {elective ? (
+                        <StatusBadge tone="info">Elective</StatusBadge>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-1 flex-col p-5">
+                  <h2 className="m-0 line-clamp-2 text-lg font-semibold text-foreground">
+                    {row.course.courseName}
+                  </h2>
+                  <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-body">
+                    {row.course.courseDescription ??
+                      "Course learning workspace for your class."}
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    <span className="rounded-full bg-muted px-2.5 py-1">
+                      {row.course.sectionName}
+                    </span>
+                    {row.course.credits ? (
+                      <span className="rounded-full bg-muted px-2.5 py-1">
+                        {row.course.credits} Credits
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-auto pt-5">
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <span className="text-xs font-semibold text-body">
+                        Progress
+                      </span>
+                      <span className="text-xs font-bold text-foreground">
+                        {row.summary.overallPercent}%
+                      </span>
+                    </div>
+                    <div
+                      className="h-2 overflow-hidden rounded-full bg-muted"
+                      role="progressbar"
+                      aria-label="Course progress"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={row.summary.overallPercent}
+                    >
+                      <div
+                        className="h-full rounded-full bg-primary"
+                        style={{ width: `${row.summary.overallPercent}%` }}
+                      />
+                    </div>
+                    <div className="mt-4 flex items-center justify-between gap-3">
+                      <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground">
+                        {nextLabel(row)}
+                      </p>
+                      <span
+                        aria-hidden="true"
+                        className="text-lg text-primary-text transition-transform group-hover:translate-x-0.5"
+                      >
+                        →
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

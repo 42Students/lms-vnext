@@ -113,6 +113,7 @@ export function LearnerYouTubePlayer({
   initialPositionSeconds,
   authoredDurationSeconds,
   completed,
+  readOnly = false,
 }: {
   contentId: string;
   deliveryId: string;
@@ -120,6 +121,7 @@ export function LearnerYouTubePlayer({
   initialPositionSeconds: number;
   authoredDurationSeconds: number;
   completed: boolean;
+  readOnly?: boolean;
 }) {
   const router = useRouter();
   const hostRef =
@@ -273,6 +275,7 @@ export function LearnerYouTubePlayer({
       const player = playerRef.current;
       if (
         !player ||
+        readOnly ||
         savingRef.current ||
         completedRef.current
       ) {
@@ -385,6 +388,7 @@ export function LearnerYouTubePlayer({
         const current =
           playerRef.current?.getCurrentTime();
         if (
+          !readOnly &&
           current !== undefined &&
           shouldPersistPlayback(
             lastSavedRef.current,
@@ -424,6 +428,7 @@ export function LearnerYouTubePlayer({
     initialPositionSeconds,
     router,
     videoId,
+    readOnly,
   ]);
 
   if (!videoId) {
@@ -457,13 +462,15 @@ export function LearnerYouTubePlayer({
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
         <span>
-          {isCompleted
-            ? "Completed"
-            : ready
+          {readOnly
+            ? "Past semester · progress is read only"
+            : isCompleted
+              ? "Completed"
+              : ready
               ? "Resume saved automatically"
               : loadFailed
-                ? "Inline player unavailable"
-                : "Loading player…"}
+                  ? "Inline player unavailable"
+                  : "Loading player…"}
         </span>
         <span>
           Saved at{" "}

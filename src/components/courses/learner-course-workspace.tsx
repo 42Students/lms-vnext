@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { QuizAttemptControl } from "./quiz-attempt-control";
 import { ResourceProgressControl } from "./resource-progress-control";
 import { LearnerYouTubePlayer } from "./learner-youtube-player";
+import { LearnerVideoPlayer } from "./learner-video-player";
 import {
   assignmentInteractionState,
   isAssignmentOverdue,
@@ -145,17 +145,22 @@ function Metric({
 function ContentCard({
   content,
   deliveryId,
+  readOnly,
 }: {
   content: Workspace["lessons"][number]["contents"][number];
   deliveryId: string;
+  readOnly: boolean;
 }) {
   const start = formatDateTime(content.startsAt);
   const end = formatDateTime(content.endsAt);
   const interaction = resourceInteractionState({
     type: content.type,
     externalUrl: content.externalUrl,
+    storageKey: content.storageKey,
     progressStatus: content.progress.status,
   });
+  const scheduled = content.availability === "SCHEDULED";
+  const ended = content.availability === "ENDED";
 
   return (
     <article
@@ -177,6 +182,15 @@ function ContentCard({
                 content.progress.status,
               )}
             </StatusBadge>
+            {scheduled ? (
+              <StatusBadge tone="warning">
+                Scheduled
+              </StatusBadge>
+            ) : ended ? (
+              <StatusBadge tone="neutral">
+                Ended
+              </StatusBadge>
+            ) : null}
           </div>
           <h3 className="mt-2 text-base font-semibold text-foreground">
             {content.title}
@@ -212,7 +226,34 @@ function ContentCard({
         </p>
       ) : null}
 
-      {content.type === "YOUTUBE" &&
+      {scheduled ? (
+        <div className="mt-4 rounded-lg border border-border bg-surface-subtle px-3 py-3 text-sm text-body">
+          {start
+            ? `Available ${start}`
+            : "This item is scheduled and is not available yet."}
+        </div>
+      ) : content.type === "LIVE_CLASS" && ended ? (
+        <div className="mt-4 rounded-lg border border-border bg-surface-subtle px-3 py-3 text-sm text-body">
+          This live session has ended.
+        </div>
+      ) : content.type === "VIDEO" &&
+      content.storageKey ? (
+        <LearnerVideoPlayer
+          contentId={content.id}
+          deliveryId={deliveryId}
+          initialPositionSeconds={
+            content.progress.lastPositionSeconds
+          }
+          authoredDurationSeconds={
+            content.progress.durationSeconds
+          }
+          completed={
+            content.progress.status ===
+            "COMPLETED"
+          }
+          readOnly={readOnly}
+        />
+      ) : content.type === "YOUTUBE" &&
       content.externalUrl ? (
         <LearnerYouTubePlayer
           contentId={content.id}
@@ -230,6 +271,7 @@ function ContentCard({
             content.progress.status ===
             "COMPLETED"
           }
+          readOnly={readOnly}
         />
       ) : content.externalUrl ? (
         <a
@@ -238,15 +280,40 @@ function ContentCard({
           rel="noreferrer"
           className="mt-4 inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
         >
-          Open content ↗
+          {content.type === "LIVE_CLASS"
+            ? "Join live class ↗"
+            : content.type === "RESOURCE"
+              ? "Open resource ↗"
+              : "Open content ↗"}
         </a>
+      ) : content.type === "RESOURCE" &&
+      content.storageKey ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          <a
+            href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+          >
+            Open resource ↗
+          </a>
+          <a
+            href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
+            className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+          >
+            Download
+          </a>
+        </div>
       ) : content.storageKey ? (
-        <p className="mt-4 text-xs font-semibold text-muted-foreground">
-          Media is attached to this lesson and will open in the learner player when signed storage delivery is connected.
+        <p className="mt-4 text-xs font-semibold text-warning">
+          This file type is not supported in the learner viewer yet.
         </p>
       ) : null}
 
-      {interaction.canMarkComplete ? (
+      {!readOnly &&
+      interaction.canMarkComplete &&
+      !scheduled &&
+      (content.type !== "LIVE_CLASS" || ended) ? (
         <ResourceProgressControl
           contentId={content.id}
           deliveryId={deliveryId}
@@ -259,9 +326,11 @@ function ContentCard({
 function AssignmentCard({
   assignment,
   deliveryId,
+  readOnly,
 }: {
   assignment: Workspace["lessons"][number]["assignments"][number];
   deliveryId: string;
+  readOnly: boolean;
 }) {
   const interaction =
     assignmentInteractionState({
@@ -357,7 +426,7 @@ function AssignmentCard({
         </p>
       ) : null}
 
-      {interaction.canSubmit ? (
+      {!readOnly && interaction.canSubmit ? (
         <AssignmentSubmissionControl
           assignmentId={assignment.id}
           deliveryId={deliveryId}
@@ -370,9 +439,11 @@ function AssignmentCard({
 function QuizCard({
   quiz,
   deliveryId,
+  readOnly,
 }: {
   quiz: Workspace["lessons"][number]["quizzes"][number];
   deliveryId: string;
+  readOnly: boolean;
 }) {
   return (
     <article
@@ -443,6 +514,7 @@ function QuizCard({
         </p>
       ) : null}
 
+      {!readOnly ? (
       <QuizAttemptControl
         quizId={quiz.id}
         deliveryId={deliveryId}
@@ -452,6 +524,11 @@ function QuizCard({
         resultsPublished={quiz.resultsPublished}
         progressStatus={quiz.progress.status}
       />
+      ) : (
+        <p className="mt-4 text-xs font-semibold text-muted-foreground">
+          Past semester · quiz attempts are read only.
+        </p>
+      )}
     </article>
   );
 }
@@ -459,200 +536,294 @@ function QuizCard({
 export function LearnerCourseWorkspace({
   deliveryId,
   workspace,
+  filter = "all",
+  focusLessonId = null,
+  focusContentId = null,
+  readOnly = false,
 }: {
   deliveryId: string;
   workspace: Workspace;
+  filter?: string;
+  focusLessonId?: string | null;
+  focusContentId?: string | null;
+  readOnly?: boolean;
 }) {
   const summary = workspace.summary;
+  const activeFilter = ["all", "lectures", "resources", "assessments", "live-sessions"].includes(filter)
+    ? filter
+    : "all";
+
+  const filters = [
+    { key: "all", label: "All" },
+    { key: "lectures", label: "Lectures" },
+    { key: "resources", label: "Resources" },
+    { key: "assessments", label: "Assessments" },
+    { key: "live-sessions", label: "Live Sessions" },
+  ] as const;
+
+  const matchesFilter = (
+    lesson: Workspace["lessons"][number],
+    item: Workspace["lessons"][number]["items"][number],
+  ) => {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "assessments") {
+      return item.kind === "ASSIGNMENT" || item.kind === "QUIZ";
+    }
+    if (item.kind !== "CONTENT") return false;
+    const content = lesson.contents.find((candidate) => candidate.id === item.id);
+    if (!content) return false;
+    if (activeFilter === "resources") return content.type === "RESOURCE";
+    if (activeFilter === "live-sessions") return content.type === "LIVE_CLASS";
+    return content.type === "VIDEO" || content.type === "YOUTUBE";
+  };
+
+  const filterCounts = {
+    all: workspace.lessons.reduce((sum, lesson) => sum + lesson.items.length, 0),
+    lectures: workspace.lessons.reduce(
+      (sum, lesson) =>
+        sum +
+        lesson.contents.filter(
+          (content) => content.type === "VIDEO" || content.type === "YOUTUBE",
+        ).length,
+      0,
+    ),
+    resources: workspace.lessons.reduce(
+      (sum, lesson) =>
+        sum + lesson.contents.filter((content) => content.type === "RESOURCE").length,
+      0,
+    ),
+    assessments: workspace.lessons.reduce(
+      (sum, lesson) => sum + lesson.assignments.length + lesson.quizzes.length,
+      0,
+    ),
+    "live-sessions": workspace.lessons.reduce(
+      (sum, lesson) =>
+        sum + lesson.contents.filter((content) => content.type === "LIVE_CLASS").length,
+      0,
+    ),
+  };
+
+  if (!workspace.learningPath) {
+    return (
+      <EmptyState
+        title="Learning path is being prepared"
+        description="This course is active, but its learning path has not been published yet."
+      />
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="Learner · Course"
-        title={workspace.course.name}
-        description={`${workspace.course.code} · Your exact Section learning workspace.`}
-        actions={
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={`/learn/attendance?deliveryId=${deliveryId}`}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-            >
-              Attendance
-            </Link>
+    <div className="space-y-5">
+      <div>
+        <h2 className="sr-only">Learning Path</h2>
+        <p className="m-0 text-sm text-body">
+          Follow the course in order, open lesson content, submit assessments, and track completion.
+        </p>
+      </div>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+          <div>
+            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
+              {workspace.learningPath.title}
+            </p>
+            <h3 className="mt-2 text-xl font-semibold text-foreground">
+              {workspace.nextItem
+                ? `Next: ${workspace.nextItem.title}`
+                : summary.itemsMissed > 0
+                  ? "No remaining actionable items"
+                  : summary.itemsTotal > 0
+                    ? "Course work complete"
+                    : "No learning items yet"}
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-body">
+              {workspace.learningPath.description ??
+                "Lessons and learning items are presented in the order defined for this course."}
+            </p>
             {workspace.nextItem ? (
-              <Link
-                href={`/learn/courses/${deliveryId}#item-${workspace.nextItem.kind}-${workspace.nextItem.itemId}`}
-                className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-              >
-                Continue learning
-              </Link>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <StatusBadge tone="info">
+                  {kindLabel(workspace.nextItem.kind)}
+                </StatusBadge>
+                <span className="text-xs text-muted-foreground">
+                  {workspace.nextItem.lessonName}
+                </span>
+              </div>
             ) : null}
           </div>
-        }
-      />
+          <ProgressBar value={summary.overallPercent} label="Overall Course progress" />
+        </div>
+      </section>
 
-      {!workspace.learningPath ? (
-        <EmptyState
-          title="Learning path is being prepared"
-          description="Your Course delivery is active, but its learning path has not been published yet."
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <Metric
+          label="Overall"
+          value={`${summary.overallPercent}%`}
+          detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
         />
-      ) : (
-        <>
-          <section className="rounded-xl border border-border bg-surface p-5">
-            <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-              <div>
-                <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-                  {workspace.learningPath.title}
-                </p>
-                <h2 className="mt-2 text-xl font-semibold text-foreground">
-                  {workspace.nextItem
-                    ? `Next: ${workspace.nextItem.title}`
-                    : summary.itemsMissed > 0
-                      ? "No remaining actionable items"
-                      : "Course work complete"}
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-body">
-                  {workspace.learningPath.description ??
-                    "Follow the ordered learning path below. Progress is calculated from content completion, assignment submissions and quiz attempts."}
-                </p>
-                {workspace.nextItem ? (
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <StatusBadge tone="info">
-                      {kindLabel(
-                        workspace.nextItem.kind,
-                      )}
-                    </StatusBadge>
-                    <span className="text-xs text-muted-foreground">
-                      {workspace.nextItem.lessonName}
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              <ProgressBar
-                value={summary.overallPercent}
-                label="Overall Course progress"
-              />
-            </div>
-          </section>
+        <Metric
+          label="Lessons"
+          value={`${summary.lessonsCompleted}/${summary.lessonsTotal}`}
+          detail="A lesson is complete when all of its actionable items are complete."
+        />
+        <Metric
+          label="Assessments"
+          value={summary.assignmentsCompleted + summary.quizzesCompleted}
+          detail={`${summary.assignmentsTotal} assignments · ${summary.quizzesTotal} quizzes.`}
+        />
+        <Metric
+          label="Missed"
+          value={summary.itemsMissed}
+          detail="Closed quizzes remain visible in the learning path."
+        />
+      </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <Metric
-              label="Overall"
-              value={`${summary.overallPercent}%`}
-              detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
-            />
-            <Metric
-              label="Lessons"
-              value={`${summary.lessonsCompleted}/${summary.lessonsTotal}`}
-              detail="Lessons complete only when every actionable item is complete."
-            />
-            <Metric
-              label="Assessments"
-              value={
-                summary.assignmentsCompleted +
-                summary.quizzesCompleted
+      <nav
+        aria-label="Learning path content filter"
+        className="overflow-x-auto rounded-xl border border-border bg-surface p-2"
+      >
+        <div className="flex min-w-max gap-1">
+          {filters.map((item) => (
+            <Link
+              key={item.key}
+              href={`/learn/courses/${deliveryId}/roadmap?filter=${item.key}`}
+              aria-current={activeFilter === item.key ? "page" : undefined}
+              className={
+                activeFilter === item.key
+                  ? "rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
+                  : "rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
               }
-              detail={`${summary.assignmentsTotal} assignments · ${summary.quizzesTotal} quizzes.`}
-            />
-            <Metric
-              label="Missed"
-              value={summary.itemsMissed}
-              detail="Expired or closed assessments remain visible but are skipped by Continue Learning."
-            />
-          </div>
+            >
+              {item.label}{" "}
+              <span className="text-xs text-muted-foreground">
+                {filterCounts[item.key]}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </nav>
 
-          <div className="space-y-5">
-            {workspace.lessons.map(
-              (lesson, lessonIndex) => (
-                <section
-                  key={lesson.id}
-                  className="rounded-xl border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
-                >
-                  <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-                        Lesson {lessonIndex + 1}
+      <div className="space-y-4">
+        {workspace.lessons.map((lesson, lessonIndex) => {
+          const visibleItems = lesson.items.filter((item) => matchesFilter(lesson, item));
+          if (activeFilter !== "all" && visibleItems.length === 0) return null;
+
+          const completed = lesson.items.filter(
+            (item) => item.progress.status === "COMPLETED",
+          ).length;
+
+          return (
+            <details
+              key={lesson.id}
+              open={
+                focusLessonId === lesson.id ||
+                (!focusLessonId && lessonIndex === 0)
+              }
+              className="group rounded-xl border border-border bg-[var(--lms-neutral-50)]"
+            >
+              <summary className="cursor-pointer list-none px-4 py-4 sm:px-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
+                      Lesson {lessonIndex + 1}
+                    </p>
+                    <h3 className="mt-1 text-lg font-semibold text-foreground">
+                      {lesson.name}
+                    </h3>
+                    {lesson.description ? (
+                      <p className="mt-1 max-w-3xl text-sm leading-6 text-body">
+                        {lesson.description}
                       </p>
-                      <h2 className="mt-1 text-lg font-semibold text-foreground">
-                        {lesson.name}
-                      </h2>
-                      {lesson.description ? (
-                        <p className="mt-1 max-w-3xl text-sm leading-6 text-body">
-                          {lesson.description}
-                        </p>
-                      ) : null}
-                    </div>
+                    ) : null}
+                  </div>
+                  <div className="flex items-center gap-2">
                     <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                      {lesson.items.length} items
+                      {completed}/{lesson.items.length} complete
+                    </span>
+                    <span aria-hidden="true" className="text-primary-text group-open:rotate-90">
+                      ›
                     </span>
                   </div>
+                </div>
+              </summary>
 
-                  {lesson.items.length === 0 ? (
-                    <div className="rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
-                      No published learning items in this lesson yet.
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {lesson.items.map((item) => {
-                        if (
-                          item.kind === "CONTENT"
-                        ) {
-                          const content =
-                            lesson.contents.find(
-                              (candidate) =>
-                                candidate.id ===
-                                item.id,
-                            );
-                          return content ? (
-                            <ContentCard
-                              key={item.id}
-                              content={content}
-                              deliveryId={deliveryId}
-                            />
-                          ) : null;
-                        }
-
-                        if (
-                          item.kind ===
-                          "ASSIGNMENT"
-                        ) {
-                          const assignment =
-                            lesson.assignments.find(
-                              (candidate) =>
-                                candidate.id ===
-                                item.id,
-                            );
-                          return assignment ? (
-                            <AssignmentCard
-                              key={item.id}
-                              assignment={assignment}
-                              deliveryId={deliveryId}
-                            />
-                          ) : null;
-                        }
-
-                        const quiz =
-                          lesson.quizzes.find(
-                            (candidate) =>
-                              candidate.id ===
-                              item.id,
-                          );
-                        return quiz ? (
-                          <QuizCard
+              <div className="border-t border-border bg-surface p-4 sm:p-5">
+                {visibleItems.length === 0 ? (
+                  <div className="rounded-lg border border-dashed border-border p-5 text-sm text-muted-foreground">
+                    No published learning items in this lesson yet.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {visibleItems.map((item) => {
+                      if (item.kind === "CONTENT") {
+                        const content = lesson.contents.find(
+                          (candidate) => candidate.id === item.id,
+                        );
+                        return content ? (
+                          <div
                             key={item.id}
-                            quiz={quiz}
-                            deliveryId={deliveryId}
-                          />
+                            className={
+                              focusContentId === item.id
+                                ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
+                                : ""
+                            }
+                          >
+                            <ContentCard content={content} deliveryId={deliveryId} readOnly={readOnly} />
+                          </div>
                         ) : null;
-                      })}
-                    </div>
-                  )}
-                </section>
-              ),
-            )}
-          </div>
-        </>
-      )}
+                      }
+
+                      if (item.kind === "ASSIGNMENT") {
+                        const assignment = lesson.assignments.find(
+                          (candidate) => candidate.id === item.id,
+                        );
+                        return assignment ? (
+                          <div
+                            key={item.id}
+                            className={
+                              focusContentId === item.id
+                                ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
+                                : ""
+                            }
+                          >
+                            <AssignmentCard assignment={assignment} deliveryId={deliveryId} readOnly={readOnly} />
+                          </div>
+                        ) : null;
+                      }
+
+                      const quiz = lesson.quizzes.find(
+                        (candidate) => candidate.id === item.id,
+                      );
+                      return quiz ? (
+                        <div
+                          key={item.id}
+                          className={
+                            focusContentId === item.id
+                              ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
+                              : ""
+                          }
+                        >
+                          <QuizCard quiz={quiz} deliveryId={deliveryId} readOnly={readOnly} />
+                        </div>
+                      ) : null;
+                    })}
+                  </div>
+                )}
+              </div>
+            </details>
+          );
+        })}
+      </div>
+
+      {activeFilter !== "all" &&
+      workspace.lessons.every(
+        (lesson) => lesson.items.filter((item) => matchesFilter(lesson, item)).length === 0,
+      ) ? (
+        <EmptyState
+          title={`No ${filters.find((item) => item.key === activeFilter)?.label ?? "content"} in this course`}
+          description="Choose another content filter to continue browsing the learning path."
+        />
+      ) : null}
     </div>
   );
 }

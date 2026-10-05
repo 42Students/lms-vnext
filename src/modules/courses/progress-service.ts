@@ -142,6 +142,15 @@ async function requireLearnerProgressScope(
     );
   }
 
+  if (
+    content.startsAt &&
+    content.startsAt.getTime() > Date.now()
+  ) {
+    throw new CoursesServiceError(
+      "CONTENT_NOT_STARTED",
+    );
+  }
+
   return {
     content,
     membershipId: context.membership.id,

@@ -168,6 +168,7 @@ export function apiErrorResponse(error: unknown) {
     ]);
     const badRequest = new Set([
       "CONTENT_TYPE_SHAPE_INVALID",
+      "CONTENT_NOT_STARTED",
       "TIMED_CONTENT_MANUAL_COMPLETION_NOT_ALLOWED",
       "CONTENT_DURATION_REQUIRED",
       "LIVE_CLASS_NOT_FINISHED",

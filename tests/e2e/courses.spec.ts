@@ -70,7 +70,7 @@ test.describe("Course browser regression", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "My Courses",
+        name: "Courses",
       }),
     ).toBeVisible();
 
@@ -82,12 +82,31 @@ test.describe("Course browser regression", () => {
     );
     await courseCard.click();
 
+    await expect(page).toHaveURL(/\/learn\/courses\/[^/]+\/home$/);
     await expect(
       page.getByRole("heading", {
         level: 1,
         name: "E2E Browser Course",
       }),
     ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Overview" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Learning Path" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Attendance" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Discussions" }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("About this course", { exact: true }),
+    ).toBeVisible();
+
+    await page.getByRole("link", { name: "Learning Path" }).click();
+    await expect(page).toHaveURL(/\/roadmap/);
     await expect(
       page.getByText("E2E Shared Notes", {
         exact: true,
@@ -141,6 +160,44 @@ test.describe("Course browser regression", () => {
         { exact: true },
       ),
     ).toBeVisible();
+
+    await page.getByRole("link", { name: "Attendance" }).click();
+    await expect(page).toHaveURL(/\/attendanceDetail/);
+    await expect(
+      page.getByText("Your course attendance summary and session-by-session record.", {
+        exact: true,
+      }),
+    ).toBeVisible();
+
+    await page.getByRole("link", { name: "Discussions" }).click();
+    await expect(page).toHaveURL(/\/discussions/);
+    await expect(
+      page.getByLabel("Write a message"),
+    ).toBeVisible();
+
+    await page.getByLabel("Write a message").fill("E2E learner discussion message");
+    const postPromise = page.waitForResponse(
+      (response) =>
+        response.url().includes("/discussions") &&
+        response.request().method() === "POST",
+    );
+    await page.getByRole("button", { name: "Post" }).click();
+    expect((await postPromise).ok()).toBe(true);
+    await expect(
+      page.getByText("E2E learner discussion message", { exact: true }),
+    ).toBeVisible();
+
+    const deletePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes("/discussions/") &&
+        response.request().method() === "DELETE",
+    );
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.getByRole("button", { name: "Delete" }).click();
+    expect((await deletePromise).ok()).toBe(true);
+    await expect(
+      page.getByText("E2E learner discussion message", { exact: true }),
+    ).toHaveCount(0);
   });
 
   test("faculty sees shared plus exact teaching content but not a sibling Section", async ({
