@@ -78,6 +78,9 @@ Legacy contract:
 - [x] Quiz attempt/result state is implemented with attempt/deadline/result policy.
 - [x] Progress updates without stale cross-lesson state are protected by monotonic progress writes.
 - [x] Empty and partial-content states are implemented.
+- [x] Roadmap lesson headers now expose current/completed/in-progress state plus per-lesson lecture/resource/assessment/live counts.
+- [x] Roadmap rows expose assignment overdue, expired-unattempted quiz, and partial video/YouTube watched-percentage cues from the same progress/deadline data used by the interaction controls.
+- [ ] Exact legacy compact-row → content modal/drawer interaction remains open; vNext still expands the rich interaction inline.
 
 ### Attendance tab
 Legacy contract:
@@ -109,6 +112,10 @@ Legacy contract:
 - [x] Author/time/Faculty context is preserved.
 - [x] Empty/loading/error states are implemented.
 - [x] Cross-class isolation is covered by integration regression tests.
+- [x] Consecutive messages from the same sender are visually grouped within the legacy five-minute window and day boundaries are preserved.
+- [x] Initial load lands on the newest message; background polling keeps the reader in place and shows a new-message counter while they read history.
+- [x] Multiple pinned messages expose count/context and the composer keeps the legacy persistent invitation/help cue.
+- [ ] Responsive/mobile discussion behavior still needs browser verification.
 
 ## Page: All Assignments
 **Legacy:** `/learn/allAssignments`  
@@ -131,8 +138,9 @@ Legacy contract audited from `AssignmentsContent`:
 - [x] Legacy 20-row pagination behavior is implemented.
 - [x] Created/due metadata and Not submitted / Due soon / Overdue / Submitted / Submitted late / Graded labels are represented.
 - [x] Published overdue assignments remain submittable.
-- [ ] Legacy assignment submission/view drawer is still missing from the aggregate page; vNext currently deep-links to the exact Learning Path item.
-- [ ] Exact drawer text/link/file field parity remains open with the drawer.
+- [x] Aggregate assignment cards open an in-page right-side assignment drawer with due/status/instructions, existing learner submission, published grade/feedback and a secondary exact Learning Path deep link.
+- [x] Written-response and HTTPS-link submission/view flows are available directly in the drawer.
+- [ ] File-backed assignment submission remains BLOCKED on the shared secure Cloud Storage workflow; do not treat text/link parity as file parity.
 - [x] Grade visibility is masked until published.
 - [x] Metrics use the full aggregate set rather than page-only counts.
 - [x] Loading/error/first-run/filtered-empty states are implemented.
@@ -486,10 +494,12 @@ Audited legacy sections:
 - extracurricular activities;
 - hobbies;
 - metadata;
-- job preferences;
-- placement academic record;
-- deep-link scroll targets for contact/connect-account sections;
-- partial-section failure behavior using all-settled loading.
+- Job Preferences intentionally absent from the current learner self-profile;
+- Placement Academic Record intentionally absent from the current learner self-profile;
+- Profile Verification card for Education and Identity, including incomplete/ready/submitted/sent-back/verified/update-pending states;
+- verified-by/date, sent-back reason, changed-since-verification semantics and visible-page refresh;
+- marksheet/resume/private identity-document prerequisites for verification;
+- deep-link scroll targets for contact/connect-account sections.
 
 Closure checklist:
 - [ ] User summary is implemented; profile-image self-service remains BLOCKED on Cloud Storage.
@@ -511,9 +521,10 @@ Closure checklist:
 - [x] Extracurricular add/edit/delete is implemented.
 - [x] Hobbies edit behavior is implemented.
 - [x] Metadata edit behavior is implemented.
-- [x] Job Preferences edit behavior is implemented.
-- [x] Placement Academic Record is shown and authoritative.
-- [x] A failure in one optional profile section does not blank the entire page.
+- [x] Job Preferences is absent from learner Profile, matching the current production self-profile; placement preferences remain placement-domain data.
+- [x] Placement Academic Record is absent from learner Profile, matching the current production self-profile.
+- [ ] Profile Verification Education/Identity state machine, learner submit/resubmit actions, verified badge/by/date, sent-back guidance and update-pending semantics remain open.
+- [ ] Verification readiness cannot be honestly completed until marksheet/resume/private identity-document storage flows are live; those storage-backed prerequisites remain BLOCKED.
 - [ ] Loading skeleton, hard-error retry and visibility-refresh behavior are verified.
 - [x] Role redirect/fence behavior is server-safe.
 - [x] Storage-backed items are marked BLOCKED until Cloud Storage is live rather than silently omitted.

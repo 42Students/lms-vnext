@@ -5,9 +5,11 @@ import {
   useMemo,
   useState,
 } from "react";
+import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { AssignmentSubmissionControl } from "./assignment-submission-control";
 
 type CourseChoice = {
   id: string;
@@ -34,9 +36,13 @@ export type LearnerAssignmentOverviewItem =
     kind: "ASSIGNMENT";
     maxPoints: number;
     submissionId: string | null;
+    submissionType: "TEXT" | "LINK" | null;
+    submissionText: string | null;
+    submissionUrl: string | null;
     submittedAt: string | null;
     gradePublished: boolean;
     pointsAwarded: number | null;
+    feedback: string | null;
   };
 
 export type LearnerQuizOverviewItem =
@@ -202,6 +208,10 @@ export function LearnerAssessmentOverview({
   const [courseId, setCourseId] =
     useState("");
   const [page, setPage] = useState(1);
+  const [
+    selectedAssignmentKey,
+    setSelectedAssignmentKey,
+  ] = useState<string | null>(null);
 
   const filtered = useMemo(
     () =>
@@ -229,6 +239,17 @@ export function LearnerAssessmentOverview({
       ? Boolean(item.submittedAt)
       : item.attemptsUsed > 0,
   ).length;
+
+  const selectedAssignment = useMemo(
+    () =>
+      items.find(
+        (item): item is LearnerAssignmentOverviewItem =>
+          item.kind === "ASSIGNMENT" &&
+          `${item.deliveryId}:${item.id}` ===
+            selectedAssignmentKey,
+      ),
+    [items, selectedAssignmentKey],
+  );
 
   if (items.length === 0) {
     return (
@@ -379,12 +400,26 @@ export function LearnerAssessmentOverview({
                         ? `${item.maxPoints} points`
                         : `${item.totalPoints} points · ${item.attemptsUsed}/${item.maxAttempts} attempts`}
                     </span>
-                    <Link
-                      href={href}
-                      className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
-                    >
-                      {state.action}
-                    </Link>
+                    {item.kind === "ASSIGNMENT" ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedAssignmentKey(
+                            `${item.deliveryId}:${item.id}`,
+                          )
+                        }
+                        className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
+                      >
+                        {state.action}
+                      </button>
+                    ) : (
+                      <Link
+                        href={href}
+                        className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
+                      >
+                        {state.action}
+                      </Link>
+                    )}
                   </div>
                 </div>
               </article>
@@ -392,6 +427,159 @@ export function LearnerAssessmentOverview({
           })}
         </div>
       )}
+
+      <Drawer
+        open={Boolean(selectedAssignment)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedAssignmentKey(null);
+          }
+        }}
+        title={selectedAssignment?.title ?? "Assignment"}
+        description={
+          selectedAssignment
+            ? `${selectedAssignment.courseName} · ${selectedAssignment.lessonName}`
+            : undefined
+        }
+        footer={
+          selectedAssignment ? (
+            <Link
+              href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
+              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text"
+            >
+              Open in Learning Path
+            </Link>
+          ) : undefined
+        }
+      >
+        {selectedAssignment ? (
+          <div className="space-y-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-lg border border-border bg-surface-subtle p-4">
+                <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                  Due
+                </p>
+                <p className="mt-1 text-sm font-semibold text-foreground">
+                  {formatDate(selectedAssignment.dueAt)}
+                </p>
+              </div>
+              <div className="rounded-lg border border-border bg-surface-subtle p-4">
+                <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                  Points
+                </p>
+                <p className="mt-1 text-sm font-semibold text-foreground">
+                  {selectedAssignment.maxPoints}
+                </p>
+              </div>
+            </div>
+
+            {selectedAssignment.description ? (
+              <section>
+                <h3 className="m-0 text-sm font-semibold text-foreground">
+                  Instructions
+                </h3>
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
+                  {selectedAssignment.description}
+                </p>
+              </section>
+            ) : null}
+
+            {selectedAssignment.submissionId ? (
+              <section className="rounded-xl border border-border bg-surface-subtle p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="m-0 text-sm font-semibold text-foreground">
+                      Your submission
+                    </h3>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Submitted {formatDate(selectedAssignment.submittedAt)}
+                    </p>
+                  </div>
+                  <StatusBadge
+                    tone={
+                      selectedAssignment.gradePublished
+                        ? "success"
+                        : "info"
+                    }
+                  >
+                    {selectedAssignment.gradePublished
+                      ? `Graded · ${selectedAssignment.pointsAwarded ?? 0}/${selectedAssignment.maxPoints}`
+                      : "Submitted · awaiting grade"}
+                  </StatusBadge>
+                </div>
+
+                {selectedAssignment.submissionType === "TEXT" &&
+                selectedAssignment.submissionText ? (
+                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                      Written response
+                    </p>
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
+                      {selectedAssignment.submissionText}
+                    </p>
+                  </div>
+                ) : null}
+
+                {selectedAssignment.submissionType === "LINK" &&
+                selectedAssignment.submissionUrl ? (
+                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                      Submitted link
+                    </p>
+                    {selectedAssignment.submissionUrl.startsWith("https://") ? (
+                      <a
+                        href={selectedAssignment.submissionUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 block break-all text-sm font-semibold text-primary-text underline"
+                      >
+                        {selectedAssignment.submissionUrl}
+                      </a>
+                    ) : (
+                      <p className="mt-2 break-all text-sm text-body">
+                        {selectedAssignment.submissionUrl}
+                      </p>
+                    )}
+                  </div>
+                ) : null}
+
+                {selectedAssignment.gradePublished &&
+                selectedAssignment.feedback ? (
+                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                      Faculty feedback
+                    </p>
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
+                      {selectedAssignment.feedback}
+                    </p>
+                  </div>
+                ) : null}
+              </section>
+            ) : (
+              <>
+                {selectedAssignment.dueAt &&
+                new Date(selectedAssignment.dueAt).getTime() <
+                  Date.now() ? (
+                  <div
+                    role="status"
+                    className="rounded-lg border border-warning bg-[var(--lms-warning-subtle)] p-4 text-sm text-body"
+                  >
+                    <strong className="text-foreground">
+                      This assignment is past due.
+                    </strong>{" "}
+                    You can still submit it; the submission will be recorded as late.
+                  </div>
+                ) : null}
+
+                <AssignmentSubmissionControl
+                  assignmentId={selectedAssignment.id}
+                  deliveryId={selectedAssignment.deliveryId}
+                />
+              </>
+            )}
+          </div>
+        ) : null}
+      </Drawer>
 
       {filtered.length > PAGE_SIZE ? (
         <nav

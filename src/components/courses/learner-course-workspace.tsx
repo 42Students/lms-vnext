@@ -9,6 +9,8 @@ import { LearnerVideoPlayer } from "./learner-video-player";
 import {
   assignmentInteractionState,
   isAssignmentOverdue,
+  isQuizExpired,
+  lessonProgressState,
   resourceInteractionState,
 } from "./learner-interaction-model";
 import {
@@ -182,6 +184,13 @@ function ContentCard({
                 content.progress.status,
               )}
             </StatusBadge>
+            {(content.type === "VIDEO" || content.type === "YOUTUBE") &&
+            content.progress.percentComplete > 0 &&
+            content.progress.percentComplete < 100 ? (
+              <StatusBadge tone="info">
+                {content.progress.percentComplete}% watched
+              </StatusBadge>
+            ) : null}
             {scheduled ? (
               <StatusBadge tone="warning">
                 Scheduled
@@ -388,7 +397,7 @@ function AssignmentCard({
       <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
         {assignment.dueAt ? (
           <span>
-            Due {formatDateTime(assignment.dueAt)}
+            {overdue ? "Was due" : "Due"} {formatDateTime(assignment.dueAt)}
           </span>
         ) : (
           <span>No deadline</span>
@@ -445,6 +454,11 @@ function QuizCard({
   deliveryId: string;
   readOnly: boolean;
 }) {
+  const expired = isQuizExpired(
+    quiz.attemptsUsed,
+    quiz.dueAt,
+  );
+
   return (
     <article
       id={`item-QUIZ-${quiz.id}`}
@@ -465,7 +479,11 @@ function QuizCard({
                 quiz.progress.status,
               )}
             </StatusBadge>
-            {quiz.status === "CLOSED" ? (
+            {expired ? (
+              <StatusBadge tone="error">
+                Expired
+              </StatusBadge>
+            ) : quiz.status === "CLOSED" ? (
               <StatusBadge tone="neutral">
                 Closed
               </StatusBadge>
@@ -493,7 +511,7 @@ function QuizCard({
         </span>
         {quiz.dueAt ? (
           <span>
-            Due {formatDateTime(quiz.dueAt)}
+            {expired ? "Was due" : "Due"} {formatDateTime(quiz.dueAt)}
           </span>
         ) : (
           <span>No deadline</span>
@@ -708,9 +726,26 @@ export function LearnerCourseWorkspace({
           const visibleItems = lesson.items.filter((item) => matchesFilter(lesson, item));
           if (activeFilter !== "all" && visibleItems.length === 0) return null;
 
-          const completed = lesson.items.filter(
-            (item) => item.progress.status === "COMPLETED",
-          ).length;
+          const lessonProgress = lessonProgressState(
+            lesson.items.map((item) => item.progress.status),
+            workspace.nextItem?.lessonId === lesson.id,
+          );
+          const contentCounts = {
+            lectures: lesson.contents.filter(
+              (content) =>
+                content.type === "VIDEO" ||
+                content.type === "YOUTUBE",
+            ).length,
+            resources: lesson.contents.filter(
+              (content) => content.type === "RESOURCE",
+            ).length,
+            assessments:
+              lesson.assignments.length +
+              lesson.quizzes.length,
+            liveSessions: lesson.contents.filter(
+              (content) => content.type === "LIVE_CLASS",
+            ).length,
+          };
 
           return (
             <details
@@ -736,10 +771,43 @@ export function LearnerCourseWorkspace({
                       </p>
                     ) : null}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex max-w-xl flex-wrap items-center justify-end gap-2">
+                    {lessonProgress.complete ? (
+                      <StatusBadge tone="success">
+                        Completed
+                      </StatusBadge>
+                    ) : lessonProgress.current ? (
+                      <StatusBadge tone="info">
+                        Current lesson
+                      </StatusBadge>
+                    ) : lessonProgress.inProgress ? (
+                      <StatusBadge tone="info">
+                        In progress
+                      </StatusBadge>
+                    ) : null}
                     <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                      {completed}/{lesson.items.length} complete
+                      {lessonProgress.completed}/{lessonProgress.total} complete
                     </span>
+                    {contentCounts.lectures > 0 ? (
+                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                        {contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}
+                      </span>
+                    ) : null}
+                    {contentCounts.resources > 0 ? (
+                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                        {contentCounts.resources} resource{contentCounts.resources === 1 ? "" : "s"}
+                      </span>
+                    ) : null}
+                    {contentCounts.assessments > 0 ? (
+                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                        {contentCounts.assessments} assessment{contentCounts.assessments === 1 ? "" : "s"}
+                      </span>
+                    ) : null}
+                    {contentCounts.liveSessions > 0 ? (
+                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                        {contentCounts.liveSessions} live
+                      </span>
+                    ) : null}
                     <span aria-hidden="true" className="text-primary-text group-open:rotate-90">
                       ›
                     </span>

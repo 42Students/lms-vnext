@@ -1,6 +1,6 @@
 # Learner UI Surface Parity Ledger
 
-> **Freshness warning — 2026-10-05:** the original Learner ledger baseline is now stale for final release. Current observed legacy heads are FE `008d113ddd9f515df65ae7fe90dba360938314f6` and BE `ed1377b744088f2ec759895658105c494337ba30`. Historical `CLOSED` rows remain useful evidence, but no family is final-release valid until `docs/planning/learner-family-verification.md` is `VERIFIED` for that family against the current/frozen oracle.
+> **Freshness warning — 2026-10-05:** the original Learner ledger baseline is now stale for final release. Current observed legacy heads are FE `1d563f75f10ede5dcc0a7b17ad65b75ea03dd07d` and BE `94af997f8f9529ffbe7da317fff47f86c16bcebf`. Historical `CLOSED` rows remain useful evidence, but no family is final-release valid until `docs/planning/learner-family-verification.md` is `VERIFIED` for that family against the current/frozen oracle.
 >
 > Read `docs/planning/clone-parity-protocol.md` before continuing.
 
@@ -174,10 +174,10 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L3-030 | Empty learning path | syllabus | EmptyState | FIXED |
 | L3-031 | Partial lesson/no-items state | syllabus | lesson state | FIXED |
 | L3-032 | Learning Path mobile behavior | syllabus responsive | learner workspace | UNCHECKED |
-| L3-033 | Current lesson + completed/in-progress lesson status | syllabus roadmap cards | learner workspace | GAP |
-| L3-034 | Per-lesson content-type breakdown/counts | syllabus roadmap cards | learner workspace | GAP |
-| L3-035 | Assignment due / overdue and expired-quiz row cues | syllabus roadmap rows | learner workspace | GAP |
-| L3-036 | Video/YouTube watched percentage on roadmap row | syllabus roadmap rows | learner workspace | GAP |
+| L3-033 | Current lesson + completed/in-progress lesson status | syllabus roadmap cards | learner workspace | FIXED |
+| L3-034 | Per-lesson content-type breakdown/counts | syllabus roadmap cards | learner workspace | FIXED |
+| L3-035 | Assignment due / overdue and expired-quiz row cues | syllabus roadmap rows | learner workspace | FIXED |
+| L3-036 | Video/YouTube watched percentage on roadmap row | syllabus roadmap rows | learner workspace | FIXED |
 | L3-037 | Roadmap content viewer/drawer interaction parity | syllabus content modal + assignment drawer | inline learner cards/players | GAP |
 
 ## L4 — Course Attendance tab
@@ -218,11 +218,11 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L5-010 | Load error/retry | Classroom | retry state | FIXED |
 | L5-011 | Historical discussion read-only | old course | `canPost=false` | FIXED |
 | L5-012 | Mobile discussion behavior | Classroom responsive | discussion component | UNCHECKED |
-| L5-013 | Consecutive-message sender grouping | Classroom buildFeed | learner discussion feed | GAP |
-| L5-014 | Initial load lands at newest message | Classroom scroll-to-bottom behavior | learner discussion feed | GAP |
-| L5-015 | New-message unseen counter while reading history | Classroom unseenCount | learner discussion feed | GAP |
-| L5-016 | Multiple pinned-message count/context | Classroom pin strip | learner discussion feed | GAP |
-| L5-017 | Persistent discussion invitation/help cue | Classroom composer copy | learner discussion feed | GAP |
+| L5-013 | Consecutive-message sender grouping | Classroom buildFeed | learner discussion feed | FIXED |
+| L5-014 | Initial load lands at newest message | Classroom scroll-to-bottom behavior | learner discussion feed | FIXED |
+| L5-015 | New-message unseen counter while reading history | Classroom unseenCount | learner discussion feed | FIXED |
+| L5-016 | Multiple pinned-message count/context | Classroom pin strip | learner discussion feed | FIXED |
+| L5-017 | Persistent discussion invitation/help cue | Classroom composer copy | learner discussion feed | FIXED |
 
 ## L6 — All Assignments: `/learn/allAssignments`
 
@@ -241,8 +241,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L6-011 | Submitted late state | AssignmentsContent | state mapping | CLOSED |
 | L6-012 | Graded state | AssignmentsContent | state mapping | CLOSED |
 | L6-013 | View/submit primary action | AssignmentsContent | aggregate component | CLOSED |
-| L6-014 | Submission/view drawer parity | AssignmentsContent | vNext interaction | GAP |
-| L6-015 | Submission text/link/file fields | AssignmentsContent | submission form | GAP |
+| L6-014 | Submission/view drawer parity | AssignmentsContent | aggregate assignment drawer | FIXED |
+| L6-015 | Submission text/link/file fields | AssignmentsContent | text/link in aggregate drawer; file awaits secure storage | BLOCKED |
 | L6-016 | Grade masked until publish | AssignmentsContent | learner service | CLOSED |
 | L6-017 | Metrics/summary pills | AssignmentsContent | aggregate metrics | CLOSED |
 | L6-018 | Loading skeleton | AssignmentsContent | aggregate page | CLOSED |
@@ -753,11 +753,11 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L30-021 | Hobbies edit | hobbies | profile workspace | FIXED |
 | L30-022 | Metadata section | metadata | profile workspace | FIXED |
 | L30-023 | Publications/awards legacy handling | profile subcomponents | profile workspace | UNCHECKED |
-| L30-024 | Job Preferences must be absent from learner Profile | learnerProfileSectionsRemoved.test.jsx / About | vNext currently renders Job Preferences | GAP |
-| L30-025 | Placement Academic Record must be absent from learner Profile | learnerProfileSectionsRemoved.test.jsx | vNext currently renders Placement Academic Record | GAP |
+| L30-024 | Job Preferences must be absent from learner Profile | learnerProfileSectionsRemoved.test.jsx / About | learner self-profile keeps placement preferences out | FIXED |
+| L30-025 | Placement Academic Record must be absent from learner Profile | learnerProfileSectionsRemoved.test.jsx | learner self-profile keeps placement academic evidence out | FIXED |
 | L30-026 | Contact deep-link scroll | profile query section | profile workspace | UNCHECKED |
 | L30-027 | Connect-accounts deep-link scroll | profile query section | profile workspace | UNCHECKED |
-| L30-028 | Optional-section partial failure isolation | profile load | allSettled | FIXED |
+| L30-028 | Optional-section partial failure isolation | removed from current learner Profile composition | no separate optional placement-section fetches | RETIRED |
 | L30-029 | Loading skeleton | ProfileSkeleton | profile route | UNCHECKED |
 | L30-030 | Hard-error + Retry | profile route | profile route | UNCHECKED |
 | L30-031 | Visibility refresh | profile route | profile page | UNCHECKED |

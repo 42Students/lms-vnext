@@ -1,6 +1,6 @@
 # LMS vNext — Account Surface Parity Matrix v2
 
-> **Freshness gate — 2026-10-05:** this matrix was built against FE `38cdd38e...`, while current observed FE is `008d113...` and BE is `ed1377b...`. The matrix is still useful for work tracking but is not final cutover proof until `docs/planning/clone-parity-protocol.md` is satisfied, the route manifest is refreshed, and family evidence is VERIFIED against the frozen oracle.
+> **Freshness gate — 2026-10-05:** this matrix was built against FE `38cdd38e...`, while current observed FE is `1d563f75...` and BE is `94af997f...`. The matrix is still useful for work tracking but is not final cutover proof until `docs/planning/clone-parity-protocol.md` is satisfied, the route manifest is refreshed, and family evidence is VERIFIED against the frozen oracle.
 
 **Audit date:** 2026-10-04  
 **Legacy UI oracle:** `42Students/lms2-fe@prod-2026`  
@@ -54,7 +54,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Learning Path | course `roadmap` tab | course workspace | Ordered lessons/content/assessments + continue learning. | DONE |
 | Course Attendance | course `attendanceDetail` | same legacy tab route | Month-scoped read-only attendance, future Scheduled rows, held/marked math, threshold headroom/recovery guidance and session detail now match the audited learner contract; mobile/browser verification remains. | PARTIAL |
 | Course Discussions | course `discussions` | same legacy tab route | Delivery-scoped feed, post/delete-own, pinned display, polling and explicit loading/empty/error states are implemented. | DONE |
-| All Assignments | `/learn/allAssignments` | `/learn/allAssignments` | Aggregate scope, filter, legacy 20-row pagination, status labels, created/due metadata, grade masking and exact lesson deep links are implemented; legacy submission/view drawer and mobile verification remain. | PARTIAL |
+| All Assignments | `/learn/allAssignments` | `/learn/allAssignments` | Aggregate scope/filter/pagination/status/grade masking plus the learner submission/view drawer are implemented; written/link submission and published feedback work in-place. File-backed submission and final mobile/browser verification remain. | PARTIAL |
 | All Quizzes | `/learn/allQuizzes` | `/learn/allQuizzes` | Aggregate scope, filter, legacy-sized pagination, attempt/result states and exact standalone quiz deep links are implemented; mobile verification remains. | PARTIAL |
 | Standalone quiz attempt UX | `/quiz` | `/quiz` full-screen attempt/review flow | Single/Multiple choice, navigation, refresh persistence, unanswered warning, attempt/deadline/result policy and layered duplicate-submit protection match the audited legacy behavior; final browser/mobile verification remains. | PARTIAL |
 | Class Schedule | `/learn/calendar` | `/learn/calendar` | Source parity is closed for title/metrics, next-three preview, Month/Week/Day navigation, filters, event metadata/deep links, empty/error/loading states and mobile agenda fallback; final browser/CI verification remains. | PARTIAL |
@@ -78,7 +78,7 @@ Detailed page contract: `docs/parity/learner.md`.
 | Project Delivery | project detail | vNext project workspace | Submission workflow exists; exact parity pending. | PARTIAL |
 | Project Activity | project detail | vNext project workspace | Verify history/activity equivalence. | PARTIAL |
 | Notifications feed | `/learn/notifications` | `/learn/notifications` | Shared route exists; legacy announcement/personal feed behavior must be audited, not assumed. | PARTIAL |
-| Self Profile | `/learn/profile` | `/learn/profile` | Current oracle drift: legacy removed Job Preferences/Placement Academic Record from learner Profile and added Education/Identity Profile Verification, marksheets/private documents, send-back/update-pending states and verified badge metadata. vNext still has removed cards and lacks verification. | PARTIAL |
+| Self Profile | `/learn/profile` | `/learn/profile` | Current-oracle removed Job Preferences/Placement Academic Record are now also absent in vNext. Education/Identity Profile Verification, marksheets/private documents, send-back/update-pending states and verified badge metadata remain open and storage-dependent. | PARTIAL |
 | `/learn` redirect | `/learn` | not required for greenfield bookmarks | Legacy redirect-only route; no user job lost. | RETIRED |
 
 ---
@@ -610,4 +610,4 @@ Within a page:
 
 ### Learner shell access re-audit — 2026-10-05
 
-Current-oracle re-audit found that Learner Projects and Placements cannot be static shell links. vNext now carries persisted hierarchical optional-module decisions plus learner placement participation resolution into the shared shell. The implementation gap for conditional Projects/Placements visibility is fixed, while family verification remains open until the corresponding admin/TPO producer workflows and browser evidence are complete. Conditional learner Drive Day remains explicitly open.
+Current-oracle re-audit found that Learner Projects and Placements cannot be static shell links. vNext now carries persisted hierarchical optional-module decisions plus learner placement participation resolution into the shared shell. The implementation gap for conditional Projects/Placements visibility is fixed, while family verification remains open until the corresponding admin/TPO producer workflows and browser evidence are complete. Conditional learner Drive Day is implemented in source; final producer/browser verification remains open.

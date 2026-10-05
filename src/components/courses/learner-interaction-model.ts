@@ -72,3 +72,34 @@ export function isAssignmentOverdue(
 ) {
   return !submissionId && Boolean(dueAt) && dueAt!.getTime() < nowMs;
 }
+
+
+export function isQuizExpired(
+  attemptsUsed: number,
+  dueAt: Date | null | undefined,
+  nowMs: number = Date.now(),
+) {
+  return attemptsUsed === 0 && Boolean(dueAt) && dueAt!.getTime() < nowMs;
+}
+
+export function lessonProgressState(
+  statuses: ProgressStatus[],
+  isCurrent: boolean,
+) {
+  const completed = statuses.filter(
+    (status) => status === "COMPLETED",
+  ).length;
+  const total = statuses.length;
+  const complete = total > 0 && completed === total;
+  const started =
+    completed > 0 ||
+    statuses.some((status) => status === "IN_PROGRESS");
+
+  return {
+    completed,
+    total,
+    complete,
+    inProgress: !complete && started,
+    current: isCurrent && !complete,
+  };
+}

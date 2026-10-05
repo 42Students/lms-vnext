@@ -41,6 +41,12 @@ export default async function LearnerAssignmentsPage() {
         maxPoints: assignment.maxPoints,
         submissionId:
           assignment.submissionId,
+        submissionType:
+          assignment.submissionType,
+        submissionText:
+          assignment.submissionText,
+        submissionUrl:
+          assignment.submissionUrl,
         submittedAt:
           assignment.submittedAt?.toISOString() ??
           null,
@@ -48,6 +54,8 @@ export default async function LearnerAssignmentsPage() {
           assignment.gradePublished,
         pointsAwarded:
           assignment.pointsAwarded,
+        feedback:
+          assignment.feedback,
       }),
     );
 

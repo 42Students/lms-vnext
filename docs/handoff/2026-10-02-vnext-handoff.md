@@ -41,13 +41,27 @@ Always refresh these heads before closing rows.
 The original Learner audit baseline is stale for final sign-off.
 
 Current observed heads on 2026-10-05:
-- `lms2-fe/prod-2026`: `008d113ddd9f515df65ae7fe90dba360938314f6`
-- `lms/prod-2026`: `ed1377b744088f2ec759895658105c494337ba30`
+- `lms2-fe/prod-2026`: `1d563f75f10ede5dcc0a7b17ad65b75ea03dd07d`
+- `lms/prod-2026`: `94af997f8f9529ffbe7da317fff47f86c16bcebf`
 - vNext before the no-surprise protocol: `db6f3c0db7ae4d2402211b1a65650de499b97c69`
 
-The old FE baseline is 115 commits behind current `prod-2026`. Material changes include learner Profile Verification/private marksheets, learner Profile section removals, placement/module-access behavior, project semantics and new account routes. The frozen route manifest is therefore stale.
+The original FE baseline is materially behind current `prod-2026`. Material changes include learner Profile Verification/private marksheets, learner Profile section removals, placement/module-access behavior, project semantics and new account routes. The frozen route manifest is therefore stale.
 
 No Learner family is release-valid until its row in `docs/planning/learner-family-verification.md` is VERIFIED. Run `npm run parity:clone-gate`; it must remain blocking until the final frozen-oracle sweep passes.
+
+
+### Latest Learner parity batch
+
+The current Learner batch closes a concentrated set of source-level parity gaps without weakening the final verification gate:
+
+- Course Discussions: sender grouping, newest-message landing, unseen-message counter, multi-pin context and persistent learner help cue are implemented.
+- Learning Path: current/completed/in-progress lesson state, per-lesson content-type counts, overdue/expired assessment cues and partial watched percentages are implemented.
+- All Assignments: aggregate cards now open an in-page right drawer; text/link submission and existing submission/grade/feedback review work there. File-backed submissions remain blocked on secure storage.
+- Learner Profile: obsolete Job Preferences and Placement Academic Record cards were removed from the learner self-profile to match current production.
+- Profile Verification was audited against current production but is intentionally not faked: education verification requires marksheets + resume and identity verification requires private Aadhaar/PAN documents, so the state machine remains open until the secure storage prerequisites are available.
+- Placement Assessments was audited and needs an explicit assessment-deadline model; do not infer legacy Due today/Overdue buckets from vNext `scheduledAt` or `resultsDueAt`.
+
+Continue from the first unresolved Learner family/row after refreshing all three heads. Do not convert `FIXED` to `CLOSED` or a family to `VERIFIED` without executed browser/mobile/regression evidence.
 
 ### Greenfield data decision — locked
 

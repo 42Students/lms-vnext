@@ -10,31 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import type { LearnerProfileDocument } from "@/modules/people/profile-validation";
 
-type Preferences = {
-  preferredRoleTitles: string[];
-  preferredLocations: string[];
-  preferredEmploymentTypes: string[];
-  preferredWorkMode: string;
-  shiftPreference: string;
-  minimumAnnualCtcInr: number | null;
-  relocationPreference: string;
-  notifyMatchingJobs: boolean;
-  notifyApplicationUpdates: boolean;
-};
-
-type Evidence = {
-  source?: string | null;
-  cgpa?: number | null;
-  activeBacklogs?: number | null;
-  pastBacklogs?: number | null;
-  tenthPercentage?: number | null;
-  twelfthPercentage?: number | null;
-  diplomaPercentage?: number | null;
-  undergraduatePercentage?: number | null;
-  gapYears?: number | null;
-  passingYear?: number | null;
-} | null;
-
 type CollectionKey =
   | "experiences"
   | "education"
@@ -136,7 +111,7 @@ function hasText(value: unknown) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function completion(document: LearnerProfileDocument, preferences: Preferences | null, evidence: Evidence) {
+function completion(document: LearnerProfileDocument) {
   const checks = [
     hasText(document.headline) || hasText(document.bio),
     Object.values(document.contacts).some(hasText),
@@ -154,8 +129,6 @@ function completion(document: LearnerProfileDocument, preferences: Preferences |
     document.extracurriculars.length > 0,
     document.hobbies.length > 0,
     document.metadata.length > 0,
-    Boolean(preferences && (preferences.preferredRoleTitles.length || preferences.preferredLocations.length)),
-    Boolean(evidence),
   ];
   return Math.round((checks.filter(Boolean).length / checks.length) * 100);
 }
@@ -206,10 +179,6 @@ export function LearnerProfileWorkspace(props: {
   rollNumber: string | null;
   registrationNumber: string | null;
   initialDocument: LearnerProfileDocument;
-  initialPreferences: Preferences | null;
-  preferencesError: boolean;
-  initialAcademicEvidence: Evidence;
-  academicEvidenceError: boolean;
 }) {
   const { showToast } = useToast();
   const [document, setDocument] = useState(props.initialDocument);
@@ -218,14 +187,11 @@ export function LearnerProfileWorkspace(props: {
   const [collection, setCollection] = useState<CollectionKey | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
-  const [preferences, setPreferences] = useState(props.initialPreferences);
-  const [preferencesOpen, setPreferencesOpen] = useState(false);
-  const [preferenceDraft, setPreferenceDraft] = useState<Preferences | null>(props.initialPreferences);
   const [pending, startTransition] = useTransition();
 
   const percent = useMemo(
-    () => completion(document, preferences, props.initialAcademicEvidence),
-    [document, preferences, props.initialAcademicEvidence],
+    () => completion(document),
+    [document],
   );
 
   function saveDocument(next: LearnerProfileDocument, onDone?: () => void) {
@@ -277,25 +243,6 @@ export function LearnerProfileWorkspace(props: {
     saveDocument({ ...document, [section]: current.filter((item) => String(item.id) !== id) } as LearnerProfileDocument);
   }
 
-  function savePreferences() {
-    if (!preferenceDraft) return;
-    startTransition(async () => {
-      const response = await fetch("/api/placements/preferences", {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(preferenceDraft),
-      });
-      const payload = await response.json().catch(() => null);
-      if (!response.ok) {
-        showToast({ tone: "error", title: "Job preferences update failed", description: payload?.error || "Try again." });
-        return;
-      }
-      setPreferences(payload.preferences);
-      setPreferenceDraft(payload.preferences);
-      setPreferencesOpen(false);
-      showToast({ tone: "success", title: "Job preferences updated" });
-    });
-  }
 
   return (
     <div className="space-y-5">
@@ -400,36 +347,7 @@ export function LearnerProfileWorkspace(props: {
         );
       })}
 
-      <Card id="job-preferences" title="Job preferences" action={preferences ? <Button size="sm" variant="secondary" onClick={() => { setPreferenceDraft({ ...preferences, preferredRoleTitles: [...preferences.preferredRoleTitles], preferredLocations: [...preferences.preferredLocations], preferredEmploymentTypes: [...preferences.preferredEmploymentTypes] }); setPreferencesOpen(true); }}>Edit</Button> : undefined}>
-        {props.preferencesError ? <p role="alert" className="m-0 text-sm text-warning">Job preferences could not be loaded. The rest of your profile is still available.</p> : preferences ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Value label="Preferred roles" value={preferences.preferredRoleTitles.join(", ")} />
-            <Value label="Locations" value={preferences.preferredLocations.join(", ")} />
-            <Value label="Work mode" value={preferences.preferredWorkMode} />
-            <Value label="Shift" value={preferences.shiftPreference} />
-            <Value label="Relocation" value={preferences.relocationPreference} />
-            <Value label="Minimum CTC" value={preferences.minimumAnnualCtcInr ? "₹" + preferences.minimumAnnualCtcInr.toLocaleString("en-IN") : null} />
-          </div>
-        ) : <p className="m-0 text-sm text-muted-foreground">No job preferences are available.</p>}
-      </Card>
 
-      <Card id="academic-record" title="Placement academic record">
-        {props.academicEvidenceError ? <p role="alert" className="m-0 text-sm text-warning">Academic evidence could not be loaded. Other profile sections remain available.</p> : props.initialAcademicEvidence ? (
-          <>
-            <div className="mb-4"><StatusBadge tone={props.initialAcademicEvidence.source === "VERIFIED" ? "success" : "warning"}>{props.initialAcademicEvidence.source === "VERIFIED" ? "Verified" : "Self-reported"}</StatusBadge></div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <Value label="CGPA" value={props.initialAcademicEvidence.cgpa} />
-              <Value label="Active backlogs" value={props.initialAcademicEvidence.activeBacklogs} />
-              <Value label="Past backlogs" value={props.initialAcademicEvidence.pastBacklogs} />
-              <Value label="10th %" value={props.initialAcademicEvidence.tenthPercentage} />
-              <Value label="12th %" value={props.initialAcademicEvidence.twelfthPercentage} />
-              <Value label="Diploma %" value={props.initialAcademicEvidence.diplomaPercentage} />
-              <Value label="UG %" value={props.initialAcademicEvidence.undergraduatePercentage} />
-              <Value label="Gap years" value={props.initialAcademicEvidence.gapYears} />
-            </div>
-          </>
-        ) : <p className="m-0 text-sm text-muted-foreground">No placement academic evidence has been recorded yet.</p>}
-      </Card>
 
       <Dialog
         open={detailsOpen}
@@ -509,25 +427,7 @@ export function LearnerProfileWorkspace(props: {
         ) : null}
       </Dialog>
 
-      <Dialog
-        open={preferencesOpen}
-        onOpenChange={setPreferencesOpen}
-        title="Edit job preferences"
-        footer={<><Button variant="secondary" disabled={pending} onClick={() => setPreferencesOpen(false)}>Cancel</Button><Button disabled={pending || !preferenceDraft} onClick={savePreferences}>{pending ? "Saving…" : "Save"}</Button></>}
-      >
-        {preferenceDraft ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-xs font-semibold text-body sm:col-span-2">Preferred roles · comma-separated<Input className="mt-1.5" value={preferenceDraft.preferredRoleTitles.join(", ")} onChange={(event) => setPreferenceDraft({ ...preferenceDraft, preferredRoleTitles: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></label>
-            <label className="text-xs font-semibold text-body sm:col-span-2">Preferred locations · comma-separated<Input className="mt-1.5" value={preferenceDraft.preferredLocations.join(", ")} onChange={(event) => setPreferenceDraft({ ...preferenceDraft, preferredLocations: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></label>
-            <label className="text-xs font-semibold text-body">Work mode<Select className="mt-1.5" value={preferenceDraft.preferredWorkMode} onChange={(event) => setPreferenceDraft({ ...preferenceDraft, preferredWorkMode: event.target.value })}>{["NO_PREFERENCE", "ONSITE", "HYBRID", "REMOTE"].map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}</Select></label>
-            <label className="text-xs font-semibold text-body">Shift<Select className="mt-1.5" value={preferenceDraft.shiftPreference} onChange={(event) => setPreferenceDraft({ ...preferenceDraft, shiftPreference: event.target.value })}>{["NO_PREFERENCE", "DAY", "NIGHT", "FLEXIBLE"].map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}</Select></label>
-            <label className="text-xs font-semibold text-body">Relocation<Select className="mt-1.5" value={preferenceDraft.relocationPreference} onChange={(event) => setPreferenceDraft({ ...preferenceDraft, relocationPreference: event.target.value })}>{["NO_PREFERENCE", "YES", "NO"].map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}</Select></label>
-            <label className="text-xs font-semibold text-body">Minimum annual CTC (₹)<Input className="mt-1.5" type="number" min={0} value={preferenceDraft.minimumAnnualCtcInr ?? ""} onChange={(event) => setPreferenceDraft({ ...preferenceDraft, minimumAnnualCtcInr: event.target.value ? Number(event.target.value) : null })} /></label>
-            <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><input type="checkbox" checked={preferenceDraft.notifyMatchingJobs} onChange={(event) => setPreferenceDraft({ ...preferenceDraft, notifyMatchingJobs: event.target.checked })} />Notify me about matching jobs</label>
-            <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><input type="checkbox" checked={preferenceDraft.notifyApplicationUpdates} onChange={(event) => setPreferenceDraft({ ...preferenceDraft, notifyApplicationUpdates: event.target.checked })} />Notify me about application updates</label>
-          </div>
-        ) : null}
-      </Dialog>
+
     </div>
   );
 }

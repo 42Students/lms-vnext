@@ -578,6 +578,9 @@ export async function getLearnerCourseWorkspace(
     maxPoints: number;
     sequence: number;
     submissionId: string | null;
+    submissionType: "TEXT" | "LINK" | null;
+    submissionText: string | null;
+    submissionUrl: string | null;
     submittedAt: Date | null;
     gradePublished: boolean;
     pointsAwarded: number | null;
@@ -721,6 +724,12 @@ export async function getLearnerCourseWorkspace(
         sequence: courseAssignments.sequence,
         submissionId:
           assignmentSubmissions.id,
+        submissionType:
+          assignmentSubmissions.submissionType,
+        submissionText:
+          assignmentSubmissions.textContent,
+        submissionUrl:
+          assignmentSubmissions.submissionUrl,
         submittedAt:
           assignmentSubmissions.submittedAt,
         gradePublished:
@@ -799,6 +808,9 @@ export async function getLearnerCourseWorkspace(
         maxPoints: row.maxPoints,
         sequence: row.sequence,
         submissionId: row.submissionId,
+        submissionType: row.submissionType,
+        submissionText: row.submissionText,
+        submissionUrl: row.submissionUrl,
         submittedAt: row.submittedAt,
         gradePublished:
           row.gradePublished ?? false,
