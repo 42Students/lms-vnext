@@ -27,7 +27,8 @@
     "status": "tsx scripts/project-status.ts",
     "smoke:authenticated": "tsx scripts/smoke-authenticated.ts",
     "parity:status": "tsx scripts/parity-status.ts",
-    "parity:pages": "tsx scripts/page-parity-status.ts"
+    "parity:pages": "tsx scripts/page-parity-status.ts",
+    "parity:learner": "tsx scripts/learner-surface-status.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",

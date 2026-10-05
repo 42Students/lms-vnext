@@ -84,3 +84,21 @@ For every legacy page, tab, section, card, modal, action and meaningful workflow
 No legacy surface may disappear silently. A consolidated vNext workspace does not automatically count as page parity when the legacy product had a distinct daily-use surface. First reach parity; then consolidate/redesign as a separate pass.
 
 Do not call LMS vNext feature-complete while `npm run parity:status` reports PARTIAL, MISSING, VERIFY or BLOCKED rows, while `npm run parity:pages` reports any open detailed checks, or while any account parity checkbox remains open. A master-matrix DONE row is not deeply closed if its corresponding `docs/parity/*.md` contract still has unresolved required behavior. Refresh the frozen legacy route manifest and affected page specs when `lms2-fe/prod-2026` materially moves.
+
+
+## Learner parity execution ledger — mandatory workflow
+
+For Learner work, `docs/planning/learner-ui-surface-ledger.md` is the operational queue. It is intentionally more granular than the route manifest or the prose parity spec.
+
+Every coding chat working on Learner parity must:
+1. read the ledger before editing;
+2. refresh `lms2-fe/prod-2026`, `lms/prod-2026`, and `lms-vnext/main` heads;
+3. continue from the first unresolved ledger row unless the user explicitly selects another row/family;
+4. compare the exact legacy page/component behavior before coding;
+5. add newly discovered UI surfaces to the ledger before implementing them;
+6. move a row through `UNCHECKED → AUDITING → GAP → FIXED → CLOSED` as appropriate;
+7. mark `CLOSED` only after a second legacy-vNext comparison and required regression/browser verification;
+8. update the ledger and affected parity docs in the same commit as the implementation;
+9. hand off the current row ID + next unresolved row when chat context is ending.
+
+Run `npm run parity:learner` for the machine-counted Learner ledger status. `FIXED` is not closed; `BLOCKED` is not closed.

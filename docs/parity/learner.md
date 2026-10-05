@@ -2,6 +2,10 @@
 
 Legacy navigation: Courses, Quizzes, Assignments, Class Schedule, Attendance, My Placements, Projects, Notifications, Profile.
 
+**Operational execution ledger:** `docs/planning/learner-ui-surface-ledger.md`.
+
+Use the ledger for row-by-row work and status. This file remains the detailed behavioral contract. A checked item here does not automatically make a ledger row `CLOSED`; closure requires the ledger's second comparison / verification rule.
+
 ## Clone-first learner naming and route lock
 
 The legacy learner information architecture is canonical in vNext. Use the exact legacy sidebar labels and canonical routes before deeper page reconstruction. Do not rename learner surfaces to vNext alternatives such as "My Courses", "/learn/quizzes", "/learn/assignments", "/learn/placements", or a shared "/notifications" entry. Those older vNext routes may exist only as compatibility redirects.

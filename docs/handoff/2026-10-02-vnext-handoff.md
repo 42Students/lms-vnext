@@ -1,6 +1,6 @@
 # LMS vNext — Current Handoff
 
-> **2026-10-04 parity directive:** account/page parity is now the highest-priority non-cloud work and a release gate. Read `docs/planning/account-surface-parity.md`. Clone the legacy product surface first using clean vNext architecture; redesign/consolidate only after parity is explicitly closed.
+> **2026-10-05 parity directive:** account/page parity is the highest-priority non-cloud work and a release gate. For Learner, the operational queue is `docs/planning/learner-ui-surface-ledger.md`: check exact legacy parity → record gaps → fix → re-check → close rows one by one. Also read `docs/planning/account-surface-parity.md`. Clone the legacy product surface first using clean vNext architecture; redesign/consolidate only after parity is explicitly closed.
 
 **Date:** 2026-10-02
 **Repository:** `42Students/lms-vnext`
@@ -9,6 +9,31 @@
 **Latest verified CI at that baseline:** run #52 — green
 
 Always verify the live `main` HEAD and latest CI before changing anything.
+
+
+## 0. Current execution mode — parity ledger
+
+Learner work is now driven by `docs/planning/learner-ui-surface-ledger.md`.
+
+Continuation chats must not restart with a broad Learner inventory. They should:
+- refresh legacy FE/BE + vNext heads;
+- run/read `npm run parity:learner`;
+- take the first unresolved row/family;
+- inspect the exact legacy implementation;
+- add any missing sub-surface to the ledger;
+- fix the gap;
+- re-check parity;
+- mark only genuinely verified rows `CLOSED`;
+- continue to the next row.
+
+Status meaning is strict: `FIXED` means implemented but still awaiting final parity/browser/regression verification. `BLOCKED` remains open. The next chat should be able to continue from the ledger without relying on conversation memory.
+
+Current audited legacy baseline when this mode was introduced:
+- `lms2-fe/prod-2026`: `38cdd38e592a6f416c8e8e99ce36438f548ed577`
+- `lms/prod-2026`: `36f93fc49dc93bfc8ad9f499a1247fbf7f98a1a9`
+- vNext before ledger commit: `6b602390d1b3d2e577991ce8698ea6f0eb2940f5`
+
+Always refresh these heads before closing rows.
 
 ### Greenfield data decision — locked
 

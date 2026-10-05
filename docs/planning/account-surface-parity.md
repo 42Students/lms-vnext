@@ -5,11 +5,12 @@
 **Legacy audited SHA:** `38cdd38e592a6f416c8e8e99ce36438f548ed577`  
 **vNext audit baseline:** `d972ebdf4563d34a059d59c4268e1f37911925fa`  
 **Mechanical route inventory:** `docs/planning/legacy-ui-route-manifest.md`  
-**Detailed page/workflow specs:** `docs/parity/README.md`
+**Detailed page/workflow specs:** `docs/parity/README.md`  
+**Learner operational ledger:** `docs/planning/learner-ui-surface-ledger.md`
 
 This matrix is the **surface-level behavioral source of truth** for clone-first / redesign-later. The route manifest is the mechanical backstop. The account files under `docs/parity/` are the second-level closure contracts for every page's sections, tabs, actions, forms, filters, modals, drawers, states, permissions, responsive behavior and regression coverage.
 
-A row may be marked DONE only when its user job is implemented **and** the required detailed page contract is closed.
+A row may be marked DONE only when its user job is implemented **and** the required detailed page contract is closed. For Learner specifically, all corresponding operational ledger rows must also be resolved (`CLOSED`, `REDESIGNED`, or `RETIRED`).
 
 ## Audit result
 
