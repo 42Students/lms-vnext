@@ -126,6 +126,7 @@ export function ProjectWorkspace({
   eyebrow,
   mode,
   currentMembershipId,
+  activeSection,
 }: {
   workspace: Workspace;
   backHref: string;
@@ -133,8 +134,13 @@ export function ProjectWorkspace({
   eyebrow: string;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
   currentMembershipId: string | null;
+  activeSection?: "overview" | "team" | "sprints" | "board" | "resources" | "activity";
 }) {
   const { readiness } = workspace;
+  const show = (section: "team" | "sprints" | "board" | "resources" | "activity") =>
+    !activeSection ||
+    activeSection === "overview" ||
+    activeSection === section;
   const tasksBySprint = new Map<
     string,
     Workspace["tasks"]
@@ -289,7 +295,7 @@ export function ProjectWorkspace({
         </section>
       ) : null}
 
-      <section className="space-y-3">
+      {show("team") ? <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -350,9 +356,9 @@ export function ProjectWorkspace({
             </article>
           ))}
         </div>
-      </section>
+      </section> : null}
 
-      <section className="space-y-3">
+      {show("sprints") || show("board") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Execution
@@ -736,9 +742,9 @@ export function ProjectWorkspace({
               })
             )}
           </div>
-        </section>
+        </section> : null}
 
-        <section className="space-y-3">
+        {show("team") ? <section className="space-y-3">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -861,7 +867,7 @@ export function ProjectWorkspace({
               })
             )}
           </div>
-        </section>
+        </section> : null}
       </div>
     </div>
   );

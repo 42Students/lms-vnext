@@ -7,11 +7,18 @@ import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-servi
 
 export default async function LearnerProjectPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ projectId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
+  const { tab } = await searchParams;
+  const activeSection =
+    tab === "team" || tab === "sprints" || tab === "board" || tab === "resources" || tab === "activity"
+      ? tab
+      : "overview";
   const access = await requireProjectReadAccess(
     context,
     projectId,
@@ -39,6 +46,7 @@ export default async function LearnerProjectPage({
       currentMembershipId={
         context.membership?.id ?? null
       }
+      activeSection={activeSection}
       />
     </div>
   );
