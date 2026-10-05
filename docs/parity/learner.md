@@ -160,13 +160,14 @@ Legacy contract:
 - result/error handling;
 - inline error boundary with retry.
 
-- [ ] Question rendering supports all legacy question types actually used.
-- [ ] Previous/next/question navigation is preserved.
-- [ ] Answer state survives expected navigation.
-- [ ] Attempt/submission confirmation and one-shot protections match.
-- [ ] Result visibility follows publish policy.
-- [ ] Fatal render/request error gives a recoverable retry state.
-- [ ] Browser refresh/back behavior is defined and tested.
+- [x] Question rendering supports the legacy Single and Multiple choice types.
+- [x] Previous/next/question navigation is preserved.
+- [x] Answer state survives question navigation and refresh through session-scoped persistence.
+- [x] Submission confirmation includes the legacy unanswered-question warning plus in-memory/session duplicate-submit locks; the database unique attempt-number constraint is the final race guard.
+- [x] Result visibility follows publish policy.
+- [x] Fatal render/request error gives a recoverable retry state.
+- [x] Back behavior returns to prior context with All Quizzes fallback, and successful submission returns after the legacy-style short confirmation window.
+- [ ] Mobile layout is implemented responsively but still needs browser verification.
 
 ## Page: Class Schedule
 **Legacy:** `/learn/calendar`

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -87,10 +87,12 @@ export function LearnerQuizAttempt() {
   const [review, setReview] = useState(reviewRequested);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const storageKey = quizId && deliveryId
     ? `learner-quiz:${deliveryId}:${quizId}`
     : "";
+  const submitLockKey = storageKey ? `${storageKey}:submit-lock` : "";
 
   async function load() {
     if (!quizId || !deliveryId) {
@@ -191,9 +193,52 @@ export function LearnerQuizAttempt() {
     });
   }
 
+  function leaveQuiz() {
+    if (
+      typeof window !== "undefined" &&
+      window.history.length > 1
+    ) {
+      router.back();
+      return;
+    }
+    router.push("/learn/allQuizzes");
+  }
+
   async function submit() {
-    if (!quiz || submitting || !attemptable) return;
-    if (!window.confirm("Submit this quiz attempt? You cannot edit this attempt after submission.")) return;
+    if (!quiz || submittingRef.current || submitting || !attemptable) return;
+
+    const unanswered = questions.filter(
+      (question) => (answers[question.id] ?? []).length === 0,
+    ).length;
+    const confirmation =
+      unanswered > 0
+        ? `You have ${unanswered} unanswered question${unanswered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
+        : "Submit this quiz attempt? You cannot edit this attempt after submission.";
+
+    if (!window.confirm(confirmation)) return;
+
+    if (submitLockKey && typeof window !== "undefined") {
+      try {
+        const raw = window.sessionStorage.getItem(submitLockKey);
+        const lockedAt = raw ? Number(JSON.parse(raw)?.ts) : 0;
+        if (
+          Number.isFinite(lockedAt) &&
+          lockedAt > 0 &&
+          Date.now() - lockedAt < 30_000
+        ) {
+          setError("A submission is already in progress in this tab. Please wait.");
+          return;
+        }
+        window.sessionStorage.setItem(
+          submitLockKey,
+          JSON.stringify({ ts: Date.now() }),
+        );
+      } catch {
+        // Session storage is only a client-side duplicate-submit guard.
+      }
+    }
+
+    submittingRef.current = true;
     setSubmitting(true);
     setError(null);
     try {
@@ -219,10 +264,21 @@ export function LearnerQuizAttempt() {
       router.replace(
         `/quiz?quizId=${encodeURIComponent(quizId)}&deliveryId=${encodeURIComponent(deliveryId)}&review=true`,
       );
+      window.setTimeout(() => {
+        leaveQuiz();
+      }, 2000);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Quiz submission failed.");
     } finally {
+      submittingRef.current = false;
       setSubmitting(false);
+      if (submitLockKey && typeof window !== "undefined") {
+        try {
+          window.sessionStorage.removeItem(submitLockKey);
+        } catch {
+          // Ignore session-storage cleanup failures.
+        }
+      }
     }
   }
 
@@ -262,7 +318,7 @@ export function LearnerQuizAttempt() {
                   : "No attempt is available to review."}
             </p>
           </div>
-          <Link href="/learn/allQuizzes" className="text-sm font-semibold text-primary-text">← All Quizzes</Link>
+          <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">← Back</button>
         </div>
         {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
         <div className="mt-6 space-y-4">
@@ -308,7 +364,7 @@ export function LearnerQuizAttempt() {
             <h1 className="mt-1 text-xl font-semibold text-foreground">{quiz.quiz.title}</h1>
             <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
           </div>
-          <Link href="/learn/allQuizzes" className="text-sm font-semibold text-primary-text">Close</Link>
+          <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">Back</button>
         </div>
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
           <div className="h-full bg-primary transition-all" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />

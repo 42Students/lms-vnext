@@ -69,6 +69,12 @@ describe("learner assessment parity pages", () => {
     expect(attempt).toContain("sessionStorage");
     expect(attempt).toContain("/submit");
     expect(attempt).toContain("review=true");
+    expect(attempt).toContain("submittingRef");
+    expect(attempt).toContain("submit-lock");
+    expect(attempt).toContain("30_000");
+    expect(attempt).toContain("unanswered question");
+    expect(attempt).toContain("router.back()");
+    expect(attempt).toContain("setTimeout");
     expect(overview).toContain("/quiz?quizId=");
   });
   it("keeps legacy aggregate assessment mechanics", () => {

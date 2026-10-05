@@ -262,26 +262,28 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
-| L8-001 | Full-screen/no learner shell | `quiz.js` | `/quiz` page | FIXED |
-| L8-002 | Quiz title/progress header | Quizpanel | attempt component | FIXED |
-| L8-003 | Question number navigation | Quizpanel | attempt sidebar | FIXED |
-| L8-004 | Previous/Next navigation | Quizpanel | attempt actions | FIXED |
-| L8-005 | SINGLE_CHOICE rendering | Quizpanel | attempt component | FIXED |
-| L8-006 | MULTIPLE_CHOICE rendering | Quizpanel | attempt component | FIXED |
-| L8-007 | Answer persistence during navigation | Quizpanel | React state | FIXED |
-| L8-008 | Answer persistence across refresh | Quizpanel behavior | sessionStorage | FIXED |
-| L8-009 | Submit confirmation | Quizpanel | confirm flow | FIXED |
-| L8-010 | Prevent unavailable/closed attempt | Quizpanel/API | attempt gating | FIXED |
-| L8-011 | Attempt limit enforcement | Quizpanel/API | service/UI | FIXED |
-| L8-012 | Deadline enforcement | Quizpanel/API | service/UI | FIXED |
-| L8-013 | Review mode | Quizpanel/results | review UI | FIXED |
-| L8-014 | Results withheld until publish | Quizpanel/results | result policy | FIXED |
-| L8-015 | Correct answers shown only when allowed | Quizpanel/results | review UI | FIXED |
-| L8-016 | Fatal load error + retry | Quizpanel boundary | error state | FIXED |
-| L8-017 | Missing URL params recovery | Quizpanel | error + All Quizzes | FIXED |
-| L8-018 | Browser Back behavior | Quizpanel | standalone route | UNCHECKED |
-| L8-019 | Double-submit/race protection | Quizpanel/API | submit state/service | UNCHECKED |
-| L8-020 | Mobile attempt layout | Quizpanel responsive | attempt UI | UNCHECKED |
+| L8-001 | Full-screen/no learner shell | `quiz.js` | `/quiz` page | CLOSED |
+| L8-002 | Quiz title/progress header | Quizpanel | attempt component | CLOSED |
+| L8-003 | Question number navigation | Quizpanel | attempt sidebar | CLOSED |
+| L8-004 | Previous/Next navigation | Quizpanel | attempt actions | CLOSED |
+| L8-005 | SINGLE_CHOICE rendering | Quizpanel | attempt component | CLOSED |
+| L8-006 | MULTIPLE_CHOICE rendering | Quizpanel | attempt component | CLOSED |
+| L8-007 | Answer persistence during navigation | Quizpanel | React state | CLOSED |
+| L8-008 | Answer persistence across refresh | Quizpanel behavior | sessionStorage | CLOSED |
+| L8-009 | Submit confirmation | Quizpanel | confirm flow | CLOSED |
+| L8-010 | Prevent unavailable/closed attempt | Quizpanel/API | attempt gating | CLOSED |
+| L8-011 | Attempt limit enforcement | Quizpanel/API | service/UI | CLOSED |
+| L8-012 | Deadline enforcement | Quizpanel/API | service/UI | CLOSED |
+| L8-013 | Review mode | Quizpanel/results | review UI | CLOSED |
+| L8-014 | Results withheld until publish | Quizpanel/results | result policy | CLOSED |
+| L8-015 | Correct answers shown only when allowed | Quizpanel/results | review UI | CLOSED |
+| L8-016 | Fatal load error + retry | Quizpanel boundary | error state | CLOSED |
+| L8-017 | Missing URL params recovery | Quizpanel | error + All Quizzes | CLOSED |
+| L8-018 | Browser Back behavior | Quizpanel | standalone route | FIXED |
+| L8-019 | Double-submit/race protection | Quizpanel/API | submit state/service | CLOSED |
+| L8-020 | Mobile attempt layout | Quizpanel responsive | attempt UI | FIXED |
+| L8-021 | Unanswered-question warning before submit | Quizpanel | attempt submit confirmation | CLOSED |
+| L8-022 | Post-submit return to prior page | Quizpanel | delayed router.back after success | CLOSED |
 
 ## L9 — Class Schedule: `/learn/calendar`
 
