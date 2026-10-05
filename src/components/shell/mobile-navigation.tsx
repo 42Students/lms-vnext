@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SidebarNav } from "./sidebar-nav";
 import type { ShellNavItem } from "./shell-model";
+
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function MobileNavigation({
   items,
@@ -10,15 +13,60 @@ export function MobileNavigation({
   items: readonly ShellNavItem[];
 }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const drawerRef = useRef<HTMLElement | null>(null);
+  const wasOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      if (wasOpenRef.current) {
+        triggerRef.current?.focus();
+      }
+      wasOpenRef.current = false;
+      return;
+    }
+
+    wasOpenRef.current = true;
+    const drawer = drawerRef.current;
+    const first = drawer?.querySelector<HTMLElement>(FOCUSABLE);
+    first?.focus();
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !drawerRef.current) return;
+      const focusable = Array.from(
+        drawerRef.current.querySelectorAll<HTMLElement>(FOCUSABLE),
+      );
+      if (focusable.length === 0) return;
+      const firstItem = focusable[0];
+      const lastItem = focusable.at(-1)!;
+      if (event.shiftKey && document.activeElement === firstItem) {
+        event.preventDefault();
+        lastItem.focus();
+      } else if (!event.shiftKey && document.activeElement === lastItem) {
+        event.preventDefault();
+        firstItem.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
-        aria-label="Open navigation"
+        aria-label="Open navigation menu"
         aria-expanded={open}
+        aria-haspopup="dialog"
         onClick={() => setOpen(true)}
-        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-lg font-semibold text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text md:hidden"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-lg font-semibold text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text md:hidden"
       >
         <span aria-hidden="true">☰</span>
       </button>
@@ -32,7 +80,10 @@ export function MobileNavigation({
             onClick={() => setOpen(false)}
           />
           <aside
-            aria-label="Mobile navigation"
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
             className="absolute inset-y-0 left-0 flex w-[min(20rem,88vw)] flex-col border-r border-[var(--lms-sidebar-border)] bg-surface shadow-xl"
           >
             <div className="flex min-h-20 items-center justify-between gap-4 border-b border-[var(--lms-sidebar-border)] px-5">
@@ -48,7 +99,7 @@ export function MobileNavigation({
                 type="button"
                 aria-label="Close navigation"
                 onClick={() => setOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-xl text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface text-xl text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text"
               >
                 <span aria-hidden="true">×</span>
               </button>

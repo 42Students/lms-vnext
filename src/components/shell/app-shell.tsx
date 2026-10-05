@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import {
+  hasMembershipRole,
   isSuperAdmin,
   type RequestContext,
 } from "@/modules/identity/context";
@@ -10,6 +11,7 @@ import { AdminScopeSwitcher } from "./admin-scope-switcher";
 import { AccountActions } from "./account-actions";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
+import { LearnerTopbarTools } from "./learner-topbar-tools";
 import { ToastProvider } from "@/components/ui/toast";
 import {
   getShellNavigation,
@@ -29,6 +31,7 @@ export function AppShell({
 }) {
   const navigation = getShellNavigation(context);
   const superAdmin = isSuperAdmin(context);
+  const learner = hasMembershipRole(context, "LEARNER");
   const currentMembership = context.membership
     ? memberships.find(
         (membership) => membership.id === context.membership?.id,
@@ -100,6 +103,7 @@ export function AppShell({
               </div>
             </div>
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+              {learner ? <LearnerTopbarTools /> : null}
               {superAdmin && adminScopeChoices ? (
                 <AdminScopeSwitcher
                   choices={adminScopeChoices}
@@ -120,7 +124,7 @@ export function AppShell({
                   activeMembershipId={context.membership?.id ?? null}
                 />
               )}
-              <AccountActions />
+              <AccountActions showNotifications={!learner} />
             </div>
           </div>
         </header>

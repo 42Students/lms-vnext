@@ -231,4 +231,16 @@ describe("authenticated shell model", () => {
     );
   });
 
+  it("keeps nested learner routes under the canonical sidebar entry", () => {
+    const learnerNav = getShellNavigation(context(["LEARNER"]));
+    const hrefs = learnerNav.map((item) => item.href);
+
+    expect(hrefs).toContain("/learn/courses");
+    expect(hrefs).toContain("/learn/my-placements");
+    expect(hrefs).toContain("/learn/projects");
+    expect(hrefs).not.toContain("/learn/courses/example/home");
+    expect(hrefs).not.toContain("/learn/my-placements/jobs");
+    expect(hrefs).not.toContain("/learn/projects/example");
+  });
+
 });

@@ -62,12 +62,12 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L0-008 | Sidebar label + route: Projects | `/learn/projects` | same | CLOSED |
 | L0-009 | Sidebar label + route: Notifications | `/learn/notifications` | same | CLOSED |
 | L0-010 | Sidebar label + route: Profile | `/learn/profile` | same | CLOSED |
-| L0-011 | Projects feature-flag visibility | Sidebar feature filtering | learner shell | UNCHECKED |
-| L0-012 | Placements feature-flag visibility | Sidebar feature filtering | learner shell | UNCHECKED |
+| L0-011 | Projects feature-flag visibility | Sidebar feature filtering | learner shell | GAP |
+| L0-012 | Placements feature-flag visibility | Sidebar feature filtering | learner shell | GAP |
 | L0-013 | Conditional Drive Day sidebar item | Sidebar + `getDriveDayMine` | no learner route yet | GAP |
-| L0-014 | Active sidebar highlight across nested routes | Sidebar | learner shell | UNCHECKED |
-| L0-015 | Learner mobile sidebar/open-close behavior | Sidebar | learner shell | UNCHECKED |
-| L0-016 | Learner topbar/account switch/sign-out behavior | shared shell | authenticated shell | UNCHECKED |
+| L0-014 | Active sidebar highlight across nested routes | Sidebar | learner shell | CLOSED |
+| L0-015 | Learner mobile sidebar/open-close behavior | Sidebar | learner shell | FIXED |
+| L0-016 | Learner topbar/account switch/sign-out behavior | shared shell | authenticated shell | FIXED |
 | L0-017 | `/learn` redirect to Courses | `src/pages/learn/index.js` | `/learn` | CLOSED |
 
 ## L1 — Courses list: `/learn/courses`
