@@ -293,7 +293,10 @@ export function LearnerAssessmentOverview({
               item.kind === "ASSIGNMENT"
                 ? assignmentState(item)
                 : quizState(item);
-            const href = `/learn/courses/${item.deliveryId}#item-${item.kind}-${item.id}`;
+            const href =
+              item.kind === "QUIZ"
+                ? `/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${item.progressStatus === "COMPLETED" || item.progressStatus === "MISSED" || item.status === "CLOSED" ? "&review=true" : ""}`
+                : `/learn/courses/${item.deliveryId}/roadmap?filter=assignments&content=${encodeURIComponent(item.id)}`;
 
             return (
               <article
