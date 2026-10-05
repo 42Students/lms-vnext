@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,15 +26,28 @@ export function SidebarNav({
         compact ? "flex-row" : "flex-col",
       )}
     >
-      {items.map((item) => {
+      {items.map((item, index) => {
+        const previousGroup =
+          index > 0 ? items[index - 1]?.group : null;
+        const startsNewGroup =
+          index > 0 &&
+          Boolean(item.group) &&
+          item.group !== previousGroup;
         const active =
           pathname === item.href ||
           (item.href !== "/dashboard" &&
             pathname.startsWith(`${item.href}/`));
 
         return (
+          <Fragment key={item.href}>
+            {startsNewGroup && !compact ? (
+              <div
+                role="separator"
+                aria-hidden="true"
+                className="my-2 border-t border-[var(--lms-sidebar-border)]"
+              />
+            ) : null}
           <Link
-            key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
             onClick={onNavigate}
@@ -70,6 +84,7 @@ export function SidebarNav({
             </span>
             <span>{item.label}</span>
           </Link>
+          </Fragment>
         );
       })}
     </nav>

@@ -11,6 +11,7 @@ export type ShellNavItem = {
   shortLabel: string;
   icon?: string;
   activeIcon?: string;
+  group?: "learning" | "tracking" | "career" | "account";
 };
 
 const dashboard: ShellNavItem = {
@@ -40,6 +41,7 @@ const learnerItems: ShellNavItem[] = [
     shortLabel: "C",
     icon: "/assets/images/common/courses.svg",
     activeIcon: "/assets/images/common/course.svg",
+    group: "learning",
   },
   {
     label: "Quizzes",
@@ -47,6 +49,7 @@ const learnerItems: ShellNavItem[] = [
     shortLabel: "Q",
     icon: "/assets/images/common/quiz.svg",
     activeIcon: "/assets/images/common/quiz-active.svg",
+    group: "learning",
   },
   {
     label: "Assignments",
@@ -54,42 +57,49 @@ const learnerItems: ShellNavItem[] = [
     shortLabel: "A",
     icon: "/assets/images/common/assignment.svg",
     activeIcon: "/assets/images/common/assignment-active.svg",
+    group: "learning",
   },
   {
     label: "Class Schedule",
     href: "/learn/calendar",
     shortLabel: "S",
     icon: "/assets/images/common/calender.svg",
+    group: "tracking",
   },
   {
     label: "Attendance",
     href: "/learn/attendance",
     shortLabel: "T",
     icon: "/assets/images/common/attendance.svg",
+    group: "tracking",
   },
   {
     label: "My Placements",
     href: "/learn/my-placements",
     shortLabel: "P",
     icon: "/assets/images/common/book-open.svg",
+    group: "career",
   },
   {
     label: "Projects",
     href: "/learn/projects",
     shortLabel: "P",
     icon: "/assets/images/common/folder.svg",
+    group: "learning",
   },
   {
     label: "Notifications",
     href: "/learn/notifications",
     shortLabel: "N",
     icon: "/assets/images/common/notification.svg",
+    group: "account",
   },
   {
     label: "Profile",
     href: "/learn/profile",
     shortLabel: "R",
     icon: "/assets/images/common/myAccount.svg",
+    group: "account",
   },
 ];
 
