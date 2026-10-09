@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { activityEvents, collegeMemberships, colleges, inAppNotifications, learnerProfiles, membershipRoles, users } from "@/db/schema";
-import { learnerPrivateDocumentReceipts, profileVerificationEvents, profileVerifications } from "@/db/schema/profile-verification";
+import { activityEvents, collegeMemberships, colleges, inAppNotifications, learnerProfiles, membershipRoles, systemRoles, users } from "@/db/schema";
+import { learnerPrivateDocumentReceipts, profileVerificationEvents, profileVerifications, profileVerificationSettings, profileVerificationTpoGrants } from "@/db/schema/profile-verification";
 import {
   VerificationStateError,
   type Transition,
@@ -90,6 +90,59 @@ export const postgresLockedVerificationTransition: LockedTransition =
       const result = await plan(current);
       const record = result.record, event = result.event;
       const previous = current?.version ?? 0;
+      // Verify actor identity and current role at COMMIT time, under locks.
+      // Authenticated request context alone may be stale after role revocation.
+      if (event.actorKind === "LEARNER") {
+        if (event.actorUserId !== member.userId ||
+            (event.action !== "SUBMITTED" && event.action !== "UPDATE_SUBMITTED")) {
+          throw new VerificationStateError("NOT_ALLOWED");
+        }
+      } else {
+        if (event.actorUserId === member.userId ||
+            (event.action !== "VERIFIED" && event.action !== "SENT_BACK")) {
+          throw new VerificationStateError("NOT_ALLOWED");
+        }
+        const [reviewerUser] = await tx.select({status:users.platformStatus})
+          .from(users).where(eq(users.id,event.actorUserId)).for("share");
+        if (reviewerUser?.status !== "ACTIVE") {
+          throw new VerificationStateError("NOT_ALLOWED");
+        }
+        if (event.actorKind === "SUPER_ADMIN") {
+          const [superRole] = await tx.select({role:systemRoles.role})
+            .from(systemRoles).where(and(eq(systemRoles.userId,event.actorUserId),
+              eq(systemRoles.role,"SUPER_ADMIN"))).for("share");
+          if (!superRole) throw new VerificationStateError("NOT_ALLOWED");
+          // Selected super-admin organization/college scope is validated by
+          // the service permission policy before entering this transaction.
+        } else {
+          const [reviewer] = await tx.select({
+            id:collegeMemberships.id,status:collegeMemberships.status,
+          }).from(collegeMemberships)
+            .where(and(eq(collegeMemberships.userId,event.actorUserId),
+              eq(collegeMemberships.collegeId,member.collegeId))).for("share");
+          if (!reviewer || reviewer.status !== "ACTIVE") {
+            throw new VerificationStateError("NOT_ALLOWED");
+          }
+          const expectedRole = event.actorKind === "TPO" ? "TPO" : "COLLEGE_ADMIN";
+          const [reviewRole] = await tx.select({role:membershipRoles.role})
+            .from(membershipRoles)
+            .where(and(eq(membershipRoles.membershipId,reviewer.id),
+              eq(membershipRoles.role,expectedRole))).for("share");
+          if (!reviewRole) throw new VerificationStateError("NOT_ALLOWED");
+          if (event.actorKind === "TPO") {
+            const [grant] = await tx.select({id:profileVerificationTpoGrants.membershipId})
+              .from(profileVerificationTpoGrants)
+              .where(and(eq(profileVerificationTpoGrants.membershipId,reviewer.id),
+                sql`${profileVerificationTpoGrants.revokedAt} is null`)).for("share");
+            const [setting] = await tx.select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
+              .from(profileVerificationSettings)
+              .where(eq(profileVerificationSettings.collegeId,member.collegeId)).for("share");
+            if (!grant || setting?.enabled === false) {
+              throw new VerificationStateError("NOT_ALLOWED");
+            }
+          }
+        }
+      }
       if (record.learnerMembershipId !== membershipId || record.section !== section ||
           event.section !== section || record.version !== previous + 1 ||
           event.priorVersion !== previous || event.nextVersion !== record.version ||
