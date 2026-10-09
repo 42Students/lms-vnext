@@ -79,3 +79,16 @@ and typechecking are required before treating this as verified.
 ## Roster integration regression specifications
 
 Added `tests/integration/groups-db03-roster.test.ts`: five PostgreSQL integration cases for group-only discovery/access, host-section denial, revocation, archive denial and inactive offering join denial. They are **authored, not run**, and use disposable fixture rows. Production acceptance still requires migration replay, `npm run typecheck`, test execution and an audit of attendance/schedule/quiz consumers.
+
+## Timetable and suspended-user protection (2026-10-10)
+
+Learner timetable now derives courses and linked-event eligibility from the
+central `listLearnerCourseDeliveries` authorization union, not exclusively
+`section_enrollments`. Primary section events without delivery remain visible,
+while linked events require access to that exact delivery. This prevents
+host-section members from seeing group-backed elective events unless they join
+the elective group. Suspended user accounts no longer pass course-read or
+course-list access even when their college membership is still marked ACTIVE.
+
+**Not verified:** typecheck, Drizzle runtime, database tests, teaching/attendance
+producer parity, historical learning access and legacy field signoff.

@@ -54,6 +54,7 @@ function requireLearnerMembership(
   context: RequestContext,
 ) {
   if (
+    context.user.platformStatus !== "ACTIVE" ||
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
     !context.membership.roles.includes("LEARNER")

@@ -7,6 +7,8 @@ import {
   eq,
   inArray,
   isNull,
+  or,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -24,11 +26,13 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { AcademicsServiceError } from "./errors";
+import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 
 function requireLearnerMembership(
   context: RequestContext,
 ) {
   if (
+    context.user.platformStatus !== "ACTIVE" ||
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
     !context.membership.roles.includes("LEARNER")
@@ -101,154 +105,65 @@ export async function getLearnerClassSchedule(
       asc(sections.name),
     );
 
-  if (placements.length === 0) {
-    return {
-      sections: [],
-      courses: [],
-      events: [],
-    };
-  }
+  // The course roster is the canonical union of primary-section learners and
+  // ACTIVE group-backed elective memberships. Never infer elective access from
+  // the host section alone.
+  const accessible = await listLearnerCourseDeliveries(context);
+  const deliveryIds = [...new Set(accessible.map(course => course.deliveryId))];
+  const coursesList = [...new Map(accessible.map(course => [
+    course.deliveryId,
+    { deliveryId: course.deliveryId, sectionId: course.sectionId,
+      courseId: course.courseId, courseName: course.courseName,
+      courseCode: course.courseCode },
+  ])).values()].sort((a, b) => a.courseName.localeCompare(b.courseName));
+  if (placements.length === 0 && deliveryIds.length === 0)
+    return { sections: [], courses: [], events: [] };
 
-  const sectionIds = placements.map(
-    (placement) => placement.sectionId,
-  );
+  const primarySectionIds = placements.map(row => row.sectionId);
+  const authorizedLink = deliveryIds.length
+    ? inArray(sectionScheduleEventCourses.deliveryId, deliveryIds)
+    : sql<boolean>`false`;
 
-  const [courseRows, eventRows] =
-    await Promise.all([
-      db
-        .select({
-          deliveryId:
-            courseSectionDeliveries.id,
-          sectionId:
-            courseSectionDeliveries.sectionId,
-          courseId: courses.id,
-          courseName: courses.name,
-          courseCode: courses.code,
-        })
-        .from(courseSectionDeliveries)
-        .innerJoin(
-          courseOfferings,
-          and(
-            eq(
-              courseOfferings.id,
-              courseSectionDeliveries.offeringId,
-            ),
-            eq(courseOfferings.status, "ACTIVE"),
-          ),
-        )
-        .innerJoin(
-          courses,
-          and(
-            eq(
-              courses.id,
-              courseOfferings.courseId,
-            ),
-            eq(courses.status, "ACTIVE"),
-          ),
-        )
-        .where(
-          and(
-            inArray(
-              courseSectionDeliveries.sectionId,
-              sectionIds,
-            ),
-            isNull(
-              courseSectionDeliveries.endedAt,
-            ),
-          ),
-        )
-        .orderBy(asc(courses.name)),
-      db
-        .select({
-          id: sectionScheduleEvents.id,
-          sectionId:
-            sectionScheduleEvents.sectionId,
-          sectionName: sections.name,
-          title: sectionScheduleEvents.title,
-          description:
-            sectionScheduleEvents.description,
-          startsAt:
-            sectionScheduleEvents.startsAt,
-          endsAt: sectionScheduleEvents.endsAt,
-          location:
-            sectionScheduleEvents.location,
-          facultyName: users.displayName,
-          deliveryId:
-            sectionScheduleEventCourses.deliveryId,
-          courseId: courses.id,
-          courseName: courses.name,
-          courseCode: courses.code,
-        })
-        .from(sectionScheduleEvents)
-        .innerJoin(
-          sections,
-          eq(
-            sections.id,
-            sectionScheduleEvents.sectionId,
-          ),
-        )
-        .leftJoin(
-          sectionScheduleEventCourses,
-          eq(
-            sectionScheduleEventCourses.scheduleEventId,
-            sectionScheduleEvents.id,
-          ),
-        )
-        .leftJoin(
-          courseSectionDeliveries,
-          eq(
-            courseSectionDeliveries.id,
-            sectionScheduleEventCourses.deliveryId,
-          ),
-        )
-        .leftJoin(
-          courseOfferings,
-          eq(
-            courseOfferings.id,
-            courseSectionDeliveries.offeringId,
-          ),
-        )
-        .leftJoin(
-          courses,
-          eq(
-            courses.id,
-            courseOfferings.courseId,
-          ),
-        )
-        .leftJoin(
-          collegeMemberships,
-          eq(
-            collegeMemberships.id,
-            sectionScheduleEvents.facultyMembershipId,
-          ),
-        )
-        .leftJoin(
-          users,
-          eq(
-            users.id,
-            collegeMemberships.userId,
-          ),
-        )
-        .where(
-          and(
-            inArray(
-              sectionScheduleEvents.sectionId,
-              sectionIds,
-            ),
-            eq(
-              sectionScheduleEvents.status,
-              "SCHEDULED",
-            ),
-          ),
-        )
-        .orderBy(
-          asc(sectionScheduleEvents.startsAt),
+  const events = await db
+    .select({
+      id: sectionScheduleEvents.id,
+      sectionId: sectionScheduleEvents.sectionId,
+      sectionName: sections.name,
+      title: sectionScheduleEvents.title,
+      description: sectionScheduleEvents.description,
+      startsAt: sectionScheduleEvents.startsAt,
+      endsAt: sectionScheduleEvents.endsAt,
+      location: sectionScheduleEvents.location,
+      facultyName: users.displayName,
+      deliveryId: sectionScheduleEventCourses.deliveryId,
+      courseId: courses.id,
+      courseName: courses.name,
+      courseCode: courses.code,
+    })
+    .from(sectionScheduleEvents)
+    .innerJoin(sections, eq(sections.id, sectionScheduleEvents.sectionId))
+    .leftJoin(
+      sectionScheduleEventCourses,
+      eq(sectionScheduleEventCourses.scheduleEventId, sectionScheduleEvents.id),
+    )
+    .leftJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, sectionScheduleEventCourses.deliveryId))
+    .leftJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .leftJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .leftJoin(collegeMemberships, eq(collegeMemberships.id, sectionScheduleEvents.facultyMembershipId))
+    .leftJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(
+      eq(sectionScheduleEvents.status, "SCHEDULED"),
+      or(
+        and(
+          inArray(sectionScheduleEvents.sectionId, primarySectionIds),
+          or(isNull(sectionScheduleEventCourses.deliveryId), authorizedLink),
         ),
-    ]);
+        // Elective events in a host section outside the learner's primary
+        // sections appear only when linked to a delivery they can access.
+        authorizedLink,
+      ),
+    ))
+    .orderBy(asc(sectionScheduleEvents.startsAt));
 
-  return {
-    sections: placements,
-    courses: courseRows,
-    events: eventRows,
-  };
+  return { sections: placements, courses: coursesList, events };
 }

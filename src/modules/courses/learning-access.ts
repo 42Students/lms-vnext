@@ -29,7 +29,8 @@ function activeSameCollegeMembership(
   collegeId: string,
 ) {
   return Boolean(
-    context.membership &&
+    context.user.platformStatus === "ACTIVE" &&
+      context.membership &&
       context.membership.status === "ACTIVE" &&
       context.membership.collegeId === collegeId,
   );
