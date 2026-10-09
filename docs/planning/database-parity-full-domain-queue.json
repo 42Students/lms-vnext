@@ -17,7 +17,7 @@
     "DB00_UNASSIGNED_TRIAGE"
   ],
   "domainCounts": {
-    "DB00_HISTORICAL_AND_ENGINE": 38,
+    "DB00_HISTORICAL_AND_ENGINE": 39,
     "DB01_IDENTITY_AND_TENANCY": 22,
     "DB02_ACADEMICS_AND_TIMETABLE": 13,
     "DB03_GROUPS_AND_ELECTIVES": 6,
@@ -28,7 +28,7 @@
     "DB08_PLACEMENT_POLICY_AND_OUTCOMES": 18,
     "DB09_TPO_AND_RECRUITER_OPERATIONS": 31,
     "DB10_SHARED_OPERATIONS": 19,
-    "DB00_UNASSIGNED_TRIAGE": 1
+    "DB00_UNASSIGNED_TRIAGE": 0
   },
   "groups": {
     "DB00_HISTORICAL_AND_ENGINE": [
@@ -63,6 +63,7 @@
       "cleanup_legacy_project_workspace_backup_20260918",
       "cleanup_legacy_project_workspace_ids_20260918",
       "flyway_schema_history",
+      "lesson_contents_legacy_type_backup_v163",
       "smrithi_application",
       "smrithi_college",
       "smrithi_college_keywords",
@@ -251,9 +252,7 @@
       "skills",
       "sms_delivery_log"
     ],
-    "DB00_UNASSIGNED_TRIAGE": [
-      "lesson_contents_legacy_type_backup_v163"
-    ]
+    "DB00_UNASSIGNED_TRIAGE": []
   },
   "rows": [
     {
@@ -1603,7 +1602,7 @@
     {
       "table": "lesson_contents_legacy_type_backup_v163",
       "snapshotName": "lesson_contents_legacy_type_backup_v163",
-      "domain": "DB00_UNASSIGNED_TRIAGE",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
       "sourceStage": "SOURCE_SEEN",
       "sourceColumns": 4,
       "alterAddCandidates": 0,
@@ -1611,7 +1610,7 @@
       "vnextCandidate": null,
       "reviewStatus": "NOT_AUDITED",
       "activeVsRetired": "UNDECIDED",
-      "requiresExplicitDecision": false,
+      "requiresExplicitDecision": true,
       "evidenceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
