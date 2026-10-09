@@ -1,6 +1,6 @@
 # DB03 schema implementation — foundation batch (2026-10-10)
 
-**State: SIX TABLES AUTHORED / NOT DATABASE-VERIFIED.**
+**State: MERGED TO MAIN / NOT DATABASE-VERIFIED.**
 Legacy source: `lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5` V166/V167/V168/V191.
 
 Added: `lms_groups`, `lms_group_members`, `lms_group_member_events`, `lms_group_rules`, `elective_slots` and `elective_offerings`. All use UUIDs and PostgreSQL types; source concepts (membership state/source/locked, event history, group active_count, rule state, slot pick limits, offering archive-aware uniqueness) are preserved. New CHECKs and restrictive FKs guard basic invariants.
@@ -227,13 +227,18 @@ lists **all 79 source columns** with **79 proposed target paths / derived
 structures**, **0 currently unmapped**, and **0 formally verified**. Proposed
 mapping is NOT equality of business behavior.
 
-**Authored DB03 test cases:** 17 `groups-db03.test.ts`, 10
+**Authored DB03 test cases:** 17 `groups-db03.test.ts`, 11
 `groups-db03-roster.test.ts`, 3 `groups-db03-project-team.test.ts`,
 2 pure `groups-db03-rule-evaluator.test.ts`, 8 static
-`db-parity-db03-schema.test.mjs`: **40 authored, 0 executed here**.
-GitHub Actions draft PR #7 was created; CI fails before any steps (no
-runner allocated), so there is no positive compile, migration, DB or E2E
-evidence. PR intentionally remains draft and must NOT be merged as ready.
+`db-parity-db03-schema.test.mjs`: **41 authored, 0 executed here**.
+DB03 pull request #7 was merged into main at
+`594a7ee61d093540d0aba8ffcfde30bba9c5bc35` following explicit user
+instruction. Follow-up pull request #18 merged at
+`ad538fd0cc41b885c4a524ff52d0b35cd84d31e7` to prevent a disabled
+user from retaining group-backed elective access through a stale request
+context. GitHub Actions fails before any job steps (no runner allocated),
+so these merges do NOT provide evidence of compilation, migration, DB or
+end-to-end correctness. DB03 remains RELEASE BLOCKED.
 
 **Prioritized hard blockers to call DB03 complete:**
 1. Runner/disposable PostgreSQL: `npm ci`, `npm run lint`,
@@ -257,3 +262,17 @@ evidence. PR intentionally remains draft and must NOT be merged as ready.
 **No migration of historical production data** (vNext greenfield). Do not
 estimate release readiness from count of tables, source-audit passes or
 authored tests. The broader 2,829-field LMS database parity remains open.
+
+## Active handoff after merge, 2026-10-10
+
+**Authoritative development branch for this workstream: `main`.** The historical
+`db-parity-2026` branch and PR #7 are completed integration history; do not
+continue DB03 on the old branch or copy stale head snapshots over main. Check
+current main SHA and preserve all parallel DB08/DB10 work. A small follow-up
+required PR #18 because other chats were updating main concurrently.
+
+**Release gate remains OPEN**: disposable PostgreSQL migration replay,
+Drizzle-generated snapshot consistency, TypeScript compilation, isolated
+integration tests, cross-program elective attendance/quiz/submission E2E,
+rule refresh scheduling and actual 79-field signoff. The count of written tests
+is not a proxy for passing tests.

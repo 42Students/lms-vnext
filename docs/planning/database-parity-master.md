@@ -1,7 +1,7 @@
 # LMS vNext — Database-first parity master plan
 
 **Initiated:** 2026-10-09  
-**Work branch:** `db-parity-2026` (branched from `42Students/lms-vnext@5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a`)  
+**Current work branch:** `main` (DB03 integrated via PR #7 at `594a7ee61d093540d0aba8ffcfde30bba9c5bc35`; historical source branch `db-parity-2026`)  
 **Legacy backend oracle:** `42Students/lms@prod-2026` observed at `21bad59d4dfaf2fa11fdeaf9353327ce105697d5` (2026-10-07)  
 **Frontend reference:** `42Students/lms2-fe@prod-2026` for producer/consumer behavior  
 **State:** FIVE SOURCE-AUDIT PASSES DOCUMENTED; DB03 RELATIONAL & SERVICE IMPLEMENTATION IN PROGRESS — NOT RUNTIME-VERIFIED  
@@ -238,3 +238,7 @@ See `docs/planning/database-parity-db03-implementation.md` for concrete
 blocked gates. DB04 Profiles/Verification and DB08 Placement Eligibility
 remain later domain implementation priorities. The source audit remains five
 passes complete, **database parity itself is not certified**.
+
+## 2026-10-10 active-branch correction
+
+The database-parity source branch was merged through PR #7 into `main`, with a DB03 guard follow-up merged through PR #18. Continue domain work on **main**, checking and preserving concurrent DB08/DB10 commits. DB03 source implementation is not a passing test result: no runner-backed compile, Drizzle generation, PostgreSQL replay, or end-to-end validation has been obtained. All 79 proposed DB03 field mappings remain formally unverified.
