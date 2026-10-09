@@ -28,7 +28,7 @@ export function classifyJava(source, file) {
       javaType: type,
       columnAnnotation: /@Column\s*\([\s\S]*?\bname\s*=\s*"([^"]+)"/.exec(anno)?.[1] ?? null,
       joinColumnAnnotation: /@JoinColumn\s*\([\s\S]*?\bname\s*=\s*"([^"]+)"/.exec(anno)?.[1] ?? null,
-      annotations: [...anno.matchAll(/@([A-Z][A-Za-z0-9_]*)/g)].map(m => m[1]),
+      annotations: [...anno.matchAll(/@([A-Z][A-Za-z0-9_]*)/g)].map(m => m[1]).filter(n => !["Entity", "Table", "MappedSuperclass", "Getter", "Setter", "Data", "JsonIgnoreProperties", "TypeDefs"].includes(n)),
     });
   }
   return { file, className, kind, table, superclass, candidateFields: fields };
