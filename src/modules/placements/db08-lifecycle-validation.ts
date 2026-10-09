@@ -74,7 +74,7 @@ export const placementExternalOutcomeInputSchema = z
     collegeId: db08Uuid,
     membershipId: db08Uuid,
     companyName: z.string().trim().min(1).max(200),
-    annualCtcInr: z.number().int().nonnegative().max(2_000_000_000)
+    annualCtcInr: z.number().int().nonnegative().max(9_999_999_999_000)
       .nullable().optional(),
     letterObjectPath: z.string().trim().min(1).max(1500)
       .nullable().optional(),
