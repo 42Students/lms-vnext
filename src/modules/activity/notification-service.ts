@@ -51,6 +51,13 @@ const deliverySchema = z
 export type InAppNotificationDeliveryInput =
   z.input<typeof deliverySchema>;
 
+function sanitizeNotificationRow<T extends { actionHref: string | null }>(row: T) {
+  return {
+    ...row,
+    actionHref: safeNotificationActionHref(row.actionHref),
+  };
+}
+
 async function writeInAppNotification(
   db: NotificationWriter,
   eventId: string,
@@ -240,10 +247,7 @@ export async function listOwnNotifications(
 
   return rows.map((row) => ({
     ...row,
-    notification: {
-      ...row.notification,
-      actionHref: safeNotificationActionHref(row.notification.actionHref),
-    },
+    notification: sanitizeNotificationRow(row.notification),
   }));
 }
 
@@ -294,7 +298,7 @@ export async function markOwnNotificationRead(
     );
   }
   if (current.readAt) {
-    return current;
+    return sanitizeNotificationRow(current);
   }
 
   const [updated] = await getDb()
@@ -318,7 +322,7 @@ export async function markOwnNotificationRead(
     .returning();
 
   if (updated) {
-    return updated;
+    return sanitizeNotificationRow(updated);
   }
 
   // Concurrent readers can observe unread before another request wins
@@ -336,5 +340,5 @@ export async function markOwnNotificationRead(
   if (!latest) {
     throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   }
-  return latest;
+  return sanitizeNotificationRow(latest);
 }
