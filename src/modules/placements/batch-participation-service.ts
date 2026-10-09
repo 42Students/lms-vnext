@@ -140,7 +140,7 @@ async function lockCollege(tx: Tx, collegeId: string) {
   if (!college) throw new PlacementBatchError("DB08_SCOPE_COLLEGE_MISMATCH");
 }
 
-async function resolveParentCollege(tx: Tx, item: Scope) {
+async function resolveParentCollege(tx: Tx, item: Scope, requireActiveLearner = true) {
   if (item.scopeType === "MEMBERSHIP") {
     const [member] = await tx
       .select({ collegeId: collegeMemberships.collegeId, status: collegeMemberships.status })
@@ -151,7 +151,7 @@ async function resolveParentCollege(tx: Tx, item: Scope) {
       ))
       .where(eq(collegeMemberships.id, item.scopeId))
       .limit(1);
-    if (!member || member.status !== "ACTIVE") {
+    if (!member || (requireActiveLearner && member.status !== "ACTIVE")) {
       throw new PlacementBatchError("DB08_LEARNER_INACTIVE");
     }
     return member.collegeId;
@@ -179,8 +179,10 @@ async function resolveParentCollege(tx: Tx, item: Scope) {
   return row.collegeId;
 }
 
-async function assertTargetCollege(tx: Tx, collegeId: string, item: Scope) {
-  if (await resolveParentCollege(tx, item) !== collegeId) {
+async function assertTargetCollege(
+  tx: Tx, collegeId: string, item: Scope, requireActiveLearner = true,
+) {
+  if (await resolveParentCollege(tx, item, requireActiveLearner) !== collegeId) {
     throw new PlacementBatchError("DB08_SCOPE_COLLEGE_MISMATCH");
   }
 }
@@ -377,7 +379,8 @@ export async function undoPlacementParticipation(
         scopeType: event.scopeType as Scope["scopeType"],
         scopeId: event.scopeId,
       };
-      await assertTargetCollege(tx, input.collegeId, item);
+      // Undo of historic decisions must still work after learner suspension.
+      await assertTargetCollege(tx, input.collegeId, item, false);
       const before = {
         status: event.afterStatus,
         reason: event.afterReason,
