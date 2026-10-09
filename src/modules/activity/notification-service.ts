@@ -1,5 +1,6 @@
 import {
   and,
+  count,
   desc,
   eq,
   inArray,
@@ -37,6 +38,13 @@ const deliverySchema = z
       .trim()
       .startsWith("/")
       .max(1000)
+      .refine(
+        (href) =>
+          !href.startsWith("//") &&
+          !href.includes("\\") &&
+          !/[\x00-\x1f\x7f]/.test(href),
+        "Notification actionHref must be an internal path",
+      )
       .nullable()
       .optional(),
   })
@@ -69,6 +77,7 @@ async function writeInAppNotification(
     return {
       delivered: 0,
       skippedInactive: 0,
+      skippedDuplicate: 0,
     };
   }
 
@@ -116,8 +125,9 @@ async function writeInAppNotification(
     )
     .map((user) => user.id);
 
+  let delivered = 0;
   if (active.length > 0) {
-    await db
+    const inserted = await db
       .insert(inAppNotifications)
       .values(
         active.map((userId) => ({
@@ -129,14 +139,17 @@ async function writeInAppNotification(
             input.actionHref ?? null,
         })),
       )
-      .onConflictDoNothing();
+      .onConflictDoNothing()
+      .returning({ id: inAppNotifications.id });
+    delivered = inserted.length;
   }
 
   return {
-    delivered: active.length,
+    delivered,
     skippedInactive:
       recipients.length -
       active.length,
+    skippedDuplicate: active.length - delivered,
   };
 }
 
@@ -231,15 +244,16 @@ export async function listOwnNotifications(
 export async function countOwnUnreadNotifications(
   context: RequestContext,
 ) {
-  const rows =
-    await listOwnNotifications(
-      context,
-      {
-        unreadOnly: true,
-        limit: 100,
-      },
+  const [row] = await getDb()
+    .select({ total: count() })
+    .from(inAppNotifications)
+    .where(
+      and(
+        eq(inAppNotifications.userId, context.user.id),
+        isNull(inAppNotifications.readAt),
+      ),
     );
-  return rows.length;
+  return row?.total ?? 0;
 }
 
 export async function markOwnNotificationRead(
