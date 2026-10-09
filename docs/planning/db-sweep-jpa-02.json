@@ -125,7 +125,25 @@
     },
     {
       "path": "src/main/java/com/_42students/lms/model/BugTrackerAccess.java",
-      "error": "UNKNOWN: Error code: UNKNOWN; Error: RemoteProtocolError: Server disconnected without sending a response."
+      "kind": "ENTITY",
+      "table": "bug_tracker_access",
+      "superClass": null,
+      "columns": [
+        "display_name",
+        "token_hash",
+        "access_role",
+        "active",
+        "created_at",
+        "updated_at"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 1020
     },
     {
       "path": "src/main/java/com/_42students/lms/model/ClassroomMessage.java",
