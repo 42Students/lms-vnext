@@ -27,3 +27,5 @@ export * from "./drive-day";
 
 export * from "./groups";
 export * from "./electives";
+
+export * from "./placement-db08-lifecycle";
