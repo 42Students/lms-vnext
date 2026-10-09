@@ -73,5 +73,13 @@ export const placementEligibilityDecisions = pgTable(
       "placement_eligibility_decisions_reason_ck",
       sql`${table.status} = 'ELIGIBLE' or length(trim(coalesce(${table.reason}, ''))) > 0`,
     ),
+    check(
+      "placement_eligibility_decisions_reason_length_ck",
+      sql`${table.reason} is null or length(${table.reason}) <= 200`,
+    ),
+    check(
+      "placement_eligibility_decisions_note_length_ck",
+      sql`${table.note} is null or length(${table.note}) <= 300`,
+    ),
   ],
 );
