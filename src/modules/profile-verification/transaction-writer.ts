@@ -9,6 +9,7 @@ import {
   type VerificationSection,
 } from "./domain";
 import type { VerificationTransactionRepository } from "./service";
+import { publishVerifiedEducation } from "./academic-publication";
 
 type LockedTransition = VerificationTransactionRepository["withLockedTransition"];
 
@@ -19,9 +20,8 @@ type LockedTransition = VerificationTransactionRepository["withLockedTransition"
  * submissions (where neither has a row yet) also serialize on one natural key.
  * This is advisory within the transaction and releases on rollback/commit.
  *
- * IMPORTANT: Education approval MUST publish the verified academic values in
- * the same transaction. Until DB04's academic-evidence writer exists, fail
- * closed instead of marking education VERIFIED without updating placements.
+ * Education approval publishes original grades and comparable placement
+ * evidence in the same transaction; failure rolls back the entire review.
  */
 export const postgresLockedVerificationTransition: LockedTransition =
   async (membershipId: string, section: VerificationSection,
@@ -32,6 +32,7 @@ export const postgresLockedVerificationTransition: LockedTransition =
       const [member] = await tx.select({
         id: collegeMemberships.id,
         status: collegeMemberships.status,
+        collegeId: collegeMemberships.collegeId,
       }).from(collegeMemberships).where(eq(collegeMemberships.id, membershipId)).for("update");
       if (!member || member.status !== "ACTIVE") {
         throw new VerificationStateError("NOT_ALLOWED");
@@ -63,12 +64,6 @@ export const postgresLockedVerificationTransition: LockedTransition =
           event.actorUserId.length === 0) {
         throw new VerificationStateError("INVALID_TRANSITION");
       }
-      if (event.action === "VERIFIED" && section === "EDUCATION") {
-        // The current placement academic-evidence row is a downstream read
-        // model. Approval without republishing it creates a stale eligibility
-        // vulnerability. No partial approval is allowed.
-        throw new VerificationStateError("INVALID_TRANSITION");
-      }
       const values = {
         submittedSnapshot: record.submittedSnapshot,
         verifiedSnapshot: record.verifiedSnapshot,
@@ -93,6 +88,16 @@ export const postgresLockedVerificationTransition: LockedTransition =
             status: record.status, ...values,
           }).returning({ id: profileVerifications.id });
       if (!persisted) throw new VerificationStateError("STALE_VERSION");
+      if (event.action === "VERIFIED" && section === "EDUCATION") {
+        if (!record.verifiedSnapshot || !record.verifiedAt) {
+          throw new VerificationStateError("INVALID_TRANSITION");
+        }
+        await publishVerifiedEducation(tx, {
+          verificationId:persisted.id, membershipId, collegeId:member.collegeId,
+          verifiedSnapshot:record.verifiedSnapshot, version:record.version,
+          reviewerId:event.actorUserId, verifiedAt:record.verifiedAt,
+        });
+      }
       await tx.insert(profileVerificationEvents).values({
         verificationId: persisted.id,
         action: event.action,
