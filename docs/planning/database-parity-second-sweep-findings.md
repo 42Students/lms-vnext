@@ -80,3 +80,13 @@ This sweep found:
 **Do not implement 199 tables as-is.** The goal remains complete **active product domain/data capability**, with explicit improvements and intentional retirement decisions. The next implementation work should first reconcile DB00 physical metadata; DB03, DB04 and DB08 are priority domains once their row-by-row field specifications are certified.
 
 **Status: DEEPER INVENTORY / NO VERIFIED DB PARITY / NO NEW DRIZZLE MIGRATIONS IN THIS SWEEP.**
+
+## Model-layer and rename extension (same sweep)
+
+- **112 JPA entities** among **118 inspected production model files**, plus 1 mapped superclass and 5 value/support types. 111 explicit JPA `@Table` names appear in the 199-table reconstructed source registry; one `StudentImage` entity uses implicit naming. This proves *source inventory consistency*, not workflow equivalence or live schema completeness.
+- `User.roles` uses `@JoinTable(name="USER_ROLES")`; `RecruiterCollegeAccess.capabilities` uses `@ElementCollection` and its own collection table. Both are data structures even without separate `@Entity` files.
+- **26** JPA entities declare `@Version`; implementation that omits optimistic concurrency can lose business correctness even when all fields exist.
+- Legacy `Faculty.facultyType` is an unannotated enum field, so default JPA ordinal representation is a legacy risk. Preserve meaning, not ordinal IDs.
+- **13 exact renamed columns** and **24 stored UPDATE rewrite statements** discovered from `V193`, in addition to 7 table renames. See `database-parity-recruiter-rename-ledger.json`.
+- `V125` conditionally drops legacy quiz JSON columns via dynamic procedure and documents their Hibernate origins. Never resurrect obsolete quizzes based on the stale snapshot alone.
+- **No database migration or live table parity verified by this second sweep.**

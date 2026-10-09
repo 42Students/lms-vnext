@@ -157,3 +157,13 @@ Read this file, `AGENTS.md`, `docs/database-workflow.md`, `docs/planning/databas
 - Strongly prefer **read-only live MySQL metadata capture** before final classification. The snapshot is from **September** and cannot represent 2026-10-09 production. Additional metadata export captures views, routines, events and partition summaries.
 - Refrain from creating 199 target tables. The objective is 100% active product data behavior with documented normalized redesigns and explicit retention/retirement decisions.
 - **No database migrations changed and no live database verified**. Source completeness has improved; actual clone parity remains not established.
+
+## Second sweep addendum — JPA and rename completeness
+
+- **118 of 118** legacy production Java files from `model/`, `model/groups/`, `model/electives/`, `model/tpo/` were individually fetched and their JPA annotations catalogued; no fetch failures remain.
+- **112** `@Entity` types, **1** mapped superclass, **5** non-entity/value types. **111** entities declare explicit `@Table` names (all found in the reconstructed registry); `StudentImage` uses implicit table naming and requires explicit physical confirmation.
+- **26** entity types have `@Version` annotations; app-layer concurrency/optimistic-lock parity must be verified.
+- `User` declares a `USER_ROLES` join table. `RecruiterCollegeAccess` uses `@ElementCollection` for `recruiter_college_access_capability`. These implicit/collection-owned tables must not disappear when canonical identity is redesigned.
+- `Faculty.facultyType` is a Java enum persisted without `@Enumerated(EnumType.STRING)`; JPA defaults to **ORDINAL**. The vNext redesign must preserve conceptual faculty-title/portal-role meaning **without** copying ordinal persistence.
+- Source evidence: `docs/planning/database-parity-jpa-entity-census.json` and 12 `db-sweep-jpa-XX.json` batch files; exact V193 table/column rename and stored-code changes in `database-parity-recruiter-rename-ledger.json`.
+- **Important:** the 118-model inventory is not an `@Entity` scan of all 1,008 Java source files. Also no live MySQL information_schema scan has been performed.
