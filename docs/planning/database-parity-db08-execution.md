@@ -17,9 +17,9 @@ The legacy batch/class/learner decision is inherited (LEARNER first, CLASS next,
 
 | Legacy table | vNext candidate / disposition | Priority |
 | --- | --- | --- |
-| `placement_eligibility` | No equivalent global scoped-decision table; job-level policy is NOT equivalent | P0 |
-| `placement_eligibility_event` | No equivalent bulk-action + undo event table | P0 |
-| `placement_batch` | No equivalent per-academic-batch registration/rules lifecycle table; `placement_seasons` is not equivalent | P0 |
+| `placement_eligibility` | Existing `placement_eligibility_decisions` (0035) is a **partial equivalent**; its polymorphic `scope_id` lacks enforced parent FK/college proof and there is no bulk undo | P0 |
+| `placement_eligibility_event` | New `placement_eligibility_events` schema drafted here; unjournaled/unverified | P0 |
+| `placement_batch` | New `placement_batch_lifecycles` schema drafted here; unjournaled/unverified | P0 |
 | `placement_registration` | No equivalent consented, per-batch registration journey identified; season-linked registration is retired by latest design | P0 |
 | `placement_debarment` | No dedicated duration/counter/restore state identified | P1 |
 | `external_placement` | No dedicated verified off-campus offer independent of fake job/application found | P1 |
@@ -43,8 +43,8 @@ This is a **field-candidate inventory** from the full source registry, not a cur
 ### DB08-A — batch policy and auditable eligibility (independent from DB03)
 
 1. Model per-cohort `placement_batch_lifecycle`: `cohort_id` immutable PK/FK, `college_id`, optional registration deadline, invited/finished timestamps, optional JSON rules override (null means college policy), actor/time fields, and a foreign/tenant integrity guard. Different departments/cohorts can have independent deadlines. No placement season dependency.
-2. Model current scoped eligibility decisions with **one of** `cohort_id` / `section_id` / `membership_id` present (CHECK exactly one), real FKs, college owner, `ELIGIBLE|INELIGIBLE`, mandatory trimmed reason for INELIGIBLE, optional note, deciding user and timestamp, unique active decision per scope. Avoid a polymorphic `scope_type+unconstrained scope_id` FK hole.
-3. Model append-only events with action ID, before/after status+reason+note, actor, timestamps, inverse/undone relationship; preserve bulk actions. Undo must ensure no intervening conflicting decisions; lock all affected scopes in stable order and transact decision+event changes together. Reject cross-tenant writers and inactive actors. Never delete history on undo.
+2. **Extend the existing 0035 `placement_eligibility_decisions` table** (do not duplicate). Its existing `scope_type+scope_id` is validated by a parent/college verification trigger in the staged SQL, with length checks, one current decision per scope, and an eventual fully typed FK refactor if desired. The staged trigger is not yet deployed.
+3. Model append-only events with action ID, before/after status+reason+note, actor, timestamps, inverse/undone relationship; preserve bulk actions. **Staged** in `src/db/schema/placement-batches.ts` and `scripts/sql/db08-batch-eligibility-staging.sql`, NOT added to the journal. Undo must ensure no intervening conflicting decisions; lock all affected scopes in stable order and transact decision+event changes together. Reject cross-tenant writers and inactive actors. Never delete history on undo.
 4. Resolve membership → current section/cohort using authoritative **active** enrollment and section assignment (do not infer from free-form display fields); calculate effective source and reasons for admins. Guard against learner transfers, stale section assignments and college mismatch.
 5. Gate student placement UI/API on **both** college module and resolved eligibility. Hide eligibility details from students; allow limited Drive Day coordinator access under its separate authorization rule. Becoming ineligible flags existing applications for TPO review; never auto-withdraw.
 6. Decide up front whether feature release is blocked until global gate is wired into every read/write route. Merely creating tables is insufficient.
