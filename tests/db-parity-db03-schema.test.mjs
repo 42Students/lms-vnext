@@ -74,3 +74,12 @@ test("DB03 cross-parent tenant guards are registered in migration 0039", () => {
     "db03_elective_offering_scope_guard","db03_project_team_scope_guard"])
     assert.ok(sql39.includes("CREATE TRIGGER "+trigger));
 });
+
+test("DB03 slot ranges stay synchronized through migrations 0037-0039", () => {
+  for (const idx of [37,38,39]) {
+    const snapshot=load("drizzle/meta/"+String(idx).padStart(4,"0")+"_snapshot.json");
+    const c=snapshot.tables["public.elective_slots"].checkConstraints;
+    assert.match(c.elective_slots_semester_ck.value,/BETWEEN 1 AND 12/);
+    assert.match(c.elective_slots_picks_ck.value,/credits" BETWEEN 0 AND 30/);
+  }
+});
