@@ -216,10 +216,10 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       .rejects.toMatchObject({ code: "LEARNER_SCHEDULE_ACCESS_DENIED" });
   });
 
-  it("rejects the wrong program even for a learner in the same college", async () => {
+  it("rejects elective joins without any active primary academic enrollment", async () => {
     const f = await setupRosterFixture();
     await expect(joinGroup(learner,f.groupId,learner.membership!.id))
-      .rejects.toMatchObject({ code: "ELECTIVE_PROGRAM_ENROLLMENT_REQUIRED" });
+      .rejects.toMatchObject({ code: "ELECTIVE_PRIMARY_SECTION_REQUIRED" });
   });
 
   it("does not allow joining an ELECTIVE group that has no active offering", async () => {

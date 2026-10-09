@@ -226,7 +226,7 @@ export async function joinGroup(
       if (group.kind !== "ELECTIVE" || group.collegeId !== slot.collegeId)
         throw new GroupServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
       if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
-        throw new GroupServiceError("ELECTIVE_PROGRAM_ENROLLMENT_REQUIRED");
+        throw new GroupServiceError("ELECTIVE_PRIMARY_SECTION_REQUIRED");
       await assertElectivePickLimit(tx, slot, memberId);
     }
     const available = group.capacity === null || group.activeCount < group.capacity;
@@ -458,7 +458,7 @@ export async function moveElectiveMember(
     assertScope(context, fromGroup, "MANUAL", memberId);
     await assertTargetMembership(tx, fromGroup, memberId);
     if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
-      throw new GroupServiceError("ELECTIVE_PROGRAM_ENROLLMENT_REQUIRED");
+      throw new GroupServiceError("ELECTIVE_PRIMARY_SECTION_REQUIRED");
     const [sourceMember] = await tx.select().from(lmsGroupMembers)
       .where(and(
         eq(lmsGroupMembers.groupId, fromGroup.id),

@@ -40,8 +40,8 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     eq(sections.status, "ACTIVE"),
     eq(sections.cohortId, courseOfferings.cohortId),
     eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
-    // Group-backed access also requires current program and primary section,
-    // not just a still-present historic group membership.
+    // Access requires an ACTIVE same-college PRIMARY program/section, but
+    // need NOT belong to the slot's program: cross-program electives are valid.
     sql<boolean>`exists (
       select 1 from learner_program_enrollments lpe
       join section_enrollments se on se.learner_enrollment_id = lpe.id
@@ -49,7 +49,6 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
       join programs p on p.id = lpe.program_id
       join departments pd on pd.id = p.department_id
       where lpe.membership_id = ${membershipId}
-        and lpe.program_id = ${electiveSlots.programId}
         and lpe.status = 'ACTIVE' and se.status = 'ACTIVE'
         and home.status = 'ACTIVE' and home.cohort_id = lpe.cohort_id
         and home.academic_period_id = se.academic_period_id
