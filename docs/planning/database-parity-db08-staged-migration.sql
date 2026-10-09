@@ -20,12 +20,18 @@ CREATE TABLE "placement_eligibility_actions" (
     OR ("status" = 'UNDONE' AND "undone_at" IS NOT NULL AND "undone_by_user_id" IS NOT NULL)
   )
 );
+CREATE UNIQUE INDEX "placement_eligibility_actions_id_college_uq"
+  ON "placement_eligibility_actions" ("id", "college_id");
 CREATE INDEX "placement_eligibility_actions_college_created_idx"
   ON "placement_eligibility_actions" ("college_id", "created_at");
 
 ALTER TABLE "placement_eligibility_decisions"
   ADD COLUMN "last_action_id" uuid
   REFERENCES "placement_eligibility_actions"("id") ON DELETE RESTRICT;
+ALTER TABLE "placement_eligibility_decisions"
+  ADD CONSTRAINT "placement_eligibility_decisions_action_college_fk"
+  FOREIGN KEY ("last_action_id", "college_id")
+  REFERENCES "placement_eligibility_actions"("id", "college_id") ON DELETE RESTRICT;
 
 CREATE TABLE "placement_eligibility_events" (
   "id" uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
@@ -49,6 +55,12 @@ CREATE TABLE "placement_eligibility_events" (
   "actor_user_id" uuid NOT NULL REFERENCES "users"("id") ON DELETE RESTRICT,
   "undone_at" timestamptz,
   "created_at" timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT "placement_eligibility_events_action_college_fk"
+    FOREIGN KEY ("action_id", "college_id")
+    REFERENCES "placement_eligibility_actions"("id", "college_id") ON DELETE RESTRICT,
+  CONSTRAINT "placement_eligibility_events_previous_action_college_fk"
+    FOREIGN KEY ("before_last_action_id", "college_id")
+    REFERENCES "placement_eligibility_actions"("id", "college_id") ON DELETE RESTRICT,
   CONSTRAINT "placement_eligibility_events_scope_ck"
     CHECK ("scope_type" IN ('MEMBERSHIP', 'SECTION', 'COHORT')),
   CONSTRAINT "placement_eligibility_events_before_status_ck"
