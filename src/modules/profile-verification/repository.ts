@@ -11,7 +11,7 @@ import { learnerProfileDocumentSchema } from "@/modules/people/profile-validatio
 import {
   safeVerificationSnapshot, type SafeSnapshot, type VerificationSection,
 } from "./domain";
-import { educationLevel, evaluateVerificationEvidence, type Receipt } from "./evidence";
+import { evaluateVerificationEvidence, usablePrivateReceipt, validateSubmittedEvidence, type Receipt } from "./evidence";
 import { postgresLockedVerificationTransition } from "./transaction-writer";
 import type { VerificationTransactionRepository } from "./service";
 
@@ -51,7 +51,9 @@ export function createProfileVerificationRepository(
         }))
       : [];
     // No object verifier means NO verified receipts, regardless of CLEAN metadata.
-    const accepted = verifiedObjects.filter(x => x.verified).map(x => x.receipt);
+    const accepted = verifiedObjects.filter(x => x.verified &&
+      usablePrivateReceipt(x.receipt,membershipId,x.receipt.purpose,new Date(),x.receipt.educationEntryId))
+      .map(x => x.receipt);
     const education = profile.education.map(e => ({
       id:e.id, educationType:e.educationType, gradeObtained:e.gradeObtained,
     }));
@@ -128,11 +130,19 @@ export function createProfileVerificationRepository(
     },
     readCurrentSectionForSubmission:async (membershipId,section) => prepare(membershipId,section),
     async submittedEvidenceIsValid(membershipId,section,snapshot) {
-      const prepared = await prepare(membershipId,section);
-      // A review cannot approve evidence that was silently replaced since
-      // submission. Compare to the exact server-owned current version.
-      return prepared.documentsReady &&
-        JSON.stringify(prepared.snapshot) === JSON.stringify(snapshot);
+      // Documents are bound to the immutable submitted snapshot. A learner
+      // can edit draft profile details without silently replacing the review.
+      if (!verifyPrivateObject) return false;
+      const rows = await loadReceipts(membershipId);
+      const accepted: Receipt[] = [];
+      for (const receipt of rows) {
+        try {
+          if (await verifyPrivateObject(receipt)) accepted.push(receipt);
+        } catch {
+          // Unavailable storage/scan verifier fails closed.
+        }
+      }
+      return validateSubmittedEvidence(membershipId,section,snapshot,accepted,new Date());
     },
   };
 }
