@@ -75,8 +75,18 @@ BEGIN
   IF NOT enrolled THEN
     RAISE EXCEPTION 'Registration cohort is not owned by learner college' USING ERRCODE='23514';
   END IF;
-  IF NEW.source='SELF' AND NOT actor_matches THEN
-    RAISE EXCEPTION 'Self registration cannot impersonate another learner' USING ERRCODE='23514';
+  IF NEW.source='SELF' THEN
+    IF NOT actor_matches THEN
+      RAISE EXCEPTION 'Self registration cannot impersonate another learner' USING ERRCODE='23514';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM placement_batch_lifecycles b
+      WHERE b.cohort_id=NEW.cohort_id AND b.college_id=NEW.college_id
+        AND b.invited_at IS NOT NULL AND b.finished_at IS NULL
+        AND (b.registration_deadline IS NULL OR b.registration_deadline > now())
+    ) THEN
+      RAISE EXCEPTION 'Registration window closed for learner self service' USING ERRCODE='23514';
+    END IF;
   END IF;
   RETURN NEW;
 END;
@@ -84,6 +94,30 @@ $$;
 CREATE TRIGGER db08_registration_parent_guard
   BEFORE INSERT OR UPDATE ON placement_batch_registrations
   FOR EACH ROW EXECUTE FUNCTION db08_assert_registration_parent();
+
+-- Database-owned audit: even an authorized future SQL writer cannot change a
+-- choice or consent without an immutable versioned event. No service duplicate.
+CREATE FUNCTION db08_register_audit() RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF TG_OP='UPDATE' AND
+    (OLD.choice,OLD.consent_version,OLD.consent_at,OLD.source)
+      IS NOT DISTINCT FROM
+    (NEW.choice,NEW.consent_version,NEW.consent_at,NEW.source) THEN
+    RETURN NEW;
+  END IF;
+  INSERT INTO placement_batch_registration_events
+    (registration_id,previous_choice,next_choice,consent_version,consent_at,actor_user_id,source)
+  VALUES (
+    NEW.id,
+    CASE WHEN TG_OP='INSERT' THEN NULL ELSE OLD.choice END,
+    NEW.choice,NEW.consent_version,NEW.consent_at,NEW.recorded_by_user_id,NEW.source
+  );
+  RETURN NEW;
+END;
+$;
+CREATE TRIGGER db08_registration_auto_audit
+  AFTER INSERT OR UPDATE ON placement_batch_registrations
+  FOR EACH ROW EXECUTE FUNCTION db08_register_audit();
 
 -- Protect append-only audit. Changes to current state MUST retain events.
 CREATE FUNCTION db08_registration_events_immutable() RETURNS trigger LANGUAGE plpgsql AS $$
@@ -95,7 +129,8 @@ CREATE TRIGGER db08_registration_events_no_mutation
   BEFORE UPDATE OR DELETE ON placement_batch_registration_events
   FOR EACH ROW EXECUTE FUNCTION db08_registration_events_immutable();
 
--- TODO gate: protect against direct SQL registration without an event, including
--- admins and backfills, via privileged DB writer boundary or transactional trigger.
+-- Source writer boundary still requires authenticated TPO/BACKFILL actor validation.
+-- SQL guards enforce SELF identity and window; reserve the administrative source
+-- mode for explicit server-side authorized services only.
 -- TODO gate: guard parent cohort/college reparenting and cross-college schema drift.
 -- TODO gate: generate official Drizzle snapshot/journal + disposable PG replay.
