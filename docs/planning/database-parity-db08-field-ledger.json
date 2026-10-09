@@ -10,7 +10,7 @@
       "src/db/schema/drive-day.ts"
     ]
   },
-  "interpretation": "A name match is merely a candidate; source-level inventory, not live MySQL or PostgreSQL introspection. Every field must be semantically reviewed, implemented, database-tested and workflow-verified (or explicitly signed off for redesign/retirement).",
+  "interpretation": "A name match is merely a candidate; source-level inventory, not live MySQL or PostgreSQL introspection. Every field must be semantically reviewed, implemented, database-tested and workflow-verified (or explicitly signed off for redesign/retirement). Preexisting placement_eligibility_decisions from 0035 covers current global decision status but lacks parent-scoped FKs and event/undo fidelity; gap is not absence of the decision table.",
   "gate": {
     "liveLegacySchema": "NOT_INSPECTED",
     "disposablePostgresReplay": "NOT_RUN",
@@ -23,7 +23,7 @@
   "counts": {
     "legacyTables": 18,
     "legacyFields": 280,
-    "candidateDirectTableMissing": 7,
+    "candidateDirectTableMissing": 6,
     "verifiedFields": 0
   },
   "tables": [
@@ -3389,8 +3389,10 @@
       "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
       "sourceBase": "V188__placement_batches_and_eligibility.sql",
       "priority": "P0",
-      "candidateVnextTables": [],
-      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "candidateVnextTables": [
+        "placement_eligibility_decisions"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_UNVERIFIED_POLYMORPHIC_SCOPE_WITHOUT_PARENT_FK_OR_UNDO",
       "fieldCount": 11,
       "fields": [
         {
