@@ -1,0 +1,205 @@
+{
+  "source": "V193__recruiter_naming.sql",
+  "sha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "warnings": [
+    "The table rename is a comma-delimited single RENAME TABLE statement: do not parse only first pair",
+    "All renamed columns and enums/codes must map forward; index/FK names change in V193/V194",
+    "Physical rename does not imply new table or erased historical business meaning"
+  ],
+  "tableRenames": [
+    {
+      "oldName": "hr_user",
+      "newName": "recruiter"
+    },
+    {
+      "oldName": "hr_college_access",
+      "newName": "recruiter_college_access"
+    },
+    {
+      "oldName": "hr_college_access_capability",
+      "newName": "recruiter_college_access_capability"
+    },
+    {
+      "oldName": "hr_notification_read",
+      "newName": "recruiter_notification_read"
+    },
+    {
+      "oldName": "hr_applicant_note",
+      "newName": "recruiter_applicant_note"
+    },
+    {
+      "oldName": "tpo_lead",
+      "newName": "recruiter_lead"
+    },
+    {
+      "oldName": "lead_activity",
+      "newName": "recruiter_lead_activity"
+    }
+  ],
+  "columnRenames": [
+    {
+      "table": "recruiter_college_access",
+      "old": "hr_user_id",
+      "new": "recruiter_id"
+    },
+    {
+      "table": "recruiter_college_access",
+      "old": "pending_lead_id",
+      "new": "pending_recruiter_lead_id"
+    },
+    {
+      "table": "recruiter_notification_read",
+      "old": "hr_user_id",
+      "new": "recruiter_id"
+    },
+    {
+      "table": "recruiter_applicant_note",
+      "old": "hr_user_id",
+      "new": "recruiter_id"
+    },
+    {
+      "table": "recruiter_lead",
+      "old": "hr_user_id",
+      "new": "recruiter_id"
+    },
+    {
+      "table": "recruiter_lead_activity",
+      "old": "lead_id",
+      "new": "recruiter_lead_id"
+    },
+    {
+      "table": "follow_up",
+      "old": "lead_id",
+      "new": "recruiter_lead_id"
+    },
+    {
+      "table": "drive_group",
+      "old": "hr_user_id",
+      "new": "recruiter_id"
+    },
+    {
+      "table": "job",
+      "old": "hr_user_id",
+      "new": "recruiter_id"
+    },
+    {
+      "table": "job_round",
+      "old": "added_by_hr_user_id",
+      "new": "added_by_recruiter_id"
+    },
+    {
+      "table": "tpo_message_thread",
+      "old": "hr_user_id",
+      "new": "recruiter_id"
+    },
+    {
+      "table": "tpo_college_settings",
+      "old": "hr_access_months",
+      "new": "recruiter_access_months"
+    },
+    {
+      "table": "tpo_college_settings",
+      "old": "hr_drive_needs_approval",
+      "new": "recruiter_drive_needs_approval"
+    }
+  ],
+  "storedCodeRewrites": [
+    {
+      "table": "tpo_audit_log",
+      "summary": "actor_type = 'RECRUITER' WHERE actor_type = 'HR'"
+    },
+    {
+      "table": "tpo_message",
+      "summary": "sender_type = 'RECRUITER' WHERE sender_type = 'HR'"
+    },
+    {
+      "table": "round_slot",
+      "summary": "proposed_by = 'RECRUITER' WHERE proposed_by = 'HR'"
+    },
+    {
+      "table": "job_offer",
+      "summary": "created_by_type = 'RECRUITER' WHERE created_by_type = 'HR'"
+    },
+    {
+      "table": "round_result",
+      "summary": "source = 'RECRUITER' WHERE source = 'HR'"
+    },
+    {
+      "table": "round_result",
+      "summary": "submitted_by_type = 'RECRUITER' WHERE submitted_by_type = 'HR'"
+    },
+    {
+      "table": "notification_outbox",
+      "summary": "recipient_type = 'RECRUITER' WHERE recipient_type = 'HR'"
+    },
+    {
+      "table": "tpo_bell_read",
+      "summary": "reader_type = 'RECRUITER' WHERE reader_type = 'HR'"
+    },
+    {
+      "table": "mobile_login_attempt",
+      "summary": "user_type = 'RECRUITER' WHERE user_type = 'HR'"
+    },
+    {
+      "table": "refresh_token_blocklist",
+      "summary": "user_type = 'RECRUITER' WHERE user_type = 'HR'"
+    },
+    {
+      "table": "user_session",
+      "summary": "user_type = 'RECRUITER' WHERE user_type = 'HR'"
+    },
+    {
+      "table": "admin_audit_log",
+      "summary": "actor_user_type = 'RECRUITER' WHERE actor_user_type = 'HR'"
+    },
+    {
+      "table": "placement_eligibility",
+      "summary": "decided_by_type = 'RECRUITER' WHERE decided_by_type = 'HR'"
+    },
+    {
+      "table": "placement_eligibility_event",
+      "summary": "actor_type = 'RECRUITER' WHERE actor_type = 'HR'"
+    },
+    {
+      "table": "lms_group",
+      "summary": "created_by_type = 'RECRUITER' WHERE created_by_type = 'HR'"
+    },
+    {
+      "table": "lms_group_member_event",
+      "summary": "actor_type = 'RECRUITER' WHERE actor_type = 'HR'"
+    },
+    {
+      "table": "tpo_audit_log",
+      "summary": "action = CONCAT('RECRUITER_', SUBSTRING(action, 4)) WHERE action LIKE 'HR\\_%'"
+    },
+    {
+      "table": "tpo_audit_log",
+      "summary": "action = CONCAT('RECRUITER_', action) WHERE action LIKE 'LEADS\\_%' OR action LIKE 'LEAD\\_%'"
+    },
+    {
+      "table": "tpo_audit_log",
+      "summary": "entity_type = 'RECRUITER_LEAD' WHERE entity_type = 'LEAD'"
+    },
+    {
+      "table": "tpo_bell",
+      "summary": "type = CONCAT('RECRUITER_', SUBSTRING(type, 4)) WHERE type LIKE 'HR\\_%'"
+    },
+    {
+      "table": "tpo_bell",
+      "summary": "link = CONCAT('/tpo/recruiters', SUBSTRING(link, 11)) WHERE link LIKE '/tpo/leads%'"
+    },
+    {
+      "table": "admin_audit_log",
+      "summary": "action_key = CONCAT('RECRUITER_', SUBSTRING(action_key, 4)) WHERE action_key LIKE 'HR\\_%'"
+    },
+    {
+      "table": "admin_audit_log",
+      "summary": "entity_type = 'recruiter' WHERE entity_type = 'hr_user'"
+    },
+    {
+      "table": "tpo_saved_view",
+      "summary": "scope = 'RECRUITER_LEADS' WHERE scope = 'LEADS'"
+    }
+  ],
+  "explicitForeignKeyFollowup": "V194__recruiter_foreign_key_names.sql"
+}
