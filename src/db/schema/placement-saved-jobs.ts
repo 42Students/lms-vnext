@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { index, pgTable, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
