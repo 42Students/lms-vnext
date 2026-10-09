@@ -31,3 +31,8 @@ Added `src/modules/groups/service.ts` with `createGroup`, `joinGroup`, and `leav
 `tests/integration/groups-db03.test.ts` now specifies five DB-backed tests: simultaneous elective max-pick=1 joins across two groups, seat/waitlist promotion and event count, wrong-college member rejection, locked removal, and a direct SQL CHECK failure. They also assert no primary section enrollment changes after elective choice.
 
 **Execution:** NOT RUN; this chat has no connected disposable PostgreSQL. Tests are not evidence of successful execution until run under `npm run test:db` with an isolated database and the registered 0037 migration applied. Tests use synthetic seeded users only.
+
+## Elective producer batch
+Added `createElectiveSlot`, `createElectiveOffering`, and `listElectiveOfferings` to `src/modules/electives/service.ts`.
+
+The producer validates admin scope, program/term college, course college and ACTIVE status, group kind/college, optional delivery course/college and locks the elective slot/group consistently with joining. Duplicate active slot/course, reused group or backed delivery map to domain errors. **Backed delivery is only a provisional bridge:** all course, quiz, schedule, attendance and grading consumers must resolve the actual group roster before this is operationally equivalent to legacy GROUP_BACKED classes. No consumer authorization changes in this batch.
