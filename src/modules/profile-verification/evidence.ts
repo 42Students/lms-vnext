@@ -40,7 +40,7 @@ export function educationLevel(input: string): "10TH" | "12TH" | "DIPLOMA" | "UG
   if (t === "UG" || t === "PG") return t;
   return null;
 }
-function usable(r: Receipt, memberId: string, purpose: PrivateDocumentPurpose, at: Date,
+export function usablePrivateReceipt(r: Receipt, memberId: string, purpose: PrivateDocumentPurpose, at: Date,
                 educationEntryId: string | null = null): boolean {
   const key = r.privateObjectKey;
   return r.owningMembershipId === memberId && r.purpose === purpose &&
@@ -54,7 +54,7 @@ function usable(r: Receipt, memberId: string, purpose: PrivateDocumentPurpose, a
 export function evaluateVerificationEvidence(input: ProfileEvidenceInput): EvidenceResult {
   const missing: string[] = [];
   const eligible = (purpose: PrivateDocumentPurpose, educationEntryId: string | null = null) =>
-    input.receipts.some(r => usable(r, input.owningMembershipId, purpose, input.now, educationEntryId));
+    input.receipts.some(r => usablePrivateReceipt(r, input.owningMembershipId, purpose, input.now, educationEntryId));
   if (input.section === "IDENTITY") {
     if (!input.hasAadhaarNumber && !input.hasPanNumber) missing.push("Provide Aadhaar or PAN details");
     if (input.hasAadhaarNumber && !eligible("AADHAAR")) missing.push("Upload verified Aadhaar document");
@@ -71,4 +71,43 @@ export function evaluateVerificationEvidence(input: ProfileEvidenceInput): Evide
     if (!eligible("RESUME")) missing.push("Upload a resume");
   }
   return {ready: missing.length === 0, missing};
+}
+
+/**
+ * Revalidate immutable submitted references, NOT the latest mutable profile.
+ * Explicit linkage prevents accepting a different CLEAN file uploaded later.
+ */
+export function validateSubmittedEvidence(
+  membershipId: string,
+  section: "EDUCATION" | "IDENTITY",
+  submitted: Record<string, unknown>,
+  receipts: Receipt[],
+  at: Date,
+): boolean {
+  const ref = (purpose: PrivateDocumentPurpose, id: unknown, entryId: string | null = null) =>
+    typeof id === "string" && receipts.some(r => r.id === id &&
+      usablePrivateReceipt(r,membershipId,purpose,at,entryId));
+  if (section === "IDENTITY") {
+    const hasAadhaar = typeof submitted.aadhaarNumber === "string" && submitted.aadhaarNumber.length > 0;
+    const hasPan = typeof submitted.panNumber === "string" && submitted.panNumber.length > 0;
+    if (!hasAadhaar && !hasPan) return false;
+    return (!hasAadhaar || ref("AADHAAR",submitted.aadhaarDocumentId)) &&
+      (!hasPan || ref("PAN",submitted.panDocumentId));
+  }
+  const raw = submitted.education;
+  if (!Array.isArray(raw)) return false;
+  const items: EducationForVerification[] = [];
+  for (const e of raw) {
+    if (e === null || typeof e !== "object" || Array.isArray(e)) return false;
+    const item = e as Record<string,unknown>;
+    if (typeof item.id !== "string" || typeof item.educationType !== "string" ||
+        typeof item.grade !== "string") return false;
+    if (!ref("MARKSHEET", item.marksheetDocumentId, item.id)) return false;
+    items.push({id:item.id,educationType:item.educationType,gradeObtained:item.grade});
+  }
+  if (!ref("RESUME",submitted.resumeDocumentId)) return false;
+  const levels = new Set(items.map(e=>educationLevel(e.educationType)));
+  return levels.has("10TH") && (levels.has("12TH") || levels.has("DIPLOMA")) &&
+    (levels.has("UG") || levels.has("PG")) &&
+    items.every(e=>e.gradeObtained.trim().length>0);
 }
