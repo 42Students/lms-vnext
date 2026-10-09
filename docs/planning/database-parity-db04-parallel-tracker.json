@@ -74,9 +74,9 @@
     {
       "id": "DB04-01",
       "name": "Legacy V187/V192 service and UI behavior sweep, including sent-back update semantics",
-      "status": "LEGACY_SERVICE_REVIEW_DONE_FRONTEND_PENDING",
+      "status": "LEGACY_SERVICE_VERIFIED_FRONTEND_PENDING",
       "releaseBlocker": true,
-      "note": "Confirmed 2026-10-10: update sent back restores VERIFIED and old approved values; bulk verify per-item partial success; exact front-end and storage flow still unreviewed."
+      "note": "Legacy submit/verify/sendback and bulk behavior checked against backend source, frontend and storage producer audit remains."
     },
     {
       "id": "DB04-02",
@@ -87,57 +87,65 @@
     {
       "id": "DB04-03",
       "name": "Profile verification current-row schema and tenant-safe FK/unique/check design",
-      "status": "NOT_STARTED",
-      "releaseBlocker": true
+      "status": "SCHEMA_STAGED_NO_MIGRATION",
+      "releaseBlocker": true,
+      "note": "Drizzle staging file profiles_verifications; intentionally not exported/registered while DB03 journal active."
     },
     {
       "id": "DB04-04",
       "name": "Immutable verification event schema and DB role grants",
-      "status": "NOT_STARTED",
-      "releaseBlocker": true
+      "status": "SCHEMA_STAGED_IMMUTABILITY_UNENFORCED",
+      "releaseBlocker": true,
+      "note": "Event table and version uniqueness authored; append-only SQL trigger/grants and runtime proof remain."
     },
     {
       "id": "DB04-05",
       "name": "Version-checked transactional learner submit and reviewer approve/send-back",
-      "status": "NOT_STARTED",
-      "releaseBlocker": true
+      "status": "STATE_MACHINE_AND_SERVICE_AUTHORED_ADAPTER_MISSING",
+      "releaseBlocker": true,
+      "note": "Pure state planner and authenticated service repository contract coded; DB transaction implementation and end-to-end wiring not done."
     },
     {
       "id": "DB04-06",
       "name": "Centralized College Admin/Super Admin/TPO admin verify authorization plus college setting",
-      "status": "NOT_STARTED",
-      "releaseBlocker": true
+      "status": "POLICY_IMPLEMENTED_TESTS_UNEXECUTED",
+      "releaseBlocker": true,
+      "note": "Central profile-verification.review permission requires tenant scope and trusted TPO admin/college setting."
     },
     {
       "id": "DB04-07",
       "name": "PII audit: raw identity values in JSONB, response redaction, masked snapshots, log handling",
-      "status": "SOURCE_RISK_IDENTIFIED",
-      "releaseBlocker": true
+      "status": "DEFENSE_IN_DEPTH_SNAPSHOT_GUARD_AUTHORED",
+      "releaseBlocker": true,
+      "note": "New verified snapshots reject raw ID numbers and public document links; existing learner_profiles.profile_document raw Aadhaar/PAN storage risk still open."
     },
     {
       "id": "DB04-08",
       "name": "Private upload receipts and owner/tenant/expiry-scoped document access",
-      "status": "BLOCKED_GCP_STORAGE",
-      "releaseBlocker": true
+      "status": "PRIVATE_RECEIPT_SCHEMA_STAGED_STORAGE_BLOCKED",
+      "releaseBlocker": true,
+      "note": "Drizzle receipt table staged; no configured secure bucket, signer, scanner, evidence producer, or access-controlled downloads."
     },
     {
       "id": "DB04-09",
       "name": "Original mark grade/scale/max, conversion provenance, policy version and precision",
-      "status": "SOURCE_BEHAVIOR_PINNED_IMPLEMENTATION_MISSING",
+      "status": "SOURCE_CONVERSION_HELPER_IMPLEMENTED_PERSISTENCE_PENDING",
       "releaseBlocker": true,
-      "note": "Exact legacy: college conversion rule change recomputes current percentages and audits CGPA_RULE_CHANGED while raw marks remain as earned; do not freeze derived percentages."
+      "note": "Bigint-rational HALF_UP grade converter faithfully matches four legacy CGPA rules and allows recompute from original marks; no DB/Settings integration."
     },
     {
       "id": "DB04-10",
       "name": "Exactly-once event+snapshot writes and reviewer concurrency integration tests",
-      "status": "NOT_STARTED",
-      "releaseBlocker": true
+      "status": "UNIT_REGRESSIONS_AUTHORED_DB_RACE_UNEXECUTED",
+      "releaseBlocker": true,
+      "note": "State/permissions/service tests authored; concurrent PostgreSQL row lock and exactly-once event proof not run."
     },
     {
       "id": "DB04-11",
       "name": "Real isolated PostgreSQL migrate/replay/introspection and malformed SQL negative tests",
-      "status": "NOT_RUN",
-      "releaseBlocker": true
+      "status": "CI_FAILED_NO_EXECUTION_EVIDENCE",
+      "releaseBlocker": true,
+      "note": "GitHub CI runs fail with no step log returned; repo builds, Drizzle migration, and PostgreSQL replay not verified."
     },
     {
       "id": "DB04-12",
@@ -154,8 +162,9 @@
     {
       "id": "DB04-14",
       "name": "Rebase on DB03 and reconcile migration numbering + Drizzle journal",
-      "status": "WAITING_FOR_DB03",
-      "releaseBlocker": true
+      "status": "WAITING_DB03_REBASE_AND_JOURNAL_RECONCILIATION",
+      "releaseBlocker": true,
+      "note": "DB03 shared branch advanced after fork; do not merge without reviewing and reconciling."
     }
   ],
   "excludedPaths": [
@@ -166,19 +175,41 @@
     "drizzle/0037_db03_groups_electives.sql"
   ],
   "testing": {
+    "isolatedPureStateMirrorTsc": "PASS_LOCAL_MIRROR",
+    "isolatedPureStateMirrorSmoke": "PASS_LOCAL_MIRROR",
+    "isolatedMarksMirrorTsc": "PASS_LOCAL_MIRROR",
+    "isolatedMarksMirrorSmoke": "PASS_13_ASSERTIONS_LOCAL_MIRROR",
+    "repositoryVitest": "NOT_EXECUTED",
+    "repositoryTypecheck": "NOT_EXECUTED",
     "postgres": "NOT_EXECUTED",
     "drizzleGeneration": "NOT_EXECUTED",
-    "typecheck": "NOT_EXECUTED",
-    "lint": "NOT_EXECUTED",
     "browser": "NOT_EXECUTED",
-    "staticSourceReview": "LEGACY_V187_V192_SERVICES_CONFIRMED"
+    "githubCI": "FAILING_WITH_NO_DIAGNOSTIC_JOB_LOGS"
   },
-  "completion": "NOT_IMPLEMENTED_NOT_VERIFIED",
+  "completion": "CODE_PARTIAL_RELEASE_BLOCKED",
   "notes": [
     "Greenfield only; do not migrate old production data",
     "Never count a source-mapped field as verified without executed tests",
     "Do not update shared branch directly while DB03 writes are active",
     "Use docs/planning/database-parity-db04-parallel-audit.md as decision contract"
   ],
-  "lastSourceAudit": "2026-10-10"
+  "lastSourceAudit": "2026-10-10",
+  "implementation": {
+    "sourceCode": [
+      "src/modules/profile-verification/domain.ts",
+      "src/modules/profile-verification/service.ts",
+      "src/modules/profile-verification/academic-marks.ts",
+      "src/db/schema/profile-verification.ts",
+      "src/modules/permissions/policy.ts (profile-verification.review permission)"
+    ],
+    "newUnitTests": [
+      "tests/unit/db04-verification-domain.test.ts",
+      "tests/unit/db04-verification-service.test.ts",
+      "tests/unit/db04-verification-policy.test.ts",
+      "tests/unit/db04-academic-marks.test.ts"
+    ],
+    "currentBehavior": "STAGED_ONLY_NO_API_NO_PERSISTENCE_NO_SECURE_UPLOAD",
+    "driftPolicy": "Do not export staged schema or register DB04 migration until DB03 journal is reconciled"
+  },
+  "lastAudit": "2026-10-10"
 }
