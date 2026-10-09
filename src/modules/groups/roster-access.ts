@@ -3,7 +3,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships, courseOfferings, courseSectionDeliveries, courses,
   departments, electiveOfferings, electiveSlots, lmsGroupMembers,
-  lmsGroups, membershipRoles, sections,
+  lmsGroups, membershipRoles, sections, users,
 } from "@/db/schema";
 
 /**
@@ -21,6 +21,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     eq(collegeMemberships.id, membershipId),
     eq(collegeMemberships.collegeId, collegeId),
     eq(collegeMemberships.status, "ACTIVE"),
+    eq(users.platformStatus, "ACTIVE"),
     eq(membershipRoles.role, "LEARNER"),
     eq(lmsGroups.kind, "ELECTIVE"),
     eq(lmsGroups.ownerScope, "COLLEGE"),
@@ -65,6 +66,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
     .innerJoin(lmsGroupMembers, eq(lmsGroupMembers.groupId, lmsGroups.id))
     .innerJoin(collegeMemberships, eq(collegeMemberships.id, lmsGroupMembers.membershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
     .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
     .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, electiveOfferings.backedDeliveryId))
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
