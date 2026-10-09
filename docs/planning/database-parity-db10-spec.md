@@ -69,7 +69,7 @@ Active parallel owners: DB03 Groups/Electives; DB04 Profiles & Verification; DB0
 | DB10-N0 | Fix existing notification count, duplicates and link validation | Source changed; tests authored; database verification pending | IMPLEMENTED_NOT_VERIFIED |
 | DB10-N1 | Read-side link policy and tests | Policy wired to reads/writes; DB tests and all read-path consumer audits pending; CI verify job failed without visible steps/logs | IMPLEMENTED_NOT_VERIFIED |
 | DB10-N2 | Delayed delivery, expiry, announcement targeting | Scheduling, expiry and deletion remain faithful to legacy workflows | NOT_STARTED |
-| DB10-B1 | Bug tracker exact API, roles, fields and state map | 5 legacy tables / all fields mapped with transitions, tenant and audit evidence | NOT_STARTED |
+| DB10-B1 | Bug tracker exact API, roles, fields and state map | 58 fields source reviewed, 5-table schema draft, pure workflow/access policy, tests authored; DB + APIs + browser pending | SOURCE_REVIEWED_DRAFT_NOT_VERIFIED |
 | DB10-A1 | Audit and announcements domain | Separate security audit from activity; schedule/targeting/pin/expiry | NOT_STARTED |
 | DB10-T1 | Templates, notifications, SMS and durable delivery | Versioning, DLT, suppression, retries, dedupe, multi-provider outcomes | NOT_STARTED |
 | DB10-L1 | Log alerting + scheduled job lease | Safe restart, muting, reacquire race/fencing | NOT_STARTED |
@@ -98,4 +98,4 @@ DB10-15: semantic drift across legacy source SHAs marks affected records STALE.
 
 Each field must contain `legacy table.column`, meaning/source code SHA, vNext target or approved redesign/retirement, nullability/default/precision/timezone, keys/FKs, deletion semantics, tenant and actor, producer/consumer, invariant and observed DB/test/UI evidence. `UNMAPPED`, `IMPLEMENTED`, `BLOCKED` and unexecuted tests are **not** verification.
 
-**Current database semantic closure: 0/221.** The three notification fixes are useful behavior hardening, not completed legacy database parity. Merge DB10 only after source refresh, CI/typecheck, disposable PostgreSQL tests and a conflict review against moving `db-parity-2026`; never force-push.
+**Current database semantic closure: 0/221.** A separate DB10-B1 audit has source-reviewed **58/58 bug tracker fields** and inventoried **25 tracker UI route/overlay candidates**, but these are not DB-verified mappings or browser-verified parity. See `database-parity-db10-bug-tracker.md` and `database-parity-db10-tracker-ui-ledger.md`. The three notification fixes are useful behavior hardening, not completed legacy database parity. Merge DB10 only after source refresh, CI/typecheck, disposable PostgreSQL tests and a conflict review against moving `db-parity-2026`; never force-push.
