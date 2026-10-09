@@ -183,6 +183,72 @@ describe.skipIf(!enabled)("DB08-A eligibility action database contracts (migrati
     expect(count.rows[0].n).toBe(0);
   });
 
+  it("blocks mismatched idempotency payloads and replay after undo", async () => {
+    const member = await createLearner();
+    const actionId = nextActionId();
+    const payload = {
+      collegeId: SEED_IDS.collegeA,
+      actionId,
+      changes: [{ scopeType: "MEMBERSHIP", scopeId: member, status: "ELIGIBLE" }],
+    };
+    await applyPlacementEligibilityBulkAction(tpo, payload);
+    await expect(applyPlacementEligibilityBulkAction(tpo, {
+      ...payload,
+      changes: [{
+        scopeType: "MEMBERSHIP",
+        scopeId: member,
+        status: "INELIGIBLE",
+        reason: "New policy",
+      }],
+    })).rejects.toMatchObject({ code: "PLACEMENT_ELIGIBILITY_ACTION_CONFLICT" });
+    await undoPlacementEligibilityBulkAction(tpo, {
+      collegeId: payload.collegeId,
+      actionId,
+    });
+    await expect(applyPlacementEligibilityBulkAction(tpo, payload))
+      .resolves.toMatchObject({ status: "UNDONE", replayed: true });
+  });
+
+  it("rejects a multi-scope action atomically if one membership belongs to another college", async () => {
+    const local = await createLearner();
+    const foreign = await createLearner(SEED_IDS.collegeB);
+    const actionId = nextActionId();
+    await expect(applyPlacementEligibilityBulkAction(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      actionId,
+      changes: [
+        { scopeType: "MEMBERSHIP", scopeId: local, status: "ELIGIBLE" },
+        { scopeType: "MEMBERSHIP", scopeId: foreign, status: "INELIGIBLE", reason: "Excluded" },
+      ],
+    })).rejects.toMatchObject({ code: "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH" });
+    const actions = await pool!.query(
+      "SELECT count(*)::int AS n FROM placement_eligibility_actions WHERE id=$1",
+      [actionId],
+    );
+    const decisions = await pool!.query(
+      "SELECT count(*)::int AS n FROM placement_eligibility_decisions WHERE scope_id=$1",
+      [local],
+    );
+    expect(actions.rows[0].n).toBe(0);
+    expect(decisions.rows[0].n).toBe(0);
+  });
+
+  it("enforces cross-college action/event composite foreign keys in raw SQL", async () => {
+    const member = await createLearner();
+    const actionId = nextActionId();
+    await applyPlacementEligibilityBulkAction(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      actionId,
+      changes: [{ scopeType: "MEMBERSHIP", scopeId: member, status: "ELIGIBLE" }],
+    });
+    await expect(pool!.query(
+      `INSERT INTO placement_eligibility_events
+        (action_id,college_id,scope_type,scope_id,after_status,actor_user_id)
+       VALUES ($1,$2,'MEMBERSHIP',$3,'ELIGIBLE',$4)`,
+      [actionId, SEED_IDS.collegeB, member, SEED_IDS.facultyUser],
+    )).rejects.toMatchObject({ code: "23503" });
+  });
+
   it("rejects a learner trying to set their own eligibility", async () => {
     const member = await createLearner();
     const learner: RequestContext = {
