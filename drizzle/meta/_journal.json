@@ -260,6 +260,13 @@
       "when": 1791253800000,
       "tag": "0036_drive_day_coordinators",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1791580200000,
+      "tag": "0037_db03_groups_electives",
+      "breakpoints": true
     }
   ]
 }
