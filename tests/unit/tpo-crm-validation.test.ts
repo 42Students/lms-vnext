@@ -37,6 +37,25 @@ describe("DB09 recruiter CRM input contracts", () => {
     })).toThrow();
   });
 
+  it("preserves V161 recruiter lead source codes and human labels", () => {
+    expect(createTpoLeadSchema.parse({
+      collegeId, name: "Source A", email: "a@example.org",
+      source: "LinkedIn",
+    }).source).toBe("LINKEDIN");
+    expect(createTpoLeadSchema.parse({
+      collegeId, name: "Source B", email: "b@example.org",
+      source: "Event or job fair",
+    }).source).toBe("EVENT");
+    expect(() => createTpoLeadSchema.parse({
+      collegeId, name: "Source C", email: "c@example.org",
+      source: "ARBITRARY_SOURCE",
+    })).toThrow();
+    expect(() => createTpoLeadSchema.parse({
+      collegeId, name: "Source D", email: "d@example.org",
+      source: "IMPORT",
+    })).toThrow();
+  });
+
   it("prevents callers from manufacturing SYSTEM audit activity", () => {
     expect(logTpoLeadActivitySchema.parse({
       collegeId, type: "CALL", note: "Spoke to recruiter",
