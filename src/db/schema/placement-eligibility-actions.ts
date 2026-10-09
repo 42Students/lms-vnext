@@ -73,6 +73,11 @@ export const placementEligibilityEvents = pgTable(
       () => placementEligibilityActions.id,
       { onDelete: "restrict" },
     ),
+    beforeDecidedByUserId: uuid("before_decided_by_user_id").references(
+      () => users.id,
+      { onDelete: "restrict" },
+    ),
+    beforeDecidedAt: timestamp("before_decided_at", { withTimezone: true }),
     afterStatus: varchar("after_status", { length: 24 }).notNull(),
     afterReason: text("after_reason"),
     afterNote: text("after_note"),
