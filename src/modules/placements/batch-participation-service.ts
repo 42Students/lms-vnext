@@ -515,6 +515,7 @@ export async function getOwnPlacementParticipationAccess(context: RequestContext
     .select({
       collegeId: collegeMemberships.collegeId,
       status: collegeMemberships.status,
+      userId: collegeMemberships.userId,
     })
     .from(collegeMemberships)
     .innerJoin(membershipRoles, and(
@@ -523,7 +524,8 @@ export async function getOwnPlacementParticipationAccess(context: RequestContext
     ))
     .where(eq(collegeMemberships.id, membershipId)).limit(1);
   if (!activeMembership || activeMembership.status !== "ACTIVE" ||
-      activeMembership.collegeId !== collegeId) {
+      activeMembership.collegeId !== collegeId ||
+      activeMembership.userId !== context.user.id) {
     return { showPlacements: false, canSelfApply: false };
   }
   const [enrollment] = await getDb().select({
