@@ -150,20 +150,21 @@ afterAll(async()=>{await pool.end();await closeDatabaseConnection();});
 describe("DB03 elective group-backed course access (PostgreSQL)", () => {
   it("shows a group-backed elective without creating primary section enrollment", async () => {
     const f = await setupRosterFixture();
+    const host = await createHostSectionLearner(f);
     const before = await pool.query(
       "SELECT count(*)::integer AS n FROM section_enrollments se JOIN learner_program_enrollments pe ON pe.id=se.learner_enrollment_id WHERE pe.membership_id=$1",
-      [learner.membership!.id],
+      [host.membershipId],
     );
-    await joinGroup(learner,f.groupId,learner.membership!.id);
-    const listed = await listLearnerCourseDeliveries(learner);
+    await joinGroup(host.ctx,f.groupId,host.membershipId);
+    const listed = await listLearnerCourseDeliveries(host.ctx);
     expect(listed.some(row=>row.deliveryId===f.deliveryId)).toBe(true);
-    await expect(requireLearningReadAccess(learner,f.offeringId,f.deliveryId)).resolves.toBe("LEARNER");
-    const schedule = await getLearnerClassSchedule(learner);
+    await expect(requireLearningReadAccess(host.ctx,f.offeringId,f.deliveryId)).resolves.toBe("LEARNER");
+    const schedule = await getLearnerClassSchedule(host.ctx);
     expect(schedule.courses.some(row=>row.deliveryId===f.deliveryId)).toBe(true);
     expect(schedule.events.some(row=>row.id===f.scheduleEventId)).toBe(true);
     const after = await pool.query(
       "SELECT count(*)::integer AS n FROM section_enrollments se JOIN learner_program_enrollments pe ON pe.id=se.learner_enrollment_id WHERE pe.membership_id=$1",
-      [learner.membership!.id],
+      [host.membershipId],
     );
     expect(after.rows[0].n).toBe(before.rows[0].n);
   });
@@ -204,14 +205,21 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
 
   it("blocks suspended accounts even when group membership remains ACTIVE", async () => {
     const f = await setupRosterFixture();
-    await joinGroup(learner,f.groupId,learner.membership!.id);
-    const suspended: RequestContext = { ...learner, user: { ...learner.user, platformStatus: "DISABLED" } };
+    const host = await createHostSectionLearner(f);
+    await joinGroup(host.ctx,f.groupId,host.membershipId);
+    const suspended: RequestContext = { ...host.ctx, user: { ...host.ctx.user, platformStatus: "DISABLED" } };
     await expect(listLearnerCourseDeliveries(suspended))
       .rejects.toMatchObject({ code: "LEARNER_PROGRESS_ACCESS_DENIED" });
     await expect(requireLearningReadAccess(suspended,f.offeringId,f.deliveryId))
       .rejects.toMatchObject({ code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED" });
     await expect(getLearnerClassSchedule(suspended))
       .rejects.toMatchObject({ code: "LEARNER_SCHEDULE_ACCESS_DENIED" });
+  });
+
+  it("rejects the wrong program even for a learner in the same college", async () => {
+    const f = await setupRosterFixture();
+    await expect(joinGroup(learner,f.groupId,learner.membership!.id))
+      .rejects.toMatchObject({ code: "ELECTIVE_PROGRAM_ENROLLMENT_REQUIRED" });
   });
 
   it("does not allow joining an ELECTIVE group that has no active offering", async () => {

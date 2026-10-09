@@ -12,7 +12,6 @@ import { getDb } from "@/db/client";
 import {
   academicPeriods,
   cohorts,
-  electiveOfferings,
   assignmentSubmissions,
   courseAssignments,
   collegeMemberships,

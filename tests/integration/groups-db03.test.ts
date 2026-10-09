@@ -25,6 +25,7 @@ const fixture = {
   users: [] as string[], memberships: [] as string[],
   periods: [] as string[], cohorts: [] as string[], sections: [] as string[],
   offerings: [] as string[], deliveries: [] as string[],
+  learnerEnrollments: [] as string[], learnerSections: [] as string[],
 };
 
 async function createActiveGroup(kind = "BUS", capacity = 1) {
@@ -91,7 +92,17 @@ async function createElectiveFixture() {
       "INSERT INTO elective_offerings (slot_id,course_id,group_id,backed_delivery_id) VALUES ($1,$2,$3,$4)",
       [slotId,courseId,groups[i],deliveryId]);
   }
-  return { slotId, groups };
+  const candidate = await createLearner();
+  const programEnrollmentId = randomUUID(), sectionEnrollmentId = randomUUID();
+  fixture.learnerEnrollments.push(programEnrollmentId);
+  fixture.learnerSections.push(sectionEnrollmentId);
+  await pool.query(
+    "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id) VALUES ($1,$2,$3,$4)",
+    [programEnrollmentId,candidate.membershipId,programId,cohortId]);
+  await pool.query(
+    "INSERT INTO section_enrollments (id,learner_enrollment_id,section_id,academic_period_id) VALUES ($1,$2,$3,$4)",
+    [sectionEnrollmentId,programEnrollmentId,sectionId,periodId]);
+  return { slotId, groups, candidate };
 }
 beforeEach(() => {
   for(const value of Object.values(fixture)) value.length=0;
@@ -107,6 +118,8 @@ afterEach(async () => {
     await pool.query("DELETE FROM elective_offerings WHERE group_id = ANY($1::uuid[])",[groupIds]);
   }
   if(fixture.slots.length) await pool.query("DELETE FROM elective_slots WHERE id = ANY($1::uuid[])",[fixture.slots]);
+  if(fixture.learnerSections.length) await pool.query("DELETE FROM section_enrollments WHERE id = ANY($1::uuid[])",[fixture.learnerSections]);
+  if(fixture.learnerEnrollments.length) await pool.query("DELETE FROM learner_program_enrollments WHERE id = ANY($1::uuid[])",[fixture.learnerEnrollments]);
   if(fixture.deliveries.length) await pool.query("DELETE FROM course_section_deliveries WHERE id = ANY($1::uuid[])",[fixture.deliveries]);
   if(fixture.offerings.length) await pool.query("DELETE FROM course_offerings WHERE id = ANY($1::uuid[])",[fixture.offerings]);
   if(fixture.sections.length) await pool.query("DELETE FROM sections WHERE id = ANY($1::uuid[])",[fixture.sections]);
@@ -125,12 +138,12 @@ afterAll(async () => { await pool.end(); await closeDatabaseConnection(); });
 
 describe("DB03 group kernel on disposable PostgreSQL", () => {
   it("serializes simultaneous choices from different offerings of the same max_pick=1 slot", async () => {
-    const { groups } = await createElectiveFixture();
+    const { groups, candidate } = await createElectiveFixture();
     const initialSections = await pool.query(
       "SELECT count(*)::integer AS n FROM section_enrollments se JOIN learner_program_enrollments e ON e.id=se.learner_enrollment_id WHERE e.membership_id=$1",
-      [SEED_IDS.learnerCollegeAMembership],
+      [candidate.membershipId],
     );
-    const results = await Promise.allSettled(groups.map(g=>joinGroup(learner,g,SEED_IDS.learnerCollegeAMembership)));
+    const results = await Promise.allSettled(groups.map(g=>joinGroup(candidate.ctx,g,candidate.membershipId)));
     expect(results.filter(r=>r.status==="fulfilled")).toHaveLength(1);
     const rejected = results.find(r=>r.status==="rejected");
     expect(rejected).toMatchObject({ status:"rejected",reason:{code:"ELECTIVE_MAX_PICK_REACHED"} });
@@ -141,7 +154,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(active.rows[0].n).toBe(1);
     const afterSections = await pool.query(
       "SELECT count(*)::integer AS n FROM section_enrollments se JOIN learner_program_enrollments e ON e.id=se.learner_enrollment_id WHERE e.membership_id=$1",
-      [SEED_IDS.learnerCollegeAMembership],
+      [candidate.membershipId],
     );
     expect(afterSections.rows[0].n).toBe(initialSections.rows[0].n);
   });
@@ -173,6 +186,18 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       .rejects.toMatchObject({code:"GROUP_MEMBER_COLLEGE_MISMATCH"});
     const events=await pool.query("SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=$1",[group]);
     expect(events.rows[0].n).toBe(0);
+  });
+  it("skips disabled waitlisted accounts and promotes the next eligible learner", async () => {
+    const group = await createActiveGroup("BUS",1);
+    const disabled = await createLearner(), eligible = await createLearner();
+    await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    await joinGroup(disabled.ctx,group,disabled.membershipId);
+    await joinGroup(eligible.ctx,group,eligible.membershipId);
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1", [disabled.ctx.user.id]);
+    await leaveGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    const members = await pool.query("SELECT membership_id,state FROM lms_group_members WHERE group_id=$1", [group]);
+    expect(members.rows.find(r=>r.membership_id===disabled.membershipId)?.state).toBe("WAITLISTED");
+    expect(members.rows.find(r=>r.membership_id===eligible.membershipId)?.state).toBe("ACTIVE");
   });
   it("rejects an admin-locked removed member rejoining through self-service", async () => {
     const group=await createActiveGroup();
