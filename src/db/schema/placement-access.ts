@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { users } from "./users";
+import { placementEligibilityActions } from "./placement-eligibility-actions";
 
 export const placementEligibilityDecisions = pgTable(
   "placement_eligibility_decisions",
@@ -26,6 +27,10 @@ export const placementEligibilityDecisions = pgTable(
     note: text("note"),
     decidedByUserId: uuid("decided_by_user_id").references(
       () => users.id,
+      { onDelete: "restrict" },
+    ),
+    lastActionId: uuid("last_action_id").references(
+      () => placementEligibilityActions.id,
       { onDelete: "restrict" },
     ),
     decidedAt: timestamp("decided_at", { withTimezone: true })
