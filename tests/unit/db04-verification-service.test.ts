@@ -14,6 +14,7 @@ const updated: SafeSnapshot = {aadhaarNumber: "XXXXXXXX5678", aadhaarDocumentId:
 
 function ctx(kind: "LEARNER" | "COLLEGE_ADMIN" | "TPO" | "SUPER_ADMIN", collegeId = collegeA): RequestContext {
   const superAdmin = kind === "SUPER_ADMIN";
+  const membershipRole = kind === "SUPER_ADMIN" ? "COLLEGE_ADMIN" : kind;
   return {
     user: {
       id: kind === "LEARNER" ? "learner-user" : kind.toLowerCase(),
@@ -26,7 +27,7 @@ function ctx(kind: "LEARNER" | "COLLEGE_ADMIN" | "TPO" | "SUPER_ADMIN", collegeI
       collegeId,
       organizationId: orgA,
       status: "ACTIVE",
-      roles: [kind],
+      roles: [membershipRole],
     },
   };
 }
