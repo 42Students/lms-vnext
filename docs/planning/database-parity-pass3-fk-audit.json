@@ -1,0 +1,4155 @@
+{
+  "schemaVersion": 1,
+  "pass": 3,
+  "source": "Drizzle snapshot 0036 only, NOT live PostgreSQL",
+  "snapshotSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+  "stats": {
+    "tables": 84,
+    "foreignKeys": 195,
+    "compositeForeignKeys": 0,
+    "singleColumnForeignKeys": 195,
+    "cascadeForeignKeys": 9,
+    "restrictForeignKeys": 184,
+    "candidateMultiParentTables": 41,
+    "checkConstraints": 172
+  },
+  "notes": [
+    "Lack of composite FK does NOT itself prove security vulnerability; service-level ownership checks may protect writes",
+    "Single parent FK only proves referenced row exists, not that two related parent records agree on college, job, cohort, or delivery",
+    "Parentage and authorization invariants require code, transaction and negative DB tests; prioritize business invariants before replacing schema"
+  ],
+  "priorityChecks": [
+    {
+      "table": "section_enrollments",
+      "parents": [
+        {
+          "name": "section_enrollments_learner_enrollment_id_learner_program_enrollments_id_fk",
+          "fromColumns": [
+            "learner_enrollment_id"
+          ],
+          "targetTable": "learner_program_enrollments",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_enrollments_section_id_sections_id_fk",
+          "fromColumns": [
+            "section_id"
+          ],
+          "targetTable": "sections",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_enrollments_academic_period_id_academic_periods_id_fk",
+          "fromColumns": [
+            "academic_period_id"
+          ],
+          "targetTable": "academic_periods",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "course_section_deliveries",
+      "parents": [
+        {
+          "name": "course_section_deliveries_offering_id_course_offerings_id_fk",
+          "fromColumns": [
+            "offering_id"
+          ],
+          "targetTable": "course_offerings",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_section_deliveries_section_id_sections_id_fk",
+          "fromColumns": [
+            "section_id"
+          ],
+          "targetTable": "sections",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "project_members",
+      "parents": [
+        {
+          "name": "project_members_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_members_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "placement_round_attendance",
+      "parents": [
+        {
+          "name": "placement_round_attendance_round_id_placement_job_rounds_id_fk",
+          "fromColumns": [
+            "round_id"
+          ],
+          "targetTable": "placement_job_rounds",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_round_attendance_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "placement_application_round_exceptions",
+      "parents": [
+        {
+          "name": "placement_application_round_exceptions_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_round_exceptions_round_id_placement_job_rounds_id_fk",
+          "fromColumns": [
+            "round_id"
+          ],
+          "targetTable": "placement_job_rounds",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_round_exceptions_request_id_placement_learner_requests_id_fk",
+          "fromColumns": [
+            "request_id"
+          ],
+          "targetTable": "placement_learner_requests",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "placement_drive_day_coordinator_assignments",
+      "parents": [
+        {
+          "name": "placement_drive_day_coordinator_assignments_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_drive_day_coordinator_assignments_job_id_placement_jobs_id_fk",
+          "fromColumns": [
+            "job_id"
+          ],
+          "targetTable": "placement_jobs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_drive_day_coordinator_assignments_learner_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "learner_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "placement_applications",
+      "parents": [
+        {
+          "name": "placement_applications_job_id_placement_jobs_id_fk",
+          "fromColumns": [
+            "job_id"
+          ],
+          "targetTable": "placement_jobs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_applications_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_applications_role_option_id_placement_job_role_options_id_fk",
+          "fromColumns": [
+            "role_option_id"
+          ],
+          "targetTable": "placement_job_role_options",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "course_teaching_assignments",
+      "parents": [
+        {
+          "name": "course_teaching_assignments_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_teaching_assignments_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "assignment_submissions",
+      "parents": [
+        {
+          "name": "assignment_submissions_assignment_id_course_assignments_id_fk",
+          "fromColumns": [
+            "assignment_id"
+          ],
+          "targetTable": "course_assignments",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "assignment_submissions_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "assignment_submissions_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    },
+    {
+      "table": "quiz_attempts",
+      "parents": [
+        {
+          "name": "quiz_attempts_quiz_id_course_quizzes_id_fk",
+          "fromColumns": [
+            "quiz_id"
+          ],
+          "targetTable": "course_quizzes",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "quiz_attempts_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "quiz_attempts_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "status": "UNTESTED_DB_LEVEL_PARENT_CONSISTENCY"
+    }
+  ],
+  "multiParentCandidateQueue": [
+    {
+      "table": "faculty_profiles",
+      "relatedParents": [
+        "college_memberships",
+        "departments"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "cohorts",
+      "relatedParents": [
+        "programs",
+        "academic_periods"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "learner_program_enrollments",
+      "relatedParents": [
+        "college_memberships",
+        "programs",
+        "cohorts"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "section_enrollments",
+      "relatedParents": [
+        "learner_program_enrollments",
+        "sections",
+        "academic_periods"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "section_faculty_assignments",
+      "relatedParents": [
+        "sections",
+        "college_memberships"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "section_schedule_events",
+      "relatedParents": [
+        "sections",
+        "college_memberships"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "sections",
+      "relatedParents": [
+        "cohorts",
+        "academic_periods"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "course_offerings",
+      "relatedParents": [
+        "courses",
+        "cohorts",
+        "academic_periods"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "course_section_deliveries",
+      "relatedParents": [
+        "course_offerings",
+        "sections"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "course_teaching_assignments",
+      "relatedParents": [
+        "course_section_deliveries",
+        "college_memberships"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "lesson_contents",
+      "relatedParents": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "learner_content_progress",
+      "relatedParents": [
+        "college_memberships",
+        "lesson_contents"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "course_assignments",
+      "relatedParents": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "assignment_submissions",
+      "relatedParents": [
+        "course_assignments",
+        "course_section_deliveries",
+        "college_memberships",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "course_quizzes",
+      "relatedParents": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "quiz_attempts",
+      "relatedParents": [
+        "course_quizzes",
+        "course_section_deliveries",
+        "college_memberships"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "quiz_attempt_answers",
+      "relatedParents": [
+        "quiz_attempts",
+        "quiz_questions"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_template_college_assignments",
+      "relatedParents": [
+        "project_templates",
+        "project_template_versions",
+        "colleges",
+        "users"
+      ],
+      "kind": "DIRECT_COLLEGE_COLUMN_DOES_NOT_PROVE_MATCHING_PARENT",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_instances",
+      "relatedParents": [
+        "colleges",
+        "project_templates",
+        "project_template_versions",
+        "users"
+      ],
+      "kind": "DIRECT_COLLEGE_COLUMN_DOES_NOT_PROVE_MATCHING_PARENT",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_sprints",
+      "relatedParents": [
+        "project_instances",
+        "project_releases"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_tasks",
+      "relatedParents": [
+        "project_instances",
+        "project_sprints"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_members",
+      "relatedParents": [
+        "project_instances",
+        "college_memberships",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_task_submissions",
+      "relatedParents": [
+        "project_instances",
+        "project_tasks",
+        "college_memberships",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_submissions",
+      "relatedParents": [
+        "project_instances",
+        "college_memberships"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_submission_reviews",
+      "relatedParents": [
+        "project_instances",
+        "project_submissions",
+        "users",
+        "college_memberships"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_evaluations",
+      "relatedParents": [
+        "project_instances",
+        "project_submissions",
+        "users",
+        "college_memberships"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "project_meetings",
+      "relatedParents": [
+        "project_instances",
+        "college_memberships",
+        "users",
+        "project_sprints",
+        "project_tasks"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_company_relationships",
+      "relatedParents": [
+        "colleges",
+        "placement_companies",
+        "college_memberships",
+        "users"
+      ],
+      "kind": "DIRECT_COLLEGE_COLUMN_DOES_NOT_PROVE_MATCHING_PARENT",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_recruiter_college_grants",
+      "relatedParents": [
+        "placement_recruiter_profiles",
+        "placement_company_relationships",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_jobs",
+      "relatedParents": [
+        "colleges",
+        "placement_company_relationships",
+        "users",
+        "placement_seasons"
+      ],
+      "kind": "DIRECT_COLLEGE_COLUMN_DOES_NOT_PROVE_MATCHING_PARENT",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_eligibility_overrides",
+      "relatedParents": [
+        "placement_jobs",
+        "college_memberships",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_applications",
+      "relatedParents": [
+        "placement_jobs",
+        "college_memberships",
+        "users",
+        "placement_job_role_options"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_round_results",
+      "relatedParents": [
+        "placement_job_rounds",
+        "placement_applications",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "activity_events",
+      "relatedParents": [
+        "organizations",
+        "colleges",
+        "users",
+        "college_memberships"
+      ],
+      "kind": "DIRECT_COLLEGE_COLUMN_DOES_NOT_PROVE_MATCHING_PARENT",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_learner_requests",
+      "relatedParents": [
+        "placement_applications",
+        "placement_job_rounds",
+        "placement_offers",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_application_round_exceptions",
+      "relatedParents": [
+        "placement_applications",
+        "placement_job_rounds",
+        "placement_learner_requests"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "section_schedule_event_courses",
+      "relatedParents": [
+        "section_schedule_events",
+        "course_section_deliveries"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "attendance_records",
+      "relatedParents": [
+        "section_schedule_events",
+        "college_memberships",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "course_discussion_messages",
+      "relatedParents": [
+        "course_section_deliveries",
+        "college_memberships",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_drive_day_coordinator_assignments",
+      "relatedParents": [
+        "colleges",
+        "placement_jobs",
+        "college_memberships",
+        "users"
+      ],
+      "kind": "DIRECT_COLLEGE_COLUMN_DOES_NOT_PROVE_MATCHING_PARENT",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    },
+    {
+      "table": "placement_round_attendance",
+      "relatedParents": [
+        "placement_job_rounds",
+        "placement_applications",
+        "users"
+      ],
+      "kind": "NO_DIRECT_COLLEGE_COLUMN",
+      "test": "Use inserted valid but mismatched parent IDs; reject cross-college and inconsistent academic/job relationships",
+      "status": "REQUIRES_APP_AND_DB_BEHAVIOR_TEST"
+    }
+  ],
+  "tableForeignKeyGraph": [
+    {
+      "table": "organizations",
+      "columnCount": 5,
+      "hasCollegeId": false,
+      "foreignKeys": [],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "colleges",
+      "columnCount": 15,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "colleges_organization_id_organizations_id_fk",
+          "fromColumns": [
+            "organization_id"
+          ],
+          "targetTable": "organizations",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "organizations"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "users",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "college_memberships",
+      "columnCount": 8,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "college_memberships_user_id_users_id_fk",
+          "fromColumns": [
+            "user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "college_memberships_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "users",
+        "colleges"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "membership_roles",
+      "columnCount": 4,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "membership_roles_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "no action"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "system_roles",
+      "columnCount": 4,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "system_roles_user_id_users_id_fk",
+          "fromColumns": [
+            "user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "no action"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "departments",
+      "columnCount": 6,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "departments_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "colleges"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "faculty_profiles",
+      "columnCount": 6,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "faculty_profiles_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "faculty_profiles_primary_department_id_departments_id_fk",
+          "fromColumns": [
+            "primary_department_id"
+          ],
+          "targetTable": "departments",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "college_memberships",
+        "departments"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "learner_profiles",
+      "columnCount": 6,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "learner_profiles_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "tenant_domains",
+      "columnCount": 11,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "tenant_domains_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "colleges"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "legacy_id_map",
+      "columnCount": 7,
+      "hasCollegeId": false,
+      "foreignKeys": [],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "academic_periods",
+      "columnCount": 9,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "academic_periods_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "colleges"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "cohorts",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "cohorts_program_id_programs_id_fk",
+          "fromColumns": [
+            "program_id"
+          ],
+          "targetTable": "programs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "cohorts_start_period_id_academic_periods_id_fk",
+          "fromColumns": [
+            "start_period_id"
+          ],
+          "targetTable": "academic_periods",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "cohorts_expected_end_period_id_academic_periods_id_fk",
+          "fromColumns": [
+            "expected_end_period_id"
+          ],
+          "targetTable": "academic_periods",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "programs",
+        "academic_periods"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "learner_program_enrollments",
+      "columnCount": 10,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "learner_program_enrollments_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "learner_program_enrollments_program_id_programs_id_fk",
+          "fromColumns": [
+            "program_id"
+          ],
+          "targetTable": "programs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "learner_program_enrollments_cohort_id_cohorts_id_fk",
+          "fromColumns": [
+            "cohort_id"
+          ],
+          "targetTable": "cohorts",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "college_memberships",
+        "programs",
+        "cohorts"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "programs",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "programs_department_id_departments_id_fk",
+          "fromColumns": [
+            "department_id"
+          ],
+          "targetTable": "departments",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "departments"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "section_enrollments",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "section_enrollments_learner_enrollment_id_learner_program_enrollments_id_fk",
+          "fromColumns": [
+            "learner_enrollment_id"
+          ],
+          "targetTable": "learner_program_enrollments",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_enrollments_section_id_sections_id_fk",
+          "fromColumns": [
+            "section_id"
+          ],
+          "targetTable": "sections",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_enrollments_academic_period_id_academic_periods_id_fk",
+          "fromColumns": [
+            "academic_period_id"
+          ],
+          "targetTable": "academic_periods",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "learner_program_enrollments",
+        "sections",
+        "academic_periods"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "section_faculty_assignments",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "section_faculty_assignments_section_id_sections_id_fk",
+          "fromColumns": [
+            "section_id"
+          ],
+          "targetTable": "sections",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_faculty_assignments_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "sections",
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "section_schedule_events",
+      "columnCount": 11,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "section_schedule_events_section_id_sections_id_fk",
+          "fromColumns": [
+            "section_id"
+          ],
+          "targetTable": "sections",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_schedule_events_faculty_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "faculty_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "sections",
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "sections",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "sections_cohort_id_cohorts_id_fk",
+          "fromColumns": [
+            "cohort_id"
+          ],
+          "targetTable": "cohorts",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "sections_academic_period_id_academic_periods_id_fk",
+          "fromColumns": [
+            "academic_period_id"
+          ],
+          "targetTable": "academic_periods",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "cohorts",
+        "academic_periods"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "courses",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "courses_department_id_departments_id_fk",
+          "fromColumns": [
+            "department_id"
+          ],
+          "targetTable": "departments",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "departments"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "course_offerings",
+      "columnCount": 10,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "course_offerings_course_id_courses_id_fk",
+          "fromColumns": [
+            "course_id"
+          ],
+          "targetTable": "courses",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_offerings_cohort_id_cohorts_id_fk",
+          "fromColumns": [
+            "cohort_id"
+          ],
+          "targetTable": "cohorts",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_offerings_academic_period_id_academic_periods_id_fk",
+          "fromColumns": [
+            "academic_period_id"
+          ],
+          "targetTable": "academic_periods",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "courses",
+        "cohorts",
+        "academic_periods"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "course_section_deliveries",
+      "columnCount": 7,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "course_section_deliveries_offering_id_course_offerings_id_fk",
+          "fromColumns": [
+            "offering_id"
+          ],
+          "targetTable": "course_offerings",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_section_deliveries_section_id_sections_id_fk",
+          "fromColumns": [
+            "section_id"
+          ],
+          "targetTable": "sections",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "course_offerings",
+        "sections"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "course_teaching_assignments",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "course_teaching_assignments_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_teaching_assignments_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "course_section_deliveries",
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "course_learning_paths",
+      "columnCount": 7,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "course_learning_paths_offering_id_course_offerings_id_fk",
+          "fromColumns": [
+            "offering_id"
+          ],
+          "targetTable": "course_offerings",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "course_offerings"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "course_lessons",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "course_lessons_learning_path_id_course_learning_paths_id_fk",
+          "fromColumns": [
+            "learning_path_id"
+          ],
+          "targetTable": "course_learning_paths",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "course_learning_paths"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "lesson_contents",
+      "columnCount": 16,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "lesson_contents_lesson_id_course_lessons_id_fk",
+          "fromColumns": [
+            "lesson_id"
+          ],
+          "targetTable": "course_lessons",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "lesson_contents_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "lesson_contents_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "learner_content_progress",
+      "columnCount": 7,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "learner_content_progress_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "learner_content_progress_lesson_content_id_lesson_contents_id_fk",
+          "fromColumns": [
+            "lesson_content_id"
+          ],
+          "targetTable": "lesson_contents",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "college_memberships",
+        "lesson_contents"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "course_assignments",
+      "columnCount": 12,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "course_assignments_lesson_id_course_lessons_id_fk",
+          "fromColumns": [
+            "lesson_id"
+          ],
+          "targetTable": "course_lessons",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_assignments_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_assignments_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 4,
+      "fkTargets": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "assignment_submissions",
+      "columnCount": 17,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "assignment_submissions_assignment_id_course_assignments_id_fk",
+          "fromColumns": [
+            "assignment_id"
+          ],
+          "targetTable": "course_assignments",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "assignment_submissions_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "assignment_submissions_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "assignment_submissions_graded_by_user_id_users_id_fk",
+          "fromColumns": [
+            "graded_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 4,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "course_assignments",
+        "course_section_deliveries",
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "course_quizzes",
+      "columnCount": 14,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "course_quizzes_lesson_id_course_lessons_id_fk",
+          "fromColumns": [
+            "lesson_id"
+          ],
+          "targetTable": "course_lessons",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_quizzes_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_quizzes_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 4,
+      "fkTargets": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "quiz_questions",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "quiz_questions_quiz_id_course_quizzes_id_fk",
+          "fromColumns": [
+            "quiz_id"
+          ],
+          "targetTable": "course_quizzes",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "course_quizzes"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "quiz_options",
+      "columnCount": 6,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "quiz_options_question_id_quiz_questions_id_fk",
+          "fromColumns": [
+            "question_id"
+          ],
+          "targetTable": "quiz_questions",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "quiz_questions"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "quiz_attempts",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "quiz_attempts_quiz_id_course_quizzes_id_fk",
+          "fromColumns": [
+            "quiz_id"
+          ],
+          "targetTable": "course_quizzes",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "quiz_attempts_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "quiz_attempts_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "course_quizzes",
+        "course_section_deliveries",
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "quiz_attempt_answers",
+      "columnCount": 11,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "quiz_attempt_answers_attempt_id_quiz_attempts_id_fk",
+          "fromColumns": [
+            "attempt_id"
+          ],
+          "targetTable": "quiz_attempts",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "quiz_attempt_answers_question_id_quiz_questions_id_fk",
+          "fromColumns": [
+            "question_id"
+          ],
+          "targetTable": "quiz_questions",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "quiz_attempts",
+        "quiz_questions"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_templates",
+      "columnCount": 11,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_templates_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_template_versions",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_template_versions_template_id_project_templates_id_fk",
+          "fromColumns": [
+            "template_id"
+          ],
+          "targetTable": "project_templates",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_template_versions_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "project_templates",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_template_college_assignments",
+      "columnCount": 7,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "project_template_college_assignments_template_id_project_templates_id_fk",
+          "fromColumns": [
+            "template_id"
+          ],
+          "targetTable": "project_templates",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_template_college_assignments_template_version_id_project_template_versions_id_fk",
+          "fromColumns": [
+            "template_version_id"
+          ],
+          "targetTable": "project_template_versions",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_template_college_assignments_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_template_college_assignments_assigned_by_user_id_users_id_fk",
+          "fromColumns": [
+            "assigned_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "project_templates",
+        "project_template_versions",
+        "colleges",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_instances",
+      "columnCount": 13,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "project_instances_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_instances_template_id_project_templates_id_fk",
+          "fromColumns": [
+            "template_id"
+          ],
+          "targetTable": "project_templates",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_instances_template_version_id_project_template_versions_id_fk",
+          "fromColumns": [
+            "template_version_id"
+          ],
+          "targetTable": "project_template_versions",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_instances_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "colleges",
+        "project_templates",
+        "project_template_versions",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_releases",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_releases_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "project_instances"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_sprints",
+      "columnCount": 10,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_sprints_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_sprints_release_id_project_releases_id_fk",
+          "fromColumns": [
+            "release_id"
+          ],
+          "targetTable": "project_releases",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 3,
+      "fkTargets": [
+        "project_instances",
+        "project_releases"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_tasks",
+      "columnCount": 12,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_tasks_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_tasks_sprint_id_project_sprints_id_fk",
+          "fromColumns": [
+            "sprint_id"
+          ],
+          "targetTable": "project_sprints",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "project_instances",
+        "project_sprints"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_resources",
+      "columnCount": 11,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_resources_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "project_instances"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_members",
+      "columnCount": 11,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_members_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_members_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_members_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "project_instances",
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_task_submissions",
+      "columnCount": 15,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_task_submissions_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_task_submissions_task_id_project_tasks_id_fk",
+          "fromColumns": [
+            "task_id"
+          ],
+          "targetTable": "project_tasks",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_task_submissions_submitted_by_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "submitted_by_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_task_submissions_reviewed_by_user_id_users_id_fk",
+          "fromColumns": [
+            "reviewed_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_task_submissions_reviewed_by_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "reviewed_by_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "project_instances",
+        "project_tasks",
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_submissions",
+      "columnCount": 13,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_submissions_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submissions_created_by_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "created_by_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submissions_submitted_by_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "submitted_by_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "project_instances",
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_submission_reviews",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_submission_reviews_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submission_reviews_submission_id_project_submissions_id_fk",
+          "fromColumns": [
+            "submission_id"
+          ],
+          "targetTable": "project_submissions",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submission_reviews_reviewed_by_user_id_users_id_fk",
+          "fromColumns": [
+            "reviewed_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submission_reviews_reviewed_by_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "reviewed_by_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "project_instances",
+        "project_submissions",
+        "users",
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_evaluations",
+      "columnCount": 10,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_evaluations_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_evaluations_submission_id_project_submissions_id_fk",
+          "fromColumns": [
+            "submission_id"
+          ],
+          "targetTable": "project_submissions",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_evaluations_evaluator_user_id_users_id_fk",
+          "fromColumns": [
+            "evaluator_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_evaluations_evaluator_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "evaluator_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "project_instances",
+        "project_submissions",
+        "users",
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_evaluation_items",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_evaluation_items_evaluation_id_project_evaluations_id_fk",
+          "fromColumns": [
+            "evaluation_id"
+          ],
+          "targetTable": "project_evaluations",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "project_evaluations"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "project_meetings",
+      "columnCount": 20,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "project_meetings_project_id_project_instances_id_fk",
+          "fromColumns": [
+            "project_id"
+          ],
+          "targetTable": "project_instances",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_requested_by_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "requested_by_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_scheduled_by_user_id_users_id_fk",
+          "fromColumns": [
+            "scheduled_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_scheduled_by_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "scheduled_by_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_linked_sprint_id_project_sprints_id_fk",
+          "fromColumns": [
+            "linked_sprint_id"
+          ],
+          "targetTable": "project_sprints",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_linked_task_id_project_tasks_id_fk",
+          "fromColumns": [
+            "linked_task_id"
+          ],
+          "targetTable": "project_tasks",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 5,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "project_instances",
+        "college_memberships",
+        "users",
+        "project_sprints",
+        "project_tasks"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_companies",
+      "columnCount": 10,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_companies_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_company_relationships",
+      "columnCount": 10,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "placement_company_relationships_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_company_relationships_company_id_placement_companies_id_fk",
+          "fromColumns": [
+            "company_id"
+          ],
+          "targetTable": "placement_companies",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_company_relationships_owner_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "owner_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_company_relationships_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "colleges",
+        "placement_companies",
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_recruiter_profiles",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_recruiter_profiles_user_id_users_id_fk",
+          "fromColumns": [
+            "user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_profiles_company_id_placement_companies_id_fk",
+          "fromColumns": [
+            "company_id"
+          ],
+          "targetTable": "placement_companies",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_profiles_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "users",
+        "placement_companies"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_recruiter_college_grants",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_recruiter_college_grants_recruiter_user_id_placement_recruiter_profiles_user_id_fk",
+          "fromColumns": [
+            "recruiter_user_id"
+          ],
+          "targetTable": "placement_recruiter_profiles",
+          "targetColumns": [
+            "user_id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_college_grants_company_relationship_id_placement_company_relationships_id_fk",
+          "fromColumns": [
+            "company_relationship_id"
+          ],
+          "targetTable": "placement_company_relationships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_college_grants_granted_by_user_id_users_id_fk",
+          "fromColumns": [
+            "granted_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_college_grants_revoked_by_user_id_users_id_fk",
+          "fromColumns": [
+            "revoked_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "placement_recruiter_profiles",
+        "placement_company_relationships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_candidate_preferences",
+      "columnCount": 12,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_candidate_preferences_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 4,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_seasons",
+      "columnCount": 12,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "placement_seasons_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_seasons_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_seasons_closed_by_user_id_users_id_fk",
+          "fromColumns": [
+            "closed_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 4,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "colleges",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_jobs",
+      "columnCount": 22,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "placement_jobs_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_jobs_company_relationship_id_placement_company_relationships_id_fk",
+          "fromColumns": [
+            "company_relationship_id"
+          ],
+          "targetTable": "placement_company_relationships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_jobs_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_jobs_season_id_placement_seasons_id_fk",
+          "fromColumns": [
+            "season_id"
+          ],
+          "targetTable": "placement_seasons",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 8,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "colleges",
+        "placement_company_relationships",
+        "users",
+        "placement_seasons"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_candidate_academic_evidence",
+      "columnCount": 16,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_candidate_academic_evidence_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_candidate_academic_evidence_verified_by_user_id_users_id_fk",
+          "fromColumns": [
+            "verified_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 7,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_job_eligibility_policies",
+      "columnCount": 16,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_job_eligibility_policies_job_id_placement_jobs_id_fk",
+          "fromColumns": [
+            "job_id"
+          ],
+          "targetTable": "placement_jobs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_job_eligibility_policies_updated_by_user_id_users_id_fk",
+          "fromColumns": [
+            "updated_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 5,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "placement_jobs",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_eligibility_overrides",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_eligibility_overrides_job_id_placement_jobs_id_fk",
+          "fromColumns": [
+            "job_id"
+          ],
+          "targetTable": "placement_jobs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_eligibility_overrides_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_eligibility_overrides_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "placement_jobs",
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_applications",
+      "columnCount": 12,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_applications_job_id_placement_jobs_id_fk",
+          "fromColumns": [
+            "job_id"
+          ],
+          "targetTable": "placement_jobs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_applications_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_applications_submitted_by_user_id_users_id_fk",
+          "fromColumns": [
+            "submitted_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_applications_role_option_id_placement_job_role_options_id_fk",
+          "fromColumns": [
+            "role_option_id"
+          ],
+          "targetTable": "placement_job_role_options",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 4,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "placement_jobs",
+        "college_memberships",
+        "users",
+        "placement_job_role_options"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_application_status_history",
+      "columnCount": 7,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_application_status_history_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_status_history_actor_user_id_users_id_fk",
+          "fromColumns": [
+            "actor_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "placement_applications",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_application_screenings",
+      "columnCount": 7,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_application_screenings_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_screenings_decided_by_user_id_users_id_fk",
+          "fromColumns": [
+            "decided_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "placement_applications",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_application_screening_history",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_application_screening_history_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_screening_history_actor_user_id_users_id_fk",
+          "fromColumns": [
+            "actor_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "placement_applications",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_job_rounds",
+      "columnCount": 21,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_job_rounds_job_id_placement_jobs_id_fk",
+          "fromColumns": [
+            "job_id"
+          ],
+          "targetTable": "placement_jobs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_job_rounds_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 9,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "placement_jobs",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_job_round_events",
+      "columnCount": 6,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_job_round_events_round_id_placement_job_rounds_id_fk",
+          "fromColumns": [
+            "round_id"
+          ],
+          "targetTable": "placement_job_rounds",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_job_round_events_actor_user_id_users_id_fk",
+          "fromColumns": [
+            "actor_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "placement_job_rounds",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_round_results",
+      "columnCount": 18,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_round_results_round_id_placement_job_rounds_id_fk",
+          "fromColumns": [
+            "round_id"
+          ],
+          "targetTable": "placement_job_rounds",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_round_results_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_round_results_submitted_by_user_id_users_id_fk",
+          "fromColumns": [
+            "submitted_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_round_results_applied_by_user_id_users_id_fk",
+          "fromColumns": [
+            "applied_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 9,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "placement_job_rounds",
+        "placement_applications",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_offers",
+      "columnCount": 15,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_offers_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_offers_issued_by_user_id_users_id_fk",
+          "fromColumns": [
+            "issued_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_offers_responded_by_user_id_users_id_fk",
+          "fromColumns": [
+            "responded_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_offers_withdrawn_by_user_id_users_id_fk",
+          "fromColumns": [
+            "withdrawn_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 6,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "placement_applications",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_offer_status_history",
+      "columnCount": 7,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_offer_status_history_offer_id_placement_offers_id_fk",
+          "fromColumns": [
+            "offer_id"
+          ],
+          "targetTable": "placement_offers",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_offer_status_history_actor_user_id_users_id_fk",
+          "fromColumns": [
+            "actor_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "placement_offers",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_joining_outcomes",
+      "columnCount": 7,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_joining_outcomes_offer_id_placement_offers_id_fk",
+          "fromColumns": [
+            "offer_id"
+          ],
+          "targetTable": "placement_offers",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_joining_outcomes_recorded_by_user_id_users_id_fk",
+          "fromColumns": [
+            "recorded_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "placement_offers",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_joining_history",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_joining_history_offer_id_placement_offers_id_fk",
+          "fromColumns": [
+            "offer_id"
+          ],
+          "targetTable": "placement_offers",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_joining_history_actor_user_id_users_id_fk",
+          "fromColumns": [
+            "actor_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "placement_offers",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "activity_events",
+      "columnCount": 16,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "activity_events_organization_id_organizations_id_fk",
+          "fromColumns": [
+            "organization_id"
+          ],
+          "targetTable": "organizations",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "activity_events_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "activity_events_actor_user_id_users_id_fk",
+          "fromColumns": [
+            "actor_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "activity_events_actor_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "actor_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 4,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "organizations",
+        "colleges",
+        "users",
+        "college_memberships"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "in_app_notifications",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "in_app_notifications_user_id_users_id_fk",
+          "fromColumns": [
+            "user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "in_app_notifications_event_id_activity_events_id_fk",
+          "fromColumns": [
+            "event_id"
+          ],
+          "targetTable": "activity_events",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "users",
+        "activity_events"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_job_role_options",
+      "columnCount": 14,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_job_role_options_job_id_placement_jobs_id_fk",
+          "fromColumns": [
+            "job_id"
+          ],
+          "targetTable": "placement_jobs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        }
+      ],
+      "checkConstraintCount": 6,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "placement_jobs"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_learner_requests",
+      "columnCount": 15,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_learner_requests_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_learner_requests_round_id_placement_job_rounds_id_fk",
+          "fromColumns": [
+            "round_id"
+          ],
+          "targetTable": "placement_job_rounds",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_learner_requests_offer_id_placement_offers_id_fk",
+          "fromColumns": [
+            "offer_id"
+          ],
+          "targetTable": "placement_offers",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_learner_requests_requested_by_user_id_users_id_fk",
+          "fromColumns": [
+            "requested_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_learner_requests_decided_by_user_id_users_id_fk",
+          "fromColumns": [
+            "decided_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 5,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "placement_applications",
+        "placement_job_rounds",
+        "placement_offers",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_application_round_exceptions",
+      "columnCount": 11,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_application_round_exceptions_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_round_exceptions_round_id_placement_job_rounds_id_fk",
+          "fromColumns": [
+            "round_id"
+          ],
+          "targetTable": "placement_job_rounds",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_round_exceptions_request_id_placement_learner_requests_id_fk",
+          "fromColumns": [
+            "request_id"
+          ],
+          "targetTable": "placement_learner_requests",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "placement_applications",
+        "placement_job_rounds",
+        "placement_learner_requests"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "section_schedule_event_courses",
+      "columnCount": 3,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "section_schedule_event_courses_schedule_event_id_section_schedule_events_id_fk",
+          "fromColumns": [
+            "schedule_event_id"
+          ],
+          "targetTable": "section_schedule_events",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "section_schedule_event_courses_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "section_schedule_events",
+        "course_section_deliveries"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "attendance_policies",
+      "columnCount": 6,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "attendance_policies_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "attendance_policies_updated_by_user_id_users_id_fk",
+          "fromColumns": [
+            "updated_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "colleges",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "attendance_sessions",
+      "columnCount": 5,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "attendance_sessions_schedule_event_id_section_schedule_events_id_fk",
+          "fromColumns": [
+            "schedule_event_id"
+          ],
+          "targetTable": "section_schedule_events",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "attendance_sessions_marked_by_user_id_users_id_fk",
+          "fromColumns": [
+            "marked_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 2,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "section_schedule_events",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "attendance_records",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "attendance_records_schedule_event_id_section_schedule_events_id_fk",
+          "fromColumns": [
+            "schedule_event_id"
+          ],
+          "targetTable": "section_schedule_events",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "attendance_records_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "attendance_records_marked_by_user_id_users_id_fk",
+          "fromColumns": [
+            "marked_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "section_schedule_events",
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "course_discussion_messages",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "course_discussion_messages_delivery_id_course_section_deliveries_id_fk",
+          "fromColumns": [
+            "delivery_id"
+          ],
+          "targetTable": "course_section_deliveries",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "course_discussion_messages_sender_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "sender_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_discussion_messages_pinned_by_user_id_users_id_fk",
+          "fromColumns": [
+            "pinned_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 0,
+      "fkTargets": [
+        "course_section_deliveries",
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "module_access_rules",
+      "columnCount": 9,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "module_access_rules_updated_by_user_id_users_id_fk",
+          "fromColumns": [
+            "updated_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 2,
+      "fkTargets": [
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_eligibility_decisions",
+      "columnCount": 11,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "placement_eligibility_decisions_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_eligibility_decisions_decided_by_user_id_users_id_fk",
+          "fromColumns": [
+            "decided_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 3,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "colleges",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_drive_day_coordinator_assignments",
+      "columnCount": 7,
+      "hasCollegeId": true,
+      "foreignKeys": [
+        {
+          "name": "placement_drive_day_coordinator_assignments_college_id_colleges_id_fk",
+          "fromColumns": [
+            "college_id"
+          ],
+          "targetTable": "colleges",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_drive_day_coordinator_assignments_job_id_placement_jobs_id_fk",
+          "fromColumns": [
+            "job_id"
+          ],
+          "targetTable": "placement_jobs",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_drive_day_coordinator_assignments_learner_membership_id_college_memberships_id_fk",
+          "fromColumns": [
+            "learner_membership_id"
+          ],
+          "targetTable": "college_memberships",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_drive_day_coordinator_assignments_created_by_user_id_users_id_fk",
+          "fromColumns": [
+            "created_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 0,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "colleges",
+        "placement_jobs",
+        "college_memberships",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    },
+    {
+      "table": "placement_round_attendance",
+      "columnCount": 8,
+      "hasCollegeId": false,
+      "foreignKeys": [
+        {
+          "name": "placement_round_attendance_round_id_placement_job_rounds_id_fk",
+          "fromColumns": [
+            "round_id"
+          ],
+          "targetTable": "placement_job_rounds",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_round_attendance_application_id_placement_applications_id_fk",
+          "fromColumns": [
+            "application_id"
+          ],
+          "targetTable": "placement_applications",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_round_attendance_marked_by_user_id_users_id_fk",
+          "fromColumns": [
+            "marked_by_user_id"
+          ],
+          "targetTable": "users",
+          "targetColumns": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "checkConstraintCount": 1,
+      "uniqueIndexCount": 1,
+      "fkTargets": [
+        "placement_job_rounds",
+        "placement_applications",
+        "users"
+      ],
+      "reviewStatus": "NOT_VERIFIED"
+    }
+  ]
+}
