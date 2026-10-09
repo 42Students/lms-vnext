@@ -75,11 +75,9 @@ const batchSettingsInput = cohortInput.extend({
 }).strict();
 
 type Scope = z.infer<typeof scope>;
-type Status = z.infer<typeof status>;
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
 type DecisionRow = typeof placementEligibilityDecisions.$inferSelect;
-type EventRow = typeof placementEligibilityEvents.$inferSelect;
 
 export class PlacementBatchError extends Error {
   constructor(public readonly code:
