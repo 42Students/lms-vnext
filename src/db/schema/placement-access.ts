@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   check,
+  foreignKey,
   index,
   pgTable,
   text,
@@ -44,6 +45,14 @@ export const placementEligibilityDecisions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    foreignKey({
+      name: "placement_eligibility_decisions_action_college_fk",
+      columns: [table.lastActionId, table.collegeId],
+      foreignColumns: [
+        placementEligibilityActions.id,
+        placementEligibilityActions.collegeId,
+      ],
+    }).onDelete("restrict"),
     uniqueIndex("placement_eligibility_decisions_scope_uq").on(
       table.scopeType,
       table.scopeId,
