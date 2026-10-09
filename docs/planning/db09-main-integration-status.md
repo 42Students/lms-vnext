@@ -37,3 +37,12 @@ These currently require a unique migration number after active DB03/DB04/DB08 br
 4. Keep `database-parity-db09-parallel-tracker.json` statuses unverified until real PostgreSQL/runtime evidence exists.
 
 **Do not claim DB09 is complete.** 52/279 source field candidates have schema drafts in PR #11, but **0/279 fields are runtime-/workflow-verified**; 31 candidate table source census is not a live database count.
+
+### Main-lineage continuation (2026-10-10)
+
+- Added `src/modules/placements/tpo-share-projection.ts` and `tests/unit/tpo-share-projection.test.ts` directly to `main` after PR #16 merge. This is a pure, deliberately not-yet-routed projection for legacy recruiter-visible candidate columns.
+- Source oracle: legacy `TpoShareService.rowsFor`: allowlisted columns, phone after SHORTLISTED, verified academic percentages only, 5-point UG bands, stage cap, 90-day closed-drive retention for non-hired learners, 12th-or-Diploma fallback.
+- Two privacy improvements are intentional and must remain documented: **unknown applicant stages fail closed** and **screening score respects showAssessmentScores**, whereas the inspected legacy rendering path reads this setting but does not enforce it when emitting `skillMatch`.
+- The helper accepts prepared data, not raw DB records. It **does not authorize share links, verify recruiter identity, enforce cross-college scope, sign/download resumes or run any request**. These responsibilities must be implemented before it is used in runtime.
+- Tests authored but **not executed in this chat**. Static repository inventory checks only verified ledger structure, not runtime functionality.
+- Status is `PURE_PROJECTION_AUTHORED`, not `DB_TESTED` or `WORKFLOW_VERIFIED`; **0/279** source field mappings verified remains accurate.
