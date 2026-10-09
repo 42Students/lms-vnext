@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { collegeMemberships } from "@/db/schema";
+import { collegeMemberships, colleges } from "@/db/schema";
 import { profileVerificationEvents, profileVerifications } from "@/db/schema/profile-verification";
 import {
   VerificationStateError,
@@ -29,6 +29,13 @@ export const postgresLockedVerificationTransition: LockedTransition =
     return getDb().transaction(async (tx) => {
       // A stable text key is hashed by PostgreSQL into a transaction-scoped lock.
       await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${"DB04:" + membershipId + ":" + section}, 0))`);
+      const [target] = await tx.select({collegeId:collegeMemberships.collegeId})
+        .from(collegeMemberships).where(eq(collegeMemberships.id,membershipId)).limit(1);
+      if (!target) throw new VerificationStateError("NOT_ALLOWED");
+      // Block concurrent admin setting, grant and CGPA policy changes for
+      // the duration of review planning + writing. Mutators lock this row.
+      await tx.select({id:colleges.id}).from(colleges)
+        .where(eq(colleges.id,target.collegeId)).for("share");
       const [member] = await tx.select({
         id: collegeMemberships.id,
         status: collegeMemberships.status,
