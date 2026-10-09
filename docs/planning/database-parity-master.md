@@ -134,3 +134,13 @@ These are **not** an exhaustive gap list; they are findings from initial migrati
 ### Handoff for future chats
 
 Read this file, `AGENTS.md`, `docs/database-workflow.md`, `docs/planning/database-parity-source-inventory.json`; refresh all branch SHAs; continue the first unresolved DB00 action, then DB01–DB12. Update audit evidence *with* corresponding implementation commits. Never mark complete based on a table name match, existing UI or an unexecuted test.
+
+## 2026-10-09 source inventory / implementation status update
+
+- Source census: **118** legacy Java model candidates, **167** migration SQL files, **84** vNext snapshot tables and **837** vNext snapshot columns.
+- Hotspot DDL from 8 migrations: **45** legacy CREATE TABLE declarations and **469** column-level checklist rows. These are **not** a complete physical schema or audited field mappings.
+- Table crosswalk: **46** table-level entries (27 absent dedicated equivalents, 9 candidate mapped structures pending field audit, 10 awaiting design review); no row is field-verified.
+- Five consistency assertions passed in an isolated audit run. Repository Node and PostgreSQL test suites have **not been executed**; CI now has a parity-source test step for when jobs can run.
+- New executable diagnostics: `scripts/db-parity-tools.mjs`, `scripts/sql/legacy-readonly-schema.sql`. Deep source findings: `docs/planning/database-parity-adversarial-findings.md`.
+- Next domain specifications: `docs/planning/database-parity-db03-spec.md` and `docs/planning/database-parity-db04-spec.md`.
+- **No Drizzle schema migration generated or applied; no database domain verified.** Next implementation is DB03 group/elective schemas and PostgreSQL constraints, followed by DB04 profile verification.
