@@ -12,7 +12,7 @@
     "fields": 221,
     "verified": 0,
     "unmapped": 221,
-    "sourceReviewedFields": 58
+    "sourceReviewedFields": 62
   },
   "records": [
     {
@@ -4756,14 +4756,26 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Primary lock namespace; one row per scheduled job",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/SchedulerLockService.java"
+      ],
+      "readers": [
+        "service/SchedulerLockService.java",
+        "service/impl/NotificationSchedulerService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "scheduled_job_leases.job_name",
+      "evidenceScope": "SOURCE_DDL_AND_SERVICE_REVIEW_ONLY",
+      "sourceReview": [
+        "V135__scheduled_job_lock.sql",
+        "service/SchedulerLockService.java",
+        "service/impl/NotificationSchedulerService.java"
+      ]
     },
     {
       "id": "DB10-SCHEDULED_JOB_LOCK-02",
@@ -4778,14 +4790,26 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Lease end wall clock; claim only when expired",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/SchedulerLockService.java"
+      ],
+      "readers": [
+        "service/SchedulerLockService.java",
+        "service/impl/NotificationSchedulerService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "scheduled_job_leases.locked_until",
+      "evidenceScope": "SOURCE_DDL_AND_SERVICE_REVIEW_ONLY",
+      "sourceReview": [
+        "V135__scheduled_job_lock.sql",
+        "service/SchedulerLockService.java",
+        "service/impl/NotificationSchedulerService.java"
+      ]
     },
     {
       "id": "DB10-SCHEDULED_JOB_LOCK-03",
@@ -4798,14 +4822,26 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Worker/instance identity for diagnostics",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/SchedulerLockService.java"
+      ],
+      "readers": [
+        "service/SchedulerLockService.java",
+        "service/impl/NotificationSchedulerService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "scheduled_job_leases.locked_by",
+      "evidenceScope": "SOURCE_DDL_AND_SERVICE_REVIEW_ONLY",
+      "sourceReview": [
+        "V135__scheduled_job_lock.sql",
+        "service/SchedulerLockService.java",
+        "service/impl/NotificationSchedulerService.java"
+      ]
     },
     {
       "id": "DB10-SCHEDULED_JOB_LOCK-04",
@@ -4820,14 +4856,26 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Timestamp of last successful lock claim or update",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/SchedulerLockService.java"
+      ],
+      "readers": [
+        "service/SchedulerLockService.java",
+        "service/impl/NotificationSchedulerService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "scheduled_job_leases.updated_at",
+      "evidenceScope": "SOURCE_DDL_AND_SERVICE_REVIEW_ONLY",
+      "sourceReview": [
+        "V135__scheduled_job_lock.sql",
+        "service/SchedulerLockService.java",
+        "service/impl/NotificationSchedulerService.java"
+      ]
     },
     {
       "id": "DB10-SKILL_SYNONYMS-01",
