@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   check,
+  foreignKey,
   index,
   jsonb,
   pgTable,
@@ -41,6 +42,10 @@ export const placementEligibilityActions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("placement_eligibility_actions_id_college_uq").on(
+      table.id,
+      table.collegeId,
+    ),
     index("placement_eligibility_actions_college_created_idx").on(
       table.collegeId,
       table.createdAt,
@@ -90,6 +95,22 @@ export const placementEligibilityEvents = pgTable(
       .defaultNow(),
   },
   (table) => [
+    foreignKey({
+      name: "placement_eligibility_events_action_college_fk",
+      columns: [table.actionId, table.collegeId],
+      foreignColumns: [
+        placementEligibilityActions.id,
+        placementEligibilityActions.collegeId,
+      ],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "placement_eligibility_events_previous_action_college_fk",
+      columns: [table.beforeLastActionId, table.collegeId],
+      foreignColumns: [
+        placementEligibilityActions.id,
+        placementEligibilityActions.collegeId,
+      ],
+    }).onDelete("restrict"),
     uniqueIndex("placement_eligibility_events_action_scope_uq").on(
       table.actionId,
       table.scopeType,
