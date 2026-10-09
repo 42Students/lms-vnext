@@ -10,6 +10,8 @@ import {
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
+  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
+
   try {
     const context = await getCurrentRequestContext();
     const collegeId = new URL(request.url).searchParams.get("collegeId") ?? "";
@@ -21,6 +23,8 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
+  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
+
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
