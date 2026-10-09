@@ -188,6 +188,17 @@ describe("DB10 notification correctness and privacy", () => {
     const [sanitized] = await listOwnNotifications(learner, { limit: 1 });
     expect(sanitized!.notification.actionHref).toBeNull();
 
+    // The single-notification mark-read endpoint must apply the same
+    // fail-closed policy, including when the record was already read.
+    const acknowledged = await markOwnNotificationRead(
+      learner, first!.notification.id,
+    );
+    expect(acknowledged.actionHref).toBeNull();
+    const acknowledgedAgain = await markOwnNotificationRead(
+      learner, first!.notification.id,
+    );
+    expect(acknowledgedAgain.actionHref).toBeNull();
+
     const directRow = await pool.query<{ action_href: string }>(
       "select action_href from in_app_notifications where id = $1",
       [first!.notification.id],
