@@ -1,0 +1,559 @@
+{
+  "schemaVersion": 1,
+  "pass": 4,
+  "disclaimer": "NOT a live schema. Fields rebuilt from V150-era test snapshot and V151-V194 migration-source DDL; 199 table candidates, some historic/retired. Candidate exact-name matches are not field-equivalence proof.",
+  "sourceLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "vnextSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+  "sourceMigrations": 44,
+  "sourceCreateTableStatements": 62,
+  "trackedTables": 199,
+  "sourceFields": 2829,
+  "counts": {
+    "sourceFields": 2829,
+    "sameNameCandidates": 321,
+    "unmatchedCandidateFields": 2508,
+    "uncertainType": 0,
+    "nullability": 0,
+    "PII": 174,
+    "datetime": 477,
+    "monetary": 0,
+    "identity": 564,
+    "withAlterHistory": 99
+  },
+  "sourceAlters": {
+    "ADD_COLUMN": 85,
+    "MODIFY_COLUMN": 6,
+    "CHANGE_COLUMN": 0,
+    "RENAME_COLUMN": 13,
+    "DROP_COLUMN": 0,
+    "OTHER_ALTER": 25
+  },
+  "sourceOperationWarnings": [],
+  "domainCounts": {
+    "DB10_SHARED_OPERATIONS": {
+      "tables": 19,
+      "fields": 221,
+      "sameNameCandidateFields": 15
+    },
+    "DB08_PLACEMENT_POLICY_AND_OUTCOMES": {
+      "tables": 18,
+      "fields": 280,
+      "sameNameCandidateFields": 53
+    },
+    "DB04_PROFILES_AND_VERIFICATION": {
+      "tables": 7,
+      "fields": 103,
+      "sameNameCandidateFields": 7
+    },
+    "DB06_ASSESSMENTS_AND_ATTENDANCE": {
+      "tables": 21,
+      "fields": 248,
+      "sameNameCandidateFields": 39
+    },
+    "DB01_IDENTITY_AND_TENANCY": {
+      "tables": 22,
+      "fields": 312,
+      "sameNameCandidateFields": 62
+    },
+    "DB00_HISTORICAL_AND_ENGINE": {
+      "tables": 39,
+      "fields": 732,
+      "sameNameCandidateFields": 0
+    },
+    "DB02_ACADEMICS_AND_TIMETABLE": {
+      "tables": 13,
+      "fields": 125,
+      "sameNameCandidateFields": 24
+    },
+    "DB05_COURSES_AND_CONTENT": {
+      "tables": 7,
+      "fields": 92,
+      "sameNameCandidateFields": 22
+    },
+    "DB09_TPO_AND_RECRUITER_OPERATIONS": {
+      "tables": 31,
+      "fields": 279,
+      "sameNameCandidateFields": 22
+    },
+    "DB03_GROUPS_AND_ELECTIVES": {
+      "tables": 6,
+      "fields": 79,
+      "sameNameCandidateFields": 0
+    },
+    "DB07_PROJECTS": {
+      "tables": 16,
+      "fields": 358,
+      "sameNameCandidateFields": 77
+    }
+  },
+  "artifacts": [
+    {
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "path": "docs/planning/db-pass4-columns-db00_historical_and_engine.json",
+      "fields": 732
+    },
+    {
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "path": "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json",
+      "fields": 312
+    },
+    {
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "path": "docs/planning/db-pass4-columns-db02_academics_and_timetable.json",
+      "fields": 125
+    },
+    {
+      "domain": "DB03_GROUPS_AND_ELECTIVES",
+      "path": "docs/planning/db-pass4-columns-db03_groups_and_electives.json",
+      "fields": 79
+    },
+    {
+      "domain": "DB04_PROFILES_AND_VERIFICATION",
+      "path": "docs/planning/db-pass4-columns-db04_profiles_and_verification.json",
+      "fields": 103
+    },
+    {
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "path": "docs/planning/db-pass4-columns-db05_courses_and_content.json",
+      "fields": 92
+    },
+    {
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "path": "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json",
+      "fields": 248
+    },
+    {
+      "domain": "DB07_PROJECTS",
+      "path": "docs/planning/db-pass4-columns-db07_projects.json",
+      "fields": 358
+    },
+    {
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "path": "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json",
+      "fields": 280
+    },
+    {
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "path": "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+      "fields": 279
+    },
+    {
+      "domain": "DB10_SHARED_OPERATIONS",
+      "path": "docs/planning/db-pass4-columns-db10_shared_operations.json",
+      "fields": 221
+    }
+  ],
+  "candidateTableMappings": [
+    {
+      "legacyTable": "admin_audit_log",
+      "vnextTables": [
+        "activity_events"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "app_setting",
+      "vnextTables": [
+        "module_access_rules"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "announcements",
+      "vnextTables": [
+        "in_app_notifications"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "attend",
+      "vnextTables": [
+        "attendance_records"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "batch",
+      "vnextTables": [
+        "cohorts"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "class",
+      "vnextTables": [
+        "sections"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "class_schedule",
+      "vnextTables": [
+        "section_schedule_events"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "college",
+      "vnextTables": [
+        "colleges"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "college_branding",
+      "vnextTables": [
+        "colleges"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "company",
+      "vnextTables": [
+        "placement_companies"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "course",
+      "vnextTables": [
+        "courses"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "department",
+      "vnextTables": [
+        "departments"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "discussions",
+      "vnextTables": [
+        "course_discussion_messages"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "faculty",
+      "vnextTables": [
+        "users",
+        "college_memberships",
+        "faculty_profiles"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "faculty_course_mapping",
+      "vnextTables": [
+        "course_teaching_assignments"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "faculty_teaching_assignment",
+      "vnextTables": [
+        "course_teaching_assignments"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "job",
+      "vnextTables": [
+        "placement_jobs"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "job_application",
+      "vnextTables": [
+        "placement_applications"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "job_application_status_history",
+      "vnextTables": [
+        "placement_application_status_history"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "vnextTables": [
+        "placement_eligibility_overrides"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "job_offer",
+      "vnextTables": [
+        "placement_offers"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "job_round",
+      "vnextTables": [
+        "placement_job_rounds"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "learner",
+      "vnextTables": [
+        "users",
+        "college_memberships",
+        "learner_profiles"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "vnextTables": [
+        "placement_candidate_academic_evidence"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "learner_content_progress",
+      "vnextTables": [
+        "learner_content_progress"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "lesson",
+      "vnextTables": [
+        "course_lessons"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "lesson_contents",
+      "vnextTables": [
+        "lesson_contents"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "new_program",
+      "vnextTables": [
+        "programs"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "notification",
+      "vnextTables": [
+        "in_app_notifications"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "organization",
+      "vnextTables": [
+        "organizations"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "vnextTables": [
+        "placement_eligibility_decisions"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "placement_season",
+      "vnextTables": [
+        "placement_seasons"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "vnextTables": [
+        "activity_events"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_delivery",
+      "vnextTables": [
+        "project_submissions"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_meeting",
+      "vnextTables": [
+        "project_meetings"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_member",
+      "vnextTables": [
+        "project_members"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_release",
+      "vnextTables": [
+        "project_releases"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_resource",
+      "vnextTables": [
+        "project_resources"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_sprint",
+      "vnextTables": [
+        "project_sprints"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_task",
+      "vnextTables": [
+        "project_tasks"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_template",
+      "vnextTables": [
+        "project_templates"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_template_college",
+      "vnextTables": [
+        "project_template_college_assignments"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_template_version",
+      "vnextTables": [
+        "project_template_versions"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "project_workspace",
+      "vnextTables": [
+        "project_instances"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "quiz_answers",
+      "vnextTables": [
+        "quiz_attempt_answers"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "quiz_attempts",
+      "vnextTables": [
+        "quiz_attempts"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "quiz_options",
+      "vnextTables": [
+        "quiz_options"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "quiz_questions",
+      "vnextTables": [
+        "quiz_questions"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "quizzes",
+      "vnextTables": [
+        "course_quizzes"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "recruiter",
+      "vnextTables": [
+        "placement_recruiter_profiles"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "recruiter_college_access",
+      "vnextTables": [
+        "placement_recruiter_college_grants"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "role",
+      "vnextTables": [
+        "system_roles"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "round_attendance",
+      "vnextTables": [
+        "placement_round_attendance"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "round_result",
+      "vnextTables": [
+        "placement_round_results"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "student_request",
+      "vnextTables": [
+        "placement_learner_requests"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "tenant_domain",
+      "vnextTables": [
+        "tenant_domains"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "user",
+      "vnextTables": [
+        "users"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    },
+    {
+      "legacyTable": "user_roles",
+      "vnextTables": [
+        "membership_roles"
+      ],
+      "confidence": "HYPOTHESIS_NOT_VERIFIED"
+    }
+  ],
+  "noClaim": "0 legacy fields verified for semantic/constraint parity"
+}

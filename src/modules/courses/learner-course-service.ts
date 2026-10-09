@@ -11,6 +11,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
+  cohorts,
   assignmentSubmissions,
   courseAssignments,
   collegeMemberships,
@@ -32,6 +33,8 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "./errors";
+import { listActiveElectiveDeliveryIds, listBoundElectiveDeliveryIds } from "@/modules/groups/roster-access";
+import { sql } from "drizzle-orm";
 import {
   requireLearningReadAccess,
 } from "./learning-access";
@@ -50,6 +53,7 @@ function requireLearnerMembership(
   context: RequestContext,
 ) {
   if (
+    context.user.platformStatus !== "ACTIVE" ||
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
     !context.membership.roles.includes("LEARNER")
@@ -73,7 +77,7 @@ export async function listLearnerCourseDeliveries(
   const includeHistorical =
     options.includeHistorical ?? false;
 
-  return getDb()
+  const primaryRows = await getDb()
     .select({
       deliveryId: courseSectionDeliveries.id,
       offeringId: courseOfferings.id,
@@ -249,6 +253,72 @@ export async function listLearnerCourseDeliveries(
       asc(courseOfferings.displayOrder),
       asc(courses.name),
     );
+  // Group-backed electives do not change the student's primary section
+  // enrollment. An existing host-section enrollment does not confer access.
+  const [groupDeliveryIds, boundDeliveryIds] = await Promise.all([
+    listActiveElectiveDeliveryIds(membership.id, membership.collegeId),
+    listBoundElectiveDeliveryIds(primaryRows.map(row => row.deliveryId)),
+  ]);
+  const bound = new Set(boundDeliveryIds);
+
+  if (groupDeliveryIds.length === 0) {
+    return primaryRows.filter(row => !bound.has(row.deliveryId));
+  }
+
+  const groupRows = await getDb()
+    .select({
+      deliveryId: courseSectionDeliveries.id,
+      offeringId: courseOfferings.id,
+      courseId: courses.id,
+      courseName: courses.name,
+      courseCode: courses.code,
+      courseDescription: courses.description,
+      offeringType: courseOfferings.type,
+      credits: courseOfferings.credits,
+      displayOrder: courseOfferings.displayOrder,
+      sectionId: sections.id,
+      sectionName: sections.name,
+      sectionCode: sections.code,
+      academicPeriodId: academicPeriods.id,
+      academicPeriodName: academicPeriods.name,
+      programId: programs.id,
+      programName: programs.name,
+      programCode: programs.code,
+      periodStartDate: academicPeriods.startDate,
+      periodEndDate: academicPeriods.endDate,
+      learningPathId: courseLearningPaths.id,
+      learningPathStatus: courseLearningPaths.status,
+      deliveryEndedAt: courseSectionDeliveries.endedAt,
+      sectionEnrollmentStatus: sql<"ACTIVE">`'ACTIVE'`,
+      programEnrollmentStatus: sql<"ACTIVE">`'ACTIVE'`,
+      periodStatus: academicPeriods.status,
+    })
+    .from(courseSectionDeliveries)
+    .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
+    .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(academicPeriods, eq(academicPeriods.id, courseOfferings.academicPeriodId))
+    .leftJoin(courseLearningPaths, and(
+      eq(courseLearningPaths.offeringId, courseOfferings.id),
+      ne(courseLearningPaths.status, "ARCHIVED"),
+    ))
+    .where(and(
+      inArray(courseSectionDeliveries.id, groupDeliveryIds),
+      eq(courseOfferings.status, "ACTIVE"),
+      eq(courses.status, "ACTIVE"),
+      eq(sections.status, "ACTIVE"),
+      eq(sections.cohortId, courseOfferings.cohortId),
+      eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
+      isNull(courseSectionDeliveries.endedAt),
+    ))
+    .orderBy(desc(academicPeriods.startDate), asc(courseOfferings.displayOrder), asc(courses.name));
+
+  // An elective-backed course appears once, even if this learner is also in
+  // its host section; eligibility remains group-owned.
+  return [...primaryRows.filter(row => !bound.has(row.deliveryId)), ...groupRows];
+
 }
 
 export async function listLearnerCourseInstructors(

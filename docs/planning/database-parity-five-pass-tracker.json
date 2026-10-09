@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "project": "42Students/lms-vnext",
+  "workBranch": "db-parity-2026",
+  "createdAt": "2026-10-09",
+  "policy": "Exactly one additional adversarial pass per user request; do not start the next pass automatically.",
+  "definitionOfComplete": "Pass reviewed + findings/metadata committed; this is NOT database parity, and execution evidence is a separate gate.",
+  "sourceBaselines": {
+    "legacyBackend": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "vnextMain": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a"
+  },
+  "passes": [
+    {
+      "pass": 1,
+      "name": "Initial legacy-to-vNext database surface discovery",
+      "status": "SOURCE_AUDIT_DONE",
+      "output": [
+        "docs/planning/database-parity-master.md",
+        "docs/planning/database-parity-hotspot-legacy-ddl.json",
+        "docs/planning/database-parity-hotspot-field-ledger.json"
+      ],
+      "notes": "Incomplete original hotspot-oriented audit. Do not claim full source inventory."
+    },
+    {
+      "pass": 2,
+      "name": "Whole migration history and entity/snapshot enumeration",
+      "status": "SOURCE_AUDIT_DONE",
+      "output": [
+        "docs/planning/database-parity-expanded-legacy-registry.json",
+        "docs/planning/database-parity-full-domain-queue.json",
+        "docs/planning/database-parity-jpa-entity-census.json",
+        "docs/planning/database-parity-second-sweep-findings.md"
+      ],
+      "notes": "199 table candidates and 118 model files discovered; source-only."
+    },
+    {
+      "pass": 3,
+      "name": "Adversarial relational integrity, lifecycle and hidden DB behavior",
+      "status": "SOURCE_AUDIT_DONE",
+      "output": [
+        "docs/planning/database-parity-pass3-fk-audit.json",
+        "docs/planning/database-parity-pass3-adversarial-findings.md",
+        "scripts/sql/vnext-readonly-integrity.sql"
+      ],
+      "notes": "12 findings, 195 FKs/41 multi-parent review candidates. No production DB introspection or negative-test execution."
+    },
+    {
+      "pass": 4,
+      "name": "Field-by-field semantic parity and active/retired provenance",
+      "status": "SOURCE_FIELD_SWEEP_DONE_UNVERIFIED",
+      "output": [
+        "docs/planning/database-parity-pass4-column-index.json",
+        "docs/planning/database-parity-pass4-structural-diff.json",
+        "docs/planning/database-parity-pass4-active-retired-triage.json",
+        "docs/planning/database-parity-pass4-adversarial-findings.md",
+        "docs/planning/database-parity-pass4-review-decisions.json",
+        "docs/planning/db-pass4-raw-ddl-151-161.json",
+        "docs/planning/db-pass4-raw-ddl-162-172.json",
+        "docs/planning/db-pass4-raw-ddl-173-183.json",
+        "docs/planning/db-pass4-raw-ddl-184-194.json",
+        "docs/planning/db-pass4-columns-db00_historical_and_engine.json",
+        "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json",
+        "docs/planning/db-pass4-columns-db02_academics_and_timetable.json",
+        "docs/planning/db-pass4-columns-db03_groups_and_electives.json",
+        "docs/planning/db-pass4-columns-db04_profiles_and_verification.json",
+        "docs/planning/db-pass4-columns-db05_courses_and_content.json",
+        "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json",
+        "docs/planning/db-pass4-columns-db07_projects.json",
+        "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json",
+        "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+        "docs/planning/db-pass4-columns-db10_shared_operations.json"
+      ],
+      "notes": "199 source table candidates, 2,829 source fields, 44 post-snapshot typed migrations, 321 source fields with name-match hints (331 pairs). 18 semantic findings; 0 fields verified, actual DB tests not run. Pass 5 untouched."
+    },
+    {
+      "pass": 5,
+      "name": "Mutation, concurrency, tenancy, retention, migration replay and release adversarial gate",
+      "status": "SOURCE_THREAT_AUDIT_DONE_RUNTIME_BLOCKED",
+      "output": [
+        "docs/planning/database-parity-pass5-adversarial-findings.md",
+        "docs/planning/database-parity-pass5-probe-manifest.json",
+        "scripts/sql/vnext-pass5-relational-witness.sql",
+        "scripts/db-parity-pass5-evaluate.mjs",
+        "tests/db-parity-pass5.test.mjs"
+      ],
+      "notes": "21 schema-grounded aggregate parent/tenant integrity witnesses; none executed, no negative insert/race/migration/role evidence; parity remains BLOCKED."
+    }
+  ],
+  "remainingBlockers": [
+    "Legacy production read-only information_schema export not available",
+    "vNext live/disposable PostgreSQL introspection not executed",
+    "No generated or applied schema migration in these audit passes",
+    "Cross-table negative SQL tests and concurrency tests not run",
+    "All 199 legacy candidate active/retired decisions still require review",
+    "All 2,829 source-derived field mappings remain unverified; JSONB and redesigned target paths need producer-consumer tests",
+    "44 newer migrations parsed but old baseline is a stale test snapshot; dynamic SQL and true active schema need live introspection",
+    "Pass 5 witnesses require seeded disposable Postgres and independent negative-write/race coverage; 0 probes executed."
+  ]
+}

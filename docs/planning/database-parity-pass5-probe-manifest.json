@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 1,
+  "kind": "READ_ONLY_WITNESS_QUERIES_NOT_NEGATIVE_TESTS",
+  "baselines": {
+    "legacyBackend": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontend": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "vnextMain": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+    "vnextBranchBeforePass5": "e823b19275f38e867988735e1e06755dec36153c",
+    "drizzle": "0036"
+  },
+  "probes": [
+    {
+      "id": "P5-01",
+      "family": "TENANT",
+      "purpose": "Project member belongs to a different college than the project",
+      "from": "project_members pm JOIN project_instances p ON p.id=pm.project_id JOIN college_memberships m ON m.id=pm.membership_id",
+      "where": "m.college_id <> p.college_id",
+      "tableAliases": {
+        "pm": "project_members",
+        "p": "project_instances",
+        "m": "college_memberships"
+      },
+      "references": [
+        "m.college_id",
+        "m.id",
+        "p.college_id",
+        "p.id",
+        "pm.membership_id",
+        "pm.project_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-02",
+      "family": "PARENT",
+      "purpose": "Task submission references a task from another project",
+      "from": "project_task_submissions s JOIN project_tasks t ON t.id=s.task_id",
+      "where": "s.project_id <> t.project_id",
+      "tableAliases": {
+        "s": "project_task_submissions",
+        "t": "project_tasks"
+      },
+      "references": [
+        "s.project_id",
+        "s.task_id",
+        "t.id",
+        "t.project_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-03",
+      "family": "TENANT",
+      "purpose": "Task submitter belongs to another college",
+      "from": "project_task_submissions s JOIN project_instances p ON p.id=s.project_id JOIN college_memberships m ON m.id=s.submitted_by_membership_id",
+      "where": "m.college_id <> p.college_id",
+      "tableAliases": {
+        "s": "project_task_submissions",
+        "p": "project_instances",
+        "m": "college_memberships"
+      },
+      "references": [
+        "m.college_id",
+        "m.id",
+        "p.college_id",
+        "p.id",
+        "s.project_id",
+        "s.submitted_by_membership_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-04",
+      "family": "TENANT",
+      "purpose": "Task reviewer membership belongs to another college",
+      "from": "project_task_submissions s JOIN project_instances p ON p.id=s.project_id JOIN college_memberships m ON m.id=s.reviewed_by_membership_id",
+      "where": "m.college_id <> p.college_id",
+      "tableAliases": {
+        "s": "project_task_submissions",
+        "p": "project_instances",
+        "m": "college_memberships"
+      },
+      "references": [
+        "m.college_id",
+        "m.id",
+        "p.college_id",
+        "p.id",
+        "s.project_id",
+        "s.reviewed_by_membership_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-05",
+      "family": "PARENT",
+      "purpose": "Project task references sprint from another project",
+      "from": "project_tasks t JOIN project_sprints s ON s.id=t.sprint_id",
+      "where": "t.project_id <> s.project_id",
+      "tableAliases": {
+        "t": "project_tasks",
+        "s": "project_sprints"
+      },
+      "references": [
+        "s.id",
+        "s.project_id",
+        "t.project_id",
+        "t.sprint_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-06",
+      "family": "PARENT",
+      "purpose": "Project sprint release belongs to another project",
+      "from": "project_sprints s JOIN project_releases r ON r.id=s.release_id",
+      "where": "s.project_id <> r.project_id",
+      "tableAliases": {
+        "s": "project_sprints",
+        "r": "project_releases"
+      },
+      "references": [
+        "r.id",
+        "r.project_id",
+        "s.project_id",
+        "s.release_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-07",
+      "family": "TENANT",
+      "purpose": "Placement job and season have different colleges",
+      "from": "placement_jobs j JOIN placement_seasons s ON s.id=j.season_id",
+      "where": "j.college_id <> s.college_id",
+      "tableAliases": {
+        "j": "placement_jobs",
+        "s": "placement_seasons"
+      },
+      "references": [
+        "j.college_id",
+        "j.season_id",
+        "s.college_id",
+        "s.id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-08",
+      "family": "TENANT",
+      "purpose": "Placement job and company relationship have different colleges",
+      "from": "placement_jobs j JOIN placement_company_relationships r ON r.id=j.company_relationship_id",
+      "where": "j.college_id <> r.college_id",
+      "tableAliases": {
+        "j": "placement_jobs",
+        "r": "placement_company_relationships"
+      },
+      "references": [
+        "j.college_id",
+        "j.company_relationship_id",
+        "r.college_id",
+        "r.id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-09",
+      "family": "TENANT",
+      "purpose": "Company relationship owner is a different-college member",
+      "from": "placement_company_relationships r JOIN college_memberships m ON m.id=r.owner_membership_id",
+      "where": "r.college_id <> m.college_id",
+      "tableAliases": {
+        "r": "placement_company_relationships",
+        "m": "college_memberships"
+      },
+      "references": [
+        "m.college_id",
+        "m.id",
+        "r.college_id",
+        "r.owner_membership_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-10",
+      "family": "TENANT",
+      "purpose": "Application learner membership belongs to another college than job",
+      "from": "placement_applications a JOIN placement_jobs j ON j.id=a.job_id JOIN college_memberships m ON m.id=a.membership_id",
+      "where": "j.college_id <> m.college_id",
+      "tableAliases": {
+        "a": "placement_applications",
+        "j": "placement_jobs",
+        "m": "college_memberships"
+      },
+      "references": [
+        "a.job_id",
+        "a.membership_id",
+        "j.college_id",
+        "j.id",
+        "m.college_id",
+        "m.id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-11",
+      "family": "PARENT",
+      "purpose": "Application's role option belongs to another job",
+      "from": "placement_applications a JOIN placement_job_role_options o ON o.id=a.role_option_id",
+      "where": "a.job_id <> o.job_id",
+      "tableAliases": {
+        "a": "placement_applications",
+        "o": "placement_job_role_options"
+      },
+      "references": [
+        "a.job_id",
+        "a.role_option_id",
+        "o.id",
+        "o.job_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-12",
+      "family": "PARENT",
+      "purpose": "Round attendance combines application and round from different jobs",
+      "from": "placement_round_attendance a JOIN placement_applications ap ON ap.id=a.application_id JOIN placement_job_rounds r ON r.id=a.round_id",
+      "where": "ap.job_id <> r.job_id",
+      "tableAliases": {
+        "a": "placement_round_attendance",
+        "ap": "placement_applications",
+        "r": "placement_job_rounds"
+      },
+      "references": [
+        "a.application_id",
+        "a.round_id",
+        "ap.id",
+        "ap.job_id",
+        "r.id",
+        "r.job_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-13",
+      "family": "PARENT",
+      "purpose": "Application round exception combines different jobs",
+      "from": "placement_application_round_exceptions e JOIN placement_applications a ON a.id=e.application_id JOIN placement_job_rounds r ON r.id=e.round_id",
+      "where": "a.job_id <> r.job_id",
+      "tableAliases": {
+        "e": "placement_application_round_exceptions",
+        "a": "placement_applications",
+        "r": "placement_job_rounds"
+      },
+      "references": [
+        "a.id",
+        "a.job_id",
+        "e.application_id",
+        "e.round_id",
+        "r.id",
+        "r.job_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-14",
+      "family": "PARENT",
+      "purpose": "Round exception's request is for another application",
+      "from": "placement_application_round_exceptions e JOIN placement_learner_requests r ON r.id=e.request_id",
+      "where": "e.application_id <> r.application_id",
+      "tableAliases": {
+        "e": "placement_application_round_exceptions",
+        "r": "placement_learner_requests"
+      },
+      "references": [
+        "e.application_id",
+        "e.request_id",
+        "r.application_id",
+        "r.id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-15",
+      "family": "PARENT",
+      "purpose": "Learner request's round is for another job",
+      "from": "placement_learner_requests r JOIN placement_applications a ON a.id=r.application_id JOIN placement_job_rounds j ON j.id=r.round_id",
+      "where": "a.job_id <> j.job_id",
+      "tableAliases": {
+        "r": "placement_learner_requests",
+        "a": "placement_applications",
+        "j": "placement_job_rounds"
+      },
+      "references": [
+        "a.id",
+        "a.job_id",
+        "j.id",
+        "j.job_id",
+        "r.application_id",
+        "r.round_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-16",
+      "family": "PARENT",
+      "purpose": "Learner request's offer is for another application",
+      "from": "placement_learner_requests r JOIN placement_offers o ON o.id=r.offer_id",
+      "where": "r.application_id <> o.application_id",
+      "tableAliases": {
+        "r": "placement_learner_requests",
+        "o": "placement_offers"
+      },
+      "references": [
+        "o.application_id",
+        "o.id",
+        "r.application_id",
+        "r.offer_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-17",
+      "family": "ACADEMIC",
+      "purpose": "Section enrollment academic period differs from section",
+      "from": "section_enrollments e JOIN sections s ON s.id=e.section_id",
+      "where": "e.academic_period_id <> s.academic_period_id",
+      "tableAliases": {
+        "e": "section_enrollments",
+        "s": "sections"
+      },
+      "references": [
+        "e.academic_period_id",
+        "e.section_id",
+        "s.academic_period_id",
+        "s.id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-18",
+      "family": "ACADEMIC",
+      "purpose": "Section enrollment cohort differs from learner program enrollment",
+      "from": "section_enrollments e JOIN sections s ON s.id=e.section_id JOIN learner_program_enrollments l ON l.id=e.learner_enrollment_id",
+      "where": "s.cohort_id <> l.cohort_id",
+      "tableAliases": {
+        "e": "section_enrollments",
+        "s": "sections",
+        "l": "learner_program_enrollments"
+      },
+      "references": [
+        "e.learner_enrollment_id",
+        "e.section_id",
+        "l.cohort_id",
+        "l.id",
+        "s.cohort_id",
+        "s.id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-19",
+      "family": "ACADEMIC",
+      "purpose": "Course delivery offering/section cohort or term mismatch",
+      "from": "course_section_deliveries d JOIN course_offerings o ON o.id=d.offering_id JOIN sections s ON s.id=d.section_id",
+      "where": "o.cohort_id <> s.cohort_id OR o.academic_period_id <> s.academic_period_id",
+      "tableAliases": {
+        "d": "course_section_deliveries",
+        "o": "course_offerings",
+        "s": "sections"
+      },
+      "references": [
+        "d.offering_id",
+        "d.section_id",
+        "o.academic_period_id",
+        "o.cohort_id",
+        "o.id",
+        "s.academic_period_id",
+        "s.cohort_id",
+        "s.id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-20",
+      "family": "ACADEMIC",
+      "purpose": "Quiz attempt's quiz belongs to another delivery",
+      "from": "quiz_attempts a JOIN course_quizzes q ON q.id=a.quiz_id",
+      "where": "a.delivery_id <> q.delivery_id",
+      "tableAliases": {
+        "a": "quiz_attempts",
+        "q": "course_quizzes"
+      },
+      "references": [
+        "a.delivery_id",
+        "a.quiz_id",
+        "q.delivery_id",
+        "q.id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-21",
+      "family": "ACADEMIC",
+      "purpose": "Assignment submission's assignment belongs to another delivery",
+      "from": "assignment_submissions s JOIN course_assignments a ON a.id=s.assignment_id",
+      "where": "s.delivery_id <> a.delivery_id",
+      "tableAliases": {
+        "s": "assignment_submissions",
+        "a": "course_assignments"
+      },
+      "references": [
+        "a.delivery_id",
+        "a.id",
+        "s.assignment_id",
+        "s.delivery_id"
+      ],
+      "expectedViolations": 0,
+      "executionEvidence": "NOT_RUN"
+    }
+  ],
+  "status": "SOURCE_REVIEW_READY_EXECUTION_NOT_RUN",
+  "warnings": [
+    "Zero violations on an empty or valid fixture does not mean the database prevents invalid writes.",
+    "Negative inserts, concurrent races, migration replay, permission denial and real catalog comparison remain untested.",
+    "Run only on a disposable PostgreSQL database seeded with synthetic non-sensitive records.",
+    "Join predicates and source columns verified against committed Drizzle 0036, NOT live schema."
+  ]
+}

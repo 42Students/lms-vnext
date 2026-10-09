@@ -1,0 +1,279 @@
+{
+  "part": "173-183",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "generatedAt": "2026-10-09",
+  "warnings": [
+    "Detailed CREATE/ALTER source parser, NOT actual post-migration live physical schema",
+    "Complex expressions/dynamic SQL/IF guards require manual review and live introspection",
+    "Descriptions are source definitions; unchanged base tables derive from historical snapshot"
+  ],
+  "migrations": [
+    {
+      "file": "V173__project_sprint_release_required.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "project_sprint",
+          "ops": [
+            {
+              "op": "MODIFY_COLUMN",
+              "column": "release_id",
+              "definition": "INT NOT NULL"
+            }
+          ],
+          "sourceMigration": "V173__project_sprint_release_required.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1371
+    },
+    {
+      "file": "V174__project_task_submission.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "project_task",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "submission_url",
+              "definition": "VARCHAR(2048) NULL AFTER blocker_reason"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "submitted_by",
+              "definition": "INT NULL AFTER submission_url"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "submitted_at",
+              "definition": "DATETIME NULL AFTER submitted_by"
+            }
+          ],
+          "sourceMigration": "V174__project_task_submission.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 858
+    },
+    {
+      "file": "V175__job_application_assessment_url.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "job_application",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "assessment_url",
+              "definition": "TEXT NULL COMMENT 'Application-specific assessment link. When null, learner/notification surfaces fall back to job.assessment_url.'"
+            }
+          ],
+          "sourceMigration": "V175__job_application_assessment_url.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 448
+    },
+    {
+      "file": "V176__hr_notification_read.sql",
+      "create": [
+        {
+          "table": "hr_notification_read",
+          "fields": [
+            {
+              "name": "hr_user_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "read_through",
+              "definition": "DATETIME NOT NULL"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (hr_user_id, college_id)"
+          ],
+          "sourceMigration": "V176__hr_notification_read.sql",
+          "rawFieldCount": 4
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 480
+    },
+    {
+      "file": "V177__hr_applicant_note.sql",
+      "create": [
+        {
+          "table": "hr_applicant_note",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "hr_user_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "job_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "application_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "rating",
+              "definition": "TINYINT NULL COMMENT '1 to 5'"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_hr_applicant_note (hr_user_id, application_id)",
+            "INDEX idx_hr_applicant_note_job (hr_user_id, job_id)"
+          ],
+          "sourceMigration": "V177__hr_applicant_note.sql",
+          "rawFieldCount": 11
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 763
+    },
+    {
+      "file": "V178__hr_drive_work_backfill.sql",
+      "create": [],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 603
+    },
+    {
+      "file": "V179__job_round_added_by_hr.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "job_round",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "added_by_hr_user_id",
+              "definition": "BIGINT NULL COMMENT 'Set when the recruiter added this round after the drive was requested"
+            }
+          ],
+          "sourceMigration": "V179__job_round_added_by_hr.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 315
+    },
+    {
+      "file": "V180__job_jd_url.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "job",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "jd_url",
+              "definition": "VARCHAR(500) NULL COMMENT 'Link to the uploaded job description file'"
+            }
+          ],
+          "sourceMigration": "V180__job_jd_url.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 235
+    },
+    {
+      "file": "V181__project_sprint_lifecycle_attribution.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "project_sprint",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "started_by",
+              "definition": "INT NULL AFTER updated_by"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "started_at",
+              "definition": "DATETIME NULL AFTER started_by"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "completed_by",
+              "definition": "INT NULL AFTER started_at"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "completed_at",
+              "definition": "DATETIME NULL AFTER completed_by"
+            }
+          ],
+          "sourceMigration": "V181__project_sprint_lifecycle_attribution.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 695
+    },
+    {
+      "file": "V182__learner_college_index.sql",
+      "create": [],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 293
+    },
+    {
+      "file": "V183__tpo_message_unread_index.sql",
+      "create": [],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 226
+    }
+  ]
+}

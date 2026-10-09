@@ -1,0 +1,1525 @@
+{
+  "part": "162-172",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "generatedAt": "2026-10-09",
+  "warnings": [
+    "Detailed CREATE/ALTER source parser, NOT actual post-migration live physical schema",
+    "Complex expressions/dynamic SQL/IF guards require manual review and live introspection",
+    "Descriptions are source definitions; unchanged base tables derive from historical snapshot"
+  ],
+  "migrations": [
+    {
+      "file": "V162__tpo_v1_settings.sql",
+      "create": [
+        {
+          "table": "college_placement_rules",
+          "fields": [
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "counts_as_placed_at",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'OFFER_RELEASED'"
+            },
+            {
+              "name": "max_held_offers",
+              "definition": "INT NOT NULL DEFAULT 1"
+            },
+            {
+              "name": "uplift_pct",
+              "definition": "INT NOT NULL DEFAULT 40 COMMENT 'A placed student may still apply if CTC is at least this much higher, or the drive is tagged Dream'"
+            },
+            {
+              "name": "min_response_hours",
+              "definition": "INT NOT NULL DEFAULT 48"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V162__tpo_v1_settings.sql",
+          "rawFieldCount": 7
+        },
+        {
+          "table": "college_what_companies_see",
+          "fields": [
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "show_cgpa_exact",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'False = band only, e.g. \"7.5-8.0\"'"
+            },
+            {
+              "name": "show_tenth_twelfth",
+              "definition": "BOOLEAN NOT NULL DEFAULT TRUE"
+            },
+            {
+              "name": "show_project_links",
+              "definition": "BOOLEAN NOT NULL DEFAULT TRUE"
+            },
+            {
+              "name": "show_assessment_scores",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "show_attendance",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V162__tpo_v1_settings.sql",
+          "rawFieldCount": 7
+        }
+      ],
+      "alter": [
+        {
+          "table": "industry_company",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "export_columns_json",
+              "definition": "JSON NULL COMMENT 'Saved per-company export column picker (TPO V1)'"
+            }
+          ],
+          "sourceMigration": "V162__tpo_v1_settings.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1496
+    },
+    {
+      "file": "V163__retire_legacy_lesson_content_types.sql",
+      "create": [
+        {
+          "table": "lesson_contents_legacy_type_backup_v163",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "content_type",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "name": "content_data",
+              "definition": "JSON NULL"
+            },
+            {
+              "name": "backed_up_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V163__retire_legacy_lesson_content_types.sql",
+          "rawFieldCount": 4
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 4784
+    },
+    {
+      "file": "V164__log_alert_signature_triage.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "log_alert_signature",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "fix_status",
+              "definition": "VARCHAR(16) NOT NULL DEFAULT 'OPEN'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "fixed_in_commit",
+              "definition": "VARCHAR(64) NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "fixed_at",
+              "definition": "TIMESTAMP NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "status_note",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "muted_reason",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "issue_public_id",
+              "definition": "VARCHAR(32) NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "last_seen_commit",
+              "definition": "VARCHAR(64) NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "regressed_at",
+              "definition": "TIMESTAMP NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "sample_path",
+              "definition": "VARCHAR(255) NULL"
+            }
+          ],
+          "sourceMigration": "V164__log_alert_signature_triage.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 749
+    },
+    {
+      "file": "V165__tpo_v1_complete.sql",
+      "create": [
+        {
+          "table": "tpo_message_thread",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "hr_user_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "job_id",
+              "definition": "INT NULL COMMENT 'Null = the General thread for this HR'"
+            },
+            {
+              "name": "last_message_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_tpo_thread (college_id, hr_user_id, job_id)",
+            "INDEX idx_tpo_thread_college (college_id, last_message_at)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 8
+        },
+        {
+          "table": "tpo_message",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "thread_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "sender_type",
+              "definition": "VARCHAR(10) NOT NULL COMMENT 'TPO | HR'"
+            },
+            {
+              "name": "sender_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "body",
+              "definition": "VARCHAR(4000) NOT NULL"
+            },
+            {
+              "name": "read_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_tpo_message_thread (thread_id, created_at)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 8
+        },
+        {
+          "table": "tpo_share_link",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "job_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "token_hash",
+              "definition": "VARCHAR(128) NOT NULL"
+            },
+            {
+              "name": "recipient_email",
+              "definition": "VARCHAR(150) NOT NULL"
+            },
+            {
+              "name": "code_hash",
+              "definition": "VARCHAR(128) NULL COMMENT 'SHA-256 of the one-time email code'"
+            },
+            {
+              "name": "email_code_hash",
+              "definition": "VARCHAR(128) NULL COMMENT 'SHA-256 of the code the company asked us to email them'"
+            },
+            {
+              "name": "email_code_expires",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "columns_json",
+              "definition": "JSON NULL"
+            },
+            {
+              "name": "max_stage",
+              "definition": "VARCHAR(30) NULL COMMENT 'Applicants past this stage are excluded; phone only after SHORTLISTED'"
+            },
+            {
+              "name": "shortlist_by",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "expires_at",
+              "definition": "DATETIME NOT NULL"
+            },
+            {
+              "name": "revoked_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "created_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_tpo_share_token (token_hash)",
+            "INDEX idx_tpo_share_job (job_id)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 17
+        },
+        {
+          "table": "tpo_share_event",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "share_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "action",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'CREATED|OPENED|DOWNLOADED_LIST|DOWNLOADED_ZIP|REVOKED'"
+            },
+            {
+              "name": "detail",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_tpo_share_event (share_id, created_at)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 6
+        },
+        {
+          "table": "round_slot",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "round_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "starts_at",
+              "definition": "DATETIME NOT NULL"
+            },
+            {
+              "name": "ends_at",
+              "definition": "DATETIME NOT NULL"
+            },
+            {
+              "name": "room",
+              "definition": "VARCHAR(100) NULL"
+            },
+            {
+              "name": "panel",
+              "definition": "VARCHAR(100) NULL"
+            },
+            {
+              "name": "capacity",
+              "definition": "INT NOT NULL DEFAULT 1"
+            },
+            {
+              "name": "proposed_by",
+              "definition": "VARCHAR(5) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | HR'"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(12) NOT NULL DEFAULT 'PROPOSED' COMMENT 'PROPOSED|CONFIRMED'"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_round_slot_round (round_id, starts_at)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 10
+        },
+        {
+          "table": "round_assignment",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "round_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "application_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "slot_id",
+              "definition": "BIGINT NULL"
+            },
+            {
+              "name": "room",
+              "definition": "VARCHAR(100) NULL"
+            },
+            {
+              "name": "student_confirmed_at",
+              "definition": "DATETIME NULL COMMENT 'Set when the student confirms a changed slot'"
+            },
+            {
+              "name": "notified_at",
+              "definition": "DATETIME NULL"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_round_assignment (round_id, application_id)",
+            "INDEX idx_round_assignment_slot (slot_id)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 9
+        },
+        {
+          "table": "reschedule_request",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "round_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "application_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "reason",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "preferred_times",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(12) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|MOVED|KEPT'"
+            },
+            {
+              "name": "reply",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "decided_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_reschedule_round (round_id, status)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 10
+        },
+        {
+          "table": "round_attendance",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "round_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "application_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(15) NOT NULL COMMENT 'WAITING|PRESENT|IN_INTERVIEW|DONE|ABSENT'"
+            },
+            {
+              "name": "room",
+              "definition": "VARCHAR(100) NULL"
+            },
+            {
+              "name": "marked_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "marked_by_role",
+              "definition": "VARCHAR(20) NULL COMMENT 'TPO_ADMIN|FACULTY|STUDENT_COORDINATOR'"
+            },
+            {
+              "name": "marked_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_round_attendance (round_id, application_id)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 9
+        },
+        {
+          "table": "tpo_team_member",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "faculty_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "role",
+              "definition": "VARCHAR(25) NOT NULL COMMENT 'TPO_ADMIN | FACULTY_COORDINATOR'"
+            },
+            {
+              "name": "department",
+              "definition": "VARCHAR(100) NULL COMMENT 'Faculty coordinators see only this department'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_tpo_team (college_id, faculty_id)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 7
+        },
+        {
+          "table": "tpo_coordinator_assignment",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "job_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL COMMENT 'The student coordinator'"
+            },
+            {
+              "name": "on_date",
+              "definition": "DATE NOT NULL"
+            },
+            {
+              "name": "created_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_tpo_coordinator (job_id, learner_id, on_date)",
+            "INDEX idx_tpo_coordinator_learner (learner_id, on_date)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 9
+        },
+        {
+          "table": "tpo_college_settings",
+          "fields": [
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "invite_email_template",
+              "definition": "VARCHAR(4000) NULL"
+            },
+            {
+              "name": "reminder_email_template",
+              "definition": "VARCHAR(4000) NULL"
+            },
+            {
+              "name": "whatsapp_template",
+              "definition": "VARCHAR(2000) NULL"
+            },
+            {
+              "name": "student_email_wording",
+              "definition": "VARCHAR(4000) NULL"
+            },
+            {
+              "name": "sms_monthly_cap",
+              "definition": "INT NOT NULL DEFAULT 500"
+            },
+            {
+              "name": "email_signature",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "logo_url",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "trusted_domains_json",
+              "definition": "JSON NULL"
+            },
+            {
+              "name": "prep_course_ids_json",
+              "definition": "JSON NULL COMMENT 'The LMS courses whose tests count toward readiness'"
+            },
+            {
+              "name": "prep_threshold_pct",
+              "definition": "INT NOT NULL DEFAULT 60 COMMENT 'Average on those tests a student needs to count as prepared'"
+            },
+            {
+              "name": "notify_toggles_json",
+              "definition": "JSON NULL COMMENT 'On/off for the optional student notices: driveOpenEmail, resultApplied, nudges, prepAssigned'"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 13
+        },
+        {
+          "table": "tpo_user_prefs",
+          "fields": [
+            {
+              "name": "faculty_id",
+              "definition": "INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "prefs_json",
+              "definition": "JSON NULL COMMENT 'Which optional notifications this person receives'"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 3
+        },
+        {
+          "table": "tpo_saved_view",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "faculty_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "scope",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'STUDENTS|LEADS|DRIVES'"
+            },
+            {
+              "name": "name",
+              "definition": "VARCHAR(100) NOT NULL"
+            },
+            {
+              "name": "filters_json",
+              "definition": "JSON NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_tpo_saved_view (college_id, faculty_id, scope)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 8
+        },
+        {
+          "table": "tpo_student_note",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(2000) NOT NULL"
+            },
+            {
+              "name": "created_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_tpo_student_note (learner_id, created_at)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 7
+        },
+        {
+          "table": "tpo_audit_log",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "actor_type",
+              "definition": "VARCHAR(10) NOT NULL COMMENT 'TPO | HR | SYSTEM | STUDENT'"
+            },
+            {
+              "name": "actor_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "action",
+              "definition": "VARCHAR(60) NOT NULL"
+            },
+            {
+              "name": "entity_type",
+              "definition": "VARCHAR(30) NULL COMMENT 'DRIVE|LEAD|STUDENT|OFFER|ROUND|SHARE|SETTINGS'"
+            },
+            {
+              "name": "entity_id",
+              "definition": "BIGINT NULL"
+            },
+            {
+              "name": "detail",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_tpo_audit_college (college_id, created_at)",
+            "INDEX idx_tpo_audit_entity (entity_type, entity_id)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 11
+        },
+        {
+          "table": "tpo_bell",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "type",
+              "definition": "VARCHAR(40) NOT NULL"
+            },
+            {
+              "name": "title",
+              "definition": "VARCHAR(200) NOT NULL"
+            },
+            {
+              "name": "body",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "link",
+              "definition": "VARCHAR(200) NULL"
+            },
+            {
+              "name": "read_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_tpo_bell (college_id, read_at, created_at)"
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql",
+          "rawFieldCount": 9
+        }
+      ],
+      "alter": [
+        {
+          "table": "hr_college_access",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "pending_lead_id",
+              "definition": "BIGINT NULL COMMENT 'Set while an existing recruiter has been invited but has not accepted yet (status PENDING_HR)'"
+            }
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql"
+        },
+        {
+          "table": "job_offer",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "expiring_notified_at",
+              "definition": "DATETIME NULL COMMENT 'Set once the holder was told the offer expires within 24 hours'"
+            }
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql"
+        },
+        {
+          "table": "job",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "application_deadline_notified_at",
+              "definition": "DATETIME NULL COMMENT 'Set once the deadline has passed and the Home \"share with company\" card was raised'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "previous_request_json",
+              "definition": "JSON NULL COMMENT 'What an HR request looked like before it was resubmitted, so the TPO can see what changed'"
+            }
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql"
+        },
+        {
+          "table": "job_application",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "ineligible_flag_at",
+              "definition": "DATETIME NULL COMMENT 'Set when a corrected or imported academic record made an existing applicant ineligible"
+            }
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql"
+        },
+        {
+          "table": "learner_academic_record",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "batch",
+              "definition": "VARCHAR(20) NULL COMMENT 'Batch / passing-out year label used by Students and Reports filters'"
+            }
+          ],
+          "sourceMigration": "V165__tpo_v1_complete.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 10210
+    },
+    {
+      "file": "V166__groups_kernel.sql",
+      "create": [
+        {
+          "table": "lms_group",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "kind",
+              "definition": "VARCHAR(40) NOT NULL COMMENT 'Feature-owned discriminator, e.g. ELECTIVE, CRT, BUS. Upper-case identifier; the kernel stores it, never interprets it'"
+            },
+            {
+              "name": "owner_scope",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'COLLEGE' COMMENT 'COLLEGE | PLATFORM'"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NULL COMMENT 'NULL only for PLATFORM-owned groups (super-admin)'"
+            },
+            {
+              "name": "name",
+              "definition": "VARCHAR(150) NOT NULL"
+            },
+            {
+              "name": "description",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'DRAFT' COMMENT 'DRAFT | ACTIVE | CLOSED | ARCHIVED. Self-join needs ACTIVE; admins may build a roster in DRAFT'"
+            },
+            {
+              "name": "capacity",
+              "definition": "INT NULL COMMENT 'NULL = unlimited. Hard limit on ACTIVE members, enforced by the atomic seat claim'"
+            },
+            {
+              "name": "active_count",
+              "definition": "INT NOT NULL DEFAULT 0 COMMENT 'Denormalised count of ACTIVE members. Seat claim = UPDATE ... WHERE active_count < capacity; reconcile endpoint recomputes it'"
+            },
+            {
+              "name": "self_join_open_from",
+              "definition": "DATETIME NULL COMMENT 'Learners may join themselves only inside [from, until]; NULL from = self-join disabled'"
+            },
+            {
+              "name": "self_join_open_until",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "academic_year",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "semester_number",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "config_json",
+              "definition": "JSON NULL COMMENT 'Feature-owned settings, stored and returned opaquely. Kernel reads only allowWaitlist and allowSelfLeave'"
+            },
+            {
+              "name": "created_by_type",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "created_by_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "is_deleted",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_lms_group_college_kind (college_id, kind, status)",
+            "INDEX idx_lms_group_kind (kind, status)"
+          ],
+          "sourceMigration": "V166__groups_kernel.sql",
+          "rawFieldCount": 22
+        },
+        {
+          "table": "lms_group_member",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "group_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "member_type",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'LEARNER' COMMENT 'LEARNER today; FACULTY/EXTERNAL reserved'"
+            },
+            {
+              "name": "member_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "state",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'REQUESTED | ACTIVE | WAITLISTED | REMOVED'"
+            },
+            {
+              "name": "source",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'MANUAL | CSV | RULE | SELF'"
+            },
+            {
+              "name": "is_locked",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'An explicit admin decision: a rule re-run never overturns it, and a locked REMOVED row blocks self re-join'"
+            },
+            {
+              "name": "waitlist_position",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "joined_at",
+              "definition": "DATETIME NULL COMMENT 'When the member last became ACTIVE'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_lms_group_member (group_id, member_type, member_id)",
+            "INDEX idx_lms_group_member_member (member_type, member_id, state)",
+            "INDEX idx_lms_group_member_state (group_id, state, waitlist_position)",
+            "CONSTRAINT fk_lms_group_member_group FOREIGN KEY (group_id) REFERENCES lms_group (id)"
+          ],
+          "sourceMigration": "V166__groups_kernel.sql",
+          "rawFieldCount": 17
+        },
+        {
+          "table": "lms_group_member_event",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "group_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "member_type",
+              "definition": "VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "member_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "from_state",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "to_state",
+              "definition": "VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "source",
+              "definition": "VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "actor_type",
+              "definition": "VARCHAR(20) NULL COMMENT 'LEARNER | FACULTY | SUPER_ADMIN | SYSTEM'"
+            },
+            {
+              "name": "actor_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "reason",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_lms_group_member_event_group (group_id, created_at)",
+            "INDEX idx_lms_group_member_event_member (member_type, member_id, created_at)"
+          ],
+          "sourceMigration": "V166__groups_kernel.sql",
+          "rawFieldCount": 13
+        },
+        {
+          "table": "lms_group_rule",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "group_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "criteria_json",
+              "definition": "JSON NOT NULL COMMENT 'Same shape as job.eligibility_json (JobEligibility.java): branches, minCgpa, maxActiveBacklogs, passingYears, ... One evaluator serves both'"
+            },
+            {
+              "name": "auto_refresh",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Reserved for a scheduled re-run; V1 applies on demand'"
+            },
+            {
+              "name": "last_run_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "last_run_matched",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_lms_group_rule_group (group_id)",
+            "CONSTRAINT fk_lms_group_rule_group FOREIGN KEY (group_id) REFERENCES lms_group (id)"
+          ],
+          "sourceMigration": "V166__groups_kernel.sql",
+          "rawFieldCount": 10
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 5290
+    },
+    {
+      "file": "V167__electives.sql",
+      "create": [
+        {
+          "table": "elective_slot",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "program_id",
+              "definition": "INT NOT NULL COMMENT 'The curriculum this slot belongs to; allocation may still take learners from any program in the college'"
+            },
+            {
+              "name": "semester_number",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "academic_year",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "name",
+              "definition": "VARCHAR(150) NOT NULL COMMENT 'e.g. Professional Elective 1'"
+            },
+            {
+              "name": "description",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "credits",
+              "definition": "INT NOT NULL DEFAULT 3"
+            },
+            {
+              "name": "min_pick",
+              "definition": "INT NOT NULL DEFAULT 1"
+            },
+            {
+              "name": "max_pick",
+              "definition": "INT NOT NULL DEFAULT 1 COMMENT 'How many offerings of this slot one learner may hold; enforced by ElectiveJoinPolicy'"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | ARCHIVED'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "is_deleted",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_elective_slot_college (college_id, program_id, semester_number)"
+          ],
+          "sourceMigration": "V167__electives.sql",
+          "rawFieldCount": 16
+        },
+        {
+          "table": "elective_offering",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "slot_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "course_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "group_id",
+              "definition": "BIGINT NOT NULL COMMENT 'lms_group of kind ELECTIVE; its ACTIVE members are the enrolled learners'"
+            },
+            {
+              "name": "backed_class_id",
+              "definition": "INT NOT NULL COMMENT 'The GROUP_BACKED class all content/timetable/attendance is keyed on'"
+            },
+            {
+              "name": "capacity",
+              "definition": "INT NULL COMMENT 'Mirrors lms_group.capacity for display; the group enforces it'"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | ARCHIVED'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "is_deleted",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_elective_offering_group (group_id)",
+            "UNIQUE KEY uk_elective_offering_class (backed_class_id)",
+            "INDEX idx_elective_offering_slot (slot_id)",
+            "INDEX idx_elective_offering_course (course_id)",
+            "CONSTRAINT fk_elective_offering_slot FOREIGN KEY (slot_id) REFERENCES elective_slot (id)",
+            "CONSTRAINT fk_elective_offering_group FOREIGN KEY (group_id) REFERENCES lms_group (id)"
+          ],
+          "sourceMigration": "V167__electives.sql",
+          "rawFieldCount": 17
+        }
+      ],
+      "alter": [
+        {
+          "table": "class",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "class_type",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'SECTION' COMMENT 'SECTION | GROUP_BACKED. GROUP_BACKED classes are hidden from the academic-setup lists'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "roster_group_id",
+              "definition": "BIGINT NULL COMMENT 'GROUP_BACKED only: roster = ACTIVE members of this lms_group'"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD INDEX idx_class_type (class_type)"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD INDEX idx_class_roster_group (roster_group_id)"
+            }
+          ],
+          "sourceMigration": "V167__electives.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 3449
+    },
+    {
+      "file": "V168__electives_offering_unique.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "elective_offering",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "active_course_key",
+              "definition": "BIGINT GENERATED ALWAYS AS (CASE WHEN status = 'ACTIVE' AND (is_deleted = false OR is_deleted IS NULL) THEN course_id ELSE NULL END) VIRTUAL"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD UNIQUE KEY uk_elective_offering_slot_active_course (slot_id, active_course_key)"
+            }
+          ],
+          "sourceMigration": "V168__electives_offering_unique.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1009
+    },
+    {
+      "file": "V169__hr_v1_email_identity.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "hr_user",
+          "ops": [
+            {
+              "op": "MODIFY_COLUMN",
+              "column": "contact_mobile",
+              "definition": "VARCHAR(15) NULL"
+            }
+          ],
+          "sourceMigration": "V169__hr_v1_email_identity.sql"
+        },
+        {
+          "table": "hr_user",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD UNIQUE KEY uk_hr_user_contact_mail (contact_mail)"
+            }
+          ],
+          "sourceMigration": "V169__hr_v1_email_identity.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 2038
+    },
+    {
+      "file": "V170__interview_reschedule_request_details.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "interview",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "reschedule_request_json",
+              "definition": "JSON NULL COMMENT 'Student V1: {reason, note, windows} from the learner''s reschedule request. Null for interviews rescheduled before this existed, or admin-initiated reschedules.'"
+            }
+          ],
+          "sourceMigration": "V170__interview_reschedule_request_details.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 599
+    },
+    {
+      "file": "V171__interview_changed_slot_tracking.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "interview",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "previous_scheduled_date",
+              "definition": "DATETIME(6) NULL COMMENT 'The slot this interview was rescheduled FROM, until the student confirms the new one.'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "scheduled_date_changed_at",
+              "definition": "DATETIME(6) NULL COMMENT 'When the slot last changed. Both columns null once the student re-confirms, or if this interview was never rescheduled.'"
+            }
+          ],
+          "sourceMigration": "V171__interview_changed_slot_tracking.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 548
+    },
+    {
+      "file": "V172__external_placement.sql",
+      "create": [
+        {
+          "table": "external_placement",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "request_id",
+              "definition": "BIGINT NULL COMMENT 'The student_request (type EXTERNAL_OFFER) this was verified from, when there is one.'"
+            },
+            {
+              "name": "company_name",
+              "definition": "VARCHAR(200) NOT NULL"
+            },
+            {
+              "name": "ctc_lpa",
+              "definition": "DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "letter_url",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "verified_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "verified_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "is_deleted",
+              "definition": "TINYINT(1) NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_external_placement_learner (learner_id, is_deleted)",
+            "INDEX idx_external_placement_college (college_id)"
+          ],
+          "sourceMigration": "V172__external_placement.sql",
+          "rawFieldCount": 12
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1114
+    }
+  ]
+}

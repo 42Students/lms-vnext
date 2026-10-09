@@ -1,0 +1,539 @@
+{
+  "sourceRepo": "42Students/lms",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "disclaimer": "Candidate SQL operations after historical snapshot; SQL regex not actual applied-schema proof.",
+  "migrations": [
+    {
+      "file": "V184__tpo_bell_read.sql",
+      "createTables": [
+        {
+          "name": "tpo_bell_read",
+          "columnCandidates": [
+            "bell_id",
+            "reader_type",
+            "reader_id",
+            "read_at"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 658
+    },
+    {
+      "file": "V185__tpo_recruiter_settings.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "tpo_college_settings",
+          "addedColumnCandidates": [
+            "hr_drive_needs_approval",
+            "hr_access_months"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN hr_drive_needs_approval TINYINT(1) NOT NULL DEFAULT 1, ADD COLUMN hr_access_months INT NOT NULL DEFAULT 6"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 568
+    },
+    {
+      "file": "V186__job_recorded_outside.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "job",
+          "addedColumnCandidates": [
+            "recorded_outside"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN recorded_outside TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Happened outside the platform"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 475
+    },
+    {
+      "file": "V187__profile_verification.sql",
+      "createTables": [
+        {
+          "name": "profile_verification",
+          "columnCandidates": [
+            "id",
+            "learner_id",
+            "section",
+            "status",
+            "submitted_snapshot",
+            "verified_snapshot",
+            "submitted_at",
+            "decided_at",
+            "decided_by_type",
+            "decided_by_id",
+            "decided_by_name",
+            "note",
+            "verified_at",
+            "verified_by_name",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "profile_verification_event",
+          "columnCandidates": [
+            "id",
+            "learner_id",
+            "section",
+            "action",
+            "actor_type",
+            "actor_id",
+            "actor_name",
+            "note",
+            "snapshot",
+            "created_at"
+          ]
+        }
+      ],
+      "alterTables": [
+        {
+          "table": "tpo_college_settings",
+          "addedColumnCandidates": [
+            "tpo_can_verify_profiles"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN tpo_can_verify_profiles TINYINT(1) NOT NULL DEFAULT 1"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 2149
+    },
+    {
+      "file": "V188__placement_batches_and_eligibility.sql",
+      "createTables": [
+        {
+          "name": "placement_eligibility",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "scope_type",
+            "scope_id",
+            "status",
+            "reason",
+            "note",
+            "decided_by_type",
+            "decided_by_id",
+            "decided_by_name",
+            "decided_at"
+          ]
+        },
+        {
+          "name": "placement_eligibility_event",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "action_id",
+            "scope_type",
+            "scope_id",
+            "before_status",
+            "before_reason",
+            "before_note",
+            "after_status",
+            "after_reason",
+            "after_note",
+            "actor_type",
+            "actor_id",
+            "actor_name",
+            "undone_at",
+            "created_at"
+          ]
+        },
+        {
+          "name": "placement_batch",
+          "columnCandidates": [
+            "batch_id",
+            "college_id",
+            "registration_deadline",
+            "invited_at",
+            "finished_at",
+            "rules_json",
+            "created_at",
+            "updated_at"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 2696
+    },
+    {
+      "file": "V189__learner_coding_profiles.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "learner",
+          "addedColumnCandidates": [
+            "coding_profiles"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN coding_profiles JSON NULL COMMENT 'Coding-platform usernames by platform key (CodingPlatforms)'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 432
+    },
+    {
+      "file": "V190__job_types_and_placement_outcomes.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "job",
+          "addedColumnCandidates": [
+            "counts_as_placed"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN counts_as_placed TINYINT(1) NOT NULL DEFAULT 1 COMMENT 'Offers from this drive count as placed (from its job type)'"
+        },
+        {
+          "table": "tpo_college_settings",
+          "addedColumnCandidates": [
+            "job_types_json",
+            "outcome_labels_json"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN job_types_json JSON NULL COMMENT 'Hidden built-in job types and the college''s own types', ADD COLUMN outcome_labels_json JSON NULL COMMENT 'College labels, each mapped to one fixed placement outcome'"
+        },
+        {
+          "table": "placement_registration",
+          "addedColumnCandidates": [
+            "outcome_label",
+            "outcome_detail"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN outcome_label VARCHAR(60) NULL COMMENT 'The college''s own label for this outcome, when one was picked', ADD COLUMN outcome_detail VARCHAR(200) NULL COMMENT 'Specifics: the exam (GATE, CAT...), the business, the university'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 1898
+    },
+    {
+      "file": "V191__project_workspace_team_group.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "project_workspace",
+          "addedColumnCandidates": [
+            "team_group_id"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " ADD COLUMN team_group_id BIGINT NULL AFTER template_id, ADD INDEX idx_project_workspace_team_group (team_group_id), ADD CONSTRAINT fk_project_workspace_team_group FOREIGN KEY (team_group_id) REFERENCES lms_group (id)"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 577
+    },
+    {
+      "file": "V192__academic_marks_as_earned.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "learner_academic_record",
+          "addedColumnCandidates": [
+            "marks_json"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN marks_json JSON NULL COMMENT 'Each level''s mark as earned (grade, scale, max)"
+        },
+        {
+          "table": "tpo_college_settings",
+          "addedColumnCandidates": [
+            "cgpa_to_pct"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN cgpa_to_pct VARCHAR(20) NULL COMMENT 'X9_5 | MINUS_0_5_X10 | MINUS_0_75_X10 | X10'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 1152
+    },
+    {
+      "file": "V193__recruiter_naming.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "recruiter_college_access",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "hr_user_id",
+            "pending_lead_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN hr_user_id TO recruiter_id, RENAME COLUMN pending_lead_id TO pending_recruiter_lead_id"
+        },
+        {
+          "table": "recruiter_notification_read",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "hr_user_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN hr_user_id TO recruiter_id"
+        },
+        {
+          "table": "recruiter_applicant_note",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "hr_user_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN hr_user_id TO recruiter_id"
+        },
+        {
+          "table": "recruiter_lead",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "hr_user_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN hr_user_id TO recruiter_id"
+        },
+        {
+          "table": "recruiter_lead_activity",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "lead_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN lead_id TO recruiter_lead_id"
+        },
+        {
+          "table": "follow_up",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "lead_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN lead_id TO recruiter_lead_id"
+        },
+        {
+          "table": "drive_group",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "hr_user_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN hr_user_id TO recruiter_id"
+        },
+        {
+          "table": "job",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "hr_user_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN hr_user_id TO recruiter_id"
+        },
+        {
+          "table": "job_round",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "added_by_hr_user_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN added_by_hr_user_id TO added_by_recruiter_id"
+        },
+        {
+          "table": "tpo_message_thread",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "hr_user_id"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN hr_user_id TO recruiter_id"
+        },
+        {
+          "table": "tpo_college_settings",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [
+            "hr_access_months",
+            "hr_drive_needs_approval"
+          ],
+          "hasIndex": false,
+          "snippet": " RENAME COLUMN hr_access_months TO recruiter_access_months, RENAME COLUMN hr_drive_needs_approval TO recruiter_drive_needs_approval"
+        },
+        {
+          "table": "recruiter",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " RENAME INDEX idx_hr_user_company TO idx_recruiter_company, RENAME INDEX uk_hr_user_contact_mail TO uk_recruiter_contact_mail, RENAME INDEX uk_hr_user_contact_mobile TO uk_recruiter_contact_mobile"
+        },
+        {
+          "table": "recruiter_college_access",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " RENAME INDEX idx_hr_college_access_college_status TO idx_recruiter_college_access_college_status, RENAME INDEX uk_hr_college_access_user_college TO uk_recruiter_college_access_user_college"
+        },
+        {
+          "table": "recruiter_applicant_note",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " RENAME INDEX idx_hr_applicant_note_job TO idx_recruiter_applicant_note_job, RENAME INDEX uk_hr_applicant_note TO uk_recruiter_applicant_note"
+        },
+        {
+          "table": "recruiter_lead",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " RENAME INDEX idx_lead_college TO idx_recruiter_lead_college, RENAME INDEX idx_lead_email TO idx_recruiter_lead_email, RENAME INDEX idx_lead_phone TO idx_recruiter_lead_phone"
+        },
+        {
+          "table": "recruiter_lead_activity",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " RENAME INDEX idx_lead_activity_lead TO idx_recruiter_lead_activity_lead"
+        },
+        {
+          "table": "round_slot",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " MODIFY proposed_by VARCHAR(20) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | RECRUITER'"
+        },
+        {
+          "table": "job_offer",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " MODIFY created_by_type VARCHAR(20) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | RECRUITER'"
+        },
+        {
+          "table": "tpo_message",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " MODIFY sender_type VARCHAR(20) NOT NULL COMMENT 'TPO | RECRUITER'"
+        },
+        {
+          "table": "tpo_audit_log",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " MODIFY actor_type VARCHAR(20) NOT NULL COMMENT 'TPO | RECRUITER | SYSTEM | STUDENT'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [
+        {
+          "from": "hr_user",
+          "to": "recruiter"
+        }
+      ],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 6060
+    },
+    {
+      "file": "V194__recruiter_foreign_key_names.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "recruiter",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " DROP FOREIGN KEY fk_hr_user_industry_company, ADD CONSTRAINT fk_recruiter_industry_company FOREIGN KEY (industry_company_id) REFERENCES industry_company (id)"
+        },
+        {
+          "table": "recruiter_college_access",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " DROP FOREIGN KEY fk_hr_college_access_college, DROP FOREIGN KEY fk_hr_college_access_hr_user, ADD CONSTRAINT fk_recruiter_college_access_college FOREIGN KEY (college_id) REFERENCES college (id), ADD CONSTRAINT fk_recruiter_college_access_recruiter FOREIGN KEY (recruiter_id) REFERENCES recruiter (id)"
+        },
+        {
+          "table": "recruiter_college_access_capability",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " DROP FOREIGN KEY fk_hr_college_access_capability_access, ADD CONSTRAINT fk_recruiter_college_access_capability_access FOREIGN KEY (access_id) REFERENCES recruiter_college_access (id) ON DELETE CASCADE"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 1136
+    }
+  ]
+}

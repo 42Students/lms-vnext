@@ -1,0 +1,2845 @@
+{
+  "purpose": "Migration-source column/constraint candidates for high-priority gap domains, not actual live schema",
+  "legacyRepo": "42Students/lms",
+  "legacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceMigrations": [
+    {
+      "name": "V166__groups_kernel.sql",
+      "declaredCreateTables": [
+        {
+          "table": "lms_group",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "kind",
+              "sqlType": "VARCHAR(40)",
+              "definition": "kind VARCHAR(40) NOT NULL COMMENT 'Feature-owned discriminator, e.g. ELECTIVE, CRT, BUS. Upper-case identifier; the kernel stores it, never interprets it'"
+            },
+            {
+              "name": "owner_scope",
+              "sqlType": "VARCHAR(20)",
+              "definition": "owner_scope VARCHAR(20) NOT NULL DEFAULT 'COLLEGE' COMMENT 'COLLEGE | PLATFORM'"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NULL COMMENT 'NULL only for PLATFORM-owned groups (super-admin)'"
+            },
+            {
+              "name": "name",
+              "sqlType": "VARCHAR(150)",
+              "definition": "name VARCHAR(150) NOT NULL"
+            },
+            {
+              "name": "description",
+              "sqlType": "VARCHAR(1000)",
+              "definition": "description VARCHAR(1000) NULL"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(20)",
+              "definition": "status VARCHAR(20) NOT NULL DEFAULT 'DRAFT' COMMENT 'DRAFT | ACTIVE | CLOSED | ARCHIVED. Self-join needs ACTIVE; admins may build a roster in DRAFT'"
+            },
+            {
+              "name": "capacity",
+              "sqlType": "INT",
+              "definition": "capacity INT NULL COMMENT 'NULL = unlimited. Hard limit on ACTIVE members, enforced by the atomic seat claim'"
+            },
+            {
+              "name": "active_count",
+              "sqlType": "INT",
+              "definition": "active_count INT NOT NULL DEFAULT 0 COMMENT 'Denormalised count of ACTIVE members. Seat claim = UPDATE ... WHERE active_count < capacity; reconcile endpoint recomputes it'"
+            },
+            {
+              "name": "self_join_open_from",
+              "sqlType": "DATETIME",
+              "definition": "self_join_open_from DATETIME NULL COMMENT 'Learners may join themselves only inside [from, until]; NULL from = self-join disabled'"
+            },
+            {
+              "name": "self_join_open_until",
+              "sqlType": "DATETIME",
+              "definition": "self_join_open_until DATETIME NULL"
+            },
+            {
+              "name": "academic_year",
+              "sqlType": "VARCHAR(20)",
+              "definition": "academic_year VARCHAR(20) NULL"
+            },
+            {
+              "name": "semester_number",
+              "sqlType": "INT",
+              "definition": "semester_number INT NULL"
+            },
+            {
+              "name": "config_json",
+              "sqlType": "JSON",
+              "definition": "config_json JSON NULL COMMENT 'Feature-owned settings, stored and returned opaquely. Kernel reads only allowWaitlist and allowSelfLeave'"
+            },
+            {
+              "name": "created_by_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "created_by_type VARCHAR(20) NULL"
+            },
+            {
+              "name": "created_by_id",
+              "sqlType": "INT",
+              "definition": "created_by_id INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "is_deleted",
+              "sqlType": "BOOLEAN",
+              "definition": "is_deleted BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "sqlType": "BIGINT",
+              "definition": "version BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_lms_group_college_kind (college_id, kind, status)",
+            "INDEX idx_lms_group_kind (kind, status)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "lms_group_member",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "group_id",
+              "sqlType": "BIGINT",
+              "definition": "group_id BIGINT NOT NULL"
+            },
+            {
+              "name": "member_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "member_type VARCHAR(20) NOT NULL DEFAULT 'LEARNER' COMMENT 'LEARNER today; FACULTY/EXTERNAL reserved'"
+            },
+            {
+              "name": "member_id",
+              "sqlType": "INT",
+              "definition": "member_id INT NOT NULL"
+            },
+            {
+              "name": "state",
+              "sqlType": "VARCHAR(20)",
+              "definition": "state VARCHAR(20) NOT NULL COMMENT 'REQUESTED | ACTIVE | WAITLISTED | REMOVED'"
+            },
+            {
+              "name": "source",
+              "sqlType": "VARCHAR(20)",
+              "definition": "source VARCHAR(20) NOT NULL COMMENT 'MANUAL | CSV | RULE | SELF'"
+            },
+            {
+              "name": "is_locked",
+              "sqlType": "BOOLEAN",
+              "definition": "is_locked BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'An explicit admin decision: a rule re-run never overturns it, and a locked REMOVED row blocks self re-join'"
+            },
+            {
+              "name": "waitlist_position",
+              "sqlType": "INT",
+              "definition": "waitlist_position INT NULL"
+            },
+            {
+              "name": "note",
+              "sqlType": "VARCHAR(500)",
+              "definition": "note VARCHAR(500) NULL"
+            },
+            {
+              "name": "joined_at",
+              "sqlType": "DATETIME",
+              "definition": "joined_at DATETIME NULL COMMENT 'When the member last became ACTIVE'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "sqlType": "BIGINT",
+              "definition": "version BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_lms_group_member (group_id, member_type, member_id)",
+            "INDEX idx_lms_group_member_member (member_type, member_id, state)",
+            "INDEX idx_lms_group_member_state (group_id, state, waitlist_position)",
+            "CONSTRAINT fk_lms_group_member_group FOREIGN KEY (group_id) REFERENCES lms_group (id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "lms_group_member_event",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "group_id",
+              "sqlType": "BIGINT",
+              "definition": "group_id BIGINT NOT NULL"
+            },
+            {
+              "name": "member_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "member_type VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "member_id",
+              "sqlType": "INT",
+              "definition": "member_id INT NOT NULL"
+            },
+            {
+              "name": "from_state",
+              "sqlType": "VARCHAR(20)",
+              "definition": "from_state VARCHAR(20) NULL"
+            },
+            {
+              "name": "to_state",
+              "sqlType": "VARCHAR(20)",
+              "definition": "to_state VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "source",
+              "sqlType": "VARCHAR(20)",
+              "definition": "source VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "actor_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "actor_type VARCHAR(20) NULL COMMENT 'LEARNER | FACULTY | SUPER_ADMIN | SYSTEM'"
+            },
+            {
+              "name": "actor_id",
+              "sqlType": "INT",
+              "definition": "actor_id INT NULL"
+            },
+            {
+              "name": "reason",
+              "sqlType": "VARCHAR(500)",
+              "definition": "reason VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_lms_group_member_event_group (group_id, created_at)",
+            "INDEX idx_lms_group_member_event_member (member_type, member_id, created_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "lms_group_rule",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "group_id",
+              "sqlType": "BIGINT",
+              "definition": "group_id BIGINT NOT NULL"
+            },
+            {
+              "name": "criteria_json",
+              "sqlType": "JSON",
+              "definition": "criteria_json JSON NOT NULL COMMENT 'Same shape as job.eligibility_json (JobEligibility.java): branches, minCgpa, maxActiveBacklogs, passingYears, ... One evaluator serves both'"
+            },
+            {
+              "name": "auto_refresh",
+              "sqlType": "BOOLEAN",
+              "definition": "auto_refresh BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Reserved for a scheduled re-run; V1 applies on demand'"
+            },
+            {
+              "name": "last_run_at",
+              "sqlType": "DATETIME",
+              "definition": "last_run_at DATETIME NULL"
+            },
+            {
+              "name": "last_run_matched",
+              "sqlType": "INT",
+              "definition": "last_run_matched INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_lms_group_rule_group (group_id)",
+            "CONSTRAINT fk_lms_group_rule_group FOREIGN KEY (group_id) REFERENCES lms_group (id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        }
+      ],
+      "alteredTables": [],
+      "droppedTables": []
+    },
+    {
+      "name": "V167__electives.sql",
+      "declaredCreateTables": [
+        {
+          "table": "elective_slot",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "program_id",
+              "sqlType": "INT",
+              "definition": "program_id INT NOT NULL COMMENT 'The curriculum this slot belongs to; allocation may still take learners from any program in the college'"
+            },
+            {
+              "name": "semester_number",
+              "sqlType": "INT",
+              "definition": "semester_number INT NOT NULL"
+            },
+            {
+              "name": "academic_year",
+              "sqlType": "VARCHAR(20)",
+              "definition": "academic_year VARCHAR(20) NULL"
+            },
+            {
+              "name": "name",
+              "sqlType": "VARCHAR(150)",
+              "definition": "name VARCHAR(150) NOT NULL COMMENT 'e.g. Professional Elective 1'"
+            },
+            {
+              "name": "description",
+              "sqlType": "VARCHAR(1000)",
+              "definition": "description VARCHAR(1000) NULL"
+            },
+            {
+              "name": "credits",
+              "sqlType": "INT",
+              "definition": "credits INT NOT NULL DEFAULT 3"
+            },
+            {
+              "name": "min_pick",
+              "sqlType": "INT",
+              "definition": "min_pick INT NOT NULL DEFAULT 1"
+            },
+            {
+              "name": "max_pick",
+              "sqlType": "INT",
+              "definition": "max_pick INT NOT NULL DEFAULT 1 COMMENT 'How many offerings of this slot one learner may hold; enforced by ElectiveJoinPolicy'"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(20)",
+              "definition": "status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | ARCHIVED'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "is_deleted",
+              "sqlType": "BOOLEAN",
+              "definition": "is_deleted BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "sqlType": "BIGINT",
+              "definition": "version BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_elective_slot_college (college_id, program_id, semester_number)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "elective_offering",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "slot_id",
+              "sqlType": "BIGINT",
+              "definition": "slot_id BIGINT NOT NULL"
+            },
+            {
+              "name": "course_id",
+              "sqlType": "INT",
+              "definition": "course_id INT NOT NULL"
+            },
+            {
+              "name": "group_id",
+              "sqlType": "BIGINT",
+              "definition": "group_id BIGINT NOT NULL COMMENT 'lms_group of kind ELECTIVE; its ACTIVE members are the enrolled learners'"
+            },
+            {
+              "name": "backed_class_id",
+              "sqlType": "INT",
+              "definition": "backed_class_id INT NOT NULL COMMENT 'The GROUP_BACKED class all content/timetable/attendance is keyed on'"
+            },
+            {
+              "name": "capacity",
+              "sqlType": "INT",
+              "definition": "capacity INT NULL COMMENT 'Mirrors lms_group.capacity for display; the group enforces it'"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(20)",
+              "definition": "status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | ARCHIVED'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "is_deleted",
+              "sqlType": "BOOLEAN",
+              "definition": "is_deleted BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "sqlType": "BIGINT",
+              "definition": "version BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_elective_offering_group (group_id)",
+            "UNIQUE KEY uk_elective_offering_class (backed_class_id)",
+            "INDEX idx_elective_offering_slot (slot_id)",
+            "INDEX idx_elective_offering_course (course_id)",
+            "CONSTRAINT fk_elective_offering_slot FOREIGN KEY (slot_id) REFERENCES elective_slot (id)",
+            "CONSTRAINT fk_elective_offering_group FOREIGN KEY (group_id) REFERENCES lms_group (id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        }
+      ],
+      "alteredTables": [
+        "class"
+      ],
+      "droppedTables": []
+    },
+    {
+      "name": "V168__electives_offering_unique.sql",
+      "declaredCreateTables": [],
+      "alteredTables": [
+        "elective_offering"
+      ],
+      "droppedTables": []
+    },
+    {
+      "name": "V187__profile_verification.sql",
+      "declaredCreateTables": [
+        {
+          "table": "profile_verification",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL"
+            },
+            {
+              "name": "section",
+              "sqlType": "VARCHAR(20)",
+              "definition": "section VARCHAR(20) NOT NULL COMMENT 'EDUCATION | IDENTITY'"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(20)",
+              "definition": "status VARCHAR(20) NOT NULL COMMENT 'SUBMITTED | SENT_BACK | VERIFIED | UPDATE_PENDING'"
+            },
+            {
+              "name": "submitted_snapshot",
+              "sqlType": "JSON",
+              "definition": "submitted_snapshot JSON NULL COMMENT 'What the student sent (identity numbers masked)'"
+            },
+            {
+              "name": "verified_snapshot",
+              "sqlType": "JSON",
+              "definition": "verified_snapshot JSON NULL COMMENT 'What was verified; stays in force while an update is pending'"
+            },
+            {
+              "name": "submitted_at",
+              "sqlType": "DATETIME",
+              "definition": "submitted_at DATETIME NULL"
+            },
+            {
+              "name": "decided_at",
+              "sqlType": "DATETIME",
+              "definition": "decided_at DATETIME NULL"
+            },
+            {
+              "name": "decided_by_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "decided_by_type VARCHAR(20) NULL COMMENT 'ADMIN | SUPER_ADMIN | TPO'"
+            },
+            {
+              "name": "decided_by_id",
+              "sqlType": "INT",
+              "definition": "decided_by_id INT NULL"
+            },
+            {
+              "name": "decided_by_name",
+              "sqlType": "VARCHAR(200)",
+              "definition": "decided_by_name VARCHAR(200) NULL"
+            },
+            {
+              "name": "note",
+              "sqlType": "VARCHAR(500)",
+              "definition": "note VARCHAR(500) NULL COMMENT 'Why it was sent back'"
+            },
+            {
+              "name": "verified_at",
+              "sqlType": "DATETIME",
+              "definition": "verified_at DATETIME NULL"
+            },
+            {
+              "name": "verified_by_name",
+              "sqlType": "VARCHAR(200)",
+              "definition": "verified_by_name VARCHAR(200) NULL"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uq_profile_verification (learner_id, section)",
+            "INDEX idx_profile_verification_status (status)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "profile_verification_event",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL"
+            },
+            {
+              "name": "section",
+              "sqlType": "VARCHAR(20)",
+              "definition": "section VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "action",
+              "sqlType": "VARCHAR(20)",
+              "definition": "action VARCHAR(20) NOT NULL COMMENT 'SUBMITTED | UPDATE_SUBMITTED | VERIFIED | SENT_BACK'"
+            },
+            {
+              "name": "actor_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "actor_type VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "actor_id",
+              "sqlType": "INT",
+              "definition": "actor_id INT NULL"
+            },
+            {
+              "name": "actor_name",
+              "sqlType": "VARCHAR(200)",
+              "definition": "actor_name VARCHAR(200) NULL"
+            },
+            {
+              "name": "note",
+              "sqlType": "VARCHAR(500)",
+              "definition": "note VARCHAR(500) NULL"
+            },
+            {
+              "name": "snapshot",
+              "sqlType": "JSON",
+              "definition": "snapshot JSON NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_profile_verification_event (learner_id, section, id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        }
+      ],
+      "alteredTables": [
+        "tpo_college_settings"
+      ],
+      "droppedTables": []
+    },
+    {
+      "name": "V188__placement_batches_and_eligibility.sql",
+      "declaredCreateTables": [
+        {
+          "table": "placement_eligibility",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "scope_type",
+              "sqlType": "VARCHAR(10)",
+              "definition": "scope_type VARCHAR(10) NOT NULL COMMENT 'BATCH | CLASS | LEARNER'"
+            },
+            {
+              "name": "scope_id",
+              "sqlType": "BIGINT",
+              "definition": "scope_id BIGINT NOT NULL"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(12)",
+              "definition": "status VARCHAR(12) NOT NULL COMMENT 'ELIGIBLE | INELIGIBLE'"
+            },
+            {
+              "name": "reason",
+              "sqlType": "VARCHAR(200)",
+              "definition": "reason VARCHAR(200) NULL COMMENT 'Required when INELIGIBLE'"
+            },
+            {
+              "name": "note",
+              "sqlType": "VARCHAR(300)",
+              "definition": "note VARCHAR(300) NULL"
+            },
+            {
+              "name": "decided_by_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "decided_by_type VARCHAR(20) NULL"
+            },
+            {
+              "name": "decided_by_id",
+              "sqlType": "INT",
+              "definition": "decided_by_id INT NULL"
+            },
+            {
+              "name": "decided_by_name",
+              "sqlType": "VARCHAR(200)",
+              "definition": "decided_by_name VARCHAR(200) NULL"
+            },
+            {
+              "name": "decided_at",
+              "sqlType": "DATETIME",
+              "definition": "decided_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uq_placement_eligibility (scope_type, scope_id)",
+            "INDEX idx_placement_eligibility_college (college_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "placement_eligibility_event",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "action_id",
+              "sqlType": "VARCHAR(36)",
+              "definition": "action_id VARCHAR(36) NOT NULL COMMENT 'One bulk action = one id'"
+            },
+            {
+              "name": "scope_type",
+              "sqlType": "VARCHAR(10)",
+              "definition": "scope_type VARCHAR(10) NOT NULL"
+            },
+            {
+              "name": "scope_id",
+              "sqlType": "BIGINT",
+              "definition": "scope_id BIGINT NOT NULL"
+            },
+            {
+              "name": "before_status",
+              "sqlType": "VARCHAR(12)",
+              "definition": "before_status VARCHAR(12) NULL COMMENT 'NULL = Not decided at that level'"
+            },
+            {
+              "name": "before_reason",
+              "sqlType": "VARCHAR(200)",
+              "definition": "before_reason VARCHAR(200) NULL"
+            },
+            {
+              "name": "before_note",
+              "sqlType": "VARCHAR(300)",
+              "definition": "before_note VARCHAR(300) NULL"
+            },
+            {
+              "name": "after_status",
+              "sqlType": "VARCHAR(12)",
+              "definition": "after_status VARCHAR(12) NULL"
+            },
+            {
+              "name": "after_reason",
+              "sqlType": "VARCHAR(200)",
+              "definition": "after_reason VARCHAR(200) NULL"
+            },
+            {
+              "name": "after_note",
+              "sqlType": "VARCHAR(300)",
+              "definition": "after_note VARCHAR(300) NULL"
+            },
+            {
+              "name": "actor_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "actor_type VARCHAR(20) NULL"
+            },
+            {
+              "name": "actor_id",
+              "sqlType": "INT",
+              "definition": "actor_id INT NULL"
+            },
+            {
+              "name": "actor_name",
+              "sqlType": "VARCHAR(200)",
+              "definition": "actor_name VARCHAR(200) NULL"
+            },
+            {
+              "name": "undone_at",
+              "sqlType": "DATETIME",
+              "definition": "undone_at DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_placement_eligibility_event_action (college_id, action_id)",
+            "INDEX idx_placement_eligibility_event_scope (scope_type, scope_id, id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "placement_batch",
+          "columns": [
+            {
+              "name": "batch_id",
+              "sqlType": "BIGINT",
+              "definition": "batch_id BIGINT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "registration_deadline",
+              "sqlType": "DATETIME",
+              "definition": "registration_deadline DATETIME NULL"
+            },
+            {
+              "name": "invited_at",
+              "sqlType": "DATETIME",
+              "definition": "invited_at DATETIME NULL"
+            },
+            {
+              "name": "finished_at",
+              "sqlType": "DATETIME",
+              "definition": "finished_at DATETIME NULL"
+            },
+            {
+              "name": "rules_json",
+              "sqlType": "JSON",
+              "definition": "rules_json JSON NULL COMMENT 'Overrides of the college placement rules for this batch; NULL = college rules'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_placement_batch_college (college_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        }
+      ],
+      "alteredTables": [],
+      "droppedTables": []
+    },
+    {
+      "name": "V161__tpo_v1_drives.sql",
+      "declaredCreateTables": [
+        {
+          "table": "placement_season",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "name",
+              "sqlType": "VARCHAR(100)",
+              "definition": "name VARCHAR(100) NOT NULL"
+            },
+            {
+              "name": "start_date",
+              "sqlType": "DATE",
+              "definition": "start_date DATE NULL"
+            },
+            {
+              "name": "end_date",
+              "sqlType": "DATE",
+              "definition": "end_date DATE NULL"
+            },
+            {
+              "name": "registration_deadline",
+              "sqlType": "DATETIME",
+              "definition": "registration_deadline DATETIME NULL"
+            },
+            {
+              "name": "is_registration_open",
+              "sqlType": "BOOLEAN",
+              "definition": "is_registration_open BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "blocked_dates",
+              "sqlType": "JSON",
+              "definition": "blocked_dates JSON NULL COMMENT 'Array of {date, label} exam/blocked dates for the season'"
+            },
+            {
+              "name": "is_current",
+              "sqlType": "BOOLEAN",
+              "definition": "is_current BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Several seasons may be open at once; this only drives default filters'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "sqlType": "BIGINT",
+              "definition": "version BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_placement_season_college (college_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "drive_group",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "hr_user_id",
+              "sqlType": "BIGINT",
+              "definition": "hr_user_id BIGINT NULL"
+            },
+            {
+              "name": "industry_company_id",
+              "sqlType": "BIGINT",
+              "definition": "industry_company_id BIGINT NULL"
+            },
+            {
+              "name": "shared_form_json",
+              "sqlType": "JSON",
+              "definition": "shared_form_json JSON NULL COMMENT 'The common job/pay/eligibility/rounds payload sent to every college in this group'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "job_eligibility_override",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "job_id",
+              "sqlType": "INT",
+              "definition": "job_id INT NOT NULL"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL"
+            },
+            {
+              "name": "override_type",
+              "sqlType": "VARCHAR(10)",
+              "definition": "override_type VARCHAR(10) NOT NULL COMMENT 'INCLUDE | EXCLUDE'"
+            },
+            {
+              "name": "reason",
+              "sqlType": "VARCHAR(500)",
+              "definition": "reason VARCHAR(500) NOT NULL"
+            },
+            {
+              "name": "created_by",
+              "sqlType": "INT",
+              "definition": "created_by INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_job_eligibility_override (job_id, learner_id)",
+            "INDEX idx_job_eligibility_override_job (job_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "job_round",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "job_id",
+              "sqlType": "INT",
+              "definition": "job_id INT NOT NULL"
+            },
+            {
+              "name": "seq",
+              "sqlType": "INT",
+              "definition": "seq INT NOT NULL COMMENT 'Display and processing order'"
+            },
+            {
+              "name": "kind",
+              "sqlType": "VARCHAR(20)",
+              "definition": "kind VARCHAR(20) NOT NULL COMMENT 'TALK|TEST|VENDOR_TEST|GD|INTERVIEW'"
+            },
+            {
+              "name": "name",
+              "sqlType": "VARCHAR(100)",
+              "definition": "name VARCHAR(100) NOT NULL"
+            },
+            {
+              "name": "mode",
+              "sqlType": "VARCHAR(20)",
+              "definition": "mode VARCHAR(20) NULL COMMENT 'ON_CAMPUS|VIRTUAL'"
+            },
+            {
+              "name": "scheduled_date",
+              "sqlType": "DATETIME",
+              "definition": "scheduled_date DATETIME NULL COMMENT 'Null = \"to be decided\"'"
+            },
+            {
+              "name": "venue",
+              "sqlType": "VARCHAR(255)",
+              "definition": "venue VARCHAR(255) NULL"
+            },
+            {
+              "name": "meeting_url",
+              "sqlType": "VARCHAR(500)",
+              "definition": "meeting_url VARCHAR(500) NULL"
+            },
+            {
+              "name": "what_to_bring",
+              "sqlType": "VARCHAR(500)",
+              "definition": "what_to_bring VARCHAR(500) NULL"
+            },
+            {
+              "name": "platform",
+              "sqlType": "VARCHAR(100)",
+              "definition": "platform VARCHAR(100) NULL COMMENT 'Test/vendor-test: Mettl, HackerRank, etc.'"
+            },
+            {
+              "name": "test_link",
+              "sqlType": "VARCHAR(500)",
+              "definition": "test_link VARCHAR(500) NULL"
+            },
+            {
+              "name": "duration_minutes",
+              "sqlType": "INT",
+              "definition": "duration_minutes INT NULL"
+            },
+            {
+              "name": "results_due",
+              "sqlType": "DATETIME",
+              "definition": "results_due DATETIME NULL"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(20)",
+              "definition": "status VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SCHEDULED|COMPLETED'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_job_round_job (job_id, seq)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "round_result",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "application_id",
+              "sqlType": "INT",
+              "definition": "application_id INT NOT NULL"
+            },
+            {
+              "name": "round_id",
+              "sqlType": "BIGINT",
+              "definition": "round_id BIGINT NOT NULL"
+            },
+            {
+              "name": "outcome",
+              "sqlType": "VARCHAR(20)",
+              "definition": "outcome VARCHAR(20) NOT NULL COMMENT 'PASS|FAIL|ABSENT|HOLD (HOLD = waitlist)'"
+            },
+            {
+              "name": "waitlist_rank",
+              "sqlType": "INT",
+              "definition": "waitlist_rank INT NULL"
+            },
+            {
+              "name": "score",
+              "sqlType": "DOUBLE",
+              "definition": "score DOUBLE NULL"
+            },
+            {
+              "name": "reason_category",
+              "sqlType": "VARCHAR(30)",
+              "definition": "reason_category VARCHAR(30) NULL COMMENT 'APTITUDE|TECHNICAL|COMMUNICATION|OTHER — feeds readiness, never shown outside the college'"
+            },
+            {
+              "name": "comment",
+              "sqlType": "VARCHAR(1000)",
+              "definition": "comment VARCHAR(1000) NULL COMMENT 'Company-private when source = PANELIST; never exported'"
+            },
+            {
+              "name": "source",
+              "sqlType": "VARCHAR(20)",
+              "definition": "source VARCHAR(20) NOT NULL COMMENT 'HR|PANELIST|DRIVE_DAY|EXCEL|TPO'"
+            },
+            {
+              "name": "submitted_by_type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "submitted_by_type VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "submitted_by_id",
+              "sqlType": "INT",
+              "definition": "submitted_by_id INT NULL"
+            },
+            {
+              "name": "submitted_at",
+              "sqlType": "DATETIME",
+              "definition": "submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "applied_at",
+              "sqlType": "DATETIME",
+              "definition": "applied_at DATETIME NULL COMMENT 'Null = still staged, waiting for the TPO (or auto-apply) to apply it'"
+            },
+            {
+              "name": "applied_by",
+              "sqlType": "INT",
+              "definition": "applied_by INT NULL"
+            },
+            {
+              "name": "superseded_by",
+              "sqlType": "BIGINT",
+              "definition": "superseded_by BIGINT NULL COMMENT 'Set when a later result for the same application+round replaces this one'"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_round_result_application (application_id)",
+            "INDEX idx_round_result_round (round_id)",
+            "INDEX idx_round_result_pending (round_id, applied_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "job_offer",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "application_id",
+              "sqlType": "INT",
+              "definition": "application_id INT NOT NULL"
+            },
+            {
+              "name": "kind",
+              "sqlType": "VARCHAR(10)",
+              "definition": "kind VARCHAR(10) NOT NULL DEFAULT 'OFFER' COMMENT 'LOI | OFFER'"
+            },
+            {
+              "name": "role_option_name",
+              "sqlType": "VARCHAR(100)",
+              "definition": "role_option_name VARCHAR(100) NULL"
+            },
+            {
+              "name": "ctc_lpa",
+              "sqlType": "DECIMAL(10,2)",
+              "definition": "ctc_lpa DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "fixed_lpa",
+              "sqlType": "DECIMAL(10,2)",
+              "definition": "fixed_lpa DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "variable_lpa",
+              "sqlType": "DECIMAL(10,2)",
+              "definition": "variable_lpa DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "joining_bonus_lpa",
+              "sqlType": "DECIMAL(10,2)",
+              "definition": "joining_bonus_lpa DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "bond_months",
+              "sqlType": "INT",
+              "definition": "bond_months INT NULL"
+            },
+            {
+              "name": "bond_amount",
+              "sqlType": "DECIMAL(10,2)",
+              "definition": "bond_amount DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "joining_date",
+              "sqlType": "DATE",
+              "definition": "joining_date DATE NULL COMMENT 'Null = \"to be announced\"'"
+            },
+            {
+              "name": "respond_by",
+              "sqlType": "DATETIME",
+              "definition": "respond_by DATETIME NULL"
+            },
+            {
+              "name": "letter_url",
+              "sqlType": "VARCHAR(500)",
+              "definition": "letter_url VARCHAR(500) NULL"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(25)",
+              "definition": "status VARCHAR(25) NOT NULL DEFAULT 'SELECTED' COMMENT 'SELECTED|PENDING_VERIFICATION|RELEASED|ACCEPTED|DECLINED|EXPIRED|WITHDRAWN|REVOKED'"
+            },
+            {
+              "name": "acceptance_channel",
+              "sqlType": "VARCHAR(15)",
+              "definition": "acceptance_channel VARCHAR(15) NULL COMMENT 'IN_APP | EXTERNAL_IMPORT'"
+            },
+            {
+              "name": "accepted_disputable_until",
+              "sqlType": "DATETIME",
+              "definition": "accepted_disputable_until DATETIME NULL COMMENT 'For EXTERNAL_IMPORT acceptances: the 48h window the student can dispute in before the cascade runs'"
+            },
+            {
+              "name": "joining_status",
+              "sqlType": "VARCHAR(15)",
+              "definition": "joining_status VARCHAR(15) NULL COMMENT 'JOINED|DEFERRED|NOT_JOINED'"
+            },
+            {
+              "name": "cascade_id",
+              "sqlType": "VARCHAR(36)",
+              "definition": "cascade_id VARCHAR(36) NULL COMMENT 'Groups every application row this offer''s accept auto-withdrew, so a reversal can undo exactly that set'"
+            },
+            {
+              "name": "revoke_reason",
+              "sqlType": "VARCHAR(500)",
+              "definition": "revoke_reason VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_by_type",
+              "sqlType": "VARCHAR(10)",
+              "definition": "created_by_type VARCHAR(10) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | HR'"
+            },
+            {
+              "name": "created_by_id",
+              "sqlType": "INT",
+              "definition": "created_by_id INT NULL"
+            },
+            {
+              "name": "verified_by",
+              "sqlType": "INT",
+              "definition": "verified_by INT NULL"
+            },
+            {
+              "name": "released_at",
+              "sqlType": "DATETIME",
+              "definition": "released_at DATETIME NULL"
+            },
+            {
+              "name": "responded_at",
+              "sqlType": "DATETIME",
+              "definition": "responded_at DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "sqlType": "BIGINT",
+              "definition": "version BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_job_offer_application (application_id)",
+            "INDEX idx_job_offer_status (status)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "learner_academic_record",
+          "columns": [
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "cgpa",
+              "sqlType": "DECIMAL(4,2)",
+              "definition": "cgpa DECIMAL(4,2) NULL"
+            },
+            {
+              "name": "active_backlogs",
+              "sqlType": "INT",
+              "definition": "active_backlogs INT NULL"
+            },
+            {
+              "name": "past_backlogs",
+              "sqlType": "INT",
+              "definition": "past_backlogs INT NULL"
+            },
+            {
+              "name": "tenth_pct",
+              "sqlType": "DECIMAL(5,2)",
+              "definition": "tenth_pct DECIMAL(5,2) NULL"
+            },
+            {
+              "name": "twelfth_pct",
+              "sqlType": "DECIMAL(5,2)",
+              "definition": "twelfth_pct DECIMAL(5,2) NULL"
+            },
+            {
+              "name": "diploma_pct",
+              "sqlType": "DECIMAL(5,2)",
+              "definition": "diploma_pct DECIMAL(5,2) NULL"
+            },
+            {
+              "name": "ug_pct",
+              "sqlType": "DECIMAL(5,2)",
+              "definition": "ug_pct DECIMAL(5,2) NULL"
+            },
+            {
+              "name": "gap_years",
+              "sqlType": "INT",
+              "definition": "gap_years INT NULL DEFAULT 0"
+            },
+            {
+              "name": "is_lateral_entry",
+              "sqlType": "BOOLEAN",
+              "definition": "is_lateral_entry BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "passing_year",
+              "sqlType": "INT",
+              "definition": "passing_year INT NULL"
+            },
+            {
+              "name": "gender",
+              "sqlType": "VARCHAR(20)",
+              "definition": "gender VARCHAR(20) NULL"
+            },
+            {
+              "name": "source",
+              "sqlType": "VARCHAR(15)",
+              "definition": "source VARCHAR(15) NOT NULL DEFAULT 'SELF' COMMENT 'VERIFIED | SELF'"
+            },
+            {
+              "name": "import_batch_id",
+              "sqlType": "VARCHAR(36)",
+              "definition": "import_batch_id VARCHAR(36) NULL"
+            },
+            {
+              "name": "imported_at",
+              "sqlType": "DATETIME",
+              "definition": "imported_at DATETIME NULL"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "placement_registration",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL"
+            },
+            {
+              "name": "season_id",
+              "sqlType": "BIGINT",
+              "definition": "season_id BIGINT NOT NULL"
+            },
+            {
+              "name": "choice",
+              "sqlType": "VARCHAR(20)",
+              "definition": "choice VARCHAR(20) NOT NULL COMMENT 'PLACEMENTS|HIGHER_STUDIES|NOT_INTERESTED'"
+            },
+            {
+              "name": "consent_version",
+              "sqlType": "VARCHAR(10)",
+              "definition": "consent_version VARCHAR(10) NULL"
+            },
+            {
+              "name": "consent_at",
+              "sqlType": "DATETIME",
+              "definition": "consent_at DATETIME NULL"
+            },
+            {
+              "name": "source",
+              "sqlType": "VARCHAR(15)",
+              "definition": "source VARCHAR(15) NOT NULL DEFAULT 'SELF' COMMENT 'SELF|TPO|BACKFILL'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_placement_registration (learner_id, season_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "placement_debarment",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL"
+            },
+            {
+              "name": "reason",
+              "sqlType": "VARCHAR(500)",
+              "definition": "reason VARCHAR(500) NOT NULL"
+            },
+            {
+              "name": "until_date",
+              "sqlType": "DATE",
+              "definition": "until_date DATE NULL"
+            },
+            {
+              "name": "until_drives",
+              "sqlType": "INT",
+              "definition": "until_drives INT NULL COMMENT 'Alternative to a date: debarred for the next N drives'"
+            },
+            {
+              "name": "drives_counted",
+              "sqlType": "INT",
+              "definition": "drives_counted INT NOT NULL DEFAULT 0"
+            },
+            {
+              "name": "created_by",
+              "sqlType": "INT",
+              "definition": "created_by INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "lifted_at",
+              "sqlType": "DATETIME",
+              "definition": "lifted_at DATETIME NULL"
+            },
+            {
+              "name": "lifted_reason",
+              "sqlType": "VARCHAR(500)",
+              "definition": "lifted_reason VARCHAR(500) NULL"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_placement_debarment_learner (learner_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "student_request",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL"
+            },
+            {
+              "name": "type",
+              "sqlType": "VARCHAR(30)",
+              "definition": "type VARCHAR(30) NOT NULL COMMENT 'WITHDRAWAL|OFFER_EXTENSION|REGISTRATION_CHANGE|ABSENCE_DISPUTE|CORRECTION|EXTERNAL_OFFER|PAP'"
+            },
+            {
+              "name": "job_id",
+              "sqlType": "INT",
+              "definition": "job_id INT NULL"
+            },
+            {
+              "name": "application_id",
+              "sqlType": "INT",
+              "definition": "application_id INT NULL"
+            },
+            {
+              "name": "payload_json",
+              "sqlType": "JSON",
+              "definition": "payload_json JSON NULL"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(15)",
+              "definition": "status VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|APPROVED|REJECTED|AUTO_APPROVED'"
+            },
+            {
+              "name": "reason",
+              "sqlType": "VARCHAR(1000)",
+              "definition": "reason VARCHAR(1000) NULL"
+            },
+            {
+              "name": "decided_by",
+              "sqlType": "INT",
+              "definition": "decided_by INT NULL"
+            },
+            {
+              "name": "decided_at",
+              "sqlType": "DATETIME",
+              "definition": "decided_at DATETIME NULL"
+            },
+            {
+              "name": "decision_reason",
+              "sqlType": "VARCHAR(500)",
+              "definition": "decision_reason VARCHAR(500) NULL"
+            },
+            {
+              "name": "escalate_at",
+              "sqlType": "DATETIME",
+              "definition": "escalate_at DATETIME NULL COMMENT 'When a pending request (e.g. a withdrawal 24h before a round) escalates to all TPO admins'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_student_request_learner (learner_id)",
+            "INDEX idx_student_request_status (status, type)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_lead",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "company_id",
+              "sqlType": "BIGINT",
+              "definition": "company_id BIGINT NULL"
+            },
+            {
+              "name": "hr_user_id",
+              "sqlType": "BIGINT",
+              "definition": "hr_user_id BIGINT NULL"
+            },
+            {
+              "name": "name",
+              "sqlType": "VARCHAR(150)",
+              "definition": "name VARCHAR(150) NOT NULL"
+            },
+            {
+              "name": "designation",
+              "sqlType": "VARCHAR(100)",
+              "definition": "designation VARCHAR(100) NULL"
+            },
+            {
+              "name": "email_norm",
+              "sqlType": "VARCHAR(150)",
+              "definition": "email_norm VARCHAR(150) NULL"
+            },
+            {
+              "name": "phone_norm",
+              "sqlType": "VARCHAR(20)",
+              "definition": "phone_norm VARCHAR(20) NULL"
+            },
+            {
+              "name": "company_name",
+              "sqlType": "VARCHAR(150)",
+              "definition": "company_name VARCHAR(150) NULL"
+            },
+            {
+              "name": "company_logo",
+              "sqlType": "VARCHAR(500)",
+              "definition": "company_logo VARCHAR(500) NULL"
+            },
+            {
+              "name": "owner_faculty_id",
+              "sqlType": "INT",
+              "definition": "owner_faculty_id INT NULL"
+            },
+            {
+              "name": "manual_stage",
+              "sqlType": "VARCHAR(15)",
+              "definition": "manual_stage VARCHAR(15) NOT NULL DEFAULT 'NEW' COMMENT 'NEW|CONTACTED|NOT_NOW — derived stages (Invited/Joined/Drive planned/Recruited) are computed, never stored'"
+            },
+            {
+              "name": "not_now_reason",
+              "sqlType": "VARCHAR(255)",
+              "definition": "not_now_reason VARCHAR(255) NULL"
+            },
+            {
+              "name": "not_now_until",
+              "sqlType": "DATE",
+              "definition": "not_now_until DATE NULL"
+            },
+            {
+              "name": "source",
+              "sqlType": "VARCHAR(30)",
+              "definition": "source VARCHAR(30) NULL"
+            },
+            {
+              "name": "invite_token_hash",
+              "sqlType": "VARCHAR(128)",
+              "definition": "invite_token_hash VARCHAR(128) NULL"
+            },
+            {
+              "name": "invite_sent_at",
+              "sqlType": "DATETIME",
+              "definition": "invite_sent_at DATETIME NULL"
+            },
+            {
+              "name": "invite_clicked_at",
+              "sqlType": "DATETIME",
+              "definition": "invite_clicked_at DATETIME NULL"
+            },
+            {
+              "name": "invite_reminder_sent_at",
+              "sqlType": "DATETIME",
+              "definition": "invite_reminder_sent_at DATETIME NULL"
+            },
+            {
+              "name": "invite_bounced_at",
+              "sqlType": "DATETIME",
+              "definition": "invite_bounced_at DATETIME NULL"
+            },
+            {
+              "name": "unsubscribed_at",
+              "sqlType": "DATETIME",
+              "definition": "unsubscribed_at DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_lead_college (college_id)",
+            "INDEX idx_lead_email (email_norm)",
+            "INDEX idx_lead_phone (phone_norm)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "lead_activity",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "lead_id",
+              "sqlType": "BIGINT",
+              "definition": "lead_id BIGINT NOT NULL"
+            },
+            {
+              "name": "type",
+              "sqlType": "VARCHAR(20)",
+              "definition": "type VARCHAR(20) NOT NULL COMMENT 'CALL|WHATSAPP|EMAIL|MEETING|NOTE|SYSTEM'"
+            },
+            {
+              "name": "outcome",
+              "sqlType": "VARCHAR(30)",
+              "definition": "outcome VARCHAR(30) NULL"
+            },
+            {
+              "name": "note",
+              "sqlType": "VARCHAR(2000)",
+              "definition": "note VARCHAR(2000) NULL"
+            },
+            {
+              "name": "is_system",
+              "sqlType": "BOOLEAN",
+              "definition": "is_system BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "created_by",
+              "sqlType": "INT",
+              "definition": "created_by INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_lead_activity_lead (lead_id, created_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "follow_up",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "lead_id",
+              "sqlType": "BIGINT",
+              "definition": "lead_id BIGINT NOT NULL"
+            },
+            {
+              "name": "due_at",
+              "sqlType": "DATETIME",
+              "definition": "due_at DATETIME NOT NULL"
+            },
+            {
+              "name": "owner_faculty_id",
+              "sqlType": "INT",
+              "definition": "owner_faculty_id INT NULL"
+            },
+            {
+              "name": "note",
+              "sqlType": "VARCHAR(500)",
+              "definition": "note VARCHAR(500) NULL"
+            },
+            {
+              "name": "done_at",
+              "sqlType": "DATETIME",
+              "definition": "done_at DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_follow_up_due (due_at, done_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "prep_assignment",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL"
+            },
+            {
+              "name": "course_id",
+              "sqlType": "INT",
+              "definition": "course_id INT NULL"
+            },
+            {
+              "name": "assessment_id",
+              "sqlType": "INT",
+              "definition": "assessment_id INT NULL"
+            },
+            {
+              "name": "due_at",
+              "sqlType": "DATETIME",
+              "definition": "due_at DATETIME NULL"
+            },
+            {
+              "name": "assigned_by",
+              "sqlType": "INT",
+              "definition": "assigned_by INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_prep_assignment_learner (learner_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "notification_outbox",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "event",
+              "sqlType": "VARCHAR(50)",
+              "definition": "event VARCHAR(50) NOT NULL"
+            },
+            {
+              "name": "recipient_type",
+              "sqlType": "VARCHAR(15)",
+              "definition": "recipient_type VARCHAR(15) NOT NULL COMMENT 'LEARNER|HR|FACULTY'"
+            },
+            {
+              "name": "recipient_id",
+              "sqlType": "INT",
+              "definition": "recipient_id INT NOT NULL"
+            },
+            {
+              "name": "channel",
+              "sqlType": "VARCHAR(10)",
+              "definition": "channel VARCHAR(10) NOT NULL COMMENT 'APP|EMAIL|SMS'"
+            },
+            {
+              "name": "payload_json",
+              "sqlType": "JSON",
+              "definition": "payload_json JSON NULL"
+            },
+            {
+              "name": "send_after",
+              "sqlType": "DATETIME",
+              "definition": "send_after DATETIME NOT NULL COMMENT 'Now + 30s for the Undo hold; immediate for non-undoable sends'"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(15)",
+              "definition": "status VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SENT|CANCELLED|FAILED'"
+            },
+            {
+              "name": "undo_group_id",
+              "sqlType": "VARCHAR(36)",
+              "definition": "undo_group_id VARCHAR(36) NULL"
+            },
+            {
+              "name": "claimed_at",
+              "sqlType": "DATETIME",
+              "definition": "claimed_at DATETIME NULL"
+            },
+            {
+              "name": "sent_at",
+              "sqlType": "DATETIME",
+              "definition": "sent_at DATETIME NULL"
+            },
+            {
+              "name": "failure_reason",
+              "sqlType": "VARCHAR(500)",
+              "definition": "failure_reason VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_notification_outbox_pending (status, send_after)",
+            "INDEX idx_notification_outbox_undo_group (undo_group_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "email_suppression",
+          "columns": [
+            {
+              "name": "email_norm",
+              "sqlType": "VARCHAR(150)",
+              "definition": "email_norm VARCHAR(150) NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "reason",
+              "sqlType": "VARCHAR(255)",
+              "definition": "reason VARCHAR(255) NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        }
+      ],
+      "alteredTables": [
+        "job",
+        "job_application",
+        "hr_college_access"
+      ],
+      "droppedTables": []
+    },
+    {
+      "name": "V162__tpo_v1_settings.sql",
+      "declaredCreateTables": [
+        {
+          "table": "college_placement_rules",
+          "columns": [
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "counts_as_placed_at",
+              "sqlType": "VARCHAR(20)",
+              "definition": "counts_as_placed_at VARCHAR(20) NOT NULL DEFAULT 'OFFER_RELEASED'"
+            },
+            {
+              "name": "max_held_offers",
+              "sqlType": "INT",
+              "definition": "max_held_offers INT NOT NULL DEFAULT 1"
+            },
+            {
+              "name": "uplift_pct",
+              "sqlType": "INT",
+              "definition": "uplift_pct INT NOT NULL DEFAULT 40 COMMENT 'A placed student may still apply if CTC is at least this much higher, or the drive is tagged Dream'"
+            },
+            {
+              "name": "min_response_hours",
+              "sqlType": "INT",
+              "definition": "min_response_hours INT NOT NULL DEFAULT 48"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "sqlType": "BIGINT",
+              "definition": "version BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "unclassifiedClauses": [],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "college_what_companies_see",
+          "columns": [
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "show_cgpa_exact",
+              "sqlType": "BOOLEAN",
+              "definition": "show_cgpa_exact BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'False = band only, e.g. \"7.5-8.0\"'"
+            },
+            {
+              "name": "show_tenth_twelfth",
+              "sqlType": "BOOLEAN",
+              "definition": "show_tenth_twelfth BOOLEAN NOT NULL DEFAULT TRUE"
+            },
+            {
+              "name": "show_project_links",
+              "sqlType": "BOOLEAN",
+              "definition": "show_project_links BOOLEAN NOT NULL DEFAULT TRUE"
+            },
+            {
+              "name": "show_assessment_scores",
+              "sqlType": "BOOLEAN",
+              "definition": "show_assessment_scores BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "show_attendance",
+              "sqlType": "BOOLEAN",
+              "definition": "show_attendance BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        }
+      ],
+      "alteredTables": [
+        "industry_company"
+      ],
+      "droppedTables": []
+    },
+    {
+      "name": "V165__tpo_v1_complete.sql",
+      "declaredCreateTables": [
+        {
+          "table": "tpo_message_thread",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "hr_user_id",
+              "sqlType": "BIGINT",
+              "definition": "hr_user_id BIGINT NOT NULL"
+            },
+            {
+              "name": "job_id",
+              "sqlType": "INT",
+              "definition": "job_id INT NULL COMMENT 'Null = the General thread for this HR'"
+            },
+            {
+              "name": "last_message_at",
+              "sqlType": "DATETIME",
+              "definition": "last_message_at DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_tpo_thread (college_id, hr_user_id, job_id)",
+            "INDEX idx_tpo_thread_college (college_id, last_message_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_message",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "thread_id",
+              "sqlType": "BIGINT",
+              "definition": "thread_id BIGINT NOT NULL"
+            },
+            {
+              "name": "sender_type",
+              "sqlType": "VARCHAR(10)",
+              "definition": "sender_type VARCHAR(10) NOT NULL COMMENT 'TPO | HR'"
+            },
+            {
+              "name": "sender_id",
+              "sqlType": "INT",
+              "definition": "sender_id INT NOT NULL"
+            },
+            {
+              "name": "body",
+              "sqlType": "VARCHAR(4000)",
+              "definition": "body VARCHAR(4000) NOT NULL"
+            },
+            {
+              "name": "read_at",
+              "sqlType": "DATETIME",
+              "definition": "read_at DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_tpo_message_thread (thread_id, created_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_share_link",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "job_id",
+              "sqlType": "INT",
+              "definition": "job_id INT NOT NULL"
+            },
+            {
+              "name": "token_hash",
+              "sqlType": "VARCHAR(128)",
+              "definition": "token_hash VARCHAR(128) NOT NULL"
+            },
+            {
+              "name": "recipient_email",
+              "sqlType": "VARCHAR(150)",
+              "definition": "recipient_email VARCHAR(150) NOT NULL"
+            },
+            {
+              "name": "code_hash",
+              "sqlType": "VARCHAR(128)",
+              "definition": "code_hash VARCHAR(128) NULL COMMENT 'SHA-256 of the one-time email code'"
+            },
+            {
+              "name": "email_code_hash",
+              "sqlType": "VARCHAR(128)",
+              "definition": "email_code_hash VARCHAR(128) NULL COMMENT 'SHA-256 of the code the company asked us to email them'"
+            },
+            {
+              "name": "email_code_expires",
+              "sqlType": "DATETIME",
+              "definition": "email_code_expires DATETIME NULL"
+            },
+            {
+              "name": "columns_json",
+              "sqlType": "JSON",
+              "definition": "columns_json JSON NULL"
+            },
+            {
+              "name": "max_stage",
+              "sqlType": "VARCHAR(30)",
+              "definition": "max_stage VARCHAR(30) NULL COMMENT 'Applicants past this stage are excluded; phone only after SHORTLISTED'"
+            },
+            {
+              "name": "shortlist_by",
+              "sqlType": "DATETIME",
+              "definition": "shortlist_by DATETIME NULL"
+            },
+            {
+              "name": "expires_at",
+              "sqlType": "DATETIME",
+              "definition": "expires_at DATETIME NOT NULL"
+            },
+            {
+              "name": "revoked_at",
+              "sqlType": "DATETIME",
+              "definition": "revoked_at DATETIME NULL"
+            },
+            {
+              "name": "created_by",
+              "sqlType": "INT",
+              "definition": "created_by INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_tpo_share_token (token_hash)",
+            "INDEX idx_tpo_share_job (job_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_share_event",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "share_id",
+              "sqlType": "BIGINT",
+              "definition": "share_id BIGINT NOT NULL"
+            },
+            {
+              "name": "action",
+              "sqlType": "VARCHAR(20)",
+              "definition": "action VARCHAR(20) NOT NULL COMMENT 'CREATED|OPENED|DOWNLOADED_LIST|DOWNLOADED_ZIP|REVOKED'"
+            },
+            {
+              "name": "detail",
+              "sqlType": "VARCHAR(500)",
+              "definition": "detail VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_tpo_share_event (share_id, created_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "round_slot",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "round_id",
+              "sqlType": "BIGINT",
+              "definition": "round_id BIGINT NOT NULL"
+            },
+            {
+              "name": "starts_at",
+              "sqlType": "DATETIME",
+              "definition": "starts_at DATETIME NOT NULL"
+            },
+            {
+              "name": "ends_at",
+              "sqlType": "DATETIME",
+              "definition": "ends_at DATETIME NOT NULL"
+            },
+            {
+              "name": "room",
+              "sqlType": "VARCHAR(100)",
+              "definition": "room VARCHAR(100) NULL"
+            },
+            {
+              "name": "panel",
+              "sqlType": "VARCHAR(100)",
+              "definition": "panel VARCHAR(100) NULL"
+            },
+            {
+              "name": "capacity",
+              "sqlType": "INT",
+              "definition": "capacity INT NOT NULL DEFAULT 1"
+            },
+            {
+              "name": "proposed_by",
+              "sqlType": "VARCHAR(5)",
+              "definition": "proposed_by VARCHAR(5) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | HR'"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(12)",
+              "definition": "status VARCHAR(12) NOT NULL DEFAULT 'PROPOSED' COMMENT 'PROPOSED|CONFIRMED'"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_round_slot_round (round_id, starts_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "round_assignment",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "round_id",
+              "sqlType": "BIGINT",
+              "definition": "round_id BIGINT NOT NULL"
+            },
+            {
+              "name": "application_id",
+              "sqlType": "INT",
+              "definition": "application_id INT NOT NULL"
+            },
+            {
+              "name": "slot_id",
+              "sqlType": "BIGINT",
+              "definition": "slot_id BIGINT NULL"
+            },
+            {
+              "name": "room",
+              "sqlType": "VARCHAR(100)",
+              "definition": "room VARCHAR(100) NULL"
+            },
+            {
+              "name": "student_confirmed_at",
+              "sqlType": "DATETIME",
+              "definition": "student_confirmed_at DATETIME NULL COMMENT 'Set when the student confirms a changed slot'"
+            },
+            {
+              "name": "notified_at",
+              "sqlType": "DATETIME",
+              "definition": "notified_at DATETIME NULL"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_round_assignment (round_id, application_id)",
+            "INDEX idx_round_assignment_slot (slot_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "reschedule_request",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "round_id",
+              "sqlType": "BIGINT",
+              "definition": "round_id BIGINT NOT NULL"
+            },
+            {
+              "name": "application_id",
+              "sqlType": "INT",
+              "definition": "application_id INT NOT NULL"
+            },
+            {
+              "name": "reason",
+              "sqlType": "VARCHAR(1000)",
+              "definition": "reason VARCHAR(1000) NULL"
+            },
+            {
+              "name": "preferred_times",
+              "sqlType": "VARCHAR(500)",
+              "definition": "preferred_times VARCHAR(500) NULL"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(12)",
+              "definition": "status VARCHAR(12) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|MOVED|KEPT'"
+            },
+            {
+              "name": "reply",
+              "sqlType": "VARCHAR(1000)",
+              "definition": "reply VARCHAR(1000) NULL"
+            },
+            {
+              "name": "decided_by",
+              "sqlType": "INT",
+              "definition": "decided_by INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_reschedule_round (round_id, status)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "round_attendance",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "round_id",
+              "sqlType": "BIGINT",
+              "definition": "round_id BIGINT NOT NULL"
+            },
+            {
+              "name": "application_id",
+              "sqlType": "INT",
+              "definition": "application_id INT NOT NULL"
+            },
+            {
+              "name": "status",
+              "sqlType": "VARCHAR(15)",
+              "definition": "status VARCHAR(15) NOT NULL COMMENT 'WAITING|PRESENT|IN_INTERVIEW|DONE|ABSENT'"
+            },
+            {
+              "name": "room",
+              "sqlType": "VARCHAR(100)",
+              "definition": "room VARCHAR(100) NULL"
+            },
+            {
+              "name": "marked_by",
+              "sqlType": "INT",
+              "definition": "marked_by INT NULL"
+            },
+            {
+              "name": "marked_by_role",
+              "sqlType": "VARCHAR(20)",
+              "definition": "marked_by_role VARCHAR(20) NULL COMMENT 'TPO_ADMIN|FACULTY|STUDENT_COORDINATOR'"
+            },
+            {
+              "name": "marked_at",
+              "sqlType": "DATETIME",
+              "definition": "marked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_round_attendance (round_id, application_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_team_member",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "faculty_id",
+              "sqlType": "INT",
+              "definition": "faculty_id INT NOT NULL"
+            },
+            {
+              "name": "role",
+              "sqlType": "VARCHAR(25)",
+              "definition": "role VARCHAR(25) NOT NULL COMMENT 'TPO_ADMIN | FACULTY_COORDINATOR'"
+            },
+            {
+              "name": "department",
+              "sqlType": "VARCHAR(100)",
+              "definition": "department VARCHAR(100) NULL COMMENT 'Faculty coordinators see only this department'"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_tpo_team (college_id, faculty_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_coordinator_assignment",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "job_id",
+              "sqlType": "INT",
+              "definition": "job_id INT NOT NULL"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL COMMENT 'The student coordinator'"
+            },
+            {
+              "name": "on_date",
+              "sqlType": "DATE",
+              "definition": "on_date DATE NOT NULL"
+            },
+            {
+              "name": "created_by",
+              "sqlType": "INT",
+              "definition": "created_by INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "UNIQUE KEY uk_tpo_coordinator (job_id, learner_id, on_date)",
+            "INDEX idx_tpo_coordinator_learner (learner_id, on_date)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_college_settings",
+          "columns": [
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "invite_email_template",
+              "sqlType": "VARCHAR(4000)",
+              "definition": "invite_email_template VARCHAR(4000) NULL"
+            },
+            {
+              "name": "reminder_email_template",
+              "sqlType": "VARCHAR(4000)",
+              "definition": "reminder_email_template VARCHAR(4000) NULL"
+            },
+            {
+              "name": "whatsapp_template",
+              "sqlType": "VARCHAR(2000)",
+              "definition": "whatsapp_template VARCHAR(2000) NULL"
+            },
+            {
+              "name": "student_email_wording",
+              "sqlType": "VARCHAR(4000)",
+              "definition": "student_email_wording VARCHAR(4000) NULL"
+            },
+            {
+              "name": "sms_monthly_cap",
+              "sqlType": "INT",
+              "definition": "sms_monthly_cap INT NOT NULL DEFAULT 500"
+            },
+            {
+              "name": "email_signature",
+              "sqlType": "VARCHAR(1000)",
+              "definition": "email_signature VARCHAR(1000) NULL"
+            },
+            {
+              "name": "logo_url",
+              "sqlType": "VARCHAR(500)",
+              "definition": "logo_url VARCHAR(500) NULL"
+            },
+            {
+              "name": "trusted_domains_json",
+              "sqlType": "JSON",
+              "definition": "trusted_domains_json JSON NULL"
+            },
+            {
+              "name": "prep_course_ids_json",
+              "sqlType": "JSON",
+              "definition": "prep_course_ids_json JSON NULL COMMENT 'The LMS courses whose tests count toward readiness'"
+            },
+            {
+              "name": "prep_threshold_pct",
+              "sqlType": "INT",
+              "definition": "prep_threshold_pct INT NOT NULL DEFAULT 60 COMMENT 'Average on those tests a student needs to count as prepared'"
+            },
+            {
+              "name": "notify_toggles_json",
+              "sqlType": "JSON",
+              "definition": "notify_toggles_json JSON NULL COMMENT 'On/off for the optional student notices: driveOpenEmail, resultApplied, nudges, prepAssigned'"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_user_prefs",
+          "columns": [
+            {
+              "name": "faculty_id",
+              "sqlType": "INT",
+              "definition": "faculty_id INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "prefs_json",
+              "sqlType": "JSON",
+              "definition": "prefs_json JSON NULL COMMENT 'Which optional notifications this person receives'"
+            },
+            {
+              "name": "updated_at",
+              "sqlType": "DATETIME",
+              "definition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_saved_view",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "faculty_id",
+              "sqlType": "INT",
+              "definition": "faculty_id INT NOT NULL"
+            },
+            {
+              "name": "scope",
+              "sqlType": "VARCHAR(20)",
+              "definition": "scope VARCHAR(20) NOT NULL COMMENT 'STUDENTS|LEADS|DRIVES'"
+            },
+            {
+              "name": "name",
+              "sqlType": "VARCHAR(100)",
+              "definition": "name VARCHAR(100) NOT NULL"
+            },
+            {
+              "name": "filters_json",
+              "sqlType": "JSON",
+              "definition": "filters_json JSON NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_tpo_saved_view (college_id, faculty_id, scope)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_student_note",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "learner_id",
+              "sqlType": "INT",
+              "definition": "learner_id INT NOT NULL"
+            },
+            {
+              "name": "note",
+              "sqlType": "VARCHAR(2000)",
+              "definition": "note VARCHAR(2000) NOT NULL"
+            },
+            {
+              "name": "created_by",
+              "sqlType": "INT",
+              "definition": "created_by INT NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_tpo_student_note (learner_id, created_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_audit_log",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "actor_type",
+              "sqlType": "VARCHAR(10)",
+              "definition": "actor_type VARCHAR(10) NOT NULL COMMENT 'TPO | HR | SYSTEM | STUDENT'"
+            },
+            {
+              "name": "actor_id",
+              "sqlType": "INT",
+              "definition": "actor_id INT NULL"
+            },
+            {
+              "name": "action",
+              "sqlType": "VARCHAR(60)",
+              "definition": "action VARCHAR(60) NOT NULL"
+            },
+            {
+              "name": "entity_type",
+              "sqlType": "VARCHAR(30)",
+              "definition": "entity_type VARCHAR(30) NULL COMMENT 'DRIVE|LEAD|STUDENT|OFFER|ROUND|SHARE|SETTINGS'"
+            },
+            {
+              "name": "entity_id",
+              "sqlType": "BIGINT",
+              "definition": "entity_id BIGINT NULL"
+            },
+            {
+              "name": "detail",
+              "sqlType": "VARCHAR(1000)",
+              "definition": "detail VARCHAR(1000) NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_tpo_audit_college (college_id, created_at)",
+            "INDEX idx_tpo_audit_entity (entity_type, entity_id)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        },
+        {
+          "table": "tpo_bell",
+          "columns": [
+            {
+              "name": "id",
+              "sqlType": "BIGINT",
+              "definition": "id BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "sqlType": "INT",
+              "definition": "college_id INT NOT NULL"
+            },
+            {
+              "name": "type",
+              "sqlType": "VARCHAR(40)",
+              "definition": "type VARCHAR(40) NOT NULL"
+            },
+            {
+              "name": "title",
+              "sqlType": "VARCHAR(200)",
+              "definition": "title VARCHAR(200) NOT NULL"
+            },
+            {
+              "name": "body",
+              "sqlType": "VARCHAR(500)",
+              "definition": "body VARCHAR(500) NULL"
+            },
+            {
+              "name": "link",
+              "sqlType": "VARCHAR(200)",
+              "definition": "link VARCHAR(200) NULL"
+            },
+            {
+              "name": "read_at",
+              "sqlType": "DATETIME",
+              "definition": "read_at DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "sqlType": "DATETIME",
+              "definition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "unclassifiedClauses": [
+            "INDEX idx_tpo_bell (college_id, read_at, created_at)"
+          ],
+          "warning": "Raw CREATE TABLE blocks only; account for later ALTER/RENAME/DROP and Hibernate ddl-auto=update."
+        }
+      ],
+      "alteredTables": [
+        "hr_college_access",
+        "job_offer",
+        "job",
+        "job_application",
+        "learner_academic_record"
+      ],
+      "droppedTables": []
+    }
+  ],
+  "totalCreatedTableStatements": 45,
+  "totalFieldsFound": 469
+}

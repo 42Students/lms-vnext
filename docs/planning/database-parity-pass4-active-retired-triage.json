@@ -1,0 +1,3415 @@
+{
+  "pass": 4,
+  "repoBaseline": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "notes": [
+    "JPA annotation establishes a declarative mapping, not actual active service usage",
+    "No JPA entity may still be active via JdbcTemplate/native SQL",
+    "Clean greenfield vNext has no migration requirement for historic backup tables but product retirement must be approved",
+    "Smrithi subsystem status unknown",
+    "All retirement decisions deliberately remain UNDECIDED"
+  ],
+  "summary": {
+    "tables": 199,
+    "jpaEntitiesWithKnownTable": 111,
+    "historicBackup": 31,
+    "smrithi": 7,
+    "migrationOnly": 49
+  },
+  "byDomain": {
+    "DB10_SHARED_OPERATIONS": {
+      "total": 19,
+      "modelEntities": 14,
+      "historic": 0,
+      "notProven": 19
+    },
+    "DB08_PLACEMENT_POLICY_AND_OUTCOMES": {
+      "total": 18,
+      "modelEntities": 14,
+      "historic": 0,
+      "notProven": 18
+    },
+    "DB04_PROFILES_AND_VERIFICATION": {
+      "total": 7,
+      "modelEntities": 2,
+      "historic": 0,
+      "notProven": 7
+    },
+    "DB06_ASSESSMENTS_AND_ATTENDANCE": {
+      "total": 21,
+      "modelEntities": 9,
+      "historic": 0,
+      "notProven": 21
+    },
+    "DB01_IDENTITY_AND_TENANCY": {
+      "total": 22,
+      "modelEntities": 20,
+      "historic": 0,
+      "notProven": 22
+    },
+    "DB00_HISTORICAL_AND_ENGINE": {
+      "total": 39,
+      "modelEntities": 0,
+      "historic": 31,
+      "notProven": 39
+    },
+    "DB02_ACADEMICS_AND_TIMETABLE": {
+      "total": 13,
+      "modelEntities": 11,
+      "historic": 0,
+      "notProven": 13
+    },
+    "DB05_COURSES_AND_CONTENT": {
+      "total": 7,
+      "modelEntities": 7,
+      "historic": 0,
+      "notProven": 7
+    },
+    "DB09_TPO_AND_RECRUITER_OPERATIONS": {
+      "total": 31,
+      "modelEntities": 12,
+      "historic": 0,
+      "notProven": 31
+    },
+    "DB03_GROUPS_AND_ELECTIVES": {
+      "total": 6,
+      "modelEntities": 6,
+      "historic": 0,
+      "notProven": 6
+    },
+    "DB07_PROJECTS": {
+      "total": 16,
+      "modelEntities": 16,
+      "historic": 0,
+      "notProven": 16
+    }
+  },
+  "rows": [
+    {
+      "table": "admin_audit_log",
+      "snapshotTable": "admin_audit_log",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/AdminAuditLog.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 13,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "activity_events"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "announcements",
+      "snapshotTable": "announcements",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Announcement.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 13,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "in_app_notifications"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "app_setting",
+      "snapshotTable": "app_setting",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/AppSetting.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 5,
+      "vnextCandidates": [
+        "module_access_rules"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "application_screening",
+      "snapshotTable": "application_screening",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ApplicationScreening.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 19,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "approver_id_card",
+      "snapshotTable": "approver_id_card",
+      "domain": "DB04_PROFILES_AND_VERIFICATION",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 11,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "assigned_exam",
+      "snapshotTable": "assigned_exam",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 19,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "assignment_upload_receipt",
+      "snapshotTable": "assignment_upload_receipt",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/AssignmentUploadReceipt.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 19,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "attempted_question",
+      "snapshotTable": "attempted_question",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 13,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "attend",
+      "snapshotTable": "attend",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Attend.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 2,
+      "vnextCandidates": [
+        "attendance_records"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "auth_handoff_token",
+      "snapshotTable": "auth_handoff_token",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/AuthHandoffToken.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "auth_token",
+      "snapshotTable": "auth_token",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/AuthToken.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 5,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "backup_legacy_content_progress_quiz_20260501",
+      "snapshotTable": "backup_legacy_content_progress_quiz_20260501",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "backup_legacy_content_sequence_quiz_20260501",
+      "snapshotTable": "backup_legacy_content_sequence_quiz_20260501",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 6,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "backup_legacy_discussions_quiz_20260501",
+      "snapshotTable": "backup_legacy_discussions_quiz_20260501",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "backup_legacy_lesson_contents_quiz_20260501",
+      "snapshotTable": "backup_legacy_lesson_contents_quiz_20260501",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 19,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "backup_legacy_quiz_attempt_20260501",
+      "snapshotTable": "backup_legacy_quiz_attempt_20260501",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "backup_legacy_quiz_draft_20260501",
+      "snapshotTable": "backup_legacy_quiz_draft_20260501",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 6,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "backup_legacy_quiz_ids_20260501",
+      "snapshotTable": "backup_legacy_quiz_ids_20260501",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 1,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "backup_legacy_student_assignment_quiz_20260501",
+      "snapshotTable": "backup_legacy_student_assignment_quiz_20260501",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 25,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "batch",
+      "snapshotTable": "batch",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Batch.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 11,
+      "structuralNameMatches": 5,
+      "vnextCandidates": [
+        "cohorts"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "bug_report",
+      "snapshotTable": "bug_report",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/BugReport.java"
+      ],
+      "firstSource": "V151__bug_tracker_phase1.sql",
+      "sourceFields": 31,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "bug_report_activity",
+      "snapshotTable": "bug_report_activity",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/BugReportActivity.java"
+      ],
+      "firstSource": "V153__bug_tracker_workflow.sql",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "bug_report_attachment",
+      "snapshotTable": "bug_report_attachment",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/BugReportAttachment.java"
+      ],
+      "firstSource": "V152__bug_tracker_attachments.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "bug_tracker_access",
+      "snapshotTable": "bug_tracker_access",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/BugTrackerAccess.java"
+      ],
+      "firstSource": "V151__bug_tracker_phase1.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "bug_tracker_session",
+      "snapshotTable": "bug_tracker_session",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V151__bug_tracker_phase1.sql",
+      "sourceFields": 5,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "class",
+      "snapshotTable": "class",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/_Class.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 14,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "sections"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "class_schedule",
+      "snapshotTable": "class_schedule",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ClassSchedule.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 12,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "section_schedule_events"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "classroom_messages",
+      "snapshotTable": "classroom_messages",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ClassroomMessage.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 11,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_faculty_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_faculty_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 44,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_odd_dob_faculty_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_odd_dob_faculty_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 44,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_odd_dob_learner_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_odd_dob_learner_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 51,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_college_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_test_college_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 17,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_department_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_test_department_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_faculty_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_test_faculty_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 44,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_job_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_test_job_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 33,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_learner_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_test_learner_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 51,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_org_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_test_org_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 5,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_young_dob_faculty_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_young_dob_faculty_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 44,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_full_lms_young_dob_learner_backup_20260918",
+      "snapshotTable": "cleanup_full_lms_young_dob_learner_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 51,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_application_backup_20260918",
+      "snapshotTable": "cleanup_legacy_placement_application_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 21,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_application_ids_20260918",
+      "snapshotTable": "cleanup_legacy_placement_application_ids_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_company_backup_20260918",
+      "snapshotTable": "cleanup_legacy_placement_company_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 17,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_company_ids_20260918",
+      "snapshotTable": "cleanup_legacy_placement_company_ids_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_job_backup_20260918",
+      "snapshotTable": "cleanup_legacy_placement_job_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 33,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_job_ids_20260918",
+      "snapshotTable": "cleanup_legacy_placement_job_ids_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_saved_job_backup_20260918",
+      "snapshotTable": "cleanup_legacy_placement_saved_job_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 4,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_project_template_backup_20260918",
+      "snapshotTable": "cleanup_legacy_project_template_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 25,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_project_template_ids_20260918",
+      "snapshotTable": "cleanup_legacy_project_template_ids_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_project_workspace_backup_20260918",
+      "snapshotTable": "cleanup_legacy_project_workspace_backup_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 36,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "cleanup_legacy_project_workspace_ids_20260918",
+      "snapshotTable": "cleanup_legacy_project_workspace_ids_20260918",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "college",
+      "snapshotTable": "college",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/College.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 17,
+      "structuralNameMatches": 10,
+      "vnextCandidates": [
+        "colleges"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "college_branding",
+      "snapshotTable": "college_branding",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/CollegeBranding.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 15,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "colleges"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "college_placement_rules",
+      "snapshotTable": "college_placement_rules",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java"
+      ],
+      "firstSource": "V162__tpo_v1_settings.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "college_what_companies_see",
+      "snapshotTable": "college_what_companies_see",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java"
+      ],
+      "firstSource": "V162__tpo_v1_settings.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "company",
+      "snapshotTable": "company",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Company.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 17,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "placement_companies"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "course",
+      "snapshotTable": "course",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Course.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 19,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "courses"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "department",
+      "snapshotTable": "department",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Department.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 5,
+      "vnextCandidates": [
+        "departments"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "discussions",
+      "snapshotTable": "discussions",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Discussions.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 16,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "course_discussion_messages"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "drive_group",
+      "snapshotTable": "drive_group",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 5,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "elective_offering",
+      "snapshotTable": "elective_offering",
+      "domain": "DB03_GROUPS_AND_ELECTIVES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/electives/ElectiveOffering.java"
+      ],
+      "firstSource": "V167__electives.sql",
+      "sourceFields": 12,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "elective_slot",
+      "snapshotTable": "elective_slot",
+      "domain": "DB03_GROUPS_AND_ELECTIVES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/electives/ElectiveSlot.java"
+      ],
+      "firstSource": "V167__electives.sql",
+      "sourceFields": 15,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "email_suppression",
+      "snapshotTable": "email_suppression",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/EmailSuppressionEntity.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "email_verification_token",
+      "snapshotTable": "email_verification_token",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/EmailVerificationToken.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "exam",
+      "snapshotTable": "exam",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 19,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "exam_faculty",
+      "snapshotTable": "exam_faculty",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "exam_faculty_mapping",
+      "snapshotTable": "exam_faculty_mapping",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 2,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "exam_monitoring",
+      "snapshotTable": "exam_monitoring",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 12,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "examinee",
+      "snapshotTable": "examinee",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 11,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "external_placement",
+      "snapshotTable": "external_placement",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/ExternalPlacement.java"
+      ],
+      "firstSource": "V172__external_placement.sql",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "facial_recognition_result",
+      "snapshotTable": "facial_recognition_result",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "faculty",
+      "snapshotTable": "faculty",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Faculty.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 50,
+      "structuralNameMatches": 6,
+      "vnextCandidates": [
+        "users",
+        "college_memberships",
+        "faculty_profiles"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "faculty_acct_verification",
+      "snapshotTable": "faculty_acct_verification",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/FacultyVerification.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 12,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "faculty_course_associations",
+      "snapshotTable": "faculty_course_associations",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 4,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "faculty_course_mapping",
+      "snapshotTable": "faculty_course_mapping",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/FacultyCourseMapping.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "course_teaching_assignments"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "faculty_teaching_assignment",
+      "snapshotTable": "faculty_teaching_assignment",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 14,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "course_teaching_assignments"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "flyway_schema_history",
+      "snapshotTable": "flyway_schema_history",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "ENGINE_HISTORY_REQUIRES_NEW_WORKFLOW",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "follow_up",
+      "snapshotTable": "follow_up",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/FollowUp.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "grade_audit_log",
+      "snapshotTable": "grade_audit_log",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/GradeAuditLog.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "industry_company",
+      "snapshotTable": "industry_company",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java"
+      ],
+      "firstSource": "V159__hr_industry_accounts.sql",
+      "sourceFields": 12,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "interview",
+      "snapshotTable": "interview",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Interview.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 29,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "job",
+      "snapshotTable": "job",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Job.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 46,
+      "structuralNameMatches": 6,
+      "vnextCandidates": [
+        "placement_jobs"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "job_application",
+      "snapshotTable": "job_application",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/JobApplication.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 24,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "placement_applications"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "job_application_status_history",
+      "snapshotTable": "job_application_status_history",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/JobApplicationStatusHistory.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 10,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "placement_application_status_history"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "job_eligibility_override",
+      "snapshotTable": "job_eligibility_override",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/JobEligibilityOverride.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "placement_eligibility_overrides"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "job_offer",
+      "snapshotTable": "job_offer",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/JobOffer.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 28,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "placement_offers"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "job_preferences",
+      "snapshotTable": "job_preferences",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/JobPreferences.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 12,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "job_round",
+      "snapshotTable": "job_round",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/JobRound.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 18,
+      "structuralNameMatches": 13,
+      "vnextCandidates": [
+        "placement_job_rounds"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "learner",
+      "snapshotTable": "learner",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Learner.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 58,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "users",
+        "college_memberships",
+        "learner_profiles"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "learner_academic_record",
+      "snapshotTable": "learner_academic_record",
+      "domain": "DB04_PROFILES_AND_VERIFICATION",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/LearnerAcademicRecord.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 18,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "placement_candidate_academic_evidence"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "learner_acct_verification",
+      "snapshotTable": "learner_acct_verification",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LearnerVerification.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 13,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "learner_content_progress",
+      "snapshotTable": "learner_content_progress",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LearnerContentProgress.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 11,
+      "structuralNameMatches": 6,
+      "vnextCandidates": [
+        "learner_content_progress"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "learner_saved_job",
+      "snapshotTable": "learner_saved_job",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LearnerSavedJob.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 4,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lecture_hall",
+      "snapshotTable": "lecture_hall",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LectureHall.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lesson",
+      "snapshotTable": "lesson",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Lesson.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 11,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "course_lessons"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lesson_content_class_sequence",
+      "snapshotTable": "lesson_content_class_sequence",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LessonContentClassSequence.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 6,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lesson_contents",
+      "snapshotTable": "lesson_contents",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LessonContents.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 18,
+      "structuralNameMatches": 6,
+      "vnextCandidates": [
+        "lesson_contents"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lesson_contents_legacy_type_backup_v163",
+      "snapshotTable": "lesson_contents_legacy_type_backup_v163",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "HISTORIC_BACKUP_REVIEW_RETIREMENT",
+      "jpaEntityFiles": [],
+      "firstSource": "V163__retire_legacy_lesson_content_types.sql",
+      "sourceFields": 4,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lms_group",
+      "snapshotTable": "lms_group",
+      "domain": "DB03_GROUPS_AND_ELECTIVES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/groups/LmsGroup.java"
+      ],
+      "firstSource": "V166__groups_kernel.sql",
+      "sourceFields": 20,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lms_group_member",
+      "snapshotTable": "lms_group_member",
+      "domain": "DB03_GROUPS_AND_ELECTIVES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/groups/LmsGroupMember.java"
+      ],
+      "firstSource": "V166__groups_kernel.sql",
+      "sourceFields": 13,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lms_group_member_event",
+      "snapshotTable": "lms_group_member_event",
+      "domain": "DB03_GROUPS_AND_ELECTIVES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/groups/LmsGroupMemberEvent.java"
+      ],
+      "firstSource": "V166__groups_kernel.sql",
+      "sourceFields": 11,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lms_group_rule",
+      "snapshotTable": "lms_group_rule",
+      "domain": "DB03_GROUPS_AND_ELECTIVES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/groups/LmsGroupRule.java"
+      ],
+      "firstSource": "V166__groups_kernel.sql",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "lms_notification_template",
+      "snapshotTable": "lms_notification_template",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 28,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "log_alert_signature",
+      "snapshotTable": "log_alert_signature",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LogAlertSignature.java"
+      ],
+      "firstSource": "V157__log_alerting.sql",
+      "sourceFields": 17,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "log_alert_signature_account",
+      "snapshotTable": "log_alert_signature_account",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LogAlertSignatureAccount.java"
+      ],
+      "firstSource": "V158__log_alert_signature_accounts.sql",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "log_alert_state",
+      "snapshotTable": "log_alert_state",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LogAlertState.java"
+      ],
+      "firstSource": "V157__log_alerting.sql",
+      "sourceFields": 4,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "login_user",
+      "snapshotTable": "login_user",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/LoginUser.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 6,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "mobile_login_attempt",
+      "snapshotTable": "mobile_login_attempt",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/MobileLoginAttempt.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 18,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "new_program",
+      "snapshotTable": "new_program",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/NewProgram.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 7,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "programs"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "new_program_structure",
+      "snapshotTable": "new_program_structure",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/NewProgramStructure.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "notification",
+      "snapshotTable": "notification",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Notification.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 21,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "in_app_notifications"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "notification_outbox",
+      "snapshotTable": "notification_outbox",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 13,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "notification_template",
+      "snapshotTable": "notification_template",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 28,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "organization",
+      "snapshotTable": "organization",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Organization.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 5,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "organizations"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "placement_batch",
+      "snapshotTable": "placement_batch",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V188__placement_batches_and_eligibility.sql",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "placement_debarment",
+      "snapshotTable": "placement_debarment",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/PlacementDebarment.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "placement_eligibility",
+      "snapshotTable": "placement_eligibility",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V188__placement_batches_and_eligibility.sql",
+      "sourceFields": 11,
+      "structuralNameMatches": 8,
+      "vnextCandidates": [
+        "placement_eligibility_decisions"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "placement_eligibility_event",
+      "snapshotTable": "placement_eligibility_event",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V188__placement_batches_and_eligibility.sql",
+      "sourceFields": 16,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "placement_registration",
+      "snapshotTable": "placement_registration",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/PlacementRegistration.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 11,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "placement_season",
+      "snapshotTable": "placement_season",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/PlacementSeason.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 12,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "placement_seasons"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "prep_assignment",
+      "snapshotTable": "prep_assignment",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "profile_verification",
+      "snapshotTable": "profile_verification",
+      "domain": "DB04_PROFILES_AND_VERIFICATION",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V187__profile_verification.sql",
+      "sourceFields": 15,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "profile_verification_event",
+      "snapshotTable": "profile_verification_event",
+      "domain": "DB04_PROFILES_AND_VERIFICATION",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V187__profile_verification.sql",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "program",
+      "snapshotTable": "program",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "program_structure",
+      "snapshotTable": "program_structure",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_activity_event",
+      "snapshotTable": "project_activity_event",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectActivityEvent.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 22,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "activity_events"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_delivery",
+      "snapshotTable": "project_delivery",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectDelivery.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 37,
+      "structuralNameMatches": 9,
+      "vnextCandidates": [
+        "project_submissions"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_delivery_event",
+      "snapshotTable": "project_delivery_event",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectDeliveryEvent.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 15,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_meeting",
+      "snapshotTable": "project_meeting",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectMeeting.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 42,
+      "structuralNameMatches": 8,
+      "vnextCandidates": [
+        "project_meetings"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_meeting_history",
+      "snapshotTable": "project_meeting_history",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectMeetingHistory.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 15,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_member",
+      "snapshotTable": "project_member",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectMember.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 12,
+      "structuralNameMatches": 5,
+      "vnextCandidates": [
+        "project_members"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_release",
+      "snapshotTable": "project_release",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectRelease.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 14,
+      "structuralNameMatches": 6,
+      "vnextCandidates": [
+        "project_releases"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_resource",
+      "snapshotTable": "project_resource",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectResource.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 31,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "project_resources"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_resource_audit",
+      "snapshotTable": "project_resource_audit",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectResourceAudit.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 15,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_sprint",
+      "snapshotTable": "project_sprint",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectSprint.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 27,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "project_sprints"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_task",
+      "snapshotTable": "project_task",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectTask.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 32,
+      "structuralNameMatches": 8,
+      "vnextCandidates": [
+        "project_tasks"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_task_comment",
+      "snapshotTable": "project_task_comment",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectTaskComment.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 13,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_template",
+      "snapshotTable": "project_template",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectTemplate.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 25,
+      "structuralNameMatches": 8,
+      "vnextCandidates": [
+        "project_templates"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_template_college",
+      "snapshotTable": "project_template_college",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectTemplateCollege.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 7,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "project_template_college_assignments"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_template_version",
+      "snapshotTable": "project_template_version",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectTemplateVersion.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 12,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "project_template_versions"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "project_workspace",
+      "snapshotTable": "project_workspace",
+      "domain": "DB07_PROJECTS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/ProjectWorkspace.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 39,
+      "structuralNameMatches": 9,
+      "vnextCandidates": [
+        "project_instances"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "qualification",
+      "snapshotTable": "qualification",
+      "domain": "DB04_PROFILES_AND_VERIFICATION",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Qualification.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 24,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "question",
+      "snapshotTable": "question",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "question_option",
+      "snapshotTable": "question_option",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 10,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "quiz_answers",
+      "snapshotTable": "quiz_answers",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/QuizAnswer.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "quiz_attempt_answers"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "quiz_attempt",
+      "snapshotTable": "quiz_attempt",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "quiz_attempts",
+      "snapshotTable": "quiz_attempts",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/QuizAttempt.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 11,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "quiz_attempts"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "quiz_options",
+      "snapshotTable": "quiz_options",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/QuizOption.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 5,
+      "vnextCandidates": [
+        "quiz_options"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "quiz_questions",
+      "snapshotTable": "quiz_questions",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/QuizQuestion.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 8,
+      "vnextCandidates": [
+        "quiz_questions"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "quizzes",
+      "snapshotTable": "quizzes",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Quiz.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 19,
+      "structuralNameMatches": 10,
+      "vnextCandidates": [
+        "course_quizzes"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "recruiter",
+      "snapshotTable": "hr_user",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Recruiter.java"
+      ],
+      "firstSource": "V159__hr_industry_accounts.sql",
+      "sourceFields": 17,
+      "structuralNameMatches": 3,
+      "vnextCandidates": [
+        "placement_recruiter_profiles"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "recruiter_applicant_note",
+      "snapshotTable": "hr_applicant_note",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V177__hr_applicant_note.sql",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "recruiter_college_access",
+      "snapshotTable": "hr_college_access",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java"
+      ],
+      "firstSource": "V159__hr_industry_accounts.sql",
+      "sourceFields": 22,
+      "structuralNameMatches": 7,
+      "vnextCandidates": [
+        "placement_recruiter_college_grants"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "recruiter_college_access_capability",
+      "snapshotTable": "hr_college_access_capability",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V159__hr_industry_accounts.sql",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "recruiter_lead",
+      "snapshotTable": "tpo_lead",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 23,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "recruiter_lead_activity",
+      "snapshotTable": "lead_activity",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "recruiter_notification_read",
+      "snapshotTable": "hr_notification_read",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V176__hr_notification_read.sql",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "refresh_token_blocklist",
+      "snapshotTable": "refresh_token_blocklist",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 5,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "reschedule_request",
+      "snapshotTable": "reschedule_request",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "role",
+      "snapshotTable": "role",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Role.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 6,
+      "structuralNameMatches": 2,
+      "vnextCandidates": [
+        "system_roles"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "round_assignment",
+      "snapshotTable": "round_assignment",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "round_attendance",
+      "snapshotTable": "round_attendance",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 8,
+      "structuralNameMatches": 6,
+      "vnextCandidates": [
+        "placement_round_attendance"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "round_result",
+      "snapshotTable": "round_result",
+      "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/RoundResult.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 15,
+      "structuralNameMatches": 9,
+      "vnextCandidates": [
+        "placement_round_results"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "round_slot",
+      "snapshotTable": "round_slot",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "scheduled_job_lock",
+      "snapshotTable": "scheduled_job_lock",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 4,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "selected_option",
+      "snapshotTable": "selected_option",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "semester",
+      "snapshotTable": "semester",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Semester.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "semester_course",
+      "snapshotTable": "semester_course",
+      "domain": "DB02_ACADEMICS_AND_TIMETABLE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/SemesterCourse.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "skill_synonyms",
+      "snapshotTable": "skill_synonyms",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/SkillSynonym.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "skill_usage",
+      "snapshotTable": "skill_usage",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "skills",
+      "snapshotTable": "skills",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/Skill.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "smrithi_application",
+      "snapshotTable": "smrithi_application",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "SMRITHI_SUBSYSTEM_REQUIRES_PRODUCT_DECISION",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 28,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "smrithi_college",
+      "snapshotTable": "smrithi_college",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "SMRITHI_SUBSYSTEM_REQUIRES_PRODUCT_DECISION",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "smrithi_college_keywords",
+      "snapshotTable": "smrithi_college_keywords",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "SMRITHI_SUBSYSTEM_REQUIRES_PRODUCT_DECISION",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 2,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "smrithi_education_type",
+      "snapshotTable": "smrithi_education_type",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "SMRITHI_SUBSYSTEM_REQUIRES_PRODUCT_DECISION",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "smrithi_notification_template",
+      "snapshotTable": "smrithi_notification_template",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "SMRITHI_SUBSYSTEM_REQUIRES_PRODUCT_DECISION",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 28,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "smrithi_program",
+      "snapshotTable": "smrithi_program",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "SMRITHI_SUBSYSTEM_REQUIRES_PRODUCT_DECISION",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "smrithi_specialization",
+      "snapshotTable": "smrithi_specialization",
+      "domain": "DB00_HISTORICAL_AND_ENGINE",
+      "archetype": "SMRITHI_SUBSYSTEM_REQUIRES_PRODUCT_DECISION",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "sms_delivery_log",
+      "snapshotTable": "sms_delivery_log",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/SmsDeliveryLog.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "student_assignment",
+      "snapshotTable": "student_assignment",
+      "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/StudentAssignment.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 27,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "student_image",
+      "snapshotTable": "student_image",
+      "domain": "DB04_PROFILES_AND_VERIFICATION",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "student_registration",
+      "snapshotTable": "student_registration",
+      "domain": "DB04_PROFILES_AND_VERIFICATION",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 22,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "student_request",
+      "snapshotTable": "student_request",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "firstSource": "V161__tpo_v1_drives.sql",
+      "sourceFields": 13,
+      "structuralNameMatches": 5,
+      "vnextCandidates": [
+        "placement_learner_requests"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tenant_domain",
+      "snapshotTable": "tenant_domain",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/TenantDomain.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 13,
+      "structuralNameMatches": 11,
+      "vnextCandidates": [
+        "tenant_domains"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_audit_log",
+      "snapshotTable": "tpo_audit_log",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_bell",
+      "snapshotTable": "tpo_bell",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 8,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_bell_read",
+      "snapshotTable": "tpo_bell_read",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V184__tpo_bell_read.sql",
+      "sourceFields": 4,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_college_settings",
+      "snapshotTable": "tpo_college_settings",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 19,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_coordinator_assignment",
+      "snapshotTable": "tpo_coordinator_assignment",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_message",
+      "snapshotTable": "tpo_message",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_message_thread",
+      "snapshotTable": "tpo_message_thread",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 6,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_saved_view",
+      "snapshotTable": "tpo_saved_view",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 7,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_share_event",
+      "snapshotTable": "tpo_share_event",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 5,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_share_link",
+      "snapshotTable": "tpo_share_link",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 15,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_student_note",
+      "snapshotTable": "tpo_student_note",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 6,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_team_member",
+      "snapshotTable": "tpo_team_member",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 6,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "tpo_user_prefs",
+      "snapshotTable": "tpo_user_prefs",
+      "domain": "DB09_TPO_AND_RECRUITER_OPERATIONS",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "V165__tpo_v1_complete.sql",
+      "sourceFields": 3,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "user",
+      "snapshotTable": "user",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/User.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 12,
+      "structuralNameMatches": 4,
+      "vnextCandidates": [
+        "users"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "user_roles",
+      "snapshotTable": "user_roles",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "MIGRATION_OR_JDBC_ONLY_REQUIRES_WRITER_READER_SCAN",
+      "jpaEntityFiles": [],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 2,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [
+        "membership_roles"
+      ],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    },
+    {
+      "table": "user_session",
+      "snapshotTable": "user_session",
+      "domain": "DB01_IDENTITY_AND_TENANCY",
+      "archetype": "JPA_ENTITY_DECLARED_BUT_ACTIVE_USE_UNVERIFIED",
+      "jpaEntityFiles": [
+        "src/main/java/com/_42students/lms/model/UserSession.java"
+      ],
+      "firstSource": "snapshot_through_V150",
+      "sourceFields": 9,
+      "structuralNameMatches": 0,
+      "vnextCandidates": [],
+      "retirementDecision": "UNDECIDED",
+      "usageEvidence": "NOT_SCANNED_SERVICE_REPOSITORY_UI",
+      "physicalMySQLExistence": "NOT_INTROSPECTED",
+      "verified": false
+    }
+  ]
+}
