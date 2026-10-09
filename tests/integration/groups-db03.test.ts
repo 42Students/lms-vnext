@@ -314,6 +314,19 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     await expect(joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership))
       .rejects.toMatchObject({code:"GROUP_MEMBERSHIP_LOCKED"});
   });
+  it("persists creator role and immutable member type snapshots in the database", async () => {
+    const group=await createActiveGroup("BUS",1);
+    const rows=await pool.query("SELECT created_by_type FROM lms_groups WHERE id=$1",[group]);
+    expect(rows.rows[0].created_by_type).toBe("COLLEGE_ADMIN");
+    await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    const events=await pool.query(
+      "SELECT member_type,actor_type,actor_user_id FROM lms_group_member_events WHERE group_id=$1",[group],
+    );
+    expect(events.rows).toHaveLength(1);
+    expect(events.rows[0]).toMatchObject({
+      member_type:"LEARNER", actor_type:"LEARNER", actor_user_id:SEED_IDS.learnerUser,
+    });
+  });
   it("blocks mutating append-only event history at the database boundary", async () => {
     const group=await createActiveGroup();
     await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
