@@ -1,6 +1,6 @@
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementCandidateAcademicEvidence } from "@/db/schema";
+import { colleges, placementCandidateAcademicEvidence } from "@/db/schema";
 import {
   profileVerificationAcademicMarks,
   profileVerificationSettings,
@@ -65,6 +65,10 @@ export async function publishVerifiedEducation(
     verifiedSnapshot: SafeSnapshot; version: number; reviewerId: string; verifiedAt: Date },
 ): Promise<void> {
   const entries = parseAcademicSnapshot(args.verifiedSnapshot);
+  // Lock college even if settings row does not yet exist. This serializes
+  // verification publication with a concurrent CGPA policy change.
+  await tx.select({id:colleges.id}).from(colleges)
+    .where(eq(colleges.id,args.collegeId)).for("update");
   const [setting] = await tx.select({rule:profileVerificationSettings.cgpaToPct})
     .from(profileVerificationSettings)
     .where(eq(profileVerificationSettings.collegeId,args.collegeId)).for("update");
