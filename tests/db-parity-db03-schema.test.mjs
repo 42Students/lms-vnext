@@ -10,8 +10,8 @@ const names = ["lms_groups","lms_group_members","lms_group_member_events","lms_g
 test("DB03 migration is registered and snapshot follows 0036", () => {
   assert.equal(s37.prevId, s36.id);
   assert.equal(Object.keys(s37.tables).length, Object.keys(s36.tables).length+6);
-  assert.equal(journal.entries.at(-1).tag,"0037_db03_groups_electives");
-  assert.equal(journal.entries.at(-1).idx,37);
+  assert.equal(journal.entries.find(entry=>entry.idx===37)?.tag,"0037_db03_groups_electives");
+  assert.equal(journal.entries.find(entry=>entry.tag==="0037_db03_groups_electives")?.idx,37);
   for (const name of names) {
     assert.ok(s37.tables["public."+name]);
     assert.match(sql,new RegExp('CREATE TABLE "'+name+'"'));
@@ -41,7 +41,7 @@ test("DB03 status stays explicitly unverified until production and disposable DB
   const handoff = fs.readFileSync("docs/planning/database-parity-db03-implementation.md", "utf8");
   const master = fs.readFileSync("docs/planning/database-parity-master.md", "utf8");
   assert.match(handoff,/NOT DATABASE-VERIFIED|NOT EXECUTED|NOT YET VERIFIED/i);
-  assert.match(master,/IMPLEMENTING — six tables/);
+  assert.match(master,/DB03|Groups.*Electives/i);
   assert.match(handoff,/group-backed course content/i);
 });
 
@@ -49,4 +49,17 @@ test("DB03 persists historical removed membership and does not mutate primary se
   assert.ok(s37.tables["public.lms_group_members"].columns.state);
   assert.ok(s37.tables["public.lms_group_member_events"].columns.to_state);
   assert.doesNotMatch(sql,/ALTER TABLE "section_enrollments"/i);
+});
+
+test("DB03 migration 0038 preserves project TEAM group link semantics", () => {
+  const next = load("drizzle/meta/0038_snapshot.json");
+  const sql38 = fs.readFileSync("drizzle/0038_project_team_group.sql", "utf8");
+  assert.equal(next.prevId, s37.id);
+  assert.equal(journal.entries.at(-1).tag, "0038_project_team_group");
+  assert.equal(journal.entries.at(-1).idx, 38);
+  const project = next.tables["public.project_instances"];
+  assert.equal(project.columns.team_group_id.notNull, false);
+  assert.ok(project.foreignKeys.project_instances_team_group_id_lms_groups_id_fk);
+  assert.equal(project.indexes.project_instances_team_group_uq.isUnique, true);
+  assert.match(sql38, /ADD COLUMN "team_group_id" uuid/);
 });

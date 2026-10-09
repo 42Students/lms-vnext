@@ -117,3 +117,11 @@ were repaired (DISABLED is valid, SUSPENDED was not).
 
 **Verification remains PENDING:** Drizzle regeneration, TypeScript compile,
 migration replay, real PostgreSQL test execution and UI/API consumer E2E.
+
+## Project team schema link (migration 0038, 2026-10-10)
+
+`project_instances.team_group_id` is a nullable, unique, FK-backed link
+to a kernel group (legacy V191 mapping). The Drizzle snapshot and migration
+journal include 0038. Source contract assertions now know 0038 follows 0037.
+Existing unlinked projects preserve the previous standalone roster behavior.
+Actual migration replay and regeneration remain unverified.
