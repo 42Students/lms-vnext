@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { activityEvents, collegeMemberships, colleges, inAppNotifications, learnerProfiles } from "@/db/schema";
+import { activityEvents, collegeMemberships, colleges, inAppNotifications, learnerProfiles, membershipRoles, users } from "@/db/schema";
 import { learnerPrivateDocumentReceipts, profileVerificationEvents, profileVerifications } from "@/db/schema/profile-verification";
 import {
   VerificationStateError,
@@ -46,6 +46,18 @@ export const postgresLockedVerificationTransition: LockedTransition =
         userId: collegeMemberships.userId,
       }).from(collegeMemberships).where(eq(collegeMemberships.id, membershipId)).for("update");
       if (!member || member.status !== "ACTIVE") {
+        throw new VerificationStateError("NOT_ALLOWED");
+      }
+      // Recheck the target's learner role and platform status INSIDE the same
+      // transaction, after the membership lock. Hold shared locks so a role
+      // removal or account suspension cannot pass between review and commit.
+      const [learnerRole] = await tx.select({role:membershipRoles.role})
+        .from(membershipRoles)
+        .where(and(eq(membershipRoles.membershipId,membershipId),
+          eq(membershipRoles.role,"LEARNER"))).for("share");
+      const [platformUser] = await tx.select({status:users.platformStatus})
+        .from(users).where(eq(users.id,member.userId)).for("share");
+      if (!learnerRole || platformUser?.status !== "ACTIVE") {
         throw new VerificationStateError("NOT_ALLOWED");
       }
       // Hold a stable snapshot of the editable profile and evidence receipts.
