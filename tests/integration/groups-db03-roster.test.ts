@@ -29,6 +29,7 @@ type Fixture = {
   courseId: string; offeringId: string; deliveryId: string; slotId: string;
   groupId: string; scheduleEventId: string; otherUserId?: string; otherMembershipId?: string;
   otherEnrollmentId?: string; otherSectionEnrollmentId?: string;
+  crossProgramId?: string; crossCohortId?: string; crossSectionId?: string;
 };
 const fixtures: Fixture[] = [];
 const label = () => "DB03-R-" + randomUUID();
@@ -136,6 +137,9 @@ afterEach(async () => {
     await pool.query("DELETE FROM cohorts WHERE id=$1",[f.cohortId]);
     await pool.query("DELETE FROM academic_periods WHERE id=$1",[f.periodId]);
     await pool.query("DELETE FROM programs WHERE id=$1",[f.programId]);
+    if(f.crossSectionId) await pool.query("DELETE FROM sections WHERE id=$1",[f.crossSectionId]);
+    if(f.crossCohortId) await pool.query("DELETE FROM cohorts WHERE id=$1",[f.crossCohortId]);
+    if(f.crossProgramId) await pool.query("DELETE FROM programs WHERE id=$1",[f.crossProgramId]);
     await pool.query("DELETE FROM lms_groups WHERE id=$1",[f.groupId]);
     if(f.otherMembershipId) {
       await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[f.otherMembershipId]);
@@ -214,6 +218,44 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       .rejects.toMatchObject({ code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED" });
     await expect(getLearnerClassSchedule(suspended))
       .rejects.toMatchObject({ code: "LEARNER_SCHEDULE_ACCESS_DENIED" });
+  });
+
+  it("permits cross-program learners from the same college without moving their primary section", async () => {
+    const f=await setupRosterFixture();
+    const student=await createHostSectionLearner(f);
+    const p=randomUUID(), c=randomUUID(), s=randomUUID();
+    f.crossProgramId=p; f.crossCohortId=c; f.crossSectionId=s;
+    await pool.query(
+      "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
+      [p,SEED_IDS.departmentA,label(),label()],
+    );
+    await pool.query(
+      "INSERT INTO cohorts (id,program_id,name,code,start_period_id,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
+      [c,p,label(),label(),f.periodId],
+    );
+    await pool.query(
+      "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
+      [s,c,f.periodId,label(),label()],
+    );
+    await pool.query(
+      "UPDATE learner_program_enrollments SET program_id=$1,cohort_id=$2 WHERE id=$3",
+      [p,c,f.otherEnrollmentId],
+    );
+    await pool.query(
+      "UPDATE section_enrollments SET section_id=$1 WHERE id=$2",
+      [s,f.otherSectionEnrollmentId],
+    );
+    const joined=await joinGroup(student.ctx,f.groupId,student.membershipId);
+    expect(joined.state).toBe("ACTIVE");
+    await expect(requireLearningReadAccess(student.ctx,f.offeringId,f.deliveryId))
+      .resolves.toBe("LEARNER");
+    const home=await pool.query(
+      "SELECT section_id FROM section_enrollments WHERE id=$1",
+      [f.otherSectionEnrollmentId],
+    );
+    expect(home.rows[0].section_id).toBe(s);
+    const listed=await listLearnerCourseDeliveries(student.ctx);
+    expect(listed.some(row=>row.deliveryId===f.deliveryId)).toBe(true);
   });
 
   it("rejects elective joins without any active primary academic enrollment", async () => {
