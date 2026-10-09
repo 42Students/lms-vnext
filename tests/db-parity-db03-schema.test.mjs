@@ -55,11 +55,22 @@ test("DB03 migration 0038 preserves project TEAM group link semantics", () => {
   const next = load("drizzle/meta/0038_snapshot.json");
   const sql38 = fs.readFileSync("drizzle/0038_project_team_group.sql", "utf8");
   assert.equal(next.prevId, s37.id);
-  assert.equal(journal.entries.at(-1).tag, "0038_project_team_group");
-  assert.equal(journal.entries.at(-1).idx, 38);
+  assert.equal(journal.entries.find(entry=>entry.idx===38)?.tag, "0038_project_team_group");
+  assert.equal(journal.entries.find(entry=>entry.tag==="0038_project_team_group")?.idx, 38);
   const project = next.tables["public.project_instances"];
   assert.equal(project.columns.team_group_id.notNull, false);
   assert.ok(project.foreignKeys.project_instances_team_group_id_lms_groups_id_fk);
   assert.equal(project.indexes.project_instances_team_group_uq.isUnique, true);
   assert.match(sql38, /ADD COLUMN "team_group_id" uuid/);
+});
+
+test("DB03 cross-parent tenant guards are registered in migration 0039", () => {
+  const s38=load("drizzle/meta/0038_snapshot.json");
+  const s39=load("drizzle/meta/0039_snapshot.json");
+  const sql39=fs.readFileSync("drizzle/0039_db03_scope_triggers.sql","utf8");
+  assert.equal(s39.prevId,s38.id);
+  assert.equal(journal.entries.at(-1).tag,"0039_db03_scope_triggers");
+  for(const trigger of ["db03_member_tenant_guard","db03_elective_slot_scope_guard",
+    "db03_elective_offering_scope_guard","db03_project_team_scope_guard"])
+    assert.ok(sql39.includes("CREATE TRIGGER "+trigger));
 });
