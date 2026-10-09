@@ -167,3 +167,13 @@ Read this file, `AGENTS.md`, `docs/database-workflow.md`, `docs/planning/databas
 - `Faculty.facultyType` is a Java enum persisted without `@Enumerated(EnumType.STRING)`; JPA defaults to **ORDINAL**. The vNext redesign must preserve conceptual faculty-title/portal-role meaning **without** copying ordinal persistence.
 - Source evidence: `docs/planning/database-parity-jpa-entity-census.json` and 12 `db-sweep-jpa-XX.json` batch files; exact V193 table/column rename and stored-code changes in `database-parity-recruiter-rename-ledger.json`.
 - **Important:** the 118-model inventory is not an `@Entity` scan of all 1,008 Java source files. Also no live MySQL information_schema scan has been performed.
+
+## Pass 3/5 — relational integrity & hidden behaviors (2026-10-09)
+
+**Pass 3 SOURCE AUDIT DONE; database equivalence NOT VERIFIED.** See `docs/planning/database-parity-pass3-adversarial-findings.md` for 12 new/further evidenced findings and `docs/planning/database-parity-pass3-fk-audit.json` for a complete snapshot FK graph.
+
+At frozen vNext schema SHA: **84 tables, 195 FKs (all single-column), 172 CHECK constraints, 9 CASCADE FKs and 41 multi-parent table scenarios needing explicit consistency review**. Some business services already perform ownership checks; those checks do not by themselves certify arbitrary direct DB writes.
+
+The pass also examined group/elective seat and pick semantics, eligibility bulk undo, profile verification's pending vs approved snapshots, active-season cardinality mismatch and audit/retention consequences. Read-only PostgreSQL catalog extraction is prepared at `scripts/sql/vnext-readonly-integrity.sql` (not executed).
+
+Pass control: `docs/planning/database-parity-five-pass-tracker.json`. **Pass 4 NOT STARTED. Pass 5 NOT STARTED.** User requested one pass per turn; do not silently combine them. Generated migrations = **zero** in this audit workstream, and no real DB tests have run.
