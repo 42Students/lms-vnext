@@ -301,6 +301,7 @@ async function promoteEligibleWaitlist(
       state: "ACTIVE", waitlistPosition: null, joinedAt: now,
       updatedAt: now, version: sql.raw('"version" + 1'),
     }).where(eq(lmsGroupMembers.id, candidate.id));
+    await mirrorProjectTeamMember(tx, group, candidate.membershipId, true, context.user.id);
     await tx.update(lmsGroups).set({
       activeCount: sql.raw('"active_count" + 1'),
       version: sql.raw('"version" + 1'), updatedAt: now,
