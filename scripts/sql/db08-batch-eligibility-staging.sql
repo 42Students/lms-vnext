@@ -81,8 +81,13 @@ CREATE FUNCTION db08_assert_scope_college() RETURNS trigger LANGUAGE plpgsql AS 
 DECLARE actual_college uuid;
 BEGIN
   IF NEW.scope_type = 'MEMBERSHIP' THEN
-    SELECT college_id INTO actual_college
-      FROM college_memberships WHERE id = NEW.scope_id;
+    SELECT m.college_id INTO actual_college
+      FROM college_memberships m
+      WHERE m.id = NEW.scope_id
+        AND EXISTS (
+          SELECT 1 FROM membership_roles mr
+          WHERE mr.membership_id = m.id AND mr.role = 'LEARNER'
+        );
   ELSIF NEW.scope_type = 'SECTION' THEN
     SELECT d.college_id INTO actual_college
       FROM sections s
