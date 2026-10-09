@@ -10,7 +10,97 @@
   "migrations": [
     {
       "file": "V162__tpo_v1_settings.sql",
-      "error": "UNKNOWN: Error code: UNKNOWN; Error: RemoteProtocolError: Server disconnected without sending a response."
+      "create": [
+        {
+          "table": "college_placement_rules",
+          "fields": [
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "counts_as_placed_at",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'OFFER_RELEASED'"
+            },
+            {
+              "name": "max_held_offers",
+              "definition": "INT NOT NULL DEFAULT 1"
+            },
+            {
+              "name": "uplift_pct",
+              "definition": "INT NOT NULL DEFAULT 40 COMMENT 'A placed student may still apply if CTC is at least this much higher, or the drive is tagged Dream'"
+            },
+            {
+              "name": "min_response_hours",
+              "definition": "INT NOT NULL DEFAULT 48"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V162__tpo_v1_settings.sql",
+          "rawFieldCount": 7
+        },
+        {
+          "table": "college_what_companies_see",
+          "fields": [
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "show_cgpa_exact",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'False = band only, e.g. \"7.5-8.0\"'"
+            },
+            {
+              "name": "show_tenth_twelfth",
+              "definition": "BOOLEAN NOT NULL DEFAULT TRUE"
+            },
+            {
+              "name": "show_project_links",
+              "definition": "BOOLEAN NOT NULL DEFAULT TRUE"
+            },
+            {
+              "name": "show_assessment_scores",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "show_attendance",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V162__tpo_v1_settings.sql",
+          "rawFieldCount": 7
+        }
+      ],
+      "alter": [
+        {
+          "table": "industry_company",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "export_columns_json",
+              "definition": "JSON NULL COMMENT 'Saved per-company export column picker (TPO V1)'"
+            }
+          ],
+          "sourceMigration": "V162__tpo_v1_settings.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1496
     },
     {
       "file": "V163__retire_legacy_lesson_content_types.sql",
