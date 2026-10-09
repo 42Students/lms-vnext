@@ -1,0 +1,4747 @@
+{
+  "domain": "DB10_SHARED_OPERATIONS",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "vnextSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+  "scope": "Source-derived field candidates only, NOT actual live schema or verified semantic mapping",
+  "counts": {
+    "tables": 19,
+    "fields": 221,
+    "sameNameCandidateFields": 15
+  },
+  "tables": [
+    {
+      "table": "admin_audit_log",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "admin_audit_log",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "activity_events"
+      ],
+      "sourceFieldCount": 13,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "activity_events",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "actor_user_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "activity_events",
+              "column": "actor_user_id",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "actor_user_type",
+          "sourceType": "varchar(20)",
+          "sourceDefinition": "varchar(20) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "actor_contact_mobile",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "varchar(32) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "action_key",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "varchar(100) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "entity_type",
+          "sourceType": "varchar(60)",
+          "sourceDefinition": "varchar(60) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "entity_id",
+          "sourceType": "varchar(60)",
+          "sourceDefinition": "varchar(60) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "organization_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "activity_events",
+              "column": "organization_id",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "college_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "activity_events",
+              "column": "college_id",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "ip_address",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "varchar(64) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "user_agent",
+          "sourceType": "varchar(512)",
+          "sourceDefinition": "varchar(512) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "payload_json",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "admin_audit_log",
+          "legacySnapshotTable": "admin_audit_log",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "activity_events"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "announcements",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "announcements",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "in_app_notifications"
+      ],
+      "sourceFieldCount": 13,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "in_app_notifications",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "in_app_notifications",
+              "column": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "is_deleted",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "message",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "receiver_type",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "receiver_value",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "sender_id",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "sender_type",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "title",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "in_app_notifications",
+              "column": "title",
+              "type": "text",
+              "nullable": false,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "scheduled_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "expires_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "announcements",
+          "legacySnapshotTable": "announcements",
+          "legacyColumn": "is_pinned",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) NOT NULL DEFAULT '0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "app_setting",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "app_setting",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "module_access_rules"
+      ],
+      "sourceFieldCount": 9,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "module_access_rules",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "module_access_rules",
+              "column": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "module_access_rules",
+              "column": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "scope_type",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "varchar(32) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "module_access_rules",
+              "column": "scope_type",
+              "type": "varchar(32)",
+              "nullable": false,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "scope_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "module_access_rules",
+              "column": "scope_id",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "setting_key",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "setting_value",
+          "sourceType": "text",
+          "sourceDefinition": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "app_setting",
+          "legacySnapshotTable": "app_setting",
+          "legacyColumn": "scope_id_key",
+          "sourceType": "int",
+          "sourceDefinition": "int GENERATED ALWAYS AS (ifnull(`scope_id`,-(1))) STORED",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "module_access_rules"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "bug_report",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "V151__bug_tracker_phase1.sql",
+      "legacySnapshotName": "bug_report",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 31,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "public_id",
+          "sourceType": "varchar(24)",
+          "sourceDefinition": "VARCHAR(24) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "reporter_access_id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "reporter_name",
+          "sourceType": "varchar(120)",
+          "sourceDefinition": "VARCHAR(120) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "account_role",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "VARCHAR(32) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "environment",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "VARCHAR(32) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "page",
+          "sourceType": "varchar(120)",
+          "sourceDefinition": "VARCHAR(120) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "screen",
+          "sourceType": "varchar(120)",
+          "sourceDefinition": "VARCHAR(120) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "section",
+          "sourceType": "varchar(120)",
+          "sourceDefinition": "VARCHAR(120) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "issue_type",
+          "sourceType": "varchar(80)",
+          "sourceDefinition": "VARCHAR(80) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "description",
+          "sourceType": "text",
+          "sourceDefinition": "TEXT NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "severity",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "VARCHAR(32) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "evidence_link",
+          "sourceType": "varchar(1000)",
+          "sourceDefinition": "VARCHAR(1000) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "status",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "VARCHAR(32) NOT NULL DEFAULT 'NEW'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'NEW'",
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "version",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL DEFAULT 0",
+          "nullable": "NOT_NULL",
+          "defaultValue": "0",
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "resolution",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "VARCHAR(32) NULL AFTER status",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "affected_layer",
+          "sourceType": "varchar(24)",
+          "sourceDefinition": "VARCHAR(24) NULL AFTER resolution",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "root_cause",
+          "sourceType": "text",
+          "sourceDefinition": "TEXT NULL AFTER affected_layer",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "fix_notes",
+          "sourceType": "text",
+          "sourceDefinition": "TEXT NULL AFTER root_cause",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "frontend_commit_sha",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "VARCHAR(64) NULL AFTER fix_notes",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "backend_commit_sha",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "VARCHAR(64) NULL AFTER frontend_commit_sha",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "regression_test_status",
+          "sourceType": "varchar(24)",
+          "sourceDefinition": "VARCHAR(24) NOT NULL DEFAULT 'NOT_REVIEWED' AFTER backend_commit_sha",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'NOT_REVIEWED'",
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "production_verified",
+          "sourceType": "boolean",
+          "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE AFTER regression_test_status",
+          "nullable": "NOT_NULL",
+          "defaultValue": "FALSE",
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "retest_status",
+          "sourceType": "varchar(24)",
+          "sourceDefinition": "VARCHAR(24) NOT NULL DEFAULT 'NOT_RETESTED' AFTER production_verified",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'NOT_RETESTED'",
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "retested_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NULL AFTER retest_status",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V153__bug_tracker_workflow.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "source_url",
+          "sourceType": "varchar(2000)",
+          "sourceDefinition": "VARCHAR(2000) NULL AFTER evidence_link",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V154__bug_tracker_source_context.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V154__bug_tracker_source_context.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "source_path",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "VARCHAR(500) NULL AFTER source_url",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V154__bug_tracker_source_context.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V154__bug_tracker_source_context.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "browser",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "VARCHAR(500) NULL AFTER source_path",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V154__bug_tracker_source_context.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V154__bug_tracker_source_context.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report",
+          "legacySnapshotTable": "bug_report",
+          "legacyColumn": "viewport",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "VARCHAR(64) NULL AFTER browser",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V154__bug_tracker_source_context.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V154__bug_tracker_source_context.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "bug_report_activity",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "V153__bug_tracker_workflow.sql",
+      "legacySnapshotName": "bug_report_activity",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 8,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "bug_report_activity",
+          "legacySnapshotTable": "bug_report_activity",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_activity",
+          "legacySnapshotTable": "bug_report_activity",
+          "legacyColumn": "bug_report_id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_activity",
+          "legacySnapshotTable": "bug_report_activity",
+          "legacyColumn": "activity_type",
+          "sourceType": "varchar(40)",
+          "sourceDefinition": "VARCHAR(40) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_activity",
+          "legacySnapshotTable": "bug_report_activity",
+          "legacyColumn": "actor_name",
+          "sourceType": "varchar(120)",
+          "sourceDefinition": "VARCHAR(120) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_activity",
+          "legacySnapshotTable": "bug_report_activity",
+          "legacyColumn": "from_value",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "VARCHAR(255) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_activity",
+          "legacySnapshotTable": "bug_report_activity",
+          "legacyColumn": "to_value",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "VARCHAR(255) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_activity",
+          "legacySnapshotTable": "bug_report_activity",
+          "legacyColumn": "note",
+          "sourceType": "varchar(1000)",
+          "sourceDefinition": "VARCHAR(1000) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_activity",
+          "legacySnapshotTable": "bug_report_activity",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "V153__bug_tracker_workflow.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "bug_report_attachment",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "V152__bug_tracker_attachments.sql",
+      "legacySnapshotName": "bug_report_attachment",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 7,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "bug_report_attachment",
+          "legacySnapshotTable": "bug_report_attachment",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V152__bug_tracker_attachments.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_attachment",
+          "legacySnapshotTable": "bug_report_attachment",
+          "legacyColumn": "bug_report_id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V152__bug_tracker_attachments.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_attachment",
+          "legacySnapshotTable": "bug_report_attachment",
+          "legacyColumn": "storage_key",
+          "sourceType": "varchar(700)",
+          "sourceDefinition": "VARCHAR(700) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V152__bug_tracker_attachments.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_attachment",
+          "legacySnapshotTable": "bug_report_attachment",
+          "legacyColumn": "original_filename",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "VARCHAR(255) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V152__bug_tracker_attachments.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_attachment",
+          "legacySnapshotTable": "bug_report_attachment",
+          "legacyColumn": "content_type",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "VARCHAR(100) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V152__bug_tracker_attachments.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_attachment",
+          "legacySnapshotTable": "bug_report_attachment",
+          "legacyColumn": "size_bytes",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V152__bug_tracker_attachments.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_report_attachment",
+          "legacySnapshotTable": "bug_report_attachment",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "V152__bug_tracker_attachments.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "bug_tracker_access",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "V151__bug_tracker_phase1.sql",
+      "legacySnapshotName": "bug_tracker_access",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 7,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "bug_tracker_access",
+          "legacySnapshotTable": "bug_tracker_access",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_access",
+          "legacySnapshotTable": "bug_tracker_access",
+          "legacyColumn": "display_name",
+          "sourceType": "varchar(120)",
+          "sourceDefinition": "VARCHAR(120) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_access",
+          "legacySnapshotTable": "bug_tracker_access",
+          "legacyColumn": "token_hash",
+          "sourceType": "char(64)",
+          "sourceDefinition": "CHAR(64) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_access",
+          "legacySnapshotTable": "bug_tracker_access",
+          "legacyColumn": "access_role",
+          "sourceType": "varchar(24)",
+          "sourceDefinition": "VARCHAR(24) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_access",
+          "legacySnapshotTable": "bug_tracker_access",
+          "legacyColumn": "active",
+          "sourceType": "boolean",
+          "sourceDefinition": "BOOLEAN NOT NULL DEFAULT TRUE",
+          "nullable": "NOT_NULL",
+          "defaultValue": "TRUE",
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_access",
+          "legacySnapshotTable": "bug_tracker_access",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_access",
+          "legacySnapshotTable": "bug_tracker_access",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "bug_tracker_session",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "V151__bug_tracker_phase1.sql",
+      "legacySnapshotName": "bug_tracker_session",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 5,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "bug_tracker_session",
+          "legacySnapshotTable": "bug_tracker_session",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_session",
+          "legacySnapshotTable": "bug_tracker_session",
+          "legacyColumn": "access_id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_session",
+          "legacySnapshotTable": "bug_tracker_session",
+          "legacyColumn": "token_hash",
+          "sourceType": "char(64)",
+          "sourceDefinition": "CHAR(64) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_session",
+          "legacySnapshotTable": "bug_tracker_session",
+          "legacyColumn": "expires_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "bug_tracker_session",
+          "legacySnapshotTable": "bug_tracker_session",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "V151__bug_tracker_phase1.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "lms_notification_template",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "lms_notification_template",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 28,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "action_url",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "body",
+          "sourceType": "text",
+          "sourceDefinition": "text NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "channel",
+          "sourceType": "varchar(20)",
+          "sourceDefinition": "varchar(20) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "created_by",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "description",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "dlt_entity_id",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "varchar(100) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "dlt_template_id",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "varchar(100) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "example_data",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "external_template_id",
+          "sourceType": "varchar(200)",
+          "sourceDefinition": "varchar(200) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "html_body",
+          "sourceType": "text",
+          "sourceDefinition": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "icon",
+          "sourceType": "varchar(50)",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "is_active",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "is_default",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "is_dlt_compliant",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "is_sample",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "language",
+          "sourceType": "varchar(10)",
+          "sourceDefinition": "varchar(10) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "merge_variable_mapping",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "notification_type",
+          "sourceType": "varchar(50)",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "sms_variable_format",
+          "sourceType": "varchar(50)",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "subject",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "template_key",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "varchar(100) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "updated_by",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "variable_schema",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lms_notification_template",
+          "legacySnapshotTable": "lms_notification_template",
+          "legacyColumn": "version",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "log_alert_signature",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "V157__log_alerting.sql",
+      "legacySnapshotName": "log_alert_signature",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 17,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "environment",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "VARCHAR(32) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "signature_hash",
+          "sourceType": "char(64)",
+          "sourceDefinition": "CHAR(64) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "sample_message",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "VARCHAR(500) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "first_seen_at",
+          "sourceType": "timestamp",
+          "sourceDefinition": "TIMESTAMP NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "last_seen_at",
+          "sourceType": "timestamp",
+          "sourceDefinition": "TIMESTAMP NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "occurrence_count",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL DEFAULT 1",
+          "nullable": "NOT_NULL",
+          "defaultValue": "1",
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "muted",
+          "sourceType": "boolean",
+          "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+          "nullable": "NOT_NULL",
+          "defaultValue": "FALSE",
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "fix_status",
+          "sourceType": "varchar(16)",
+          "sourceDefinition": "VARCHAR(16) NOT NULL DEFAULT 'OPEN'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'OPEN'",
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "fixed_in_commit",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "VARCHAR(64) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "fixed_at",
+          "sourceType": "timestamp",
+          "sourceDefinition": "TIMESTAMP NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "status_note",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "VARCHAR(500) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "muted_reason",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "VARCHAR(255) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "issue_public_id",
+          "sourceType": "varchar(32)",
+          "sourceDefinition": "VARCHAR(32) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "last_seen_commit",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "VARCHAR(64) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "regressed_at",
+          "sourceType": "timestamp",
+          "sourceDefinition": "TIMESTAMP NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature",
+          "legacySnapshotTable": "log_alert_signature",
+          "legacyColumn": "sample_path",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "VARCHAR(255) NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V164__log_alert_signature_triage.sql",
+          "history": [
+            {
+              "op": "ADD_COLUMN",
+              "migration": "V164__log_alert_signature_triage.sql"
+            }
+          ],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "log_alert_signature_account",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "V158__log_alert_signature_accounts.sql",
+      "legacySnapshotName": "log_alert_signature_account",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 3,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "log_alert_signature_account",
+          "legacySnapshotTable": "log_alert_signature_account",
+          "legacyColumn": "signature_id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V158__log_alert_signature_accounts.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA",
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature_account",
+          "legacySnapshotTable": "log_alert_signature_account",
+          "legacyColumn": "account_id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V158__log_alert_signature_accounts.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_signature_account",
+          "legacySnapshotTable": "log_alert_signature_account",
+          "legacyColumn": "first_seen_at",
+          "sourceType": "timestamp",
+          "sourceDefinition": "TIMESTAMP NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V158__log_alert_signature_accounts.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "log_alert_state",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "V157__log_alerting.sql",
+      "legacySnapshotName": "log_alert_state",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 4,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "log_alert_state",
+          "legacySnapshotTable": "log_alert_state",
+          "legacyColumn": "id",
+          "sourceType": "bigint",
+          "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_state",
+          "legacySnapshotTable": "log_alert_state",
+          "legacyColumn": "state_key",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "VARCHAR(64) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_state",
+          "legacySnapshotTable": "log_alert_state",
+          "legacyColumn": "poll_cursor_at",
+          "sourceType": "timestamp",
+          "sourceDefinition": "TIMESTAMP NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "log_alert_state",
+          "legacySnapshotTable": "log_alert_state",
+          "legacyColumn": "admin_last_viewed_at",
+          "sourceType": "timestamp",
+          "sourceDefinition": "TIMESTAMP NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": null,
+          "sourceEvidence": "V157__log_alerting.sql",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "notification",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "notification",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "in_app_notifications"
+      ],
+      "sourceFieldCount": 21,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "in_app_notifications",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "in_app_notifications",
+              "column": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "class_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "course_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "learner_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "is_read",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "message",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "title",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "in_app_notifications",
+              "column": "title",
+              "type": "text",
+              "nullable": false,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "context_label",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "notification_type",
+          "sourceType": "varchar(20)",
+          "sourceDefinition": "varchar(20) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "application_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "job_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "assessment_url",
+          "sourceType": "varchar(2048)",
+          "sourceDefinition": "varchar(2048) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "interview_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "creator_faculty_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "scheduled_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "delivery_status",
+          "sourceType": "varchar(20)",
+          "sourceDefinition": "varchar(20) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "delivery_error",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification",
+          "legacySnapshotTable": "notification",
+          "legacyColumn": "delivered_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "in_app_notifications"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "notification_template",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "notification_template",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 28,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "action_url",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "body",
+          "sourceType": "text",
+          "sourceDefinition": "text NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "channel",
+          "sourceType": "varchar(20)",
+          "sourceDefinition": "varchar(20) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "created_by",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "description",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "dlt_entity_id",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "varchar(100) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "dlt_template_id",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "varchar(100) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "example_data",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "external_template_id",
+          "sourceType": "varchar(200)",
+          "sourceDefinition": "varchar(200) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "html_body",
+          "sourceType": "text",
+          "sourceDefinition": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "icon",
+          "sourceType": "varchar(50)",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "is_active",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "is_default",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "is_dlt_compliant",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "is_sample",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "language",
+          "sourceType": "varchar(10)",
+          "sourceDefinition": "varchar(10) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "merge_variable_mapping",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "notification_type",
+          "sourceType": "varchar(50)",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "sms_variable_format",
+          "sourceType": "varchar(50)",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "subject",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "template_key",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "varchar(100) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "updated_by",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "variable_schema",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "notification_template",
+          "legacySnapshotTable": "notification_template",
+          "legacyColumn": "version",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "scheduled_job_lock",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "scheduled_job_lock",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 4,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "scheduled_job_lock",
+          "legacySnapshotTable": "scheduled_job_lock",
+          "legacyColumn": "job_name",
+          "sourceType": "varchar(120)",
+          "sourceDefinition": "varchar(120) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "scheduled_job_lock",
+          "legacySnapshotTable": "scheduled_job_lock",
+          "legacyColumn": "locked_until",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "scheduled_job_lock",
+          "legacySnapshotTable": "scheduled_job_lock",
+          "legacyColumn": "locked_by",
+          "sourceType": "varchar(120)",
+          "sourceDefinition": "varchar(120) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "scheduled_job_lock",
+          "legacySnapshotTable": "scheduled_job_lock",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "skill_synonyms",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "skill_synonyms",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 3,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "skill_synonyms",
+          "legacySnapshotTable": "skill_synonyms",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skill_synonyms",
+          "legacySnapshotTable": "skill_synonyms",
+          "legacyColumn": "synonym",
+          "sourceType": "varchar(100)",
+          "sourceDefinition": "varchar(100) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skill_synonyms",
+          "legacySnapshotTable": "skill_synonyms",
+          "legacyColumn": "skill_id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "skill_usage",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "skill_usage",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 3,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "skill_usage",
+          "legacySnapshotTable": "skill_usage",
+          "legacyColumn": "skill_name",
+          "sourceType": "varchar(200)",
+          "sourceDefinition": "varchar(200) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skill_usage",
+          "legacySnapshotTable": "skill_usage",
+          "legacyColumn": "usage_count",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skill_usage",
+          "legacySnapshotTable": "skill_usage",
+          "legacyColumn": "last_used",
+          "sourceType": "timestamp",
+          "sourceDefinition": "timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "skills",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "skills",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 9,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "category",
+          "sourceType": "varchar(50)",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "display_name",
+          "sourceType": "varchar(200)",
+          "sourceDefinition": "varchar(200) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "is_active",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "name",
+          "sourceType": "varchar(200)",
+          "sourceDefinition": "varchar(200) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "search_priority",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "skills",
+          "legacySnapshotTable": "skills",
+          "legacyColumn": "usage_count",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "sms_delivery_log",
+      "domain": "DB10_SHARED_OPERATIONS",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "sms_delivery_log",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 8,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "sms_delivery_log",
+          "legacySnapshotTable": "sms_delivery_log",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "sms_delivery_log",
+          "legacySnapshotTable": "sms_delivery_log",
+          "legacyColumn": "purpose",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "varchar(64) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "sms_delivery_log",
+          "legacySnapshotTable": "sms_delivery_log",
+          "legacyColumn": "recipient_suffix",
+          "sourceType": "varchar(8)",
+          "sourceDefinition": "varchar(8) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "sms_delivery_log",
+          "legacySnapshotTable": "sms_delivery_log",
+          "legacyColumn": "status",
+          "sourceType": "varchar(16)",
+          "sourceDefinition": "varchar(16) NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "sms_delivery_log",
+          "legacySnapshotTable": "sms_delivery_log",
+          "legacyColumn": "provider_message_id",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "varchar(64) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "sms_delivery_log",
+          "legacySnapshotTable": "sms_delivery_log",
+          "legacyColumn": "error_summary",
+          "sourceType": "varchar(500)",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "sms_delivery_log",
+          "legacySnapshotTable": "sms_delivery_log",
+          "legacyColumn": "college_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "sms_delivery_log",
+          "legacySnapshotTable": "sms_delivery_log",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    }
+  ]
+}
