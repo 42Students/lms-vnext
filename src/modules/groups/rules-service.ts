@@ -77,6 +77,10 @@ export async function refreshGroupRule(context:RequestContext,groupIdInput:strin
   const groupId=uuid.parse(groupIdInput);
   return getDb().transaction(async tx => {
     const group=await requireGroupManagement(tx,context,groupId);
+    // Setting up a rule is allowed on a draft group. Materializing its
+    // membership roster is not: only ACTIVE groups can enroll learners.
+    if (group.status!=="ACTIVE")
+      throw new GroupRuleServiceError("GROUP_RULE_GROUP_NOT_ACTIVE");
     const [rule]=await tx.select().from(lmsGroupRules)
       .where(eq(lmsGroupRules.groupId,groupId)).limit(1);
     if (!rule) throw new GroupRuleServiceError("GROUP_RULE_NOT_FOUND");
@@ -120,7 +124,7 @@ export async function refreshGroupRule(context:RequestContext,groupIdInput:strin
     let active=current.filter(row=>row.state==="ACTIVE").length;
     let waitlistPosition=Math.max(0,...current.filter(row=>row.state==="WAITLISTED")
       .map(row=>row.waitlistPosition ?? 0));
-    let added=0,removed=0,waitlisted=0,skippedCapacity=0,skippedOverride=0;
+    let added=0,removed=0,promoted=0,waitlisted=0,skippedCapacity=0,skippedOverride=0;
 
     for(const member of current) {
       if (matches.has(member.membershipId) || member.source!=="RULE" ||
@@ -138,6 +142,30 @@ export async function refreshGroupRule(context:RequestContext,groupIdInput:strin
       });
       removed++;
       old.set(member.membershipId,{...member,state:"REMOVED"});
+    }
+
+    // A rule-refresh can free seats after removing stale RULE members. Existing
+    // eligible waitlisted RULE members have priority over fresh matches. Locked
+    // or human-managed memberships are NOT implicitly changed by this runner.
+    const existingWaitlist=current
+      .filter(row=>row.state==="WAITLISTED" && row.source==="RULE" &&
+        !row.isLocked && matches.has(row.membershipId))
+      .sort((a,b)=>(a.waitlistPosition??Number.MAX_SAFE_INTEGER) -
+                   (b.waitlistPosition??Number.MAX_SAFE_INTEGER) ||
+                   a.createdAt.getTime()-b.createdAt.getTime());
+    for(const member of existingWaitlist) {
+      if(group.capacity!==null && active>=group.capacity) break;
+      await tx.update(lmsGroupMembers).set({
+        state:"ACTIVE",waitlistPosition:null,joinedAt:now,updatedAt:now,
+        version:sql`${lmsGroupMembers.version} + 1`,
+      }).where(eq(lmsGroupMembers.id,member.id));
+      await tx.insert(lmsGroupMemberEvents).values({
+        groupId,membershipId:member.membershipId,fromState:"WAITLISTED",
+        toState:"ACTIVE",source:"RULE",actorType:"SYSTEM",actorUserId:null,
+        reason:"RULE_REFRESH_WAITLIST_PROMOTION",
+      });
+      active++; promoted++;
+      old.set(member.membershipId,{...member,state:"ACTIVE",waitlistPosition:null});
     }
 
     for(const membershipId of [...matches].sort()) {
@@ -180,7 +208,7 @@ export async function refreshGroupRule(context:RequestContext,groupIdInput:strin
     await tx.update(lmsGroupRules).set({
       lastRunAt:now,lastRunMatched:matches.size,updatedAt:now,
     }).where(eq(lmsGroupRules.id,rule.id));
-    return {matched:matches.size,active,added,removed,waitlisted,
+    return {matched:matches.size,active,added,removed,promoted,waitlisted,
       skippedCapacity,skippedOverride};
   });
 }

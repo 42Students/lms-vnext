@@ -192,3 +192,14 @@ Includes a pure evaluation suite and an isolated PostgreSQL idempotence,
 locked-override and manual-protection integration test. **NOT EXECUTED**.
 Rule scheduling (`autoRefresh`) and complete legacy eligibility-expression
 parity remain release blockers, not falsely marked complete.
+
+## Rule roster reconciliation — waitlist vacancy and lifecycle (2026-10-10)
+
+The generic rule refresher now rejects non-ACTIVE groups rather than
+materializing member access before activation. It also promotes already
+WAITLISTED, still-matching, unlocked RULE memberships (ordered by existing
+waitlist position) when rule removals create vacancies, before considering
+new matches. Human-managed/locked states are left untouched. Promoted
+transitions record separate immutable SYSTEM events and are idempotent on
+subsequent refreshes. New isolated PostgreSQL tests cover vacancy
+promotion and DRAFT-group rejection. **Tests have not been executed.**

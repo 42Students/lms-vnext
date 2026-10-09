@@ -303,6 +303,68 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
 });
 
 describe("DB03 bounded group rule refresh (PostgreSQL)", () => {
+  it("does not materialize rule enrollments for a DRAFT group", async () => {
+    const draft = await createGroup(admin,{
+      collegeId:SEED_IDS.collegeA,kind:"BUS",
+      name:"DB03 draft rule "+randomUUID(),capacity:1,
+    });
+    fixture.groups.push(draft.id);
+    const {programId}=await createElectiveFixture();
+    await upsertGroupRule(admin,draft.id,{
+      criteria:{allowedProgramIds:[programId]},autoRefresh:false,
+    });
+    await expect(refreshGroupRule(admin,draft.id))
+      .rejects.toMatchObject({code:"GROUP_RULE_GROUP_NOT_ACTIVE"});
+    const [rows]=await Promise.all([
+      pool.query("SELECT count(*)::integer AS n FROM lms_group_members WHERE group_id=$1",[draft.id]),
+    ]);
+    expect(rows.rows[0].n).toBe(0);
+  });
+
+  it("promotes an existing eligible RULE waitlist when a stale active rule member exits", async () => {
+    const data=await createElectiveFixture();
+    const second=await createLearner();
+    const secondEnrollmentId=randomUUID();
+    fixture.learnerEnrollments.push(secondEnrollmentId);
+    await pool.query(
+      "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id) VALUES ($1,$2,$3,$4)",
+      [secondEnrollmentId,second.membershipId,data.programId,data.cohortId],
+    );
+    const group=await createActiveGroup("BUS",1);
+    await upsertGroupRule(admin,group,{
+      criteria:{allowedProgramIds:[data.programId]},autoRefresh:false,
+    });
+    const first=await refreshGroupRule(admin,group);
+    expect(first).toMatchObject({matched:2,added:2,active:1,waitlisted:1});
+    const members=await pool.query(
+      "SELECT membership_id,state FROM lms_group_members WHERE group_id=$1",
+      [group],
+    );
+    const active=members.rows.find(row=>row.state==="ACTIVE");
+    const waiting=members.rows.find(row=>row.state==="WAITLISTED");
+    expect(active).toBeDefined();
+    expect(waiting).toBeDefined();
+
+    await pool.query(
+      "UPDATE learner_program_enrollments SET status='WITHDRAWN', withdrawn_at=now() WHERE membership_id=$1 AND program_id=$2",
+      [active.membership_id,data.programId],
+    );
+    const refreshed=await refreshGroupRule(admin,group);
+    expect(refreshed).toMatchObject({matched:1,removed:1,promoted:1,active:1,added:0});
+    const promotedRow=await pool.query(
+      "SELECT state,waitlist_position FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [group,waiting.membership_id],
+    );
+    expect(promotedRow.rows[0]).toMatchObject({state:"ACTIVE",waitlist_position:null});
+    const promotion=await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=$1 AND reason='RULE_REFRESH_WAITLIST_PROMOTION'",
+      [group],
+    );
+    expect(promotion.rows[0].n).toBe(1);
+    expect(await refreshGroupRule(admin,group))
+      .toMatchObject({matched:1,active:1,added:0,removed:0,promoted:0});
+  });
+
   it("is idempotent, protects MANUAL and locked decisions, and reconciles active_count", async () => {
     const data=await createElectiveFixture();
     const group=await createActiveGroup("BUS",2);
