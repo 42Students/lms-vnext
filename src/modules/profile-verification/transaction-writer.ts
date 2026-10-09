@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { collegeMemberships, colleges } from "@/db/schema";
+import { activityEvents, collegeMemberships, colleges, inAppNotifications } from "@/db/schema";
 import { profileVerificationEvents, profileVerifications } from "@/db/schema/profile-verification";
 import {
   VerificationStateError,
@@ -37,12 +37,13 @@ export const postgresLockedVerificationTransition: LockedTransition =
       // Use UPDATE immediately: upgrading SHARE to UPDATE later can deadlock
       // two concurrent Education approvals. This is conservative and serializes
       // reviews per college until finer-grained settings versioning exists.
-      await tx.select({id:colleges.id}).from(colleges)
+      const [college] = await tx.select({id:colleges.id,organizationId:colleges.organizationId}).from(colleges)
         .where(eq(colleges.id,target.collegeId)).for("update");
       const [member] = await tx.select({
         id: collegeMemberships.id,
         status: collegeMemberships.status,
         collegeId: collegeMemberships.collegeId,
+        userId: collegeMemberships.userId,
       }).from(collegeMemberships).where(eq(collegeMemberships.id, membershipId)).for("update");
       if (!member || member.status !== "ACTIVE") {
         throw new VerificationStateError("NOT_ALLOWED");
@@ -120,6 +121,28 @@ export const postgresLockedVerificationTransition: LockedTransition =
         nextVersion: event.nextVersion,
         createdAt: event.occurredAt,
       });
+      if (event.action === "VERIFIED" || event.action === "SENT_BACK") {
+        if (!college) throw new VerificationStateError("NOT_ALLOWED");
+        const [activity] = await tx.insert(activityEvents).values({
+          organizationId:college.organizationId,collegeId:member.collegeId,
+          actorUserId:event.actorUserId,module:"PLACEMENTS",
+          eventType:event.action === "VERIFIED"
+            ? "PROFILE_VERIFICATION_APPROVED" : "PROFILE_VERIFICATION_SENT_BACK",
+          importance:"NORMAL",subjectType:"PROFILE_VERIFICATION",
+          subjectId:persisted.id,
+          summary:event.action === "VERIFIED"
+            ? "Learner profile section verified" : "Profile section returned for correction",
+          metadata:{section,version:record.version},
+        }).returning({id:activityEvents.id});
+        if (!activity) throw new VerificationStateError("INVALID_TRANSITION");
+        await tx.insert(inAppNotifications).values({
+          userId:member.userId,eventId:activity.id,
+          title:"Profile verification update",
+          body:event.action === "VERIFIED"
+            ? section+" profile verification approved"
+            : section+" profile verification needs correction",
+        });
+      }
       return record;
     });
   };
