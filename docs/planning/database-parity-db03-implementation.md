@@ -100,3 +100,20 @@ The DB03 roster integration suite now tests timetable inclusion/exclusion for ac
 ## Exact backing-delivery checks
 
 The shared active group-backed roster query also requires the backed delivery's section to be ACTIVE and to match the course offering's cohort and academic period. This avoids navigation/API drift from stale or cross-parent delivery links. Current mapping is conservative: ended/archived elective access requires a separate reviewed historical policy. **Not yet DB-tested.**
+
+## Strict backed-delivery release fix (2026-10-10)
+
+Elective offerings now REQUIRE a backed delivery in the TypeScript Drizzle
+schema, PostgreSQL migration, snapshot and service validation. The writer also
+checks ACTIVE course offering/type ELECTIVE, ACTIVE section, matching cohort and
+academic period, no ended delivery, same college and slot-period match when
+specified. The DB03 concurrent max-pick fixture now creates real academic
+structure, course offerings and deliveries; unbacked test shortcuts are gone.
+
+The DB03 roster tests no longer DELETE append-only events, only TRUNCATE within
+explicit `DB03_ISOLATED_TEST_DATABASE=1` disposable mode. CI sets that
+acknowledgement for its PostgreSQL test step. Invalid platform status fixtures
+were repaired (DISABLED is valid, SUSPENDED was not).
+
+**Verification remains PENDING:** Drizzle regeneration, TypeScript compile,
+migration replay, real PostgreSQL test execution and UI/API consumer E2E.

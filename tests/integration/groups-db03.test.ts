@@ -23,6 +23,8 @@ const learner: RequestContext = {
 const fixture = {
   groups: [] as string[], slots: [] as string[], courses: [] as string[], programs: [] as string[],
   users: [] as string[], memberships: [] as string[],
+  periods: [] as string[], cohorts: [] as string[], sections: [] as string[],
+  offerings: [] as string[], deliveries: [] as string[],
 };
 
 async function createActiveGroup(kind = "BUS", capacity = 1) {
@@ -51,23 +53,44 @@ async function createLearner(collegeId = SEED_IDS.collegeA): Promise<{ ctx: Requ
   }};
 }
 async function createElectiveFixture() {
-  const programId = randomUUID(), courseA = randomUUID(), courseB = randomUUID(), slotId = randomUUID();
-  fixture.programs.push(programId); fixture.courses.push(courseA, courseB); fixture.slots.push(slotId);
-  await pool.query("INSERT INTO programs (id, department_id, name, code, duration_terms) VALUES ($1,$2,$3,$4,8)",
-    [programId,SEED_IDS.departmentA,"DB03 Program "+programId,"DB03-"+programId]);
-  for (const cid of [courseA,courseB]) await pool.query(
-    "INSERT INTO courses (id, department_id, name, code) VALUES ($1,$2,$3,$4)",
-    [cid,SEED_IDS.departmentA,"DB03 Course "+cid,"DB03-"+cid],
-  );
+  const programId = randomUUID(), courseA = randomUUID(), courseB = randomUUID();
+  const slotId = randomUUID(), periodId = randomUUID(), cohortId = randomUUID(), sectionId = randomUUID();
+  fixture.programs.push(programId); fixture.courses.push(courseA, courseB);
+  fixture.slots.push(slotId); fixture.periods.push(periodId);
+  fixture.cohorts.push(cohortId); fixture.sections.push(sectionId);
   await pool.query(
-    "INSERT INTO elective_slots (id,college_id,program_id,semester_number,name,credits,min_pick,max_pick) VALUES ($1,$2,$3,1,'DB03 Slot',3,1,1)",
-    [slotId,SEED_IDS.collegeA,programId],
-  );
+    "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
+    [programId,SEED_IDS.departmentA,"DB03 Program "+programId,"DB03-"+programId]);
+  await pool.query(
+    "INSERT INTO academic_periods (id,college_id,name,code,start_date,end_date,status) VALUES ($1,$2,$3,$4,'2026-07-01','2026-12-31','ACTIVE')",
+    [periodId,SEED_IDS.collegeA,"DB03 Period "+periodId,"DB03-"+periodId]);
+  await pool.query(
+    "INSERT INTO cohorts (id,program_id,name,code,start_period_id,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
+    [cohortId,programId,"DB03 Cohort "+cohortId,"DB03-"+cohortId,periodId]);
+  await pool.query(
+    "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
+    [sectionId,cohortId,periodId,"DB03 Section "+sectionId,"DB03-"+sectionId]);
+  for (const cid of [courseA,courseB]) await pool.query(
+    "INSERT INTO courses (id,department_id,name,code) VALUES ($1,$2,$3,$4)",
+    [cid,SEED_IDS.departmentA,"DB03 Course "+cid,"DB03-"+cid]);
+  await pool.query(
+    "INSERT INTO elective_slots (id,college_id,program_id,academic_period_id,semester_number,name,credits,min_pick,max_pick) VALUES ($1,$2,$3,$4,1,'DB03 Slot',3,1,1)",
+    [slotId,SEED_IDS.collegeA,programId,periodId]);
   const groups = [await createActiveGroup("ELECTIVE"), await createActiveGroup("ELECTIVE")];
-  for (let i=0;i<groups.length;i++) await pool.query(
-    "INSERT INTO elective_offerings (slot_id,course_id,group_id) VALUES ($1,$2,$3)",
-    [slotId, i===0?courseA:courseB, groups[i]],
-  );
+  for (let i=0;i<groups.length;i++) {
+    const courseId = i===0?courseA:courseB;
+    const offeringId = randomUUID(), deliveryId = randomUUID();
+    fixture.offerings.push(offeringId); fixture.deliveries.push(deliveryId);
+    await pool.query(
+      "INSERT INTO course_offerings (id,course_id,cohort_id,academic_period_id,type,credits,display_order) VALUES ($1,$2,$3,$4,'ELECTIVE',3,$5)",
+      [offeringId,courseId,cohortId,periodId,i]);
+    await pool.query(
+      "INSERT INTO course_section_deliveries (id,offering_id,section_id) VALUES ($1,$2,$3)",
+      [deliveryId,offeringId,sectionId]);
+    await pool.query(
+      "INSERT INTO elective_offerings (slot_id,course_id,group_id,backed_delivery_id) VALUES ($1,$2,$3,$4)",
+      [slotId,courseId,groups[i],deliveryId]);
+  }
   return { slotId, groups };
 }
 beforeEach(() => {
@@ -84,6 +107,11 @@ afterEach(async () => {
     await pool.query("DELETE FROM elective_offerings WHERE group_id = ANY($1::uuid[])",[groupIds]);
   }
   if(fixture.slots.length) await pool.query("DELETE FROM elective_slots WHERE id = ANY($1::uuid[])",[fixture.slots]);
+  if(fixture.deliveries.length) await pool.query("DELETE FROM course_section_deliveries WHERE id = ANY($1::uuid[])",[fixture.deliveries]);
+  if(fixture.offerings.length) await pool.query("DELETE FROM course_offerings WHERE id = ANY($1::uuid[])",[fixture.offerings]);
+  if(fixture.sections.length) await pool.query("DELETE FROM sections WHERE id = ANY($1::uuid[])",[fixture.sections]);
+  if(fixture.cohorts.length) await pool.query("DELETE FROM cohorts WHERE id = ANY($1::uuid[])",[fixture.cohorts]);
+  if(fixture.periods.length) await pool.query("DELETE FROM academic_periods WHERE id = ANY($1::uuid[])",[fixture.periods]);
   if(groupIds.length) await pool.query("DELETE FROM lms_groups WHERE id = ANY($1::uuid[])",[groupIds]);
   if(fixture.courses.length) await pool.query("DELETE FROM courses WHERE id = ANY($1::uuid[])",[fixture.courses]);
   if(fixture.programs.length) await pool.query("DELETE FROM programs WHERE id = ANY($1::uuid[])",[fixture.programs]);
