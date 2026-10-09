@@ -1,0 +1,253 @@
+{
+  "range": [
+    0,
+    10
+  ],
+  "sha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "entries": [
+    {
+      "path": "src/main/java/com/_42students/lms/model/_Class.java",
+      "kind": "ENTITY",
+      "table": "class",
+      "superClass": "BaseModel",
+      "columns": [
+        "id",
+        "name",
+        "description",
+        "start_date",
+        "end_date",
+        "program_id",
+        "batch_id",
+        "upper_limit",
+        "lower_limit",
+        "class_type",
+        "roster_group_id"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 1679
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/AdminAuditLog.java",
+      "kind": "ENTITY",
+      "table": "admin_audit_log",
+      "superClass": null,
+      "columns": [
+        "actor_user_id",
+        "actor_user_type",
+        "actor_contact_mobile",
+        "action_key",
+        "entity_type",
+        "entity_id",
+        "organization_id",
+        "college_id",
+        "ip_address",
+        "user_agent",
+        "payload_json",
+        "created_at"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 1767
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/Announcement.java",
+      "kind": "ENTITY",
+      "table": "announcements",
+      "superClass": null,
+      "columns": [
+        "receiver_type",
+        "receiver_value",
+        "title",
+        "message",
+        "sender_type",
+        "sender_id",
+        "is_deleted",
+        "scheduled_at",
+        "expires_at",
+        "is_pinned"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 1,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 2008
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/ApplicationScreening.java",
+      "kind": "ENTITY",
+      "table": "application_screening",
+      "superClass": "BaseModel",
+      "columns": [
+        "screening_status",
+        "overall_score",
+        "skill_score",
+        "education_score",
+        "matched_skills",
+        "missing_skills",
+        "explanation",
+        "is_partial_score",
+        "excluded_attributes",
+        "screening_version",
+        "screened_at",
+        "screened_by",
+        "screening_method",
+        "screening_metadata"
+      ],
+      "joinColumns": [
+        "application_id"
+      ],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 4779
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/AppSetting.java",
+      "kind": "ENTITY",
+      "table": "app_setting",
+      "superClass": "BaseModel",
+      "columns": [
+        "scope_type",
+        "scope_id",
+        "setting_key",
+        "setting_value"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 654
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/AssignmentUploadReceipt.java",
+      "kind": "ENTITY",
+      "table": "assignment_upload_receipt",
+      "superClass": "BaseModel",
+      "columns": [
+        "receipt_id",
+        "storage_key",
+        "public_url",
+        "folder",
+        "upload_type",
+        "owner_user_id",
+        "owner_user_type",
+        "lesson_content_id",
+        "declared_content_type",
+        "declared_content_length",
+        "actual_content_type",
+        "actual_content_length",
+        "expires_at",
+        "consumed_at",
+        "student_assignment_id"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 1787
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/Attend.java",
+      "kind": "ENTITY",
+      "table": "attend",
+      "superClass": "BaseModel",
+      "columns": [
+        "student_id",
+        "class_schedule_id",
+        "drop_class_reason",
+        "marked_by",
+        "attendance_status"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 1930
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/AuthHandoffToken.java",
+      "kind": "ENTITY",
+      "table": "auth_handoff_token",
+      "superClass": "BaseModel",
+      "columns": [
+        "token",
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "used"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 759
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/AuthToken.java",
+      "kind": "ENTITY",
+      "table": "auth_token",
+      "superClass": "BaseModel",
+      "columns": [
+        "token"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 659
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/BaseModel.java",
+      "kind": "MAPPED_SUPERCLASS",
+      "table": null,
+      "superClass": null,
+      "columns": [
+        "id",
+        "created_at",
+        "updated_at",
+        "is_deleted"
+      ],
+      "joinColumns": [],
+      "joins": 0,
+      "elements": 0,
+      "ordinal": 0,
+      "string": 0,
+      "versions": 0,
+      "cascade": false,
+      "bytes": 1106
+    }
+  ],
+  "warnings": "Source annotation inventory; implicit naming / dynamic DDL / active table mapping unverified."
+}
