@@ -126,6 +126,35 @@ The source registry's 280 fields must be reviewed one by one before any table is
 
 **Concurrency/source drift:** DB08 branch forked at `c489b2569dd2d2742da2ee17ed313a26853dc4da`. While authoring, shared `db-parity-2026` advanced to `1a0f00557babf68407ad8189c80c973e1324a18c` (14 commits beyond the fork when observed). Integration must inspect the **newest** shared head and review DB03/DB04 changes, not rebase blindly.
 
+## DB08-B/C/D/E staging checkpoint — 2026-10-10
+
+**Source parity:** 18 legacy candidate tables, 280 source-derived fields. Independent ledger now has **68 MAPPED (reviewed staged destinations), 14 BLOCKED (specific structural/behavioral mismatches) and 198 UNMAPPED**. These are field-reconciliation states, *not* database/application completion percentages. Zero DB08 migration, DB tests or end-to-end workflow gates have been verified.
+
+### Newly authored files and semantics
+
+- `src/db/schema/placement-db08-lifecycle.ts`: placement-specific batch lifecycle (cohort keyed); per-learner-per-season registration/consent/outcome; debarment with date/drive count/lift history and unique counted drive receipts; verified off-campus placement with soft revocation and private object-path field. External CTC uses BIGINT annual INR to preserve legacy DECIMAL(10,2) LPA numerical range (still needs policy integration).
+- `src/db/schema/placement-saved-jobs.ts`: dedicated learner bookmark table, independent of applications and job preferences.
+- `src/modules/placements/db08-batch-registration-service.ts`: TPO college+cohort ownership checks; explicit batch invite/finish; learner vs TPO registration control; active program enrollment and deadline gate; repeated identical consent does not rewrite the original timestamp.
+- `src/modules/placements/db08-debarment-service.ts`: historical lift; date-based and counted-drive restrictions; transaction row lock and one receipt per job under the debarment. **Still requires confirmation that a job corresponds to exactly one legacy counted drive.**
+- `src/modules/placements/db08-external-outcome-service.ts`: TPO-only verified outside placement, revocation and policy-neutral union of accepted on-campus and verified off-campus CTC evidence. **No placement-cascade policy wired**; `EXTERNAL_OFFER` request type remains unavailable in current vNext learner request model.
+- `src/modules/placements/db08-saved-job-service.ts`: learner bookmark save/unsave/list; job must be published for initial save; unique per learner/job.
+- `src/modules/placements/db08-lifecycle-validation.ts`: UUID/choice/date/consent/debarment/amount validation.
+- `docs/planning/database-parity-db08-lifecycle-staged-migration.sql`: **review artifact only**, not a numbered migration.
+- `tests/unit/placement-db08-lifecycle.test.ts` and `tests/unit/placement-db08-schema.test.ts`: contracts and schema declarations, **not executed**.
+- `tests/integration/placements-db08-lifecycle.test.ts`: isolated-Postgres gating for missing/finished batch, consent replay, registration deadline and cross-college cohort. **Requires DB08_SCHEMA_READY=1, DB08_ISOLATED_TEST_DATABASE=1, TEST_DATABASE_URL and a fresh actual schema migration.**
+
+### Important unresolved correctness and parity work
+
+1. DB00 actual legacy live physical schema still not introspected; legacy Hibernate ddl-auto=update prevents full physical coverage proof.
+2. Raw PostgreSQL cross-tenant polymorphic/reference ownership for batch/cohort, registration/season/membership, external outcome/membership and bookmark/job needs **database-level guardrails** in DB11, beyond service checks. Do not expose the new APIs until this is proven.
+3. DB04 private uploaded evidence verification and original grades/CGPA source of truth are not integrated. The external outcome service currently accepts a namespaced object key but has no verified object receipt. This is a **blocker**, not completed private evidence.
+4. DB09 college placement rules, held CTC, uplift, counts-as-placed and registration/outcome configuration are not yet integrated. A policy-neutral evidence union does not prove parity.
+5. The legacy V188 batch model displaces parts of V161 seasons. vNext season has one ACTIVE per college whereas legacy supported more than one open season with an independent `is_current` filter. Mark as a product-state divergence until reviewed, not an automatic design improvement.
+6. Legacy individual learner interviews, role/job settings, screenings, offer version/financial components and remaining fields still require semantic proof. There are 198 UNMAPPED source fields in this ledger.
+7. GitHub Actions CI reports failure on current DB08 commits. The job-step API returned no steps and the redirected log could not be fetched, so **code failure vs runner/billing infrastructure failure is unresolved**. No passing lint/typecheck/unit/build/Postgres proof can be claimed.
+8. Avoid edits to shared `drizzle/meta/_journal.json` during parallel DB03/DB04 development. Regenerate numbered Drizzle migration and run disposable-DB replay after reconciling latest shared head.
+9. New DB08 B/C/D/E services have **no public HTTP endpoints by design** until migrations, tenant DB integrity and tests are green. Never count staged source as released functionality.
+
 ## Coordination handoff
 
 - [x] Branch isolated, GitHub issue claim established.
@@ -135,7 +164,7 @@ The source registry's 280 fields must be reviewed one by one before any table is
 - [x] Three additional precedence/fallback/NOT_DECIDED unit regression cases authored in `tests/unit/placement-access.test.ts`; **not executed**.
 - [x] Two automated tracker-gate tests authored in `tests/unit/placement-db08-ledger.test.ts` (every table/field accounted for; no evidence-free verification); **not executed**.
 - [x] Bulk eligibility action/event schema, transaction service, and stale-safe undo **authored on branch only** (migration and runtime proof pending).
-- [ ] 280/280 **semantically verified** field mappings (0 currently).
+- [ ] 280/280 source fields fully workflow-verified (68 staged MAPPED, 14 BLOCKED, 198 UNMAPPED, 0 DB_TESTED/WORKFLOW_VERIFIED).
 - [ ] DB08 schema/API implemented.
 - [ ] PostgreSQL and role/tenant tests executed.
 - [ ] Full legacy FE/API workflow comparison + acceptance sign-off.
