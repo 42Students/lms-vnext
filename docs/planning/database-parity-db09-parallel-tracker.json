@@ -17,7 +17,7 @@
     "fieldMappingsWorkflowVerified": 0,
     "approvedRetirements": 0,
     "runtimeTestsExecuted": 0,
-    "proposedFieldTargetsAuthored": 14
+    "proposedFieldTargetsAuthored": 52
   },
   "ownerExclusions": [
     "DB03 groups/electives and 0037 migration",
@@ -836,7 +836,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "due_at",
@@ -851,7 +859,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.due_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "owner_faculty_id",
@@ -866,7 +882,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.owner_membership_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "note",
@@ -879,7 +903,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.note",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "done_at",
@@ -894,7 +926,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.done_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "created_at",
@@ -909,7 +949,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.created_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "recruiter_lead_id",
@@ -924,8 +972,25 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.lead_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         }
+      ],
+      "proposedVnextTable": "placement_tpo_followups",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-crm.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "V161/V165 and later recruiter-lead renames",
+        "TpoRecruiterLeadService/TpoRecruiterLeadController"
       ]
     },
     {
@@ -1925,7 +1990,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "college_id",
@@ -1940,7 +2013,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.college_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "company_id",
@@ -1955,7 +2036,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.company_relationship_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "name",
@@ -1968,7 +2057,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.name",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "designation",
@@ -1981,7 +2078,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.designation",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "email_norm",
@@ -1996,7 +2101,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.email_norm",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "phone_norm",
@@ -2011,7 +2124,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.phone_norm",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "company_name",
@@ -2024,7 +2145,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.company_name",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "company_logo",
@@ -2037,7 +2166,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.company_logo_object_path",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "owner_faculty_id",
@@ -2052,7 +2189,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.owner_membership_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "manual_stage",
@@ -2065,7 +2210,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.manual_stage",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "not_now_reason",
@@ -2078,7 +2231,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.not_now_reason",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "not_now_until",
@@ -2091,7 +2252,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.not_now_until",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "source",
@@ -2104,7 +2273,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.source",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "invite_token_hash",
@@ -2119,7 +2296,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_token_hash",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "invite_sent_at",
@@ -2134,7 +2319,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_sent_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "invite_clicked_at",
@@ -2149,7 +2342,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_clicked_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "invite_reminder_sent_at",
@@ -2164,7 +2365,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_reminder_sent_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "invite_bounced_at",
@@ -2179,7 +2388,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_bounced_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "unsubscribed_at",
@@ -2194,7 +2411,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.unsubscribed_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "created_at",
@@ -2209,7 +2434,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.created_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "updated_at",
@@ -2224,7 +2457,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.updated_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "recruiter_id",
@@ -2239,8 +2480,25 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.recruiter_user_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         }
+      ],
+      "proposedVnextTable": "placement_tpo_leads",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-crm.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "V161/V165 and later recruiter-lead renames",
+        "TpoRecruiterLeadService/TpoRecruiterLeadController"
       ]
     },
     {
@@ -2267,7 +2525,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "type",
@@ -2280,7 +2546,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.type",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "outcome",
@@ -2293,7 +2567,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.outcome",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "note",
@@ -2306,7 +2588,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.note",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "is_system",
@@ -2319,7 +2609,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.is_system",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "created_by",
@@ -2332,7 +2630,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.created_by_user_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "created_at",
@@ -2347,7 +2653,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.created_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         },
         {
           "legacyField": "recruiter_lead_id",
@@ -2362,8 +2676,25 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.lead_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
         }
+      ],
+      "proposedVnextTable": "placement_tpo_lead_activities",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-crm.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "V161/V165 and later recruiter-lead renames",
+        "TpoRecruiterLeadService/TpoRecruiterLeadController"
       ]
     },
     {
@@ -4774,11 +5105,13 @@
       ]
     }
   ],
-  "implementationBatch": "DB09-A_POLICY_VISIBILITY_SCHEMA_AND_ENDPOINTS_AUTHORED_NOT_DB_VERIFIED",
+  "implementationBatch": "DB09_A_POLICY_VISIBILITY_AND_CRM_AUTHORED_NOT_DB_VERIFIED",
   "notes": [
-    "14/279 V162 source fields have corresponding isolated Drizzle schema definitions and API service contracts, but are deliberately NOT verified.",
-    "Company-visible data filtering and placement offer cascade consumer rewiring remain open.",
-    "SQL draft is unregistered; tests authored but neither unit nor PostgreSQL tests executed in this chat.",
-    "Keep original V162 default values. Visibility version is an intentional additive concurrency safeguard."
+    "52 of 279 DB09 source fields have proposed Drizzle counterparts (14 policy/visibility, 38 CRM). ZERO mappings are workflow/db verified.",
+    "All new SQL is unregistered under docs/planning/sql: never run against shared or production database.",
+    "CRM app APIs implement lead creation/list, activity stage transitions and due/move/done follow-ups; invitations/derived recruiter lifecycle are not implemented.",
+    "DB09 CRM owner membership, company relationship and recruiter user mappings require source consumer sign-off; direct-sql tenant guards are staged but unexecuted.",
+    "DB08 and DB10 retain their separate implementation ownership; no overlapping schema/services have been edited.",
+    "Code and tests authored only: cannot assert typecheck, lint, runtime Postgres replay or CI success from this environment."
   ]
 }
