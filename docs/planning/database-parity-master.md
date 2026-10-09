@@ -221,3 +221,20 @@ scheduling); project-team mirror; rule refresh; 79 field-level source mappings;
 physical cross-tenant FK/trigger strategy; append-only group event protection.
 **After DB03:** prioritize DB04 profiles and verification and DB08 placements
 eligibility, then complete the remaining domain queue.
+
+## DB03 working branch checkpoint — 2026-10-10
+
+GitHub branch `db-parity-2026` now records additive migrations **0037–0040**:
+six Groups/Electives tables, project-team group link, tenant guard triggers,
+and historical role/type snapshots. The DB03 source-column crosswalk accounts
+for **79/79 proposed source-to-target mappings** with **0 runtime-verified**
+fields; source path mapping does not prove behavioral parity. 40 DB03 targeted
+tests have been authored with **0 executed in this work session**. Draft PR
+[DB03 + database-first parity #7](https://github.com/42Students/lms-vnext/pull/7)
+is a CI/review gate, **not merge-ready**; runner allocation failed before
+steps on the observed GitHub Actions runs.
+
+See `docs/planning/database-parity-db03-implementation.md` for concrete
+blocked gates. DB04 Profiles/Verification and DB08 Placement Eligibility
+remain later domain implementation priorities. The source audit remains five
+passes complete, **database parity itself is not certified**.

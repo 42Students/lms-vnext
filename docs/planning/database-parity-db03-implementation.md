@@ -211,3 +211,49 @@ Manual join and PostgreSQL member identity trigger now both require ACTIVE user 
 ## Soft-deleted elective listing protection (2026-10-10)
 
 `listElectiveOfferings` now excludes `deleted_at` rows even if the old status is still ACTIVE; the shared slot pick limit and roster-access predicates already excluded them. Added an isolated PostgreSQL regression case. Not executed.
+
+
+## Implementation checkpoint, 2026-10-10 — RELEASE BLOCKED
+
+**Source-implemented, not evidence-verified:** six foundational tables (0037),
+project-team FK (0038), four parent/tenant integrity trigger families and
+immutable group ownership (0039), historical creator actor and event member
+type snapshots (0040). Rule evaluator/refresh, cross-program elective join and
+read access, learner course/timetable access, project-team transaction mirror,
+direct learner edit protection, and event immutability are authored.
+
+**Field accounting:** `docs/planning/database-parity-db03-79-field-crosswalk.json`
+lists **all 79 source columns** with **79 proposed target paths / derived
+structures**, **0 currently unmapped**, and **0 formally verified**. Proposed
+mapping is NOT equality of business behavior.
+
+**Authored DB03 test cases:** 17 `groups-db03.test.ts`, 10
+`groups-db03-roster.test.ts`, 3 `groups-db03-project-team.test.ts`,
+2 pure `groups-db03-rule-evaluator.test.ts`, 8 static
+`db-parity-db03-schema.test.mjs`: **40 authored, 0 executed here**.
+GitHub Actions draft PR #7 was created; CI fails before any steps (no
+runner allocated), so there is no positive compile, migration, DB or E2E
+evidence. PR intentionally remains draft and must NOT be merged as ready.
+
+**Prioritized hard blockers to call DB03 complete:**
+1. Runner/disposable PostgreSQL: `npm ci`, `npm run lint`,
+   `npm run typecheck`, `npm run test:db:parity`, `npm run db:generate`;
+   inspect `git diff --exit-code -- drizzle/` to catch manually-authored
+   snapshot drift.
+2. Replay all migrations 0000–0040 on a **new disposable PostgreSQL** database,
+   inspect physical tables, FKs, indexes, CHECKs and functions/triggers in
+   `pg_catalog`; run isolated DB03 integration and negative-write/race
+   suites. **Never point database reset/test helpers at production or shared DB.**
+3. Prove lecture attendance capture, quiz/assignment submission/grading,
+   learner/faculty/admin course and section roster, scheduling, content and
+   history are consistent under cross-program electives and group lifecycle.
+4. Reconcile *full* legacy JSON eligibility criteria, elective semester/year,
+   refresh scheduling policy, group capacity/rule race with direct joins,
+   project team source-of-truth across all producer APIs.
+5. Review and sign off each of the 79 crosswalk fields with concrete
+   PostgreSQL and write/read workflow evidence. Review concurrent branch
+   changes before signoff. Legacy actual SQL schema is still not inspected.
+
+**No migration of historical production data** (vNext greenfield). Do not
+estimate release readiness from count of tables, source-audit passes or
+authored tests. The broader 2,829-field LMS database parity remains open.
