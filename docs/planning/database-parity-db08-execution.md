@@ -158,3 +158,18 @@ The existing 18/280 legacy DB08 source census is unchanged and **all 280 fields 
 ### Quality note
 
 A source-shape review checked 18 listed invariants (files, guards, tracking and test presence). That is **not** TypeScript/SQL runtime validation or a database parity percentage.
+
+
+## Main integration and DB08-C kickoff — 2026-10-10
+
+**Integrated:** PR [#14](https://github.com/42Students/lms-vnext/pull/14) merged the **19 DB08-only files** from `db08-placement-parity-2026` into `main` as squash commit `b9bbabee6b44726e44b605a35104e345db9dd194`. This deliberately did **not** merge the stale DB-parity/DB03/DB04 history. **From this checkpoint onward, this DB08 chat writes directly to `main`** and must re-fetch `main` for each write to preserve other agents' contributions. The original isolated branch is historical, not the active target.
+
+**Build gate:** PR #14 GitHub CI marked failure but the GitHub Actions job had **zero steps, zero runner assignment, and finished within ~3 seconds**. This is *not a passing check*, and it does not establish a code failure. Before any live schema/route integration, separately run typecheck, lint, unit tests, build, generated migrations, disposable PostgreSQL and affected Playwright.
+
+**DB08-C source files added on `main`:**
+- `src/db/schema/placement-external.ts`: independent external offer with `SUBMITTED → VERIFIED/REJECTED → REVOKED` semantics, explicit verification/revocation actors/timestamps, private letter object path, original `ctc_lpa` numeric precision, immutable-event candidate and separate `placement_saved_jobs` model. These avoid inventing an on-campus job, application or offer for a student's real off-campus placement.
+- `src/modules/placements/external-offer-policy.ts`: a submitted/rejected/revoked external offer must never count as placed or influence uplift/held CTC. Only a reviewer-confirmed VERIFIED offer is eligible. Convert numeric `ctc_lpa` to annual INR using exact integer arithmetic; unknown salary stays unknown, not zero.
+- `tests/unit/placement-external-offer-policy.test.ts`: source-authored unit tests for verification guard, revocation, exact CTC and invalid salary.
+- `docs/planning/database-parity-db08-field-ledger.json`: all 18 source tables have **candidate destination models** now; **zero of 280 fields are semantically certified**. Candidate table presence is not parity.
+
+**Still NOT implemented or verified:** actual SQL migrations (staging drafts are not in Drizzle journal), external-offer service/APIs, reviewer request workflow, private signed letter delivery, saved-job service/UI, placement report aggregation, offer-status fidelity, and all producer/consumer parity. DB08 work is not finished.
