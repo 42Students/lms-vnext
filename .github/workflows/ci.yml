@@ -55,6 +55,9 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Database parity source-ledger checks
+        run: npm run test:db:parity
+
       - name: Deployment config validator
         env:
           GCP_PROJECT_ID: lms-vnext-dev

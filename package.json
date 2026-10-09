@@ -29,7 +29,11 @@
     "parity:status": "tsx scripts/parity-status.ts",
     "parity:pages": "tsx scripts/page-parity-status.ts",
     "parity:learner": "tsx scripts/learner-surface-status.ts",
-    "parity:clone-gate": "tsx scripts/clone-parity-gate.ts"
+    "parity:clone-gate": "tsx scripts/clone-parity-gate.ts",
+    "db:parity:status": "node scripts/db-parity-tools.mjs status",
+    "db:parity:inventory": "node scripts/db-parity-tools.mjs inventory",
+    "db:parity:compare": "node scripts/db-parity-tools.mjs compare",
+    "test:db:parity": "node --test tests/db-parity-tools.test.mjs tests/db-parity-contracts.test.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",
