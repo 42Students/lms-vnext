@@ -143,3 +143,17 @@ and academic year. VNext currently does NOT persist a proven equivalent
 semester/year-on-current-cohort mapping; period equality by itself does NOT
 prove semester equivalence. This is an explicit DB02/DB03 blocker, not
 a completed field mapping. Do not mark DB03 VERIFIED.
+
+## Project TEAM live mirror & rollback specifications (2026-10-10)
+
+The 0038 link is consumed by `attachProjectTeamGroup` and the kernel
+membership transitions. Only empty DRAFT same-college groups attach to empty
+project rosters. ACTIVE learner membership is mirrored to project_members in
+the **same transaction** as event and counter changes; a failed mirror aborts
+the group join. Direct project learner add/exit APIs reject
+`PROJECT_TEAM_GROUP_MANAGED` after a locked project-row check. Mentor
+management is separate.
+
+Added isolated PostgreSQL tests: transition/rejoin mirroring, direct writer
+rejection, and rollback on a conflicting privileged-SQL project member.
+**The tests have been authored but have NOT run; CI runner was never allocated.**
