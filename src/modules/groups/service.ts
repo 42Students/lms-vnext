@@ -4,6 +4,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships, electiveOfferings, electiveSlots,
   lmsGroupMemberEvents, lmsGroupMembers, lmsGroups, membershipRoles, users,
+  projectInstances, projectMembers,
 } from "@/db/schema";
 import { hasActiveMembership, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -131,6 +132,42 @@ async function emitEvent(tx: Tx, args: {
   });
 }
 
+
+async function mirrorProjectTeamMember(
+  tx: Tx, group: GroupRow, memberId: string, active: boolean, userId: string,
+) {
+  if (group.kind !== "PROJECT_TEAM") return;
+  const [project] = await tx.select({
+    id: projectInstances.id,
+    collegeId: projectInstances.collegeId,
+    status: projectInstances.status,
+  }).from(projectInstances)
+    .where(eq(projectInstances.teamGroupId, group.id)).limit(1);
+  if (!project || project.collegeId !== group.collegeId || project.status === "ARCHIVED")
+    throw new GroupServiceError("PROJECT_TEAM_LINK_INVALID");
+  const [existing] = await tx.select().from(projectMembers)
+    .where(and(eq(projectMembers.projectId, project.id),
+      eq(projectMembers.membershipId, memberId), isNull(projectMembers.endedAt)))
+    .limit(1);
+  if (active) {
+    if (existing) {
+      if (existing.role !== "LEARNER")
+        throw new GroupServiceError("PROJECT_TEAM_MEMBER_ROLE_CONFLICT");
+      return;
+    }
+    await tx.insert(projectMembers).values({
+      projectId: project.id, membershipId: memberId,
+      role: "LEARNER", isPrimary: false, createdByUserId: userId,
+    });
+  } else {
+    if (!existing || existing.role !== "LEARNER")
+      throw new GroupServiceError("PROJECT_TEAM_MIRROR_INCONSISTENT");
+    await tx.update(projectMembers).set({
+      endedAt: new Date(), isPrimary: false, updatedAt: new Date(),
+    }).where(eq(projectMembers.id, existing.id));
+  }
+}
+
 export async function createGroup(context: RequestContext, raw: unknown) {
   const input = groupCreate.parse(raw);
   if (input.collegeId === null) {
@@ -213,6 +250,7 @@ export async function joinGroup(
           .where(eq(lmsGroupMembers.id, existing.id)).returning()
       : await tx.insert(lmsGroupMembers)
           .values({ groupId, membershipId: memberId, ...patch }).returning();
+    if (available) await mirrorProjectTeamMember(tx, group, memberId, true, context.user.id);
     if (available) await tx.update(lmsGroups)
       .set({ activeCount: sql.raw('"active_count" + 1'), version: sql.raw('"version" + 1'), updatedAt: new Date() })
       .where(eq(lmsGroups.id, groupId));
@@ -256,6 +294,7 @@ export async function leaveGroup(
       toState: "REMOVED", source: mode, context,
     });
     if (member.state === "ACTIVE") {
+      await mirrorProjectTeamMember(tx, group, memberId, false, context.user.id);
       await tx.update(lmsGroups).set({
         activeCount: sql.raw('"active_count" - 1'),
         version: sql.raw('"version" + 1'), updatedAt: now,
@@ -293,6 +332,7 @@ export async function leaveGroup(
           }
         }
         if (first) {
+          await mirrorProjectTeamMember(tx, group, first.membershipId, true, context.user.id);
           await tx.update(lmsGroupMembers).set({
             state: "ACTIVE", waitlistPosition: null, joinedAt: now,
             updatedAt: now, version: sql.raw('"version" + 1'),
@@ -330,6 +370,33 @@ export async function transitionGroup(context: RequestContext, groupIdInput: str
     const [updated] = await tx.update(lmsGroups).set({
       status: next, version: sql.raw('"version" + 1'), updatedAt: new Date(),
     }).where(eq(lmsGroups.id, group.id)).returning();
+    return updated!;
+  });
+}
+
+/** Link only empty, same-college learner rosters; group remains source of truth. */
+export async function attachProjectTeamGroup(context: RequestContext, projectIdInput: string, groupIdInput: string) {
+  const projectId = uuid.parse(projectIdInput), groupId = uuid.parse(groupIdInput);
+  return getDb().transaction(async tx => {
+    const group = await lockGroup(tx, groupId);
+    if (group.kind !== "PROJECT_TEAM" || group.ownerScope !== "COLLEGE" ||
+      !group.collegeId || group.status !== "DRAFT" || group.activeCount !== 0)
+      throw new GroupServiceError("PROJECT_TEAM_GROUP_NOT_ATTACHABLE");
+    requirePermission(context, "projects.manage", { collegeId: group.collegeId });
+    const [project] = await tx.select().from(projectInstances)
+      .where(eq(projectInstances.id, projectId)).for("update");
+    if (!project || project.collegeId !== group.collegeId ||
+      project.teamGroupId || project.status === "ARCHIVED")
+      throw new GroupServiceError("PROJECT_TEAM_PROJECT_NOT_ATTACHABLE");
+    const [pm] = await tx.select({ total: count() }).from(projectMembers)
+      .where(and(eq(projectMembers.projectId, project.id), isNull(projectMembers.endedAt)));
+    const [gm] = await tx.select({ total: count() }).from(lmsGroupMembers)
+      .where(eq(lmsGroupMembers.groupId, group.id));
+    if ((pm?.total ?? 0) !== 0 || (gm?.total ?? 0) !== 0)
+      throw new GroupServiceError("PROJECT_TEAM_ROSTER_NOT_EMPTY");
+    const [updated] = await tx.update(projectInstances)
+      .set({ teamGroupId: group.id, updatedAt: new Date() })
+      .where(eq(projectInstances.id, project.id)).returning();
     return updated!;
   });
 }
