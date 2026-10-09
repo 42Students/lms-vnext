@@ -1,0 +1,5117 @@
+{
+  "title": "DB09 placement operations source-field parity review",
+  "generatedFrom": "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+  "originalLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "vnextBaseSha": "c489b2569dd2d2742da2ee17ed313a26853dc4da",
+  "sourceVnextInventorySha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+  "coordinationIssue": 5,
+  "ownershipBranch": "db09-tpo-recruiter-ops-2026",
+  "state": "SOURCE_CANDIDATES_ENUMERATED_NOT_SEMANTICALLY_VERIFIED",
+  "warning": "Candidate targets are for human investigation only: no row is mapped, implemented, DB-tested or workflow-verified. Source metadata is not actual live schema evidence.",
+  "counts": {
+    "legacyTableCandidates": 31,
+    "legacyFieldCandidates": 279,
+    "fieldMappingsVerified": 0,
+    "fieldMappingsImplemented": 0,
+    "fieldMappingsDbTested": 0,
+    "fieldMappingsWorkflowVerified": 0,
+    "approvedRetirements": 0,
+    "runtimeTestsExecuted": 0,
+    "proposedFieldTargetsAuthored": 52
+  },
+  "ownerExclusions": [
+    "DB03 groups/electives and 0037 migration",
+    "DB04 identity/profile verification and marks provenance",
+    "DB08 job/registration/eligibility/offer/outcome",
+    "DB10 shared email suppression and notification outbox delivery"
+  ],
+  "requiredGates": [
+    "replay full legacy DDL and inspect active/retired renames",
+    "check legacy FE/BE producers and consumers",
+    "decide per-field semantic target and tenancy",
+    "implement only DB09-owned schemas/services on isolated branch",
+    "regenerate/rebase migrations after DB03/DB04/DB08",
+    "disposable PostgreSQL isolation/constraint and concurrency tests",
+    "end-to-end actor privacy and workflow verification",
+    "fresh legacy source SHA and release sign-off"
+  ],
+  "tables": [
+    {
+      "legacyTableCandidate": "college_placement_rules",
+      "sourceMigrationOrSnapshot": "V162__tpo_v1_settings.sql",
+      "sourceFieldCount": 7,
+      "legacyPhysicalTableName": "college_placement_rules",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL PRIMARY KEY",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.college_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "counts_as_placed_at",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL DEFAULT 'OFFER_RELEASED'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "'OFFER_RELEASED'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.counts_as_placed_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "max_held_offers",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL DEFAULT 1",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "1",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.max_held_offers",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "uplift_pct",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL DEFAULT 40 COMMENT 'A placed student may still apply if CTC is at least this much higher, or the drive is tagged Dream'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "40",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.uplift_pct",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "min_response_hours",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL DEFAULT 48",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "48",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.min_response_hours",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.updated_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "version",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL DEFAULT 0",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "0",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.version",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        }
+      ],
+      "proposedVnextTable": "placement_college_rules",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-policy.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "legacy V162__tpo_v1_settings.sql",
+        "legacy JPA CollegePlacementRules/CollegeWhatCompaniesSee"
+      ]
+    },
+    {
+      "legacyTableCandidate": "college_what_companies_see",
+      "sourceMigrationOrSnapshot": "V162__tpo_v1_settings.sql",
+      "sourceFieldCount": 7,
+      "legacyPhysicalTableName": "college_what_companies_see",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL PRIMARY KEY",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.college_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "show_cgpa_exact",
+          "sourceSqlType": "boolean",
+          "sourceSqlDefinition": "BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'False = band only, e.g. \"7.5-8.0\"'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "FALSE",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_cgpa_exact",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "show_tenth_twelfth",
+          "sourceSqlType": "boolean",
+          "sourceSqlDefinition": "BOOLEAN NOT NULL DEFAULT TRUE",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "TRUE",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_tenth_twelfth",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "show_project_links",
+          "sourceSqlType": "boolean",
+          "sourceSqlDefinition": "BOOLEAN NOT NULL DEFAULT TRUE",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "TRUE",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_project_links",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "show_assessment_scores",
+          "sourceSqlType": "boolean",
+          "sourceSqlDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "FALSE",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_assessment_scores",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "show_attendance",
+          "sourceSqlType": "boolean",
+          "sourceSqlDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "FALSE",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_attendance",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.updated_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
+        }
+      ],
+      "proposedVnextTable": "placement_company_visibility_settings",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-policy.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "legacy V162__tpo_v1_settings.sql",
+        "legacy JPA CollegePlacementRules/CollegeWhatCompaniesSee"
+      ]
+    },
+    {
+      "legacyTableCandidate": "company",
+      "sourceMigrationOrSnapshot": "snapshot_through_V150",
+      "sourceFieldCount": 17,
+      "legacyPhysicalTableName": "company",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [
+        "placement_companies"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "int NOT NULL AUTO_INCREMENT",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "name",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "varchar(150) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "logo_url",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "varchar(500) DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "website",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "varchar(500) DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "industry",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "varchar(100) DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "description",
+          "sourceSqlType": "text",
+          "sourceSqlDefinition": "text",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "contact_person_name",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "varchar(150) DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "contact_email",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "varchar(150) DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "contact_phone",
+          "sourceSqlType": "varchar(30)",
+          "sourceSqlDefinition": "varchar(30) DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "internal_notes",
+          "sourceSqlType": "text",
+          "sourceSqlDefinition": "text",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "int DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "organization_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "int DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "datetime DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "datetime DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceSqlType": "tinyint(1)",
+          "sourceSqlDefinition": "tinyint(1) DEFAULT '0'",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": "'0'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "dedup_key",
+          "sourceSqlType": "varchar(200)",
+          "sourceSqlDefinition": "varchar(200) GENERATED ALWAYS AS (if((`college_id` is null),concat(_utf8mb4'org:',coalesce(`organization_id`,0),_utf8mb4':',lower(`name`)),concat(_utf8mb4'college:',`college_id`,_utf8mb4':',lower(`name`)))) STORED",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "dedup_key_active",
+          "sourceSqlType": "varchar(210)",
+          "sourceSqlDefinition": "varchar(210) DEFAULT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": "NULL",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "drive_group",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 5,
+      "legacyPhysicalTableName": "drive_group",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "industry_company_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "shared_form_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL COMMENT 'The common job/pay/eligibility/rounds payload sent to every college in this group'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recruiter_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "email_suppression",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 3,
+      "legacyPhysicalTableName": "email_suppression",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB10_DEPENDENCY",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "email_norm",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "VARCHAR(150) NOT NULL PRIMARY KEY",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "reason",
+          "sourceSqlType": "varchar(255)",
+          "sourceSqlDefinition": "VARCHAR(255) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "follow_up",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 7,
+      "legacyPhysicalTableName": "follow_up",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "due_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.due_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "owner_faculty_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.owner_membership_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "note",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.note",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "done_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.done_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.created_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "recruiter_lead_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_followups.lead_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        }
+      ],
+      "proposedVnextTable": "placement_tpo_followups",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-crm.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "V161/V165 and later recruiter-lead renames",
+        "TpoRecruiterLeadService/TpoRecruiterLeadController"
+      ]
+    },
+    {
+      "legacyTableCandidate": "industry_company",
+      "sourceMigrationOrSnapshot": "V159__hr_industry_accounts.sql",
+      "sourceFieldCount": 12,
+      "legacyPhysicalTableName": "industry_company",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [
+        "placement_companies",
+        "placement_company_relationships"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL AUTO_INCREMENT",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "name",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "VARCHAR(150) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "website",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "industry",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "logo_url",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_by_user_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_by_user_type",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime(6)",
+          "sourceSqlDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP(6)",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime(6)",
+          "sourceSqlDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP(6)",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceSqlType": "boolean",
+          "sourceSqlDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "FALSE",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "version",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL DEFAULT 0",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "0",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "export_columns_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL COMMENT 'Saved per-company export column picker (TPO V1)'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [
+            "placement_companies",
+            "placement_company_relationships"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "job_round",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 18,
+      "legacyPhysicalTableName": "job_round",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB08_OWNED",
+      "candidateTargets": [
+        "placement_job_rounds"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "job_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "seq",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL COMMENT 'Display and processing order'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "kind",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL COMMENT 'TALK|TEST|VENDOR_TEST|GD|INTERVIEW'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "name",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "mode",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NULL COMMENT 'ON_CAMPUS|VIRTUAL'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "scheduled_date",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL COMMENT 'Null = \"to be decided\"'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "venue",
+          "sourceSqlType": "varchar(255)",
+          "sourceSqlDefinition": "VARCHAR(255) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "meeting_url",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "what_to_bring",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "platform",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NULL COMMENT 'Test/vendor-test: Mettl, HackerRank, etc.'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "test_link",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "duration_minutes",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "results_due",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "status",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SCHEDULED|COMPLETED'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "'PENDING'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "added_by_recruiter_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NULL COMMENT 'Set when the recruiter added this round after the drive was requested",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_job_rounds"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "notification_outbox",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 13,
+      "legacyPhysicalTableName": "notification_outbox",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB10_DEPENDENCY",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "event",
+          "sourceSqlType": "varchar(50)",
+          "sourceSqlDefinition": "VARCHAR(50) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recipient_type",
+          "sourceSqlType": "varchar(15)",
+          "sourceSqlDefinition": "VARCHAR(15) NOT NULL COMMENT 'LEARNER|HR|FACULTY'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recipient_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "channel",
+          "sourceSqlType": "varchar(10)",
+          "sourceSqlDefinition": "VARCHAR(10) NOT NULL COMMENT 'APP|EMAIL|SMS'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "payload_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "send_after",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL COMMENT 'Now + 30s for the Undo hold; immediate for non-undoable sends'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "status",
+          "sourceSqlType": "varchar(15)",
+          "sourceSqlDefinition": "VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SENT|CANCELLED|FAILED'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "'PENDING'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "undo_group_id",
+          "sourceSqlType": "varchar(36)",
+          "sourceSqlDefinition": "VARCHAR(36) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "claimed_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "sent_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "failure_reason",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "prep_assignment",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 7,
+      "legacyPhysicalTableName": "prep_assignment",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09_WITH_COURSES_CONSUMER",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "learner_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "course_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "assessment_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "due_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "assigned_by",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "recruiter_applicant_note",
+      "sourceMigrationOrSnapshot": "V177__hr_applicant_note.sql",
+      "sourceFieldCount": 9,
+      "legacyPhysicalTableName": "hr_applicant_note",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "job_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "application_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "rating",
+          "sourceSqlType": "tinyint",
+          "sourceSqlDefinition": "TINYINT NULL COMMENT '1 to 5'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "note",
+          "sourceSqlType": "varchar(1000)",
+          "sourceSqlDefinition": "VARCHAR(1000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recruiter_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "recruiter_lead",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 23,
+      "legacyPhysicalTableName": "tpo_lead",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.college_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "company_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.company_relationship_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "name",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "VARCHAR(150) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.name",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "designation",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.designation",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "email_norm",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "VARCHAR(150) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.email_norm",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "phone_norm",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.phone_norm",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "company_name",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "VARCHAR(150) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.company_name",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "company_logo",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.company_logo_object_path",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "owner_faculty_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.owner_membership_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "manual_stage",
+          "sourceSqlType": "varchar(15)",
+          "sourceSqlDefinition": "VARCHAR(15) NOT NULL DEFAULT 'NEW' COMMENT 'NEW|CONTACTED|NOT_NOW — derived stages (Invited/Joined/Drive planned/Recruited) are computed, never stored'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "'NEW'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.manual_stage",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "not_now_reason",
+          "sourceSqlType": "varchar(255)",
+          "sourceSqlDefinition": "VARCHAR(255) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.not_now_reason",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "not_now_until",
+          "sourceSqlType": "date",
+          "sourceSqlDefinition": "DATE NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.not_now_until",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "source",
+          "sourceSqlType": "varchar(30)",
+          "sourceSqlDefinition": "VARCHAR(30) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.source",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "invite_token_hash",
+          "sourceSqlType": "varchar(128)",
+          "sourceSqlDefinition": "VARCHAR(128) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_token_hash",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "invite_sent_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_sent_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "invite_clicked_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_clicked_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "invite_reminder_sent_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_reminder_sent_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "invite_bounced_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.invite_bounced_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "unsubscribed_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.unsubscribed_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.created_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.updated_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "recruiter_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_leads.recruiter_user_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        }
+      ],
+      "proposedVnextTable": "placement_tpo_leads",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-crm.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "V161/V165 and later recruiter-lead renames",
+        "TpoRecruiterLeadService/TpoRecruiterLeadController"
+      ]
+    },
+    {
+      "legacyTableCandidate": "recruiter_lead_activity",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 8,
+      "legacyPhysicalTableName": "lead_activity",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "type",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL COMMENT 'CALL|WHATSAPP|EMAIL|MEETING|NOTE|SYSTEM'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.type",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "outcome",
+          "sourceSqlType": "varchar(30)",
+          "sourceSqlDefinition": "VARCHAR(30) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.outcome",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "note",
+          "sourceSqlType": "varchar(2000)",
+          "sourceSqlDefinition": "VARCHAR(2000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.note",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "is_system",
+          "sourceSqlType": "boolean",
+          "sourceSqlDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "FALSE",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.is_system",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "created_by",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.created_by_user_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.created_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        },
+        {
+          "legacyField": "recruiter_lead_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null,
+          "proposedTarget": "placement_tpo_lead_activities.lead_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-crm.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-crm-validation.test.ts",
+            "tests/integration/db09-tpo-crm.test.ts"
+          ]
+        }
+      ],
+      "proposedVnextTable": "placement_tpo_lead_activities",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-crm.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "V161/V165 and later recruiter-lead renames",
+        "TpoRecruiterLeadService/TpoRecruiterLeadController"
+      ]
+    },
+    {
+      "legacyTableCandidate": "recruiter_notification_read",
+      "sourceMigrationOrSnapshot": "V176__hr_notification_read.sql",
+      "sourceFieldCount": 3,
+      "legacyPhysicalTableName": "hr_notification_read",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [
+        "in_app_notifications"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "read_through",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recruiter_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "reschedule_request",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 9,
+      "legacyPhysicalTableName": "reschedule_request",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "round_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "application_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "reason",
+          "sourceSqlType": "varchar(1000)",
+          "sourceSqlDefinition": "VARCHAR(1000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "preferred_times",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "status",
+          "sourceSqlType": "varchar(12)",
+          "sourceSqlDefinition": "VARCHAR(12) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|MOVED|KEPT'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "'PENDING'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "reply",
+          "sourceSqlType": "varchar(1000)",
+          "sourceSqlDefinition": "VARCHAR(1000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "decided_by",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "round_assignment",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 7,
+      "legacyPhysicalTableName": "round_assignment",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "round_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "application_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "slot_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "room",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "student_confirmed_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL COMMENT 'Set when the student confirms a changed slot'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "notified_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "round_slot",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 9,
+      "legacyPhysicalTableName": "round_slot",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "round_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "starts_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "ends_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "room",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "panel",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "capacity",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL DEFAULT 1",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "1",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "proposed_by",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | RECRUITER'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "'TPO'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "status",
+          "sourceSqlType": "varchar(12)",
+          "sourceSqlDefinition": "VARCHAR(12) NOT NULL DEFAULT 'PROPOSED' COMMENT 'PROPOSED|CONFIRMED'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "'PROPOSED'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "student_request",
+      "sourceMigrationOrSnapshot": "V161__tpo_v1_drives.sql",
+      "sourceFieldCount": 13,
+      "legacyPhysicalTableName": "student_request",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB08_OWNED",
+      "candidateTargets": [
+        "placement_learner_requests"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "learner_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "type",
+          "sourceSqlType": "varchar(30)",
+          "sourceSqlDefinition": "VARCHAR(30) NOT NULL COMMENT 'WITHDRAWAL|OFFER_EXTENSION|REGISTRATION_CHANGE|ABSENCE_DISPUTE|CORRECTION|EXTERNAL_OFFER|PAP'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "job_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "application_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "payload_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "status",
+          "sourceSqlType": "varchar(15)",
+          "sourceSqlDefinition": "VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|APPROVED|REJECTED|AUTO_APPROVED'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "'PENDING'",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "reason",
+          "sourceSqlType": "varchar(1000)",
+          "sourceSqlDefinition": "VARCHAR(1000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "decided_by",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "decided_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "decision_reason",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "escalate_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL COMMENT 'When a pending request (e.g. a withdrawal 24h before a round) escalates to all TPO admins'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_learner_requests"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_audit_log",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 9,
+      "legacyPhysicalTableName": "tpo_audit_log",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "actor_type",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL COMMENT 'TPO | RECRUITER | SYSTEM | STUDENT'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "actor_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "action",
+          "sourceSqlType": "varchar(60)",
+          "sourceSqlDefinition": "VARCHAR(60) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "entity_type",
+          "sourceSqlType": "varchar(30)",
+          "sourceSqlDefinition": "VARCHAR(30) NULL COMMENT 'DRIVE|LEAD|STUDENT|OFFER|ROUND|SHARE|SETTINGS'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "entity_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "detail",
+          "sourceSqlType": "varchar(1000)",
+          "sourceSqlDefinition": "VARCHAR(1000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_bell",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 8,
+      "legacyPhysicalTableName": "tpo_bell",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [
+        "in_app_notifications",
+        "activity_events"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications",
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications",
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "type",
+          "sourceSqlType": "varchar(40)",
+          "sourceSqlDefinition": "VARCHAR(40) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "in_app_notifications",
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "title",
+          "sourceSqlType": "varchar(200)",
+          "sourceSqlDefinition": "VARCHAR(200) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "in_app_notifications",
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "body",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "in_app_notifications",
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "link",
+          "sourceSqlType": "varchar(200)",
+          "sourceSqlDefinition": "VARCHAR(200) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "in_app_notifications",
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "read_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications",
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications",
+            "activity_events"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_bell_read",
+      "sourceMigrationOrSnapshot": "V184__tpo_bell_read.sql",
+      "sourceFieldCount": 4,
+      "legacyPhysicalTableName": "tpo_bell_read",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [
+        "in_app_notifications"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "bell_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "reader_type",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "in_app_notifications"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "reader_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "read_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "in_app_notifications"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_college_settings",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 19,
+      "legacyPhysicalTableName": "tpo_college_settings",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL PRIMARY KEY",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "invite_email_template",
+          "sourceSqlType": "varchar(4000)",
+          "sourceSqlDefinition": "VARCHAR(4000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "reminder_email_template",
+          "sourceSqlType": "varchar(4000)",
+          "sourceSqlDefinition": "VARCHAR(4000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "whatsapp_template",
+          "sourceSqlType": "varchar(2000)",
+          "sourceSqlDefinition": "VARCHAR(2000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "student_email_wording",
+          "sourceSqlType": "varchar(4000)",
+          "sourceSqlDefinition": "VARCHAR(4000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "sms_monthly_cap",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL DEFAULT 500",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "500",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "email_signature",
+          "sourceSqlType": "varchar(1000)",
+          "sourceSqlDefinition": "VARCHAR(1000) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "logo_url",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "trusted_domains_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "prep_course_ids_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL COMMENT 'The LMS courses whose tests count toward readiness'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "prep_threshold_pct",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL DEFAULT 60 COMMENT 'Average on those tests a student needs to count as prepared'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "60",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "notify_toggles_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL COMMENT 'On/off for the optional student notices: driveOpenEmail, resultApplied, nudges, prepAssigned'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "tpo_can_verify_profiles",
+          "sourceSqlType": "tinyint(1)",
+          "sourceSqlDefinition": "TINYINT(1) NOT NULL DEFAULT 1",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "1",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "job_types_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL COMMENT 'Hidden built-in job types and the college''s own types'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "outcome_labels_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL COMMENT 'College labels, each mapped to one fixed placement outcome'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "cgpa_to_pct",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NULL COMMENT 'X9_5 | MINUS_0_5_X10 | MINUS_0_75_X10 | X10'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recruiter_access_months",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL DEFAULT 6",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "6",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recruiter_drive_needs_approval",
+          "sourceSqlType": "tinyint(1)",
+          "sourceSqlDefinition": "TINYINT(1) NOT NULL DEFAULT 1",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "1",
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_coordinator_assignment",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 7,
+      "legacyPhysicalTableName": "tpo_coordinator_assignment",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [
+        "placement_drive_day_coordinator_assignments"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_drive_day_coordinator_assignments"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_drive_day_coordinator_assignments"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "job_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_drive_day_coordinator_assignments"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "learner_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL COMMENT 'The student coordinator'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "placement_drive_day_coordinator_assignments"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "on_date",
+          "sourceSqlType": "date",
+          "sourceSqlDefinition": "DATE NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_drive_day_coordinator_assignments"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_by",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "placement_drive_day_coordinator_assignments"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "placement_drive_day_coordinator_assignments"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_message",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 7,
+      "legacyPhysicalTableName": "tpo_message",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "thread_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "sender_type",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL COMMENT 'TPO | RECRUITER'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "sender_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "body",
+          "sourceSqlType": "varchar(4000)",
+          "sourceSqlDefinition": "VARCHAR(4000) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "read_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_message_thread",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 6,
+      "legacyPhysicalTableName": "tpo_message_thread",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "job_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL COMMENT 'Null = the General thread for this HR'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "last_message_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recruiter_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_saved_view",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 7,
+      "legacyPhysicalTableName": "tpo_saved_view",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "faculty_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "scope",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL COMMENT 'STUDENTS|LEADS|DRIVES'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "name",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "filters_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_share_event",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 5,
+      "legacyPhysicalTableName": "tpo_share_event",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "share_id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "action",
+          "sourceSqlType": "varchar(20)",
+          "sourceSqlDefinition": "VARCHAR(20) NOT NULL COMMENT 'CREATED|OPENED|DOWNLOADED_LIST|DOWNLOADED_ZIP|REVOKED'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "detail",
+          "sourceSqlType": "varchar(500)",
+          "sourceSqlDefinition": "VARCHAR(500) NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_share_link",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 15,
+      "legacyPhysicalTableName": "tpo_share_link",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "job_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "token_hash",
+          "sourceSqlType": "varchar(128)",
+          "sourceSqlDefinition": "VARCHAR(128) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "recipient_email",
+          "sourceSqlType": "varchar(150)",
+          "sourceSqlDefinition": "VARCHAR(150) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "code_hash",
+          "sourceSqlType": "varchar(128)",
+          "sourceSqlDefinition": "VARCHAR(128) NULL COMMENT 'SHA-256 of the one-time email code'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "email_code_hash",
+          "sourceSqlType": "varchar(128)",
+          "sourceSqlDefinition": "VARCHAR(128) NULL COMMENT 'SHA-256 of the code the company asked us to email them'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "email_code_expires",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA",
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "columns_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "max_stage",
+          "sourceSqlType": "varchar(30)",
+          "sourceSqlDefinition": "VARCHAR(30) NULL COMMENT 'Applicants past this stage are excluded; phone only after SHORTLISTED'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "shortlist_by",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "expires_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "revoked_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_by",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_student_note",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 6,
+      "legacyPhysicalTableName": "tpo_student_note",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "learner_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "note",
+          "sourceSqlType": "varchar(2000)",
+          "sourceSqlDefinition": "VARCHAR(2000) NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_by",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NULL",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_team_member",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 6,
+      "legacyPhysicalTableName": "tpo_team_member",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [
+        "membership_roles"
+      ],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceSqlType": "bigint",
+          "sourceSqlDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+          "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "membership_roles"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "college_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "membership_roles"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "faculty_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [
+            "membership_roles"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "role",
+          "sourceSqlType": "varchar(25)",
+          "sourceSqlDefinition": "VARCHAR(25) NOT NULL COMMENT 'TPO_ADMIN | FACULTY_COORDINATOR'",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "membership_roles"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "department",
+          "sourceSqlType": "varchar(100)",
+          "sourceSqlDefinition": "VARCHAR(100) NULL COMMENT 'Faculty coordinators see only this department'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [],
+          "mappingCandidates": [
+            "membership_roles"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [
+            "membership_roles"
+          ],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTableCandidate": "tpo_user_prefs",
+      "sourceMigrationOrSnapshot": "V165__tpo_v1_complete.sql",
+      "sourceFieldCount": 3,
+      "legacyPhysicalTableName": "tpo_user_prefs",
+      "status": "FIELD_SEMANTICS_UNVERIFIED",
+      "responsibleWorkstream": "DB09",
+      "candidateTargets": [],
+      "candidateMappingIsVerified": false,
+      "activeRetiredHistoricalDecision": "PENDING_MIGRATION_CHAIN_AND_PRODUCER_REVIEW",
+      "fields": [
+        {
+          "legacyField": "faculty_id",
+          "sourceSqlType": "int",
+          "sourceSqlDefinition": "INT NOT NULL PRIMARY KEY",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "prefs_json",
+          "sourceSqlType": "json",
+          "sourceSqlDefinition": "JSON NULL COMMENT 'Which optional notifications this person receives'",
+          "sourceNullable": "NULL_ALLOWED",
+          "sourceDefault": null,
+          "sourceRiskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceSqlType": "datetime",
+          "sourceSqlDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "sourceNullable": "NOT_NULL",
+          "sourceDefault": "CURRENT_TIMESTAMP",
+          "sourceRiskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "mappingCandidates": [],
+          "verifiedVnextMapping": null,
+          "disposition": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedBy": null,
+          "validationEvidence": null
+        }
+      ]
+    }
+  ],
+  "implementationBatch": "DB09_A_POLICY_VISIBILITY_AND_CRM_AUTHORED_NOT_DB_VERIFIED",
+  "notes": [
+    "52 of 279 DB09 source fields have proposed Drizzle counterparts (14 policy/visibility, 38 CRM). ZERO mappings are workflow/db verified.",
+    "All new SQL is unregistered under docs/planning/sql: never run against shared or production database.",
+    "CRM app APIs implement lead creation/list, activity stage transitions and due/move/done follow-ups; invitations/derived recruiter lifecycle are not implemented.",
+    "DB09 CRM owner membership, company relationship and recruiter user mappings require source consumer sign-off; direct-sql tenant guards are staged but unexecuted.",
+    "DB08 and DB10 retain their separate implementation ownership; no overlapping schema/services have been edited.",
+    "Code and tests authored only: cannot assert typecheck, lint, runtime Postgres replay or CI success from this environment."
+  ]
+}
