@@ -41,3 +41,18 @@ SELECT JSON_OBJECT('kind','check','table_name',T.TABLE_NAME,'constraint_name',T.
 SELECT JSON_OBJECT('kind','trigger','trigger_name',TRIGGER_NAME,'event_object_table',EVENT_OBJECT_TABLE,
   'event_manipulation',EVENT_MANIPULATION,'action_timing',ACTION_TIMING)
   FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE() ORDER BY TRIGGER_NAME;
+-- Second adversarial sweep: metadata-only objects outside ordinary table lists.
+-- Access may be restricted by MySQL grants; an empty result is not proof of absence.
+SELECT JSON_OBJECT('kind','view','view_name',TABLE_NAME,'check_option',CHECK_OPTION,'security_type',SECURITY_TYPE)
+  FROM information_schema.VIEWS WHERE TABLE_SCHEMA = DATABASE() ORDER BY TABLE_NAME;
+SELECT JSON_OBJECT('kind','routine','routine_name',ROUTINE_NAME,'routine_type',ROUTINE_TYPE,
+  'sql_data_access',SQL_DATA_ACCESS,'security_type',SECURITY_TYPE)
+  FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA = DATABASE()
+  ORDER BY ROUTINE_TYPE,ROUTINE_NAME;
+SELECT JSON_OBJECT('kind','event','event_name',EVENT_NAME,'status',STATUS,'event_type',EVENT_TYPE)
+  FROM information_schema.EVENTS WHERE EVENT_SCHEMA = DATABASE() ORDER BY EVENT_NAME;
+SELECT JSON_OBJECT('kind','partition','table_name',TABLE_NAME,'partition_name',PARTITION_NAME,
+  'partition_ordinal_position',PARTITION_ORDINAL_POSITION,'partition_method',PARTITION_METHOD)
+  FROM information_schema.PARTITIONS
+  WHERE TABLE_SCHEMA = DATABASE() AND PARTITION_NAME IS NOT NULL
+  ORDER BY TABLE_NAME,PARTITION_ORDINAL_POSITION;

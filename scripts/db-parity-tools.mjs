@@ -143,7 +143,11 @@ export function run(argv = process.argv.slice(2)) {
     process.stdout.write(JSON.stringify(report, null, 2) + "\n");
     if (report.unmappedTables.length || report.nonimplementedTables.length || report.danglingTargetMappings.length) process.exitCode = 2;
   } else if (cmd === "status") {
+    const extended = json(path.join(defaultRoot, "docs/planning/database-parity-expanded-legacy-registry.json"));
+    const domainQueue = json(path.join(defaultRoot, "docs/planning/database-parity-full-domain-queue.json"));
     const report = { baseline: manifest.baseline, sourceCounts: manifest.summaries,
+      secondSweepSourceCounts: extended.counts, secondSweepDomainCounts: domainQueue.domainCounts,
+      secondSweepMappedCandidateCount: domainQueue.rows.filter(r => r.reviewStatus === "VERIFIED").length,
       legacyTableCrosswalkEntries: mappings.tables.length,
       implementedLegacyTableMappings: mappings.tables.filter(m => m.vnextTable && m.state === "MAPPED_PENDING_FIELD_AUDIT").length,
       explicitMissingLegacyConcepts: mappings.tables.filter(m => m.state === "GAP_CONFIRMED").map(m => m.legacyTable),

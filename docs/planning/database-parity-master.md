@@ -144,3 +144,16 @@ Read this file, `AGENTS.md`, `docs/database-workflow.md`, `docs/planning/databas
 - New executable diagnostics: `scripts/db-parity-tools.mjs`, `scripts/sql/legacy-readonly-schema.sql`. Deep source findings: `docs/planning/database-parity-adversarial-findings.md`.
 - Next domain specifications: `docs/planning/database-parity-db03-spec.md` and `docs/planning/database-parity-db04-spec.md`.
 - **No Drizzle schema migration generated or applied; no database domain verified.** Next implementation is DB03 group/elective schemas and PostgreSQL constraints, followed by DB04 profile verification.
+
+## 2026-10-09 second adversarial **completeness** sweep (supersedes earlier hotspot-only inventory status)
+
+**Read first:** `docs/planning/database-parity-second-sweep-findings.md`.
+
+- Historical checked-in legacy MySQL **test** schema snapshot (approximately V150): **137 tables, 2,138 CREATE TABLE column candidates**.
+- All **44 V151–V194 migrations** source-inspected and recorded in four `db-sweep-migrations-*.json` files. They contain **62 CREATE TABLE statements** and at least **85 ALTER ADD COLUMN candidates**.
+- Resulting **199 distinct table candidates** (not verified live/active), with **2,744 initial created-column candidates**. **Seven** V193 table renames and **13** column rename candidates tracked; do not double-count HR and Recruiter names.
+- **31** historical backup candidates, **7** Smrithi subsystem tables, `flyway_schema_history` deployment metadata; **all 199** placed in a domain queue, **0 unassigned**. **153** candidates were not even in the previous 46-table hotspot crosswalk.
+- **Critical:** legacy `V125` uses stored-procedure-driven **conditional DROP COLUMN**, and legacy `V113` uses company deduplication **triggers**. Plain CREATE/ALTER regex misses dynamic DDL and enforcement rules.
+- Strongly prefer **read-only live MySQL metadata capture** before final classification. The snapshot is from **September** and cannot represent 2026-10-09 production. Additional metadata export captures views, routines, events and partition summaries.
+- Refrain from creating 199 target tables. The objective is 100% active product data behavior with documented normalized redesigns and explicit retention/retirement decisions.
+- **No database migrations changed and no live database verified**. Source completeness has improved; actual clone parity remains not established.
