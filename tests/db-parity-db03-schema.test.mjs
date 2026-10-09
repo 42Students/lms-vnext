@@ -37,6 +37,14 @@ test("DB03 snapshot tracks all authored columns, FKs, checks and indexes", () =>
   assert.match(sql, /CREATE TRIGGER db03_group_member_events_no_mutation/);
   assert.match(sql, /BEFORE UPDATE OR DELETE ON "lms_group_member_events"/);
 });
+test("DB03 status stays explicitly unverified until production and disposable DB checks", () => {
+  const handoff = fs.readFileSync("docs/planning/database-parity-db03-implementation.md", "utf8");
+  const master = fs.readFileSync("docs/planning/database-parity-master.md", "utf8");
+  assert.match(handoff,/NOT DATABASE-VERIFIED|NOT EXECUTED|NOT YET VERIFIED/i);
+  assert.match(master,/IMPLEMENTING — six tables/);
+  assert.match(handoff,/group-backed course content/i);
+});
+
 test("DB03 persists historical removed membership and does not mutate primary section assignments", () => {
   assert.ok(s37.tables["public.lms_group_members"].columns.state);
   assert.ok(s37.tables["public.lms_group_member_events"].columns.to_state);

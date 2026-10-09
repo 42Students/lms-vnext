@@ -157,6 +157,18 @@ export function run(argv = process.argv.slice(2)) {
       pass5SourceAuditStatus: tracker.passes[4].status,
       pass5IntegrityWitnesses: json(path.join(defaultRoot, "docs/planning/database-parity-pass5-probe-manifest.json")).probes.length,
       pass5WitnessesExecuted: 0,
+      currentCommittedDrizzleSnapshot: {
+        file: "drizzle/meta/0037_snapshot.json",
+        source: "MANUALLY_CONSTRUCTED_REQUIRES_DRIZZLE_KIT_ROUND_TRIP",
+        tables: Object.keys(json(path.join(defaultRoot, "drizzle/meta/0037_snapshot.json")).tables).length,
+      },
+      db03Implementation: {
+        state: "SCHEMA_AND_SERVICES_AUTHORED_UNVERIFIED",
+        authoredTables: 6, registeredMigration: "0037_db03_groups_electives",
+        postgresIntegrationTestsDefined: 6, postgresIntegrationTestsExecuted: 0,
+        fullLegacyFieldParityVerified: false,
+        groupBackedConsumerParityVerified: false,
+      },
       databaseReleaseReady: false };
     process.stdout.write(JSON.stringify(report, null, 2) + "\n");
   } else throw Error("Unknown command: " + cmd);

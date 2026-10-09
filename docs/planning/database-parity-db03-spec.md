@@ -1,6 +1,6 @@
 # DB03 — Groups + Electives schema contract
 
-**Status:** DESIGN STARTED; no generated migration or DB execution yet.
+**Status:** IMPLEMENTATION IN PROGRESS. Six Drizzle tables, registered manual SQL migration, 0037 snapshot, transactional group operations and elective slot/offering producers authored on `db-parity-2026`. No Drizzle-kit regen/typecheck/DB replay or browser verification yet.
 **Legacy oracle:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`; migrations V166/V167/V168/V191 and Java entities `LmsGroup`, `LmsGroupMember`, `LmsGroupMemberEvent`, `LmsGroupRule`, `ElectiveSlot`, `ElectiveOffering`.
 
 ## Required domain model
@@ -31,9 +31,9 @@ Legacy group-backed classes allow elective learners from other programs without 
 
 ## Adversarial test checklist
 
-- [ ] concurrent last-seat claims do not overbook;
-- [ ] parallel elective choices honor max_pick across offerings;
-- [ ] locked removal rejects self-join and rule-based rejoin;
+- [ ] concurrent last-seat claims do not overbook (transaction row locking authored; DB race unexecuted);
+- [ ] parallel elective choices honor max_pick across offerings (slot lock authored + test unexecuted);
+- [ ] locked removal rejects self-join and rule-based rejoin (SELF supported; RULE writer not yet implemented);
 - [ ] rule refresh preserves manual/CSV decisions;
 - [ ] group-owned roster drives the same attendance/quiz/content authorization;
 - [ ] learner keeps primary section unchanged after elective enrollment;
@@ -42,4 +42,4 @@ Legacy group-backed classes allow elective learners from other programs without 
 - [ ] project-team member mirror and source state agree under rollback;
 - [ ] generated Drizzle schema, migration snapshot, PostgreSQL replay, and unit/integration/E2E evidence are recorded.
 
-Completion demands a generated migration (`npm run db:generate`), real DB verification, and every legacy field in `database-parity-hotspot-field-ledger.json` either mapped and tested or explicitly approved for redesign/retirement. **No schema has been changed in this planning batch.**
+Completion demands a Drizzle-kit round-trip (`npm run db:generate`), real PostgreSQL replay and service/browser tests, and every legacy field mapped/tested or explicitly retired. **Six tables are now authored and migration 0037 is registered, but no successful runtime evidence exists.** See `database-parity-db03-implementation.md`.
