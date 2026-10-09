@@ -30,6 +30,14 @@ describe("DB04 staged schema source contract (not SQL execution)",()=>{
     expect(candidate).toContain("BEFORE UPDATE ON profile_verifications");
     expect(candidate).toContain("NEW.row_version <> OLD.row_version+1");
   });
+  it("locks and revalidates actual learner and reviewer roles before commit",()=>{
+    expect(transaction).toContain('eq(membershipRoles.role,"LEARNER")');
+    expect(transaction).toContain('eq(systemRoles.role,"SUPER_ADMIN")');
+    expect(transaction).toContain('eq(membershipRoles.role,expectedRole)');
+    expect(transaction).toContain('profileVerificationTpoGrants.revokedAt');
+    expect(transaction).toContain('profileVerificationSettings.tpoCanVerifyProfiles');
+    expect(transaction).toContain('platformUser?.status !== "ACTIVE"');
+  });
   it("requires transactional same-key first-write serialization and atomic academic output",()=>{
     expect(transaction).toContain("pg_advisory_xact_lock");
     expect(transaction).toContain("publishVerifiedEducation(tx");
