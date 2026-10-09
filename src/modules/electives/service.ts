@@ -15,11 +15,11 @@ const slotInput = z.object({
   collegeId: uuid,
   programId: uuid,
   academicPeriodId: uuid.nullish(),
-  semesterNumber: z.number().int().min(1).max(24),
+  semesterNumber: z.number().int().min(1).max(12),
   academicYear: z.string().max(20).nullish(),
   name: z.string().trim().min(1).max(150),
   description: z.string().max(1000).nullish(),
-  credits: z.number().int().positive().default(3),
+  credits: z.number().int().min(0).max(30).default(3),
   minPick: z.number().int().min(0).default(1),
   maxPick: z.number().int().positive().default(1),
 }).refine(value => value.minPick <= value.maxPick, { path: ["maxPick"], message: "maxPick must be >= minPick" });
@@ -37,9 +37,23 @@ export class ElectivesServiceError extends Error {
   }
 }
 
+function normalizeAcademicYear(raw: string | null | undefined): string | null {
+  if (!raw || !raw.trim()) return null;
+  const match = /^([0-9]{4})(?:-([0-9]{2}|[0-9]{4}))?$/.exec(raw.trim());
+  if (!match) throw new ElectivesServiceError("ELECTIVE_ACADEMIC_YEAR_INVALID");
+  const start = Number(match[1]), next = start + 1, end = match[2];
+  if (end && Number(end) !== (end.length === 2 ? next % 100 : next))
+    throw new ElectivesServiceError("ELECTIVE_ACADEMIC_YEAR_INVALID");
+  return start + "-" + String(next % 100).padStart(2,"0");
+}
+
 export async function createElectiveSlot(context: RequestContext, raw: unknown) {
   const input = slotInput.parse(raw);
   const program = await loadProgramScope(input.programId);
+  const [duration] = await getDb().select({ terms: programs.durationTerms })
+    .from(programs).where(eq(programs.id, input.programId)).limit(1);
+  if (!duration || input.semesterNumber > duration.terms)
+    throw new ElectivesServiceError("ELECTIVE_SEMESTER_OUTSIDE_PROGRAM");
   requirePermission(context, "academics.manage", {
     organizationId: program.organizationId, collegeId: input.collegeId,
   });
@@ -57,7 +71,7 @@ export async function createElectiveSlot(context: RequestContext, raw: unknown) 
     programId: input.programId,
     academicPeriodId: input.academicPeriodId ?? null,
     semesterNumber: input.semesterNumber,
-    academicYear: input.academicYear ?? null,
+    academicYear: normalizeAcademicYear(input.academicYear),
     name: input.name,
     description: input.description ?? null,
     credits: input.credits,

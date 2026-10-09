@@ -99,8 +99,8 @@ CREATE TABLE "elective_slots" (
   "version" integer DEFAULT 0 NOT NULL,
   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
   "updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-  CONSTRAINT "elective_slots_semester_ck" CHECK ("semester_number" BETWEEN 1 AND 24),
-  CONSTRAINT "elective_slots_picks_ck" CHECK ("credits" > 0 AND "min_pick" >= 0 AND "max_pick" >= 1 AND "min_pick" <= "max_pick"),
+  CONSTRAINT "elective_slots_semester_ck" CHECK ("semester_number" BETWEEN 1 AND 12),
+  CONSTRAINT "elective_slots_picks_ck" CHECK ("credits" BETWEEN 0 AND 30 AND "min_pick" >= 0 AND "max_pick" >= 1 AND "min_pick" <= "max_pick"),
   CONSTRAINT "elective_slots_status_ck" CHECK ("status" IN ('ACTIVE','ARCHIVED')),
   CONSTRAINT "elective_slots_name_ck" CHECK (length(trim("name")) > 0),
   CONSTRAINT "elective_slots_version_ck" CHECK ("version" >= 0)

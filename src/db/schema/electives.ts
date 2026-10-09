@@ -24,8 +24,8 @@ export const electiveSlots = pgTable("elective_slots", {
 }, t => [
   index("elective_slots_college_program_term_idx").on(t.collegeId, t.programId, t.semesterNumber),
   index("elective_slots_period_status_idx").on(t.academicPeriodId, t.status),
-  check("elective_slots_semester_ck", sql.raw("\"semester_number\" BETWEEN 1 AND 24")),
-  check("elective_slots_picks_ck", sql.raw("\"credits\" > 0 AND \"min_pick\" >= 0 AND \"max_pick\" >= 1 AND \"min_pick\" <= \"max_pick\"")),
+  check("elective_slots_semester_ck", sql.raw("\"semester_number\" BETWEEN 1 AND 12")),
+  check("elective_slots_picks_ck", sql.raw("\"credits\" BETWEEN 0 AND 30 AND \"min_pick\" >= 0 AND \"max_pick\" >= 1 AND \"min_pick\" <= \"max_pick\"")),
   check("elective_slots_status_ck", sql.raw("\"status\" IN ('ACTIVE','ARCHIVED')")),
   check("elective_slots_name_ck", sql.raw("length(trim(\"name\")) > 0")),
   check("elective_slots_version_ck", sql.raw("\"version\" >= 0")),
