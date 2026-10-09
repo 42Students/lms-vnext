@@ -11,7 +11,8 @@
     "tables": 19,
     "fields": 221,
     "verified": 0,
-    "unmapped": 221
+    "unmapped": 221,
+    "sourceReviewedFields": 58
   },
   "records": [
     {
@@ -835,14 +836,25 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Internal issue primary key",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-02",
@@ -855,14 +867,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "User-facing issue reference",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.public_id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-03",
@@ -877,14 +900,25 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Submitting tracker access owner FK",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.reporter_access_id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-04",
@@ -897,14 +931,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Display-only reporter name, not authentication",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.reporter_name",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-05",
@@ -917,14 +962,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Affected LMS user role",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.account_role",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-06",
@@ -937,14 +993,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Reported environment",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.environment",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-07",
@@ -957,14 +1024,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Page/route where defect occurred",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.page",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-08",
@@ -977,14 +1055,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Specific screen",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.screen",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-09",
@@ -997,14 +1086,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Page section",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.section",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-10",
@@ -1017,14 +1117,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Reported defect classification",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.issue_type",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-11",
@@ -1037,14 +1148,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Issue narrative",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.description",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-12",
@@ -1057,14 +1179,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Bug impact severity",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.severity",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-13",
@@ -1077,14 +1210,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "HTTP(S) supporting evidence URL",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.evidence_link",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-14",
@@ -1097,14 +1241,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Workflow status",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.status",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-15",
@@ -1119,14 +1274,25 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Immutable creation time",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.created_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-16",
@@ -1141,14 +1307,25 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Last modification time",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.updated_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-17",
@@ -1161,14 +1338,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Optimistic concurrency version",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.version",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-18",
@@ -1181,14 +1369,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Terminal resolution",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.resolution",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-19",
@@ -1201,14 +1400,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Affected FE/BE layer",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.affected_layer",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-20",
@@ -1221,14 +1431,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Engineering root-cause note",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.root_cause",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-21",
@@ -1241,14 +1462,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Engineering implementation notes",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.fix_notes",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-22",
@@ -1261,14 +1493,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Frontend fix commit SHA",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.frontend_commit_sha",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-23",
@@ -1281,14 +1524,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Backend fix commit SHA",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.backend_commit_sha",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-24",
@@ -1301,14 +1555,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Regression test status",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.regression_test_status",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-25",
@@ -1321,14 +1586,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Production deployment verification marker",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.production_verified",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-26",
@@ -1341,14 +1617,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Reporter retest outcome",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.retest_status",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-27",
@@ -1363,14 +1650,25 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Retest decision timestamp",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.retested_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-28",
@@ -1383,14 +1681,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Original source URL",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.source_url",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V154__bug_tracker_source_context.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-29",
@@ -1403,14 +1712,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Frontend source path",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.source_path",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V154__bug_tracker_source_context.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-30",
@@ -1423,14 +1743,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Reporter browser identity",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.browser",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V154__bug_tracker_source_context.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT-31",
@@ -1443,14 +1774,25 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Viewport/browser dimensions",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerService.java"
+      ],
+      "readers": [
+        "service/BugTrackerService.java",
+        "controller/PublicBugTrackerController.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_reports.viewport",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V154__bug_tracker_source_context.sql",
+        "model/BugReport.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-01",
@@ -1465,14 +1807,24 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "History row primary key",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_activities.id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReportActivity.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-02",
@@ -1487,14 +1839,24 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "FK to the issue",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_activities.bug_report_id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReportActivity.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-03",
@@ -1507,14 +1869,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Transition/event kind",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_activities.activity_type",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReportActivity.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-04",
@@ -1527,14 +1899,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Recorded actor display label",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_activities.actor_name",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReportActivity.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-05",
@@ -1547,14 +1929,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Prior changed value",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_activities.from_value",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReportActivity.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-06",
@@ -1567,14 +1959,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "New changed value",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_activities.to_value",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReportActivity.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-07",
@@ -1587,14 +1989,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Retest/transition note",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_activities.note",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReportActivity.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ACTIVITY-08",
@@ -1609,14 +2021,24 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "History creation timestamp",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
+      "readers": [
+        "service/BugTrackerWorkflowService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_activities.created_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V153__bug_tracker_workflow.sql",
+        "model/BugReportActivity.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-01",
@@ -1631,14 +2053,24 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Private attachment metadata PK",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
+      "readers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_attachments.id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V152__bug_tracker_attachments.sql",
+        "model/BugReportAttachment.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-02",
@@ -1653,14 +2085,24 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Owning issue FK",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
+      "readers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_attachments.bug_report_id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V152__bug_tracker_attachments.sql",
+        "model/BugReportAttachment.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-03",
@@ -1673,14 +2115,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Private object storage key",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
+      "readers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_attachments.storage_key",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V152__bug_tracker_attachments.sql",
+        "model/BugReportAttachment.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-04",
@@ -1693,14 +2145,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Original user-visible file name",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
+      "readers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_attachments.original_filename",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V152__bug_tracker_attachments.sql",
+        "model/BugReportAttachment.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-05",
@@ -1713,14 +2175,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Verified uploaded object MIME type",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
+      "readers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_attachments.content_type",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V152__bug_tracker_attachments.sql",
+        "model/BugReportAttachment.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-06",
@@ -1733,14 +2205,24 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Verified uploaded byte size",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
+      "readers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_attachments.size_bytes",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V152__bug_tracker_attachments.sql",
+        "model/BugReportAttachment.java"
+      ]
     },
     {
       "id": "DB10-BUG_REPORT_ATTACHMENT-07",
@@ -1755,14 +2237,24 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Metadata creation time",
       "tenantScope": null,
-      "writers": [],
-      "readers": [],
+      "writers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
+      "readers": [
+        "service/BugTrackerAttachmentService.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_report_attachments.created_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V152__bug_tracker_attachments.sql",
+        "model/BugReportAttachment.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-01",
@@ -1777,14 +2269,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Tracker actor PK",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "repository/BugTrackerAccessRepository.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_access.id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugTrackerAccess.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-02",
@@ -1797,14 +2297,22 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Display name of tracker reporter",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "repository/BugTrackerAccessRepository.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_access.display_name",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugTrackerAccess.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-03",
@@ -1819,14 +2327,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "SHA-256 access token hash, never plaintext",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "repository/BugTrackerAccessRepository.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_access.token_hash",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugTrackerAccess.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-04",
@@ -1839,14 +2355,22 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Reporter versus manager privileges",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "repository/BugTrackerAccessRepository.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_access.access_role",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugTrackerAccess.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-05",
@@ -1859,14 +2383,22 @@
       "riskFlags": [],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Revocation/activation flag",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "repository/BugTrackerAccessRepository.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_access.active",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugTrackerAccess.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-06",
@@ -1881,14 +2413,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Access creation timestamp",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "repository/BugTrackerAccessRepository.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_access.created_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugTrackerAccess.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_ACCESS-07",
@@ -1903,14 +2443,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Access update timestamp",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "repository/BugTrackerAccessRepository.java"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_access.updated_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "model/BugTrackerAccess.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-01",
@@ -1925,14 +2473,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Tracker session PK",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "UNTRACED"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_sessions.id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "repository/BugTrackerAccessRepository.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-02",
@@ -1947,14 +2503,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Tracker actor FK",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "UNTRACED"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_sessions.access_id",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "repository/BugTrackerAccessRepository.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-03",
@@ -1969,14 +2533,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Session token hash, never plaintext",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "UNTRACED"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_sessions.token_hash",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "repository/BugTrackerAccessRepository.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-04",
@@ -1991,14 +2563,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Session expiry time",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "UNTRACED"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_sessions.expires_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "repository/BugTrackerAccessRepository.java"
+      ]
     },
     {
       "id": "DB10-BUG_TRACKER_SESSION-05",
@@ -2013,14 +2593,22 @@
       ],
       "vnextTableCandidates": [],
       "mappingTarget": null,
-      "semantics": null,
+      "semantics": "Session creation time",
       "tenantScope": null,
       "writers": [],
-      "readers": [],
+      "readers": [
+        "UNTRACED"
+      ],
       "historyAndDeleteSemantics": null,
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "bug_tracker_sessions.created_at",
+      "evidenceScope": "SOURCE_DDL_AND_JPA_REVIEW_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d:V151__bug_tracker_phase1.sql",
+        "repository/BugTrackerAccessRepository.java"
+      ]
     },
     {
       "id": "DB10-LMS_NOTIFICATION_TEMPLATE-01",
