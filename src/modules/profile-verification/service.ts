@@ -24,15 +24,19 @@ import {
  * Until a PostgreSQL adapter implements this contract, these service methods
  * must NOT be connected to public API routes.
  */
-export interface VerificationTransactionRepository {
-  resolveLearner(membershipId: string): Promise<{
+export type VerificationLearnerTarget = {
     membershipId: string;
     collegeId: string;
     organizationId: string;
     userId: string;
     status: "ACTIVE" | "SUSPENDED" | "ENDED";
     hasLearnerRole: boolean;
-  } | null>;
+};
+
+export interface VerificationTransactionRepository {
+  resolveLearner(membershipId: string): Promise<VerificationLearnerTarget | null>;
+  /** Display-name snapshot for audit; resolve from canonical user/actor membership. */
+  reviewerDisplayName(userId: string): Promise<string | null>;
   isTpoAdministrator(actorUserId: string, collegeId: string): Promise<boolean>;
   isTpoVerificationEnabled(collegeId: string): Promise<boolean>;
   withLockedTransition(
@@ -53,9 +57,7 @@ export interface VerificationTransactionRepository {
   ): Promise<boolean>;
 }
 
-function assertLearnerTarget(
-  target: Awaited<ReturnType<VerificationTransactionRepository["resolveLearner"]>>,
-): asserts target is NonNullable<typeof target> {
+function assertLearnerTarget(target: VerificationLearnerTarget | null): asserts target is VerificationLearnerTarget {
   if (!target || target.status !== "ACTIVE" || !target.hasLearnerRole) {
     throw new VerificationStateError("NOT_ALLOWED");
   }
@@ -132,7 +134,8 @@ export async function reviewProfileVerification(
     tpoVerificationAdministrator: tpoAdministrator,
     tpoVerificationEnabled,
   });
-  const reviewer = actor(context);
+  const reviewer: Actor = {...actor(context), displayName:
+    await repository.reviewerDisplayName(context.user.id)};
   if (reviewer.kind === "LEARNER") throw new VerificationStateError("NOT_ALLOWED");
   return repository.withLockedTransition(input.learnerMembershipId, input.section, async (existing) => {
     if (!existing) throw new VerificationStateError("INVALID_TRANSITION");
