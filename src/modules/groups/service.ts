@@ -3,10 +3,11 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, electiveOfferings, electiveSlots,
-  lmsGroupMemberEvents, lmsGroupMembers, lmsGroups, membershipRoles,
+  lmsGroupMemberEvents, lmsGroupMembers, lmsGroups, membershipRoles, users,
 } from "@/db/schema";
 import { hasActiveMembership, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { hasElectiveAcademicEligibility } from "./elective-eligibility";
 
 const uuid = z.string().uuid();
 const groupCreate = z.object({
@@ -187,6 +188,8 @@ export async function joinGroup(
     if (slot) {
       if (group.kind !== "ELECTIVE" || group.collegeId !== slot.collegeId)
         throw new GroupServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
+      if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
+        throw new GroupServiceError("ELECTIVE_PROGRAM_ENROLLMENT_REQUIRED");
       await assertElectivePickLimit(tx, slot, memberId);
     }
     const available = group.capacity === null || group.activeCount < group.capacity;
@@ -230,7 +233,7 @@ export async function leaveGroup(
   const groupId = uuid.parse(groupIdInput), memberId = uuid.parse(memberIdInput);
   const mode = supportedMode.parse(requestedMode);
   return getDb().transaction(async tx => {
-    await lockElectiveSlot(tx, groupId);
+    const slot = await lockElectiveSlot(tx, groupId);
     const group = await lockGroup(tx, groupId);
     assertScope(context, group, mode, memberId);
     if (mode === "SELF" && group.configJson.allowSelfLeave !== true)
@@ -259,7 +262,7 @@ export async function leaveGroup(
       }).where(eq(lmsGroups.id, groupId));
       if (group.status === "ACTIVE") {
         // Do not promote a suspended member or a learner whose role was removed.
-        const [first] = await tx.select({
+        const candidates = await tx.select({
           id: lmsGroupMembers.id,
           membershipId: lmsGroupMembers.membershipId,
           source: lmsGroupMembers.source,
@@ -268,12 +271,27 @@ export async function leaveGroup(
             eq(collegeMemberships.id, lmsGroupMembers.membershipId),
             eq(collegeMemberships.status, "ACTIVE"),
           ))
+          .innerJoin(users, and(
+            eq(users.id, collegeMemberships.userId),
+            eq(users.platformStatus, "ACTIVE"),
+          ))
           .innerJoin(membershipRoles, and(
             eq(membershipRoles.membershipId, collegeMemberships.id),
             eq(membershipRoles.role, "LEARNER"),
           ))
-          .where(and(eq(lmsGroupMembers.groupId, groupId), eq(lmsGroupMembers.state, "WAITLISTED")))
-          .orderBy(asc(lmsGroupMembers.waitlistPosition), asc(lmsGroupMembers.createdAt)).limit(1);
+          .where(and(
+            eq(lmsGroupMembers.groupId, groupId),
+            eq(lmsGroupMembers.state, "WAITLISTED"),
+            group.collegeId ? eq(collegeMemberships.collegeId, group.collegeId) : undefined,
+          ))
+          .orderBy(asc(lmsGroupMembers.waitlistPosition), asc(lmsGroupMembers.createdAt));
+        let first: (typeof candidates)[number] | undefined;
+        for (const candidate of candidates) {
+          if (!slot || await hasElectiveAcademicEligibility(tx, slot, candidate.membershipId)) {
+            first = candidate;
+            break;
+          }
+        }
         if (first) {
           await tx.update(lmsGroupMembers).set({
             state: "ACTIVE", waitlistPosition: null, joinedAt: now,

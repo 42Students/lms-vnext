@@ -40,11 +40,22 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     eq(sections.status, "ACTIVE"),
     eq(sections.cohortId, courseOfferings.cohortId),
     eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
-    // Validate that the curriculum slot is not forged from another college.
+    // Group-backed access also requires current program and primary section,
+    // not just a still-present historic group membership.
     sql<boolean>`exists (
-      select 1 from programs p
+      select 1 from learner_program_enrollments lpe
+      join section_enrollments se on se.learner_enrollment_id = lpe.id
+      join sections home on home.id = se.section_id
+      join programs p on p.id = lpe.program_id
       join departments pd on pd.id = p.department_id
-      where p.id = ${electiveSlots.programId} and pd.college_id = ${collegeId}
+      where lpe.membership_id = ${membershipId}
+        and lpe.program_id = ${electiveSlots.programId}
+        and lpe.status = 'ACTIVE' and se.status = 'ACTIVE'
+        and home.status = 'ACTIVE' and home.cohort_id = lpe.cohort_id
+        and home.academic_period_id = se.academic_period_id
+        and (${electiveSlots.academicPeriodId} is null
+             or se.academic_period_id = ${electiveSlots.academicPeriodId})
+        and pd.college_id = ${collegeId}
     )`,
   ];
   if (deliveryId) conditions.push(eq(electiveOfferings.backedDeliveryId, deliveryId));

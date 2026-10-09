@@ -125,3 +125,21 @@ to a kernel group (legacy V191 mapping). The Drizzle snapshot and migration
 journal include 0038. Source contract assertions now know 0038 follows 0037.
 Existing unlinked projects preserve the previous standalone roster behavior.
 Actual migration replay and regeneration remain unverified.
+
+## Academic eligibility guard (2026-10-10)
+
+Compared directly with legacy `ElectiveService.learnerEligibilityError`.
+New joins now require an ACTIVE learner enrollment in the elective slot's
+program, a valid ACTIVE **primary** section tied to that learner's cohort, and
+slot/section period equality whenever `academic_period_id` is populated.
+Waitlist promotion skips learners whose actual user account was DISABLED,
+whose role/college was revoked or whose active primary program/section ceased
+matching. Both elective course discovery and exact-delivery authorization
+also require this active academic eligibility, so a stale group-member row
+does not keep access.
+
+**Unresolved parity contract:** Legacy also checks current batch semester
+and academic year. VNext currently does NOT persist a proven equivalent
+semester/year-on-current-cohort mapping; period equality by itself does NOT
+prove semester equivalence. This is an explicit DB02/DB03 blocker, not
+a completed field mapping. Do not mark DB03 VERIFIED.
