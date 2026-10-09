@@ -130,6 +130,7 @@ async function emitEvent(tx: Tx, args: {
     fromState: args.fromState,
     toState: args.toState,
     source: args.source,
+    memberType: "LEARNER",
     actorType: args.systemActor ? "SYSTEM" : actorType(args.context),
     actorUserId: args.systemActor ? null : args.context.user.id,
     reason: args.reason ?? null,
@@ -196,6 +197,7 @@ export async function createGroup(context: RequestContext, raw: unknown) {
     semesterNumber: input.semesterNumber ?? null,
     configJson: input.configJson,
     createdByUserId: context.user.id,
+    createdByType: actorType(context),
   }).returning();
   return created!;
 }
