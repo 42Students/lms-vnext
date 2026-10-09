@@ -75,3 +75,7 @@ The original learner course-list and `requireLearningReadAccess` treated primary
 attendance capture; course producer-level GROUP_BACKED delivery lifecycle;
 grading/quiz submission behavior under all access modes. DB fixture tests
 and typechecking are required before treating this as verified.
+
+## Roster integration regression specifications
+
+Added `tests/integration/groups-db03-roster.test.ts`: five PostgreSQL integration cases for group-only discovery/access, host-section denial, revocation, archive denial and inactive offering join denial. They are **authored, not run**, and use disposable fixture rows. Production acceptance still requires migration replay, `npm run typecheck`, test execution and an audit of attendance/schedule/quiz consumers.
