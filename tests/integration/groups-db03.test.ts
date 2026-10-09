@@ -3,7 +3,7 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
-import { createGroup, joinGroup, leaveGroup, transitionGroup } from "@/modules/groups/service";
+import { createGroup, joinGroup, leaveGroup, moveElectiveMember, transitionGroup } from "@/modules/groups/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -102,7 +102,7 @@ async function createElectiveFixture() {
   await pool.query(
     "INSERT INTO section_enrollments (id,learner_enrollment_id,section_id,academic_period_id) VALUES ($1,$2,$3,$4)",
     [sectionEnrollmentId,programEnrollmentId,sectionId,periodId]);
-  return { slotId, groups, candidate };
+  return { slotId, groups, candidate, programId, cohortId, sectionId, periodId };
 }
 beforeEach(() => {
   for(const value of Object.values(fixture)) value.length=0;
@@ -158,6 +158,67 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     );
     expect(afterSections.rows[0].n).toBe(initialSections.rows[0].n);
   });
+  it("moves an elective atomically between offerings of the same slot", async () => {
+    const { groups, candidate } = await createElectiveFixture();
+    const active = await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
+    expect(active.state).toBe("ACTIVE");
+    const moved = await moveElectiveMember(
+      admin, fixture.offerings[0], fixture.offerings[1], candidate.membershipId,
+    );
+    expect(moved.state).toBe("ACTIVE");
+    const counts = await pool.query(
+      "SELECT id,active_count FROM lms_groups WHERE id=ANY($1::uuid[])",
+      [groups],
+    );
+    expect(counts.rows.find(r=>r.id===groups[0]).active_count).toBe(0);
+    expect(counts.rows.find(r=>r.id===groups[1]).active_count).toBe(1);
+    const memberStates = await pool.query(
+      "SELECT group_id,state FROM lms_group_members WHERE group_id=ANY($1::uuid[]) AND membership_id=$2",
+      [groups,candidate.membershipId],
+    );
+    expect(memberStates.rows.find(r=>r.group_id===groups[0]).state).toBe("REMOVED");
+    expect(memberStates.rows.find(r=>r.group_id===groups[1]).state).toBe("ACTIVE");
+    const events = await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=ANY($1::uuid[])",
+      [groups],
+    );
+    expect(events.rows[0].n).toBe(3);
+  });
+
+  it("rolls back a move into a full target without changing source membership", async () => {
+    const { groups, candidate, programId, cohortId, sectionId, periodId } =
+      await createElectiveFixture();
+    const other = await createLearner();
+    const programEnrollmentId = randomUUID(), sectionEnrollmentId = randomUUID();
+    fixture.learnerEnrollments.push(programEnrollmentId);
+    fixture.learnerSections.push(sectionEnrollmentId);
+    await pool.query(
+      "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id) VALUES ($1,$2,$3,$4)",
+      [programEnrollmentId,other.membershipId,programId,cohortId]);
+    await pool.query(
+      "INSERT INTO section_enrollments (id,learner_enrollment_id,section_id,academic_period_id) VALUES ($1,$2,$3,$4)",
+      [sectionEnrollmentId,programEnrollmentId,sectionId,periodId]);
+    await pool.query(
+      "UPDATE lms_groups SET config_json='{}'::jsonb WHERE id=$1",
+      [groups[1]],
+    );
+    await joinGroup(other.ctx,groups[1],other.membershipId);
+    await joinGroup(candidate.ctx,groups[0],candidate.membershipId);
+    await expect(moveElectiveMember(
+      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+    )).rejects.toMatchObject({ code: "GROUP_CAPACITY_REACHED" });
+    const membership = await pool.query(
+      "SELECT state FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [groups[0],candidate.membershipId],
+    );
+    expect(membership.rows[0].state).toBe("ACTIVE");
+    const events = await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE membership_id=$1",
+      [candidate.membershipId],
+    );
+    expect(events.rows[0].n).toBe(1);
+  });
+
   it("keeps seat-count, waitlist and immutable event trail consistent under leave and promotion", async () => {
     const group = await createActiveGroup();
     const second = await createLearner();

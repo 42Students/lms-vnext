@@ -173,3 +173,6 @@ export async function listElectiveOfferings(context: RequestContext, slotIdInput
     .where(and(eq(electiveOfferings.slotId, slotId),
       eq(electiveOfferings.status, "ACTIVE")));
 }
+
+/** Same-slot administrative transfer is transactional in the group kernel. */
+export { moveElectiveMember as moveElectiveSelection } from "@/modules/groups/service";

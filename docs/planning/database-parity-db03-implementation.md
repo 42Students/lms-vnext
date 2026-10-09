@@ -157,3 +157,21 @@ management is separate.
 Added isolated PostgreSQL tests: transition/rejoin mirroring, direct writer
 rejection, and rollback on a conflicting privileged-SQL project member.
 **The tests have been authored but have NOT run; CI runner was never allocated.**
+
+## Atomic elective transfer (2026-10-10)
+
+Added `moveElectiveMember` in the group kernel (also re-exported as
+`moveElectiveSelection` from the electives module). Moves require same active
+slot, two distinct active backed offerings, authenticated college administrator,
+active same-program learner, active source membership, and non-locked target.
+Within ONE PostgreSQL transaction we lock the shared slot, then both groups
+in deterministic ID order; validate target capacity BEFORE removing source;
+update group seats/history; and promote an eligible source waitlisted learner.
+If the target is unavailable with no waitlist, all source mutations roll back.
+No primary section enrollment changes. This mirrors legacy
+`ElectiveService.move` rather than doing two independent HTTP actions.
+
+The group promotion helper also mirrors project-team members atomically,
+preserving another DB03 workstream's group/project source-of-truth mapping.
+Two more PostgreSQL tests cover successful transfer and failed full-target
+rollback. Runtime test execution remains BLOCKED.
