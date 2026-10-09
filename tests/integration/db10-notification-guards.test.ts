@@ -170,4 +170,29 @@ describe("DB10 notification correctness and privacy", () => {
     }
     expect(await countOwnUnreadNotifications(learner)).toBe(0);
   });
+
+  it("redacts unsafe legacy-stored action URLs at read time", async () => {
+    const e = await event();
+    await deliverInAppNotification(e.id, [SEED_IDS.learnerUser], {
+      title: "Existing notice",
+      body: "Old row",
+      actionHref: "/learn/placements",
+    });
+    const [first] = await listOwnNotifications(learner, { limit: 1 });
+    expect(first).toBeDefined();
+    await pool.query(
+      "update in_app_notifications set action_href = $1 where id = $2",
+      ["//attacker.example/redirect", first!.notification.id],
+    );
+
+    const [sanitized] = await listOwnNotifications(learner, { limit: 1 });
+    expect(sanitized!.notification.actionHref).toBeNull();
+
+    const directRow = await pool.query<{ action_href: string }>(
+      "select action_href from in_app_notifications where id = $1",
+      [first!.notification.id],
+    );
+    expect(directRow.rows[0]!.action_href).toBe("//attacker.example/redirect");
+  });
+
 });
