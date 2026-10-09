@@ -75,9 +75,15 @@
     {
       "pass": 5,
       "name": "Mutation, concurrency, tenancy, retention, migration replay and release adversarial gate",
-      "status": "NOT_STARTED",
-      "output": [],
-      "notes": "All identified invariants negative tested against disposable PostgreSQL; do not certify if live DB or CI inaccessible."
+      "status": "SOURCE_THREAT_AUDIT_DONE_RUNTIME_BLOCKED",
+      "output": [
+        "docs/planning/database-parity-pass5-adversarial-findings.md",
+        "docs/planning/database-parity-pass5-probe-manifest.json",
+        "scripts/sql/vnext-pass5-relational-witness.sql",
+        "scripts/db-parity-pass5-evaluate.mjs",
+        "tests/db-parity-pass5.test.mjs"
+      ],
+      "notes": "21 schema-grounded aggregate parent/tenant integrity witnesses; none executed, no negative insert/race/migration/role evidence; parity remains BLOCKED."
     }
   ],
   "remainingBlockers": [
@@ -87,6 +93,7 @@
     "Cross-table negative SQL tests and concurrency tests not run",
     "All 199 legacy candidate active/retired decisions still require review",
     "All 2,829 source-derived field mappings remain unverified; JSONB and redesigned target paths need producer-consumer tests",
-    "44 newer migrations parsed but old baseline is a stale test snapshot; dynamic SQL and true active schema need live introspection"
+    "44 newer migrations parsed but old baseline is a stale test snapshot; dynamic SQL and true active schema need live introspection",
+    "Pass 5 witnesses require seeded disposable Postgres and independent negative-write/race coverage; 0 probes executed."
   ]
 }
