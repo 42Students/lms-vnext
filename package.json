@@ -33,7 +33,7 @@
     "db:parity:status": "node scripts/db-parity-tools.mjs status",
     "db:parity:inventory": "node scripts/db-parity-tools.mjs inventory",
     "db:parity:compare": "node scripts/db-parity-tools.mjs compare",
-    "test:db:parity": "node --test tests/db-parity-tools.test.mjs tests/db-parity-contracts.test.mjs tests/db-parity-expanded-registry.test.mjs tests/db-parity-jpa-and-renames.test.mjs tests/db-parity-pass3.test.mjs"
+    "test:db:parity": "node --test tests/db-parity-tools.test.mjs tests/db-parity-contracts.test.mjs tests/db-parity-expanded-registry.test.mjs tests/db-parity-jpa-and-renames.test.mjs tests/db-parity-pass3.test.mjs tests/db-parity-pass4.test.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",

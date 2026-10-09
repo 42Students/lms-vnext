@@ -177,3 +177,15 @@ At frozen vNext schema SHA: **84 tables, 195 FKs (all single-column), 172 CHECK 
 The pass also examined group/elective seat and pick semantics, eligibility bulk undo, profile verification's pending vs approved snapshots, active-season cardinality mismatch and audit/retention consequences. Read-only PostgreSQL catalog extraction is prepared at `scripts/sql/vnext-readonly-integrity.sql` (not executed).
 
 Pass control: `docs/planning/database-parity-five-pass-tracker.json`. **Pass 4 NOT STARTED. Pass 5 NOT STARTED.** User requested one pass per turn; do not silently combine them. Generated migrations = **zero** in this audit workstream, and no real DB tests have run.
+
+## Pass 4 / 5 — field-by-field source and semantic gap sweep (2026-10-09)
+
+**Source sweep DONE, semantic field parity NOT verified. Pass 5 NOT STARTED.**
+
+- Source reconstructs **199 table candidates / 2,829 legacy fields** (2,138 snapshot + 606 from 62 post-V150 CREATE TABLEs + 85 ADD COLUMN; V193 table and column renames applied). All 44 post-snapshot files parsed for typed column definitions and changes.
+- Split by domain in **11 ledgers**. `docs/planning/database-parity-pass4-column-index.json` is the entry point, with per-field names, type, source nullability/default, migration and rename history, candidate target field matches, privacy/timestamp/key risk flags.
+- `database-parity-pass4-structural-diff.json`: **58** source table candidates have tentative target-table mapping proposals; **321** source fields find a same-name target in these mappings, creating **331** potential target pairs; **2,508** do not. None are automatically equivalent or missing. NULL and type review flags require active-field decision evidence.
+- `database-parity-pass4-active-retired-triage.json`: 111 JPA entity-declared tables, 49 likely JDBC/SQL-only product/ops source candidates, 31 historical backups, 7 Smrithi tables and Flyway metadata. All keep/retire decisions UNDECIDED.
+- `database-parity-pass4-adversarial-findings.md` has **18 findings**, tracked in `database-parity-pass4-review-decisions.json` with explicit acceptance criteria. No findings marked fixed.
+- **Explicit blockers:** 0 of 2,829 field semantics verified; actual MySQL/PostgreSQL catalog diff and DB constraints tests not run. This source sweep does not certify real database parity.
+- **Next when user requests:** Pass 5 mutation/race/tenancy/retention/migration replay verification, with hard blocking on unavailable DB, and fresh source-sha drift checks.

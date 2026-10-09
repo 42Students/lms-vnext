@@ -145,6 +145,8 @@ export function run(argv = process.argv.slice(2)) {
   } else if (cmd === "status") {
     const extended = json(path.join(defaultRoot, "docs/planning/database-parity-expanded-legacy-registry.json"));
     const domainQueue = json(path.join(defaultRoot, "docs/planning/database-parity-full-domain-queue.json"));
+    const pass4 = json(path.join(defaultRoot, "docs/planning/database-parity-pass4-column-index.json"));
+    const tracker = json(path.join(defaultRoot, "docs/planning/database-parity-five-pass-tracker.json"));
     const report = { baseline: manifest.baseline, sourceCounts: manifest.summaries,
       secondSweepSourceCounts: extended.counts, secondSweepDomainCounts: domainQueue.domainCounts,
       secondSweepMappedCandidateCount: domainQueue.rows.filter(r => r.reviewStatus === "VERIFIED").length,

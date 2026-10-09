@@ -47,9 +47,30 @@
     {
       "pass": 4,
       "name": "Field-by-field semantic parity and active/retired provenance",
-      "status": "NOT_STARTED",
-      "output": [],
-      "notes": "Must cover full 199 source candidates, live metadata once available, UI/API writers/readers, type/null/default/index/PII/history."
+      "status": "SOURCE_FIELD_SWEEP_DONE_UNVERIFIED",
+      "output": [
+        "docs/planning/database-parity-pass4-column-index.json",
+        "docs/planning/database-parity-pass4-structural-diff.json",
+        "docs/planning/database-parity-pass4-active-retired-triage.json",
+        "docs/planning/database-parity-pass4-adversarial-findings.md",
+        "docs/planning/database-parity-pass4-review-decisions.json",
+        "docs/planning/db-pass4-raw-ddl-151-161.json",
+        "docs/planning/db-pass4-raw-ddl-162-172.json",
+        "docs/planning/db-pass4-raw-ddl-173-183.json",
+        "docs/planning/db-pass4-raw-ddl-184-194.json",
+        "docs/planning/db-pass4-columns-db00_historical_and_engine.json",
+        "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json",
+        "docs/planning/db-pass4-columns-db02_academics_and_timetable.json",
+        "docs/planning/db-pass4-columns-db03_groups_and_electives.json",
+        "docs/planning/db-pass4-columns-db04_profiles_and_verification.json",
+        "docs/planning/db-pass4-columns-db05_courses_and_content.json",
+        "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json",
+        "docs/planning/db-pass4-columns-db07_projects.json",
+        "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json",
+        "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+        "docs/planning/db-pass4-columns-db10_shared_operations.json"
+      ],
+      "notes": "199 source table candidates, 2,829 source fields, 44 post-snapshot typed migrations, 321 source fields with name-match hints (331 pairs). 18 semantic findings; 0 fields verified, actual DB tests not run. Pass 5 untouched."
     },
     {
       "pass": 5,
@@ -64,6 +85,8 @@
     "vNext live/disposable PostgreSQL introspection not executed",
     "No generated or applied schema migration in these audit passes",
     "Cross-table negative SQL tests and concurrency tests not run",
-    "All 199 legacy candidate active/retired decisions still require review"
+    "All 199 legacy candidate active/retired decisions still require review",
+    "All 2,829 source-derived field mappings remain unverified; JSONB and redesigned target paths need producer-consumer tests",
+    "44 newer migrations parsed but old baseline is a stale test snapshot; dynamic SQL and true active schema need live introspection"
   ]
 }
