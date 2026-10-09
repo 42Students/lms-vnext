@@ -144,5 +144,15 @@ export const placementEligibilityEvents = pgTable(
       sql`${table.afterStatus} <> 'INELIGIBLE'
         or length(trim(coalesce(${table.afterReason}, ''))) > 0`,
     ),
+    check(
+      "placement_eligibility_events_reason_length_ck",
+      sql`(${table.beforeReason} is null or length(${table.beforeReason}) <= 200)
+        and (${table.afterReason} is null or length(${table.afterReason}) <= 200)`,
+    ),
+    check(
+      "placement_eligibility_events_note_length_ck",
+      sql`(${table.beforeNote} is null or length(${table.beforeNote}) <= 300)
+        and (${table.afterNote} is null or length(${table.afterNote}) <= 300)`,
+    ),
   ],
 );
