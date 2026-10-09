@@ -90,12 +90,45 @@
 - Attempt a saved view referencing a second college's lead or sharing private visibility defaults; deny.
 - Attempt forged faculty/TPO actor type and cross-college thread member; deny at authorization and persistence boundaries.
 
+## Implementation checkpoint — 2026-10-10 (subsequent to initial audit)
+
+**Source-backed schema proposals authored, NOT runtime verified:** 52/279 DB09 field candidates.
+This consists of 14 V162 college placement policy / recruiter visibility fields and
+38 recruiter_lead / recruiter_lead_activity / follow_up fields. The companion JSON
+retains each legacy field and proposed target without promoting any field to VERIFIED.
+
+### DB09-A settings
+
+- `src/db/schema/tpo-policy.ts`: `placement_college_rules`, `placement_company_visibility_settings`; original V162 defaults/values and additive visibility version.
+- `src/modules/placements/tpo-policy-service.ts` + validation: college-scoped TPO/CA GET, partial PUT using version compare, no row creation on GET.
+- `src/app/api/placements/tpo/placement-rules` and `company-visibility`: same-origin PUT; 409 for a version conflict.
+- `tests/unit/tpo-policy-validation.test.ts`, `tests/integration/db09-tpo-policy.test.ts`.
+- `docs/planning/sql/db09-policy-visibility-premerge.sql`: isolated **unregistered** draft. **The college policy is not yet consumed by offer acceptance or placement-cascade rules; privacy flags are not yet enforced by recruiter share rendering.** API presence is not behavioral parity.
+
+### DB09-A recruiter lead CRM
+
+- `src/db/schema/tpo-crm.ts`: `placement_tpo_leads`, `placement_tpo_lead_activities`, `placement_tpo_followups`; activity history and follow-up persist separately.
+- `src/modules/placements/tpo-crm-service.ts` + validation: create/list leads, log contact + NEW→CONTACTED, list activity, create/due/move/done follow-ups, mark NOT_NOW.
+- Seven REST route files under `src/app/api/placements/tpo/` for these workflows; same-origin POST/PATCH.
+- `docs/planning/sql/db09-tpo-crm-premerge.sql`: isolated **unregistered** draft, composite (college, lead) FK, direct-SQL scope-check triggers for owners/relationships, and immutable activity trigger.
+- `tests/unit/tpo-crm-validation.test.ts`, `tests/integration/db09-tpo-crm.test.ts`; tests require `TEST_DATABASE_URL` and `DB09_ISOLATED_TEST_DATABASE=1` with the pending SQL staged in a **disposable** database.
+- **Known open:** legacy invite issuance, hashed token confirmation, reminder/bounce/unsubscribe, derived stages, linked company/recruiter upgrades, source import and spreadsheet preview, saved views, role/department restrictions. A CRM lead list/API is not the complete legacy recruiter board.
+
+### Explicit verification gates
+
+1. Review Drizzle generated SQL + snapshot only **after DB03/DB04/DB08 branch integration**; register a unique migration sequence and validate replay from empty PostgreSQL.
+2. Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, then explicitly isolated PostgreSQL integration tests. **None of these have been executed by this chat.**
+3. Test 409 stale saves and concurrent duplicate leads, cross-college direct SQL, immutable event history, follow-up completion, user and organization scope, feature-module gating and browser flows.
+4. Match every exposed field to legacy producer and frontend consumer. Do not claim that legacy `company_id` → companyRelationshipId or `owner_faculty_id` → collegeMembershipId is semantically proven simply because data types line up.
+5. Secure recruiter-share and invite delivery integrations must precede release; DO NOT expose these endpoints in deployed runtime with pending schema migrations.
+6. Rediff fresh legacy FE/BE heads and confirm no concurrent ownership conflict. Keep draft PR #11 unmerged until gates pass.
+
 ## Quality/evidence ledger
 
 - **Inventoried:** 31 tables / 279 fields (pre-existing source candidate ledger; checked structure and source migrations).
-- **Verified field semantics:** 0 / 279. **Reviewed retirements:** 0.
+- **Verified field semantics:** 0 / 279. **Schema-proposed fields:** 52 / 279. **Reviewed retirements:** 0.
 - **Executed PostgreSQL migrations/integration tests:** 0; no database environment used.
-- **Code changes to application/schema:** 0. This audit is a non-overlapping coordination and requirements deliverable.
+- **Code changes to application/schema:** DB09-A proposals for 2 settings tables and 3 CRM tables plus services/API routes on isolated branch; no registered migration or verified executable release.
 - **Pending:** full source exact column mapping, legacy frontend surface checks, all producer/consumer handlers, live disposable DB assertions, final parity signature.
 
 The companion JSON tracks every source-derived field without falsely treating name-based matches as verified.
