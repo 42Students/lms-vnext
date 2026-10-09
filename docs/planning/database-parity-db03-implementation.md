@@ -42,3 +42,8 @@ The producer validates admin scope, program/term college, course college and ACT
 - Prevent attaching a new elective offering to an already populated group under the same slot→group locks used by member joins. This closes a creation-versus-join bypass of `max_pick` at setup time.
 - Both elective slot counts and offering reads now ignore soft-deleted offerings.
 - Remaining: event creation access control (DB role grants), direct SQL tenant integrity, and exhaustive producer/consumer roster parity. These changes are unexecuted.
+
+## Isolated test-safety + group lifecycle
+A `transitionGroup` API now supports authorized DRAFT/CLOSED→ACTIVE, ACTIVE→CLOSED and DRAFT/CLOSED→ARCHIVED (archive requires no active seats). Tests invoke this rather than issuing raw status updates.
+
+The DB03 integration suite now **requires** `TEST_DATABASE_URL` and the explicit `DB03_ISOLATED_TEST_DATABASE=1` acknowledgement. Its cleanup uses TRUNCATE only for the isolated group-member event history table, because the production event trigger deliberately rejects UPDATE and DELETE. Never point this suite at any shared or production database. An additional test verifies both UPDATE and DELETE of event history are refused. Runtime result: NOT EXECUTED in this chat.

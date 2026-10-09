@@ -276,3 +276,24 @@ export async function leaveGroup(
     return removed!;
   });
 }
+
+
+const groupTransition = z.enum(["ACTIVATE", "CLOSE", "ARCHIVE"]);
+/** Lifecycle transitions require management permissions and serialize on the group row. */
+export async function transitionGroup(context: RequestContext, groupIdInput: string, raw: unknown) {
+  const groupId = uuid.parse(groupIdInput);
+  const action = groupTransition.parse(raw);
+  return getDb().transaction(async tx => {
+    const group = await lockGroup(tx, groupId);
+    assertScope(context, group, "MANUAL", group.createdByUserId);
+    const next =
+      action === "ACTIVATE" && ["DRAFT", "CLOSED"].includes(group.status) ? "ACTIVE" :
+      action === "CLOSE" && group.status === "ACTIVE" ? "CLOSED" :
+      action === "ARCHIVE" && ["DRAFT", "CLOSED"].includes(group.status) && group.activeCount === 0 ? "ARCHIVED" : null;
+    if (!next) throw new GroupServiceError("GROUP_TRANSITION_INVALID");
+    const [updated] = await tx.update(lmsGroups).set({
+      status: next, version: sql.raw('"version" + 1'), updatedAt: new Date(),
+    }).where(eq(lmsGroups.id, group.id)).returning();
+    return updated!;
+  });
+}

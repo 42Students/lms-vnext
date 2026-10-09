@@ -3,11 +3,12 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
-import { createGroup, joinGroup, leaveGroup } from "@/modules/groups/service";
+import { createGroup, joinGroup, leaveGroup, transitionGroup } from "@/modules/groups/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const url = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!url) throw new Error("TEST_DATABASE_URL is required for DB03 integration tests");
+const url = process.env.TEST_DATABASE_URL;
+if (!url || process.env.DB03_ISOLATED_TEST_DATABASE !== "1")
+  throw new Error("DB03 requires TEST_DATABASE_URL AND DB03_ISOLATED_TEST_DATABASE=1; history cleanup uses TRUNCATE on an isolated disposable database");
 const pool = new Pool({ connectionString: url, max: 5 });
 const admin: RequestContext = {
   user: { id: SEED_IDS.collegeAdminUser, identityUid: "seed-college-admin", platformStatus: "ACTIVE", systemRoles: [] },
@@ -31,7 +32,7 @@ async function createActiveGroup(kind = "BUS", capacity = 1) {
     selfJoinOpenFrom: new Date(Date.now() - 60_000),
   });
   fixture.groups.push(group.id);
-  await pool.query("UPDATE lms_groups SET status = 'ACTIVE' WHERE id = $1", [group.id]);
+  await transitionGroup(admin, group.id, "ACTIVATE");
   return group.id;
 }
 async function createLearner(collegeId = SEED_IDS.collegeA): Promise<{ ctx: RequestContext; membershipId: string }> {
@@ -75,7 +76,9 @@ beforeEach(() => {
 afterEach(async () => {
   const groupIds = fixture.groups;
   if(groupIds.length) {
-    await pool.query("DELETE FROM lms_group_member_events WHERE group_id = ANY($1::uuid[])",[groupIds]);
+    // UPDATE/DELETE are intentionally forbidden by the audit trigger.
+    // TRUNCATE is permitted ONLY in this deliberately isolated disposable test DB.
+    await pool.query("TRUNCATE TABLE lms_group_member_events");
     await pool.query("DELETE FROM lms_group_members WHERE group_id = ANY($1::uuid[])",[groupIds]);
     await pool.query("DELETE FROM lms_group_rules WHERE group_id = ANY($1::uuid[])",[groupIds]);
     await pool.query("DELETE FROM elective_offerings WHERE group_id = ANY($1::uuid[])",[groupIds]);
@@ -148,6 +151,14 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     await pool.query("UPDATE lms_group_members SET is_locked=true WHERE group_id=$1",[group]);
     await expect(joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership))
       .rejects.toMatchObject({code:"GROUP_MEMBERSHIP_LOCKED"});
+  });
+  it("blocks mutating append-only event history at the database boundary", async () => {
+    const group=await createActiveGroup();
+    await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    await expect(pool.query("DELETE FROM lms_group_member_events WHERE group_id=$1",[group]))
+      .rejects.toMatchObject({code:"23514"});
+    await expect(pool.query("UPDATE lms_group_member_events SET reason='tampered' WHERE group_id=$1",[group]))
+      .rejects.toMatchObject({code:"23514"});
   });
   it("rejects impossible capacity counters by a physical CHECK constraint", async () => {
     const group=await createActiveGroup("BUS",1);
