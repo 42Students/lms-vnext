@@ -66,7 +66,7 @@ export const DEFAULT_TPO_SHARE_VISIBILITY: Readonly<TpoShareVisibility> = Object
 });
 
 const SHARE_STAGE_POSITIONS = new Map<string, number>(
-  TPO_SHARE_STAGES.map((stage, i) => [stage, i]),
+  TPO_SHARE_STAGES.map((stage, i) => [stage, i] as const),
 );
 const SHARE_COLUMN_SET: ReadonlySet<string> = new Set(TPO_SHARE_COLUMNS);
 const RETENTION_MILLISECONDS = 90 * 24 * 60 * 60 * 1000;
