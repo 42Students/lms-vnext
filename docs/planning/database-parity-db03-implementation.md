@@ -47,3 +47,6 @@ The producer validates admin scope, program/term college, course college and ACT
 A `transitionGroup` API now supports authorized DRAFT/CLOSED→ACTIVE, ACTIVE→CLOSED and DRAFT/CLOSED→ARCHIVED (archive requires no active seats). Tests invoke this rather than issuing raw status updates.
 
 The DB03 integration suite now **requires** `TEST_DATABASE_URL` and the explicit `DB03_ISOLATED_TEST_DATABASE=1` acknowledgement. Its cleanup uses TRUNCATE only for the isolated group-member event history table, because the production event trigger deliberately rejects UPDATE and DELETE. Never point this suite at any shared or production database. An additional test verifies both UPDATE and DELETE of event history are refused. Runtime result: NOT EXECUTED in this chat.
+
+## Event actor attribution and waitlist eligibility
+Automatic promotion is now recorded as a SYSTEM event (the original member source is retained). Promotion scans only waitlisted records whose college membership remains ACTIVE and whose LEARNER role still exists. Suspended members are not promoted ahead of eligible learners. Revoked/stale waitlist cleanup and rule-driven refresh remain separate open work.

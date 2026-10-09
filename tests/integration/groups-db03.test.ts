@@ -128,11 +128,13 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(removed.state).toBe("REMOVED");
     const [current,events] = await Promise.all([
       pool.query("SELECT active_count FROM lms_groups WHERE id=$1",[group]),
-      pool.query("SELECT from_state,to_state FROM lms_group_member_events WHERE group_id=$1 ORDER BY created_at",[group]),
+      pool.query("SELECT from_state,to_state,actor_type,actor_user_id FROM lms_group_member_events WHERE group_id=$1 ORDER BY created_at",[group]),
     ]);
     expect(current.rows[0].active_count).toBe(1);
     expect(events.rows).toHaveLength(4);
     expect(events.rows.some(e=>e.from_state==="WAITLISTED" && e.to_state==="ACTIVE")).toBe(true);
+    expect(events.rows.find(e=>e.from_state==="WAITLISTED" && e.to_state==="ACTIVE"))
+      .toMatchObject({actor_type:"SYSTEM",actor_user_id:null});
     const promoted = await pool.query("SELECT state,waitlist_position FROM lms_group_members WHERE id=$1",[waiting.id]);
     expect(promoted.rows[0]).toMatchObject({state:"ACTIVE",waitlist_position:null});
   });

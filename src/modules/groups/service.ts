@@ -115,8 +115,8 @@ async function assertElectivePickLimit(tx: Tx, slot: NonNullable<Awaited<ReturnT
 }
 async function emitEvent(tx: Tx, args: {
   groupId: string; membershipId: string; fromState: string | null;
-  toState: "ACTIVE" | "WAITLISTED" | "REMOVED"; source: "SELF" | "MANUAL";
-  context: RequestContext; reason?: string;
+  toState: "ACTIVE" | "WAITLISTED" | "REMOVED"; source: "SELF" | "MANUAL" | "RULE" | "CSV";
+  context: RequestContext; reason?: string; systemActor?: boolean;
 }) {
   await tx.insert(lmsGroupMemberEvents).values({
     groupId: args.groupId,
@@ -124,8 +124,8 @@ async function emitEvent(tx: Tx, args: {
     fromState: args.fromState,
     toState: args.toState,
     source: args.source,
-    actorType: actorType(args.context),
-    actorUserId: args.context.user.id,
+    actorType: args.systemActor ? "SYSTEM" : actorType(args.context),
+    actorUserId: args.systemActor ? null : args.context.user.id,
     reason: args.reason ?? null,
   });
 }
@@ -254,7 +254,20 @@ export async function leaveGroup(
         version: sql.raw('"version" + 1'), updatedAt: now,
       }).where(eq(lmsGroups.id, groupId));
       if (group.status === "ACTIVE") {
-        const [first] = await tx.select().from(lmsGroupMembers)
+        // Do not promote a suspended member or a learner whose role was removed.
+        const [first] = await tx.select({
+          id: lmsGroupMembers.id,
+          membershipId: lmsGroupMembers.membershipId,
+          source: lmsGroupMembers.source,
+        }).from(lmsGroupMembers)
+          .innerJoin(collegeMemberships, and(
+            eq(collegeMemberships.id, lmsGroupMembers.membershipId),
+            eq(collegeMemberships.status, "ACTIVE"),
+          ))
+          .innerJoin(membershipRoles, and(
+            eq(membershipRoles.membershipId, collegeMemberships.id),
+            eq(membershipRoles.role, "LEARNER"),
+          ))
           .where(and(eq(lmsGroupMembers.groupId, groupId), eq(lmsGroupMembers.state, "WAITLISTED")))
           .orderBy(asc(lmsGroupMembers.waitlistPosition), asc(lmsGroupMembers.createdAt)).limit(1);
         if (first) {
@@ -268,7 +281,8 @@ export async function leaveGroup(
           }).where(eq(lmsGroups.id, groupId));
           await emitEvent(tx, {
             groupId, membershipId: first.membershipId, fromState: "WAITLISTED",
-            toState: "ACTIVE", source: mode, context, reason: "WAITLIST_PROMOTION",
+            toState: "ACTIVE", source: first.source as "SELF" | "MANUAL" | "RULE" | "CSV",
+            context, reason: "WAITLIST_PROMOTION", systemActor: true,
           });
         }
       }
