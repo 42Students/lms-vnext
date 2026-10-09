@@ -117,6 +117,22 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       .toBe("NOT_NOW");
   });
 
+  it("never returns a hashed invite token in TPO lead APIs", async () => {
+    if (!pool) throw new Error("Isolated database missing");
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Invite Shield",
+      email: "invite-shield@example.org",
+    });
+    await pool.query(
+      "UPDATE placement_tpo_leads SET invite_token_hash = $1 WHERE id = $2",
+      ["a".repeat(64), lead.id],
+    );
+    const [listed] = await listTpoLeads(tpo, SEED_IDS.collegeA);
+    expect(listed).not.toHaveProperty("inviteTokenHash");
+    expect(lead).not.toHaveProperty("inviteTokenHash");
+  });
+
   it("deduplicates competing lead creation by normalized email", async () => {
     const results = await Promise.allSettled([
       createTpoLead(tpo, {
