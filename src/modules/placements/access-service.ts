@@ -38,18 +38,17 @@ export function resolvePlacementParticipationFromDecisions(
   chain: readonly ModuleAccessScope[],
   decisions: readonly PlacementEligibilityDecision[],
 ): ResolvedPlacementParticipation {
-  for (const scope of chain) {
-    if (
-      !ELIGIBILITY_LEVELS.has(scope.scopeType) ||
-      !scope.scopeId
-    ) {
-      continue;
-    }
+  // Legacy V188: the most specific decision wins. Do not rely on
+  // callers to supply the module-access chain in precedence order.
+  for (const level of ["MEMBERSHIP", "SECTION", "COHORT"] as const) {
+    const scope = chain.find(
+      (item) => item.scopeType === level && Boolean(item.scopeId),
+    );
+    if (!scope) continue;
 
     const decision = decisions.find(
       (item) =>
-        item.scopeType === scope.scopeType &&
-        item.scopeId === scope.scopeId,
+        item.scopeType === level && item.scopeId === scope.scopeId,
     );
 
     if (
@@ -58,10 +57,7 @@ export function resolvePlacementParticipationFromDecisions(
     ) {
       return {
         status: decision.status,
-        level: scope.scopeType as
-          | "MEMBERSHIP"
-          | "SECTION"
-          | "COHORT",
+        level,
         reason: decision.reason,
         note: decision.note,
       };
