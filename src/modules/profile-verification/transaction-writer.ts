@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { activityEvents, collegeMemberships, colleges, inAppNotifications } from "@/db/schema";
-import { profileVerificationEvents, profileVerifications } from "@/db/schema/profile-verification";
+import { activityEvents, collegeMemberships, colleges, inAppNotifications, learnerProfiles } from "@/db/schema";
+import { learnerPrivateDocumentReceipts, profileVerificationEvents, profileVerifications } from "@/db/schema/profile-verification";
 import {
   VerificationStateError,
   type Transition,
@@ -48,6 +48,15 @@ export const postgresLockedVerificationTransition: LockedTransition =
       if (!member || member.status !== "ACTIVE") {
         throw new VerificationStateError("NOT_ALLOWED");
       }
+      // Hold a stable snapshot of the editable profile and evidence receipts.
+      // Their updates/revocations must wait until this verification commits.
+      await tx.select({membershipId:learnerProfiles.membershipId})
+        .from(learnerProfiles).where(eq(learnerProfiles.membershipId,membershipId))
+        .for("share");
+      await tx.select({id:learnerPrivateDocumentReceipts.id})
+        .from(learnerPrivateDocumentReceipts)
+        .where(eq(learnerPrivateDocumentReceipts.owningMembershipId,membershipId))
+        .for("share");
       const [stored] = await tx.select().from(profileVerifications).where(and(
         eq(profileVerifications.learnerMembershipId, membershipId),
         eq(profileVerifications.section, section),
