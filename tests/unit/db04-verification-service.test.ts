@@ -53,6 +53,7 @@ class MemoryRepo implements VerificationTransactionRepository {
       hasLearnerRole: true,
     };
   }
+  async reviewerDisplayName() { return "Authorized reviewer"; }
   async isTpoAdministrator() { return this.tpoAdmin; }
   async isTpoVerificationEnabled() { return this.tpoEnabled; }
   async readCurrentSectionForSubmission() {
@@ -83,6 +84,7 @@ describe("DB04 verification service enforcement", () => {
     expect((await reviewProfileVerification(ctx("COLLEGE_ADMIN"), command(1), db, now)).status)
       .toBe("VERIFIED");
     expect(db.events).toHaveLength(2);
+    expect(db.events[1].actorName).toBe("Authorized reviewer");
   });
 
   it("maintains original verified data on a rejected update", async () => {
