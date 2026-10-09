@@ -86,7 +86,7 @@ export async function createTpoLead(
       phoneNorm: normalizePhone(input.phone),
       designation: input.designation ?? null,
       companyName: input.companyName ?? null,
-      source: input.source ?? "ADDED_BY_HAND",
+      source: input.source ?? "MANUAL",
       ownerMembershipId: ownerMembership(context, input.collegeId),
     })
     .onConflictDoNothing()
