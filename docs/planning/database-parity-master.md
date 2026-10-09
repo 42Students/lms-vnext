@@ -4,7 +4,7 @@
 **Work branch:** `db-parity-2026` (branched from `42Students/lms-vnext@5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a`)  
 **Legacy backend oracle:** `42Students/lms@prod-2026` observed at `21bad59d4dfaf2fa11fdeaf9353327ce105697d5` (2026-10-07)  
 **Frontend reference:** `42Students/lms2-fe@prod-2026` for producer/consumer behavior  
-**State:** INVENTORY STARTED — DO NOT CLAIM DB PARITY  
+**State:** FIVE SOURCE-AUDIT PASSES DOCUMENTED; DB03 RELATIONAL & SERVICE IMPLEMENTATION IN PROGRESS — NOT RUNTIME-VERIFIED  
 **Machine-readable baseline:** `docs/planning/database-parity-source-inventory.json`
 
 ## Decision and non-negotiable intent
@@ -195,3 +195,29 @@ Pass control: `docs/planning/database-parity-five-pass-tracker.json`. **Pass 4 N
 All five **source-review** passes are now documented, but **DB PARITY IS NOT COMPLETE**. Pass 5's 21 aggregate SQL integrity witnesses and evaluator are listed in [database-parity-pass5-adversarial-findings.md](database-parity-pass5-adversarial-findings.md) with machine-readable scenarios at [database-parity-pass5-probe-manifest.json](database-parity-pass5-probe-manifest.json). No witness, negative-write/race test, migration replay, PostgreSQL introspection or legacy live MySQL comparison was executed. All 2,829 source-field semantic mappings are unverified, and 199 candidate table decisions remain unresolved. Source-audit completion is **not** schema/domain implementation completion.
 
 **Next work:** implement the first unresolved DB03 group/elective schema and business invariants on `db-parity-2026`, generate a migration, run tests on disposable PostgreSQL, then proceed DB04 and DB08. Preserve the zero-data-migration decision; do not modify legacy production databases.
+
+## 2026-10-10 implementation checkpoint — DB03 Groups & Electives
+
+The frozen original Drizzle snapshot had **84 tables**. The DB03 branch now
+authors six additional tables (**90 in the registered 0037 snapshot**): groups,
+members, member events, rules, elective slots, elective offerings. The authored
+migration is registered in the journal; PostgreSQL replay/Drizzle regenerated
+diff and typechecking **have not been executed**.
+
+DB03 adds group membership transactions, elective slot max-pick row locking,
+waitlist events, and a central active group-roster predicate powering both
+course discovery and delivery read authorization. Learner timetable reads now
+consume the authorized delivery union; host section membership does not grant
+group-backed elective access. Six new group-roster integration scenarios are
+written (not executed), in addition to the five existing group kernel cases.
+
+**Evidence gate:** Source audit completeness is not database parity. Keep all
+2,829 source-derived fields semantically unverified until mapping and real
+workflow/SQL tests pass. No runtime test results or CI success are asserted.
+
+**Next DB03 tasks:** disposable Postgres migration + test execution; validation
+of every producer/consumer (quiz submissions, attendance recording, grading,
+scheduling); project-team mirror; rule refresh; 79 field-level source mappings;
+physical cross-tenant FK/trigger strategy; append-only group event protection.
+**After DB03:** prioritize DB04 profiles and verification and DB08 placements
+eligibility, then complete the remaining domain queue.

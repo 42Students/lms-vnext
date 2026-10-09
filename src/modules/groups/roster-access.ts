@@ -3,7 +3,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships, courseOfferings, courseSectionDeliveries, courses,
   departments, electiveOfferings, electiveSlots, lmsGroupMembers,
-  lmsGroups, membershipRoles,
+  lmsGroups, membershipRoles, sections,
 } from "@/db/schema";
 
 /**
@@ -37,6 +37,9 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     eq(courses.status, "ACTIVE"),
     eq(departments.collegeId, collegeId),
     isNull(courseSectionDeliveries.endedAt),
+    eq(sections.status, "ACTIVE"),
+    eq(sections.cohortId, courseOfferings.cohortId),
+    eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
     // Validate that the curriculum slot is not forged from another college.
     sql<boolean>`exists (
       select 1 from programs p
@@ -55,6 +58,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
     .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, electiveOfferings.backedDeliveryId))
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, eq(departments.id, courses.departmentId))
     .where(and(...conditions));

@@ -96,3 +96,7 @@ producer parity, historical learning access and legacy field signoff.
 ## Additional regression specifications
 
 The DB03 roster integration suite now tests timetable inclusion/exclusion for active group members versus unrelated host-section learners and rejects suspended learner contexts even if group membership persists. **Test run pending.**
+
+## Exact backing-delivery checks
+
+The shared active group-backed roster query also requires the backed delivery's section to be ACTIVE and to match the course offering's cohort and academic period. This avoids navigation/API drift from stale or cross-parent delivery links. Current mapping is conservative: ended/archived elective access requires a separate reviewed historical policy. **Not yet DB-tested.**
