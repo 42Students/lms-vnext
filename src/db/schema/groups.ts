@@ -17,7 +17,7 @@ export const lmsGroups = pgTable("lms_groups", {
   selfJoinOpenUntil: timestamp("self_join_open_until", { withTimezone: true }),
   academicYear: varchar("academic_year", { length: 20 }),
   semesterNumber: integer("semester_number"),
-  configJson: jsonb("config_json").default(sql.raw("'{}'::jsonb")).notNull(),
+  configJson: jsonb("config_json").$type<Record<string, unknown>>().default(sql.raw("'{}'::jsonb")).notNull(),
   createdByUserId: uuid("created_by_user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
   version: integer("version").default(0).notNull(),
@@ -84,7 +84,7 @@ export const lmsGroupMemberEvents = pgTable("lms_group_member_events", {
 export const lmsGroupRules = pgTable("lms_group_rules", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   groupId: uuid("group_id").notNull().references(() => lmsGroups.id, { onDelete: "restrict" }),
-  criteriaJson: jsonb("criteria_json").notNull(),
+  criteriaJson: jsonb("criteria_json").$type<Record<string, unknown>>().notNull(),
   criteriaVersion: integer("criteria_version").default(1).notNull(),
   autoRefresh: boolean("auto_refresh").default(false).notNull(),
   lastRunAt: timestamp("last_run_at", { withTimezone: true }),
