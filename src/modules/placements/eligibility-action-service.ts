@@ -16,6 +16,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import {
   normalizePlacementEligibilityBulkAction,
+  placementEligibilityChangeSchema,
   placementEligibilityUndoSchema,
 } from "./eligibility-action-validation";
 
@@ -51,10 +52,15 @@ export async function applyPlacementEligibilityBulkAction(
       .limit(1);
 
     if (existingAction) {
+      // PostgreSQL jsonb canonicalizes key order. Reparse into the Zod
+      // field order before checking whether this key is a true retry.
+      const priorPayload = placementEligibilityChangeSchema
+        .array()
+        .safeParse(existingAction.requestPayload);
       if (
         existingAction.collegeId !== input.collegeId ||
-        JSON.stringify(existingAction.requestPayload) !==
-          JSON.stringify(input.changes)
+        !priorPayload.success ||
+        JSON.stringify(priorPayload.data) !== JSON.stringify(input.changes)
       ) {
         throw new PlacementsServiceError(
           "PLACEMENT_ELIGIBILITY_ACTION_CONFLICT",
