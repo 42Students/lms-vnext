@@ -1,5 +1,6 @@
 import {
   and,
+  count,
   desc,
   eq,
   inArray,
@@ -14,6 +15,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { ActivityServiceError } from "./errors";
+import { safeNotificationActionHref } from "./notification-action";
 
 type NotificationWriter = Pick<
   ReturnType<typeof getDb>,
@@ -37,6 +39,10 @@ const deliverySchema = z
       .trim()
       .startsWith("/")
       .max(1000)
+      .refine(
+        (href) => safeNotificationActionHref(href) === href,
+        "Notification actionHref must be an internal path",
+      )
       .nullable()
       .optional(),
   })
@@ -69,6 +75,7 @@ async function writeInAppNotification(
     return {
       delivered: 0,
       skippedInactive: 0,
+      skippedDuplicate: 0,
     };
   }
 
@@ -116,8 +123,9 @@ async function writeInAppNotification(
     )
     .map((user) => user.id);
 
+  let delivered = 0;
   if (active.length > 0) {
-    await db
+    const inserted = await db
       .insert(inAppNotifications)
       .values(
         active.map((userId) => ({
@@ -129,14 +137,17 @@ async function writeInAppNotification(
             input.actionHref ?? null,
         })),
       )
-      .onConflictDoNothing();
+      .onConflictDoNothing()
+      .returning({ id: inAppNotifications.id });
+    delivered = inserted.length;
   }
 
   return {
-    delivered: active.length,
+    delivered,
     skippedInactive:
       recipients.length -
       active.length,
+    skippedDuplicate: active.length - delivered,
   };
 }
 
@@ -195,7 +206,7 @@ export async function listOwnNotifications(
     );
   }
 
-  return getDb()
+  const rows = await getDb()
     .select({
       notification:
         inAppNotifications,
@@ -226,20 +237,29 @@ export async function listOwnNotifications(
       desc(inAppNotifications.id),
     )
     .limit(limit);
+
+  return rows.map((row) => ({
+    ...row,
+    notification: {
+      ...row.notification,
+      actionHref: safeNotificationActionHref(row.notification.actionHref),
+    },
+  }));
 }
 
 export async function countOwnUnreadNotifications(
   context: RequestContext,
 ) {
-  const rows =
-    await listOwnNotifications(
-      context,
-      {
-        unreadOnly: true,
-        limit: 100,
-      },
+  const [row] = await getDb()
+    .select({ total: count() })
+    .from(inAppNotifications)
+    .where(
+      and(
+        eq(inAppNotifications.userId, context.user.id),
+        isNull(inAppNotifications.readAt),
+      ),
     );
-  return rows.length;
+  return row?.total ?? 0;
 }
 
 export async function markOwnNotificationRead(
@@ -297,5 +317,24 @@ export async function markOwnNotificationRead(
     )
     .returning();
 
-  return updated ?? current;
+  if (updated) {
+    return updated;
+  }
+
+  // Concurrent readers can observe unread before another request wins
+  // the conditional update. Return the committed row, not stale readAt=null.
+  const [latest] = await getDb()
+    .select()
+    .from(inAppNotifications)
+    .where(
+      and(
+        eq(inAppNotifications.id, notificationId),
+        eq(inAppNotifications.userId, context.user.id),
+      ),
+    )
+    .limit(1);
+  if (!latest) {
+    throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+  }
+  return latest;
 }
