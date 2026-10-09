@@ -21,6 +21,7 @@ export * from "./discussions";
 
 export * from "./module-access";
 export * from "./placement-access";
+export * from "./placement-eligibility-actions";
 
 export * from "./drive-day";
 
