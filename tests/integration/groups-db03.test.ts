@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createGroup, joinGroup, leaveGroup, moveElectiveMember, transitionGroup } from "@/modules/groups/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { createElectiveSlot } from "@/modules/electives/service";
 import { upsertGroupRule, refreshGroupRule } from "@/modules/groups/rules-service";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -218,6 +219,23 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       [candidate.membershipId],
     );
     expect(events.rows[0].n).toBe(1);
+  });
+
+  it("normalizes the elective academic year and enforces source slot bounds", async () => {
+    const { programId, periodId } = await createElectiveFixture();
+    const values = {
+      collegeId: SEED_IDS.collegeA, programId, academicPeriodId: periodId,
+      semesterNumber: 8, name: "DB03 slot validation",
+      credits: 0, minPick: 0, maxPick: 1,
+    };
+    const made = await createElectiveSlot(admin, { ...values, academicYear: "2026" });
+    fixture.slots.push(made.id);
+    expect(made.academicYear).toBe("2026-27");
+    expect(made.credits).toBe(0);
+    await expect(createElectiveSlot(admin, { ...values, semesterNumber: 9 }))
+      .rejects.toMatchObject({code:"ELECTIVE_SEMESTER_OUTSIDE_PROGRAM"});
+    await expect(createElectiveSlot(admin, { ...values, academicYear: "2026-29" }))
+      .rejects.toMatchObject({code:"ELECTIVE_ACADEMIC_YEAR_INVALID"});
   });
 
   it("keeps seat-count, waitlist and immutable event trail consistent under leave and promotion", async () => {
