@@ -4,8 +4,9 @@
  * No runtime verification is implied by this file.
  */
 import { sql } from "drizzle-orm";
-import { bigint, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { bigint, boolean, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { collegeMemberships } from "./memberships";
+import { colleges } from "./colleges";
 import { users } from "./users";
 import type { SafeSnapshot } from "@/modules/profile-verification/domain";
 
@@ -101,4 +102,59 @@ export const profileVerificationEvents = pgTable("profile_verification_events", 
     sql`${t.priorVersion} >= 0 and ${t.nextVersion} = ${t.priorVersion} + 1`),
   check("profile_verification_events_sendback_reason_ck",
     sql`${t.action} != 'SENT_BACK' or (${t.note} is not null and char_length(trim(${t.note})) >= 3)`),
+]);
+
+/** College administrator-owned authorization and current CGPA conversion. */
+export const profileVerificationSettings = pgTable("profile_verification_settings", {
+  collegeId: uuid("college_id").primaryKey().references(() => colleges.id, {onDelete: "restrict"}),
+  tpoCanVerifyProfiles: boolean("tpo_can_verify_profiles").notNull().default(true),
+  cgpaToPct: varchar("cgpa_to_pct", {length: 24}).notNull().default("X9_5"),
+  updatedByUserId: uuid("updated_by_user_id").references(() => users.id, {onDelete: "restrict"}),
+  updatedAt: timestamp("updated_at", {withTimezone: true}).notNull().defaultNow(),
+}, t => [
+  check("profile_verification_settings_rule_ck", sql`${t.cgpaToPct} in
+    ('X9_5','MINUS_0_5_X10','MINUS_0_75_X10','X10')`),
+]);
+
+/** Explicit delegated TPO administrator rights; a TPO membership alone is NOT enough. */
+export const profileVerificationTpoGrants = pgTable("profile_verification_tpo_grants", {
+  membershipId: uuid("membership_id").primaryKey()
+    .references(() => collegeMemberships.id, {onDelete: "restrict"}),
+  grantedByUserId: uuid("granted_by_user_id").notNull()
+    .references(() => users.id, {onDelete: "restrict"}),
+  grantedAt: timestamp("granted_at", {withTimezone: true}).notNull().defaultNow(),
+  revokedAt: timestamp("revoked_at", {withTimezone: true}),
+}, t => [
+  index("profile_verification_tpo_grants_revoked_idx").on(t.revokedAt),
+]);
+
+/** Retain the original verified grade and the last derived comparable percent.
+ * The current college CGPA rule may deliberately recompute the percentage.
+ */
+export const profileVerificationAcademicMarks = pgTable("profile_verification_academic_marks", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  verificationId: uuid("verification_id").notNull()
+    .references(() => profileVerifications.id, {onDelete: "restrict"}),
+  learnerMembershipId: uuid("learner_membership_id").notNull()
+    .references(() => collegeMemberships.id, {onDelete: "restrict"}),
+  level: varchar("level", {length: 16}).notNull(),
+  originalGrade: varchar("original_grade", {length: 64}).notNull(),
+  originalScale: varchar("original_scale", {length: 32}),
+  originalMax: varchar("original_max", {length: 32}),
+  percentageBasisPoints: integer("percentage_basis_points"),
+  appliedRule: varchar("applied_rule", {length: 24}).notNull(),
+  sourceSnapshotVersion: integer("source_snapshot_version").notNull(),
+  verifiedByUserId: uuid("verified_by_user_id").notNull().references(() => users.id, {onDelete: "restrict"}),
+  verifiedAt: timestamp("verified_at", {withTimezone: true}).notNull(),
+  updatedAt: timestamp("updated_at", {withTimezone: true}).notNull().defaultNow(),
+}, t => [
+  uniqueIndex("profile_verification_academic_marks_level_uq").on(t.learnerMembershipId,t.level),
+  index("profile_verification_academic_marks_verification_idx").on(t.verificationId),
+  check("profile_verification_academic_marks_level_ck",
+    sql`${t.level} in ('10TH','12TH','DIPLOMA','UG','PG')`),
+  check("profile_verification_academic_marks_percentage_ck",
+    sql`${t.percentageBasisPoints} is null or ${t.percentageBasisPoints} between 0 and 10000`),
+  check("profile_verification_academic_marks_revision_ck", sql`${t.sourceSnapshotVersion} > 0`),
+  check("profile_verification_academic_marks_rule_ck", sql`${t.appliedRule} in
+    ('X9_5','MINUS_0_5_X10','MINUS_0_75_X10','X10')`),
 ]);
