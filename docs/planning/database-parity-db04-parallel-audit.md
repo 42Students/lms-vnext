@@ -68,7 +68,7 @@ Observations about **absence** are scoped to the inspected `profiles.ts`, profil
 
 ### D. Original academic marks + conversion
 - Preserve source `marks_json` semantic content as typed, validated per-level grade/scale/max (10TH/12TH/DIPLOMA/UG/PG) **alongside** the comparable normalized percentage, not instead of it.
-- Persist or version the **college conversion formula in force at verification** and the transformed value so later config edits cannot silently rewrite historical approved eligibility.
+- Persist provenance for the **college conversion formula used** and normalized result at each calculation. **Critical exact-legacy exception:** `AcademicMarksService.saveRule` intentionally recomputes current comparable percentages for the entire college after a rule change and writes a `CGPA_RULE_CHANGED` audit entry. vNext must preserve this administrative recompute behavior while keeping raw verified grade/scale/max immutable; adding historical conversion-version evidence is an additive audit improvement, not a reason to freeze current derived percentages.
 - Keep `SELF` data distinct from `VERIFIED` evidence with reviewer/time and linkage to verification version. Existing `placement_candidate_academic_evidence` is a consumer; avoid DB08 eligibility redesign here.
 - Validate decimal precision, unsupported formulas, null/missing distinctions, rounding modes and an original 9.2/10 test under `X9_5`, `MINUS_0_5_X10`, `MINUS_0_75_X10` and `X10` formulas.
 
@@ -83,9 +83,9 @@ No database row for derived `INCOMPLETE` and `READY`. Actual persistence begins 
 | VERIFIED | learner edits current profile | VERIFIED + derived changed-since-verified | **existing** approved values |
 | VERIFIED | learner submits changed section | UPDATE_PENDING | **existing** approved values |
 | UPDATE_PENDING | authorized reviewer approves | VERIFIED | new verified snapshot, old preserved in event |
-| UPDATE_PENDING | authorized reviewer sends back | SENT_BACK or reviewed legacy-approved variant | **old approved snapshot remains**; inspect exact legacy display state |
+| UPDATE_PENDING | authorized reviewer sends back with reason | **VERIFIED** | **old approved snapshot remains**; event records SENT_BACK and reason |
 
-Implementation must inspect the final sent-back-from-update behavior in legacy service, not assume `SENT_BACK` always means `SELF` evidence. Guard every action by membership status, role, college, document receipts and an expected row version. Event append + current-row transition + academic evidence publication are **one transaction**. On conflict, only one reviewer wins.
+Legacy service confirms sent-back of an unverified first submission becomes SENT_BACK, but sent-back of an UPDATE_PENDING request restores VERIFIED and retains the old approved values. The event action is SENT_BACK in both cases. Any vNext implementation must preserve that distinction. Guard every action by membership status, role, college, document receipts and an expected row version. Event append + current-row transition + academic evidence publication are **one transaction**. On conflict, only one reviewer wins.
 
 ## 6. Role and privacy authorization matrix
 | Actor | Edit own draft | Submit own | Read own | Review/decide | Download private docs |
@@ -122,7 +122,7 @@ Centralized `permissions/policy.ts` must own reviewer entitlement, and the colle
 - [ ] submit fails without corresponding identity/education document receipts + resume
 - [ ] only signed short-lived, access-checked private download; revoke/retention tested
 - [ ] audit direct `learner_profiles.profile_document` storage of raw ID numbers and decide encrypted-vault remediation
-- [ ] raw 9.2/10 CGPA and normalized % round-trip under each college policy; historical policy revision retained
+- [ ] raw 9.2/10 CGPA and normalized % round-trip under each college policy; admin rule change recomputes current percentages and logs the action, while historical raw marks remain unchanged
 - [ ] verified values used by Students/TPO/eligibility consumer; self-edit doesn't override it
 ### Evidence + cross-account
 - [ ] source SHA, vNext SHA, exact tests executed, browser verification, file workflow and exception sign-off recorded
@@ -136,3 +136,16 @@ Centralized `permissions/policy.ts` must own reviewer entitlement, and the colle
 4. Run all PostgreSQL/typecheck/build/E2E gates; merge only after fresh `db-parity-2026` head verification. Mark `FIXED` only when code exists, never `VERIFIED` without executed evidence.
 
 **Last audit conclusion:** This branch adds a non-overlapping source-backed DB04 contract and a precise release gate, **not** a claim of database parity or production-ready verification.
+## 9. Legacy implementation confirmation — 2026-10-10
+
+Service-level inspection at `lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5` of `service/tpo/ProfileVerificationService.java` and `service/tpo/AcademicMarksService.java` confirms:
+
+1. `submit()` is transactional; initial and returned-for-fix submission writes SUBMITTED, a changed VERIFIED profile writes UPDATE_PENDING, and identical submitted versus verified snapshot is rejected. It logs SUBMITTED or UPDATE_SUBMITTED.
+2. `verify()` is transactional; it accepts only SUBMITTED or UPDATE_PENDING, moves to VERIFIED, copies submitted to verified, writes academic evidence for Education, appends VERIFIED event and enqueues a notification.
+3. `sendBack()` is transactional; it requires a reason (at least 3 characters), accepts only pending states, returns an UPDATE_PENDING review to VERIFIED **without replacing the prior verified snapshot**, but returns an initial SUBMITTED review to SENT_BACK. It appends SENT_BACK event and notification in both cases.
+4. `verifierCollege()` allows only College Admin, scoped Super Admin, or authorized TPO admin, with TPO permission default ON and college-configurable. A TPO coordinator never qualifies.
+5. `requireDocumentsForBlindVerify()` only blocks the quick/bulk blind path when documents are missing; an opened individual review route is not prohibited by that helper. This is important for **behavioral parity**: mandate human review and explicit security exception rather than falsely claiming all legacy verification paths already enforce uploaded evidence.
+6. `AcademicMarksService.saveRule()` deliberately recomputes the comparable verified percentages when the college changes its CGPA conversion policy and audits that rule change; raw marks-as-earned are retained separately. Do **not** freeze percentage values at verification time and silently break this workflow.
+7. Current legacy updates use a read then status-only UPDATE by learner and section; there is no visible expected-row-version predicate. vNext must add compare-and-swap/row-lock protection as a documented concurrency safety improvement, and test it.
+
+**New exact behavior gate:** verify-many is per-item best-effort and returns verified count plus individual failed rows, not all-or-nothing across the batch; a state-safe implementation should preserve that user-visible outcome. Remaining source audit includes the exact frontend UI and document download/retention path.
