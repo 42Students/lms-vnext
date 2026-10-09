@@ -38,30 +38,25 @@ export function resolvePlacementParticipationFromDecisions(
   chain: readonly ModuleAccessScope[],
   decisions: readonly PlacementEligibilityDecision[],
 ): ResolvedPlacementParticipation {
-  for (const scope of chain) {
-    if (
-      !ELIGIBILITY_LEVELS.has(scope.scopeType) ||
-      !scope.scopeId
-    ) {
-      continue;
-    }
+  // Legacy V188: the closest scope wins even if the caller supplied
+  // the access chain in an unexpected order.
+  for (const level of ["MEMBERSHIP", "SECTION", "COHORT"] as const) {
+    const scope = chain.find(
+      (item) => item.scopeType === level && Boolean(item.scopeId),
+    );
+    if (!scope) continue;
 
     const decision = decisions.find(
       (item) =>
-        item.scopeType === scope.scopeType &&
-        item.scopeId === scope.scopeId,
+        item.scopeType === level && item.scopeId === scope.scopeId,
     );
-
     if (
       decision?.status === "ELIGIBLE" ||
       decision?.status === "INELIGIBLE"
     ) {
       return {
         status: decision.status,
-        level: scope.scopeType as
-          | "MEMBERSHIP"
-          | "SECTION"
-          | "COHORT",
+        level,
         reason: decision.reason,
         note: decision.note,
       };
