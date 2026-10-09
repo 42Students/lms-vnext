@@ -7,7 +7,8 @@ export type PeopleServiceErrorCode =
   | "LAST_MEMBERSHIP_ROLE"
   | "LEARNER_ROLE_REQUIRED"
   | "FACULTY_ROLE_REQUIRED"
-  | "DEPARTMENT_NOT_FOUND";
+  | "DEPARTMENT_NOT_FOUND"
+  | "PRIVATE_IDENTITY_STORAGE_NOT_READY";
 
 export class PeopleServiceError extends Error {
   constructor(public readonly code: PeopleServiceErrorCode) {
