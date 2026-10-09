@@ -97,3 +97,27 @@ This is a **field-candidate inventory** from the full source registry, not a cur
 Only this branch owns DB08 files, its fresh specs/ledgers, and (after reconciliation) placement eligibility/batch/registration schema and services. DB03 remains with the groups/electives chat, DB04 with the profiles/verification chat. Touch shared `src/db/schema/index.ts`, `drizzle/meta`, broad access gates and central trackers only during explicit rebase/integration to avoid racing the other chats. **No partial work may be advertised as complete or merged based on source inspection alone.**
 
 Sources: `V188__placement_batches_and_eligibility.sql`, `V161__tpo_v1_drives.sql`, `V172__external_placement.sql`, `docs/tpo-ux/BATCHES-AND-ELIGIBILITY-DESIGN.md`, `PlacementEligibilityService.java`, `src/db/schema/placements.ts`, `src/db/schema/drive-day.ts`, `src/modules/placements/eligibility-service.ts`, and `src/modules/placements/season-service.ts`.
+
+
+## Implementation checkpoint — 2026-10-10, DB08-A source authoring
+
+**Code authored and pushed to the DB08 branch (not integrated):**
+
+- `src/db/schema/placement-batches.ts`: `placement_batch_lifecycles` and append-only `placement_eligibility_events` declarations. Reuses the **preexisting** `placement_eligibility_decisions` (0035) as the single current-state store; no duplicate table.
+- `scripts/sql/db08-batch-eligibility-staging.sql`: non-journaled draft of the new tables, parent/college verification triggers, immutable event guard and length constraints on the existing current-state table. **Do not run in shared or production databases.**
+- `src/modules/placements/batch-participation-service.ts`: transactional upsert for independent batch settings, recorded invitation/finish timestamps, manager bulk decisions, stale-safe full-action undo and private learner access policy. Decisions and undo lock their college row to serialize even the missing-row case; this is correctness-oriented and may need partitioned locks after measured load testing.
+- `tests/integration/placements-db08-batches.test.ts`: six isolated PostgreSQL test cases for bulk/undo, stale undo, cross-college writer and direct SQL negatives, immutable history, concurrency and per-batch lifecycle. Require **all** `DB08_ISOLATED_TEST_DATABASE=1`, `DB08_MIGRATION_APPLIED=1` and matching `DATABASE_URL`/`TEST_DATABASE_URL`; guard intentionally fails if database preparation is absent.
+- `src/modules/placements/batch-eligibility-policy.ts` and `tests/unit/placement-batch-eligibility-policy.test.ts`: inherited learner/class/batch decisions and private boolean-only participation policy.
+- `scripts/db08-parity-status.mjs`, `tests/db08-parity-status.test.mjs` and `docs/planning/database-parity-db08-field-ledger.json`: 280-field exhaustiveness and evidence gate (all remain `UNVERIFIED`; no inflated parity claims).
+
+**Verification not performed:** TypeScript typecheck, Vitest, generated Drizzle migration/snapshot diff, migration replay or race tests on disposable PostgreSQL. These source files are **not** a green CI result. The Drizzle schema entrypoint is `src/db/schema/index.ts`; the new schema is deliberately not exported from that shared file until coordinated migration integration. API/routes/sidebar/job-application gating also remains unwired. Do not deploy this branch as-is.
+
+**Remaining P0 release blockers** (must not be marked complete):
+1. Rebase on the current DB03 + DB04 head when safe; update `src/db/schema/index.ts`, generate/inspect official migration and journal+snapshot, remove or reconcile the staged draft, replay full migration chain.
+2. Execute six DB08 integration cases and add cross-tenant **MEMBERSHIP and SECTION** parent negatives, FK/orphan deletion tests, permission denials and batch invitation notification verification. Current SQL parent guard only checks at row write; parent deletion/move must also be protected with true referential constraints or parent-side guard triggers.
+3. Wire global participation checks to every student placement API/sidebar/job application, preserving coordinator-only Drive Day access. Do not use job-specific eligibility as a substitute.
+4. Implement batch invite email outbox/delivery before exposing `markPlacementBatchInvited` in an HTTP route (it currently records a checkpoint only). Persist manager-visible ineligible flags on existing applications without withdrawing.
+5. Add decision actor revocation/cross-college tests; test 2,000-row bulk behavior under load before broad rollout. Track the difference between authorized manager writes and module-paid access.
+6. Field-by-field review of all 280 source candidates with verified producer/consumer mapping; complete DB08-B, DB08-C and DB08-D.
+
+**Important scope nuance:** `placement_eligibility_decisions` is already present in the committed `0035_learner_module_access.sql`, so its absence was a provisional first-pass census error now corrected in the field ledger. There are **six**, not seven, legacy DB08 tables without a direct dedicated vNext table candidate in the inspected schema; even those may be intentionally redesigned and must be individually reviewed.
