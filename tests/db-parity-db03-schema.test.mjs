@@ -69,7 +69,7 @@ test("DB03 cross-parent tenant guards are registered in migration 0039", () => {
   const s39=load("drizzle/meta/0039_snapshot.json");
   const sql39=fs.readFileSync("drizzle/0039_db03_scope_triggers.sql","utf8");
   assert.equal(s39.prevId,s38.id);
-  assert.equal(journal.entries.at(-1).tag,"0039_db03_scope_triggers");
+  assert.equal(journal.entries.find(entry=>entry.idx===39)?.tag,"0039_db03_scope_triggers");
   for(const trigger of ["db03_member_tenant_guard","db03_elective_slot_scope_guard",
     "db03_elective_offering_scope_guard","db03_project_team_scope_guard"])
     assert.ok(sql39.includes("CREATE TRIGGER "+trigger));
@@ -82,4 +82,22 @@ test("DB03 slot ranges stay synchronized through migrations 0037-0039", () => {
     assert.match(c.elective_slots_semester_ck.value,/BETWEEN 1 AND 12/);
     assert.match(c.elective_slots_picks_ck.value,/credits" BETWEEN 0 AND 30/);
   }
+});
+
+test("DB03 0040 historical role/type snapshots are registered and map legacy fields", () => {
+  const s39=load("drizzle/meta/0039_snapshot.json");
+  const s40=load("drizzle/meta/0040_snapshot.json");
+  const sql40=fs.readFileSync("drizzle/0040_db03_history_actor_types.sql","utf8");
+  const crosswalk=load("docs/planning/database-parity-db03-79-field-crosswalk.json");
+  assert.equal(s40.prevId,s39.id);
+  assert.equal(journal.entries.at(-1).tag,"0040_db03_history_actor_types");
+  assert.equal(s40.tables["public.lms_groups"].columns.created_by_type.notNull,false);
+  assert.equal(s40.tables["public.lms_group_member_events"].columns.member_type.notNull,true);
+  assert.match(sql40,/ALTER TABLE "lms_groups" ADD COLUMN "created_by_type"/);
+  assert.match(sql40,/ALTER TABLE "lms_group_member_events" ADD COLUMN "member_type"/);
+  assert.equal(crosswalk.sourceColumns,79);
+  assert.equal(crosswalk.proposed,79);
+  assert.equal(crosswalk.unmapped,0);
+  assert.equal(crosswalk.verified,0);
+  for (const field of crosswalk.fields) assert.equal(field.verification,"UNVERIFIED");
 });

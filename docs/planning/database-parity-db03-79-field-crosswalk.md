@@ -1,19 +1,19 @@
 # DB03 79-column semantic crosswalk — PROPOSED / UNVERIFIED
 
-Generated from `docs/planning/db-pass4-columns-db03_groups_and_electives.json` (legacy migrations) against the committed vNext Drizzle snapshot 0039. This is an **all-column accounting ledger, not a verified parity result**.
+Generated from `docs/planning/db-pass4-columns-db03_groups_and_electives.json` (legacy migrations) against the committed vNext Drizzle snapshot 0040. This is an **all-column accounting ledger, not a verified parity result**.
 
 | Gate | Evidence |
 | --- | --- |
 | Legacy source tables | 6 |
 | Legacy source columns listed | 79 |
-| Proposed target paths/derived structures | 78 |
-| Truly unmapped historical fields | 1 |
+| Proposed target paths/derived structures | 79 |
+| Truly unmapped historical fields | 0 |
 | Runtime/semantic field verifications | **0** |
 
 ## Highest-risk semantic differences
 
-1. **Legacy group creator type is NOT persisted**: `lms_group.created_by_type` does not have a vNext historical column. A creator user ID cannot reproduce an actor's old role after changes. Resolve by adding a durable creator-type snapshot or documenting approved intentional retirement.
-2. **Event member type is derived from current group-member row**, not stored immutably per event. If member type ever changes, event history loses the original type. Resolve by storing event type snapshot or enforcing permanent type immutability with tests.
+1. **Creator role is newly persisted**: `lms_groups.created_by_type` (migration 0040). Creation writes a role snapshot, but role/actor semantics still require DB tests.
+2. **Event member type is newly persisted**: `lms_group_member_events.member_type` (migration 0040), not derived from mutable roles. Verify event writers and history retention.
 3. **Legacy backed class is a different primitive** than vNext `course_section_deliveries`. The current group-backed course, quiz, timetable and attendance consumers must be end-to-end tested, including cross-program learner access without home-section movement.
 4. **Source numeric IDs are redesigned as tenant-scoped UUID membership IDs**. Audit actual producer/consumer identity interpretation rather than comparing only column types.
 5. **MySQL generated active_course_key is replaced by partial unique index**. Negative SQL/race and archive/re-offer tests are still required.
