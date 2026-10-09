@@ -5,13 +5,18 @@ DECLARE
   group_college uuid;
   membership_college uuid;
   membership_status text;
+  user_platform_status text;
 BEGIN
   SELECT g.owner_scope, g.college_id INTO owner_scope, group_college
     FROM lms_groups g WHERE g.id = NEW.group_id;
-  SELECT m.college_id, m.status INTO membership_college, membership_status
-    FROM college_memberships m WHERE m.id = NEW.membership_id;
-  IF membership_college IS NULL OR membership_status <> 'ACTIVE' THEN
-    RAISE EXCEPTION 'DB03 membership must be active' USING ERRCODE='23514';
+  SELECT m.college_id, m.status::text, u.platform_status::text
+    INTO membership_college, membership_status, user_platform_status
+    FROM college_memberships m
+    JOIN users u ON u.id=m.user_id
+    WHERE m.id = NEW.membership_id;
+  IF membership_college IS NULL OR membership_status <> 'ACTIVE'
+      OR user_platform_status IS DISTINCT FROM 'ACTIVE' THEN
+    RAISE EXCEPTION 'DB03 group member and user must be active' USING ERRCODE='23514';
   END IF;
   IF owner_scope = 'COLLEGE' AND group_college IS DISTINCT FROM membership_college THEN
     RAISE EXCEPTION 'DB03 group membership college mismatch' USING ERRCODE='23514';

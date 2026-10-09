@@ -77,8 +77,12 @@ async function assertTargetMembership(tx: Tx, group: GroupRow, memberId: string)
     id: collegeMemberships.id,
     collegeId: collegeMemberships.collegeId,
     status: collegeMemberships.status,
-  }).from(collegeMemberships).where(eq(collegeMemberships.id, memberId)).limit(1);
-  if (!m || m.status !== "ACTIVE") throw new GroupServiceError("GROUP_MEMBER_INACTIVE");
+    platformStatus: users.platformStatus,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(eq(collegeMemberships.id, memberId)).limit(1);
+  if (!m || m.status !== "ACTIVE" || m.platformStatus !== "ACTIVE")
+    throw new GroupServiceError("GROUP_MEMBER_INACTIVE");
   if (group.ownerScope === "COLLEGE" && m.collegeId !== group.collegeId)
     throw new GroupServiceError("GROUP_MEMBER_COLLEGE_MISMATCH");
   const [learnerRole] = await tx.select({ role: membershipRoles.role })

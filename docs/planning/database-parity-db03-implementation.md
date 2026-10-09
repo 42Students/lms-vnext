@@ -203,3 +203,7 @@ new matches. Human-managed/locked states are left untouched. Promoted
 transitions record separate immutable SYSTEM events and are idempotent on
 subsequent refreshes. New isolated PostgreSQL tests cover vacancy
 promotion and DRAFT-group rejection. **Tests have not been executed.**
+
+## Disabled-user target hardening (2026-10-10)
+
+Manual join and PostgreSQL member identity trigger now both require ACTIVE user platform status as well as ACTIVE college membership, eliminating disabled accounts consuming seats through privileged/admin joins. New integration test covers service rejection and physical SQL rejection. Runtime result: NOT TESTED.

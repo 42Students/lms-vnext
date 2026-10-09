@@ -259,6 +259,21 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     const promoted = await pool.query("SELECT state,waitlist_position FROM lms_group_members WHERE id=$1",[waiting.id]);
     expect(promoted.rows[0]).toMatchObject({state:"ACTIVE",waitlist_position:null});
   });
+  it("blocks MANUAL group enrollments of DISABLED users at service and SQL boundaries", async () => {
+    const group=await createActiveGroup("BUS",2);
+    const disabled=await createLearner();
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[disabled.ctx.user.id]);
+    await expect(joinGroup(admin,group,disabled.membershipId,"MANUAL"))
+      .rejects.toMatchObject({code:"GROUP_MEMBER_INACTIVE"});
+    await expect(pool.query(
+      "INSERT INTO lms_group_members (group_id,membership_id,state,source) VALUES ($1,$2,'ACTIVE','MANUAL')",
+      [group,disabled.membershipId],
+    )).rejects.toMatchObject({code:"23514"});
+    const result=await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_members WHERE group_id=$1",[group],
+    );
+    expect(result.rows[0].n).toBe(0);
+  });
   it("rejects a valid foreign college learner membership on a college group", async () => {
     const group=await createActiveGroup();
     const outsider=await createLearner(SEED_IDS.collegeB);
