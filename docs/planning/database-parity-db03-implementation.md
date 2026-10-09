@@ -26,3 +26,8 @@ Added `src/modules/groups/service.ts` with `createGroup`, `joinGroup`, and `leav
 - No primary section changes.
 
 **Still not proven:** real DB transaction execution, all admin/rule state variants, consent/status policy, DB-level append-only event immutability, group-backed course consumers. Cross-parent invalid inserts remain possible by privileged SQL; transactional service checking alone is not proof of schema-level tenant integrity.
+
+## Disposable PostgreSQL integration suite added
+`tests/integration/groups-db03.test.ts` now specifies five DB-backed tests: simultaneous elective max-pick=1 joins across two groups, seat/waitlist promotion and event count, wrong-college member rejection, locked removal, and a direct SQL CHECK failure. They also assert no primary section enrollment changes after elective choice.
+
+**Execution:** NOT RUN; this chat has no connected disposable PostgreSQL. Tests are not evidence of successful execution until run under `npm run test:db` with an isolated database and the registered 0037 migration applied. Tests use synthetic seeded users only.
