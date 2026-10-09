@@ -262,6 +262,59 @@ export async function joinGroup(
   });
 }
 
+/**
+ * Called while holding the elective slot (when present) and the group lock.
+ * Never promote a suspended account or an academically ineligible elective.
+ */
+async function promoteEligibleWaitlist(
+  tx: Tx, group: GroupRow,
+  slot: Awaited<ReturnType<typeof lockElectiveSlot>>,
+  context: RequestContext, now: Date,
+) {
+  const candidates = await tx.select({
+    id: lmsGroupMembers.id,
+    membershipId: lmsGroupMembers.membershipId,
+    source: lmsGroupMembers.source,
+  }).from(lmsGroupMembers)
+    .innerJoin(collegeMemberships, and(
+      eq(collegeMemberships.id, lmsGroupMembers.membershipId),
+      eq(collegeMemberships.status, "ACTIVE"),
+    ))
+    .innerJoin(users, and(
+      eq(users.id, collegeMemberships.userId),
+      eq(users.platformStatus, "ACTIVE"),
+    ))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "LEARNER"),
+    ))
+    .where(and(
+      eq(lmsGroupMembers.groupId, group.id),
+      eq(lmsGroupMembers.state, "WAITLISTED"),
+      group.collegeId ? eq(collegeMemberships.collegeId, group.collegeId) : undefined,
+    ))
+    .orderBy(asc(lmsGroupMembers.waitlistPosition), asc(lmsGroupMembers.createdAt));
+  for (const candidate of candidates) {
+    if (slot && !(await hasElectiveAcademicEligibility(tx, slot, candidate.membershipId)))
+      continue;
+    await tx.update(lmsGroupMembers).set({
+      state: "ACTIVE", waitlistPosition: null, joinedAt: now,
+      updatedAt: now, version: sql.raw('"version" + 1'),
+    }).where(eq(lmsGroupMembers.id, candidate.id));
+    await tx.update(lmsGroups).set({
+      activeCount: sql.raw('"active_count" + 1'),
+      version: sql.raw('"version" + 1'), updatedAt: now,
+    }).where(eq(lmsGroups.id, group.id));
+    await emitEvent(tx, {
+      groupId: group.id, membershipId: candidate.membershipId,
+      fromState: "WAITLISTED", toState: "ACTIVE",
+      source: candidate.source as "SELF" | "MANUAL" | "RULE" | "CSV",
+      context, reason: "WAITLIST_PROMOTION", systemActor: true,
+    });
+    break;
+  }
+}
+
 export async function leaveGroup(
   context: RequestContext,
   groupIdInput: string,
@@ -299,55 +352,8 @@ export async function leaveGroup(
         activeCount: sql.raw('"active_count" - 1'),
         version: sql.raw('"version" + 1'), updatedAt: now,
       }).where(eq(lmsGroups.id, groupId));
-      if (group.status === "ACTIVE") {
-        // Do not promote a suspended member or a learner whose role was removed.
-        const candidates = await tx.select({
-          id: lmsGroupMembers.id,
-          membershipId: lmsGroupMembers.membershipId,
-          source: lmsGroupMembers.source,
-        }).from(lmsGroupMembers)
-          .innerJoin(collegeMemberships, and(
-            eq(collegeMemberships.id, lmsGroupMembers.membershipId),
-            eq(collegeMemberships.status, "ACTIVE"),
-          ))
-          .innerJoin(users, and(
-            eq(users.id, collegeMemberships.userId),
-            eq(users.platformStatus, "ACTIVE"),
-          ))
-          .innerJoin(membershipRoles, and(
-            eq(membershipRoles.membershipId, collegeMemberships.id),
-            eq(membershipRoles.role, "LEARNER"),
-          ))
-          .where(and(
-            eq(lmsGroupMembers.groupId, groupId),
-            eq(lmsGroupMembers.state, "WAITLISTED"),
-            group.collegeId ? eq(collegeMemberships.collegeId, group.collegeId) : undefined,
-          ))
-          .orderBy(asc(lmsGroupMembers.waitlistPosition), asc(lmsGroupMembers.createdAt));
-        let first: (typeof candidates)[number] | undefined;
-        for (const candidate of candidates) {
-          if (!slot || await hasElectiveAcademicEligibility(tx, slot, candidate.membershipId)) {
-            first = candidate;
-            break;
-          }
-        }
-        if (first) {
-          await mirrorProjectTeamMember(tx, group, first.membershipId, true, context.user.id);
-          await tx.update(lmsGroupMembers).set({
-            state: "ACTIVE", waitlistPosition: null, joinedAt: now,
-            updatedAt: now, version: sql.raw('"version" + 1'),
-          }).where(eq(lmsGroupMembers.id, first.id));
-          await tx.update(lmsGroups).set({
-            activeCount: sql.raw('"active_count" + 1'),
-            version: sql.raw('"version" + 1'), updatedAt: now,
-          }).where(eq(lmsGroups.id, groupId));
-          await emitEvent(tx, {
-            groupId, membershipId: first.membershipId, fromState: "WAITLISTED",
-            toState: "ACTIVE", source: first.source as "SELF" | "MANUAL" | "RULE" | "CSV",
-            context, reason: "WAITLIST_PROMOTION", systemActor: true,
-          });
-        }
-      }
+      if (group.status === "ACTIVE")
+        await promoteEligibleWaitlist(tx, group, slot, context, now);
     }
     return removed!;
   });
@@ -398,5 +404,128 @@ export async function attachProjectTeamGroup(context: RequestContext, projectIdI
       .set({ teamGroupId: group.id, updatedAt: new Date() })
       .where(eq(projectInstances.id, project.id)).returning();
     return updated!;
+  });
+}
+
+
+/**
+ * Admin-only atomic transfer between active offerings of the SAME elective
+ * slot. The slot is locked first, then both groups in id order to avoid
+ * deadlocks with join/leave. An invalid/full target rolls back the source.
+ */
+export async function moveElectiveMember(
+  context: RequestContext,
+  sourceOfferingIdInput: string,
+  targetOfferingIdInput: string,
+  membershipIdInput: string,
+) {
+  const sourceOfferingId = uuid.parse(sourceOfferingIdInput);
+  const targetOfferingId = uuid.parse(targetOfferingIdInput);
+  const memberId = uuid.parse(membershipIdInput);
+  if (sourceOfferingId === targetOfferingId)
+    throw new GroupServiceError("ELECTIVE_MOVE_SAME_OFFERING");
+  return getDb().transaction(async tx => {
+    const offeringRows = await tx.select().from(electiveOfferings)
+      .where(inArray(electiveOfferings.id, [sourceOfferingId, targetOfferingId]));
+    const fromOffering = offeringRows.find(o => o.id === sourceOfferingId);
+    const toOffering = offeringRows.find(o => o.id === targetOfferingId);
+    if (!fromOffering || !toOffering ||
+        fromOffering.slotId !== toOffering.slotId ||
+        fromOffering.deletedAt || toOffering.deletedAt ||
+        fromOffering.status !== "ACTIVE" || toOffering.status !== "ACTIVE")
+      throw new GroupServiceError("ELECTIVE_MOVE_OFFERINGS_INVALID");
+
+    const [slot] = await tx.select().from(electiveSlots)
+      .where(eq(electiveSlots.id, fromOffering.slotId)).for("update");
+    if (!slot || slot.deletedAt || slot.status !== "ACTIVE")
+      throw new GroupServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
+
+    const locked = await tx.select().from(lmsGroups)
+      .where(inArray(lmsGroups.id, [fromOffering.groupId, toOffering.groupId]))
+      .orderBy(asc(lmsGroups.id)).for("update");
+    const fromGroup = locked.find(g => g.id === fromOffering.groupId);
+    const toGroup = locked.find(g => g.id === toOffering.groupId);
+    if (!fromGroup || !toGroup || fromGroup.id === toGroup.id ||
+        fromGroup.kind !== "ELECTIVE" || toGroup.kind !== "ELECTIVE" ||
+        fromGroup.ownerScope !== "COLLEGE" || toGroup.ownerScope !== "COLLEGE" ||
+        fromGroup.collegeId !== slot.collegeId ||
+        toGroup.collegeId !== slot.collegeId ||
+        fromGroup.deletedAt || toGroup.deletedAt ||
+        fromGroup.status !== "ACTIVE" || toGroup.status !== "ACTIVE")
+      throw new GroupServiceError("ELECTIVE_MOVE_GROUPS_INVALID");
+
+    assertScope(context, fromGroup, "MANUAL", memberId);
+    await assertTargetMembership(tx, fromGroup, memberId);
+    if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
+      throw new GroupServiceError("ELECTIVE_PROGRAM_ENROLLMENT_REQUIRED");
+    const [sourceMember] = await tx.select().from(lmsGroupMembers)
+      .where(and(
+        eq(lmsGroupMembers.groupId, fromGroup.id),
+        eq(lmsGroupMembers.membershipId, memberId),
+      )).limit(1);
+    if (!sourceMember || !["ACTIVE", "WAITLISTED"].includes(sourceMember.state))
+      throw new GroupServiceError("ELECTIVE_MOVE_SOURCE_NOT_CURRENT");
+
+    const [oldTarget] = await tx.select().from(lmsGroupMembers)
+      .where(and(
+        eq(lmsGroupMembers.groupId, toGroup.id),
+        eq(lmsGroupMembers.membershipId, memberId),
+      )).limit(1);
+    if (oldTarget && ["ACTIVE", "WAITLISTED"].includes(oldTarget.state))
+      throw new GroupServiceError("ELECTIVE_MOVE_TARGET_ALREADY_HELD");
+    if (oldTarget?.isLocked)
+      throw new GroupServiceError("GROUP_MEMBERSHIP_LOCKED");
+
+    const available = toGroup.capacity === null ||
+      toGroup.activeCount < toGroup.capacity;
+    if (!available && toGroup.configJson.allowWaitlist !== true)
+      throw new GroupServiceError("GROUP_CAPACITY_REACHED");
+    const toState = available ? "ACTIVE" as const : "WAITLISTED" as const;
+    let waitlistPosition: number | null = null;
+    if (!available) {
+      const [row] = await tx.select({ position: max(lmsGroupMembers.waitlistPosition) })
+        .from(lmsGroupMembers)
+        .where(and(eq(lmsGroupMembers.groupId, toGroup.id),
+                   eq(lmsGroupMembers.state, "WAITLISTED")));
+      waitlistPosition = (row?.position ?? 0) + 1;
+    }
+    const now = new Date();
+    await tx.update(lmsGroupMembers).set({
+      state: "REMOVED", waitlistPosition: null, updatedAt: now,
+      version: sql.raw('"version" + 1'),
+    }).where(eq(lmsGroupMembers.id, sourceMember.id));
+    await emitEvent(tx, {
+      groupId: fromGroup.id, membershipId: memberId,
+      fromState: sourceMember.state, toState: "REMOVED",
+      source: "MANUAL", context, reason: "ELECTIVE_MOVE_OUT",
+    });
+    const patch = {
+      state: toState, source: "MANUAL" as const, isLocked: false,
+      waitlistPosition, joinedAt: available ? now : null, updatedAt: now,
+    };
+    const [target] = oldTarget
+      ? await tx.update(lmsGroupMembers).set({
+          ...patch, version: sql.raw('"version" + 1'),
+        }).where(eq(lmsGroupMembers.id, oldTarget.id)).returning()
+      : await tx.insert(lmsGroupMembers).values({
+          groupId: toGroup.id, membershipId: memberId, ...patch,
+        }).returning();
+    if (available) await tx.update(lmsGroups).set({
+      activeCount: sql.raw('"active_count" + 1'),
+      version: sql.raw('"version" + 1'), updatedAt: now,
+    }).where(eq(lmsGroups.id, toGroup.id));
+    await emitEvent(tx, {
+      groupId: toGroup.id, membershipId: memberId,
+      fromState: oldTarget?.state ?? null, toState,
+      source: "MANUAL", context, reason: "ELECTIVE_MOVE_IN",
+    });
+    if (sourceMember.state === "ACTIVE") {
+      await tx.update(lmsGroups).set({
+        activeCount: sql.raw('"active_count" - 1'),
+        version: sql.raw('"version" + 1'), updatedAt: now,
+      }).where(eq(lmsGroups.id, fromGroup.id));
+      await promoteEligibleWaitlist(tx, fromGroup, slot, context, now);
+    }
+    return target!;
   });
 }
