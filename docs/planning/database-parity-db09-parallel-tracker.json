@@ -16,7 +16,8 @@
     "fieldMappingsDbTested": 0,
     "fieldMappingsWorkflowVerified": 0,
     "approvedRetirements": 0,
-    "runtimeTestsExecuted": 0
+    "runtimeTestsExecuted": 0,
+    "proposedFieldTargetsAuthored": 14
   },
   "ownerExclusions": [
     "DB03 groups/electives and 0037 migration",
@@ -59,7 +60,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.college_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "counts_as_placed_at",
@@ -72,7 +81,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.counts_as_placed_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "max_held_offers",
@@ -85,7 +102,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.max_held_offers",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "uplift_pct",
@@ -98,7 +123,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.uplift_pct",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "min_response_hours",
@@ -111,7 +144,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.min_response_hours",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "updated_at",
@@ -126,7 +167,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.updated_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "version",
@@ -139,8 +188,25 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_college_rules.version",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         }
+      ],
+      "proposedVnextTable": "placement_college_rules",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-policy.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "legacy V162__tpo_v1_settings.sql",
+        "legacy JPA CollegePlacementRules/CollegeWhatCompaniesSee"
       ]
     },
     {
@@ -167,7 +233,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.college_id",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "show_cgpa_exact",
@@ -180,7 +254,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_cgpa_exact",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "show_tenth_twelfth",
@@ -193,7 +275,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_tenth_twelfth",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "show_project_links",
@@ -206,7 +296,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_project_links",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "show_assessment_scores",
@@ -219,7 +317,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_assessment_scores",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "show_attendance",
@@ -232,7 +338,15 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.show_attendance",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         },
         {
           "legacyField": "updated_at",
@@ -247,8 +361,25 @@
           "verifiedVnextMapping": null,
           "disposition": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedBy": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedTarget": "placement_company_visibility_settings.updated_at",
+          "proposedTargetIsVerified": false,
+          "schemaAuthored": true,
+          "schemaAuthoredEvidence": "src/db/schema/tpo-policy.ts",
+          "validationTestsAuthored": [
+            "tests/unit/tpo-policy-validation.test.ts",
+            "tests/integration/db09-tpo-policy.test.ts"
+          ]
         }
+      ],
+      "proposedVnextTable": "placement_company_visibility_settings",
+      "schemaAuthored": true,
+      "schemaAuthoredPath": "src/db/schema/tpo-policy.ts",
+      "migrationState": "UNREGISTERED_PREMERGE_SQL_DRAFT",
+      "testState": "AUTHORED_NOT_EXECUTED",
+      "sourceComparison": [
+        "legacy V162__tpo_v1_settings.sql",
+        "legacy JPA CollegePlacementRules/CollegeWhatCompaniesSee"
       ]
     },
     {
@@ -4642,5 +4773,12 @@
         }
       ]
     }
+  ],
+  "implementationBatch": "DB09-A_POLICY_VISIBILITY_SCHEMA_AND_ENDPOINTS_AUTHORED_NOT_DB_VERIFIED",
+  "notes": [
+    "14/279 V162 source fields have corresponding isolated Drizzle schema definitions and API service contracts, but are deliberately NOT verified.",
+    "Company-visible data filtering and placement offer cascade consumer rewiring remain open.",
+    "SQL draft is unregistered; tests authored but neither unit nor PostgreSQL tests executed in this chat.",
+    "Keep original V162 default values. Visibility version is an intentional additive concurrency safeguard."
   ]
 }
