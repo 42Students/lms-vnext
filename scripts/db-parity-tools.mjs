@@ -153,7 +153,11 @@ export function run(argv = process.argv.slice(2)) {
       legacyTableCrosswalkEntries: mappings.tables.length,
       implementedLegacyTableMappings: mappings.tables.filter(m => m.vnextTable && m.state === "MAPPED_PENDING_FIELD_AUDIT").length,
       explicitMissingLegacyConcepts: mappings.tables.filter(m => m.state === "GAP_CONFIRMED").map(m => m.legacyTable),
-      physicalLegacySchemaAvailable: false, parityVerified: false };
+      physicalLegacySchemaAvailable: false, parityVerified: false,
+      pass5SourceAuditStatus: tracker.passes[4].status,
+      pass5IntegrityWitnesses: json(path.join(defaultRoot, "docs/planning/database-parity-pass5-probe-manifest.json")).probes.length,
+      pass5WitnessesExecuted: 0,
+      databaseReleaseReady: false };
     process.stdout.write(JSON.stringify(report, null, 2) + "\n");
   } else throw Error("Unknown command: " + cmd);
 }

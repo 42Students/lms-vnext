@@ -189,3 +189,9 @@ Pass control: `docs/planning/database-parity-five-pass-tracker.json`. **Pass 4 N
 - `database-parity-pass4-adversarial-findings.md` has **18 findings**, tracked in `database-parity-pass4-review-decisions.json` with explicit acceptance criteria. No findings marked fixed.
 - **Explicit blockers:** 0 of 2,829 field semantics verified; actual MySQL/PostgreSQL catalog diff and DB constraints tests not run. This source sweep does not certify real database parity.
 - **Next when user requests:** Pass 5 mutation/race/tenancy/retention/migration replay verification, with hard blocking on unavailable DB, and fresh source-sha drift checks.
+
+## Five-pass adversarial source audit checkpoint — 2026-10-10
+
+All five **source-review** passes are now documented, but **DB PARITY IS NOT COMPLETE**. Pass 5's 21 aggregate SQL integrity witnesses and evaluator are listed in [database-parity-pass5-adversarial-findings.md](database-parity-pass5-adversarial-findings.md) with machine-readable scenarios at [database-parity-pass5-probe-manifest.json](database-parity-pass5-probe-manifest.json). No witness, negative-write/race test, migration replay, PostgreSQL introspection or legacy live MySQL comparison was executed. All 2,829 source-field semantic mappings are unverified, and 199 candidate table decisions remain unresolved. Source-audit completion is **not** schema/domain implementation completion.
+
+**Next work:** implement the first unresolved DB03 group/elective schema and business invariants on `db-parity-2026`, generate a migration, run tests on disposable PostgreSQL, then proceed DB04 and DB08. Preserve the zero-data-migration decision; do not modify legacy production databases.
