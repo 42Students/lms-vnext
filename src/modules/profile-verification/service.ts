@@ -138,6 +138,19 @@ export async function reviewProfileVerification(
     await repository.reviewerDisplayName(context.user.id)};
   if (reviewer.kind === "LEARNER") throw new VerificationStateError("NOT_ALLOWED");
   return repository.withLockedTransition(input.learnerMembershipId, input.section, async (existing) => {
+    // Recheck after the writer has acquired the college lock. The earlier
+    // fast-fail check cannot protect against a grant/settings revocation race.
+    const [stillTpoAdmin,stillTpoEnabled] = tpo
+      ? await Promise.all([
+          repository.isTpoAdministrator(context.user.id,target.collegeId),
+          repository.isTpoVerificationEnabled(target.collegeId),
+        ])
+      : [false,false];
+    requirePermission(context,"profile-verification.review",{
+      collegeId:target.collegeId,organizationId:target.organizationId,
+      tpoVerificationAdministrator:stillTpoAdmin,
+      tpoVerificationEnabled:stillTpoEnabled,
+    });
     if (!existing) throw new VerificationStateError("INVALID_TRANSITION");
     const documentsReviewedAndAccepted = input.action === "VERIFY"
       ? await repository.submittedEvidenceIsValid(
