@@ -172,6 +172,10 @@ export async function joinGroup(
     const group = await lockGroup(tx, groupId);
     assertScope(context, group, mode, memberId);
     await assertTargetMembership(tx, group, memberId);
+    // An ELECTIVE group without a currently active offering must not be
+    // joined directly to bypass the shared slot's max_pick guard.
+    if (group.kind === "ELECTIVE" && !slot)
+      throw new GroupServiceError("ELECTIVE_OFFERING_NOT_ACTIVE");
     if (mode === "SELF") assertSelfWindow(group, new Date());
     else if (!["DRAFT", "ACTIVE"].includes(group.status))
       throw new GroupServiceError("GROUP_NOT_MUTABLE");

@@ -50,3 +50,28 @@ The DB03 integration suite now **requires** `TEST_DATABASE_URL` and the explicit
 
 ## Event actor attribution and waitlist eligibility
 Automatic promotion is now recorded as a SYSTEM event (the original member source is retained). Promotion scans only waitlisted records whose college membership remains ACTIVE and whose LEARNER role still exists. Suspended members are not promoted ahead of eligible learners. Revoked/stale waitlist cleanup and rule-driven refresh remain separate open work.
+
+## Group-backed learner access batch (2026-10-10)
+
+The original learner course-list and `requireLearningReadAccess` treated primary
+`section_enrollments` as the only roster. Fixed that incomplete parity path:
+- `src/modules/groups/roster-access.ts` now centralizes the ACTIVE elective
+  roster predicate for both course discovery and exact-delivery permissions.
+- Filters require matching college across group, slot, membership, course
+  department and the slot's owning program, ACTIVE learner role, member
+  state, group/slot/offering/course, and a live backed delivery.
+- The host section **never** grants a non-member access to a group-backed
+  elective. Archived/inactive linked offerings are denied even when the
+  learner belongs to the host section.
+- Elective courses are visible to active group members without altering
+  the learner's `section_enrollments`.
+- The group join writer rejects a kind=ELECTIVE group without an ACTIVE
+  offering; direct joins cannot bypass the common slot lock.
+- Historical elective reads intentionally require current ACTIVE group
+  membership; this is a conservative authorization policy awaiting explicit
+  legacy historical behavior approval.
+
+**Not yet covered:** learner schedule for elective event sessions; faculty
+attendance capture; course producer-level GROUP_BACKED delivery lifecycle;
+grading/quiz submission behavior under all access modes. DB fixture tests
+and typechecking are required before treating this as verified.

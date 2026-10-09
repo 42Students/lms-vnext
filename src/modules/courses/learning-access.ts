@@ -12,6 +12,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
+import { hasActiveElectiveDeliveryAccess, isElectiveBackedDelivery } from "@/modules/groups/roster-access";
 import { CoursesServiceError } from "./errors";
 import {
   loadCourseOfferingScope,
@@ -84,6 +85,16 @@ async function hasLearnerDeliveryAccess(
     !context.membership.roles.includes("LEARNER")
   ) {
     return false;
+  }
+
+  // An elective-backed delivery must NEVER fall back to the host section's
+  // primary roster: the elective group is its sole learner membership source.
+  if (await isElectiveBackedDelivery(delivery.id)) {
+    return hasActiveElectiveDeliveryAccess(
+      context.membership.id,
+      delivery.collegeId,
+      delivery.id,
+    );
   }
 
   const [row] = await getDb()
