@@ -317,5 +317,24 @@ export async function markOwnNotificationRead(
     )
     .returning();
 
-  return updated ?? current;
+  if (updated) {
+    return updated;
+  }
+
+  // Concurrent readers can observe unread before another request wins
+  // the conditional update. Return the committed row, not stale readAt=null.
+  const [latest] = await getDb()
+    .select()
+    .from(inAppNotifications)
+    .where(
+      and(
+        eq(inAppNotifications.id, notificationId),
+        eq(inAppNotifications.userId, context.user.id),
+      ),
+    )
+    .limit(1);
+  if (!latest) {
+    throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+  }
+  return latest;
 }
