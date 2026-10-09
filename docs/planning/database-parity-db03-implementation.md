@@ -13,3 +13,16 @@ Added: `lms_groups`, `lms_group_members`, `lms_group_member_events`, `lms_group_
 
 ## Follow-up verification
 Run `npm run db:generate` in a complete checkout and inspect generated `0037` drift against the authored SQL, then replay migrations against disposable PostgreSQL before running tests. The migration is now **registered in the journal** with an intentionally constructed 0037 snapshot. A full Drizzle-kit generation diff and PostgreSQL replay are still REQUIRED to detect manual snapshot/schema drift; registration does not prove execution. The migration will be picked up by `db:migrate` when run against a disposable database.
+
+## Membership transaction batch (2026-10-10)
+
+Added `src/modules/groups/service.ts` with `createGroup`, `joinGroup`, and `leaveGroup`:
+- Parent group row is locked with `FOR UPDATE`, and elective joins lock the shared slot **before** the group.
+- Active seat counts, durable member transition, append-only event **insert**, and waitlist promotion occur in one transaction.
+- SELF joins require active learner account and exact membership, group ACTIVE status and valid join window.
+- MANUAL edits require tenant admin permission; platform groups require global superadmin.
+- Locked REMOVED rejects rejoin; existing ACTIVE/WAITLISTED joins are idempotent.
+- max_pick counts ACTIVE **and** WAITLISTED across active offerings of the common slot.
+- No primary section changes.
+
+**Still not proven:** real DB transaction execution, all admin/rule state variants, consent/status policy, DB-level append-only event immutability, group-backed course consumers. Cross-parent invalid inserts remain possible by privileged SQL; transactional service checking alone is not proof of schema-level tenant integrity.
