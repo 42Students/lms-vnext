@@ -193,6 +193,8 @@ export async function applyPlacementEligibilityBulkAction(
         beforeReason: previous?.reason ?? null,
         beforeNote: previous?.note ?? null,
         beforeLastActionId: previous?.lastActionId ?? null,
+        beforeDecidedByUserId: previous?.decidedByUserId ?? null,
+        beforeDecidedAt: previous?.decidedAt ?? null,
         afterStatus: change.status,
         afterReason: change.reason,
         afterNote: change.note,
@@ -324,8 +326,8 @@ export async function undoPlacementEligibilityBulkAction(
             reason: event.beforeReason,
             note: event.beforeNote,
             lastActionId: event.beforeLastActionId,
-            decidedByUserId: context.user.id,
-            decidedAt: now,
+            decidedByUserId: event.beforeDecidedByUserId,
+            decidedAt: event.beforeDecidedAt ?? now,
             updatedAt: now,
           })
           .where(
