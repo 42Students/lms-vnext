@@ -18,12 +18,20 @@
     "fieldsUnverified": 280,
     "workstreamBranch": "db08-placement-parity-2026",
     "executionDoc": "docs/planning/database-parity-db08-execution.md",
-    "currentPriority": "DB08-A_BULK_ELIGIBILITY_AND_BATCH_LIFECYCLE"
+    "currentPriority": "DB08_B_POSTGRES_REPLAY_AND_REGISTRATION_DEBARMENT_INTEGRATION",
+    "bSchemasStaged": [
+      "src/db/schema/placement-registration.ts",
+      "src/db/schema/placement-debarments.ts"
+    ],
+    "bMigrationStaged": [
+      "scripts/sql/db08-registration-staging.sql",
+      "scripts/sql/db08-debarment-staging.sql"
+    ]
   },
   "counts": {
     "legacyTables": 18,
     "legacyFields": 280,
-    "candidateDirectTableMissing": 6,
+    "candidateDirectTableMissing": 2,
     "verifiedFields": 0
   },
   "tables": [
@@ -3091,8 +3099,10 @@
       "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
       "sourceBase": "V188__placement_batches_and_eligibility.sql",
       "priority": "P0",
-      "candidateVnextTables": [],
-      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "candidateVnextTables": [
+        "placement_batch_lifecycles"
+      ],
+      "disposition": "SOURCE_AUTHORED_CANDIDATES_UNJOURNALED_NOT_VERIFIED",
       "fieldCount": 8,
       "fields": [
         {
@@ -3230,8 +3240,12 @@
       "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
       "sourceBase": "V161__tpo_v1_drives.sql",
       "priority": "P1",
-      "candidateVnextTables": [],
-      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "candidateVnextTables": [
+        "placement_debarments",
+        "placement_debarment_drive_events",
+        "placement_debarment_history"
+      ],
+      "disposition": "SOURCE_AUTHORED_CANDIDATES_UNJOURNALED_NOT_VERIFIED",
       "fieldCount": 10,
       "fields": [
         {
@@ -3566,8 +3580,10 @@
       "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
       "sourceBase": "V188__placement_batches_and_eligibility.sql",
       "priority": "P0",
-      "candidateVnextTables": [],
-      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "candidateVnextTables": [
+        "placement_eligibility_events"
+      ],
+      "disposition": "SOURCE_AUTHORED_CANDIDATES_UNJOURNALED_NOT_VERIFIED",
       "fieldCount": 16,
       "fields": [
         {
@@ -3813,8 +3829,11 @@
       "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
       "sourceBase": "V161__tpo_v1_drives.sql",
       "priority": "P0",
-      "candidateVnextTables": [],
-      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "candidateVnextTables": [
+        "placement_batch_registrations",
+        "placement_batch_registration_events"
+      ],
+      "disposition": "SOURCE_AUTHORED_CANDIDATES_UNJOURNALED_NOT_VERIFIED",
       "fieldCount": 11,
       "fields": [
         {
