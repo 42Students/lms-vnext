@@ -12,6 +12,110 @@
   ],
   "tables": [
     {
+      "legacyTable": "bug_report",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Operational bug tracker; explicit retirement requires user decision",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "College held-offer count/placed definition/uplift/response policy",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Visibility/privacy policy fields not modeled as dedicated vNext persistent entity",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "drive_group",
+      "vnextTable": null,
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "elective_offering",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Links elective slot, course, group and group-backed class",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "elective_slot",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Slot min/max elective choices, academic-year/term, credits, status",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "email_suppression",
+      "vnextTable": null,
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "follow_up",
+      "vnextTable": null,
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "vnextTable": "public.placement_eligibility_overrides",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "job_offer",
+      "vnextTable": "public.placement_offers",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "job_round",
+      "vnextTable": "public.placement_job_rounds",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "lead_activity",
+      "vnextTable": null,
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "vnextTable": "public.placement_candidate_academic_evidence",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
       "legacyTable": "lms_group",
       "vnextTable": null,
       "state": "GAP_CONFIRMED",
@@ -44,34 +148,26 @@
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "elective_slot",
+      "legacyTable": "notification_outbox",
       "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Slot min/max elective choices, academic-year/term, credits, status",
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "elective_offering",
+      "legacyTable": "placement_batch",
       "vnextTable": null,
       "state": "GAP_CONFIRMED",
-      "notes": "Links elective slot, course, group and group-backed class",
+      "notes": "Placement-specific batch enrollment deadline, invite/finished state and rules",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "profile_verification",
+      "legacyTable": "placement_debarment",
       "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Education/Identity submitted/verified/returned/update-pending snapshots",
-      "fieldAudit": "NOT_STARTED",
-      "workflowVerification": "NOT_STARTED"
-    },
-    {
-      "legacyTable": "profile_verification_event",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Immutable verification actor/action timeline",
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
@@ -92,74 +188,42 @@
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "placement_batch",
+      "legacyTable": "placement_registration",
       "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Placement-specific batch enrollment deadline, invite/finished state and rules",
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "college_placement_rules",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "College held-offer count/placed definition/uplift/response policy",
+      "legacyTable": "placement_season",
+      "vnextTable": "public.placement_seasons",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "college_what_companies_see",
+      "legacyTable": "prep_assignment",
       "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Visibility/privacy policy fields not modeled as dedicated vNext persistent entity",
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "tpo_message_thread",
+      "legacyTable": "profile_verification",
       "vnextTable": null,
       "state": "GAP_CONFIRMED",
-      "notes": "HR/TPO drive or general conversation thread",
+      "notes": "Education/Identity submitted/verified/returned/update-pending snapshots",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "tpo_message",
+      "legacyTable": "profile_verification_event",
       "vnextTable": null,
       "state": "GAP_CONFIRMED",
-      "notes": "HR/TPO exchange body/read state history",
-      "fieldAudit": "NOT_STARTED",
-      "workflowVerification": "NOT_STARTED"
-    },
-    {
-      "legacyTable": "tpo_share_link",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Company share-link lifecycle and access controls",
-      "fieldAudit": "NOT_STARTED",
-      "workflowVerification": "NOT_STARTED"
-    },
-    {
-      "legacyTable": "tpo_share_event",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Company share auditable events",
-      "fieldAudit": "NOT_STARTED",
-      "workflowVerification": "NOT_STARTED"
-    },
-    {
-      "legacyTable": "round_slot",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Negotiated timed interview slots / capacity / panel, distinct from round itself",
-      "fieldAudit": "NOT_STARTED",
-      "workflowVerification": "NOT_STARTED"
-    },
-    {
-      "legacyTable": "round_assignment",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Applicant slot assignment & confirmation",
+      "notes": "Immutable verification actor/action timeline",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
@@ -172,42 +236,42 @@
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "tpo_team_member",
+      "legacyTable": "round_assignment",
       "vnextTable": null,
       "state": "GAP_CONFIRMED",
-      "notes": "Delegated team membership, scope and operational permissions",
+      "notes": "Applicant slot assignment & confirmation",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "tpo_coordinator_assignment",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "TPO coordinator ownership, distinct from drive-day learner coordinator",
+      "legacyTable": "round_attendance",
+      "vnextTable": "public.placement_round_attendance",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "Appears in V165__tpo_v1_complete.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "tpo_college_settings",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "Recruiter/TPO college setting state and eligibility of verifier role",
+      "legacyTable": "round_result",
+      "vnextTable": "public.placement_round_results",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "tpo_saved_view",
+      "legacyTable": "round_slot",
       "vnextTable": null,
       "state": "GAP_CONFIRMED",
-      "notes": "Saved table filters/view configuration",
+      "notes": "Negotiated timed interview slots / capacity / panel, distinct from round itself",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "tpo_student_note",
-      "vnextTable": null,
-      "state": "GAP_CONFIRMED",
-      "notes": "TPO notes with authorship and visibility",
+      "legacyTable": "student_request",
+      "vnextTable": "public.placement_learner_requests",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     },
@@ -228,10 +292,90 @@
       "workflowVerification": "NOT_STARTED"
     },
     {
-      "legacyTable": "bug_report",
+      "legacyTable": "tpo_college_settings",
       "vnextTable": null,
       "state": "GAP_CONFIRMED",
-      "notes": "Operational bug tracker; explicit retirement requires user decision",
+      "notes": "Recruiter/TPO college setting state and eligibility of verifier role",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "TPO coordinator ownership, distinct from drive-day learner coordinator",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "vnextTable": null,
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V161__tpo_v1_drives.sql. Needs field/behavior/constraint audit; no automatic retirement.",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_message",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "HR/TPO exchange body/read state history",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_message_thread",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "HR/TPO drive or general conversation thread",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Saved table filters/view configuration",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_share_event",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Company share auditable events",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Company share-link lifecycle and access controls",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_student_note",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "TPO notes with authorship and visibility",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_team_member",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Delegated team membership, scope and operational permissions",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_user_prefs",
+      "vnextTable": null,
+      "state": "REVIEW_REQUIRED",
+      "notes": "Appears in V165__tpo_v1_complete.sql. Needs field/behavior/constraint audit; no automatic retirement.",
       "fieldAudit": "NOT_STARTED",
       "workflowVerification": "NOT_STARTED"
     }
