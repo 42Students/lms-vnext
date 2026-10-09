@@ -1,0 +1,1520 @@
+{
+  "schemaVersion": 1,
+  "project": "42Students/lms-vnext",
+  "dbDomain": "DB03_GROUPS_AND_ELECTIVES",
+  "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "targetBranch": "db-parity-2026",
+  "targetHeadWhenGenerated": "189682d74606d58821235d4c72b21888eda7c6d2",
+  "vnextSchemaSnapshot": "drizzle/meta/0039_snapshot.json",
+  "statement": "79 SOURCE columns inventoried, proposed path-only mapping; no actual DB schema, code execution, or semantic parity proved.",
+  "sourceTables": 6,
+  "sourceColumns": 79,
+  "proposed": 78,
+  "unmapped": 1,
+  "identityRedesigns": 4,
+  "semanticRedesigns": 1,
+  "derived": 2,
+  "legacyActorSnapshotGaps": 1,
+  "verified": 0,
+  "fields": [
+    {
+      "legacyColumn": "elective_offering.id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.slot_id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.slot_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.course_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.course_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.group_id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL COMMENT 'lms_group of kind ELECTIVE; its ACTIVE members are the enrolled learners'",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.group_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.backed_class_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL COMMENT 'The GROUP_BACKED class all content/timetable/attendance is keyed on'",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.backed_delivery_id"
+      ],
+      "kind": "SEMANTIC_REDESIGN",
+      "verification": "UNVERIFIED",
+      "requiredDecision": true,
+      "risk": "Legacy GROUP_BACKED class has all per-class content/attendance/course surfaces; vNext backed delivery and group roster consumers need end-to-end proof.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.capacity",
+      "legacyType": "int",
+      "legacyDefinition": "INT NULL COMMENT 'Mirrors lms_group.capacity for display; the group enforces it'",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.capacity"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.status",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | ARCHIVED'",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.status"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.created_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.created_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.updated_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.updated_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.is_deleted",
+      "legacyType": "boolean",
+      "legacyDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.deleted_at"
+      ],
+      "kind": "SOFT_DELETE_TIMESTAMP",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.version",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL DEFAULT 0",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_offerings.version"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_offering.active_course_key",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT GENERATED ALWAYS AS (CASE WHEN status = 'ACTIVE' AND (is_deleted = false OR is_deleted IS NULL) THEN course_id ELSE NULL END) VIRTUAL",
+      "legacySource": "V168__electives_offering_unique.sql",
+      "target": [
+        "elective_offerings_slot_active_course_uq"
+      ],
+      "kind": "DERIVED_UNIQUE_INDEX",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "Generated nullable key replaced with PostgreSQL partial unique index; verify concurrent ACTIVE duplicate and archive/re-offer.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.college_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.college_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.program_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL COMMENT 'The curriculum this slot belongs to; allocation may still take learners from any program in the college'",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.program_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.semester_number",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.semester_number"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.academic_year",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NULL",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.academic_year"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.name",
+      "legacyType": "varchar(150)",
+      "legacyDefinition": "VARCHAR(150) NOT NULL COMMENT 'e.g. Professional Elective 1'",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.name"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.description",
+      "legacyType": "varchar(1000)",
+      "legacyDefinition": "VARCHAR(1000) NULL",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.description"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.credits",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL DEFAULT 3",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.credits"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.min_pick",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL DEFAULT 1",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.min_pick"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.max_pick",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL DEFAULT 1 COMMENT 'How many offerings of this slot one learner may hold; enforced by ElectiveJoinPolicy'",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.max_pick"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.status",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | ARCHIVED'",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.status"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.created_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.created_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.updated_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.updated_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.is_deleted",
+      "legacyType": "boolean",
+      "legacyDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.deleted_at"
+      ],
+      "kind": "SOFT_DELETE_TIMESTAMP",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "elective_slot.version",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL DEFAULT 0",
+      "legacySource": "V167__electives.sql",
+      "target": [
+        "elective_slots.version"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.kind",
+      "legacyType": "varchar(40)",
+      "legacyDefinition": "VARCHAR(40) NOT NULL COMMENT 'Feature-owned discriminator, e.g. ELECTIVE, CRT, BUS. Upper-case identifier; the kernel stores it, never interprets it'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.kind"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.owner_scope",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL DEFAULT 'COLLEGE' COMMENT 'COLLEGE | PLATFORM'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.owner_scope"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.college_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NULL COMMENT 'NULL only for PLATFORM-owned groups (super-admin)'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.college_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.name",
+      "legacyType": "varchar(150)",
+      "legacyDefinition": "VARCHAR(150) NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.name"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.description",
+      "legacyType": "varchar(1000)",
+      "legacyDefinition": "VARCHAR(1000) NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.description"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.status",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL DEFAULT 'DRAFT' COMMENT 'DRAFT | ACTIVE | CLOSED | ARCHIVED. Self-join needs ACTIVE; admins may build a roster in DRAFT'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.status"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.capacity",
+      "legacyType": "int",
+      "legacyDefinition": "INT NULL COMMENT 'NULL = unlimited. Hard limit on ACTIVE members, enforced by the atomic seat claim'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.capacity"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.active_count",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL DEFAULT 0 COMMENT 'Denormalised count of ACTIVE members. Seat claim = UPDATE ... WHERE active_count < capacity; reconcile endpoint recomputes it'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.active_count"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.self_join_open_from",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NULL COMMENT 'Learners may join themselves only inside [from, until]; NULL from = self-join disabled'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.self_join_open_from"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.self_join_open_until",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.self_join_open_until"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.academic_year",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.academic_year"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.semester_number",
+      "legacyType": "int",
+      "legacyDefinition": "INT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.semester_number"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.config_json",
+      "legacyType": "json",
+      "legacyDefinition": "JSON NULL COMMENT 'Feature-owned settings, stored and returned opaquely. Kernel reads only allowWaitlist and allowSelfLeave'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.config_json"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.created_by_type",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [],
+      "kind": "UNMAPPED_HISTORICAL_DATA",
+      "verification": "UNVERIFIED",
+      "requiredDecision": true,
+      "risk": "No durable creator type snapshot: created_by_user_id cannot reconstruct actor role at creation after role changes. Requires explicit policy/design decision.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.created_by_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.created_by_user_id"
+      ],
+      "kind": "IDENTITY_REDESIGN",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "Legacy polymorphic int type/id becomes canonical UUID; confirm original actor identity semantics.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.created_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.created_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.updated_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.updated_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.is_deleted",
+      "legacyType": "boolean",
+      "legacyDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.deleted_at"
+      ],
+      "kind": "SOFT_DELETE_TIMESTAMP",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group.version",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL DEFAULT 0",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_groups.version"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.group_id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.group_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.member_type",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL DEFAULT 'LEARNER' COMMENT 'LEARNER today; FACULTY/EXTERNAL reserved'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.member_type"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.member_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.membership_id"
+      ],
+      "kind": "IDENTITY_REDESIGN",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "Legacy numeric member ID mapped to scoped college membership; cross-college and nonlearner types require deliberate policy.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.state",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL COMMENT 'REQUESTED | ACTIVE | WAITLISTED | REMOVED'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.state"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.source",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL COMMENT 'MANUAL | CSV | RULE | SELF'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.source"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.is_locked",
+      "legacyType": "boolean",
+      "legacyDefinition": "BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'An explicit admin decision: a rule re-run never overturns it, and a locked REMOVED row blocks self re-join'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.is_locked"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.waitlist_position",
+      "legacyType": "int",
+      "legacyDefinition": "INT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.waitlist_position"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.note",
+      "legacyType": "varchar(500)",
+      "legacyDefinition": "VARCHAR(500) NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.note"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.joined_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NULL COMMENT 'When the member last became ACTIVE'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.joined_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.created_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.created_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.updated_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.updated_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member.version",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL DEFAULT 0",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.version"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.group_id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.group_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.member_type",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_members.member_type"
+      ],
+      "kind": "DERIVED_HISTORICAL_JOIN",
+      "verification": "UNVERIFIED",
+      "requiredDecision": true,
+      "risk": "Event's historical member_type not separately persisted. Need guarantee immutable member type or add type snapshot to events.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.member_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.membership_id"
+      ],
+      "kind": "IDENTITY_REDESIGN",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "Source numeric member ID mapped to college membership UUID.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.from_state",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.from_state"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.to_state",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.to_state"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.source",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.source"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.actor_type",
+      "legacyType": "varchar(20)",
+      "legacyDefinition": "VARCHAR(20) NULL COMMENT 'LEARNER | FACULTY | SUPER_ADMIN | SYSTEM'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.actor_type"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.actor_id",
+      "legacyType": "int",
+      "legacyDefinition": "INT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.actor_user_id"
+      ],
+      "kind": "IDENTITY_REDESIGN",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "Legacy polymorphic actor ID now user UUID; original role type retained separately.",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.reason",
+      "legacyType": "varchar(500)",
+      "legacyDefinition": "VARCHAR(500) NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.reason"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_member_event.created_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_member_events.created_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_rule.id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_rules.id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_rule.group_id",
+      "legacyType": "bigint",
+      "legacyDefinition": "BIGINT NOT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_rules.group_id"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_rule.criteria_json",
+      "legacyType": "json",
+      "legacyDefinition": "JSON NOT NULL COMMENT 'Same shape as job.eligibility_json (JobEligibility.java): branches, minCgpa, maxActiveBacklogs, passingYears, ... One evaluator serves both'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_rules.criteria_json"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_rule.auto_refresh",
+      "legacyType": "boolean",
+      "legacyDefinition": "BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Reserved for a scheduled re-run; V1 applies on demand'",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_rules.auto_refresh"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_rule.last_run_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_rules.last_run_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_rule.last_run_matched",
+      "legacyType": "int",
+      "legacyDefinition": "INT NULL",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_rules.last_run_matched"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": null,
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_rule.created_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_rules.created_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    },
+    {
+      "legacyColumn": "lms_group_rule.updated_at",
+      "legacyType": "datetime",
+      "legacyDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "legacySource": "V166__groups_kernel.sql",
+      "target": [
+        "lms_group_rules.updated_at"
+      ],
+      "kind": "DIRECT_SOURCE_NAME_MATCH",
+      "verification": "UNVERIFIED",
+      "requiredDecision": false,
+      "risk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "dataTypeTimezoneProof": null,
+      "nullabilityDefaultProof": null,
+      "serviceWriteProof": null,
+      "serviceReadProof": null,
+      "postgresTestProof": null,
+      "signoff": null
+    }
+  ]
+}
