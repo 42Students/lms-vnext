@@ -14,10 +14,7 @@ import {
 } from "@/db/schema";
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
-import {
-  placementBatchRegistrationEvents,
-  placementBatchRegistrations,
-} from "@/db/schema/placement-registration";
+import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import {
@@ -218,15 +215,8 @@ export async function registerOwnPlacementChoice(
       }).where(eq(placementBatchRegistrations.id, existing.id)).returning();
     }
     if (!registration) throw new Error("DB08 registration persistence failed");
-    await tx.insert(placementBatchRegistrationEvents).values({
-      registrationId: registration.id,
-      previousChoice: existing?.choice ?? null,
-      nextChoice: payload.choice,
-      consentVersion: payload.consentVersion,
-      consentAt: payload.consentAt,
-      actorUserId: context.user.id,
-      source: "SELF",
-    });
+    // SQL AFTER INSERT/UPDATE trigger generates one immutable event, including
+    // for a future writer that bypasses this application service.
     return registration;
   });
 }
