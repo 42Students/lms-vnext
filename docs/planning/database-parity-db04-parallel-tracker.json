@@ -115,16 +115,16 @@
     {
       "id": "DB04-07",
       "name": "PII audit: raw identity values in JSONB, response redaction, masked snapshots, log handling",
-      "status": "DEFENSE_IN_DEPTH_SNAPSHOT_GUARD_AUTHORED",
+      "status": "SNAPSHOT_GUARD_AND_PROFILE_FORMAT_FIX_AUTHORED_PRIVACY_OPEN",
       "releaseBlocker": true,
-      "note": "New verified snapshots reject raw ID numbers and public document links; existing learner_profiles.profile_document raw Aadhaar/PAN storage risk still open."
+      "note": "Verification snapshot guard authored; fixed 4 education/achievement year regexes and phone regex in learner profile validation with regression tests; existing raw Aadhaar/PAN profile JSON storage remains a security release blocker."
     },
     {
       "id": "DB04-08",
       "name": "Private upload receipts and owner/tenant/expiry-scoped document access",
-      "status": "PRIVATE_RECEIPT_SCHEMA_STAGED_STORAGE_BLOCKED",
+      "status": "PRIVATE_RECEIPT_SCHEMA_AND_EVIDENCE_VALIDATOR_STAGED_GCP_BLOCKED",
       "releaseBlocker": true,
-      "note": "Drizzle receipt table staged; no configured secure bucket, signer, scanner, evidence producer, or access-controlled downloads."
+      "note": "Private receipt table and pure section readiness/evidence gate implemented with unit tests; no actual cloud object, scanner, signing, or access-checked download execution."
     },
     {
       "id": "DB04-09",
@@ -184,7 +184,9 @@
     "postgres": "NOT_EXECUTED",
     "drizzleGeneration": "NOT_EXECUTED",
     "browser": "NOT_EXECUTED",
-    "githubCI": "FAILING_WITH_NO_DIAGNOSTIC_JOB_LOGS"
+    "githubCI": "FAILING_WITH_NO_DIAGNOSTIC_JOB_LOGS",
+    "isolatedReceiptEvidenceMirrorTsc": "PASS_LOCAL_MIRROR",
+    "isolatedReceiptEvidenceMirrorSmoke": "PASS_5_ASSERTIONS_LOCAL_MIRROR"
   },
   "completion": "CODE_PARTIAL_RELEASE_BLOCKED",
   "notes": [
@@ -200,16 +202,27 @@
       "src/modules/profile-verification/service.ts",
       "src/modules/profile-verification/academic-marks.ts",
       "src/db/schema/profile-verification.ts",
-      "src/modules/permissions/policy.ts (profile-verification.review permission)"
+      "src/modules/permissions/policy.ts (profile-verification.review permission)",
+      "src/modules/profile-verification/evidence.ts",
+      "src/modules/people/profile-validation.ts (phone/year regex corrections)"
     ],
     "newUnitTests": [
       "tests/unit/db04-verification-domain.test.ts",
       "tests/unit/db04-verification-service.test.ts",
       "tests/unit/db04-verification-policy.test.ts",
-      "tests/unit/db04-academic-marks.test.ts"
+      "tests/unit/db04-academic-marks.test.ts",
+      "tests/unit/db04-verification-evidence.test.ts",
+      "tests/unit/db04-profile-document-format.test.ts"
     ],
     "currentBehavior": "STAGED_ONLY_NO_API_NO_PERSISTENCE_NO_SECURE_UPLOAD",
     "driftPolicy": "Do not export staged schema or register DB04 migration until DB03 journal is reconciled"
   },
-  "lastAudit": "2026-10-10"
+  "lastAudit": "2026-10-10",
+  "exceptionPendingApproval": {
+    "legacyIndividualVerifyAllowsMissingDocuments": true,
+    "vnextStagedPlannerRequiresAcceptedPrivateEvidenceForEveryApproval": true,
+    "type": "DOCUMENTED_SECURITY_HARDENING_DEVIATION",
+    "approval": "NOT_APPROVED",
+    "reason": "Prevent blind identity checks and verification without actual private upload receipts; full browser parity signoff blocked until reviewed"
+  }
 }
