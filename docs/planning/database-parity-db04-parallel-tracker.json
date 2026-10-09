@@ -74,8 +74,9 @@
     {
       "id": "DB04-01",
       "name": "Legacy V187/V192 service and UI behavior sweep, including sent-back update semantics",
-      "status": "IN_PROGRESS",
-      "releaseBlocker": true
+      "status": "LEGACY_SERVICE_REVIEW_DONE_FRONTEND_PENDING",
+      "releaseBlocker": true,
+      "note": "Confirmed 2026-10-10: update sent back restores VERIFIED and old approved values; bulk verify per-item partial success; exact front-end and storage flow still unreviewed."
     },
     {
       "id": "DB04-02",
@@ -122,8 +123,9 @@
     {
       "id": "DB04-09",
       "name": "Original mark grade/scale/max, conversion provenance, policy version and precision",
-      "status": "NOT_STARTED",
-      "releaseBlocker": true
+      "status": "SOURCE_BEHAVIOR_PINNED_IMPLEMENTATION_MISSING",
+      "releaseBlocker": true,
+      "note": "Exact legacy: college conversion rule change recomputes current percentages and audits CGPA_RULE_CHANGED while raw marks remain as earned; do not freeze derived percentages."
     },
     {
       "id": "DB04-10",
@@ -168,7 +170,8 @@
     "drizzleGeneration": "NOT_EXECUTED",
     "typecheck": "NOT_EXECUTED",
     "lint": "NOT_EXECUTED",
-    "browser": "NOT_EXECUTED"
+    "browser": "NOT_EXECUTED",
+    "staticSourceReview": "LEGACY_V187_V192_SERVICES_CONFIRMED"
   },
   "completion": "NOT_IMPLEMENTED_NOT_VERIFIED",
   "notes": [
@@ -176,5 +179,6 @@
     "Never count a source-mapped field as verified without executed tests",
     "Do not update shared branch directly while DB03 writes are active",
     "Use docs/planning/database-parity-db04-parallel-audit.md as decision contract"
-  ]
+  ],
+  "lastSourceAudit": "2026-10-10"
 }
