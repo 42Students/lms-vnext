@@ -8,6 +8,7 @@ import {
   learnerProfiles,
 } from "@/db/schema";
 import { drizzlePeopleRepository } from "./repository";
+import { PeopleServiceError } from "./errors";
 import {
   emptyLearnerProfileDocument,
   learnerProfileDocumentSchema,
@@ -84,6 +85,12 @@ export const drizzleProfileRepository: ProfileRepository = {
     membershipId,
     document,
   ): Promise<LearnerProfileView> {
+    // Until an encrypted/private identity vault is provisioned, reject these
+    // fields explicitly instead of placing national ID numbers in generic
+    // profile_document JSONB or silently discarding user input.
+    if (document.identity.aadhaarNumber || document.identity.panNumber) {
+      throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
+    }
     const db = getDb();
     const [profile] = await db
       .insert(learnerProfiles)

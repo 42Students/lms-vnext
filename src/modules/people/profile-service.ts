@@ -246,6 +246,9 @@ export async function upsertOwnLearnerProfileDocument(
   const document =
     learnerProfileDocumentSchema.parse(rawInput);
 
+  if (document.identity.aadhaarNumber || document.identity.panNumber) {
+    throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
+  }
   return repository.upsertLearnerProfileDocument(
     membership.id,
     document,
