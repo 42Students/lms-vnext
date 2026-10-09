@@ -2,7 +2,7 @@ import { and, count, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  cohorts, courseOfferings, courseSectionDeliveries, courses,
+  cohorts, courseOfferings, courseSectionDeliveries, courses, sections,
   departments, electiveOfferings, electiveSlots, lmsGroupMembers, lmsGroups, programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -27,7 +27,7 @@ const offeringInput = z.object({
   slotId: uuid,
   courseId: uuid,
   groupId: uuid,
-  backedDeliveryId: uuid.nullish(),
+  backedDeliveryId: uuid,
 });
 
 export class ElectivesServiceError extends Error {
@@ -102,25 +102,39 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
     if (!course || course.collegeId !== slot.collegeId || course.status !== "ACTIVE") {
       throw new ElectivesServiceError("ELECTIVE_COURSE_COLLEGE_MISMATCH");
     }
-    if (input.backedDeliveryId) {
+    {
       const [delivery] = await tx.select({
         id: courseSectionDeliveries.id,
         courseId: courseOfferings.courseId,
         collegeId: departments.collegeId,
+        offeringPeriodId: courseOfferings.academicPeriodId,
+        offeringCohortId: courseOfferings.cohortId,
+        offeringStatus: courseOfferings.status,
+        offeringType: courseOfferings.type,
+        sectionCohortId: sections.cohortId,
+        sectionPeriodId: sections.academicPeriodId,
+        sectionStatus: sections.status,
+        endedAt: courseSectionDeliveries.endedAt,
       }).from(courseSectionDeliveries)
         .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+        .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
         .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
         .innerJoin(programs, eq(programs.id, cohorts.programId))
         .innerJoin(departments, eq(departments.id, programs.departmentId))
         .where(eq(courseSectionDeliveries.id, input.backedDeliveryId)).limit(1);
-      if (!delivery || delivery.courseId !== course.id || delivery.collegeId !== slot.collegeId) {
+      if (!delivery || delivery.courseId !== course.id || delivery.collegeId !== slot.collegeId ||
+          delivery.offeringType !== "ELECTIVE" || delivery.offeringStatus !== "ACTIVE" ||
+          delivery.sectionStatus !== "ACTIVE" || delivery.endedAt !== null ||
+          delivery.sectionCohortId !== delivery.offeringCohortId ||
+          delivery.sectionPeriodId !== delivery.offeringPeriodId ||
+          (slot.academicPeriodId !== null && slot.academicPeriodId !== delivery.offeringPeriodId)) {
         throw new ElectivesServiceError("ELECTIVE_DELIVERY_MISMATCH");
       }
     }
     try {
       const [offering] = await tx.insert(electiveOfferings).values({
         slotId: slot.id, courseId: course.id, groupId: group.id,
-        backedDeliveryId: input.backedDeliveryId ?? null,
+        backedDeliveryId: input.backedDeliveryId,
         capacity: group.capacity,
       }).returning();
       return offering!;

@@ -111,7 +111,7 @@ CREATE TABLE "elective_offerings" (
   "slot_id" uuid NOT NULL,
   "course_id" uuid NOT NULL,
   "group_id" uuid NOT NULL,
-  "backed_delivery_id" uuid,
+  "backed_delivery_id" uuid NOT NULL,
   "capacity" integer,
   "status" varchar(20) DEFAULT 'ACTIVE' NOT NULL,
   "deleted_at" timestamp with time zone,

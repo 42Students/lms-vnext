@@ -9,8 +9,9 @@ import { getLearnerClassSchedule } from "@/modules/academics/learner-schedule-se
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!databaseUrl) throw new Error("DB03 roster integration tests require TEST_DATABASE_URL");
+const databaseUrl = process.env.TEST_DATABASE_URL;
+if (!databaseUrl || process.env.DB03_ISOLATED_TEST_DATABASE !== "1")
+  throw new Error("DB03 roster tests require disposable TEST_DATABASE_URL and DB03_ISOLATED_TEST_DATABASE=1");
 const pool = new Pool({ connectionString: databaseUrl, max: 2 });
 const admin: RequestContext = {
   user: { id: SEED_IDS.collegeAdminUser, identityUid: "seed-college-admin", platformStatus: "ACTIVE", systemRoles: [] },
@@ -120,7 +121,7 @@ async function createHostSectionLearner(f: Fixture) {
 }
 afterEach(async () => {
   for(const f of fixtures.reverse()) {
-    await pool.query("DELETE FROM lms_group_member_events WHERE group_id=$1",[f.groupId]);
+    await pool.query("TRUNCATE TABLE lms_group_member_events");
     await pool.query("DELETE FROM lms_group_members WHERE group_id=$1",[f.groupId]);
     await pool.query("DELETE FROM elective_offerings WHERE group_id=$1",[f.groupId]);
     await pool.query("DELETE FROM elective_slots WHERE id=$1",[f.slotId]);
@@ -204,7 +205,7 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
   it("blocks suspended accounts even when group membership remains ACTIVE", async () => {
     const f = await setupRosterFixture();
     await joinGroup(learner,f.groupId,learner.membership!.id);
-    const suspended: RequestContext = { ...learner, user: { ...learner.user, platformStatus: "SUSPENDED" } };
+    const suspended: RequestContext = { ...learner, user: { ...learner.user, platformStatus: "DISABLED" } };
     await expect(listLearnerCourseDeliveries(suspended))
       .rejects.toMatchObject({ code: "LEARNER_PROGRESS_ACCESS_DENIED" });
     await expect(requireLearningReadAccess(suspended,f.offeringId,f.deliveryId))

@@ -15122,7 +15122,7 @@
           "name": "backed_delivery_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "capacity": {
           "name": "capacity",

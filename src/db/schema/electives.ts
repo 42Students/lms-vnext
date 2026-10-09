@@ -36,7 +36,7 @@ export const electiveOfferings = pgTable("elective_offerings", {
   slotId: uuid("slot_id").notNull().references(() => electiveSlots.id, { onDelete: "restrict" }),
   courseId: uuid("course_id").notNull().references(() => courses.id, { onDelete: "restrict" }),
   groupId: uuid("group_id").notNull().references(() => lmsGroups.id, { onDelete: "restrict" }),
-  backedDeliveryId: uuid("backed_delivery_id").references(() => courseSectionDeliveries.id, { onDelete: "restrict" }),
+  backedDeliveryId: uuid("backed_delivery_id").notNull().references(() => courseSectionDeliveries.id, { onDelete: "restrict" }),
   capacity: integer("capacity"),
   status: varchar("status", { length: 20 }).default('ACTIVE').notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),

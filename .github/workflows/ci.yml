@@ -105,6 +105,8 @@ jobs:
         run: npm run db:migrate
 
       - name: Database integration tests
+        env:
+          DB03_ISOLATED_TEST_DATABASE: "1"
         run: npm run test:db
 
       - name: Install Playwright Chromium
