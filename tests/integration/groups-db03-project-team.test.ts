@@ -90,6 +90,17 @@ describe("DB03 project TEAM roster mirroring (PostgreSQL)", () => {
     expect(total.rows[0].n).toBe(1);
   });
 
+  it("rejects privileged SQL binding a project to an unrelated group kind", async () => {
+    const f=await setupTeam();
+    await pool.query("UPDATE lms_groups SET kind='BUS' WHERE id=$1",[f.groupId]);
+    await expect(pool.query(
+      "UPDATE project_instances SET team_group_id=$1 WHERE id=$2",
+      [f.groupId,f.projectId],
+    )).rejects.toMatchObject({code:"23514"});
+    const link=await pool.query("SELECT team_group_id FROM project_instances WHERE id=$1",[f.projectId]);
+    expect(link.rows[0].team_group_id).toBeNull();
+  });
+
   it("rolls back a group join when the project mirror cannot accept it", async () => {
     const f=await setupTeam();
     await attachProjectTeamGroup(admin,f.projectId,f.groupId);
