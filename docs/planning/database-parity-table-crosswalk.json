@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "source": "Legacy SQL migrations V161 V162 V165 V166 V167 V187 V188 V191 and JPA model files inspected on 2026-10-09",
+  "reviewBoundary": "Table-level mapping only; no fields, relationships, use cases or lifecycle certified.",
+  "sourceLegacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "destinationVnextSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+  "statusVocabulary": [
+    "GAP_CONFIRMED",
+    "MAPPED_PENDING_FIELD_AUDIT",
+    "REVIEW_REQUIRED",
+    "RETIRED_PROPOSED"
+  ],
+  "tables": [
+    {
+      "legacyTable": "lms_group",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Group kind/owner/capacity/self-join/atomic counters, status and soft deletion require own kernel",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Membership states + locked removal + waitlist and join source, unique by group/member",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Append-only membership event audit",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Saved criteria, auto-refresh and last-run stats",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "elective_slot",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Slot min/max elective choices, academic-year/term, credits, status",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "elective_offering",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Links elective slot, course, group and group-backed class",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "profile_verification",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Education/Identity submitted/verified/returned/update-pending snapshots",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Immutable verification actor/action timeline",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "vnextTable": "public.placement_eligibility_decisions",
+      "state": "MAPPED_PENDING_FIELD_AUDIT",
+      "notes": "vNext stores effective decisions; prove scope inheritance and inactive/undeclared semantics",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Bulk-action undoable eligibility history absent from vNext physical snapshot",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "placement_batch",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Placement-specific batch enrollment deadline, invite/finished state and rules",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "College held-offer count/placed definition/uplift/response policy",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Visibility/privacy policy fields not modeled as dedicated vNext persistent entity",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_message_thread",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "HR/TPO drive or general conversation thread",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_message",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "HR/TPO exchange body/read state history",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Company share-link lifecycle and access controls",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_share_event",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Company share auditable events",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "round_slot",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Negotiated timed interview slots / capacity / panel, distinct from round itself",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "round_assignment",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Applicant slot assignment & confirmation",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Legacy reschedule-request details, may map to application exception only after field audit",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_team_member",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Delegated team membership, scope and operational permissions",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "TPO coordinator ownership, distinct from drive-day learner coordinator",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Recruiter/TPO college setting state and eligibility of verifier role",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Saved table filters/view configuration",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_student_note",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "TPO notes with authorship and visibility",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "TPO-specific auditable operations, potential mapping to activity_events needs proof",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "TPO notification read state, potentially mapped to in_app_notifications after proof",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    },
+    {
+      "legacyTable": "bug_report",
+      "vnextTable": null,
+      "state": "GAP_CONFIRMED",
+      "notes": "Operational bug tracker; explicit retirement requires user decision",
+      "fieldAudit": "NOT_STARTED",
+      "workflowVerification": "NOT_STARTED"
+    }
+  ]
+}
