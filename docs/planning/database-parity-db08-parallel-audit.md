@@ -115,6 +115,9 @@ The source registry's 280 fields must be reviewed one by one before any table is
 - [x] Branch isolated, GitHub issue claim established.
 - [x] Current legacy/backend, legacy/frontend and vNext base SHAs pinned.
 - [x] Initial 18-table disposition and high-priority invariants documented.
+- [x] Eligibility pure resolver now enforces explicit MEMBERSHIP > SECTION > COHORT precedence independent of input chain ordering (`src/modules/placements/access-service.ts`).
+- [x] Three additional precedence/fallback/NOT_DECIDED unit regression cases authored in `tests/unit/placement-access.test.ts`; **not executed**.
+- [ ] Bulk eligibility event/undo model and database transaction behavior implemented.
 - [ ] 280/280 **semantically verified** field mappings (0 currently).
 - [ ] DB08 schema/API implemented.
 - [ ] PostgreSQL and role/tenant tests executed.
