@@ -5,7 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createGroup, joinGroup, leaveGroup, moveElectiveMember, transitionGroup } from "@/modules/groups/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import { createElectiveSlot } from "@/modules/electives/service";
+import { createElectiveSlot, listElectiveOfferings } from "@/modules/electives/service";
 import { upsertGroupRule, refreshGroupRule } from "@/modules/groups/rules-service";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -219,6 +219,18 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       [candidate.membershipId],
     );
     expect(events.rows[0].n).toBe(1);
+  });
+
+  it("hides soft-deleted ACTIVE offerings from the elective slot listing", async () => {
+    const {slotId}=await createElectiveFixture();
+    expect(await listElectiveOfferings(admin,slotId)).toHaveLength(2);
+    await pool.query(
+      "UPDATE elective_offerings SET deleted_at=now() WHERE id=$1",
+      [fixture.offerings[0]],
+    );
+    const visible=await listElectiveOfferings(admin,slotId);
+    expect(visible).toHaveLength(1);
+    expect(visible[0].offeringId).toBe(fixture.offerings[1]);
   });
 
   it("normalizes the elective academic year and enforces source slot bounds", async () => {

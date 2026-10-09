@@ -185,7 +185,8 @@ export async function listElectiveOfferings(context: RequestContext, slotIdInput
   }).from(electiveOfferings)
     .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
     .where(and(eq(electiveOfferings.slotId, slotId),
-      eq(electiveOfferings.status, "ACTIVE")));
+      eq(electiveOfferings.status, "ACTIVE"),
+      isNull(electiveOfferings.deletedAt)));
 }
 
 /** Same-slot administrative transfer is transactional in the group kernel. */
