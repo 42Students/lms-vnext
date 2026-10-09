@@ -18,7 +18,7 @@
     "uniquePhysicalTableCandidates": 199,
     "uniqueCandidateRenames": 7,
     "sourceColumnCandidates": 2744,
-    "historicalBackupCandidateTables": 30,
+    "historicalBackupCandidateTables": 31,
     "sourceCandidateTablesWithoutPriorCrosswalk": 153,
     "unaccountedPriorCrosswalkEntries": 0
   },
@@ -8164,7 +8164,7 @@
     {
       "legacyNameAtSnapshot": "lesson_contents_legacy_type_backup_v163",
       "candidateNameAfterV194": "lesson_contents_legacy_type_backup_v163",
-      "category": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "category": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
       "firstSource": "V163__retire_legacy_lesson_content_types.sql",
       "sourceColumns": [
         {
