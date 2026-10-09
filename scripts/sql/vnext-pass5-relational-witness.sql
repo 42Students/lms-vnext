@@ -1,7 +1,7 @@
 -- Pass 5: aggregate-only relational integrity witness (NOT a prevention test).
 -- Run only on an explicitly authorized disposable PostgreSQL fixture database.
 -- Do not run against production or export identifying application rows.
--- psql -X -A -t -v ON_ERROR_STOP=1 "$TEST_DATABASE_URL" -f scripts/sql/vnext-pass5-relational-witness.sql > /tmp/vnext-pass5.jsonl
+-- psql -q -X -A -t -v ON_ERROR_STOP=1 "$TEST_DATABASE_URL" -f scripts/sql/vnext-pass5-relational-witness.sql > /tmp/vnext-pass5.jsonl
 -- node scripts/db-parity-pass5-evaluate.mjs /tmp/vnext-pass5.jsonl
 -- Nonzero witness counts prove invalid combinations EXIST. Zero counts do NOT prove protection.
 -- An empty database will return zero for every probe and cannot satisfy the release gate.

@@ -38,7 +38,7 @@ These checks are *diagnostics against existing data*, not an assertion that an e
 
 ```bash
 # First: provision a disposable Postgres DB, apply all migrations, and SEED two+ synthetic colleges
-psql -X -A -t -v ON_ERROR_STOP=1 "$TEST_DATABASE_URL" \
+psql -q -X -A -t -v ON_ERROR_STOP=1 "$TEST_DATABASE_URL" \
   -f scripts/sql/vnext-pass5-relational-witness.sql > /tmp/vnext-pass5.jsonl
 node scripts/db-parity-pass5-evaluate.mjs /tmp/vnext-pass5.jsonl
 npm run test:db:parity
