@@ -44,12 +44,13 @@ Active parallel owners: DB03 Groups/Electives; DB04 Profiles & Verification; DB0
 
 ### DB10-N: first implementation increment — existing notification correctness
 
-**Three confirmed source-code defects** in `src/modules/activity/notification-service.ts` were changed here (no schema migrations):
+**Four confirmed source-code defects** in `src/modules/activity/notification-service.ts` were changed here (no schema migrations):
 1. `countOwnUnreadNotifications` previously listed at most 100 unread rows and returned array length. Now uses `count()` with both recipient ownership and `read_at is null` conditions.
 2. `deliverInAppNotification` previously returned number of active recipients regardless of `onConflictDoNothing()`, reporting duplicates as delivered. Now uses `returning({id})`, accurately reports inserted count and adds `skippedDuplicate`. Inactive users remain counted separately.
-3. `actionHref` previously accepted `//other-host` and backslash/control-character sequences. Now requires safe internal paths and rejects protocol-relative URLs. **Stored-row defense:** `listOwnNotifications` now suppresses unsafe legacy action links on read via `safeNotificationActionHref`; existing database bytes remain unchanged for auditability. Any alternate notification read consumer must reuse this policy.
+3. `actionHref` previously accepted `//other-host` and backslash/control-character sequences. Now requires safe internal paths and rejects protocol-relative URLs.
+4. A concurrent `markOwnNotificationRead` loser could return stale `readAt=null` despite another writer committing read state. Now refetches the owned committed record when the conditional update loses. **Stored-row defense:** `listOwnNotifications` now suppresses unsafe legacy action links on read via `safeNotificationActionHref`; existing database bytes remain unchanged for auditability. Any alternate notification read consumer must reuse this policy.
 
-**New executable tests** at `tests/integration/db10-notification-guards.test.ts`: duplicate-event count semantics, 105 unread notifications (including cross-user isolation and decrement on read), off-origin/control-character URL rejection, and existing unsafe-row read sanitization. `tests/unit/notification-action.test.ts` tests the pure path policy. **Not executed yet** until a disposable PostgreSQL with committed migrations and seed is available. A separate Node-based tracker test `tests/db-parity-db10-ledger.test.mjs` guards source-record completeness and prevents fake verification. No test claim without actual runner output.
+**New executable tests** at `tests/integration/db10-notification-guards.test.ts`: duplicate-event count semantics, 105 unread notifications (including cross-user isolation and decrement on read), off-origin/control-character URL rejection, existing unsafe-row read sanitization, and 12 parallel read acknowledgements. `tests/unit/notification-action.test.ts` tests the pure path policy. **Not executed yet** until a disposable PostgreSQL with committed migrations and seed is available. A separate Node-based tracker test `tests/db-parity-db10-ledger.test.mjs` guards source-record completeness and prevents fake verification. No test claim without actual runner output.
 
 ### Critical privacy and lifecycle gates still open
 
@@ -66,7 +67,7 @@ Active parallel owners: DB03 Groups/Electives; DB04 Profiles & Verification; DB0
 | ID | Task | Acceptance standard | Progress |
 |---|---|---|---|
 | DB10-N0 | Fix existing notification count, duplicates and link validation | Source changed; tests authored; database verification pending | IMPLEMENTED_NOT_VERIFIED |
-| DB10-N1 | Read-side link policy and tests | Policy wired to reads/writes; DB tests and all read-path consumer audits pending | IMPLEMENTED_NOT_VERIFIED |
+| DB10-N1 | Read-side link policy and tests | Policy wired to reads/writes; DB tests and all read-path consumer audits pending; CI verify job failed without visible steps/logs | IMPLEMENTED_NOT_VERIFIED |
 | DB10-N2 | Delayed delivery, expiry, announcement targeting | Scheduling, expiry and deletion remain faithful to legacy workflows | NOT_STARTED |
 | DB10-B1 | Bug tracker exact API, roles, fields and state map | 5 legacy tables / all fields mapped with transitions, tenant and audit evidence | NOT_STARTED |
 | DB10-A1 | Audit and announcements domain | Separate security audit from activity; schedule/targeting/pin/expiry | NOT_STARTED |
