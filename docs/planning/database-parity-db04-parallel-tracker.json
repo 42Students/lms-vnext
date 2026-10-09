@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "domain": "DB04_PROFILES_AND_VERIFICATION",
   "owner": "parallel DB04 chat",
-  "workBranch": "db04-profile-verification-2026",
+  "workBranch": "main",
   "baseBranch": "db-parity-2026",
   "createdAt": "2026-10-10",
   "sharedCoordinationIssue": "https://github.com/42Students/lms-vnext/issues/2",
@@ -109,9 +109,9 @@
     {
       "id": "DB04-06",
       "name": "Centralized College Admin/Super Admin/TPO admin verify authorization plus college setting",
-      "status": "TPO_POLICY_GRANT_SETTINGS_SERVICES_AUTHORED_UNEXECUTED",
+      "status": "POLICY_AND_TRANSACTION_REAUTHORIZATION_ON_MAIN_UNEXECUTED",
       "releaseBlocker": true,
-      "note": "Trusted same-college admin grant/revoke, settings toggle and locked in-txn reviewer recheck implemented; no live tests."
+      "note": "Main commit 37b631e88148d2406106ce143cd9a384339dcd6e rechecks target learner and reviewer user/college/role/TPO grant at transaction time; database execution unverified."
     },
     {
       "id": "DB04-07",
@@ -189,7 +189,7 @@
     "browserAndGCS": "NOT_RUN",
     "sourceStructuralChecks": "7_OF_7_PASSED_NOT_RUNTIME"
   },
-  "completion": "PARTIAL_SOURCE_IMPLEMENTATION_RELEASE_BLOCKED",
+  "completion": "MAIN_INTEGRATED_RELEASE_BLOCKED",
   "notes": [
     "Greenfield only; do not migrate old production data",
     "Never count a source-mapped field as verified without executed tests",
@@ -221,7 +221,9 @@
     "migrationRegistered": false,
     "connectedRoutes": false,
     "productionStorageProvisioned": false,
-    "codeState": "IMPLEMENTED_SOURCE_ONLY_NOT_RUNTIME_VERIFIED"
+    "codeState": "INTEGRATED_TO_MAIN_INACTIVE_UNVERIFIED",
+    "activeBranch": "main",
+    "latestAuthCommit": "37b631e88148d2406106ce143cd9a384339dcd6e"
   },
   "lastAudit": "2026-10-10",
   "exceptionPendingApproval": {
@@ -247,5 +249,16 @@
     "103 field semantic verification + undecided active/retired records",
     "CI failures and unavailable logs prevent repository-level execution evidence",
     "Documented intentional stronger document verification exception pending signoff"
-  ]
+  ],
+  "integration": {
+    "integratedAt": "2026-10-10",
+    "integrationPullRequest": "https://github.com/42Students/lms-vnext/pull/17",
+    "integrationSquashSha": "d1a5f36e5cc8600a27e8aa9d41677c5258273f17",
+    "originalWorkBranch": "db04-profile-verification-2026",
+    "originalDraftPullRequest": "https://github.com/42Students/lms-vnext/pull/3",
+    "originalDraftStatus": "CLOSED_UNMERGED_REPLACED_BY_PR17",
+    "db03BranchPreserved": true,
+    "migrationRegistered": false,
+    "publicRoutesEnabled": false
+  }
 }
