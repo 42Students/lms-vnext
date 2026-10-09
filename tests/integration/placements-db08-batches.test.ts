@@ -194,6 +194,11 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
       "INSERT INTO placement_batch_lifecycles(cohort_id,college_id,created_by_user_id,updated_by_user_id) VALUES ($1,$2,$3,$3)",
       [b.cohortId,SEED_IDS.collegeA,SEED_IDS.collegeAdminUser],
     )).rejects.toMatchObject({ code: "23514" });
+    // A same-college faculty identity is not an eligible learner target.
+    await expect(pool.query(
+      "INSERT INTO placement_eligibility_decisions(college_id,scope_type,scope_id,status) VALUES ($1,'MEMBERSHIP',$2,'ELIGIBLE')",
+      [SEED_IDS.collegeA,SEED_IDS.facultyCollegeAMembership],
+    )).rejects.toMatchObject({ code: "23514" });
     await expect(pool.query(
       "INSERT INTO placement_eligibility_events(college_id,action_id,event_kind,scope_type,scope_id,after_status,actor_user_id) VALUES ($1,$2,'DECIDE','COHORT',$3,'ELIGIBLE',$4)",
       [SEED_IDS.collegeA,randomUUID(),b.cohortId,SEED_IDS.collegeAdminUser],
