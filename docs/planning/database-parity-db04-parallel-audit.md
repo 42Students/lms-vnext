@@ -166,3 +166,15 @@ The source audit has now become a staged implementation. **No DB04 schema migrat
 **Highest-priority next batch:** secure repository adapter + transactional SQL event write + checked document evidence producer, then full source field crosswalk, mark provenance/college rule persistence, isolated PostgreSQL negative writes, and final UI parity. Rebase on active DB03 branch with migration journal review **before** enabling or merging this staged schema.
 
 The canonical machine-readable ownership and evidence queue remains `docs/planning/database-parity-db04-parallel-tracker.json`. Coordination issue #2 and draft PR #3 track the same branch.
+
+## 11. Further isolated batch: source-backed verification evidence + profile validator bugfix
+
+- `src/modules/profile-verification/evidence.ts` now derives EDUCATION/IDENTITY submission readiness from owner-scoped CLEAN private upload receipts. It requires 10th, 12th or Diploma, UG/PG, marks and marksheets for each education entry, plus a résumé; Identity requires Aadhaar or PAN evidence matching every ID number supplied. Revoked/expired/unscanned, wrong-owner, public-URL, bad-hash and oversized receipts fail closed.
+- `tests/unit/db04-verification-evidence.test.ts` covers the matrix. Standalone local source-mirror TypeScript and smoke checks passed, not full-repo Vitest or PostgreSQL checks.
+- Concrete vNext profile validation defects found and corrected in `src/modules/people/profile-validation.ts`: phone pattern formerly contained literal `[d]` / `[ds-]` rather than numeric digits; four year fields used literal `d{4}` rather than `\\d{4}`. New `tests/unit/db04-profile-document-format.test.ts` checks real phone and years. **Repository regression suite not executed**.
+
+### Parity/security exception requiring approval
+The production legacy `ProfileVerificationService.verify()` individual-review path does not universally enforce uploaded document evidence, although its bulk/quick-review path does. DB04 staged service requires an accepted private evidence receipt for every approval. This is an **intentional security hardening deviation** motivated by avoiding blind identity checks, not a claim of identical legacy behavior. Keep this exception open until explicit product/security sign-off; do not silently label this family parity VERIFIED.
+
+### Unresolved risk
+Raw Aadhaar/PAN strings remain supported in the existing `learner_profiles.profile_document` JSON; the new snapshot guard does not remediate that underlying profile storage. Do not expose verification APIs until private identity storage, redaction, encryption, document authorization, migration and associated negative tests are resolved. The Drizzle staging file is still unregistered and no live database has been modified.
