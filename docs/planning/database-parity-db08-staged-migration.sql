@@ -32,6 +32,12 @@ ALTER TABLE "placement_eligibility_decisions"
   ADD CONSTRAINT "placement_eligibility_decisions_action_college_fk"
   FOREIGN KEY ("last_action_id", "college_id")
   REFERENCES "placement_eligibility_actions"("id", "college_id") ON DELETE RESTRICT;
+ALTER TABLE "placement_eligibility_decisions"
+  ADD CONSTRAINT "placement_eligibility_decisions_reason_length_ck"
+  CHECK ("reason" IS NULL OR length("reason") <= 200);
+ALTER TABLE "placement_eligibility_decisions"
+  ADD CONSTRAINT "placement_eligibility_decisions_note_length_ck"
+  CHECK ("note" IS NULL OR length("note") <= 300);
 
 CREATE TABLE "placement_eligibility_events" (
   "id" uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
@@ -72,7 +78,13 @@ CREATE TABLE "placement_eligibility_events" (
       OR length(trim(coalesce("before_reason", ''))) > 0),
   CONSTRAINT "placement_eligibility_events_after_reason_ck"
     CHECK ("after_status" <> 'INELIGIBLE'
-      OR length(trim(coalesce("after_reason", ''))) > 0)
+      OR length(trim(coalesce("after_reason", ''))) > 0),
+  CONSTRAINT "placement_eligibility_events_reason_length_ck"
+    CHECK (("before_reason" IS NULL OR length("before_reason") <= 200)
+      AND ("after_reason" IS NULL OR length("after_reason") <= 200)),
+  CONSTRAINT "placement_eligibility_events_note_length_ck"
+    CHECK (("before_note" IS NULL OR length("before_note") <= 300)
+      AND ("after_note" IS NULL OR length("after_note") <= 300))
 );
 CREATE UNIQUE INDEX "placement_eligibility_events_action_scope_uq"
   ON "placement_eligibility_events" ("action_id", "scope_type", "scope_id");
