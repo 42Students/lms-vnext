@@ -4,7 +4,7 @@
  * No runtime verification is implied by this file.
  */
 import { sql } from "drizzle-orm";
-import { bigint, boolean, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { bigint, boolean, check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { collegeMemberships } from "./memberships";
 import { colleges } from "./colleges";
 import { users } from "./users";
@@ -30,6 +30,7 @@ export const profileVerifications = pgTable("profile_verifications", {
   updatedAt: timestamp("updated_at", {withTimezone: true}).notNull().defaultNow(),
 }, (t) => [
   uniqueIndex("profile_verifications_learner_section_uq").on(t.learnerMembershipId, t.section),
+  uniqueIndex("profile_verifications_id_member_uq").on(t.id, t.learnerMembershipId),
   index("profile_verifications_status_section_idx").on(t.status, t.section),
   index("profile_verifications_learner_status_idx").on(t.learnerMembershipId, t.status),
   check("profile_verifications_section_ck", sql`${t.section} in ('EDUCATION','IDENTITY')`),
@@ -133,8 +134,7 @@ export const profileVerificationTpoGrants = pgTable("profile_verification_tpo_gr
  */
 export const profileVerificationAcademicMarks = pgTable("profile_verification_academic_marks", {
   id: uuid("id").defaultRandom().primaryKey(),
-  verificationId: uuid("verification_id").notNull()
-    .references(() => profileVerifications.id, {onDelete: "restrict"}),
+  verificationId: uuid("verification_id").notNull(),
   learnerMembershipId: uuid("learner_membership_id").notNull()
     .references(() => collegeMemberships.id, {onDelete: "restrict"}),
   level: varchar("level", {length: 16}).notNull(),
@@ -150,6 +150,9 @@ export const profileVerificationAcademicMarks = pgTable("profile_verification_ac
 }, t => [
   uniqueIndex("profile_verification_academic_marks_level_uq").on(t.learnerMembershipId,t.level),
   index("profile_verification_academic_marks_verification_idx").on(t.verificationId),
+  foreignKey({name:"profile_verification_academic_marks_parent_fk",
+    columns:[t.verificationId,t.learnerMembershipId],
+    foreignColumns:[profileVerifications.id,profileVerifications.learnerMembershipId]}).onDelete("restrict"),
   check("profile_verification_academic_marks_level_ck",
     sql`${t.level} in ('10TH','12TH','DIPLOMA','UG','PG')`),
   check("profile_verification_academic_marks_percentage_ck",
