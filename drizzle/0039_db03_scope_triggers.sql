@@ -115,3 +115,21 @@ END; $$;
 CREATE TRIGGER db03_project_team_scope_guard
 BEFORE INSERT OR UPDATE OF team_group_id,college_id ON project_instances
 FOR EACH ROW EXECUTE FUNCTION db03_guard_project_team_scope();
+
+--> statement-breakpoint
+-- Ownership and purpose are identity, not mutable settings. Changing these
+-- after joining people could retroactively defeat tenant/feature boundaries.
+CREATE FUNCTION db03_group_owner_immutable() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NEW.kind IS DISTINCT FROM OLD.kind
+     OR NEW.owner_scope IS DISTINCT FROM OLD.owner_scope
+     OR NEW.college_id IS DISTINCT FROM OLD.college_id THEN
+    RAISE EXCEPTION 'DB03 group kind and owner scope cannot change'
+      USING ERRCODE='23514';
+  END IF;
+  RETURN NEW;
+END; $$;
+--> statement-breakpoint
+CREATE TRIGGER db03_group_owner_immutable_guard
+BEFORE UPDATE OF kind,owner_scope,college_id ON lms_groups
+FOR EACH ROW EXECUTE FUNCTION db03_group_owner_immutable();

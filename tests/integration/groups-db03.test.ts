@@ -295,6 +295,13 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     await expect(pool.query("UPDATE lms_group_member_events SET reason='tampered' WHERE group_id=$1",[group]))
       .rejects.toMatchObject({code:"23514"});
   });
+  it("refuses privileged SQL mutation of group owner or feature kind", async () => {
+    const group=await createActiveGroup("BUS",1);
+    await expect(pool.query("UPDATE lms_groups SET kind='ELECTIVE' WHERE id=$1",[group]))
+      .rejects.toMatchObject({code:"23514"});
+    await expect(pool.query("UPDATE lms_groups SET college_id=$1 WHERE id=$2",
+      [SEED_IDS.collegeB,group])).rejects.toMatchObject({code:"23514"});
+  });
   it("rejects impossible capacity counters by a physical CHECK constraint", async () => {
     const group=await createActiveGroup("BUS",1);
     await expect(pool.query("UPDATE lms_groups SET active_count=2 WHERE id=$1",[group]))
