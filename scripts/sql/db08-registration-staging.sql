@@ -97,24 +97,24 @@ CREATE TRIGGER db08_registration_parent_guard
 
 -- Database-owned audit: even an authorized future SQL writer cannot change a
 -- choice or consent without an immutable versioned event. No service duplicate.
-CREATE FUNCTION db08_register_audit() RETURNS trigger LANGUAGE plpgsql AS $
+CREATE FUNCTION db08_register_audit() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE prior_choice varchar(24);
 BEGIN
-  IF TG_OP='UPDATE' AND
-    (OLD.choice,OLD.consent_version,OLD.consent_at,OLD.source)
-      IS NOT DISTINCT FROM
-    (NEW.choice,NEW.consent_version,NEW.consent_at,NEW.source) THEN
-    RETURN NEW;
+  IF TG_OP='UPDATE' THEN
+    prior_choice := OLD.choice;
+    IF (OLD.choice,OLD.consent_version,OLD.consent_at,OLD.source)
+         IS NOT DISTINCT FROM
+       (NEW.choice,NEW.consent_version,NEW.consent_at,NEW.source) THEN
+      RETURN NEW;
+    END IF;
   END IF;
   INSERT INTO placement_batch_registration_events
     (registration_id,previous_choice,next_choice,consent_version,consent_at,actor_user_id,source)
-  VALUES (
-    NEW.id,
-    CASE WHEN TG_OP='INSERT' THEN NULL ELSE OLD.choice END,
-    NEW.choice,NEW.consent_version,NEW.consent_at,NEW.recorded_by_user_id,NEW.source
-  );
+  VALUES (NEW.id,prior_choice,NEW.choice,NEW.consent_version,
+    NEW.consent_at,NEW.recorded_by_user_id,NEW.source);
   RETURN NEW;
 END;
-$;
+$$;
 CREATE TRIGGER db08_registration_auto_audit
   AFTER INSERT OR UPDATE ON placement_batch_registrations
   FOR EACH ROW EXECUTE FUNCTION db08_register_audit();
