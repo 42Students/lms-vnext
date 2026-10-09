@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "domain": "DB04_PROFILES_AND_VERIFICATION",
+  "owner": "parallel DB04 chat",
+  "workBranch": "db04-profile-verification-2026",
+  "baseBranch": "db-parity-2026",
+  "createdAt": "2026-10-10",
+  "sharedCoordinationIssue": "https://github.com/42Students/lms-vnext/issues/2",
+  "baselines": {
+    "legacyBackend": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontend": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "vnextDB03Base": "c489b2569dd2d2742da2ee17ed313a26853dc4da"
+  },
+  "sourceCensus": {
+    "tableCandidates": 7,
+    "fields": 103,
+    "fieldsSemanticallyVerified": 0,
+    "tableCandidatesReviewedForDisposition": 7,
+    "tableCandidatesDispositionSignedOff": 0,
+    "sourceLedger": "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
+  },
+  "tableCandidates": [
+    {
+      "legacy": "profile_verification",
+      "fields": 15,
+      "target": "profile_verifications",
+      "status": "REQUIRED_NOT_IMPLEMENTED",
+      "owner": "DB04"
+    },
+    {
+      "legacy": "profile_verification_event",
+      "fields": 10,
+      "target": "profile_verification_events",
+      "status": "REQUIRED_NOT_IMPLEMENTED",
+      "owner": "DB04"
+    },
+    {
+      "legacy": "learner_academic_record",
+      "fields": 18,
+      "target": "placement_candidate_academic_evidence",
+      "status": "PARTIAL_MAPPING_UNVERIFIED",
+      "owner": "DB04_AND_DB08"
+    },
+    {
+      "legacy": "qualification",
+      "fields": 24,
+      "target": "learner_profiles.profile_document.education",
+      "status": "PARTIAL_MAPPING_UNVERIFIED",
+      "owner": "DB04"
+    },
+    {
+      "legacy": "student_image",
+      "fields": 3,
+      "target": null,
+      "status": "USAGE_AND_RETIREMENT_UNVERIFIED",
+      "owner": "DB04"
+    },
+    {
+      "legacy": "student_registration",
+      "fields": 22,
+      "target": null,
+      "status": "CROSS_DOMAIN_DB01_DB02_REVIEW",
+      "owner": "DB01_DB02"
+    },
+    {
+      "legacy": "approver_id_card",
+      "fields": 11,
+      "target": null,
+      "status": "PRODUCT_USAGE_UNVERIFIED",
+      "owner": "DB04_RESEARCH"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "DB04-01",
+      "name": "Legacy V187/V192 service and UI behavior sweep, including sent-back update semantics",
+      "status": "IN_PROGRESS",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-02",
+      "name": "Map all 103 source fields individually, including CRUD consumers and evidence",
+      "status": "NOT_STARTED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-03",
+      "name": "Profile verification current-row schema and tenant-safe FK/unique/check design",
+      "status": "NOT_STARTED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-04",
+      "name": "Immutable verification event schema and DB role grants",
+      "status": "NOT_STARTED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-05",
+      "name": "Version-checked transactional learner submit and reviewer approve/send-back",
+      "status": "NOT_STARTED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-06",
+      "name": "Centralized College Admin/Super Admin/TPO admin verify authorization plus college setting",
+      "status": "NOT_STARTED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-07",
+      "name": "PII audit: raw identity values in JSONB, response redaction, masked snapshots, log handling",
+      "status": "SOURCE_RISK_IDENTIFIED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-08",
+      "name": "Private upload receipts and owner/tenant/expiry-scoped document access",
+      "status": "BLOCKED_GCP_STORAGE",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-09",
+      "name": "Original mark grade/scale/max, conversion provenance, policy version and precision",
+      "status": "NOT_STARTED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-10",
+      "name": "Exactly-once event+snapshot writes and reviewer concurrency integration tests",
+      "status": "NOT_STARTED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-11",
+      "name": "Real isolated PostgreSQL migrate/replay/introspection and malformed SQL negative tests",
+      "status": "NOT_RUN",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-12",
+      "name": "TPO queue/learner card/college review producer-consumer browser parity",
+      "status": "NOT_RUN",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-13",
+      "name": "Classify student_image, student_registration, approver_id_card active/retired",
+      "status": "NOT_STARTED",
+      "releaseBlocker": true
+    },
+    {
+      "id": "DB04-14",
+      "name": "Rebase on DB03 and reconcile migration numbering + Drizzle journal",
+      "status": "WAITING_FOR_DB03",
+      "releaseBlocker": true
+    }
+  ],
+  "excludedPaths": [
+    "src/modules/groups",
+    "src/modules/electives",
+    "src/modules/courses/learning-access.ts",
+    "src/modules/academics/learner-schedule-service.ts",
+    "drizzle/0037_db03_groups_electives.sql"
+  ],
+  "testing": {
+    "postgres": "NOT_EXECUTED",
+    "drizzleGeneration": "NOT_EXECUTED",
+    "typecheck": "NOT_EXECUTED",
+    "lint": "NOT_EXECUTED",
+    "browser": "NOT_EXECUTED"
+  },
+  "completion": "NOT_IMPLEMENTED_NOT_VERIFIED",
+  "notes": [
+    "Greenfield only; do not migrate old production data",
+    "Never count a source-mapped field as verified without executed tests",
+    "Do not update shared branch directly while DB03 writes are active",
+    "Use docs/planning/database-parity-db04-parallel-audit.md as decision contract"
+  ]
+}
