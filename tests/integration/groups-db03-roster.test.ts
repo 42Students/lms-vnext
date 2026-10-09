@@ -264,6 +264,41 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       .rejects.toMatchObject({ code: "ELECTIVE_PRIMARY_SECTION_REQUIRED" });
   });
 
+  it("rejects forged cross-college group membership in direct SQL", async () => {
+    const f=await setupRosterFixture();
+    await expect(pool.query(
+      "INSERT INTO lms_group_members (group_id,membership_id,member_type,state,source) VALUES ($1,$2,'FACULTY','ACTIVE','MANUAL')",
+      [f.groupId,SEED_IDS.facultyCollegeBMembership],
+    )).rejects.toMatchObject({code:"23514"});
+    const rows=await pool.query("SELECT count(*)::integer AS n FROM lms_group_members WHERE group_id=$1",[f.groupId]);
+    expect(rows.rows[0].n).toBe(0);
+  });
+
+  it("rejects forged elective slot college and delivery course in privileged SQL", async () => {
+    const f=await setupRosterFixture();
+    await expect(pool.query(
+      "UPDATE elective_slots SET college_id=$1 WHERE id=$2",
+      [SEED_IDS.collegeB,f.slotId],
+    )).rejects.toMatchObject({code:"23514"});
+    const foreignCourseId=randomUUID();
+    await pool.query(
+      "INSERT INTO courses (id,department_id,name,code) VALUES ($1,$2,$3,$4)",
+      [foreignCourseId,SEED_IDS.departmentB,label(),label()],
+    );
+    try {
+      await expect(pool.query(
+        "UPDATE elective_offerings SET course_id=$1 WHERE group_id=$2",
+        [foreignCourseId,f.groupId],
+      )).rejects.toMatchObject({code:"23514"});
+      const row=await pool.query(
+        "SELECT course_id FROM elective_offerings WHERE group_id=$1",[f.groupId],
+      );
+      expect(row.rows[0].course_id).toBe(f.courseId);
+    } finally {
+      await pool.query("DELETE FROM courses WHERE id=$1",[foreignCourseId]);
+    }
+  });
+
   it("does not allow joining an ELECTIVE group that has no active offering", async () => {
     const f = await setupRosterFixture();
     await pool.query("UPDATE elective_offerings SET status='ARCHIVED' WHERE group_id=$1",[f.groupId]);
