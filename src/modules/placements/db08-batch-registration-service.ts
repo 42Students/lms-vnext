@@ -233,18 +233,22 @@ export async function recordPlacementRegistration(
     const consentVersion = self
       ? (input.consentVersion ?? previous?.consentVersion ?? null)
       : (previous?.consentVersion ?? null);
-    const consentAt = self && input.consentVersion
+    // Repeating the same signed version must not forge a fresh consent time.
+    const consentAt = self && input.consentVersion &&
+      input.consentVersion !== previous?.consentVersion
       ? now
-      : (previous?.consentAt ?? null);
-    const outcomeLabel = input.outcomeLabel ?? null;
-    const outcomeDetail = input.outcomeDetail ?? null;
+      : (previous?.consentAt ?? (self && input.consentVersion ? now : null));
+    const outcomeLabel = input.outcomeLabel === undefined
+      ? (previous?.outcomeLabel ?? null) : input.outcomeLabel;
+    const outcomeDetail = input.outcomeDetail === undefined
+      ? (previous?.outcomeDetail ?? null) : input.outcomeDetail;
     const source = self ? "SELF" as const : "TPO" as const;
 
     if (previous &&
       previous.choice === input.choice &&
       previous.consentVersion === consentVersion &&
       ((previous.consentAt === null && consentAt === null) ||
-        (previous.consentAt !== null && consentAt !== null && !input.consentVersion)) &&
+        (previous.consentAt?.getTime() === consentAt?.getTime())) &&
       previous.outcomeLabel === outcomeLabel &&
       previous.outcomeDetail === outcomeDetail
     ) {
