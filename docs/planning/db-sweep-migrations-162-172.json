@@ -1,0 +1,629 @@
+{
+  "sourceRepo": "42Students/lms",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "disclaimer": "Candidate SQL operations after historical snapshot; SQL regex not actual applied-schema proof.",
+  "migrations": [
+    {
+      "file": "V162__tpo_v1_settings.sql",
+      "createTables": [
+        {
+          "name": "college_placement_rules",
+          "columnCandidates": [
+            "college_id",
+            "counts_as_placed_at",
+            "max_held_offers",
+            "uplift_pct",
+            "min_response_hours",
+            "updated_at",
+            "version"
+          ]
+        },
+        {
+          "name": "college_what_companies_see",
+          "columnCandidates": [
+            "college_id",
+            "show_cgpa_exact",
+            "show_tenth_twelfth",
+            "show_project_links",
+            "show_assessment_scores",
+            "show_attendance",
+            "updated_at"
+          ]
+        }
+      ],
+      "alterTables": [
+        {
+          "table": "industry_company",
+          "addedColumnCandidates": [
+            "export_columns_json"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN export_columns_json JSON NULL COMMENT 'Saved per-company export column picker (TPO V1)'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 1496
+    },
+    {
+      "file": "V163__retire_legacy_lesson_content_types.sql",
+      "createTables": [
+        {
+          "name": "lesson_contents_legacy_type_backup_v163",
+          "columnCandidates": [
+            "id",
+            "content_type",
+            "content_data",
+            "backed_up_at"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 4784
+    },
+    {
+      "file": "V164__log_alert_signature_triage.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "log_alert_signature",
+          "addedColumnCandidates": [
+            "fix_status",
+            "fixed_in_commit",
+            "fixed_at",
+            "status_note",
+            "muted_reason",
+            "issue_public_id",
+            "last_seen_commit",
+            "regressed_at",
+            "sample_path"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN fix_status VARCHAR(16) NOT NULL DEFAULT 'OPEN', ADD COLUMN fixed_in_commit VARCHAR(64) NULL, ADD COLUMN fixed_at TIMESTAMP NULL, ADD COLUMN status_note VARCHAR(500) NULL, ADD COLUMN muted_reason VARCHAR(255) NULL, ADD COLUMN issue_public_id VARCHAR(32) NULL, ADD COLUMN last_seen_commit VARCHAR(64) NULL, ADD COLUMN regressed_at TIMESTAMP NULL, ADD COLUMN sample_path VARCHAR(255) NULL"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 749
+    },
+    {
+      "file": "V165__tpo_v1_complete.sql",
+      "createTables": [
+        {
+          "name": "tpo_message_thread",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "hr_user_id",
+            "job_id",
+            "last_message_at",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_message",
+          "columnCandidates": [
+            "id",
+            "thread_id",
+            "sender_type",
+            "sender_id",
+            "body",
+            "read_at",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_share_link",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "job_id",
+            "token_hash",
+            "recipient_email",
+            "code_hash",
+            "email_code_hash",
+            "email_code_expires",
+            "columns_json",
+            "max_stage",
+            "shortlist_by",
+            "expires_at",
+            "revoked_at",
+            "created_by",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_share_event",
+          "columnCandidates": [
+            "id",
+            "share_id",
+            "action",
+            "detail",
+            "created_at"
+          ]
+        },
+        {
+          "name": "round_slot",
+          "columnCandidates": [
+            "id",
+            "round_id",
+            "starts_at",
+            "ends_at",
+            "room",
+            "panel",
+            "capacity",
+            "proposed_by",
+            "status"
+          ]
+        },
+        {
+          "name": "round_assignment",
+          "columnCandidates": [
+            "id",
+            "round_id",
+            "application_id",
+            "slot_id",
+            "room",
+            "student_confirmed_at",
+            "notified_at"
+          ]
+        },
+        {
+          "name": "reschedule_request",
+          "columnCandidates": [
+            "id",
+            "round_id",
+            "application_id",
+            "reason",
+            "preferred_times",
+            "status",
+            "reply",
+            "decided_by",
+            "created_at"
+          ]
+        },
+        {
+          "name": "round_attendance",
+          "columnCandidates": [
+            "id",
+            "round_id",
+            "application_id",
+            "status",
+            "room",
+            "marked_by",
+            "marked_by_role",
+            "marked_at"
+          ]
+        },
+        {
+          "name": "tpo_team_member",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "faculty_id",
+            "role",
+            "department",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_coordinator_assignment",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "job_id",
+            "learner_id",
+            "on_date",
+            "created_by",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_college_settings",
+          "columnCandidates": [
+            "college_id",
+            "invite_email_template",
+            "reminder_email_template",
+            "whatsapp_template",
+            "student_email_wording",
+            "sms_monthly_cap",
+            "email_signature",
+            "logo_url",
+            "trusted_domains_json",
+            "prep_course_ids_json",
+            "prep_threshold_pct",
+            "notify_toggles_json",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "tpo_user_prefs",
+          "columnCandidates": [
+            "faculty_id",
+            "prefs_json",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "tpo_saved_view",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "faculty_id",
+            "scope",
+            "name",
+            "filters_json",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_student_note",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "learner_id",
+            "note",
+            "created_by",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_audit_log",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "actor_type",
+            "actor_id",
+            "action",
+            "entity_type",
+            "entity_id",
+            "detail",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_bell",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "type",
+            "title",
+            "body",
+            "link",
+            "read_at",
+            "created_at"
+          ]
+        }
+      ],
+      "alterTables": [
+        {
+          "table": "hr_college_access",
+          "addedColumnCandidates": [
+            "pending_lead_id"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN pending_lead_id BIGINT NULL COMMENT 'Set while an existing recruiter has been invited but has not accepted yet (status PENDING_HR)'"
+        },
+        {
+          "table": "job_offer",
+          "addedColumnCandidates": [
+            "expiring_notified_at"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN expiring_notified_at DATETIME NULL COMMENT 'Set once the holder was told the offer expires within 24 hours'"
+        },
+        {
+          "table": "job",
+          "addedColumnCandidates": [
+            "application_deadline_notified_at",
+            "previous_request_json"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN application_deadline_notified_at DATETIME NULL COMMENT 'Set once the deadline has passed and the Home \"share with company\" card was raised', ADD COLUMN previous_request_json JSON NULL COMMENT 'What an HR request looked like before it was resubmitted, so the TPO can see what changed'"
+        },
+        {
+          "table": "job_application",
+          "addedColumnCandidates": [
+            "ineligible_flag_at"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN ineligible_flag_at DATETIME NULL COMMENT 'Set when a corrected or imported academic record made an existing applicant ineligible"
+        },
+        {
+          "table": "learner_academic_record",
+          "addedColumnCandidates": [
+            "batch"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN batch VARCHAR(20) NULL COMMENT 'Batch / passing-out year label used by Students and Reports filters'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 10210
+    },
+    {
+      "file": "V166__groups_kernel.sql",
+      "createTables": [
+        {
+          "name": "lms_group",
+          "columnCandidates": [
+            "id",
+            "kind",
+            "owner_scope",
+            "college_id",
+            "name",
+            "description",
+            "status",
+            "capacity",
+            "active_count",
+            "self_join_open_from",
+            "self_join_open_until",
+            "academic_year",
+            "semester_number",
+            "config_json",
+            "created_by_type",
+            "created_by_id",
+            "created_at",
+            "updated_at",
+            "is_deleted",
+            "version"
+          ]
+        },
+        {
+          "name": "lms_group_member",
+          "columnCandidates": [
+            "id",
+            "group_id",
+            "member_type",
+            "member_id",
+            "state",
+            "source",
+            "is_locked",
+            "waitlist_position",
+            "note",
+            "joined_at",
+            "created_at",
+            "updated_at",
+            "version"
+          ]
+        },
+        {
+          "name": "lms_group_member_event",
+          "columnCandidates": [
+            "id",
+            "group_id",
+            "member_type",
+            "member_id",
+            "from_state",
+            "to_state",
+            "source",
+            "actor_type",
+            "actor_id",
+            "reason",
+            "created_at"
+          ]
+        },
+        {
+          "name": "lms_group_rule",
+          "columnCandidates": [
+            "id",
+            "group_id",
+            "criteria_json",
+            "auto_refresh",
+            "last_run_at",
+            "last_run_matched",
+            "created_at",
+            "updated_at"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 5290
+    },
+    {
+      "file": "V167__electives.sql",
+      "createTables": [
+        {
+          "name": "elective_slot",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "program_id",
+            "semester_number",
+            "academic_year",
+            "name",
+            "description",
+            "credits",
+            "min_pick",
+            "max_pick",
+            "status",
+            "created_at",
+            "updated_at",
+            "is_deleted",
+            "version"
+          ]
+        },
+        {
+          "name": "elective_offering",
+          "columnCandidates": [
+            "id",
+            "slot_id",
+            "course_id",
+            "group_id",
+            "backed_class_id",
+            "capacity",
+            "status",
+            "created_at",
+            "updated_at",
+            "is_deleted",
+            "version"
+          ]
+        }
+      ],
+      "alterTables": [
+        {
+          "table": "class",
+          "addedColumnCandidates": [
+            "class_type",
+            "roster_group_id"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " ADD COLUMN class_type VARCHAR(20) NOT NULL DEFAULT 'SECTION' COMMENT 'SECTION | GROUP_BACKED. GROUP_BACKED classes are hidden from the academic-setup lists', ADD COLUMN roster_group_id BIGINT NULL COMMENT 'GROUP_BACKED only: roster = ACTIVE members of this lms_group', ADD INDEX idx_class_type (class_type), ADD INDEX idx_class_roster_group (roster_group_id)"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 3449
+    },
+    {
+      "file": "V168__electives_offering_unique.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "elective_offering",
+          "addedColumnCandidates": [
+            "active_course_key"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " ADD COLUMN active_course_key BIGINT GENERATED ALWAYS AS (CASE WHEN status = 'ACTIVE' AND (is_deleted = false OR is_deleted IS NULL) THEN course_id ELSE NULL END) VIRTUAL, ADD UNIQUE KEY uk_elective_offering_slot_active_course (slot_id, active_course_key)"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 1009
+    },
+    {
+      "file": "V169__hr_v1_email_identity.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "hr_user",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " MODIFY COLUMN contact_mobile VARCHAR(15) NULL"
+        },
+        {
+          "table": "hr_user",
+          "addedColumnCandidates": [],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": true,
+          "snippet": " ADD UNIQUE KEY uk_hr_user_contact_mail (contact_mail)"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 2038
+    },
+    {
+      "file": "V170__interview_reschedule_request_details.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "interview",
+          "addedColumnCandidates": [
+            "reschedule_request_json"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN reschedule_request_json JSON NULL COMMENT 'Student V1: {reason, note, windows} from the learner''s reschedule request. Null for interviews rescheduled before this existed, or admin-initiated reschedules.'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 599
+    },
+    {
+      "file": "V171__interview_changed_slot_tracking.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "interview",
+          "addedColumnCandidates": [
+            "previous_scheduled_date",
+            "scheduled_date_changed_at"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN previous_scheduled_date DATETIME(6) NULL COMMENT 'The slot this interview was rescheduled FROM, until the student confirms the new one.', ADD COLUMN scheduled_date_changed_at DATETIME(6) NULL COMMENT 'When the slot last changed. Both columns null once the student re-confirms, or if this interview was never rescheduled.'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 548
+    },
+    {
+      "file": "V172__external_placement.sql",
+      "createTables": [
+        {
+          "name": "external_placement",
+          "columnCandidates": [
+            "id",
+            "learner_id",
+            "college_id",
+            "request_id",
+            "company_name",
+            "ctc_lpa",
+            "letter_url",
+            "verified_by",
+            "verified_at",
+            "is_deleted"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 1114
+    }
+  ]
+}

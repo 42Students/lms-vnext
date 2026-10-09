@@ -1,0 +1,875 @@
+{
+  "part": "184-194",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "generatedAt": "2026-10-09",
+  "warnings": [
+    "Detailed CREATE/ALTER source parser, NOT actual post-migration live physical schema",
+    "Complex expressions/dynamic SQL/IF guards require manual review and live introspection",
+    "Descriptions are source definitions; unchanged base tables derive from historical snapshot"
+  ],
+  "migrations": [
+    {
+      "file": "V184__tpo_bell_read.sql",
+      "create": [
+        {
+          "table": "tpo_bell_read",
+          "fields": [
+            {
+              "name": "bell_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "reader_type",
+              "definition": "VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "reader_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "read_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (bell_id, reader_type, reader_id)",
+            "INDEX idx_tpo_bell_read_reader (reader_type, reader_id, bell_id)"
+          ],
+          "sourceMigration": "V184__tpo_bell_read.sql",
+          "rawFieldCount": 6
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 658
+    },
+    {
+      "file": "V185__tpo_recruiter_settings.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "tpo_college_settings",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "hr_drive_needs_approval",
+              "definition": "TINYINT(1) NOT NULL DEFAULT 1"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "hr_access_months",
+              "definition": "INT NOT NULL DEFAULT 6"
+            }
+          ],
+          "sourceMigration": "V185__tpo_recruiter_settings.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 568
+    },
+    {
+      "file": "V186__job_recorded_outside.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "job",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "recorded_outside",
+              "definition": "TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Happened outside the platform"
+            }
+          ],
+          "sourceMigration": "V186__job_recorded_outside.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 475
+    },
+    {
+      "file": "V187__profile_verification.sql",
+      "create": [
+        {
+          "table": "profile_verification",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "section",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'EDUCATION | IDENTITY'"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'SUBMITTED | SENT_BACK | VERIFIED | UPDATE_PENDING'"
+            },
+            {
+              "name": "submitted_snapshot",
+              "definition": "JSON NULL COMMENT 'What the student sent (identity numbers masked)'"
+            },
+            {
+              "name": "verified_snapshot",
+              "definition": "JSON NULL COMMENT 'What was verified; stays in force while an update is pending'"
+            },
+            {
+              "name": "submitted_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "decided_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "decided_by_type",
+              "definition": "VARCHAR(20) NULL COMMENT 'ADMIN | SUPER_ADMIN | TPO'"
+            },
+            {
+              "name": "decided_by_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "decided_by_name",
+              "definition": "VARCHAR(200) NULL"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(500) NULL COMMENT 'Why it was sent back'"
+            },
+            {
+              "name": "verified_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "verified_by_name",
+              "definition": "VARCHAR(200) NULL"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uq_profile_verification (learner_id, section)",
+            "INDEX idx_profile_verification_status (status)"
+          ],
+          "sourceMigration": "V187__profile_verification.sql",
+          "rawFieldCount": 17
+        },
+        {
+          "table": "profile_verification_event",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "section",
+              "definition": "VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "action",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'SUBMITTED | UPDATE_SUBMITTED | VERIFIED | SENT_BACK'"
+            },
+            {
+              "name": "actor_type",
+              "definition": "VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "actor_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "actor_name",
+              "definition": "VARCHAR(200) NULL"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "snapshot",
+              "definition": "JSON NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_profile_verification_event (learner_id, section, id)"
+          ],
+          "sourceMigration": "V187__profile_verification.sql",
+          "rawFieldCount": 11
+        }
+      ],
+      "alter": [
+        {
+          "table": "tpo_college_settings",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "tpo_can_verify_profiles",
+              "definition": "TINYINT(1) NOT NULL DEFAULT 1"
+            }
+          ],
+          "sourceMigration": "V187__profile_verification.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 2149
+    },
+    {
+      "file": "V188__placement_batches_and_eligibility.sql",
+      "create": [
+        {
+          "table": "placement_eligibility",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "scope_type",
+              "definition": "VARCHAR(10) NOT NULL COMMENT 'BATCH | CLASS | LEARNER'"
+            },
+            {
+              "name": "scope_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(12) NOT NULL COMMENT 'ELIGIBLE | INELIGIBLE'"
+            },
+            {
+              "name": "reason",
+              "definition": "VARCHAR(200) NULL COMMENT 'Required when INELIGIBLE'"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(300) NULL"
+            },
+            {
+              "name": "decided_by_type",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "decided_by_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "decided_by_name",
+              "definition": "VARCHAR(200) NULL"
+            },
+            {
+              "name": "decided_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uq_placement_eligibility (scope_type, scope_id)",
+            "INDEX idx_placement_eligibility_college (college_id)"
+          ],
+          "sourceMigration": "V188__placement_batches_and_eligibility.sql",
+          "rawFieldCount": 13
+        },
+        {
+          "table": "placement_eligibility_event",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "action_id",
+              "definition": "VARCHAR(36) NOT NULL COMMENT 'One bulk action = one id'"
+            },
+            {
+              "name": "scope_type",
+              "definition": "VARCHAR(10) NOT NULL"
+            },
+            {
+              "name": "scope_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "before_status",
+              "definition": "VARCHAR(12) NULL COMMENT 'NULL = Not decided at that level'"
+            },
+            {
+              "name": "before_reason",
+              "definition": "VARCHAR(200) NULL"
+            },
+            {
+              "name": "before_note",
+              "definition": "VARCHAR(300) NULL"
+            },
+            {
+              "name": "after_status",
+              "definition": "VARCHAR(12) NULL"
+            },
+            {
+              "name": "after_reason",
+              "definition": "VARCHAR(200) NULL"
+            },
+            {
+              "name": "after_note",
+              "definition": "VARCHAR(300) NULL"
+            },
+            {
+              "name": "actor_type",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "actor_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "actor_name",
+              "definition": "VARCHAR(200) NULL"
+            },
+            {
+              "name": "undone_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_placement_eligibility_event_action (college_id, action_id)",
+            "INDEX idx_placement_eligibility_event_scope (scope_type, scope_id, id)"
+          ],
+          "sourceMigration": "V188__placement_batches_and_eligibility.sql",
+          "rawFieldCount": 18
+        },
+        {
+          "table": "placement_batch",
+          "fields": [
+            {
+              "name": "batch_id",
+              "definition": "BIGINT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "registration_deadline",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "invited_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "finished_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "rules_json",
+              "definition": "JSON NULL COMMENT 'Overrides of the college placement rules for this batch; NULL = college rules'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_placement_batch_college (college_id)"
+          ],
+          "sourceMigration": "V188__placement_batches_and_eligibility.sql",
+          "rawFieldCount": 9
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 2696
+    },
+    {
+      "file": "V189__learner_coding_profiles.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "learner",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "coding_profiles",
+              "definition": "JSON NULL COMMENT 'Coding-platform usernames by platform key (CodingPlatforms)'"
+            }
+          ],
+          "sourceMigration": "V189__learner_coding_profiles.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 432
+    },
+    {
+      "file": "V190__job_types_and_placement_outcomes.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "job",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "counts_as_placed",
+              "definition": "TINYINT(1) NOT NULL DEFAULT 1 COMMENT 'Offers from this drive count as placed (from its job type)'"
+            }
+          ],
+          "sourceMigration": "V190__job_types_and_placement_outcomes.sql"
+        },
+        {
+          "table": "tpo_college_settings",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "job_types_json",
+              "definition": "JSON NULL COMMENT 'Hidden built-in job types and the college''s own types'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "outcome_labels_json",
+              "definition": "JSON NULL COMMENT 'College labels, each mapped to one fixed placement outcome'"
+            }
+          ],
+          "sourceMigration": "V190__job_types_and_placement_outcomes.sql"
+        },
+        {
+          "table": "placement_registration",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "outcome_label",
+              "definition": "VARCHAR(60) NULL COMMENT 'The college''s own label for this outcome, when one was picked'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "outcome_detail",
+              "definition": "VARCHAR(200) NULL COMMENT 'Specifics: the exam (GATE, CAT...), the business, the university'"
+            }
+          ],
+          "sourceMigration": "V190__job_types_and_placement_outcomes.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1898
+    },
+    {
+      "file": "V191__project_workspace_team_group.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "project_workspace",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "team_group_id",
+              "definition": "BIGINT NULL AFTER template_id"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD INDEX idx_project_workspace_team_group (team_group_id)"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD CONSTRAINT fk_project_workspace_team_group FOREIGN KEY (team_group_id) REFERENCES lms_group (id)"
+            }
+          ],
+          "sourceMigration": "V191__project_workspace_team_group.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 577
+    },
+    {
+      "file": "V192__academic_marks_as_earned.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "learner_academic_record",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "marks_json",
+              "definition": "JSON NULL COMMENT 'Each level''s mark as earned (grade, scale, max)"
+            }
+          ],
+          "sourceMigration": "V192__academic_marks_as_earned.sql"
+        },
+        {
+          "table": "tpo_college_settings",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "cgpa_to_pct",
+              "definition": "VARCHAR(20) NULL COMMENT 'X9_5 | MINUS_0_5_X10 | MINUS_0_75_X10 | X10'"
+            }
+          ],
+          "sourceMigration": "V192__academic_marks_as_earned.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1152
+    },
+    {
+      "file": "V193__recruiter_naming.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "recruiter_college_access",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_user_id",
+              "to": "recruiter_id"
+            },
+            {
+              "op": "RENAME_COLUMN",
+              "from": "pending_lead_id",
+              "to": "pending_recruiter_lead_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter_notification_read",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_user_id",
+              "to": "recruiter_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter_applicant_note",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_user_id",
+              "to": "recruiter_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter_lead",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_user_id",
+              "to": "recruiter_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter_lead_activity",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "lead_id",
+              "to": "recruiter_lead_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "follow_up",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "lead_id",
+              "to": "recruiter_lead_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "drive_group",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_user_id",
+              "to": "recruiter_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "job",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_user_id",
+              "to": "recruiter_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "job_round",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "added_by_hr_user_id",
+              "to": "added_by_recruiter_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "tpo_message_thread",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_user_id",
+              "to": "recruiter_id"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "tpo_college_settings",
+          "ops": [
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_access_months",
+              "to": "recruiter_access_months"
+            },
+            {
+              "op": "RENAME_COLUMN",
+              "from": "hr_drive_needs_approval",
+              "to": "recruiter_drive_needs_approval"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX idx_hr_user_company TO idx_recruiter_company"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX uk_hr_user_contact_mail TO uk_recruiter_contact_mail"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX uk_hr_user_contact_mobile TO uk_recruiter_contact_mobile"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter_college_access",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX idx_hr_college_access_college_status TO idx_recruiter_college_access_college_status"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX uk_hr_college_access_user_college TO uk_recruiter_college_access_user_college"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter_applicant_note",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX idx_hr_applicant_note_job TO idx_recruiter_applicant_note_job"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX uk_hr_applicant_note TO uk_recruiter_applicant_note"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter_lead",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX idx_lead_college TO idx_recruiter_lead_college"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX idx_lead_email TO idx_recruiter_lead_email"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX idx_lead_phone TO idx_recruiter_lead_phone"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "recruiter_lead_activity",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "RENAME INDEX idx_lead_activity_lead TO idx_recruiter_lead_activity_lead"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "round_slot",
+          "ops": [
+            {
+              "op": "MODIFY_COLUMN",
+              "column": "proposed_by",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | RECRUITER'"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "job_offer",
+          "ops": [
+            {
+              "op": "MODIFY_COLUMN",
+              "column": "created_by_type",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | RECRUITER'"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "tpo_message",
+          "ops": [
+            {
+              "op": "MODIFY_COLUMN",
+              "column": "sender_type",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'TPO | RECRUITER'"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        },
+        {
+          "table": "tpo_audit_log",
+          "ops": [
+            {
+              "op": "MODIFY_COLUMN",
+              "column": "actor_type",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'TPO | RECRUITER | SYSTEM | STUDENT'"
+            }
+          ],
+          "sourceMigration": "V193__recruiter_naming.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 6060
+    },
+    {
+      "file": "V194__recruiter_foreign_key_names.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "recruiter",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "DROP FOREIGN KEY fk_hr_user_industry_company"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD CONSTRAINT fk_recruiter_industry_company FOREIGN KEY (industry_company_id) REFERENCES industry_company (id)"
+            }
+          ],
+          "sourceMigration": "V194__recruiter_foreign_key_names.sql"
+        },
+        {
+          "table": "recruiter_college_access",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "DROP FOREIGN KEY fk_hr_college_access_college"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "DROP FOREIGN KEY fk_hr_college_access_hr_user"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD CONSTRAINT fk_recruiter_college_access_college FOREIGN KEY (college_id) REFERENCES college (id)"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD CONSTRAINT fk_recruiter_college_access_recruiter FOREIGN KEY (recruiter_id) REFERENCES recruiter (id)"
+            }
+          ],
+          "sourceMigration": "V194__recruiter_foreign_key_names.sql"
+        },
+        {
+          "table": "recruiter_college_access_capability",
+          "ops": [
+            {
+              "op": "OTHER_ALTER",
+              "text": "DROP FOREIGN KEY fk_hr_college_access_capability_access"
+            },
+            {
+              "op": "OTHER_ALTER",
+              "text": "ADD CONSTRAINT fk_recruiter_college_access_capability_access FOREIGN KEY (access_id) REFERENCES recruiter_college_access (id) ON DELETE CASCADE"
+            }
+          ],
+          "sourceMigration": "V194__recruiter_foreign_key_names.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1136
+    }
+  ]
+}

@@ -195,18 +195,20 @@ export async function addProjectMember(
   );
 
   try {
-    const [member] = await getDb()
-      .insert(projectMembers)
-      .values({
+    const [member] = await getDb().transaction(async tx => {
+      const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId })
+        .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
+      if (input.role === "LEARNER" && project?.teamGroupId)
+        throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
+      return tx.insert(projectMembers).values({
         projectId: scope.project.id,
         membershipId: input.membershipId,
         role: input.role,
         isPrimary: input.isPrimary,
         roleLabel: input.roleLabel ?? null,
         createdByUserId: context.user.id,
-      })
-      .returning();
-
+      }).returning();
+    });
     return member;
   } catch (error) {
     throw mapMemberConstraint(error);
@@ -280,18 +282,21 @@ export async function endProjectMember(
     memberId,
   );
 
-  const now = new Date();
-  const [ended] = await getDb()
-    .update(projectMembers)
-    .set({
-      endedAt: now,
-      isPrimary: false,
-      updatedAt: now,
-    })
-    .where(eq(projectMembers.id, member.id))
-    .returning();
-
-  return ended;
+  return getDb().transaction(async tx => {
+    const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId })
+      .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
+    if (member.role === "LEARNER" && project?.teamGroupId)
+      throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
+    const [fresh] = await tx.select().from(projectMembers)
+      .where(and(eq(projectMembers.id, member.id), isNull(projectMembers.endedAt)))
+      .for("update");
+    if (!fresh) throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+    const now = new Date();
+    const [ended] = await tx.update(projectMembers)
+      .set({ endedAt: now, isPrimary: false, updatedAt: now })
+      .where(eq(projectMembers.id, member.id)).returning();
+    return ended!;
+  });
 }
 
 export async function listProjectMembers(

@@ -260,6 +260,34 @@
       "when": 1791253800000,
       "tag": "0036_drive_day_coordinators",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1791580200000,
+      "tag": "0037_db03_groups_electives",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1791583800000,
+      "tag": "0038_project_team_group",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1791587400000,
+      "tag": "0039_db03_scope_triggers",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1791591000000,
+      "tag": "0040_db03_history_actor_types",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,457 @@
+import { randomUUID } from "node:crypto";
+import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
+import { Pool } from "pg";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { createGroup, joinGroup, leaveGroup, moveElectiveMember, transitionGroup } from "@/modules/groups/service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+import { createElectiveSlot, listElectiveOfferings } from "@/modules/electives/service";
+import { upsertGroupRule, refreshGroupRule } from "@/modules/groups/rules-service";
+
+const url = process.env.TEST_DATABASE_URL;
+if (!url || process.env.DB03_ISOLATED_TEST_DATABASE !== "1")
+  throw new Error("DB03 requires TEST_DATABASE_URL AND DB03_ISOLATED_TEST_DATABASE=1; history cleanup uses TRUNCATE on an isolated disposable database");
+const pool = new Pool({ connectionString: url, max: 5 });
+const admin: RequestContext = {
+  user: { id: SEED_IDS.collegeAdminUser, identityUid: "seed-college-admin", platformStatus: "ACTIVE", systemRoles: [] },
+  membership: { id: SEED_IDS.collegeAdminMembership, collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["COLLEGE_ADMIN"] },
+};
+const learner: RequestContext = {
+  user: { id: SEED_IDS.learnerUser, identityUid: "seed-learner", platformStatus: "ACTIVE", systemRoles: [] },
+  membership: { id: SEED_IDS.learnerCollegeAMembership, collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["LEARNER"] },
+};
+const fixture = {
+  groups: [] as string[], slots: [] as string[], courses: [] as string[], programs: [] as string[],
+  users: [] as string[], memberships: [] as string[],
+  periods: [] as string[], cohorts: [] as string[], sections: [] as string[],
+  offerings: [] as string[], deliveries: [] as string[],
+  learnerEnrollments: [] as string[], learnerSections: [] as string[],
+};
+
+async function createActiveGroup(kind = "BUS", capacity = 1) {
+  const group = await createGroup(admin, {
+    collegeId: SEED_IDS.collegeA, kind, name: "DB03 " + randomUUID(),
+    capacity, configJson: { allowSelfLeave: true, allowWaitlist: true },
+    selfJoinOpenFrom: new Date(Date.now() - 60_000),
+  });
+  fixture.groups.push(group.id);
+  await transitionGroup(admin, group.id, "ACTIVATE");
+  return group.id;
+}
+async function createLearner(collegeId = SEED_IDS.collegeA): Promise<{ ctx: RequestContext; membershipId: string }> {
+  const userId = randomUUID(), membershipId = randomUUID();
+  fixture.users.push(userId);
+  fixture.memberships.push(membershipId);
+  await pool.query("INSERT INTO users (id, identity_uid, display_name) VALUES ($1,$2,'DB03 learner')",
+    [userId, "db03-"+userId]);
+  await pool.query("INSERT INTO college_memberships (id, user_id, college_id) VALUES ($1,$2,$3)",
+    [membershipId,userId,collegeId]);
+  await pool.query("INSERT INTO membership_roles (membership_id,role) VALUES ($1,'LEARNER')", [membershipId]);
+  return { membershipId, ctx: {
+    user: { id: userId, identityUid: "db03-"+userId, platformStatus: "ACTIVE", systemRoles: [] },
+    membership: { id: membershipId, collegeId, organizationId: SEED_IDS.organization,
+      status: "ACTIVE", roles: ["LEARNER"] },
+  }};
+}
+async function createElectiveFixture() {
+  const programId = randomUUID(), courseA = randomUUID(), courseB = randomUUID();
+  const slotId = randomUUID(), periodId = randomUUID(), cohortId = randomUUID(), sectionId = randomUUID();
+  fixture.programs.push(programId); fixture.courses.push(courseA, courseB);
+  fixture.slots.push(slotId); fixture.periods.push(periodId);
+  fixture.cohorts.push(cohortId); fixture.sections.push(sectionId);
+  await pool.query(
+    "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
+    [programId,SEED_IDS.departmentA,"DB03 Program "+programId,"DB03-"+programId]);
+  await pool.query(
+    "INSERT INTO academic_periods (id,college_id,name,code,start_date,end_date,status) VALUES ($1,$2,$3,$4,'2026-07-01','2026-12-31','ACTIVE')",
+    [periodId,SEED_IDS.collegeA,"DB03 Period "+periodId,"DB03-"+periodId]);
+  await pool.query(
+    "INSERT INTO cohorts (id,program_id,name,code,start_period_id,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
+    [cohortId,programId,"DB03 Cohort "+cohortId,"DB03-"+cohortId,periodId]);
+  await pool.query(
+    "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
+    [sectionId,cohortId,periodId,"DB03 Section "+sectionId,"DB03-"+sectionId]);
+  for (const cid of [courseA,courseB]) await pool.query(
+    "INSERT INTO courses (id,department_id,name,code) VALUES ($1,$2,$3,$4)",
+    [cid,SEED_IDS.departmentA,"DB03 Course "+cid,"DB03-"+cid]);
+  await pool.query(
+    "INSERT INTO elective_slots (id,college_id,program_id,academic_period_id,semester_number,name,credits,min_pick,max_pick) VALUES ($1,$2,$3,$4,1,'DB03 Slot',3,1,1)",
+    [slotId,SEED_IDS.collegeA,programId,periodId]);
+  const groups = [await createActiveGroup("ELECTIVE"), await createActiveGroup("ELECTIVE")];
+  for (let i=0;i<groups.length;i++) {
+    const courseId = i===0?courseA:courseB;
+    const offeringId = randomUUID(), deliveryId = randomUUID();
+    fixture.offerings.push(offeringId); fixture.deliveries.push(deliveryId);
+    await pool.query(
+      "INSERT INTO course_offerings (id,course_id,cohort_id,academic_period_id,type,credits,display_order) VALUES ($1,$2,$3,$4,'ELECTIVE',3,$5)",
+      [offeringId,courseId,cohortId,periodId,i]);
+    await pool.query(
+      "INSERT INTO course_section_deliveries (id,offering_id,section_id) VALUES ($1,$2,$3)",
+      [deliveryId,offeringId,sectionId]);
+    await pool.query(
+      "INSERT INTO elective_offerings (slot_id,course_id,group_id,backed_delivery_id) VALUES ($1,$2,$3,$4)",
+      [slotId,courseId,groups[i],deliveryId]);
+  }
+  const candidate = await createLearner();
+  const programEnrollmentId = randomUUID(), sectionEnrollmentId = randomUUID();
+  fixture.learnerEnrollments.push(programEnrollmentId);
+  fixture.learnerSections.push(sectionEnrollmentId);
+  await pool.query(
+    "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id) VALUES ($1,$2,$3,$4)",
+    [programEnrollmentId,candidate.membershipId,programId,cohortId]);
+  await pool.query(
+    "INSERT INTO section_enrollments (id,learner_enrollment_id,section_id,academic_period_id) VALUES ($1,$2,$3,$4)",
+    [sectionEnrollmentId,programEnrollmentId,sectionId,periodId]);
+  return { slotId, groups, candidate, programId, cohortId, sectionId, periodId };
+}
+beforeEach(() => {
+  for(const value of Object.values(fixture)) value.length=0;
+});
+afterEach(async () => {
+  const groupIds = fixture.groups;
+  if(groupIds.length) {
+    // UPDATE/DELETE are intentionally forbidden by the audit trigger.
+    // TRUNCATE is permitted ONLY in this deliberately isolated disposable test DB.
+    await pool.query("TRUNCATE TABLE lms_group_member_events");
+    await pool.query("DELETE FROM lms_group_members WHERE group_id = ANY($1::uuid[])",[groupIds]);
+    await pool.query("DELETE FROM lms_group_rules WHERE group_id = ANY($1::uuid[])",[groupIds]);
+    await pool.query("DELETE FROM elective_offerings WHERE group_id = ANY($1::uuid[])",[groupIds]);
+  }
+  if(fixture.slots.length) await pool.query("DELETE FROM elective_slots WHERE id = ANY($1::uuid[])",[fixture.slots]);
+  if(fixture.learnerSections.length) await pool.query("DELETE FROM section_enrollments WHERE id = ANY($1::uuid[])",[fixture.learnerSections]);
+  if(fixture.learnerEnrollments.length) await pool.query("DELETE FROM learner_program_enrollments WHERE id = ANY($1::uuid[])",[fixture.learnerEnrollments]);
+  if(fixture.deliveries.length) await pool.query("DELETE FROM course_section_deliveries WHERE id = ANY($1::uuid[])",[fixture.deliveries]);
+  if(fixture.offerings.length) await pool.query("DELETE FROM course_offerings WHERE id = ANY($1::uuid[])",[fixture.offerings]);
+  if(fixture.sections.length) await pool.query("DELETE FROM sections WHERE id = ANY($1::uuid[])",[fixture.sections]);
+  if(fixture.cohorts.length) await pool.query("DELETE FROM cohorts WHERE id = ANY($1::uuid[])",[fixture.cohorts]);
+  if(fixture.periods.length) await pool.query("DELETE FROM academic_periods WHERE id = ANY($1::uuid[])",[fixture.periods]);
+  if(groupIds.length) await pool.query("DELETE FROM lms_groups WHERE id = ANY($1::uuid[])",[groupIds]);
+  if(fixture.courses.length) await pool.query("DELETE FROM courses WHERE id = ANY($1::uuid[])",[fixture.courses]);
+  if(fixture.programs.length) await pool.query("DELETE FROM programs WHERE id = ANY($1::uuid[])",[fixture.programs]);
+  if(fixture.memberships.length) {
+    await pool.query("DELETE FROM membership_roles WHERE membership_id = ANY($1::uuid[])",[fixture.memberships]);
+    await pool.query("DELETE FROM college_memberships WHERE id = ANY($1::uuid[])",[fixture.memberships]);
+  }
+  if(fixture.users.length) await pool.query("DELETE FROM users WHERE id = ANY($1::uuid[])",[fixture.users]);
+});
+afterAll(async () => { await pool.end(); await closeDatabaseConnection(); });
+
+describe("DB03 group kernel on disposable PostgreSQL", () => {
+  it("serializes simultaneous choices from different offerings of the same max_pick=1 slot", async () => {
+    const { groups, candidate } = await createElectiveFixture();
+    const initialSections = await pool.query(
+      "SELECT count(*)::integer AS n FROM section_enrollments se JOIN learner_program_enrollments e ON e.id=se.learner_enrollment_id WHERE e.membership_id=$1",
+      [candidate.membershipId],
+    );
+    const results = await Promise.allSettled(groups.map(g=>joinGroup(candidate.ctx,g,candidate.membershipId)));
+    expect(results.filter(r=>r.status==="fulfilled")).toHaveLength(1);
+    const rejected = results.find(r=>r.status==="rejected");
+    expect(rejected).toMatchObject({ status:"rejected",reason:{code:"ELECTIVE_MAX_PICK_REACHED"} });
+    const active = await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_members WHERE group_id=ANY($1::uuid[]) AND state='ACTIVE'",
+      [groups],
+    );
+    expect(active.rows[0].n).toBe(1);
+    const afterSections = await pool.query(
+      "SELECT count(*)::integer AS n FROM section_enrollments se JOIN learner_program_enrollments e ON e.id=se.learner_enrollment_id WHERE e.membership_id=$1",
+      [candidate.membershipId],
+    );
+    expect(afterSections.rows[0].n).toBe(initialSections.rows[0].n);
+  });
+  it("moves an elective atomically between offerings of the same slot", async () => {
+    const { groups, candidate } = await createElectiveFixture();
+    const active = await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
+    expect(active.state).toBe("ACTIVE");
+    const moved = await moveElectiveMember(
+      admin, fixture.offerings[0], fixture.offerings[1], candidate.membershipId,
+    );
+    expect(moved.state).toBe("ACTIVE");
+    const counts = await pool.query(
+      "SELECT id,active_count FROM lms_groups WHERE id=ANY($1::uuid[])",
+      [groups],
+    );
+    expect(counts.rows.find(r=>r.id===groups[0]).active_count).toBe(0);
+    expect(counts.rows.find(r=>r.id===groups[1]).active_count).toBe(1);
+    const memberStates = await pool.query(
+      "SELECT group_id,state FROM lms_group_members WHERE group_id=ANY($1::uuid[]) AND membership_id=$2",
+      [groups,candidate.membershipId],
+    );
+    expect(memberStates.rows.find(r=>r.group_id===groups[0]).state).toBe("REMOVED");
+    expect(memberStates.rows.find(r=>r.group_id===groups[1]).state).toBe("ACTIVE");
+    const events = await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=ANY($1::uuid[])",
+      [groups],
+    );
+    expect(events.rows[0].n).toBe(3);
+  });
+
+  it("rolls back a move into a full target without changing source membership", async () => {
+    const { groups, candidate, programId, cohortId, sectionId, periodId } =
+      await createElectiveFixture();
+    const other = await createLearner();
+    const programEnrollmentId = randomUUID(), sectionEnrollmentId = randomUUID();
+    fixture.learnerEnrollments.push(programEnrollmentId);
+    fixture.learnerSections.push(sectionEnrollmentId);
+    await pool.query(
+      "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id) VALUES ($1,$2,$3,$4)",
+      [programEnrollmentId,other.membershipId,programId,cohortId]);
+    await pool.query(
+      "INSERT INTO section_enrollments (id,learner_enrollment_id,section_id,academic_period_id) VALUES ($1,$2,$3,$4)",
+      [sectionEnrollmentId,programEnrollmentId,sectionId,periodId]);
+    await pool.query(
+      "UPDATE lms_groups SET config_json='{}'::jsonb WHERE id=$1",
+      [groups[1]],
+    );
+    await joinGroup(other.ctx,groups[1],other.membershipId);
+    await joinGroup(candidate.ctx,groups[0],candidate.membershipId);
+    await expect(moveElectiveMember(
+      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+    )).rejects.toMatchObject({ code: "GROUP_CAPACITY_REACHED" });
+    const membership = await pool.query(
+      "SELECT state FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [groups[0],candidate.membershipId],
+    );
+    expect(membership.rows[0].state).toBe("ACTIVE");
+    const events = await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE membership_id=$1",
+      [candidate.membershipId],
+    );
+    expect(events.rows[0].n).toBe(1);
+  });
+
+  it("hides soft-deleted ACTIVE offerings from the elective slot listing", async () => {
+    const {slotId}=await createElectiveFixture();
+    expect(await listElectiveOfferings(admin,slotId)).toHaveLength(2);
+    await pool.query(
+      "UPDATE elective_offerings SET deleted_at=now() WHERE id=$1",
+      [fixture.offerings[0]],
+    );
+    const visible=await listElectiveOfferings(admin,slotId);
+    expect(visible).toHaveLength(1);
+    expect(visible[0].offeringId).toBe(fixture.offerings[1]);
+  });
+
+  it("normalizes the elective academic year and enforces source slot bounds", async () => {
+    const { programId, periodId } = await createElectiveFixture();
+    const values = {
+      collegeId: SEED_IDS.collegeA, programId, academicPeriodId: periodId,
+      semesterNumber: 8, name: "DB03 slot validation",
+      credits: 0, minPick: 0, maxPick: 1,
+    };
+    const made = await createElectiveSlot(admin, { ...values, academicYear: "2026" });
+    fixture.slots.push(made.id);
+    expect(made.academicYear).toBe("2026-27");
+    expect(made.credits).toBe(0);
+    await expect(createElectiveSlot(admin, { ...values, semesterNumber: 9 }))
+      .rejects.toMatchObject({code:"ELECTIVE_SEMESTER_OUTSIDE_PROGRAM"});
+    await expect(createElectiveSlot(admin, { ...values, academicYear: "2026-29" }))
+      .rejects.toMatchObject({code:"ELECTIVE_ACADEMIC_YEAR_INVALID"});
+  });
+
+  it("keeps seat-count, waitlist and immutable event trail consistent under leave and promotion", async () => {
+    const group = await createActiveGroup();
+    const second = await createLearner();
+    const active = await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    const waiting = await joinGroup(second.ctx,group,second.membershipId);
+    expect(active.state).toBe("ACTIVE");
+    expect(waiting.state).toBe("WAITLISTED");
+    const removed = await leaveGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    expect(removed.state).toBe("REMOVED");
+    const [current,events] = await Promise.all([
+      pool.query("SELECT active_count FROM lms_groups WHERE id=$1",[group]),
+      pool.query("SELECT from_state,to_state,actor_type,actor_user_id FROM lms_group_member_events WHERE group_id=$1 ORDER BY created_at",[group]),
+    ]);
+    expect(current.rows[0].active_count).toBe(1);
+    expect(events.rows).toHaveLength(4);
+    expect(events.rows.some(e=>e.from_state==="WAITLISTED" && e.to_state==="ACTIVE")).toBe(true);
+    expect(events.rows.find(e=>e.from_state==="WAITLISTED" && e.to_state==="ACTIVE"))
+      .toMatchObject({actor_type:"SYSTEM",actor_user_id:null});
+    const promoted = await pool.query("SELECT state,waitlist_position FROM lms_group_members WHERE id=$1",[waiting.id]);
+    expect(promoted.rows[0]).toMatchObject({state:"ACTIVE",waitlist_position:null});
+  });
+  it("blocks MANUAL group enrollments of DISABLED users at service and SQL boundaries", async () => {
+    const group=await createActiveGroup("BUS",2);
+    const disabled=await createLearner();
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[disabled.ctx.user.id]);
+    await expect(joinGroup(admin,group,disabled.membershipId,"MANUAL"))
+      .rejects.toMatchObject({code:"GROUP_MEMBER_INACTIVE"});
+    await expect(pool.query(
+      "INSERT INTO lms_group_members (group_id,membership_id,state,source) VALUES ($1,$2,'ACTIVE','MANUAL')",
+      [group,disabled.membershipId],
+    )).rejects.toMatchObject({code:"23514"});
+    const result=await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_members WHERE group_id=$1",[group],
+    );
+    expect(result.rows[0].n).toBe(0);
+  });
+  it("rejects a valid foreign college learner membership on a college group", async () => {
+    const group=await createActiveGroup();
+    const outsider=await createLearner(SEED_IDS.collegeB);
+    await expect(joinGroup(admin,group,outsider.membershipId,"MANUAL"))
+      .rejects.toMatchObject({code:"GROUP_MEMBER_COLLEGE_MISMATCH"});
+    const events=await pool.query("SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=$1",[group]);
+    expect(events.rows[0].n).toBe(0);
+  });
+  it("skips disabled waitlisted accounts and promotes the next eligible learner", async () => {
+    const group = await createActiveGroup("BUS",1);
+    const disabled = await createLearner(), eligible = await createLearner();
+    await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    await joinGroup(disabled.ctx,group,disabled.membershipId);
+    await joinGroup(eligible.ctx,group,eligible.membershipId);
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1", [disabled.ctx.user.id]);
+    await leaveGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    const members = await pool.query("SELECT membership_id,state FROM lms_group_members WHERE group_id=$1", [group]);
+    expect(members.rows.find(r=>r.membership_id===disabled.membershipId)?.state).toBe("WAITLISTED");
+    expect(members.rows.find(r=>r.membership_id===eligible.membershipId)?.state).toBe("ACTIVE");
+  });
+  it("rejects an admin-locked removed member rejoining through self-service", async () => {
+    const group=await createActiveGroup();
+    await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    await leaveGroup(admin,group,SEED_IDS.learnerCollegeAMembership,"MANUAL");
+    await pool.query("UPDATE lms_group_members SET is_locked=true WHERE group_id=$1",[group]);
+    await expect(joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership))
+      .rejects.toMatchObject({code:"GROUP_MEMBERSHIP_LOCKED"});
+  });
+  it("persists creator role and immutable member type snapshots in the database", async () => {
+    const group=await createActiveGroup("BUS",1);
+    const rows=await pool.query("SELECT created_by_type FROM lms_groups WHERE id=$1",[group]);
+    expect(rows.rows[0].created_by_type).toBe("COLLEGE_ADMIN");
+    await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    const events=await pool.query(
+      "SELECT member_type,actor_type,actor_user_id FROM lms_group_member_events WHERE group_id=$1",[group],
+    );
+    expect(events.rows).toHaveLength(1);
+    expect(events.rows[0]).toMatchObject({
+      member_type:"LEARNER", actor_type:"LEARNER", actor_user_id:SEED_IDS.learnerUser,
+    });
+  });
+  it("blocks mutating append-only event history at the database boundary", async () => {
+    const group=await createActiveGroup();
+    await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
+    await expect(pool.query("DELETE FROM lms_group_member_events WHERE group_id=$1",[group]))
+      .rejects.toMatchObject({code:"23514"});
+    await expect(pool.query("UPDATE lms_group_member_events SET reason='tampered' WHERE group_id=$1",[group]))
+      .rejects.toMatchObject({code:"23514"});
+  });
+  it("refuses privileged SQL mutation of group owner or feature kind", async () => {
+    const group=await createActiveGroup("BUS",1);
+    await expect(pool.query("UPDATE lms_groups SET kind='ELECTIVE' WHERE id=$1",[group]))
+      .rejects.toMatchObject({code:"23514"});
+    await expect(pool.query("UPDATE lms_groups SET college_id=$1 WHERE id=$2",
+      [SEED_IDS.collegeB,group])).rejects.toMatchObject({code:"23514"});
+  });
+  it("rejects impossible capacity counters by a physical CHECK constraint", async () => {
+    const group=await createActiveGroup("BUS",1);
+    await expect(pool.query("UPDATE lms_groups SET active_count=2 WHERE id=$1",[group]))
+      .rejects.toMatchObject({code:"23514"});
+  });
+});
+
+describe("DB03 bounded group rule refresh (PostgreSQL)", () => {
+  it("does not materialize rule enrollments for a DRAFT group", async () => {
+    const draft = await createGroup(admin,{
+      collegeId:SEED_IDS.collegeA,kind:"BUS",
+      name:"DB03 draft rule "+randomUUID(),capacity:1,
+    });
+    fixture.groups.push(draft.id);
+    const {programId}=await createElectiveFixture();
+    await upsertGroupRule(admin,draft.id,{
+      criteria:{allowedProgramIds:[programId]},autoRefresh:false,
+    });
+    await expect(refreshGroupRule(admin,draft.id))
+      .rejects.toMatchObject({code:"GROUP_RULE_GROUP_NOT_ACTIVE"});
+    const [rows]=await Promise.all([
+      pool.query("SELECT count(*)::integer AS n FROM lms_group_members WHERE group_id=$1",[draft.id]),
+    ]);
+    expect(rows.rows[0].n).toBe(0);
+  });
+
+  it("promotes an existing eligible RULE waitlist when a stale active rule member exits", async () => {
+    const data=await createElectiveFixture();
+    const second=await createLearner();
+    const secondEnrollmentId=randomUUID();
+    fixture.learnerEnrollments.push(secondEnrollmentId);
+    await pool.query(
+      "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id) VALUES ($1,$2,$3,$4)",
+      [secondEnrollmentId,second.membershipId,data.programId,data.cohortId],
+    );
+    const group=await createActiveGroup("BUS",1);
+    await upsertGroupRule(admin,group,{
+      criteria:{allowedProgramIds:[data.programId]},autoRefresh:false,
+    });
+    const first=await refreshGroupRule(admin,group);
+    expect(first).toMatchObject({matched:2,added:2,active:1,waitlisted:1});
+    const members=await pool.query(
+      "SELECT membership_id,state FROM lms_group_members WHERE group_id=$1",
+      [group],
+    );
+    const active=members.rows.find(row=>row.state==="ACTIVE");
+    const waiting=members.rows.find(row=>row.state==="WAITLISTED");
+    expect(active).toBeDefined();
+    expect(waiting).toBeDefined();
+
+    await pool.query(
+      "UPDATE learner_program_enrollments SET status='WITHDRAWN', withdrawn_at=now() WHERE membership_id=$1 AND program_id=$2",
+      [active.membership_id,data.programId],
+    );
+    const refreshed=await refreshGroupRule(admin,group);
+    expect(refreshed).toMatchObject({matched:1,removed:1,promoted:1,active:1,added:0});
+    const promotedRow=await pool.query(
+      "SELECT state,waitlist_position FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [group,waiting.membership_id],
+    );
+    expect(promotedRow.rows[0]).toMatchObject({state:"ACTIVE",waitlist_position:null});
+    const promotion=await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=$1 AND reason='RULE_REFRESH_WAITLIST_PROMOTION'",
+      [group],
+    );
+    expect(promotion.rows[0].n).toBe(1);
+    expect(await refreshGroupRule(admin,group))
+      .toMatchObject({matched:1,active:1,added:0,removed:0,promoted:0});
+  });
+
+  it("is idempotent, protects MANUAL and locked decisions, and reconciles active_count", async () => {
+    const data=await createElectiveFixture();
+    const group=await createActiveGroup("BUS",2);
+    await upsertGroupRule(admin,group,{
+      criteria:{allowedProgramIds:[data.programId]},autoRefresh:false,
+    });
+    const first=await refreshGroupRule(admin,group);
+    expect(first).toMatchObject({matched:1,added:1,active:1,removed:0});
+    const second=await refreshGroupRule(admin,group);
+    expect(second).toMatchObject({matched:1,added:0,removed:0,active:1});
+    const initialEvents=await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=$1",[group],
+    );
+    expect(initialEvents.rows[0].n).toBe(1);
+
+    // Human MANUAL membership must not be overwritten by rerunning a rule.
+    await joinGroup(admin,group,SEED_IDS.learnerCollegeAMembership,"MANUAL");
+    const [{rows:[ruleRow]}]=await Promise.all([pool.query(
+      "SELECT id FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [group,data.candidate.membershipId],
+    )]);
+    await pool.query("UPDATE lms_group_members SET is_locked=true WHERE id=$1",[ruleRow.id]);
+    await upsertGroupRule(admin,group,{
+      criteria:{allowedProgramIds:[data.programId],minCgpa:9.9},autoRefresh:false,
+    });
+    const locked=await refreshGroupRule(admin,group);
+    expect(locked).toMatchObject({matched:0,removed:0,active:2});
+    await pool.query("UPDATE lms_group_members SET is_locked=false WHERE id=$1",[ruleRow.id]);
+    const removed=await refreshGroupRule(admin,group);
+    expect(removed).toMatchObject({matched:0,removed:1,active:1});
+    const [members,groupCounter]=await Promise.all([
+      pool.query("SELECT membership_id,state,source FROM lms_group_members WHERE group_id=$1",[group]),
+      pool.query("SELECT active_count FROM lms_groups WHERE id=$1",[group]),
+    ]);
+    expect(members.rows.find(row=>row.membership_id===data.candidate.membershipId))
+      .toMatchObject({state:"REMOVED",source:"RULE"});
+    expect(members.rows.find(row=>row.membership_id===SEED_IDS.learnerCollegeAMembership))
+      .toMatchObject({state:"ACTIVE",source:"MANUAL"});
+    expect(groupCounter.rows[0].active_count).toBe(1);
+    const third=await refreshGroupRule(admin,group);
+    expect(third).toMatchObject({added:0,removed:0,active:1});
+  });
+});

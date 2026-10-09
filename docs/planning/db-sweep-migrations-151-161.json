@@ -1,0 +1,680 @@
+{
+  "sourceRepo": "42Students/lms",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "disclaimer": "Candidate SQL operations after historical snapshot; SQL regex is not engine parser and not an applied-schema proof. Inspect dynamic DDL/data backfill/conditional execution.",
+  "migrations": [
+    {
+      "file": "V151__bug_tracker_phase1.sql",
+      "createTables": [
+        {
+          "name": "bug_tracker_access",
+          "columnCandidates": [
+            "id",
+            "display_name",
+            "token_hash",
+            "access_role",
+            "active",
+            "created_at",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "bug_tracker_session",
+          "columnCandidates": [
+            "id",
+            "access_id",
+            "token_hash",
+            "expires_at",
+            "created_at"
+          ]
+        },
+        {
+          "name": "bug_report",
+          "columnCandidates": [
+            "id",
+            "public_id",
+            "reporter_access_id",
+            "reporter_name",
+            "account_role",
+            "environment",
+            "page",
+            "screen",
+            "section",
+            "issue_type",
+            "description",
+            "severity",
+            "evidence_link",
+            "status",
+            "created_at",
+            "updated_at",
+            "version"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 3060
+    },
+    {
+      "file": "V152__bug_tracker_attachments.sql",
+      "createTables": [
+        {
+          "name": "bug_report_attachment",
+          "columnCandidates": [
+            "id",
+            "bug_report_id",
+            "storage_key",
+            "original_filename",
+            "content_type",
+            "size_bytes",
+            "created_at"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 628
+    },
+    {
+      "file": "V153__bug_tracker_workflow.sql",
+      "createTables": [
+        {
+          "name": "bug_report_activity",
+          "columnCandidates": [
+            "id",
+            "bug_report_id",
+            "activity_type",
+            "actor_name",
+            "from_value",
+            "to_value",
+            "note",
+            "created_at"
+          ]
+        }
+      ],
+      "alterTables": [
+        {
+          "table": "bug_report",
+          "addedColumnCandidates": [
+            "resolution",
+            "affected_layer",
+            "root_cause",
+            "fix_notes",
+            "frontend_commit_sha",
+            "backend_commit_sha",
+            "regression_test_status",
+            "production_verified",
+            "retest_status",
+            "retested_at"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN resolution VARCHAR(32) NULL AFTER status, ADD COLUMN affected_layer VARCHAR(24) NULL AFTER resolution, ADD COLUMN root_cause TEXT NULL AFTER affected_layer, ADD COLUMN fix_notes TEXT NULL AFTER root_cause, ADD COLUMN frontend_commit_sha VARCHAR(64) NULL AFTER fix_notes, ADD COLUMN backend_commit_sha VARCHAR(64) NULL AFTER frontend_commit_sha, ADD COLUMN regression_test_status VARCHAR(24) NOT NULL DEFAULT 'NOT_REVIEWED' AFTER backend_commit_sha, ADD COLUMN producti"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 1341
+    },
+    {
+      "file": "V154__bug_tracker_source_context.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "bug_report",
+          "addedColumnCandidates": [
+            "source_url",
+            "source_path",
+            "browser",
+            "viewport"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN source_url VARCHAR(2000) NULL AFTER evidence_link, ADD COLUMN source_path VARCHAR(500) NULL AFTER source_url, ADD COLUMN browser VARCHAR(500) NULL AFTER source_path, ADD COLUMN viewport VARCHAR(64) NULL AFTER browser"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 268
+    },
+    {
+      "file": "V155__split_current_permanent_address_location.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "learner",
+          "addedColumnCandidates": [
+            "current_city",
+            "current_state",
+            "current_pincode",
+            "permanent_city",
+            "permanent_state",
+            "permanent_pincode"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN current_city VARCHAR(255) NULL AFTER current_address, ADD COLUMN current_state VARCHAR(255) NULL AFTER current_city, ADD COLUMN current_pincode VARCHAR(20) NULL AFTER current_state, ADD COLUMN permanent_city VARCHAR(255) NULL AFTER permanent_address, ADD COLUMN permanent_state VARCHAR(255) NULL AFTER permanent_city, ADD COLUMN permanent_pincode VARCHAR(20) NULL AFTER permanent_state"
+        },
+        {
+          "table": "faculty",
+          "addedColumnCandidates": [
+            "current_city",
+            "current_state",
+            "current_pincode",
+            "permanent_city",
+            "permanent_state",
+            "permanent_pincode"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN current_city VARCHAR(255) NULL AFTER current_address, ADD COLUMN current_state VARCHAR(255) NULL AFTER current_city, ADD COLUMN current_pincode VARCHAR(20) NULL AFTER current_state, ADD COLUMN permanent_city VARCHAR(255) NULL AFTER permanent_address, ADD COLUMN permanent_state VARCHAR(255) NULL AFTER permanent_city, ADD COLUMN permanent_pincode VARCHAR(20) NULL AFTER permanent_state"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 1524
+    },
+    {
+      "file": "V156__class_schedule_attendance_marked.sql",
+      "createTables": [],
+      "alterTables": [
+        {
+          "table": "class_schedule",
+          "addedColumnCandidates": [
+            "attendance_marked_at"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN attendance_marked_at TIMESTAMP NULL"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 655
+    },
+    {
+      "file": "V157__log_alerting.sql",
+      "createTables": [
+        {
+          "name": "log_alert_signature",
+          "columnCandidates": [
+            "id",
+            "environment",
+            "signature_hash",
+            "sample_message",
+            "first_seen_at",
+            "last_seen_at",
+            "occurrence_count",
+            "muted"
+          ]
+        },
+        {
+          "name": "log_alert_state",
+          "columnCandidates": [
+            "id",
+            "state_key",
+            "poll_cursor_at",
+            "admin_last_viewed_at"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 1000
+    },
+    {
+      "file": "V158__log_alert_signature_accounts.sql",
+      "createTables": [
+        {
+          "name": "log_alert_signature_account",
+          "columnCandidates": [
+            "signature_id",
+            "account_id",
+            "first_seen_at"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 1052
+    },
+    {
+      "file": "V159__hr_industry_accounts.sql",
+      "createTables": [
+        {
+          "name": "industry_company",
+          "columnCandidates": [
+            "id",
+            "name",
+            "website",
+            "industry",
+            "logo_url",
+            "created_by_user_id",
+            "created_by_user_type",
+            "created_at",
+            "updated_at",
+            "is_deleted",
+            "version"
+          ]
+        },
+        {
+          "name": "hr_user",
+          "columnCandidates": [
+            "id",
+            "first_name",
+            "last_name",
+            "contact_mobile",
+            "contact_mail",
+            "designation",
+            "industry_company_id",
+            "suspended_at",
+            "suspension_reason",
+            "token_version",
+            "last_login_at",
+            "created_by_user_id",
+            "created_by_user_type",
+            "created_at",
+            "updated_at",
+            "is_deleted",
+            "version"
+          ]
+        },
+        {
+          "name": "hr_college_access",
+          "columnCandidates": [
+            "id",
+            "hr_user_id",
+            "college_id",
+            "organization_id",
+            "status",
+            "valid_until",
+            "granted_by_user_id",
+            "granted_by_user_type",
+            "granted_at",
+            "revoked_by_user_id",
+            "revoked_by_user_type",
+            "revoked_at",
+            "revoke_reason",
+            "created_at",
+            "updated_at",
+            "is_deleted",
+            "version"
+          ]
+        },
+        {
+          "name": "hr_college_access_capability",
+          "columnCandidates": [
+            "access_id",
+            "capability",
+            "granted_at"
+          ]
+        }
+      ],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 4251
+    },
+    {
+      "file": "V160__project_template_version_sort_index.sql",
+      "createTables": [],
+      "alterTables": [],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": false,
+      "bytes": 838
+    },
+    {
+      "file": "V161__tpo_v1_drives.sql",
+      "createTables": [
+        {
+          "name": "placement_season",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "name",
+            "start_date",
+            "end_date",
+            "registration_deadline",
+            "is_registration_open",
+            "blocked_dates",
+            "is_current",
+            "created_at",
+            "updated_at",
+            "version"
+          ]
+        },
+        {
+          "name": "drive_group",
+          "columnCandidates": [
+            "id",
+            "hr_user_id",
+            "industry_company_id",
+            "shared_form_json",
+            "created_at"
+          ]
+        },
+        {
+          "name": "job_eligibility_override",
+          "columnCandidates": [
+            "id",
+            "job_id",
+            "learner_id",
+            "override_type",
+            "reason",
+            "created_by",
+            "created_at"
+          ]
+        },
+        {
+          "name": "job_round",
+          "columnCandidates": [
+            "id",
+            "job_id",
+            "seq",
+            "kind",
+            "name",
+            "mode",
+            "scheduled_date",
+            "venue",
+            "meeting_url",
+            "what_to_bring",
+            "platform",
+            "test_link",
+            "duration_minutes",
+            "results_due",
+            "status",
+            "created_at",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "round_result",
+          "columnCandidates": [
+            "id",
+            "application_id",
+            "round_id",
+            "outcome",
+            "waitlist_rank",
+            "score",
+            "reason_category",
+            "comment",
+            "source",
+            "submitted_by_type",
+            "submitted_by_id",
+            "submitted_at",
+            "applied_at",
+            "applied_by",
+            "superseded_by"
+          ]
+        },
+        {
+          "name": "job_offer",
+          "columnCandidates": [
+            "id",
+            "application_id",
+            "kind",
+            "role_option_name",
+            "ctc_lpa",
+            "fixed_lpa",
+            "variable_lpa",
+            "joining_bonus_lpa",
+            "bond_months",
+            "bond_amount",
+            "joining_date",
+            "respond_by",
+            "letter_url",
+            "status",
+            "acceptance_channel",
+            "accepted_disputable_until",
+            "joining_status",
+            "cascade_id",
+            "revoke_reason",
+            "created_by_type",
+            "created_by_id",
+            "verified_by",
+            "released_at",
+            "responded_at",
+            "created_at",
+            "updated_at",
+            "version"
+          ]
+        },
+        {
+          "name": "learner_academic_record",
+          "columnCandidates": [
+            "learner_id",
+            "cgpa",
+            "active_backlogs",
+            "past_backlogs",
+            "tenth_pct",
+            "twelfth_pct",
+            "diploma_pct",
+            "ug_pct",
+            "gap_years",
+            "is_lateral_entry",
+            "passing_year",
+            "gender",
+            "source",
+            "import_batch_id",
+            "imported_at",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "placement_registration",
+          "columnCandidates": [
+            "id",
+            "learner_id",
+            "season_id",
+            "choice",
+            "consent_version",
+            "consent_at",
+            "source",
+            "created_at",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "placement_debarment",
+          "columnCandidates": [
+            "id",
+            "learner_id",
+            "reason",
+            "until_date",
+            "until_drives",
+            "drives_counted",
+            "created_by",
+            "created_at",
+            "lifted_at",
+            "lifted_reason"
+          ]
+        },
+        {
+          "name": "student_request",
+          "columnCandidates": [
+            "id",
+            "learner_id",
+            "type",
+            "job_id",
+            "application_id",
+            "payload_json",
+            "status",
+            "reason",
+            "decided_by",
+            "decided_at",
+            "decision_reason",
+            "escalate_at",
+            "created_at"
+          ]
+        },
+        {
+          "name": "tpo_lead",
+          "columnCandidates": [
+            "id",
+            "college_id",
+            "company_id",
+            "hr_user_id",
+            "name",
+            "designation",
+            "email_norm",
+            "phone_norm",
+            "company_name",
+            "company_logo",
+            "owner_faculty_id",
+            "manual_stage",
+            "not_now_reason",
+            "not_now_until",
+            "source",
+            "invite_token_hash",
+            "invite_sent_at",
+            "invite_clicked_at",
+            "invite_reminder_sent_at",
+            "invite_bounced_at",
+            "unsubscribed_at",
+            "created_at",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "lead_activity",
+          "columnCandidates": [
+            "id",
+            "lead_id",
+            "type",
+            "outcome",
+            "note",
+            "is_system",
+            "created_by",
+            "created_at"
+          ]
+        },
+        {
+          "name": "follow_up",
+          "columnCandidates": [
+            "id",
+            "lead_id",
+            "due_at",
+            "owner_faculty_id",
+            "note",
+            "done_at",
+            "created_at"
+          ]
+        },
+        {
+          "name": "prep_assignment",
+          "columnCandidates": [
+            "id",
+            "learner_id",
+            "course_id",
+            "assessment_id",
+            "due_at",
+            "assigned_by",
+            "created_at"
+          ]
+        },
+        {
+          "name": "notification_outbox",
+          "columnCandidates": [
+            "id",
+            "event",
+            "recipient_type",
+            "recipient_id",
+            "channel",
+            "payload_json",
+            "send_after",
+            "status",
+            "undo_group_id",
+            "claimed_at",
+            "sent_at",
+            "failure_reason",
+            "created_at"
+          ]
+        },
+        {
+          "name": "email_suppression",
+          "columnCandidates": [
+            "email_norm",
+            "reason",
+            "created_at"
+          ]
+        }
+      ],
+      "alterTables": [
+        {
+          "table": "job",
+          "addedColumnCandidates": [
+            "drive_mode",
+            "lifecycle_status",
+            "category",
+            "category_override_reason",
+            "season_id",
+            "owner_faculty_id",
+            "drive_group_id",
+            "hr_user_id"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN drive_mode VARCHAR(20) NOT NULL DEFAULT 'ON_CAMPUS' COMMENT 'ON_CAMPUS | POOL | OFF_CAMPUS', ADD COLUMN lifecycle_status VARCHAR(20) NOT NULL DEFAULT 'PUBLISHED' COMMENT 'REQUEST|SENT_BACK|REJECTED|DRAFT|PUBLISHED|CLOSED|CANCELLED — kept in sync with is_draft/is_active by JobLifecycleService, never written directly elsewhere', ADD COLUMN category VARCHAR(20) NULL COMMENT 'REGULAR|DREAM|SUPER_DREAM — defaults from CTC, can be overridden with a reason', ADD COLUMN c"
+        },
+        {
+          "table": "job_application",
+          "addedColumnCandidates": [
+            "current_round_id"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN current_round_id BIGINT NULL COMMENT 'Which job_round this applicant is currently in"
+        },
+        {
+          "table": "hr_college_access",
+          "addedColumnCandidates": [
+            "granted_by_type",
+            "verification",
+            "hiring_for_company_id",
+            "agency_for_company_name"
+          ],
+          "droppedColumnCandidates": [],
+          "renameColumnCandidates": [],
+          "hasIndex": false,
+          "snippet": " ADD COLUMN granted_by_type VARCHAR(15) NULL DEFAULT 'SUPER_ADMIN' COMMENT 'SUPER_ADMIN | TPO — V1 lets a TPO grant access to their own college', ADD COLUMN verification VARCHAR(20) NOT NULL DEFAULT 'VERIFIED_DOMAIN' COMMENT 'VERIFIED_DOMAIN | TPO_APPROVED | PENDING', ADD COLUMN hiring_for_company_id BIGINT NULL, ADD COLUMN agency_for_company_name VARCHAR(150) NULL COMMENT 'Set when this HR is an agency/RPO hiring for a named client'"
+        }
+      ],
+      "drops": [],
+      "renameTables": [],
+      "triggers": false,
+      "backfill": true,
+      "bytes": 19642
+    }
+  ]
+}

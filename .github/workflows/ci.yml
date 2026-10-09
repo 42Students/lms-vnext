@@ -55,6 +55,9 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Database parity source-ledger checks
+        run: npm run test:db:parity
+
       - name: Deployment config validator
         env:
           GCP_PROJECT_ID: lms-vnext-dev
@@ -102,6 +105,8 @@ jobs:
         run: npm run db:migrate
 
       - name: Database integration tests
+        env:
+          DB03_ISOLATED_TEST_DATABASE: "1"
         run: npm run test:db
 
       - name: Install Playwright Chromium

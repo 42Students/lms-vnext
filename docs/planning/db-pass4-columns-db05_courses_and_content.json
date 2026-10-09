@@ -1,0 +1,2179 @@
+{
+  "domain": "DB05_COURSES_AND_CONTENT",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "vnextSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+  "scope": "Source-derived field candidates only, NOT actual live schema or verified semantic mapping",
+  "counts": {
+    "tables": 7,
+    "fields": 92,
+    "sameNameCandidateFields": 22
+  },
+  "tables": [
+    {
+      "table": "classroom_messages",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "classroom_messages",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 11,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "course_id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "class_id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "sender_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "sender_name",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "sender_role",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "varchar(64) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "message_text",
+          "sourceType": "text",
+          "sourceDefinition": "text NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "classroom_messages",
+          "legacySnapshotTable": "classroom_messages",
+          "legacyColumn": "is_pinned",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "course",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "course",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "courses"
+      ],
+      "sourceFieldCount": 19,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "courses",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "courses",
+              "column": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "courses",
+              "column": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "active",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "allowed_for_display",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "course_name",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "created_by_org_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "default_subscription_days",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "dept_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "enabled",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "formal_title",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "contents",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "parent_course_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "short_title",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "slug",
+          "sourceType": "varchar(64)",
+          "sourceDefinition": "varchar(64) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "version",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "course_name_key",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) GENERATED ALWAYS AS ((case when (((`is_deleted` is null) or (`is_deleted` = 0)) and (`course_name` is not null) and (trim(`course_name`) <> _utf8mb4'')) then lower(trim(`course_name`)) else NULL end)) STORED",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "course",
+          "legacySnapshotTable": "course",
+          "legacyColumn": "short_title_key",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) GENERATED ALWAYS AS ((case when (((`is_deleted` is null) or (`is_deleted` = 0)) and (`short_title` is not null) and (trim(`short_title`) <> _utf8mb4'')) then lower(trim(`short_title`)) else NULL end)) STORED",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "courses"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "discussions",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "discussions",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "course_discussion_messages"
+      ],
+      "sourceFieldCount": 16,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "course_discussion_messages",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "course_discussion_messages",
+              "column": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "course_discussion_messages",
+              "column": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "content_text",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "lesson_content_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "profile_name",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "sequence",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "user_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "user_name",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "parent_discussion_id",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "discussion_status",
+          "sourceType": "varchar(20)",
+          "sourceDefinition": "varchar(20) NOT NULL DEFAULT 'OPEN'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'OPEN'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "is_faculty_answer",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) NOT NULL DEFAULT b'0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "b",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "resolved_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "resolved_by",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "discussions",
+          "legacySnapshotTable": "discussions",
+          "legacyColumn": "attachment_url",
+          "sourceType": "text",
+          "sourceDefinition": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_discussion_messages"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "learner_content_progress",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "learner_content_progress",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "learner_content_progress"
+      ],
+      "sourceFieldCount": 11,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "learner_content_progress",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "learner_id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "lesson_content_id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "learner_content_progress",
+              "column": "lesson_content_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "last_position_seconds",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL DEFAULT '0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "learner_content_progress",
+              "column": "last_position_seconds",
+              "type": "integer",
+              "nullable": false,
+              "default": 0
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "duration_seconds",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL DEFAULT '0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "completed_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "learner_content_progress",
+              "column": "completed_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "learner_content_progress",
+              "column": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "learner_content_progress",
+              "column": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) NOT NULL DEFAULT '0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "first_completed_at",
+          "sourceType": "timestamp",
+          "sourceDefinition": "timestamp NULL DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "learner_content_progress",
+          "legacySnapshotTable": "learner_content_progress",
+          "legacyColumn": "attempt",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL DEFAULT '1'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'1'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "learner_content_progress"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "lesson",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "lesson",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "course_lessons"
+      ],
+      "sourceFieldCount": 11,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "course_lessons",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "course_lessons",
+              "column": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "course_lessons",
+              "column": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "active",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "course_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "enabled",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "lesson_name",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "sequence",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "course_lessons",
+              "column": "sequence",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "version",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson",
+          "legacySnapshotTable": "lesson",
+          "legacyColumn": "lesson_name_key",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) GENERATED ALWAYS AS ((case when (((`is_deleted` is null) or (`is_deleted` = 0)) and (`lesson_name` is not null) and (trim(`lesson_name`) <> _utf8mb4'')) then lower(trim(`lesson_name`)) else NULL end)) STORED",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "course_lessons"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "lesson_content_class_sequence",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "lesson_content_class_sequence",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [],
+      "sourceFieldCount": 6,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "lesson_content_class_sequence",
+          "legacySnapshotTable": "lesson_content_class_sequence",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_content_class_sequence",
+          "legacySnapshotTable": "lesson_content_class_sequence",
+          "legacyColumn": "lesson_content_id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_content_class_sequence",
+          "legacySnapshotTable": "lesson_content_class_sequence",
+          "legacyColumn": "class_id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_content_class_sequence",
+          "legacySnapshotTable": "lesson_content_class_sequence",
+          "legacyColumn": "sequence",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_content_class_sequence",
+          "legacySnapshotTable": "lesson_content_class_sequence",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_content_class_sequence",
+          "legacySnapshotTable": "lesson_content_class_sequence",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP(6)",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "table": "lesson_contents",
+      "domain": "DB05_COURSES_AND_CONTENT",
+      "sourceBase": "snapshot_through_V150",
+      "legacySnapshotName": "lesson_contents",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "vnextCandidates": [
+        "lesson_contents"
+      ],
+      "sourceFieldCount": 18,
+      "unparsedChanges": [],
+      "rows": [
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "id",
+          "sourceType": "int",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "lesson_contents",
+              "column": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "created_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "lesson_contents",
+              "column": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "updated_at",
+          "sourceType": "datetime(6)",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "lesson_contents",
+              "column": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": false,
+              "default": "now()"
+            }
+          ],
+          "sourceJPAColumnAnnotated": false,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "active",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "class_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "content_data",
+          "sourceType": "json",
+          "sourceDefinition": "json DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "content_title",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "content_type",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "lesson_contents",
+              "column": "content_type",
+              "type": "lesson_content_type",
+              "nullable": false,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "course_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "course_name",
+          "sourceType": "varchar(255)",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "enabled",
+          "sourceType": "bit(1)",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "faculty_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "lesson_id",
+          "sourceType": "int",
+          "sourceDefinition": "int DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "lesson_contents",
+              "column": "lesson_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "points",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "sequence",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [
+            {
+              "table": "lesson_contents",
+              "column": "sequence",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            }
+          ],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "deadline",
+          "sourceType": "datetime",
+          "sourceDefinition": "datetime DEFAULT NULL",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        },
+        {
+          "legacyTable": "lesson_contents",
+          "legacySnapshotTable": "lesson_contents",
+          "legacyColumn": "version",
+          "sourceType": "bigint",
+          "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "history": [],
+          "candidateVnextTables": [
+            "lesson_contents"
+          ],
+          "candidateExactNameMatches": [],
+          "sourceJPAColumnAnnotated": true,
+          "riskFlags": [],
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "verifiedMapping": null,
+          "validationEvidence": null
+        }
+      ]
+    }
+  ]
+}

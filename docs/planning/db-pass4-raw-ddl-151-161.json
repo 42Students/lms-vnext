@@ -1,0 +1,1877 @@
+{
+  "part": "151-161",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "generatedAt": "2026-10-09",
+  "warnings": [
+    "Detailed CREATE/ALTER source parser, NOT actual post-migration live physical schema",
+    "Complex expressions/dynamic SQL/IF guards require manual review and live introspection",
+    "Descriptions are source definitions; unchanged base tables derive from historical snapshot"
+  ],
+  "migrations": [
+    {
+      "file": "V151__bug_tracker_phase1.sql",
+      "create": [
+        {
+          "table": "bug_tracker_access",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT NOT NULL AUTO_INCREMENT"
+            },
+            {
+              "name": "display_name",
+              "definition": "VARCHAR(120) NOT NULL"
+            },
+            {
+              "name": "token_hash",
+              "definition": "CHAR(64) NOT NULL"
+            },
+            {
+              "name": "access_role",
+              "definition": "VARCHAR(24) NOT NULL"
+            },
+            {
+              "name": "active",
+              "definition": "BOOLEAN NOT NULL DEFAULT TRUE"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY uk_bug_tracker_access_token_hash (token_hash)",
+            "KEY idx_bug_tracker_access_active_role (active, access_role)"
+          ],
+          "sourceMigration": "V151__bug_tracker_phase1.sql",
+          "rawFieldCount": 10
+        },
+        {
+          "table": "bug_tracker_session",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT NOT NULL AUTO_INCREMENT"
+            },
+            {
+              "name": "access_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "token_hash",
+              "definition": "CHAR(64) NOT NULL"
+            },
+            {
+              "name": "expires_at",
+              "definition": "DATETIME(6) NOT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY uk_bug_tracker_session_token_hash (token_hash)",
+            "KEY idx_bug_tracker_session_expiry (expires_at)",
+            "KEY idx_bug_tracker_session_access (access_id)",
+            "CONSTRAINT fk_bug_tracker_session_access FOREIGN KEY (access_id) REFERENCES bug_tracker_access(id)"
+          ],
+          "sourceMigration": "V151__bug_tracker_phase1.sql",
+          "rawFieldCount": 10
+        },
+        {
+          "table": "bug_report",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT NOT NULL AUTO_INCREMENT"
+            },
+            {
+              "name": "public_id",
+              "definition": "VARCHAR(24) NULL"
+            },
+            {
+              "name": "reporter_access_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "reporter_name",
+              "definition": "VARCHAR(120) NOT NULL"
+            },
+            {
+              "name": "account_role",
+              "definition": "VARCHAR(32) NOT NULL"
+            },
+            {
+              "name": "environment",
+              "definition": "VARCHAR(32) NOT NULL"
+            },
+            {
+              "name": "page",
+              "definition": "VARCHAR(120) NOT NULL"
+            },
+            {
+              "name": "screen",
+              "definition": "VARCHAR(120) NULL"
+            },
+            {
+              "name": "section",
+              "definition": "VARCHAR(120) NULL"
+            },
+            {
+              "name": "issue_type",
+              "definition": "VARCHAR(80) NOT NULL"
+            },
+            {
+              "name": "description",
+              "definition": "TEXT NOT NULL"
+            },
+            {
+              "name": "severity",
+              "definition": "VARCHAR(32) NOT NULL"
+            },
+            {
+              "name": "evidence_link",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(32) NOT NULL DEFAULT 'NEW'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY uk_bug_report_public_id (public_id)",
+            "KEY idx_bug_report_created_at (created_at)",
+            "KEY idx_bug_report_status_created (status, created_at)",
+            "KEY idx_bug_report_reporter_created (reporter_access_id, created_at)",
+            "KEY idx_bug_report_environment_created (environment, created_at)",
+            "KEY idx_bug_report_page_created (page, created_at)",
+            "CONSTRAINT fk_bug_report_reporter_access FOREIGN KEY (reporter_access_id) REFERENCES bug_tracker_access(id)"
+          ],
+          "sourceMigration": "V151__bug_tracker_phase1.sql",
+          "rawFieldCount": 25
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 3060
+    },
+    {
+      "file": "V152__bug_tracker_attachments.sql",
+      "create": [
+        {
+          "table": "bug_report_attachment",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT NOT NULL AUTO_INCREMENT"
+            },
+            {
+              "name": "bug_report_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "storage_key",
+              "definition": "VARCHAR(700) NOT NULL"
+            },
+            {
+              "name": "original_filename",
+              "definition": "VARCHAR(255) NOT NULL"
+            },
+            {
+              "name": "content_type",
+              "definition": "VARCHAR(100) NOT NULL"
+            },
+            {
+              "name": "size_bytes",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY uk_bug_report_attachment_storage_key (storage_key)",
+            "KEY idx_bug_report_attachment_issue_created (bug_report_id, created_at)",
+            "CONSTRAINT fk_bug_report_attachment_issue FOREIGN KEY (bug_report_id) REFERENCES bug_report(id) ON DELETE CASCADE"
+          ],
+          "sourceMigration": "V152__bug_tracker_attachments.sql",
+          "rawFieldCount": 11
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 628
+    },
+    {
+      "file": "V153__bug_tracker_workflow.sql",
+      "create": [
+        {
+          "table": "bug_report_activity",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT NOT NULL AUTO_INCREMENT"
+            },
+            {
+              "name": "bug_report_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "activity_type",
+              "definition": "VARCHAR(40) NOT NULL"
+            },
+            {
+              "name": "actor_name",
+              "definition": "VARCHAR(120) NULL"
+            },
+            {
+              "name": "from_value",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "name": "to_value",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (id)",
+            "KEY idx_bug_report_activity_issue_created (bug_report_id, created_at)",
+            "CONSTRAINT fk_bug_report_activity_issue FOREIGN KEY (bug_report_id) REFERENCES bug_report(id) ON DELETE CASCADE"
+          ],
+          "sourceMigration": "V153__bug_tracker_workflow.sql",
+          "rawFieldCount": 11
+        }
+      ],
+      "alter": [
+        {
+          "table": "bug_report",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "resolution",
+              "definition": "VARCHAR(32) NULL AFTER status"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "affected_layer",
+              "definition": "VARCHAR(24) NULL AFTER resolution"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "root_cause",
+              "definition": "TEXT NULL AFTER affected_layer"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "fix_notes",
+              "definition": "TEXT NULL AFTER root_cause"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "frontend_commit_sha",
+              "definition": "VARCHAR(64) NULL AFTER fix_notes"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "backend_commit_sha",
+              "definition": "VARCHAR(64) NULL AFTER frontend_commit_sha"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "regression_test_status",
+              "definition": "VARCHAR(24) NOT NULL DEFAULT 'NOT_REVIEWED' AFTER backend_commit_sha"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "production_verified",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE AFTER regression_test_status"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "retest_status",
+              "definition": "VARCHAR(24) NOT NULL DEFAULT 'NOT_RETESTED' AFTER production_verified"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "retested_at",
+              "definition": "DATETIME(6) NULL AFTER retest_status"
+            }
+          ],
+          "sourceMigration": "V153__bug_tracker_workflow.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1341
+    },
+    {
+      "file": "V154__bug_tracker_source_context.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "bug_report",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "source_url",
+              "definition": "VARCHAR(2000) NULL AFTER evidence_link"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "source_path",
+              "definition": "VARCHAR(500) NULL AFTER source_url"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "browser",
+              "definition": "VARCHAR(500) NULL AFTER source_path"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "viewport",
+              "definition": "VARCHAR(64) NULL AFTER browser"
+            }
+          ],
+          "sourceMigration": "V154__bug_tracker_source_context.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 268
+    },
+    {
+      "file": "V155__split_current_permanent_address_location.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "learner",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "current_city",
+              "definition": "VARCHAR(255) NULL AFTER current_address"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "current_state",
+              "definition": "VARCHAR(255) NULL AFTER current_city"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "current_pincode",
+              "definition": "VARCHAR(20) NULL AFTER current_state"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "permanent_city",
+              "definition": "VARCHAR(255) NULL AFTER permanent_address"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "permanent_state",
+              "definition": "VARCHAR(255) NULL AFTER permanent_city"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "permanent_pincode",
+              "definition": "VARCHAR(20) NULL AFTER permanent_state"
+            }
+          ],
+          "sourceMigration": "V155__split_current_permanent_address_location.sql"
+        },
+        {
+          "table": "faculty",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "current_city",
+              "definition": "VARCHAR(255) NULL AFTER current_address"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "current_state",
+              "definition": "VARCHAR(255) NULL AFTER current_city"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "current_pincode",
+              "definition": "VARCHAR(20) NULL AFTER current_state"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "permanent_city",
+              "definition": "VARCHAR(255) NULL AFTER permanent_address"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "permanent_state",
+              "definition": "VARCHAR(255) NULL AFTER permanent_city"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "permanent_pincode",
+              "definition": "VARCHAR(20) NULL AFTER permanent_state"
+            }
+          ],
+          "sourceMigration": "V155__split_current_permanent_address_location.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1524
+    },
+    {
+      "file": "V156__class_schedule_attendance_marked.sql",
+      "create": [],
+      "alter": [
+        {
+          "table": "class_schedule",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "attendance_marked_at",
+              "definition": "TIMESTAMP NULL"
+            }
+          ],
+          "sourceMigration": "V156__class_schedule_attendance_marked.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 655
+    },
+    {
+      "file": "V157__log_alerting.sql",
+      "create": [
+        {
+          "table": "log_alert_signature",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "environment",
+              "definition": "VARCHAR(32) NOT NULL"
+            },
+            {
+              "name": "signature_hash",
+              "definition": "CHAR(64) NOT NULL"
+            },
+            {
+              "name": "sample_message",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "first_seen_at",
+              "definition": "TIMESTAMP NOT NULL"
+            },
+            {
+              "name": "last_seen_at",
+              "definition": "TIMESTAMP NOT NULL"
+            },
+            {
+              "name": "occurrence_count",
+              "definition": "BIGINT NOT NULL DEFAULT 1"
+            },
+            {
+              "name": "muted",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uq_log_alert_signature (environment, signature_hash)"
+          ],
+          "sourceMigration": "V157__log_alerting.sql",
+          "rawFieldCount": 9
+        },
+        {
+          "table": "log_alert_state",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "state_key",
+              "definition": "VARCHAR(64) NOT NULL"
+            },
+            {
+              "name": "poll_cursor_at",
+              "definition": "TIMESTAMP NULL"
+            },
+            {
+              "name": "admin_last_viewed_at",
+              "definition": "TIMESTAMP NULL"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uq_log_alert_state_key (state_key)"
+          ],
+          "sourceMigration": "V157__log_alerting.sql",
+          "rawFieldCount": 5
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1000
+    },
+    {
+      "file": "V158__log_alert_signature_accounts.sql",
+      "create": [
+        {
+          "table": "log_alert_signature_account",
+          "fields": [
+            {
+              "name": "signature_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "account_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "first_seen_at",
+              "definition": "TIMESTAMP NOT NULL"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (signature_id, account_id)",
+            "CONSTRAINT fk_log_alert_signature_account_signature FOREIGN KEY (signature_id) REFERENCES log_alert_signature (id) ON DELETE CASCADE"
+          ],
+          "sourceMigration": "V158__log_alert_signature_accounts.sql",
+          "rawFieldCount": 5
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 1052
+    },
+    {
+      "file": "V159__hr_industry_accounts.sql",
+      "create": [
+        {
+          "table": "industry_company",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "INT NOT NULL AUTO_INCREMENT"
+            },
+            {
+              "name": "name",
+              "definition": "VARCHAR(150) NOT NULL"
+            },
+            {
+              "name": "website",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "industry",
+              "definition": "VARCHAR(100) NULL"
+            },
+            {
+              "name": "logo_url",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_by_user_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_by_user_type",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "is_deleted",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (id)",
+            "KEY idx_industry_company_name (name)"
+          ],
+          "sourceMigration": "V159__hr_industry_accounts.sql",
+          "rawFieldCount": 13
+        },
+        {
+          "table": "hr_user",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "INT NOT NULL AUTO_INCREMENT"
+            },
+            {
+              "name": "first_name",
+              "definition": "VARCHAR(100) NOT NULL"
+            },
+            {
+              "name": "last_name",
+              "definition": "VARCHAR(100) NULL"
+            },
+            {
+              "name": "contact_mobile",
+              "definition": "VARCHAR(15) NOT NULL"
+            },
+            {
+              "name": "contact_mail",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "name": "designation",
+              "definition": "VARCHAR(150) NULL"
+            },
+            {
+              "name": "industry_company_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "suspended_at",
+              "definition": "DATETIME(6) NULL"
+            },
+            {
+              "name": "suspension_reason",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "token_version",
+              "definition": "INT NOT NULL DEFAULT 0"
+            },
+            {
+              "name": "last_login_at",
+              "definition": "DATETIME(6) NULL"
+            },
+            {
+              "name": "created_by_user_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_by_user_type",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "is_deleted",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY uk_hr_user_contact_mobile (contact_mobile)",
+            "KEY idx_hr_user_company (industry_company_id)",
+            "CONSTRAINT fk_hr_user_industry_company FOREIGN KEY (industry_company_id) REFERENCES industry_company (id)"
+          ],
+          "sourceMigration": "V159__hr_industry_accounts.sql",
+          "rawFieldCount": 21
+        },
+        {
+          "table": "hr_college_access",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "INT NOT NULL AUTO_INCREMENT"
+            },
+            {
+              "name": "hr_user_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "organization_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'"
+            },
+            {
+              "name": "valid_until",
+              "definition": "DATETIME(6) NULL"
+            },
+            {
+              "name": "granted_by_user_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "granted_by_user_type",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "granted_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "revoked_by_user_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "revoked_by_user_type",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "revoked_at",
+              "definition": "DATETIME(6) NULL"
+            },
+            {
+              "name": "revoke_reason",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)"
+            },
+            {
+              "name": "is_deleted",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY uk_hr_college_access_user_college (hr_user_id, college_id)",
+            "KEY idx_hr_college_access_college_status (college_id, status)",
+            "CONSTRAINT fk_hr_college_access_hr_user FOREIGN KEY (hr_user_id) REFERENCES hr_user (id)",
+            "CONSTRAINT fk_hr_college_access_college FOREIGN KEY (college_id) REFERENCES college (id)"
+          ],
+          "sourceMigration": "V159__hr_industry_accounts.sql",
+          "rawFieldCount": 22
+        },
+        {
+          "table": "hr_college_access_capability",
+          "fields": [
+            {
+              "name": "access_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "capability",
+              "definition": "VARCHAR(64) NOT NULL"
+            },
+            {
+              "name": "granted_at",
+              "definition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)"
+            }
+          ],
+          "constraints": [
+            "PRIMARY KEY (access_id, capability)",
+            "CONSTRAINT fk_hr_college_access_capability_access FOREIGN KEY (access_id) REFERENCES hr_college_access (id) ON DELETE CASCADE"
+          ],
+          "sourceMigration": "V159__hr_industry_accounts.sql",
+          "rawFieldCount": 5
+        }
+      ],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 4251
+    },
+    {
+      "file": "V160__project_template_version_sort_index.sql",
+      "create": [],
+      "alter": [],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 838
+    },
+    {
+      "file": "V161__tpo_v1_drives.sql",
+      "create": [
+        {
+          "table": "placement_season",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "name",
+              "definition": "VARCHAR(100) NOT NULL"
+            },
+            {
+              "name": "start_date",
+              "definition": "DATE NULL"
+            },
+            {
+              "name": "end_date",
+              "definition": "DATE NULL"
+            },
+            {
+              "name": "registration_deadline",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "is_registration_open",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "blocked_dates",
+              "definition": "JSON NULL COMMENT 'Array of {date, label} exam/blocked dates for the season'"
+            },
+            {
+              "name": "is_current",
+              "definition": "BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Several seasons may be open at once; this only drives default filters'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_placement_season_college (college_id)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 13
+        },
+        {
+          "table": "drive_group",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "hr_user_id",
+              "definition": "BIGINT NULL"
+            },
+            {
+              "name": "industry_company_id",
+              "definition": "BIGINT NULL"
+            },
+            {
+              "name": "shared_form_json",
+              "definition": "JSON NULL COMMENT 'The common job/pay/eligibility/rounds payload sent to every college in this group'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 5
+        },
+        {
+          "table": "job_eligibility_override",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "job_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "override_type",
+              "definition": "VARCHAR(10) NOT NULL COMMENT 'INCLUDE | EXCLUDE'"
+            },
+            {
+              "name": "reason",
+              "definition": "VARCHAR(500) NOT NULL"
+            },
+            {
+              "name": "created_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_job_eligibility_override (job_id, learner_id)",
+            "INDEX idx_job_eligibility_override_job (job_id)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 9
+        },
+        {
+          "table": "job_round",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "job_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "seq",
+              "definition": "INT NOT NULL COMMENT 'Display and processing order'"
+            },
+            {
+              "name": "kind",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'TALK|TEST|VENDOR_TEST|GD|INTERVIEW'"
+            },
+            {
+              "name": "name",
+              "definition": "VARCHAR(100) NOT NULL"
+            },
+            {
+              "name": "mode",
+              "definition": "VARCHAR(20) NULL COMMENT 'ON_CAMPUS|VIRTUAL'"
+            },
+            {
+              "name": "scheduled_date",
+              "definition": "DATETIME NULL COMMENT 'Null = \"to be decided\"'"
+            },
+            {
+              "name": "venue",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "name": "meeting_url",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "what_to_bring",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "platform",
+              "definition": "VARCHAR(100) NULL COMMENT 'Test/vendor-test: Mettl, HackerRank, etc.'"
+            },
+            {
+              "name": "test_link",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "duration_minutes",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "results_due",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SCHEDULED|COMPLETED'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_job_round_job (job_id, seq)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 18
+        },
+        {
+          "table": "round_result",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "application_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "round_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "outcome",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'PASS|FAIL|ABSENT|HOLD (HOLD = waitlist)'"
+            },
+            {
+              "name": "waitlist_rank",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "score",
+              "definition": "DOUBLE NULL"
+            },
+            {
+              "name": "reason_category",
+              "definition": "VARCHAR(30) NULL COMMENT 'APTITUDE|TECHNICAL|COMMUNICATION|OTHER — feeds readiness, never shown outside the college'"
+            },
+            {
+              "name": "comment",
+              "definition": "VARCHAR(1000) NULL COMMENT 'Company-private when source = PANELIST; never exported'"
+            },
+            {
+              "name": "source",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'HR|PANELIST|DRIVE_DAY|EXCEL|TPO'"
+            },
+            {
+              "name": "submitted_by_type",
+              "definition": "VARCHAR(20) NOT NULL"
+            },
+            {
+              "name": "submitted_by_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "submitted_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "applied_at",
+              "definition": "DATETIME NULL COMMENT 'Null = still staged, waiting for the TPO (or auto-apply) to apply it'"
+            },
+            {
+              "name": "applied_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "superseded_by",
+              "definition": "BIGINT NULL COMMENT 'Set when a later result for the same application+round replaces this one'"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_round_result_application (application_id)",
+            "INDEX idx_round_result_round (round_id)",
+            "INDEX idx_round_result_pending (round_id, applied_at)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 18
+        },
+        {
+          "table": "job_offer",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "application_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "kind",
+              "definition": "VARCHAR(10) NOT NULL DEFAULT 'OFFER' COMMENT 'LOI | OFFER'"
+            },
+            {
+              "name": "role_option_name",
+              "definition": "VARCHAR(100) NULL"
+            },
+            {
+              "name": "ctc_lpa",
+              "definition": "DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "fixed_lpa",
+              "definition": "DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "variable_lpa",
+              "definition": "DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "joining_bonus_lpa",
+              "definition": "DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "bond_months",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "bond_amount",
+              "definition": "DECIMAL(10,2) NULL"
+            },
+            {
+              "name": "joining_date",
+              "definition": "DATE NULL COMMENT 'Null = \"to be announced\"'"
+            },
+            {
+              "name": "respond_by",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "letter_url",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(25) NOT NULL DEFAULT 'SELECTED' COMMENT 'SELECTED|PENDING_VERIFICATION|RELEASED|ACCEPTED|DECLINED|EXPIRED|WITHDRAWN|REVOKED'"
+            },
+            {
+              "name": "acceptance_channel",
+              "definition": "VARCHAR(15) NULL COMMENT 'IN_APP | EXTERNAL_IMPORT'"
+            },
+            {
+              "name": "accepted_disputable_until",
+              "definition": "DATETIME NULL COMMENT 'For EXTERNAL_IMPORT acceptances: the 48h window the student can dispute in before the cascade runs'"
+            },
+            {
+              "name": "joining_status",
+              "definition": "VARCHAR(15) NULL COMMENT 'JOINED|DEFERRED|NOT_JOINED'"
+            },
+            {
+              "name": "cascade_id",
+              "definition": "VARCHAR(36) NULL COMMENT 'Groups every application row this offer''s accept auto-withdrew, so a reversal can undo exactly that set'"
+            },
+            {
+              "name": "revoke_reason",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_by_type",
+              "definition": "VARCHAR(10) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | HR'"
+            },
+            {
+              "name": "created_by_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "verified_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "released_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "responded_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "version",
+              "definition": "BIGINT NOT NULL DEFAULT 0"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_job_offer_application (application_id)",
+            "INDEX idx_job_offer_status (status)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 29
+        },
+        {
+          "table": "learner_academic_record",
+          "fields": [
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "cgpa",
+              "definition": "DECIMAL(4,2) NULL"
+            },
+            {
+              "name": "active_backlogs",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "past_backlogs",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "tenth_pct",
+              "definition": "DECIMAL(5,2) NULL"
+            },
+            {
+              "name": "twelfth_pct",
+              "definition": "DECIMAL(5,2) NULL"
+            },
+            {
+              "name": "diploma_pct",
+              "definition": "DECIMAL(5,2) NULL"
+            },
+            {
+              "name": "ug_pct",
+              "definition": "DECIMAL(5,2) NULL"
+            },
+            {
+              "name": "gap_years",
+              "definition": "INT NULL DEFAULT 0"
+            },
+            {
+              "name": "is_lateral_entry",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "passing_year",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "gender",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "source",
+              "definition": "VARCHAR(15) NOT NULL DEFAULT 'SELF' COMMENT 'VERIFIED | SELF'"
+            },
+            {
+              "name": "import_batch_id",
+              "definition": "VARCHAR(36) NULL"
+            },
+            {
+              "name": "imported_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 16
+        },
+        {
+          "table": "placement_registration",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "season_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "choice",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'PLACEMENTS|HIGHER_STUDIES|NOT_INTERESTED'"
+            },
+            {
+              "name": "consent_version",
+              "definition": "VARCHAR(10) NULL"
+            },
+            {
+              "name": "consent_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "source",
+              "definition": "VARCHAR(15) NOT NULL DEFAULT 'SELF' COMMENT 'SELF|TPO|BACKFILL'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "UNIQUE KEY uk_placement_registration (learner_id, season_id)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 10
+        },
+        {
+          "table": "placement_debarment",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "reason",
+              "definition": "VARCHAR(500) NOT NULL"
+            },
+            {
+              "name": "until_date",
+              "definition": "DATE NULL"
+            },
+            {
+              "name": "until_drives",
+              "definition": "INT NULL COMMENT 'Alternative to a date: debarred for the next N drives'"
+            },
+            {
+              "name": "drives_counted",
+              "definition": "INT NOT NULL DEFAULT 0"
+            },
+            {
+              "name": "created_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "lifted_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "lifted_reason",
+              "definition": "VARCHAR(500) NULL"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_placement_debarment_learner (learner_id)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 11
+        },
+        {
+          "table": "student_request",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "type",
+              "definition": "VARCHAR(30) NOT NULL COMMENT 'WITHDRAWAL|OFFER_EXTENSION|REGISTRATION_CHANGE|ABSENCE_DISPUTE|CORRECTION|EXTERNAL_OFFER|PAP'"
+            },
+            {
+              "name": "job_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "application_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "payload_json",
+              "definition": "JSON NULL"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|APPROVED|REJECTED|AUTO_APPROVED'"
+            },
+            {
+              "name": "reason",
+              "definition": "VARCHAR(1000) NULL"
+            },
+            {
+              "name": "decided_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "decided_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "decision_reason",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "escalate_at",
+              "definition": "DATETIME NULL COMMENT 'When a pending request (e.g. a withdrawal 24h before a round) escalates to all TPO admins'"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_student_request_learner (learner_id)",
+            "INDEX idx_student_request_status (status, type)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 15
+        },
+        {
+          "table": "tpo_lead",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "college_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "company_id",
+              "definition": "BIGINT NULL"
+            },
+            {
+              "name": "hr_user_id",
+              "definition": "BIGINT NULL"
+            },
+            {
+              "name": "name",
+              "definition": "VARCHAR(150) NOT NULL"
+            },
+            {
+              "name": "designation",
+              "definition": "VARCHAR(100) NULL"
+            },
+            {
+              "name": "email_norm",
+              "definition": "VARCHAR(150) NULL"
+            },
+            {
+              "name": "phone_norm",
+              "definition": "VARCHAR(20) NULL"
+            },
+            {
+              "name": "company_name",
+              "definition": "VARCHAR(150) NULL"
+            },
+            {
+              "name": "company_logo",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "owner_faculty_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "manual_stage",
+              "definition": "VARCHAR(15) NOT NULL DEFAULT 'NEW' COMMENT 'NEW|CONTACTED|NOT_NOW — derived stages (Invited/Joined/Drive planned/Recruited) are computed, never stored'"
+            },
+            {
+              "name": "not_now_reason",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "name": "not_now_until",
+              "definition": "DATE NULL"
+            },
+            {
+              "name": "source",
+              "definition": "VARCHAR(30) NULL"
+            },
+            {
+              "name": "invite_token_hash",
+              "definition": "VARCHAR(128) NULL"
+            },
+            {
+              "name": "invite_sent_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "invite_clicked_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "invite_reminder_sent_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "invite_bounced_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "unsubscribed_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "updated_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_lead_college (college_id)",
+            "INDEX idx_lead_email (email_norm)",
+            "INDEX idx_lead_phone (phone_norm)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 26
+        },
+        {
+          "table": "lead_activity",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "lead_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "type",
+              "definition": "VARCHAR(20) NOT NULL COMMENT 'CALL|WHATSAPP|EMAIL|MEETING|NOTE|SYSTEM'"
+            },
+            {
+              "name": "outcome",
+              "definition": "VARCHAR(30) NULL"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(2000) NULL"
+            },
+            {
+              "name": "is_system",
+              "definition": "BOOLEAN NOT NULL DEFAULT FALSE"
+            },
+            {
+              "name": "created_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_lead_activity_lead (lead_id, created_at)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 9
+        },
+        {
+          "table": "follow_up",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "lead_id",
+              "definition": "BIGINT NOT NULL"
+            },
+            {
+              "name": "due_at",
+              "definition": "DATETIME NOT NULL"
+            },
+            {
+              "name": "owner_faculty_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "note",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "done_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_follow_up_due (due_at, done_at)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 8
+        },
+        {
+          "table": "prep_assignment",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "learner_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "course_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "assessment_id",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "due_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "assigned_by",
+              "definition": "INT NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_prep_assignment_learner (learner_id)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 8
+        },
+        {
+          "table": "notification_outbox",
+          "fields": [
+            {
+              "name": "id",
+              "definition": "BIGINT AUTO_INCREMENT PRIMARY KEY"
+            },
+            {
+              "name": "event",
+              "definition": "VARCHAR(50) NOT NULL"
+            },
+            {
+              "name": "recipient_type",
+              "definition": "VARCHAR(15) NOT NULL COMMENT 'LEARNER|HR|FACULTY'"
+            },
+            {
+              "name": "recipient_id",
+              "definition": "INT NOT NULL"
+            },
+            {
+              "name": "channel",
+              "definition": "VARCHAR(10) NOT NULL COMMENT 'APP|EMAIL|SMS'"
+            },
+            {
+              "name": "payload_json",
+              "definition": "JSON NULL"
+            },
+            {
+              "name": "send_after",
+              "definition": "DATETIME NOT NULL COMMENT 'Now + 30s for the Undo hold; immediate for non-undoable sends'"
+            },
+            {
+              "name": "status",
+              "definition": "VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SENT|CANCELLED|FAILED'"
+            },
+            {
+              "name": "undo_group_id",
+              "definition": "VARCHAR(36) NULL"
+            },
+            {
+              "name": "claimed_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "sent_at",
+              "definition": "DATETIME NULL"
+            },
+            {
+              "name": "failure_reason",
+              "definition": "VARCHAR(500) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [
+            "INDEX idx_notification_outbox_pending (status, send_after)",
+            "INDEX idx_notification_outbox_undo_group (undo_group_id)"
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 15
+        },
+        {
+          "table": "email_suppression",
+          "fields": [
+            {
+              "name": "email_norm",
+              "definition": "VARCHAR(150) NOT NULL PRIMARY KEY"
+            },
+            {
+              "name": "reason",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "name": "created_at",
+              "definition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            }
+          ],
+          "constraints": [],
+          "sourceMigration": "V161__tpo_v1_drives.sql",
+          "rawFieldCount": 3
+        }
+      ],
+      "alter": [
+        {
+          "table": "job",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "drive_mode",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'ON_CAMPUS' COMMENT 'ON_CAMPUS | POOL | OFF_CAMPUS'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "lifecycle_status",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'PUBLISHED' COMMENT 'REQUEST|SENT_BACK|REJECTED|DRAFT|PUBLISHED|CLOSED|CANCELLED — kept in sync with is_draft/is_active by JobLifecycleService, never written directly elsewhere'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "category",
+              "definition": "VARCHAR(20) NULL COMMENT 'REGULAR|DREAM|SUPER_DREAM — defaults from CTC, can be overridden with a reason'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "category_override_reason",
+              "definition": "VARCHAR(255) NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "season_id",
+              "definition": "BIGINT NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "owner_faculty_id",
+              "definition": "INT NULL COMMENT 'Drive owner: TPO admin or a delegated faculty coordinator'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "drive_group_id",
+              "definition": "BIGINT NULL COMMENT 'Set when this job is one college''s copy of a multi-college HR drive'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "hr_user_id",
+              "definition": "BIGINT NULL COMMENT 'HR who requested this drive, if any"
+            }
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql"
+        },
+        {
+          "table": "job_application",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "current_round_id",
+              "definition": "BIGINT NULL COMMENT 'Which job_round this applicant is currently in"
+            }
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql"
+        },
+        {
+          "table": "hr_college_access",
+          "ops": [
+            {
+              "op": "ADD_COLUMN",
+              "column": "granted_by_type",
+              "definition": "VARCHAR(15) NULL DEFAULT 'SUPER_ADMIN' COMMENT 'SUPER_ADMIN | TPO — V1 lets a TPO grant access to their own college'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "verification",
+              "definition": "VARCHAR(20) NOT NULL DEFAULT 'VERIFIED_DOMAIN' COMMENT 'VERIFIED_DOMAIN | TPO_APPROVED | PENDING'"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "hiring_for_company_id",
+              "definition": "BIGINT NULL"
+            },
+            {
+              "op": "ADD_COLUMN",
+              "column": "agency_for_company_name",
+              "definition": "VARCHAR(150) NULL COMMENT 'Set when this HR is an agency/RPO hiring for a named client'"
+            }
+          ],
+          "sourceMigration": "V161__tpo_v1_drives.sql"
+        }
+      ],
+      "hasDynamicSql": false,
+      "hasProcedure": false,
+      "hasTriggers": false,
+      "bytes": 19642
+    }
+  ]
+}

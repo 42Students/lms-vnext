@@ -1,0 +1,4713 @@
+{
+  "schemaVersion": 1,
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "baselineVnextSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+  "notes": "This is a source-created raw DDL field checklist. Later migrations and Hibernate update may mutate/drop fields. A row is NOT done merely because a likely target name exists.",
+  "sourceMigrations": [
+    "V166__groups_kernel.sql",
+    "V167__electives.sql",
+    "V168__electives_offering_unique.sql",
+    "V187__profile_verification.sql",
+    "V188__placement_batches_and_eligibility.sql",
+    "V161__tpo_v1_drives.sql",
+    "V162__tpo_v1_settings.sql",
+    "V165__tpo_v1_complete.sql"
+  ],
+  "counts": {
+    "tables": 45,
+    "sourceCreatedColumns": 469,
+    "auditedFields": 0
+  },
+  "fields": [
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "kind",
+      "legacyType": "VARCHAR(40)",
+      "legacyDefinition": "kind VARCHAR(40) NOT NULL COMMENT 'Feature-owned discriminator, e.g. ELECTIVE, CRT, BUS. Upper-case identifier; the kernel stores it, never interprets it'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "owner_scope",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "owner_scope VARCHAR(20) NOT NULL DEFAULT 'COLLEGE' COMMENT 'COLLEGE | PLATFORM'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NULL COMMENT 'NULL only for PLATFORM-owned groups (super-admin)'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "name",
+      "legacyType": "VARCHAR(150)",
+      "legacyDefinition": "name VARCHAR(150) NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "description",
+      "legacyType": "VARCHAR(1000)",
+      "legacyDefinition": "description VARCHAR(1000) NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "status VARCHAR(20) NOT NULL DEFAULT 'DRAFT' COMMENT 'DRAFT | ACTIVE | CLOSED | ARCHIVED. Self-join needs ACTIVE; admins may build a roster in DRAFT'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "capacity",
+      "legacyType": "INT",
+      "legacyDefinition": "capacity INT NULL COMMENT 'NULL = unlimited. Hard limit on ACTIVE members, enforced by the atomic seat claim'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "active_count",
+      "legacyType": "INT",
+      "legacyDefinition": "active_count INT NOT NULL DEFAULT 0 COMMENT 'Denormalised count of ACTIVE members. Seat claim = UPDATE ... WHERE active_count < capacity; reconcile endpoint recomputes it'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "self_join_open_from",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "self_join_open_from DATETIME NULL COMMENT 'Learners may join themselves only inside [from, until]; NULL from = self-join disabled'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "self_join_open_until",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "self_join_open_until DATETIME NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "academic_year",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "academic_year VARCHAR(20) NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "semester_number",
+      "legacyType": "INT",
+      "legacyDefinition": "semester_number INT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "config_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "config_json JSON NULL COMMENT 'Feature-owned settings, stored and returned opaquely. Kernel reads only allowWaitlist and allowSelfLeave'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "created_by_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "created_by_type VARCHAR(20) NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "created_by_id",
+      "legacyType": "INT",
+      "legacyDefinition": "created_by_id INT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "is_deleted",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "is_deleted BOOLEAN NOT NULL DEFAULT FALSE",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group",
+      "legacyColumn": "version",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "version BIGINT NOT NULL DEFAULT 0",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "group_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "group_id BIGINT NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "member_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "member_type VARCHAR(20) NOT NULL DEFAULT 'LEARNER' COMMENT 'LEARNER today; FACULTY/EXTERNAL reserved'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "member_id",
+      "legacyType": "INT",
+      "legacyDefinition": "member_id INT NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "state",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "state VARCHAR(20) NOT NULL COMMENT 'REQUESTED | ACTIVE | WAITLISTED | REMOVED'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "source",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "source VARCHAR(20) NOT NULL COMMENT 'MANUAL | CSV | RULE | SELF'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "is_locked",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "is_locked BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'An explicit admin decision: a rule re-run never overturns it, and a locked REMOVED row blocks self re-join'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "waitlist_position",
+      "legacyType": "INT",
+      "legacyDefinition": "waitlist_position INT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "note",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "note VARCHAR(500) NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "joined_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "joined_at DATETIME NULL COMMENT 'When the member last became ACTIVE'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member",
+      "legacyColumn": "version",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "version BIGINT NOT NULL DEFAULT 0",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "group_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "group_id BIGINT NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "member_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "member_type VARCHAR(20) NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "member_id",
+      "legacyType": "INT",
+      "legacyDefinition": "member_id INT NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "from_state",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "from_state VARCHAR(20) NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "to_state",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "to_state VARCHAR(20) NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "source",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "source VARCHAR(20) NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "actor_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "actor_type VARCHAR(20) NULL COMMENT 'LEARNER | FACULTY | SUPER_ADMIN | SYSTEM'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "actor_id",
+      "legacyType": "INT",
+      "legacyDefinition": "actor_id INT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "reason",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "reason VARCHAR(500) NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_member_event",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "legacyColumn": "group_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "group_id BIGINT NOT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "legacyColumn": "criteria_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "criteria_json JSON NOT NULL COMMENT 'Same shape as job.eligibility_json (JobEligibility.java): branches, minCgpa, maxActiveBacklogs, passingYears, ... One evaluator serves both'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "legacyColumn": "auto_refresh",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "auto_refresh BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Reserved for a scheduled re-run; V1 applies on demand'",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "legacyColumn": "last_run_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "last_run_at DATETIME NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "legacyColumn": "last_run_matched",
+      "legacyType": "INT",
+      "legacyDefinition": "last_run_matched INT NULL",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lms_group_rule",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V166__groups_kernel.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "program_id",
+      "legacyType": "INT",
+      "legacyDefinition": "program_id INT NOT NULL COMMENT 'The curriculum this slot belongs to; allocation may still take learners from any program in the college'",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "semester_number",
+      "legacyType": "INT",
+      "legacyDefinition": "semester_number INT NOT NULL",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "academic_year",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "academic_year VARCHAR(20) NULL",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "name",
+      "legacyType": "VARCHAR(150)",
+      "legacyDefinition": "name VARCHAR(150) NOT NULL COMMENT 'e.g. Professional Elective 1'",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "description",
+      "legacyType": "VARCHAR(1000)",
+      "legacyDefinition": "description VARCHAR(1000) NULL",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "credits",
+      "legacyType": "INT",
+      "legacyDefinition": "credits INT NOT NULL DEFAULT 3",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "min_pick",
+      "legacyType": "INT",
+      "legacyDefinition": "min_pick INT NOT NULL DEFAULT 1",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "max_pick",
+      "legacyType": "INT",
+      "legacyDefinition": "max_pick INT NOT NULL DEFAULT 1 COMMENT 'How many offerings of this slot one learner may hold; enforced by ElectiveJoinPolicy'",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | ARCHIVED'",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "is_deleted",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "is_deleted BOOLEAN NOT NULL DEFAULT FALSE",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_slot",
+      "legacyColumn": "version",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "version BIGINT NOT NULL DEFAULT 0",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "slot_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "slot_id BIGINT NOT NULL",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "course_id",
+      "legacyType": "INT",
+      "legacyDefinition": "course_id INT NOT NULL",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "group_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "group_id BIGINT NOT NULL COMMENT 'lms_group of kind ELECTIVE; its ACTIVE members are the enrolled learners'",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "backed_class_id",
+      "legacyType": "INT",
+      "legacyDefinition": "backed_class_id INT NOT NULL COMMENT 'The GROUP_BACKED class all content/timetable/attendance is keyed on'",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "capacity",
+      "legacyType": "INT",
+      "legacyDefinition": "capacity INT NULL COMMENT 'Mirrors lms_group.capacity for display; the group enforces it'",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | ARCHIVED'",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "is_deleted",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "is_deleted BOOLEAN NOT NULL DEFAULT FALSE",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "elective_offering",
+      "legacyColumn": "version",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "version BIGINT NOT NULL DEFAULT 0",
+      "firstSeenMigration": "V167__electives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "section",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "section VARCHAR(20) NOT NULL COMMENT 'EDUCATION | IDENTITY'",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "status VARCHAR(20) NOT NULL COMMENT 'SUBMITTED | SENT_BACK | VERIFIED | UPDATE_PENDING'",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "submitted_snapshot",
+      "legacyType": "JSON",
+      "legacyDefinition": "submitted_snapshot JSON NULL COMMENT 'What the student sent (identity numbers masked)'",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "verified_snapshot",
+      "legacyType": "JSON",
+      "legacyDefinition": "verified_snapshot JSON NULL COMMENT 'What was verified; stays in force while an update is pending'",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "submitted_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "submitted_at DATETIME NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "decided_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "decided_at DATETIME NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "decided_by_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "decided_by_type VARCHAR(20) NULL COMMENT 'ADMIN | SUPER_ADMIN | TPO'",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "decided_by_id",
+      "legacyType": "INT",
+      "legacyDefinition": "decided_by_id INT NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "decided_by_name",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "decided_by_name VARCHAR(200) NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "note",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "note VARCHAR(500) NULL COMMENT 'Why it was sent back'",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "verified_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "verified_at DATETIME NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "verified_by_name",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "verified_by_name VARCHAR(200) NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "section",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "section VARCHAR(20) NOT NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "action",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "action VARCHAR(20) NOT NULL COMMENT 'SUBMITTED | UPDATE_SUBMITTED | VERIFIED | SENT_BACK'",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "actor_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "actor_type VARCHAR(20) NOT NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "actor_id",
+      "legacyType": "INT",
+      "legacyDefinition": "actor_id INT NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "actor_name",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "actor_name VARCHAR(200) NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "note",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "note VARCHAR(500) NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "snapshot",
+      "legacyType": "JSON",
+      "legacyDefinition": "snapshot JSON NULL",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "profile_verification_event",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V187__profile_verification.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "scope_type",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "scope_type VARCHAR(10) NOT NULL COMMENT 'BATCH | CLASS | LEARNER'",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "scope_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "scope_id BIGINT NOT NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(12)",
+      "legacyDefinition": "status VARCHAR(12) NOT NULL COMMENT 'ELIGIBLE | INELIGIBLE'",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "reason",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "reason VARCHAR(200) NULL COMMENT 'Required when INELIGIBLE'",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "note",
+      "legacyType": "VARCHAR(300)",
+      "legacyDefinition": "note VARCHAR(300) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "decided_by_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "decided_by_type VARCHAR(20) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "decided_by_id",
+      "legacyType": "INT",
+      "legacyDefinition": "decided_by_id INT NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "decided_by_name",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "decided_by_name VARCHAR(200) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "legacyColumn": "decided_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "decided_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "action_id",
+      "legacyType": "VARCHAR(36)",
+      "legacyDefinition": "action_id VARCHAR(36) NOT NULL COMMENT 'One bulk action = one id'",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "scope_type",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "scope_type VARCHAR(10) NOT NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "scope_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "scope_id BIGINT NOT NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "before_status",
+      "legacyType": "VARCHAR(12)",
+      "legacyDefinition": "before_status VARCHAR(12) NULL COMMENT 'NULL = Not decided at that level'",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "before_reason",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "before_reason VARCHAR(200) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "before_note",
+      "legacyType": "VARCHAR(300)",
+      "legacyDefinition": "before_note VARCHAR(300) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "after_status",
+      "legacyType": "VARCHAR(12)",
+      "legacyDefinition": "after_status VARCHAR(12) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "after_reason",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "after_reason VARCHAR(200) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "after_note",
+      "legacyType": "VARCHAR(300)",
+      "legacyDefinition": "after_note VARCHAR(300) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "actor_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "actor_type VARCHAR(20) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "actor_id",
+      "legacyType": "INT",
+      "legacyDefinition": "actor_id INT NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "actor_name",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "actor_name VARCHAR(200) NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "undone_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "undone_at DATETIME NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_batch",
+      "legacyColumn": "batch_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "batch_id BIGINT NOT NULL PRIMARY KEY",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_batch",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_batch",
+      "legacyColumn": "registration_deadline",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "registration_deadline DATETIME NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_batch",
+      "legacyColumn": "invited_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "invited_at DATETIME NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_batch",
+      "legacyColumn": "finished_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "finished_at DATETIME NULL",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_batch",
+      "legacyColumn": "rules_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "rules_json JSON NULL COMMENT 'Overrides of the college placement rules for this batch; NULL = college rules'",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_batch",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_batch",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V188__placement_batches_and_eligibility.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "name",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "name VARCHAR(100) NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "start_date",
+      "legacyType": "DATE",
+      "legacyDefinition": "start_date DATE NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "end_date",
+      "legacyType": "DATE",
+      "legacyDefinition": "end_date DATE NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "registration_deadline",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "registration_deadline DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "is_registration_open",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "is_registration_open BOOLEAN NOT NULL DEFAULT FALSE",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "blocked_dates",
+      "legacyType": "JSON",
+      "legacyDefinition": "blocked_dates JSON NULL COMMENT 'Array of {date, label} exam/blocked dates for the season'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "is_current",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "is_current BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Several seasons may be open at once; this only drives default filters'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_season",
+      "legacyColumn": "version",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "version BIGINT NOT NULL DEFAULT 0",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "drive_group",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "drive_group",
+      "legacyColumn": "hr_user_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "hr_user_id BIGINT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "drive_group",
+      "legacyColumn": "industry_company_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "industry_company_id BIGINT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "drive_group",
+      "legacyColumn": "shared_form_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "shared_form_json JSON NULL COMMENT 'The common job/pay/eligibility/rounds payload sent to every college in this group'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "drive_group",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "legacyColumn": "job_id",
+      "legacyType": "INT",
+      "legacyDefinition": "job_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "legacyColumn": "override_type",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "override_type VARCHAR(10) NOT NULL COMMENT 'INCLUDE | EXCLUDE'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "legacyColumn": "reason",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "reason VARCHAR(500) NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "legacyColumn": "created_by",
+      "legacyType": "INT",
+      "legacyDefinition": "created_by INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "job_id",
+      "legacyType": "INT",
+      "legacyDefinition": "job_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "seq",
+      "legacyType": "INT",
+      "legacyDefinition": "seq INT NOT NULL COMMENT 'Display and processing order'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "kind",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "kind VARCHAR(20) NOT NULL COMMENT 'TALK|TEST|VENDOR_TEST|GD|INTERVIEW'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "name",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "name VARCHAR(100) NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "mode",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "mode VARCHAR(20) NULL COMMENT 'ON_CAMPUS|VIRTUAL'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "scheduled_date",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "scheduled_date DATETIME NULL COMMENT 'Null = \"to be decided\"'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "venue",
+      "legacyType": "VARCHAR(255)",
+      "legacyDefinition": "venue VARCHAR(255) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "meeting_url",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "meeting_url VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "what_to_bring",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "what_to_bring VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "platform",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "platform VARCHAR(100) NULL COMMENT 'Test/vendor-test: Mettl, HackerRank, etc.'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "test_link",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "test_link VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "duration_minutes",
+      "legacyType": "INT",
+      "legacyDefinition": "duration_minutes INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "results_due",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "results_due DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "status VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SCHEDULED|COMPLETED'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_round",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "application_id",
+      "legacyType": "INT",
+      "legacyDefinition": "application_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "round_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "round_id BIGINT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "outcome",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "outcome VARCHAR(20) NOT NULL COMMENT 'PASS|FAIL|ABSENT|HOLD (HOLD = waitlist)'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "waitlist_rank",
+      "legacyType": "INT",
+      "legacyDefinition": "waitlist_rank INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "score",
+      "legacyType": "DOUBLE",
+      "legacyDefinition": "score DOUBLE NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "reason_category",
+      "legacyType": "VARCHAR(30)",
+      "legacyDefinition": "reason_category VARCHAR(30) NULL COMMENT 'APTITUDE|TECHNICAL|COMMUNICATION|OTHER — feeds readiness, never shown outside the college'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "comment",
+      "legacyType": "VARCHAR(1000)",
+      "legacyDefinition": "comment VARCHAR(1000) NULL COMMENT 'Company-private when source = PANELIST; never exported'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "source",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "source VARCHAR(20) NOT NULL COMMENT 'HR|PANELIST|DRIVE_DAY|EXCEL|TPO'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "submitted_by_type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "submitted_by_type VARCHAR(20) NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "submitted_by_id",
+      "legacyType": "INT",
+      "legacyDefinition": "submitted_by_id INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "submitted_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "applied_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "applied_at DATETIME NULL COMMENT 'Null = still staged, waiting for the TPO (or auto-apply) to apply it'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "applied_by",
+      "legacyType": "INT",
+      "legacyDefinition": "applied_by INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_result",
+      "legacyColumn": "superseded_by",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "superseded_by BIGINT NULL COMMENT 'Set when a later result for the same application+round replaces this one'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "application_id",
+      "legacyType": "INT",
+      "legacyDefinition": "application_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "kind",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "kind VARCHAR(10) NOT NULL DEFAULT 'OFFER' COMMENT 'LOI | OFFER'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "role_option_name",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "role_option_name VARCHAR(100) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "ctc_lpa",
+      "legacyType": "DECIMAL(10,2)",
+      "legacyDefinition": "ctc_lpa DECIMAL(10,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "fixed_lpa",
+      "legacyType": "DECIMAL(10,2)",
+      "legacyDefinition": "fixed_lpa DECIMAL(10,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "variable_lpa",
+      "legacyType": "DECIMAL(10,2)",
+      "legacyDefinition": "variable_lpa DECIMAL(10,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "joining_bonus_lpa",
+      "legacyType": "DECIMAL(10,2)",
+      "legacyDefinition": "joining_bonus_lpa DECIMAL(10,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "bond_months",
+      "legacyType": "INT",
+      "legacyDefinition": "bond_months INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "bond_amount",
+      "legacyType": "DECIMAL(10,2)",
+      "legacyDefinition": "bond_amount DECIMAL(10,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "joining_date",
+      "legacyType": "DATE",
+      "legacyDefinition": "joining_date DATE NULL COMMENT 'Null = \"to be announced\"'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "respond_by",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "respond_by DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "letter_url",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "letter_url VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(25)",
+      "legacyDefinition": "status VARCHAR(25) NOT NULL DEFAULT 'SELECTED' COMMENT 'SELECTED|PENDING_VERIFICATION|RELEASED|ACCEPTED|DECLINED|EXPIRED|WITHDRAWN|REVOKED'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "acceptance_channel",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "acceptance_channel VARCHAR(15) NULL COMMENT 'IN_APP | EXTERNAL_IMPORT'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "accepted_disputable_until",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "accepted_disputable_until DATETIME NULL COMMENT 'For EXTERNAL_IMPORT acceptances: the 48h window the student can dispute in before the cascade runs'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "joining_status",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "joining_status VARCHAR(15) NULL COMMENT 'JOINED|DEFERRED|NOT_JOINED'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "cascade_id",
+      "legacyType": "VARCHAR(36)",
+      "legacyDefinition": "cascade_id VARCHAR(36) NULL COMMENT 'Groups every application row this offer''s accept auto-withdrew, so a reversal can undo exactly that set'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "revoke_reason",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "revoke_reason VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "created_by_type",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "created_by_type VARCHAR(10) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | HR'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "created_by_id",
+      "legacyType": "INT",
+      "legacyDefinition": "created_by_id INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "verified_by",
+      "legacyType": "INT",
+      "legacyDefinition": "verified_by INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "released_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "released_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "responded_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "responded_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "job_offer",
+      "legacyColumn": "version",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "version BIGINT NOT NULL DEFAULT 0",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "cgpa",
+      "legacyType": "DECIMAL(4,2)",
+      "legacyDefinition": "cgpa DECIMAL(4,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "active_backlogs",
+      "legacyType": "INT",
+      "legacyDefinition": "active_backlogs INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "past_backlogs",
+      "legacyType": "INT",
+      "legacyDefinition": "past_backlogs INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "tenth_pct",
+      "legacyType": "DECIMAL(5,2)",
+      "legacyDefinition": "tenth_pct DECIMAL(5,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "twelfth_pct",
+      "legacyType": "DECIMAL(5,2)",
+      "legacyDefinition": "twelfth_pct DECIMAL(5,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "diploma_pct",
+      "legacyType": "DECIMAL(5,2)",
+      "legacyDefinition": "diploma_pct DECIMAL(5,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "ug_pct",
+      "legacyType": "DECIMAL(5,2)",
+      "legacyDefinition": "ug_pct DECIMAL(5,2) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "gap_years",
+      "legacyType": "INT",
+      "legacyDefinition": "gap_years INT NULL DEFAULT 0",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "is_lateral_entry",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "is_lateral_entry BOOLEAN NOT NULL DEFAULT FALSE",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "passing_year",
+      "legacyType": "INT",
+      "legacyDefinition": "passing_year INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "gender",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "gender VARCHAR(20) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "source",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "source VARCHAR(15) NOT NULL DEFAULT 'SELF' COMMENT 'VERIFIED | SELF'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "import_batch_id",
+      "legacyType": "VARCHAR(36)",
+      "legacyDefinition": "import_batch_id VARCHAR(36) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "imported_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "imported_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "learner_academic_record",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "season_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "season_id BIGINT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "choice",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "choice VARCHAR(20) NOT NULL COMMENT 'PLACEMENTS|HIGHER_STUDIES|NOT_INTERESTED'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "consent_version",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "consent_version VARCHAR(10) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "consent_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "consent_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "source",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "source VARCHAR(15) NOT NULL DEFAULT 'SELF' COMMENT 'SELF|TPO|BACKFILL'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_registration",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "reason",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "reason VARCHAR(500) NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "until_date",
+      "legacyType": "DATE",
+      "legacyDefinition": "until_date DATE NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "until_drives",
+      "legacyType": "INT",
+      "legacyDefinition": "until_drives INT NULL COMMENT 'Alternative to a date: debarred for the next N drives'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "drives_counted",
+      "legacyType": "INT",
+      "legacyDefinition": "drives_counted INT NOT NULL DEFAULT 0",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "created_by",
+      "legacyType": "INT",
+      "legacyDefinition": "created_by INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "lifted_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "lifted_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "legacyColumn": "lifted_reason",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "lifted_reason VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "type",
+      "legacyType": "VARCHAR(30)",
+      "legacyDefinition": "type VARCHAR(30) NOT NULL COMMENT 'WITHDRAWAL|OFFER_EXTENSION|REGISTRATION_CHANGE|ABSENCE_DISPUTE|CORRECTION|EXTERNAL_OFFER|PAP'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "job_id",
+      "legacyType": "INT",
+      "legacyDefinition": "job_id INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "application_id",
+      "legacyType": "INT",
+      "legacyDefinition": "application_id INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "payload_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "payload_json JSON NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "status VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|APPROVED|REJECTED|AUTO_APPROVED'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "reason",
+      "legacyType": "VARCHAR(1000)",
+      "legacyDefinition": "reason VARCHAR(1000) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "decided_by",
+      "legacyType": "INT",
+      "legacyDefinition": "decided_by INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "decided_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "decided_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "decision_reason",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "decision_reason VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "escalate_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "escalate_at DATETIME NULL COMMENT 'When a pending request (e.g. a withdrawal 24h before a round) escalates to all TPO admins'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "student_request",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "company_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "company_id BIGINT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "hr_user_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "hr_user_id BIGINT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "name",
+      "legacyType": "VARCHAR(150)",
+      "legacyDefinition": "name VARCHAR(150) NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "designation",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "designation VARCHAR(100) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "email_norm",
+      "legacyType": "VARCHAR(150)",
+      "legacyDefinition": "email_norm VARCHAR(150) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "phone_norm",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "phone_norm VARCHAR(20) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "company_name",
+      "legacyType": "VARCHAR(150)",
+      "legacyDefinition": "company_name VARCHAR(150) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "company_logo",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "company_logo VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "owner_faculty_id",
+      "legacyType": "INT",
+      "legacyDefinition": "owner_faculty_id INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "manual_stage",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "manual_stage VARCHAR(15) NOT NULL DEFAULT 'NEW' COMMENT 'NEW|CONTACTED|NOT_NOW — derived stages (Invited/Joined/Drive planned/Recruited) are computed, never stored'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "not_now_reason",
+      "legacyType": "VARCHAR(255)",
+      "legacyDefinition": "not_now_reason VARCHAR(255) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "not_now_until",
+      "legacyType": "DATE",
+      "legacyDefinition": "not_now_until DATE NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "source",
+      "legacyType": "VARCHAR(30)",
+      "legacyDefinition": "source VARCHAR(30) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "invite_token_hash",
+      "legacyType": "VARCHAR(128)",
+      "legacyDefinition": "invite_token_hash VARCHAR(128) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "invite_sent_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "invite_sent_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "invite_clicked_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "invite_clicked_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "invite_reminder_sent_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "invite_reminder_sent_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "invite_bounced_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "invite_bounced_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "unsubscribed_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "unsubscribed_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_lead",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lead_activity",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lead_activity",
+      "legacyColumn": "lead_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "lead_id BIGINT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lead_activity",
+      "legacyColumn": "type",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "type VARCHAR(20) NOT NULL COMMENT 'CALL|WHATSAPP|EMAIL|MEETING|NOTE|SYSTEM'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lead_activity",
+      "legacyColumn": "outcome",
+      "legacyType": "VARCHAR(30)",
+      "legacyDefinition": "outcome VARCHAR(30) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lead_activity",
+      "legacyColumn": "note",
+      "legacyType": "VARCHAR(2000)",
+      "legacyDefinition": "note VARCHAR(2000) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lead_activity",
+      "legacyColumn": "is_system",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "is_system BOOLEAN NOT NULL DEFAULT FALSE",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lead_activity",
+      "legacyColumn": "created_by",
+      "legacyType": "INT",
+      "legacyDefinition": "created_by INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "lead_activity",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "follow_up",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "follow_up",
+      "legacyColumn": "lead_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "lead_id BIGINT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "follow_up",
+      "legacyColumn": "due_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "due_at DATETIME NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "follow_up",
+      "legacyColumn": "owner_faculty_id",
+      "legacyType": "INT",
+      "legacyDefinition": "owner_faculty_id INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "follow_up",
+      "legacyColumn": "note",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "note VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "follow_up",
+      "legacyColumn": "done_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "done_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "follow_up",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "prep_assignment",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "prep_assignment",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "prep_assignment",
+      "legacyColumn": "course_id",
+      "legacyType": "INT",
+      "legacyDefinition": "course_id INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "prep_assignment",
+      "legacyColumn": "assessment_id",
+      "legacyType": "INT",
+      "legacyDefinition": "assessment_id INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "prep_assignment",
+      "legacyColumn": "due_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "due_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "prep_assignment",
+      "legacyColumn": "assigned_by",
+      "legacyType": "INT",
+      "legacyDefinition": "assigned_by INT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "prep_assignment",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "event",
+      "legacyType": "VARCHAR(50)",
+      "legacyDefinition": "event VARCHAR(50) NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "recipient_type",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "recipient_type VARCHAR(15) NOT NULL COMMENT 'LEARNER|HR|FACULTY'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "recipient_id",
+      "legacyType": "INT",
+      "legacyDefinition": "recipient_id INT NOT NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "channel",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "channel VARCHAR(10) NOT NULL COMMENT 'APP|EMAIL|SMS'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "payload_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "payload_json JSON NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "send_after",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "send_after DATETIME NOT NULL COMMENT 'Now + 30s for the Undo hold; immediate for non-undoable sends'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "status VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SENT|CANCELLED|FAILED'",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "undo_group_id",
+      "legacyType": "VARCHAR(36)",
+      "legacyDefinition": "undo_group_id VARCHAR(36) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "claimed_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "claimed_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "sent_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "sent_at DATETIME NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "failure_reason",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "failure_reason VARCHAR(500) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "notification_outbox",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "email_suppression",
+      "legacyColumn": "email_norm",
+      "legacyType": "VARCHAR(150)",
+      "legacyDefinition": "email_norm VARCHAR(150) NOT NULL PRIMARY KEY",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "email_suppression",
+      "legacyColumn": "reason",
+      "legacyType": "VARCHAR(255)",
+      "legacyDefinition": "reason VARCHAR(255) NULL",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "email_suppression",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V161__tpo_v1_drives.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL PRIMARY KEY",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "legacyColumn": "counts_as_placed_at",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "counts_as_placed_at VARCHAR(20) NOT NULL DEFAULT 'OFFER_RELEASED'",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "legacyColumn": "max_held_offers",
+      "legacyType": "INT",
+      "legacyDefinition": "max_held_offers INT NOT NULL DEFAULT 1",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "legacyColumn": "uplift_pct",
+      "legacyType": "INT",
+      "legacyDefinition": "uplift_pct INT NOT NULL DEFAULT 40 COMMENT 'A placed student may still apply if CTC is at least this much higher, or the drive is tagged Dream'",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "legacyColumn": "min_response_hours",
+      "legacyType": "INT",
+      "legacyDefinition": "min_response_hours INT NOT NULL DEFAULT 48",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_placement_rules",
+      "legacyColumn": "version",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "version BIGINT NOT NULL DEFAULT 0",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL PRIMARY KEY",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "legacyColumn": "show_cgpa_exact",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "show_cgpa_exact BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'False = band only, e.g. \"7.5-8.0\"'",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "legacyColumn": "show_tenth_twelfth",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "show_tenth_twelfth BOOLEAN NOT NULL DEFAULT TRUE",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "legacyColumn": "show_project_links",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "show_project_links BOOLEAN NOT NULL DEFAULT TRUE",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "legacyColumn": "show_assessment_scores",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "show_assessment_scores BOOLEAN NOT NULL DEFAULT FALSE",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "legacyColumn": "show_attendance",
+      "legacyType": "BOOLEAN",
+      "legacyDefinition": "show_attendance BOOLEAN NOT NULL DEFAULT FALSE",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "college_what_companies_see",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V162__tpo_v1_settings.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message_thread",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message_thread",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message_thread",
+      "legacyColumn": "hr_user_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "hr_user_id BIGINT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message_thread",
+      "legacyColumn": "job_id",
+      "legacyType": "INT",
+      "legacyDefinition": "job_id INT NULL COMMENT 'Null = the General thread for this HR'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message_thread",
+      "legacyColumn": "last_message_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "last_message_at DATETIME NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message_thread",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message",
+      "legacyColumn": "thread_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "thread_id BIGINT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message",
+      "legacyColumn": "sender_type",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "sender_type VARCHAR(10) NOT NULL COMMENT 'TPO | HR'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message",
+      "legacyColumn": "sender_id",
+      "legacyType": "INT",
+      "legacyDefinition": "sender_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message",
+      "legacyColumn": "body",
+      "legacyType": "VARCHAR(4000)",
+      "legacyDefinition": "body VARCHAR(4000) NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message",
+      "legacyColumn": "read_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "read_at DATETIME NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_message",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "job_id",
+      "legacyType": "INT",
+      "legacyDefinition": "job_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "token_hash",
+      "legacyType": "VARCHAR(128)",
+      "legacyDefinition": "token_hash VARCHAR(128) NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "recipient_email",
+      "legacyType": "VARCHAR(150)",
+      "legacyDefinition": "recipient_email VARCHAR(150) NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "code_hash",
+      "legacyType": "VARCHAR(128)",
+      "legacyDefinition": "code_hash VARCHAR(128) NULL COMMENT 'SHA-256 of the one-time email code'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "email_code_hash",
+      "legacyType": "VARCHAR(128)",
+      "legacyDefinition": "email_code_hash VARCHAR(128) NULL COMMENT 'SHA-256 of the code the company asked us to email them'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "email_code_expires",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "email_code_expires DATETIME NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "columns_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "columns_json JSON NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "max_stage",
+      "legacyType": "VARCHAR(30)",
+      "legacyDefinition": "max_stage VARCHAR(30) NULL COMMENT 'Applicants past this stage are excluded; phone only after SHORTLISTED'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "shortlist_by",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "shortlist_by DATETIME NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "expires_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "expires_at DATETIME NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "revoked_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "revoked_at DATETIME NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "created_by",
+      "legacyType": "INT",
+      "legacyDefinition": "created_by INT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_link",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_event",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_event",
+      "legacyColumn": "share_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "share_id BIGINT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_event",
+      "legacyColumn": "action",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "action VARCHAR(20) NOT NULL COMMENT 'CREATED|OPENED|DOWNLOADED_LIST|DOWNLOADED_ZIP|REVOKED'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_event",
+      "legacyColumn": "detail",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "detail VARCHAR(500) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_share_event",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "round_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "round_id BIGINT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "starts_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "starts_at DATETIME NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "ends_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "ends_at DATETIME NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "room",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "room VARCHAR(100) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "panel",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "panel VARCHAR(100) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "capacity",
+      "legacyType": "INT",
+      "legacyDefinition": "capacity INT NOT NULL DEFAULT 1",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "proposed_by",
+      "legacyType": "VARCHAR(5)",
+      "legacyDefinition": "proposed_by VARCHAR(5) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | HR'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_slot",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(12)",
+      "legacyDefinition": "status VARCHAR(12) NOT NULL DEFAULT 'PROPOSED' COMMENT 'PROPOSED|CONFIRMED'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_assignment",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_assignment",
+      "legacyColumn": "round_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "round_id BIGINT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_assignment",
+      "legacyColumn": "application_id",
+      "legacyType": "INT",
+      "legacyDefinition": "application_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_assignment",
+      "legacyColumn": "slot_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "slot_id BIGINT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_assignment",
+      "legacyColumn": "room",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "room VARCHAR(100) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_assignment",
+      "legacyColumn": "student_confirmed_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "student_confirmed_at DATETIME NULL COMMENT 'Set when the student confirms a changed slot'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_assignment",
+      "legacyColumn": "notified_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "notified_at DATETIME NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "round_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "round_id BIGINT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "application_id",
+      "legacyType": "INT",
+      "legacyDefinition": "application_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "reason",
+      "legacyType": "VARCHAR(1000)",
+      "legacyDefinition": "reason VARCHAR(1000) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "preferred_times",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "preferred_times VARCHAR(500) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(12)",
+      "legacyDefinition": "status VARCHAR(12) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|MOVED|KEPT'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "reply",
+      "legacyType": "VARCHAR(1000)",
+      "legacyDefinition": "reply VARCHAR(1000) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "decided_by",
+      "legacyType": "INT",
+      "legacyDefinition": "decided_by INT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "reschedule_request",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_attendance",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_attendance",
+      "legacyColumn": "round_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "round_id BIGINT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_attendance",
+      "legacyColumn": "application_id",
+      "legacyType": "INT",
+      "legacyDefinition": "application_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_attendance",
+      "legacyColumn": "status",
+      "legacyType": "VARCHAR(15)",
+      "legacyDefinition": "status VARCHAR(15) NOT NULL COMMENT 'WAITING|PRESENT|IN_INTERVIEW|DONE|ABSENT'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_attendance",
+      "legacyColumn": "room",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "room VARCHAR(100) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_attendance",
+      "legacyColumn": "marked_by",
+      "legacyType": "INT",
+      "legacyDefinition": "marked_by INT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_attendance",
+      "legacyColumn": "marked_by_role",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "marked_by_role VARCHAR(20) NULL COMMENT 'TPO_ADMIN|FACULTY|STUDENT_COORDINATOR'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "round_attendance",
+      "legacyColumn": "marked_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "marked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_team_member",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_team_member",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_team_member",
+      "legacyColumn": "faculty_id",
+      "legacyType": "INT",
+      "legacyDefinition": "faculty_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_team_member",
+      "legacyColumn": "role",
+      "legacyType": "VARCHAR(25)",
+      "legacyDefinition": "role VARCHAR(25) NOT NULL COMMENT 'TPO_ADMIN | FACULTY_COORDINATOR'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_team_member",
+      "legacyColumn": "department",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "department VARCHAR(100) NULL COMMENT 'Faculty coordinators see only this department'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_team_member",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "legacyColumn": "job_id",
+      "legacyType": "INT",
+      "legacyDefinition": "job_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL COMMENT 'The student coordinator'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "legacyColumn": "on_date",
+      "legacyType": "DATE",
+      "legacyDefinition": "on_date DATE NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "legacyColumn": "created_by",
+      "legacyType": "INT",
+      "legacyDefinition": "created_by INT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_coordinator_assignment",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "invite_email_template",
+      "legacyType": "VARCHAR(4000)",
+      "legacyDefinition": "invite_email_template VARCHAR(4000) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "reminder_email_template",
+      "legacyType": "VARCHAR(4000)",
+      "legacyDefinition": "reminder_email_template VARCHAR(4000) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "whatsapp_template",
+      "legacyType": "VARCHAR(2000)",
+      "legacyDefinition": "whatsapp_template VARCHAR(2000) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "student_email_wording",
+      "legacyType": "VARCHAR(4000)",
+      "legacyDefinition": "student_email_wording VARCHAR(4000) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "sms_monthly_cap",
+      "legacyType": "INT",
+      "legacyDefinition": "sms_monthly_cap INT NOT NULL DEFAULT 500",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "email_signature",
+      "legacyType": "VARCHAR(1000)",
+      "legacyDefinition": "email_signature VARCHAR(1000) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "logo_url",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "logo_url VARCHAR(500) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "trusted_domains_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "trusted_domains_json JSON NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "prep_course_ids_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "prep_course_ids_json JSON NULL COMMENT 'The LMS courses whose tests count toward readiness'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "prep_threshold_pct",
+      "legacyType": "INT",
+      "legacyDefinition": "prep_threshold_pct INT NOT NULL DEFAULT 60 COMMENT 'Average on those tests a student needs to count as prepared'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "notify_toggles_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "notify_toggles_json JSON NULL COMMENT 'On/off for the optional student notices: driveOpenEmail, resultApplied, nudges, prepAssigned'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_college_settings",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_user_prefs",
+      "legacyColumn": "faculty_id",
+      "legacyType": "INT",
+      "legacyDefinition": "faculty_id INT NOT NULL PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_user_prefs",
+      "legacyColumn": "prefs_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "prefs_json JSON NULL COMMENT 'Which optional notifications this person receives'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_user_prefs",
+      "legacyColumn": "updated_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "legacyColumn": "faculty_id",
+      "legacyType": "INT",
+      "legacyDefinition": "faculty_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "legacyColumn": "scope",
+      "legacyType": "VARCHAR(20)",
+      "legacyDefinition": "scope VARCHAR(20) NOT NULL COMMENT 'STUDENTS|LEADS|DRIVES'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "legacyColumn": "name",
+      "legacyType": "VARCHAR(100)",
+      "legacyDefinition": "name VARCHAR(100) NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "legacyColumn": "filters_json",
+      "legacyType": "JSON",
+      "legacyDefinition": "filters_json JSON NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_saved_view",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_student_note",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_student_note",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_student_note",
+      "legacyColumn": "learner_id",
+      "legacyType": "INT",
+      "legacyDefinition": "learner_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_student_note",
+      "legacyColumn": "note",
+      "legacyType": "VARCHAR(2000)",
+      "legacyDefinition": "note VARCHAR(2000) NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_student_note",
+      "legacyColumn": "created_by",
+      "legacyType": "INT",
+      "legacyDefinition": "created_by INT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_student_note",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "actor_type",
+      "legacyType": "VARCHAR(10)",
+      "legacyDefinition": "actor_type VARCHAR(10) NOT NULL COMMENT 'TPO | HR | SYSTEM | STUDENT'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "actor_id",
+      "legacyType": "INT",
+      "legacyDefinition": "actor_id INT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "action",
+      "legacyType": "VARCHAR(60)",
+      "legacyDefinition": "action VARCHAR(60) NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "entity_type",
+      "legacyType": "VARCHAR(30)",
+      "legacyDefinition": "entity_type VARCHAR(30) NULL COMMENT 'DRIVE|LEAD|STUDENT|OFFER|ROUND|SHARE|SETTINGS'",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "entity_id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "entity_id BIGINT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "detail",
+      "legacyType": "VARCHAR(1000)",
+      "legacyDefinition": "detail VARCHAR(1000) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_audit_log",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "legacyColumn": "id",
+      "legacyType": "BIGINT",
+      "legacyDefinition": "id BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "legacyColumn": "college_id",
+      "legacyType": "INT",
+      "legacyDefinition": "college_id INT NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "legacyColumn": "type",
+      "legacyType": "VARCHAR(40)",
+      "legacyDefinition": "type VARCHAR(40) NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "legacyColumn": "title",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "title VARCHAR(200) NOT NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "legacyColumn": "body",
+      "legacyType": "VARCHAR(500)",
+      "legacyDefinition": "body VARCHAR(500) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "legacyColumn": "link",
+      "legacyType": "VARCHAR(200)",
+      "legacyDefinition": "link VARCHAR(200) NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "legacyColumn": "read_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "read_at DATETIME NULL",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    },
+    {
+      "legacyTable": "tpo_bell",
+      "legacyColumn": "created_at",
+      "legacyType": "DATETIME",
+      "legacyDefinition": "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "firstSeenMigration": "V165__tpo_v1_complete.sql",
+      "vnextTarget": null,
+      "verificationStatus": "NOT_AUDITED",
+      "notes": null
+    }
+  ]
+}
