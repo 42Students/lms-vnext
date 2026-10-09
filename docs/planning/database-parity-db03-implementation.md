@@ -92,3 +92,7 @@ course-list access even when their college membership is still marked ACTIVE.
 
 **Not verified:** typecheck, Drizzle runtime, database tests, teaching/attendance
 producer parity, historical learning access and legacy field signoff.
+
+## Additional regression specifications
+
+The DB03 roster integration suite now tests timetable inclusion/exclusion for active group members versus unrelated host-section learners and rejects suspended learner contexts even if group membership persists. **Test run pending.**
