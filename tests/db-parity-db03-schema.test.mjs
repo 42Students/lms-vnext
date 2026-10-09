@@ -34,6 +34,8 @@ test("DB03 snapshot tracks all authored columns, FKs, checks and indexes", () =>
   }
   assert.ok(s37.tables["public.elective_offerings"].indexes.elective_offerings_slot_active_course_uq.where);
   assert.ok(s37.tables["public.lms_groups"].checkConstraints.lms_groups_count_ck);
+  assert.match(sql, /CREATE TRIGGER db03_group_member_events_no_mutation/);
+  assert.match(sql, /BEFORE UPDATE OR DELETE ON "lms_group_member_events"/);
 });
 test("DB03 persists historical removed membership and does not mutate primary section assignments", () => {
   assert.ok(s37.tables["public.lms_group_members"].columns.state);

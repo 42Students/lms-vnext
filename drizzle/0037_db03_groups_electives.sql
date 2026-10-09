@@ -182,3 +182,16 @@ CREATE UNIQUE INDEX "elective_offerings_slot_active_course_uq" ON "elective_offe
 CREATE INDEX "elective_offerings_slot_status_idx" ON "elective_offerings" USING btree ("slot_id","status");
 --> statement-breakpoint
 CREATE INDEX "elective_offerings_course_idx" ON "elective_offerings" USING btree ("course_id");
+
+-- Append-only audit contract, independently enforced even if a new writer bypasses the service.
+CREATE FUNCTION db03_group_member_events_immutable() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+  RAISE EXCEPTION 'Group member event history is append-only' USING ERRCODE = '23514';
+END;
+$$;
+--> statement-breakpoint
+CREATE TRIGGER db03_group_member_events_no_mutation
+BEFORE UPDATE OR DELETE ON "lms_group_member_events"
+FOR EACH ROW EXECUTE FUNCTION db03_group_member_events_immutable();
+--> statement-breakpoint

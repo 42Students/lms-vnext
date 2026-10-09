@@ -1,4 +1,4 @@
-import { and, asc, count, eq, inArray, max, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNull, max, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -91,7 +91,8 @@ async function lockElectiveSlot(tx: Tx, groupId: string) {
     slotId: electiveOfferings.slotId,
   }).from(electiveOfferings)
     .where(and(eq(electiveOfferings.groupId, groupId),
-      eq(electiveOfferings.status, "ACTIVE"))).limit(1);
+      eq(electiveOfferings.status, "ACTIVE"),
+      isNull(electiveOfferings.deletedAt))).limit(1);
   if (!offering) return null;
   const [slot] = await tx.select().from(electiveSlots)
     .where(eq(electiveSlots.id, offering.slotId)).for("update");
@@ -106,6 +107,7 @@ async function assertElectivePickLimit(tx: Tx, slot: NonNullable<Awaited<ReturnT
     .where(and(
       eq(electiveOfferings.slotId, slot.id),
       eq(electiveOfferings.status, "ACTIVE"),
+      isNull(electiveOfferings.deletedAt),
       eq(lmsGroupMembers.membershipId, memberId),
       inArray(lmsGroupMembers.state, ["ACTIVE", "WAITLISTED"]),
     ));

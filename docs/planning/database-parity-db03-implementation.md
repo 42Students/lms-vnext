@@ -36,3 +36,9 @@ Added `src/modules/groups/service.ts` with `createGroup`, `joinGroup`, and `leav
 Added `createElectiveSlot`, `createElectiveOffering`, and `listElectiveOfferings` to `src/modules/electives/service.ts`.
 
 The producer validates admin scope, program/term college, course college and ACTIVE status, group kind/college, optional delivery course/college and locks the elective slot/group consistently with joining. Duplicate active slot/course, reused group or backed delivery map to domain errors. **Backed delivery is only a provisional bridge:** all course, quiz, schedule, attendance and grading consumers must resolve the actual group roster before this is operationally equivalent to legacy GROUP_BACKED classes. No consumer authorization changes in this batch.
+
+## Hardening adjustment — lifecycle and concurrent offering creation
+- `lms_group_member_events` now has a PostgreSQL trigger rejecting UPDATE/DELETE of event history; this custom database object is not captured by the Drizzle table snapshot and must be verified from `pg_trigger` after replay.
+- Prevent attaching a new elective offering to an already populated group under the same slot→group locks used by member joins. This closes a creation-versus-join bypass of `max_pick` at setup time.
+- Both elective slot counts and offering reads now ignore soft-deleted offerings.
+- Remaining: event creation access control (DB role grants), direct SQL tenant integrity, and exhaustive producer/consumer roster parity. These changes are unexecuted.

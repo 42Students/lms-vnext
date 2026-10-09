@@ -1,9 +1,9 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, count, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  academicPeriods, cohorts, courseOfferings, courseSectionDeliveries, courses,
-  departments, electiveOfferings, electiveSlots, lmsGroups, programs,
+  cohorts, courseOfferings, courseSectionDeliveries, courses,
+  departments, electiveOfferings, electiveSlots, lmsGroupMembers, lmsGroups, programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -83,6 +83,14 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
         group.collegeId !== slot.collegeId || group.kind !== "ELECTIVE" ||
         group.deletedAt || !["DRAFT","ACTIVE"].includes(group.status)) {
       throw new ElectivesServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
+    }
+    // A group may only be attached as a new elective before enrollment.
+    // Locking slot then group makes this safe against concurrent joins.
+    const [roster] = await tx.select({ total: count() }).from(lmsGroupMembers)
+      .where(and(eq(lmsGroupMembers.groupId, group.id),
+        inArray(lmsGroupMembers.state, ["ACTIVE", "WAITLISTED"])));
+    if (group.activeCount !== 0 || (roster?.total ?? 0) !== 0) {
+      throw new ElectivesServiceError("ELECTIVE_GROUP_HAS_MEMBERS");
     }
     const [course] = await tx.select({
       id: courses.id,
