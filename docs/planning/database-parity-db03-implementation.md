@@ -175,3 +175,20 @@ The group promotion helper also mirrors project-team members atomically,
 preserving another DB03 workstream's group/project source-of-truth mapping.
 Two more PostgreSQL tests cover successful transfer and failed full-target
 rollback. Runtime test execution remains BLOCKED.
+
+## Rule-based group roster batch (2026-10-10)
+
+Added strict `rule-evaluator.ts` (programs, cohorts, CGPA, active backlogs,
+passing years; absent academic evidence fails closed) plus transactionally
+serialized `upsertGroupRule` and `refreshGroupRule`. Reruns reconcile the
+ACTIVE count, append event history for state changes, honor finite capacity
+and optional waitlist, and preserve manual/CSV/SELF and locked decisions.
+Unknown legacy JSON rule fields or empty catch-all criteria are rejected
+rather than silently broadening the audience. Generic rule runner explicitly
+rejects ELECTIVE and PROJECT_TEAM kinds, which need feature-specific
+reconciliation to honor max-pick and project mirrors.
+
+Includes a pure evaluation suite and an isolated PostgreSQL idempotence,
+locked-override and manual-protection integration test. **NOT EXECUTED**.
+Rule scheduling (`autoRefresh`) and complete legacy eligibility-expression
+parity remain release blockers, not falsely marked complete.

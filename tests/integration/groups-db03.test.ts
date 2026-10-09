@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createGroup, joinGroup, leaveGroup, moveElectiveMember, transitionGroup } from "@/modules/groups/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { upsertGroupRule, refreshGroupRule } from "@/modules/groups/rules-service";
 
 const url = process.env.TEST_DATABASE_URL;
 if (!url || process.env.DB03_ISOLATED_TEST_DATABASE !== "1")
@@ -280,5 +281,50 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     const group=await createActiveGroup("BUS",1);
     await expect(pool.query("UPDATE lms_groups SET active_count=2 WHERE id=$1",[group]))
       .rejects.toMatchObject({code:"23514"});
+  });
+});
+
+describe("DB03 bounded group rule refresh (PostgreSQL)", () => {
+  it("is idempotent, protects MANUAL and locked decisions, and reconciles active_count", async () => {
+    const data=await createElectiveFixture();
+    const group=await createActiveGroup("BUS",2);
+    await upsertGroupRule(admin,group,{
+      criteria:{allowedProgramIds:[data.programId]},autoRefresh:false,
+    });
+    const first=await refreshGroupRule(admin,group);
+    expect(first).toMatchObject({matched:1,added:1,active:1,removed:0});
+    const second=await refreshGroupRule(admin,group);
+    expect(second).toMatchObject({matched:1,added:0,removed:0,active:1});
+    const initialEvents=await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=$1",[group],
+    );
+    expect(initialEvents.rows[0].n).toBe(1);
+
+    // Human MANUAL membership must not be overwritten by rerunning a rule.
+    await joinGroup(admin,group,SEED_IDS.learnerCollegeAMembership,"MANUAL");
+    const [{rows:[ruleRow]}]=await Promise.all([pool.query(
+      "SELECT id FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [group,data.candidate.membershipId],
+    )]);
+    await pool.query("UPDATE lms_group_members SET is_locked=true WHERE id=$1",[ruleRow.id]);
+    await upsertGroupRule(admin,group,{
+      criteria:{allowedProgramIds:[data.programId],minCgpa:9.9},autoRefresh:false,
+    });
+    const locked=await refreshGroupRule(admin,group);
+    expect(locked).toMatchObject({matched:0,removed:0,active:2});
+    await pool.query("UPDATE lms_group_members SET is_locked=false WHERE id=$1",[ruleRow.id]);
+    const removed=await refreshGroupRule(admin,group);
+    expect(removed).toMatchObject({matched:0,removed:1,active:1});
+    const [members,groupCounter]=await Promise.all([
+      pool.query("SELECT membership_id,state,source FROM lms_group_members WHERE group_id=$1",[group]),
+      pool.query("SELECT active_count FROM lms_groups WHERE id=$1",[group]),
+    ]);
+    expect(members.rows.find(row=>row.membership_id===data.candidate.membershipId))
+      .toMatchObject({state:"REMOVED",source:"RULE"});
+    expect(members.rows.find(row=>row.membership_id===SEED_IDS.learnerCollegeAMembership))
+      .toMatchObject({state:"ACTIVE",source:"MANUAL"});
+    expect(groupCounter.rows[0].active_count).toBe(1);
+    const third=await refreshGroupRule(admin,group);
+    expect(third).toMatchObject({added:0,removed:0,active:1});
   });
 });
