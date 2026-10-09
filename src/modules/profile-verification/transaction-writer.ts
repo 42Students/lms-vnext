@@ -34,8 +34,11 @@ export const postgresLockedVerificationTransition: LockedTransition =
       if (!target) throw new VerificationStateError("NOT_ALLOWED");
       // Block concurrent admin setting, grant and CGPA policy changes for
       // the duration of review planning + writing. Mutators lock this row.
+      // Use UPDATE immediately: upgrading SHARE to UPDATE later can deadlock
+      // two concurrent Education approvals. This is conservative and serializes
+      // reviews per college until finer-grained settings versioning exists.
       await tx.select({id:colleges.id}).from(colleges)
-        .where(eq(colleges.id,target.collegeId)).for("share");
+        .where(eq(colleges.id,target.collegeId)).for("update");
       const [member] = await tx.select({
         id: collegeMemberships.id,
         status: collegeMemberships.status,
