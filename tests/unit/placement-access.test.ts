@@ -58,4 +58,47 @@ describe("learner placement participation", () => {
       note: null,
     });
   });
+  it("honors learner, class, then batch precedence for reversed scope chains", () => {
+    const decisions = [
+      {
+        scopeType: "COHORT",
+        scopeId: chain[2].scopeId!,
+        status: "INELIGIBLE",
+        reason: "Batch excluded",
+        note: null,
+      },
+      {
+        scopeType: "SECTION",
+        scopeId: chain[1].scopeId!,
+        status: "ELIGIBLE",
+        reason: null,
+        note: "Class permitted",
+      },
+      {
+        scopeType: "MEMBERSHIP",
+        scopeId: chain[0].scopeId!,
+        status: "INELIGIBLE",
+        reason: "Learner blocked",
+        note: null,
+      },
+    ];
+    expect(resolvePlacementParticipationFromDecisions(
+      [...chain].reverse(), decisions,
+    )).toEqual({
+      status: "INELIGIBLE",
+      level: "MEMBERSHIP",
+      reason: "Learner blocked",
+      note: null,
+    });
+    expect(resolvePlacementParticipationFromDecisions(
+      [...chain].reverse(), decisions.slice(0, 2),
+    )).toMatchObject({ status: "ELIGIBLE", level: "SECTION" });
+    expect(resolvePlacementParticipationFromDecisions(
+      [...chain].reverse(), decisions.slice(0, 1),
+    )).toMatchObject({ status: "INELIGIBLE", level: "COHORT" });
+    expect(resolvePlacementParticipationFromDecisions(
+      [...chain].reverse(), [],
+    )).toMatchObject({ status: "NOT_DECIDED", level: null });
+  });
+
 });
