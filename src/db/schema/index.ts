@@ -23,3 +23,6 @@ export * from "./module-access";
 export * from "./placement-access";
 
 export * from "./drive-day";
+
+export * from "./groups";
+export * from "./electives";
