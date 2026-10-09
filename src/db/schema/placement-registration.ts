@@ -1,0 +1,111 @@
+import { sql } from "drizzle-orm";
+import {
+  check,
+  index,
+  integer,
+  pgTable,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
+import { cohorts } from "./academics";
+import { colleges } from "./colleges";
+import { collegeMemberships } from "./memberships";
+import { users } from "./users";
+
+/**
+ * DB08-B: registration is per academic batch, not placement season.
+ * Caller and SQL scope guards must prove that membership+cohort belong to
+ * the same college and that the learner is enrolled in the cohort.
+ */
+export const placementBatchRegistrations = pgTable(
+  "placement_batch_registrations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    cohortId: uuid("cohort_id")
+      .notNull()
+      .references(() => cohorts.id, { onDelete: "restrict" }),
+    membershipId: uuid("membership_id")
+      .notNull()
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    choice: varchar("choice", { length: 24 }).notNull(),
+    consentVersion: varchar("consent_version", { length: 32 }),
+    consentAt: timestamp("consent_at", { withTimezone: true }),
+    source: varchar("source", { length: 16 }).notNull(),
+    recordedByUserId: uuid("recorded_by_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    version: integer("version").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("placement_batch_registrations_member_cohort_uq").on(
+      t.membershipId, t.cohortId,
+    ),
+    index("placement_batch_registrations_college_cohort_idx").on(
+      t.collegeId, t.cohortId, t.choice,
+    ),
+    check(
+      "placement_batch_registrations_choice_ck",
+      sql`${t.choice} in (
+        'PLACEMENTS','HIGHER_STUDIES','NOT_INTERESTED',
+        'ENTREPRENEURSHIP','COMPETITIVE_EXAMS')`,
+    ),
+    check(
+      "placement_batch_registrations_source_ck",
+      sql`${t.source} in ('SELF','TPO','BACKFILL')`,
+    ),
+    check(
+      "placement_batch_registrations_consent_ck",
+      sql`(${t.choice} = 'PLACEMENTS' and ${t.consentAt} is not null
+          and length(trim(coalesce(${t.consentVersion}, ''))) > 0)
+        or (${t.choice} <> 'PLACEMENTS' and ${t.consentAt} is null
+          and ${t.consentVersion} is null)`,
+    ),
+    check("placement_batch_registrations_version_ck", sql`${t.version} >= 0`),
+  ],
+);
+
+/**
+ * The registration row can change, but event history cannot. Repeated consent
+ * is auditable; do not infer consent from a non-PLACEMENTS choice.
+ */
+export const placementBatchRegistrationEvents = pgTable(
+  "placement_batch_registration_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    registrationId: uuid("registration_id")
+      .notNull()
+      .references(() => placementBatchRegistrations.id, { onDelete: "restrict" }),
+    previousChoice: varchar("previous_choice", { length: 24 }),
+    nextChoice: varchar("next_choice", { length: 24 }).notNull(),
+    consentVersion: varchar("consent_version", { length: 32 }),
+    consentAt: timestamp("consent_at", { withTimezone: true }),
+    actorUserId: uuid("actor_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    source: varchar("source", { length: 16 }).notNull(),
+    occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("placement_batch_registration_events_registration_time_idx").on(
+      t.registrationId, t.occurredAt,
+    ),
+    check(
+      "placement_batch_registration_events_source_ck",
+      sql`${t.source} in ('SELF','TPO','BACKFILL')`,
+    ),
+    check(
+      "placement_batch_registration_events_consent_ck",
+      sql`(${t.nextChoice} = 'PLACEMENTS' and ${t.consentAt} is not null
+           and length(trim(coalesce(${t.consentVersion}, ''))) > 0)
+        or (${t.nextChoice} <> 'PLACEMENTS' and ${t.consentAt} is null
+           and ${t.consentVersion} is null)`,
+    ),
+  ],
+);
