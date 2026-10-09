@@ -18,7 +18,7 @@
     "fieldsUnverified": 280,
     "workstreamBranch": "db08-placement-parity-2026",
     "executionDoc": "docs/planning/database-parity-db08-execution.md",
-    "currentPriority": "DB08_B_POSTGRES_REPLAY_AND_REGISTRATION_DEBARMENT_INTEGRATION",
+    "currentPriority": "DB08_C_EXTERNAL_OUTCOMES_AND_SAVED_JOBS_SOURCE_AUTHORED_NO_DB_REPLAY",
     "bSchemasStaged": [
       "src/db/schema/placement-registration.ts",
       "src/db/schema/placement-debarments.ts"
@@ -26,12 +26,15 @@
     "bMigrationStaged": [
       "scripts/sql/db08-registration-staging.sql",
       "scripts/sql/db08-debarment-staging.sql"
+    ],
+    "cSchemasStaged": [
+      "src/db/schema/placement-external.ts"
     ]
   },
   "counts": {
     "legacyTables": 18,
     "legacyFields": 280,
-    "candidateDirectTableMissing": 2,
+    "candidateDirectTableMissing": 0,
     "verifiedFields": 0
   },
   "tables": [
@@ -353,8 +356,11 @@
       "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
       "sourceBase": "V172__external_placement.sql",
       "priority": "P1",
-      "candidateVnextTables": [],
-      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "candidateVnextTables": [
+        "placement_external_offers",
+        "placement_external_offer_events"
+      ],
+      "disposition": "STAGED_CANDIDATE_NOT_JOURNALED_NOT_SEMANTICALLY_VERIFIED",
       "fieldCount": 10,
       "fields": [
         {
@@ -3024,8 +3030,10 @@
       "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
       "sourceBase": "snapshot_through_V150",
       "priority": "P2",
-      "candidateVnextTables": [],
-      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "candidateVnextTables": [
+        "placement_saved_jobs"
+      ],
+      "disposition": "STAGED_CANDIDATE_NOT_JOURNALED_NOT_SEMANTICALLY_VERIFIED",
       "fieldCount": 4,
       "fields": [
         {
