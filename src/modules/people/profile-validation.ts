@@ -52,7 +52,7 @@ const phoneValue = z
   .refine(
     (value) =>
       value === "" ||
-      /^[+]?[d][ds-]{7,20}$/.test(value),
+      /^[+]?\d[\d\s-]{7,20}$/.test(value),
     "Use a valid phone number",
   )
   .default("");
@@ -276,12 +276,12 @@ const educationSchema = z
     startYear: z
       .string()
       .trim()
-      .regex(/^$|^d{4}$/)
+      .regex(/^$|^\d{4}$/)
       .default(""),
     endYear: z
       .string()
       .trim()
-      .regex(/^$|^d{4}$/)
+      .regex(/^$|^\d{4}$/)
       .default(""),
     gradingType: z
       .enum([
@@ -356,7 +356,7 @@ const achievementSchema = z
     year: z
       .string()
       .trim()
-      .regex(/^$|^d{4}$/)
+      .regex(/^$|^\d{4}$/)
       .default(""),
     description: textValue(3000),
   })
@@ -384,7 +384,7 @@ const extracurricularSchema = z
     year: z
       .string()
       .trim()
-      .regex(/^$|^d{4}$/)
+      .regex(/^$|^\d{4}$/)
       .default(""),
     description: textValue(3000),
   })
