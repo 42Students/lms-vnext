@@ -56,8 +56,14 @@ CREATE INDEX "placement_debarment_history_parent_time_idx"
 
 -- A debarred learner's college and LEARNER role must be real.
 CREATE FUNCTION db08_validate_debarment_parent() RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE actual_college uuid;
+DECLARE actual_college uuid; actual_count bigint;
 BEGIN
+  SELECT count(*) INTO actual_count
+    FROM placement_debarment_drive_events e WHERE e.debarment_id=NEW.id;
+  IF NEW.drives_counted <> actual_count THEN
+    RAISE EXCEPTION 'Debarment drive count must match immutable recorded drive events'
+      USING ERRCODE='23514';
+  END IF;
   SELECT m.college_id INTO actual_college
     FROM college_memberships m
     JOIN membership_roles mr ON mr.membership_id=m.id AND mr.role='LEARNER'
@@ -104,6 +110,15 @@ BEGIN
      OR actual_college IS DISTINCT FROM parent_row.college_id THEN
     RAISE EXCEPTION 'Debarment job/college or lifted state invalid' USING ERRCODE='23514';
   END IF;
+  -- Legacy precedence: until_date overrides until_drives. Date is inclusive,
+  -- and uses the legacy deployment's Indian calendar until college timezones
+  -- are modeled explicitly.
+  IF (parent_row.until_date IS NOT NULL AND
+      (now() AT TIME ZONE 'Asia/Kolkata')::date > parent_row.until_date)
+     OR (parent_row.until_date IS NULL AND parent_row.until_drives IS NOT NULL
+       AND parent_row.drives_counted >= parent_row.until_drives) THEN
+    RAISE EXCEPTION 'Debarment already expired for this drive' USING ERRCODE='23514';
+  END IF;
   SELECT EXISTS (
     SELECT 1 FROM placement_applications a WHERE a.job_id=NEW.job_id
       AND a.membership_id=parent_row.membership_id
@@ -135,6 +150,6 @@ CREATE TRIGGER db08_debarment_drive_events_no_mutation
   BEFORE UPDATE OR DELETE ON placement_debarment_drive_events
   FOR EACH ROW EXECUTE FUNCTION db08_debarment_events_immutable();
 
--- P0 blockers: DB triggers must also prevent manual drives_counted mutation,
--- unauthorized actor writes, parent-side college move, and retroactive insertion
--- after expiry; service-level checks do not replace full database permission policy.
+-- P0 blockers: DB session/writer grants must prevent unauthorized actor writes,
+-- parent-side college reparenting requires a physical guard, and all college
+-- timezones must become explicit. Source-only authoring is NOT PG validation.
