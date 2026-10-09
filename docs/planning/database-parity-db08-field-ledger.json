@@ -1,0 +1,4594 @@
+{
+  "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
+  "status": "SOURCE_CENSUS_COMPLETE_MAPPING_UNVERIFIED",
+  "capturedFrom": {
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "vnextBranchBaselineSha": "c489b2569dd2d2742da2ee17ed313a26853dc4da",
+    "sourceInventory": "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json",
+    "vnextSchemaFiles": [
+      "src/db/schema/placements.ts",
+      "src/db/schema/drive-day.ts"
+    ]
+  },
+  "interpretation": "A name match is merely a candidate; source-level inventory, not live MySQL or PostgreSQL introspection. Every field must be semantically reviewed, implemented, database-tested and workflow-verified (or explicitly signed off for redesign/retirement).",
+  "gate": {
+    "liveLegacySchema": "NOT_INSPECTED",
+    "disposablePostgresReplay": "NOT_RUN",
+    "fieldMappingsVerified": 0,
+    "fieldsUnverified": 280,
+    "workstreamBranch": "db08-placement-parity-2026",
+    "executionDoc": "docs/planning/database-parity-db08-execution.md",
+    "currentPriority": "DB08-A_BULK_ELIGIBILITY_AND_BATCH_LIFECYCLE"
+  },
+  "counts": {
+    "legacyTables": 18,
+    "legacyFields": 280,
+    "candidateDirectTableMissing": 7,
+    "verifiedFields": 0
+  },
+  "tables": [
+    {
+      "legacyTable": "application_screening",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "snapshot_through_V150",
+      "priority": "P2",
+      "candidateVnextTables": [
+        "placement_application_screenings",
+        "placement_application_screening_history"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 19,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_application_screening_history.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_application_screening_history.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_deleted",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_application_screenings.updated_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "education_score",
+          "legacyType": "double",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "excluded_attributes",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "explanation",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_partial_score",
+          "legacyType": "bit(1)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "matched_skills",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "missing_skills",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "overall_score",
+          "legacyType": "double",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "screened_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "screened_by",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "screening_metadata",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "screening_method",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "screening_status",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "screening_version",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "skill_score",
+          "legacyType": "double",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "application_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_application_screenings.application_id",
+            "placement_application_screening_history.application_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "external_placement",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V172__external_placement.sql",
+      "priority": "P1",
+      "candidateVnextTables": [],
+      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "fieldCount": 10,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "learner_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "college_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "request_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "company_name",
+          "legacyType": "varchar(200)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "ctc_lpa",
+          "legacyType": "decimal(10,2)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "letter_url",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "verified_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "verified_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_deleted",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "0",
+          "sourceEvidence": "V172__external_placement.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "interview",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "snapshot_through_V150",
+      "priority": "P2",
+      "candidateVnextTables": [
+        "placement_job_rounds",
+        "placement_application_round_exceptions"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 29,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_job_rounds.id",
+            "placement_application_round_exceptions.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_job_rounds.created_at",
+            "placement_application_round_exceptions.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_deleted",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_job_rounds.updated_at",
+            "placement_application_round_exceptions.updated_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "interview_mode",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "interview_status",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "interview_type",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "location",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "interviewer_name",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "notes",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "round_description",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "organization_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "scheduled_date",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_job_rounds.job_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_application_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "learner_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "version",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "scheduled_date_hour",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "feedback_rating",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "feedback_comments",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "feedback_recommend_action",
+          "legacyType": "varchar(30)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "feedback_submitted_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "feedback_submitted_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "duration_minutes",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_job_rounds.duration_minutes"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "feedback_recommend",
+          "legacyType": "bit(1)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "reschedule_request_json",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V170__interview_reschedule_request_details.sql",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "previous_scheduled_date",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V171__interview_changed_slot_tracking.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "scheduled_date_changed_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V171__interview_changed_slot_tracking.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "job",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "snapshot_through_V150",
+      "priority": "P1",
+      "candidateVnextTables": [
+        "placement_jobs",
+        "placement_job_role_options"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 46,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_jobs.id",
+            "placement_job_role_options.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_jobs.created_at",
+            "placement_job_role_options.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_deleted",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_jobs.updated_at",
+            "placement_job_role_options.updated_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "application_deadline",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_jobs.application_deadline"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "candidate_preferences",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "college_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_jobs.college_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "company_logo",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "company_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "company_name",
+          "legacyType": "varchar(100)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "ctc_range",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "evaluation_config",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_active",
+          "legacyType": "bit(1)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_description",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_responsibilities",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_slug",
+          "legacyType": "varchar(32)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_title",
+          "legacyType": "varchar(100)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_type",
+          "legacyType": "varchar(50)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "location",
+          "legacyType": "varchar(200)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "organization_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "posted_date",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "screening_version",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "target_batch_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "target_class_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "target_department_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "target_program_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "visibility_type",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "important_dates",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "assessment_url",
+          "legacyType": "varchar(2048)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "assessment_deadline",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_draft",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "version",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "drive_mode",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'ON_CAMPUS'",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "lifecycle_status",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'PUBLISHED'",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "category",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "category_override_reason",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "season_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_jobs.season_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "owner_faculty_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "drive_group_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "application_deadline_notified_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "previous_request_json",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "jd_url",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V180__job_jd_url.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "recorded_outside",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "0",
+          "sourceEvidence": "V186__job_recorded_outside.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "counts_as_placed",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "1",
+          "sourceEvidence": "V190__job_types_and_placement_outcomes.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "recruiter_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "job_application",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "snapshot_through_V150",
+      "priority": "P1",
+      "candidateVnextTables": [
+        "placement_applications",
+        "placement_application_status_history"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 24,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_applications.id",
+            "placement_application_status_history.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_application_status_history.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_deleted",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_applications.updated_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "application_status",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "applied_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "organization_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "pap_requested",
+          "legacyType": "bit(1)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "resume_url",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "resume_history",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA",
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "source",
+          "legacyType": "varchar(50)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "status_updated_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "status_updated_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_applications.job_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "learner_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "internal_notes",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "rejection_reason",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "offer_letter_url",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "offer_letter_sent_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "version",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "status_before_withdrawal",
+          "legacyType": "varchar(30)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "current_round_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "ineligible_flag_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "assessment_url",
+          "legacyType": "text",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V175__job_application_assessment_url.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "job_application_status_history",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "snapshot_through_V150",
+      "priority": "P1",
+      "candidateVnextTables": [
+        "placement_application_status_history"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 10,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_application_status_history.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "application_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_application_status_history.application_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "old_status",
+          "legacyType": "varchar(50)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "new_status",
+          "legacyType": "varchar(50)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "changed_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "changed_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "rejection_reason",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_application_status_history.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_deleted",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "job_eligibility_override",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V161__tpo_v1_drives.sql",
+      "priority": "P1",
+      "candidateVnextTables": [
+        "placement_eligibility_overrides"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 7,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_eligibility_overrides.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_eligibility_overrides.job_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "learner_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "override_type",
+          "legacyType": "varchar(10)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "reason",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_eligibility_overrides.reason"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_eligibility_overrides.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "job_offer",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V161__tpo_v1_drives.sql",
+      "priority": "P1",
+      "candidateVnextTables": [
+        "placement_offers",
+        "placement_joining_outcomes",
+        "placement_offer_status_history"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 28,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_offers.id",
+            "placement_offer_status_history.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "application_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_offers.application_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "kind",
+          "legacyType": "varchar(10)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'OFFER'",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "role_option_name",
+          "legacyType": "varchar(100)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "ctc_lpa",
+          "legacyType": "decimal(10,2)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "fixed_lpa",
+          "legacyType": "decimal(10,2)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "variable_lpa",
+          "legacyType": "decimal(10,2)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "joining_bonus_lpa",
+          "legacyType": "decimal(10,2)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "bond_months",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "bond_amount",
+          "legacyType": "decimal(10,2)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "joining_date",
+          "legacyType": "date",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_offers.joining_date",
+            "placement_joining_outcomes.joining_date"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "respond_by",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "letter_url",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "status",
+          "legacyType": "varchar(25)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'SELECTED'",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_offers.status",
+            "placement_joining_outcomes.status"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "acceptance_channel",
+          "legacyType": "varchar(15)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "accepted_disputable_until",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "joining_status",
+          "legacyType": "varchar(15)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "cascade_id",
+          "legacyType": "varchar(36)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "revoke_reason",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_by_type",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'TPO'",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_by_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "verified_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "released_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "responded_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_offers.responded_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_offer_status_history.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_offers.updated_at",
+            "placement_joining_outcomes.updated_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "version",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "0",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_offers.version"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "expiring_notified_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "job_preferences",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "snapshot_through_V150",
+      "priority": "P2",
+      "candidateVnextTables": [
+        "placement_candidate_preferences"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 12,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_candidate_preferences.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_deleted",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "'0'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime(6)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_candidate_preferences.updated_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "exam_slot_preference",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "pap_interest",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "preferred_employment_city",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "role_preference",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "specific_role_preference",
+          "legacyType": "text",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "work_shift_preference",
+          "legacyType": "varchar(255)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": "NULL",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "learner_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_notifications_enabled",
+          "legacyType": "tinyint(1)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'1'",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "learner_saved_job",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "snapshot_through_V150",
+      "priority": "P2",
+      "candidateVnextTables": [],
+      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "fieldCount": 4,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "learner_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "job_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "placement_batch",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V188__placement_batches_and_eligibility.sql",
+      "priority": "P0",
+      "candidateVnextTables": [],
+      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "fieldCount": 8,
+      "fields": [
+        {
+          "legacyColumn": "batch_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "college_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "registration_deadline",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "invited_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "finished_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "rules_json",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "placement_debarment",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V161__tpo_v1_drives.sql",
+      "priority": "P1",
+      "candidateVnextTables": [],
+      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "fieldCount": 10,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "learner_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "reason",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "until_date",
+          "legacyType": "date",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "until_drives",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "drives_counted",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "0",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "lifted_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "lifted_reason",
+          "legacyType": "varchar(500)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "placement_eligibility",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V188__placement_batches_and_eligibility.sql",
+      "priority": "P0",
+      "candidateVnextTables": [],
+      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "fieldCount": 11,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "college_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "scope_type",
+          "legacyType": "varchar(10)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "scope_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "status",
+          "legacyType": "varchar(12)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "reason",
+          "legacyType": "varchar(200)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "note",
+          "legacyType": "varchar(300)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "decided_by_type",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "decided_by_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "decided_by_name",
+          "legacyType": "varchar(200)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "decided_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "placement_eligibility_event",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V188__placement_batches_and_eligibility.sql",
+      "priority": "P0",
+      "candidateVnextTables": [],
+      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "fieldCount": 16,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "college_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "action_id",
+          "legacyType": "varchar(36)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "scope_type",
+          "legacyType": "varchar(10)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "scope_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "before_status",
+          "legacyType": "varchar(12)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "before_reason",
+          "legacyType": "varchar(200)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "before_note",
+          "legacyType": "varchar(300)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "after_status",
+          "legacyType": "varchar(12)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "after_reason",
+          "legacyType": "varchar(200)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "after_note",
+          "legacyType": "varchar(300)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "actor_type",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "actor_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "actor_name",
+          "legacyType": "varchar(200)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "undone_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V188__placement_batches_and_eligibility.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "placement_registration",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V161__tpo_v1_drives.sql",
+      "priority": "P0",
+      "candidateVnextTables": [],
+      "disposition": "NO_DIRECT_PERSISTENCE_CANDIDATE",
+      "fieldCount": 11,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "learner_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "season_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "choice",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "consent_version",
+          "legacyType": "varchar(10)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "consent_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "source",
+          "legacyType": "varchar(15)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "'SELF'",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "outcome_label",
+          "legacyType": "varchar(60)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V190__job_types_and_placement_outcomes.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "outcome_detail",
+          "legacyType": "varchar(200)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V190__job_types_and_placement_outcomes.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "placement_season",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V161__tpo_v1_drives.sql",
+      "priority": "P0",
+      "candidateVnextTables": [
+        "placement_seasons"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 12,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_seasons.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "college_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_seasons.college_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "name",
+          "legacyType": "varchar(100)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_seasons.name"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "start_date",
+          "legacyType": "date",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_seasons.start_date"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "end_date",
+          "legacyType": "date",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_seasons.end_date"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "registration_deadline",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_registration_open",
+          "legacyType": "boolean",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "FALSE",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "blocked_dates",
+          "legacyType": "json",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "is_current",
+          "legacyType": "boolean",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "TRUE",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "created_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_seasons.created_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "updated_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_seasons.updated_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "version",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "0",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "round_attendance",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V165__tpo_v1_complete.sql",
+      "priority": "P1",
+      "candidateVnextTables": [
+        "placement_round_attendance"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 8,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_attendance.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "round_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_attendance.round_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "application_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_attendance.application_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "status",
+          "legacyType": "varchar(15)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_round_attendance.status"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "room",
+          "legacyType": "varchar(100)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_round_attendance.room"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "marked_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "marked_by_role",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "marked_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V165__tpo_v1_complete.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_attendance.marked_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "round_result",
+      "sourceTableClass": "PRODUCT_OR_OPERATIONS_TABLE_REQUIRES_MAPPING",
+      "sourceBase": "V161__tpo_v1_drives.sql",
+      "priority": "P1",
+      "candidateVnextTables": [
+        "placement_round_results"
+      ],
+      "disposition": "PARTIAL_CANDIDATE_SEMANTICS_UNVERIFIED",
+      "fieldCount": 15,
+      "fields": [
+        {
+          "legacyColumn": "id",
+          "legacyType": "bigint",
+          "legacyNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "application_id",
+          "legacyType": "int",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.application_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "round_id",
+          "legacyType": "bigint",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.round_id"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "outcome",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.outcome"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "waitlist_rank",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.waitlist_rank"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "score",
+          "legacyType": "double",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "PRECISION_ROUNDING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "reason_category",
+          "legacyType": "varchar(30)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.reason_category"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "comment",
+          "legacyType": "varchar(1000)",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "source",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.source"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "submitted_by_type",
+          "legacyType": "varchar(20)",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "submitted_by_id",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "submitted_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NOT_NULL",
+          "legacyDefault": "CURRENT_TIMESTAMP",
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.submitted_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "applied_at",
+          "legacyType": "datetime",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "exactNameCandidatesOnly": [
+            "placement_round_results.applied_at"
+          ],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "applied_by",
+          "legacyType": "int",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        },
+        {
+          "legacyColumn": "superseded_by",
+          "legacyType": "bigint",
+          "legacyNullable": "NULL_ALLOWED",
+          "legacyDefault": null,
+          "sourceEvidence": "V161__tpo_v1_drives.sql",
+          "riskFlags": [],
+          "exactNameCandidatesOnly": [],
+          "status": "UNVERIFIED",
+          "verifiedMapping": null,
+          "producerConsumerEvidence": null,
+          "dbTestEvidence": null,
+          "reviewDecision": null
+        }
+      ]
+    }
+  ]
+}
