@@ -121,3 +121,40 @@ Sources: `V188__placement_batches_and_eligibility.sql`, `V161__tpo_v1_drives.sql
 6. Field-by-field review of all 280 source candidates with verified producer/consumer mapping; complete DB08-B, DB08-C and DB08-D.
 
 **Important scope nuance:** `placement_eligibility_decisions` is already present in the committed `0035_learner_module_access.sql`, so its absence was a provisional first-pass census error now corrected in the field ledger. There are **six**, not seven, legacy DB08 tables without a direct dedicated vNext table candidate in the inspected schema; even those may be intentionally redesigned and must be individually reviewed.
+
+
+## DB08-B checkpoint — batch registration + manual debarment (2026-10-10)
+
+**Status:** CODE AND STAGED SQL AUTHORED, **NOT** MIGRATION-JOURNALED, RUNTIME-VERIFIED OR WIRED TO ROUTES.
+
+### Implemented on the isolated DB08 branch (source level)
+
+- `src/db/schema/placement-registration.ts`: batch-scoped registrations with real cohort/member references, unique member+cohort, `PLACEMENTS/HIGHER_STUDIES/NOT_INTERESTED/ENTREPRENEURSHIP/COMPETITIVE_EXAMS` choices, source, stored consent version+instant, and immutable history candidates. The latest legacy `BatchRegistrationService` opens invitation windows per academic batch, while older `TpoStudentService` stores `season_id`; vNext deliberately uses cohort as the durable registration partition.
+- `src/modules/placements/batch-registration-policy.ts`: deadline is exclusive, invited but unfinished batch required, original `v1` placement consent version, and Legacy V1 date-before-drives debarment precedence.
+- `src/modules/placements/batch-registration-service.ts`: authenticated learner-only transaction; real active membership/user binding, active cohort/section validation, two-gate eligibility and module check, invitation/deadline check, a single mutable per-cohort registration row. Duplicate same-choice submissions preserve the first consent timestamp. Administrative choices are deliberately *not* permitted through this self-service writer.
+- `scripts/sql/db08-registration-staging.sql`: cross-college/member/cohort guards, SELF identity and invitation-window guard; SQL-owned `AFTER INSERT/UPDATE` audit creates an immutable event even if the row is changed by another authorized writer. The service does not duplicate SQL-created events.
+- `src/db/schema/placement-debarments.ts`: durable manual debarments, drive-counter evidence and immutable CREATE/DRIVE_COUNTED/LIFTED history; preserves date/drive duration and manual lift.
+- `src/modules/placements/debarment-service.ts`: manager permission and tenant checks, manual create/lift, idempotent per-job drive counting requiring an actual learner application. Historical actions are not erased on lift.
+- `scripts/sql/db08-debarment-staging.sql`: direct-SQL tenant check, immutable audit and distinct drive events, SQL-owned counter increment, counter-to-history reconciliation, expiry checks. A repeated job does not increase the count.
+- `tests/unit/placement-batch-registration-policy.test.ts` and `tests/integration/placements-db08-registration.test.ts`: unit specs for consent/time boundaries/duration; gated disposable PostgreSQL specs for registration idempotence/change history, deadline, wrong references, debarment create/lift.
+
+### Parity inventory update
+
+The existing 18/280 legacy DB08 source census is unchanged and **all 280 fields remain UNVERIFIED**. Source-authored (but unjournaled) candidates are now attached to legacy `placement_batch`, `placement_eligibility_event`, `placement_registration`, and `placement_debarment`. Only `external_placement` and `learner_saved_job` still have no dedicated table candidate in this workstream; this is NOT a complete semantic diff.
+
+### Critical release blockers — do not claim DB08-B complete
+
+1. **Drizzle source integration:** `src/db/schema/index.ts` does not yet export DB08-A/B schemas. Source files and draft SQL are not active migrations. Rebase after DB03+DB04 coordination, generate official Drizzle migration plus exact snapshot/journal, compare staged SQL, replay full chain on isolated disposable PostgreSQL.
+2. **No executed tests:** Neither `vitest`, TypeScript typecheck nor Postgres constraints/concurrency have been executed in this chat. Unit/integration test files are authored, not passing evidence. `DB08_B_MIGRATION_APPLIED=1` must only be set after real disposable DB migration.
+3. **Invitation emails:** DB08-A currently records `invitedAt` but has no transactional outbox/notification sender. Never expose an Invite or Remind UI action until actual deliveries/recipients and idempotency are proved.
+4. **Self-service gating:** Module-enabled check currently occurs before the database transaction; synchronize module writes and learner registration under a common college-level lock or re-check against the authoritative module rules inside the transaction to prevent a paid-module OFF race.
+5. **No route or UI parity:** Student registration, TPO Batches/Students grids, drive progression, debarment counter integration, manager bulk actions and paid-module eligibility have not been wired to their actual APIs/sidebar/jobs. No page parity claim.
+6. **Timezones:** `debarment-service.ts` and SQL staging intentionally use `Asia/Kolkata` to match the existing India-centric legacy deployment, but per-college timezone configuration must replace this assumption before multi-region tenants launch.
+7. **Writer trust:** Privileged direct SQL `TPO/BACKFILL` registration could bypass application actor permissions; enforce writer roles/grants and protected DB functions. Parent-side academic reparenting may invalidate scoped foreign relationships unless blocked or reconciled.
+8. **Database and workflow tests:** Real Postgres must test cross-college MEMBER/SECTION/COHORT, concurrent bulk undo and enrollment transfer, duplicate drive-count events, expired debarment, immutable change logs, consent overwrite, debarment status visibility to companies, and audit/consistency under rollback.
+9. **Behavioral sign-off:** Manager bulk registration and manager choices (`ENTREPRENEURSHIP`, `COMPETITIVE_EXAMS`) are stored as data candidates only. Decide exposed workflows from legacy FE. Explicit verified consent text/version is a release requirement.
+10. **Remaining DB08:** External placements, saved jobs, full offer fidelity, 280-field semantic crosswalk and full account UI/API parity remain outstanding.
+
+### Quality note
+
+A source-shape review checked 18 listed invariants (files, guards, tracking and test presence). That is **not** TypeScript/SQL runtime validation or a database parity percentage.
