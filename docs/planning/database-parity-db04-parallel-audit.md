@@ -178,3 +178,33 @@ The production legacy `ProfileVerificationService.verify()` individual-review pa
 
 ### Unresolved risk
 Raw Aadhaar/PAN strings remain supported in the existing `learner_profiles.profile_document` JSON; the new snapshot guard does not remediate that underlying profile storage. Do not expose verification APIs until private identity storage, redaction, encryption, document authorization, migration and associated negative tests are resolved. The Drizzle staging file is still unregistered and no live database has been modified.
+
+## 12. Continuation checkpoint — expanded DB04 source implementation (2026-10-10)
+
+**Ownership:** This branch remains independent of active `db-parity-2026` (DB03 at least through migration `0040`). Do not rebase/merge while overlapping migration work is uncontrolled. Draft PR #3 remains an implementation proposal, not a release.
+
+**New persisted-domain modules authored:**
+- `transaction-writer.ts` uses transaction-scoped advisory lock for same learner+section (including simultaneous first submit), college row lock, membership and verification row locks, CAS row version, and all-or-nothing current review row/event writes.
+- `academic-publication.ts` publishes original marks with percent/rule/version provenance and updates `placement_candidate_academic_evidence` **inside** the same approval transaction. `settings-service.ts` deliberately recalculates percentages across current college verified records on rule changes while leaving original grade/scale/max intact; writes an activity event.
+- `transaction-writer.ts` also writes activity and in-app notification on approval/send-back in the same transaction, without including identity numbers or grades.
+- `tpo-grants-service.ts` grants or revokes explicit same-college TPO admin reviewer rights and logs them. Reviewer permission is reevaluated once inside the college-locked review transition to close revoke-versus-decision races.
+- `repository.ts` resolves learner ownership, TPO grants and settings through server-side PostgreSQL reads, constructs masked snapshots and validates receipt IDs from immutable **submitted** evidence rather than comparing later editable profile state.
+- `gcs-private-receipts.ts` defines a fail-closed GCS metadata verifier requiring uniform bucket-level access, enforced Public Access Prevention, exact generation/size/type/SHA-256 and privileged malware scan attestation. It has **not** been executed against any GCP bucket. A trusted scanner and IAM/upload controls do not yet exist.
+
+**Privacy stop-gap:** The existing learner profile service and repository now explicitly reject attempts to persist new raw Aadhaar/PAN values in generic `learner_profiles.profile_document`. This is an intentional temporary functional restriction; an encrypted identity vault, safe masking/decryption rules, migration of existing raw test/prod rows if any, UX mapping and verified identity flow are still necessary. Do not call identity verification feature-complete with that restriction.
+
+**Physical migration candidate:** `docs/planning/db04-proposed-migration.sql` declares six tables, immutable event trigger, revision guard and composite learner+verification FK. It is outside the active Drizzle journal and must be regenerated/reconciled against `src/db/schema/profile-verification.ts`, replayed on disposable PG, inspected via catalogs and stress-tested **before** it is promoted. Seven static source structural checks passed. This is NOT SQL runtime evidence.
+
+**Source field crosswalk:** `docs/planning/db04-field-crosswalk-proposals.json` now enumerates all 103 legacy DB04 source fields with type/null/default/risk/proposed target: **67 target proposals, 0 field mappings verified, 0 retirement approvals**. Do not convert matching names into closure without producer/consumer and live metadata evidence.
+
+**Regression suite drafted:** under `tests/unit/db04-*.test.ts` for state transitions, reviewer/tenant permissions, private receipt completeness, submitted document immutability, marks conversion, old profile validation bugfix, raw ID rejection and source schema structure. Actual repository Vitest and PostgreSQL execution **not verified**. Limited local mirrors of previous pure modules passed 13 state, 5 evidence and 13 academic assertions; those are not evidence for newly added DB transaction modules.
+
+### Mandatory next steps before release
+1. Refresh and rebase onto stable `db-parity-2026` after DB03; resolve `0040+` migration journal, Drizzle generated snapshot and composite FK/trigger DDL.
+2. Run `npm run db:generate`, SQL replay, `npm run typecheck`, `npm test`, `npm run test:db`, `npm run build`, browser tests on disposable infrastructure; add real negative cross-college direct-SQL, race/rollback and privacy tests.
+3. Provision/configure non-public GCS bucket, scanner attestations, signed upload/download IAM, encrypted Aadhaar/PAN storage, retention/deletion and audit. Public routes intentionally remain unwired until this gate passes.
+4. Wire learner submit and College Admin/Super Admin/TPO verifier queue, bulk per-item decisions, settings, status cards, badges, notifications and all producer→consumer workflows. Freeze FE/BE oracle SHAs for final parity.
+5. Resolve remaining DB04 historical candidates (registration, images, approver card), prove all 103 source fields mapped or approved retired, and document security-hardening behavior exceptions.
+6. Investigate GitHub CI failures: branch, shared DB03, and main report failing jobs without useful step logs. Do not claim full green gates until they execute.
+
+This checkpoint is **partial implementation with explicit release blockers**, not DB04 completion. The next chat should use `docs/planning/database-parity-db04-parallel-tracker.json` as operational queue.
