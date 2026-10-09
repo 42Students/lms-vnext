@@ -46,3 +46,13 @@ These currently require a unique migration number after active DB03/DB04/DB08 br
 - The helper accepts prepared data, not raw DB records. It **does not authorize share links, verify recruiter identity, enforce cross-college scope, sign/download resumes or run any request**. These responsibilities must be implemented before it is used in runtime.
 - Tests authored but **not executed in this chat**. Static repository inventory checks only verified ledger structure, not runtime functionality.
 - Status is `PURE_PROJECTION_AUTHORED`, not `DB_TESTED` or `WORKFLOW_VERIFIED`; **0/279** source field mappings verified remains accurate.
+
+## Mainline source synchronization (2026-10-10)
+
+All 16 remaining DB09 files from the original draft PR #11 are integrated into the main-lineage source tree: 2 schema modules, 2 services, 9 API routes, 1 API-error adapter and 2 integration suites. Main's schema registry exports those 5 table models, and package.json exposes the DB09 audit/opt-in database commands.
+
+**Critical rollout safeguard:** all 9 routes, across GET/POST/PATCH/PUT handlers, default to HTTP 503 `DB09_MIGRATIONS_PENDING` unless the server process has `DB09_TPO_API_READY=DB09_VERIFIED`. Do not set this value until the tables are registered in the Drizzle journal, deployed and verified with live Postgres integration tests. The staged SQL drafts are **not registered migrations**, so the API remains unavailable.
+
+The unit/static tests are part of the codebase; database integration tests are deliberately gated on `TEST_DATABASE_URL` + `DB09_ISOLATED_TEST_DATABASE=1`. No runtime tests or database replay have been executed during this chat. The 279-field legacy ledger remains 0/279 verified. GitHub Actions has a known runner-start failure; a green check cannot be inferred from missing job steps.
+
+Do not merge original PR #11 after this synchronization; all its DB09-owned source content has been brought to main without bringing unrelated DB03/04/08 commits.
