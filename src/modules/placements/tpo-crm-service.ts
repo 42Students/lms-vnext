@@ -57,17 +57,46 @@ function ownerMembership(context: RequestContext, collegeId: string) {
     : null;
 }
 
+/** Explicit API projection: never expose stored invitation token hashes. */
+function tpoLeadView(row: typeof placementTpoLeads.$inferSelect) {
+  return {
+    id: row.id,
+    collegeId: row.collegeId,
+    companyRelationshipId: row.companyRelationshipId,
+    name: row.name,
+    designation: row.designation,
+    emailNorm: row.emailNorm,
+    phoneNorm: row.phoneNorm,
+    companyName: row.companyName,
+    companyLogoObjectPath: row.companyLogoObjectPath,
+    ownerMembershipId: row.ownerMembershipId,
+    manualStage: row.manualStage,
+    notNowReason: row.notNowReason,
+    notNowUntil: row.notNowUntil,
+    source: row.source,
+    inviteSentAt: row.inviteSentAt,
+    inviteClickedAt: row.inviteClickedAt,
+    inviteReminderSentAt: row.inviteReminderSentAt,
+    inviteBouncedAt: row.inviteBouncedAt,
+    unsubscribedAt: row.unsubscribedAt,
+    recruiterUserId: row.recruiterUserId,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  };
+}
+
 export async function listTpoLeads(
   context: RequestContext,
   rawCollegeId: string,
 ) {
   const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
   await requirePlacementManageScope(context, collegeId);
-  return getDb()
+  const rows = await getDb()
     .select()
     .from(placementTpoLeads)
     .where(eq(placementTpoLeads.collegeId, collegeId))
     .orderBy(desc(placementTpoLeads.updatedAt), desc(placementTpoLeads.id));
+  return rows.map(tpoLeadView);
 }
 
 /** Database partial uniques make email/phone duplicate prevention race-safe. */
@@ -93,7 +122,7 @@ export async function createTpoLead(
     .returning();
 
   if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_DUPLICATE");
-  return lead;
+  return tpoLeadView(lead);
 }
 
 export async function listTpoLeadActivities(
@@ -303,5 +332,5 @@ export async function markTpoLeadNotNow(
     ))
     .returning();
   if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
-  return lead;
+  return tpoLeadView(lead);
 }
