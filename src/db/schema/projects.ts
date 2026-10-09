@@ -16,6 +16,7 @@ import type { ProjectTemplateBlueprint } from "@/modules/projects/validation";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
+import { lmsGroups } from "./groups";
 
 export const projectTemplates = pgTable(
   "project_templates",
@@ -182,6 +183,7 @@ export const projectInstances = pgTable(
       .references(() => projectTemplateVersions.id, {
         onDelete: "restrict",
       }),
+    teamGroupId: uuid("team_group_id").references(() => lmsGroups.id, { onDelete: "restrict" }),
     slug: varchar("slug", { length: 96 }).notNull(),
     title: text("title").notNull(),
     summary: text("summary"),
@@ -217,6 +219,7 @@ export const projectInstances = pgTable(
       table.collegeId,
       sql`lower(${table.slug})`,
     ),
+    uniqueIndex("project_instances_team_group_uq").on(table.teamGroupId),
     index("project_instances_college_status_idx").on(
       table.collegeId,
       table.status,

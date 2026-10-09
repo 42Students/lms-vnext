@@ -267,6 +267,13 @@
       "when": 1791580200000,
       "tag": "0037_db03_groups_electives",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1791583800000,
+      "tag": "0038_project_team_group",
+      "breakpoints": true
     }
   ]
 }
