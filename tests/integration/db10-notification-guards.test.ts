@@ -195,4 +195,25 @@ describe("DB10 notification correctness and privacy", () => {
     expect(directRow.rows[0]!.action_href).toBe("//attacker.example/redirect");
   });
 
+
+  it("returns committed read state when multiple requests acknowledge concurrently", async () => {
+    const e = await event();
+    await deliverInAppNotification(e.id, [SEED_IDS.learnerUser], {
+      title: "Concurrency notice",
+      body: "Mark this once",
+      actionHref: "/learn/placements",
+    });
+    const [notice] = await listOwnNotifications(learner, { limit: 1 });
+    expect(notice).toBeDefined();
+
+    const reads = await Promise.all(
+      Array.from({ length: 12 }, () =>
+        markOwnNotificationRead(learner, notice!.notification.id),
+      ),
+    );
+    expect(reads).toHaveLength(12);
+    expect(reads.every((row) => row.readAt instanceof Date)).toBe(true);
+    expect(await countOwnUnreadNotifications(learner)).toBe(0);
+  });
+
 });
