@@ -28,6 +28,7 @@ export type PlatformPermission =
   | "project-template.manage"
   | "project-template.assign"
   | "people.manage"
+  | "profile-verification.review"
   | "system-role.manage"
   | "membership.role.manage"
   | "membership.lifecycle.manage";
@@ -36,6 +37,9 @@ export type ResourceScope = {
   organizationId?: string | null;
   collegeId?: string | null;
   placementCompanyRelationshipId?: string | null;
+  /** Trusted server-side lookups, never values read from request JSON. */
+  tpoVerificationEnabled?: boolean;
+  tpoVerificationAdministrator?: boolean;
 };
 
 function isInsideAdminScope(
@@ -178,6 +182,14 @@ export function can(
 
     case "project-template.assign":
       return false;
+
+    case "profile-verification.review":
+      return isSameMembershipCollege(context, resource) && (
+        hasMembershipRole(context, "COLLEGE_ADMIN") ||
+        (hasMembershipRole(context, "TPO") &&
+          resource.tpoVerificationAdministrator === true &&
+          resource.tpoVerificationEnabled === true)
+      );
 
     case "placements.manage":
       return (
