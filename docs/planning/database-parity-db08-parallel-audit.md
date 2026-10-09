@@ -110,6 +110,22 @@ The source registry's 280 fields must be reviewed one by one before any table is
 14. An interview appointment is rescheduled: previous time, actor, feedback provenance and candidate-specific slot survive.
 15. Migration replay from clean PostgreSQL; repeated migration/snapshot diff; cold-start test of all FK/unique/check constraints.
 
+## DB08-A staged implementation checkpoint (2026-10-10)
+
+**Code authored, not yet migrated or executed.** This distinction is a release gate, not a minor caveat.
+
+- `src/db/schema/placement-eligibility-actions.ts`: separate idempotent action header and before/after event ledger, original actor/time snapshots, undo timestamps, composite `(action_id,college_id)` foreign-key constraints. `placement_eligibility_decisions.last_action_id` records causal history.
+- `src/modules/placements/eligibility-action-validation.ts`: Zod scope/type validation, normalized reason/note, duplicate-scope denial, 200-target bound and stable retry ordering.
+- `src/modules/placements/eligibility-action-service.ts`: TPO/College Admin permission check, per-scope college ownership via real membership/academic joins, deterministic transaction advisory locks, replay-safe action IDs, atomic bulk decisions and stale-safe undo. No new HTTP route intentionally exposed until migration exists.
+- `docs/planning/database-parity-db08-staged-migration.sql`: **non-active** PostgreSQL DDL review artifact. Do not apply manually to production or move into `drizzle/` without regenerating numbering/journal from a fresh shared base.
+- `tests/unit/placement-eligibility-actions.test.ts`: validation/reason/duplicate/canonical payload regression cases authored.
+- `tests/integration/placements-db08-actions.test.ts`: seven **gated and currently skipped** DB tests (requires `DB08_SCHEMA_READY=1`, `DB08_ISOLATED_TEST_DATABASE=1`, `TEST_DATABASE_URL`). Covers replay, undo ordering, tenant substitution, atomic validation, mismatched payloads, FK rejection, role denial. **Not run**.
+- Existing `src/modules/placements/access-service.ts` has explicit MEMBER > SECTION > COHORT precedence independent of caller ordering, with regression tests authored but **not run**.
+
+**Known required follow-ups before merge:** Drizzle-generated numbered migration and snapshot; replay on clean PostgreSQL; typecheck/lint/unit DB suite and CI; test effects from legacy TPO/learner endpoints and browser. The Drizzle source currently describes tables not present on DBs migrated only to the shared journal. Do not publish the new service via API until migration and tests pass.
+
+**Concurrency/source drift:** DB08 branch forked at `c489b2569dd2d2742da2ee17ed313a26853dc4da`. While authoring, shared `db-parity-2026` advanced to `1a0f00557babf68407ad8189c80c973e1324a18c` (14 commits beyond the fork when observed). Integration must inspect the **newest** shared head and review DB03/DB04 changes, not rebase blindly.
+
 ## Coordination handoff
 
 - [x] Branch isolated, GitHub issue claim established.
@@ -118,7 +134,7 @@ The source registry's 280 fields must be reviewed one by one before any table is
 - [x] Eligibility pure resolver now enforces explicit MEMBERSHIP > SECTION > COHORT precedence independent of input chain ordering (`src/modules/placements/access-service.ts`).
 - [x] Three additional precedence/fallback/NOT_DECIDED unit regression cases authored in `tests/unit/placement-access.test.ts`; **not executed**.
 - [x] Two automated tracker-gate tests authored in `tests/unit/placement-db08-ledger.test.ts` (every table/field accounted for; no evidence-free verification); **not executed**.
-- [ ] Bulk eligibility event/undo model and database transaction behavior implemented.
+- [x] Bulk eligibility action/event schema, transaction service, and stale-safe undo **authored on branch only** (migration and runtime proof pending).
 - [ ] 280/280 **semantically verified** field mappings (0 currently).
 - [ ] DB08 schema/API implemented.
 - [ ] PostgreSQL and role/tenant tests executed.
