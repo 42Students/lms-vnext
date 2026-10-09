@@ -15,6 +15,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { ActivityServiceError } from "./errors";
+import { safeNotificationActionHref } from "./notification-action";
 
 type NotificationWriter = Pick<
   ReturnType<typeof getDb>,
@@ -39,10 +40,7 @@ const deliverySchema = z
       .startsWith("/")
       .max(1000)
       .refine(
-        (href) =>
-          !href.startsWith("//") &&
-          !href.includes("\\") &&
-          !/[\x00-\x1f\x7f]/.test(href),
+        (href) => safeNotificationActionHref(href) === href,
         "Notification actionHref must be an internal path",
       )
       .nullable()
@@ -208,7 +206,7 @@ export async function listOwnNotifications(
     );
   }
 
-  return getDb()
+  const rows = await getDb()
     .select({
       notification:
         inAppNotifications,
@@ -239,6 +237,14 @@ export async function listOwnNotifications(
       desc(inAppNotifications.id),
     )
     .limit(limit);
+
+  return rows.map((row) => ({
+    ...row,
+    notification: {
+      ...row.notification,
+      actionHref: safeNotificationActionHref(row.notification.actionHref),
+    },
+  }));
 }
 
 export async function countOwnUnreadNotifications(
