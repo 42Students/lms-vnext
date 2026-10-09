@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   check,
   date,
   index,
@@ -217,7 +218,7 @@ export const placementExternalOutcomes = pgTable(
       { onDelete: "restrict" },
     ),
     companyName: varchar("company_name", { length: 200 }).notNull(),
-    annualCtcInr: integer("annual_ctc_inr"),
+    annualCtcInr: bigint("annual_ctc_inr", { mode: "number" }),
     letterObjectPath: text("letter_object_path"),
     verifiedByUserId: uuid("verified_by_user_id")
       .notNull()
