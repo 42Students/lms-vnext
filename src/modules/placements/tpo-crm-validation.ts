@@ -13,7 +13,7 @@ export const tpoCrmFollowupIdSchema = id;
 export const tpoLeadSourceSchema = z.string().trim()
   .min(1).max(30)
   .transform(value => {
-    const key = value.toUpperCase().replace(/\\s+/g, "_");
+    const key = value.toUpperCase().replace(/\s+/g, "_");
     const synonyms: Record<string, string> = {
       ALUMNI: "ALUMNI",
       REFERRAL: "REFERRAL",
