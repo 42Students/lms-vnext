@@ -298,36 +298,58 @@ CREATE FUNCTION db02_guard_schedule_hall_tenant()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   section_college uuid;
+  faculty_college uuid;
   hall_college uuid;
 BEGIN
-  IF NEW.lecture_hall_id IS NULL THEN
-    RETURN NEW;
-  END IF;
-
+  -- Validate section and faculty even if there is no assigned lecture hall.
+  -- The earlier early-return allowed direct SQL to attach a cross-college
+  -- faculty_membership_id whenever lecture_hall_id was NULL.
   SELECT d.college_id INTO section_college
     FROM sections s
-    JOIN cohorts c ON c.id=s.cohort_id
-    JOIN programs p ON p.id=c.program_id
-    JOIN departments d ON d.id=p.department_id
-   WHERE s.id=NEW.section_id;
+    JOIN cohorts c ON c.id = s.cohort_id
+    JOIN programs p ON p.id = c.program_id
+    JOIN departments d ON d.id = p.department_id
+   WHERE s.id = NEW.section_id;
 
-  SELECT college_id INTO hall_college
-    FROM lecture_halls
-   WHERE id=NEW.lecture_hall_id AND status='ACTIVE';
-
-  IF section_college IS NULL OR hall_college IS NULL THEN
-    RAISE EXCEPTION 'Unknown section or inactive lecture hall' USING ERRCODE='23503';
+  IF section_college IS NULL THEN
+    RAISE EXCEPTION 'Unknown schedule section scope' USING ERRCODE = '23503';
   END IF;
-  IF section_college <> hall_college THEN
-    RAISE EXCEPTION 'Schedule section and lecture hall must belong to the same college'
-      USING ERRCODE='23514';
+
+  IF NEW.faculty_membership_id IS NOT NULL THEN
+    SELECT college_id INTO faculty_college
+      FROM college_memberships
+     WHERE id = NEW.faculty_membership_id;
+    IF faculty_college IS NULL THEN
+      RAISE EXCEPTION 'Unknown faculty membership' USING ERRCODE = '23503';
+    END IF;
+    IF faculty_college <> section_college THEN
+      RAISE EXCEPTION 'Schedule faculty must belong to the section college'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
+  IF NEW.lecture_hall_id IS NOT NULL THEN
+    -- Existing cancelled sessions may retain an archived hall reference.
+    -- New active bookings may only use currently ACTIVE lecture halls.
+    SELECT college_id INTO hall_college
+      FROM lecture_halls
+     WHERE id = NEW.lecture_hall_id
+       AND (status = 'ACTIVE' OR NEW.status = 'CANCELLED');
+    IF hall_college IS NULL THEN
+      RAISE EXCEPTION 'Unknown or inactive lecture hall' USING ERRCODE = '23503';
+    END IF;
+    IF section_college <> hall_college THEN
+      RAISE EXCEPTION 'Schedule section and lecture hall must belong to the same college'
+        USING ERRCODE = '23514';
+    END IF;
   END IF;
   RETURN NEW;
 END;
 $$;
 
 CREATE TRIGGER db02_schedule_hall_tenant_guard
-BEFORE INSERT OR UPDATE OF section_id, lecture_hall_id ON section_schedule_events
+BEFORE INSERT OR UPDATE OF section_id, faculty_membership_id, lecture_hall_id, status
+ON section_schedule_events
 FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_hall_tenant();
 
 -- PostgreSQL overlap invariants. Chat 1 must confirm btree_gist is available in the
