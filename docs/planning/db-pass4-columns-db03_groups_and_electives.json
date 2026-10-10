@@ -1,12 +1,16 @@
 {
   "domain": "DB03_GROUPS_AND_ELECTIVES",
   "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
-  "vnextSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
-  "scope": "Source-derived field candidates only, NOT actual live schema or verified semantic mapping",
+  "vnextSha": "ba35e3ae9e65738c0d41a81bd1f8adba9319f92d",
+  "scope": "Source-derived 79-field DB03 inventory reconciled to proposed vNext targets; NOT runtime/database semantic verification",
   "counts": {
     "tables": 6,
     "fields": 79,
-    "sameNameCandidateFields": 0
+    "sameNameCandidateFields": 0,
+    "sourceReviewedFields": 79,
+    "proposedMappedFields": 79,
+    "unmappedAfterSourceReview": 0,
+    "runtimeSemanticVerifiedFields": 0
   },
   "tables": [
     {
@@ -29,15 +33,23 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "elective_offering",
@@ -49,15 +61,23 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.slot_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "elective_offering",
@@ -69,15 +89,23 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.course_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "elective_offering",
@@ -89,15 +117,23 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.group_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "elective_offering",
@@ -109,15 +145,23 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.backed_delivery_id"
+          ],
+          "mappingKind": "SEMANTIC_REDESIGN",
+          "requiredDecision": true,
+          "mappingRisk": "Legacy GROUP_BACKED class has all per-class content/attendance/course surfaces; vNext backed delivery and group roster consumers need end-to-end proof."
         },
         {
           "legacyTable": "elective_offering",
@@ -129,13 +173,21 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.capacity"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_offering",
@@ -147,13 +199,21 @@
           "defaultValue": "'ACTIVE'",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.status"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_offering",
@@ -165,15 +225,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.created_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "elective_offering",
@@ -185,15 +253,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.updated_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "elective_offering",
@@ -205,13 +281,21 @@
           "defaultValue": "FALSE",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.deleted_at"
+          ],
+          "mappingKind": "SOFT_DELETE_TIMESTAMP",
+          "requiredDecision": false,
+          "mappingRisk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics."
         },
         {
           "legacyTable": "elective_offering",
@@ -223,13 +307,21 @@
           "defaultValue": "0",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings.version"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_offering",
@@ -246,13 +338,21 @@
               "migration": "V168__electives_offering_unique.sql"
             }
           ],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_offerings"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_offerings_slot_active_course_uq"
+          ],
+          "mappingKind": "DERIVED_UNIQUE_INDEX",
+          "requiredDecision": false,
+          "mappingRisk": "Generated nullable key replaced with PostgreSQL partial unique index; verify concurrent ACTIVE duplicate and archive/re-offer."
         }
       ]
     },
@@ -276,15 +376,23 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "elective_slot",
@@ -296,15 +404,23 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.college_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "elective_slot",
@@ -316,15 +432,23 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.program_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "elective_slot",
@@ -336,13 +460,21 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.semester_number"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_slot",
@@ -354,13 +486,21 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.academic_year"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_slot",
@@ -372,13 +512,21 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.name"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_slot",
@@ -390,13 +538,21 @@
           "defaultValue": null,
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.description"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_slot",
@@ -408,13 +564,21 @@
           "defaultValue": "3",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.credits"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_slot",
@@ -426,13 +590,21 @@
           "defaultValue": "1",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.min_pick"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_slot",
@@ -444,13 +616,21 @@
           "defaultValue": "1",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.max_pick"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_slot",
@@ -462,13 +642,21 @@
           "defaultValue": "'ACTIVE'",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.status"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "elective_slot",
@@ -480,15 +668,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.created_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "elective_slot",
@@ -500,15 +696,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.updated_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "elective_slot",
@@ -520,13 +724,21 @@
           "defaultValue": "FALSE",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.deleted_at"
+          ],
+          "mappingKind": "SOFT_DELETE_TIMESTAMP",
+          "requiredDecision": false,
+          "mappingRisk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics."
         },
         {
           "legacyTable": "elective_slot",
@@ -538,13 +750,21 @@
           "defaultValue": "0",
           "sourceEvidence": "V167__electives.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "elective_slots"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "elective_slots.version"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         }
       ]
     },
@@ -568,15 +788,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "lms_group",
@@ -588,13 +816,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.kind"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -606,13 +842,21 @@
           "defaultValue": "'COLLEGE'",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.owner_scope"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -624,15 +868,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.college_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "lms_group",
@@ -644,13 +896,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.name"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -662,13 +922,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.description"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -680,13 +948,21 @@
           "defaultValue": "'DRAFT'",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.status"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -698,13 +974,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.capacity"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -716,13 +1000,21 @@
           "defaultValue": "0",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.active_count"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -734,15 +1026,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.self_join_open_from"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group",
@@ -754,15 +1054,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.self_join_open_until"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group",
@@ -774,13 +1082,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.academic_year"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -792,13 +1108,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.semester_number"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group",
@@ -810,15 +1134,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.config_json"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
         },
         {
           "legacyTable": "lms_group",
@@ -830,13 +1162,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.created_by_type"
+          ],
+          "mappingKind": "HISTORICAL_SNAPSHOT_PERSISTED",
+          "requiredDecision": false,
+          "mappingRisk": "Now durably persisted on new group creation; verify actor role conversion and historical values against legacy producer."
         },
         {
           "legacyTable": "lms_group",
@@ -848,15 +1188,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.created_by_user_id"
+          ],
+          "mappingKind": "IDENTITY_REDESIGN",
+          "requiredDecision": false,
+          "mappingRisk": "Legacy polymorphic int type/id becomes canonical UUID; confirm original actor identity semantics."
         },
         {
           "legacyTable": "lms_group",
@@ -868,15 +1216,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.created_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group",
@@ -888,15 +1244,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.updated_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group",
@@ -908,13 +1272,21 @@
           "defaultValue": "FALSE",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.deleted_at"
+          ],
+          "mappingKind": "SOFT_DELETE_TIMESTAMP",
+          "requiredDecision": false,
+          "mappingRisk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics."
         },
         {
           "legacyTable": "lms_group",
@@ -926,13 +1298,21 @@
           "defaultValue": "0",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_groups"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_groups.version"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         }
       ]
     },
@@ -956,15 +1336,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "lms_group_member",
@@ -976,15 +1364,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.group_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "lms_group_member",
@@ -996,13 +1392,21 @@
           "defaultValue": "'LEARNER'",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.member_type"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member",
@@ -1014,15 +1418,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.membership_id"
+          ],
+          "mappingKind": "IDENTITY_REDESIGN",
+          "requiredDecision": false,
+          "mappingRisk": "Legacy numeric member ID mapped to scoped college membership; cross-college and nonlearner types require deliberate policy."
         },
         {
           "legacyTable": "lms_group_member",
@@ -1034,13 +1446,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.state"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member",
@@ -1052,13 +1472,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.source"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member",
@@ -1070,13 +1498,21 @@
           "defaultValue": "FALSE",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.is_locked"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member",
@@ -1088,13 +1524,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.waitlist_position"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member",
@@ -1106,13 +1550,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.note"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member",
@@ -1124,15 +1576,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.joined_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group_member",
@@ -1144,15 +1604,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.created_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group_member",
@@ -1164,15 +1632,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.updated_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group_member",
@@ -1184,13 +1660,21 @@
           "defaultValue": "0",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_members"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_members.version"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         }
       ]
     },
@@ -1214,15 +1698,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1234,15 +1726,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.group_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1254,13 +1754,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.member_type"
+          ],
+          "mappingKind": "HISTORICAL_SNAPSHOT_PERSISTED",
+          "requiredDecision": false,
+          "mappingRisk": "Now independently persisted per append-only group member event; verify event producer pathways."
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1272,15 +1780,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.membership_id"
+          ],
+          "mappingKind": "IDENTITY_REDESIGN",
+          "requiredDecision": false,
+          "mappingRisk": "Source numeric member ID mapped to college membership UUID."
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1292,13 +1808,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.from_state"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1310,13 +1834,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.to_state"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1328,13 +1860,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.source"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1346,13 +1886,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.actor_type"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1364,15 +1912,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.actor_user_id"
+          ],
+          "mappingKind": "IDENTITY_REDESIGN",
+          "requiredDecision": false,
+          "mappingRisk": "Legacy polymorphic actor ID now user UUID; original role type retained separately."
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1384,13 +1940,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.reason"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_member_event",
@@ -1402,15 +1966,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_member_events"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_member_events.created_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         }
       ]
     },
@@ -1434,15 +2006,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_rules"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_rules.id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "lms_group_rule",
@@ -1454,15 +2034,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_rules"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_rules.group_id"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "INTEGER_KEY_TO_UUID_MAPPING"
         },
         {
           "legacyTable": "lms_group_rule",
@@ -1474,15 +2062,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_rules"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_rules.criteria_json"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
         },
         {
           "legacyTable": "lms_group_rule",
@@ -1494,13 +2090,21 @@
           "defaultValue": "FALSE",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_rules"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_rules.auto_refresh"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_rule",
@@ -1512,15 +2116,23 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_rules"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_rules.last_run_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group_rule",
@@ -1532,13 +2144,21 @@
           "defaultValue": null,
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_rules"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_rules.last_run_matched"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": null
         },
         {
           "legacyTable": "lms_group_rule",
@@ -1550,15 +2170,23 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_rules"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_rules.created_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         },
         {
           "legacyTable": "lms_group_rule",
@@ -1570,17 +2198,40 @@
           "defaultValue": "CURRENT_TIMESTAMP",
           "sourceEvidence": "V166__groups_kernel.sql",
           "history": [],
-          "candidateVnextTables": [],
+          "candidateVnextTables": [
+            "lms_group_rules"
+          ],
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_MAPPING_PROPOSED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": "Source-reviewed against pinned legacy DB03 migrations/docs and vNext 79-field crosswalk; target proposal only. PostgreSQL/runtime semantic verification remains pending.",
+          "proposedVnextTargets": [
+            "lms_group_rules.updated_at"
+          ],
+          "mappingKind": "DIRECT_SOURCE_NAME_MATCH",
+          "requiredDecision": false,
+          "mappingRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS"
         }
       ]
     }
-  ]
+  ],
+  "sourceReview": {
+    "reviewedOn": "2026-10-11",
+    "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "vnextEvidenceSha": "ba35e3ae9e65738c0d41a81bd1f8adba9319f92d",
+    "crosswalk": "docs/planning/database-parity-db03-79-field-crosswalk.json",
+    "implementation": "docs/planning/database-parity-db03-implementation.md",
+    "findings": [
+      "79/79 legacy DB03 fields have proposed target/derived mappings; 0 are formally runtime-verified.",
+      "Legacy group config defaults allowWaitlist=true and allowSelfLeave=true when absent/non-boolean; vNext parity fixes authored.",
+      "Legacy locked REMOVED membership blocks self rejoin but explicit admin re-add/move may revive it while preserving the lock; vNext parity fixes authored.",
+      "Legacy active_course_key is intentionally remodeled as a PostgreSQL partial unique index.",
+      "Legacy backed_class_id is intentionally remodeled as backed_delivery_id plus group-roster consumers; end-to-end consumer proof remains a later verification gate."
+    ],
+    "verificationState": "SOURCE_REVIEWED_NOT_RUNTIME_VERIFIED"
+  }
 }
