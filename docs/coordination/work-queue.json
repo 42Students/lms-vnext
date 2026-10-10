@@ -292,25 +292,35 @@
       "paths": [
         "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T01:57:00+05:30",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T01:57:00+05:30"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T01:57:00+05:30",
+          "reason": "Chat 3 CAS-claimed next lowest-priority eligible unclaimed DATABASE task after DB-004 was claimed by Chat 2."
         }
       ]
     },
