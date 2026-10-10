@@ -1,5 +1,6 @@
 -- DB-012 / Chat 3, DATABASE phase. SOURCE DESIGN CANDIDATE ONLY.
--- Legacy V165__tpo_v1_complete.sql: round_slot, round_assignment,
+-- Legacy V165__tpo_v1_complete.sql + V193__recruiter_naming.sql:
+-- the final proposer code is RECRUITER, not HR. round_slot, round_assignment,
 -- reschedule_request. Current vNext placement_application_round_exceptions
 -- does not itself retain all legacy slot capacity/proposer/status, student
 -- confirmation, notification, or request decision history.
@@ -42,7 +43,7 @@ CREATE TABLE placement_round_slots (
   CONSTRAINT placement_round_slots_range_ck CHECK (ends_at > starts_at),
   CONSTRAINT placement_round_slots_capacity_ck CHECK (capacity > 0),
   CONSTRAINT placement_round_slots_proposer_ck
-    CHECK (proposed_by IN ('TPO','HR')),
+    CHECK (proposed_by IN ('TPO','RECRUITER')),
   CONSTRAINT placement_round_slots_status_ck
     CHECK (status IN ('PROPOSED','CONFIRMED')),
   CONSTRAINT placement_round_slots_version_ck CHECK (row_version > 0)
