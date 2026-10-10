@@ -487,9 +487,38 @@ export async function archiveProjectInstance(
       );
     }
 
-    // Shared activity taxonomy does not yet define a Project archive event.
-    // W06 owns that taxonomy; archive state is persisted here without inventing a
-    // misleading event type. W03 issue #23 tracks the cross-lane audit handoff.
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED,
+        collegeId: scope.collegeId,
+        organizationId:
+          scope.organizationId,
+        subjectType:
+          "project_instance",
+        subjectId: archived.id,
+        subjectLabel: archived.title,
+        summary:
+          "Project " +
+          archived.title +
+          " archived",
+        metadata: {
+          projectId: archived.id,
+          previousStatus: project.status,
+          status: archived.status,
+        },
+        groupKey:
+          "projects:instance:" +
+          archived.id,
+        dedupeKey:
+          "projects:instance:" +
+          archived.id +
+          ":archived:" +
+          now.toISOString(),
+      },
+    );
 
     return archived;
   });
