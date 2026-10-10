@@ -416,14 +416,14 @@
       "paths": [
         "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-10T20:30:04.201Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:32:30.065Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -445,6 +445,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:30:04.201Z",
           "reason": "Chat 1 CAS claim; DB06 assessments/attendance source-semantic reconciliation."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:32:30.065Z",
+          "reason": "DB06 source-contract audit started; schema edits deferred while Chat 5 owns broad src/db/schema/** claim."
         }
       ]
     },
