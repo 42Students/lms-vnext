@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-021",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB015_RACE_INVENTORY_EXPANDED_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB021_STAGED_OUTCOME_FIDELITY_WORK",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a1cb921b86bf8ffe063ec42fb828da540edddaca",
+    "observedMainSha": "90c6bc5b27ea137590f132b49345e8457b1d06be",
     "lastWorkerMergedSha": "7abfea349617109528e4f8e81026cd6508836064",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-015 completed with 23 source-audited race/transition witnesses: 13 source-protected NOT_RUN, 3 source-protected only in unmigrated drafts, and 7 implementation/policy/dispatcher blockers. Zero runtime race probes executed."
+    "summary": "DB-021 claimed: vNext DB08 missing persisted job counts-as-placed, non-placement outcome label/detail, and offer compensation/bond/dispute state."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -48,7 +48,7 @@
     "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
     "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified."
   ],
-  "nextAction": "Refresh the shared DATABASE queue and CAS-pick the next eligible task. Do not patch DB02 academic gaps while Chat 4 owns DB-005; preserve DB-015 as COMPLETED but not DONE_VERIFIED.",
+  "nextAction": "Stage isolated DB08 SQL and source/tracking contract with static tests; preserve Chat 1 integration ownership.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -71,7 +71,8 @@
     "DB-006",
     "DB-011",
     "DB-013",
-    "DB-015"
+    "DB-015",
+    "DB-021"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -79,7 +80,7 @@
     "DB-013",
     "DB-015"
   ],
-  "lastPickedAt": "2026-10-10T20:44:00.000Z",
+  "lastPickedAt": "2026-10-11",
   "lastCompletedAt": "2026-10-10T20:52:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
