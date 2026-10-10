@@ -23,6 +23,7 @@ import {
   electiveOfferings,
   electiveSlots,
   learnerProgramEnrollments,
+  learnerProfiles,
   lmsGroupMembers,
   lmsGroups,
   membershipRoles,
@@ -157,6 +158,8 @@ async function currentDeliveryRoster(
         membershipId: collegeMemberships.id,
         displayName: users.displayName,
         email: users.email,
+        phoneE164: users.phoneE164,
+        rollNumber: learnerProfiles.rollNumber,
       })
       .from(lmsGroupMembers)
       .innerJoin(
@@ -179,6 +182,13 @@ async function currentDeliveryRoster(
       .innerJoin(
         users,
         eq(users.id, collegeMemberships.userId),
+      )
+      .leftJoin(
+        learnerProfiles,
+        eq(
+          learnerProfiles.membershipId,
+          collegeMemberships.id,
+        ),
       )
       .where(
         and(
@@ -414,6 +424,8 @@ export async function getFacultyAttendanceWorkspace(
             markedAt: attendanceRecords.markedAt,
             displayName: users.displayName,
             email: users.email,
+            phoneE164: users.phoneE164,
+            rollNumber: learnerProfiles.rollNumber,
           })
           .from(attendanceRecords)
           .innerJoin(
@@ -426,6 +438,13 @@ export async function getFacultyAttendanceWorkspace(
           .innerJoin(
             users,
             eq(users.id, collegeMemberships.userId),
+          )
+          .leftJoin(
+            learnerProfiles,
+            eq(
+              learnerProfiles.membershipId,
+              collegeMemberships.id,
+            ),
           )
           .where(
             inArray(
