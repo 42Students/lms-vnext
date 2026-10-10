@@ -5,7 +5,7 @@ import {
   collegeMemberships, colleges, learnerProfiles, membershipRoles, users,
 } from "@/db/schema";
 import {
-  learnerPrivateDocumentReceipts, profileVerificationSettings, profileVerificationTpoGrants,
+  profilePrivateDocumentReceipts, profileVerificationSettings, profileVerificationTpoGrants,
 } from "@/db/schema/profile-verification";
 import { learnerProfileDocumentSchema } from "@/modules/people/profile-validation";
 import {
@@ -26,8 +26,8 @@ export function createProfileVerificationRepository(
   verifyPrivateObject?: ObjectEvidenceVerifier,
 ): VerificationTransactionRepository {
   const loadReceipts = async (membershipId: string): Promise<Receipt[]> => {
-    const rows = await getDb().select().from(learnerPrivateDocumentReceipts)
-      .where(eq(learnerPrivateDocumentReceipts.owningMembershipId, membershipId));
+    const rows = await getDb().select().from(profilePrivateDocumentReceipts)
+      .where(eq(profilePrivateDocumentReceipts.owningMembershipId, membershipId));
     return rows.map(r => ({
       id:r.id, owningMembershipId:r.owningMembershipId,
       purpose:r.purpose as Receipt["purpose"], educationEntryId:r.educationEntryId,
