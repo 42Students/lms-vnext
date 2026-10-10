@@ -170,3 +170,18 @@ The latest `main` work adds:
 **Executed-PASS tests: NONE.** Every new Vitest/PostgreSQL test remains authored only. No Drizzle journal changes were made by W04. Do not describe this checkpoint or Issue #24 as complete.
 
 **Unresolved W04 blockers:** W01 DB08-A/B/C/D schema+journal integration, transactional paid-module OFF/ineligibility/finished batch Apply gate, verified placement registration/debarment and invitation delivery, end-to-end recruiter/company/private letters, full TPO/HR/College/Super Admin page/tab/modal parity, runtime PG/CI/browser evidence. Next code item not requiring W01: deepen TPO/HR Drive Day and offer acceptance/integrity negative integration tests, then consume migration integration when available.
+
+
+## W04 follow-up — same-day Drive Day isolation and offer-issuance concurrency (2026-10-10)
+
+Legacy FE rechecked against `lms2-fe@prod-2026:e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `src/pages/tpo/drive-day/index.js` explicitly describes **today's assigned rounds** and a student coordinator seeing only drives assigned today; the roster detail `[roundId].js` exposes a limited Present/Absent interaction. Backend legacy oracle remains `lms@prod-2026:21bad59d4dfaf2fa11fdeaf9353327ce105697d5`.
+
+**New source fixes on `main`, not final parity proof:**
+- `src/modules/placements/drive-day-coordinator-policy.ts`: pure India-duty-date predicate. An assignment for today no longer authorizes every scheduled/future/past round of the same drive; only dated SCHEDULED/COMPLETED rounds qualify. Missing, PENDING and CANCELLED rounds fail closed.
+- `drive-day-coordinator-service.ts`: both today's availability and the assigned-round list filter by the exact round's scheduled date. Direct roster/attendance deep-link authorization rechecks date. Roster additionally checks same-college candidate membership and same-job role option.
+- `markDriveDayAttendance` now rechecks coordinator assignment and round under database SHARE locks, rechecks submitted/shortlisted applicant under a SHARE lock, and uses a single `ON CONFLICT DO UPDATE` attendance write instead of a racy SELECT then INSERT. Real concurrent transaction/revocation evidence remains pending.
+- `offer-service.ts`: manager issuance validates the candidate screening and applied interview results **inside** a SERIALIZABLE DB transaction after acquiring the application row lock. This prevents the previous pre-transaction result snapshot from independently authorizing an offer issued after a conflicting screening/result change. SQL serialization failures abort the transaction; automatic retry/idempotency at the API boundary still needs review.
+
+**Tests authored (not executed):** `tests/unit/placement-drive-day-coordinator-policy.test.ts` exercises India UTC date rollover, cancelled/pending/unscheduled denial; `tests/integration/placements-w04-coordinator-days.test.ts` exercises same-day roster/attendance, next-day denial, assignment revocation, forged user and concurrent idempotent check-in; `tests/integration/placements-p8-offers.test.ts` adds rejected screening and invalidated applied result negative cases. Test runner/DB/browser PASS count remains **zero**.
+
+**New explicit gaps:** transactional recheck of the coordinator's non-applicant status, signed attendance audit/history for correction/undo, admin-only historical roster review, and serializable-retry/user-error mapping. Candidate list/attendance tests remain authored only and must not be used to mark Drive Day family CLOSED. Active DB08 migrations remain W01-only.
