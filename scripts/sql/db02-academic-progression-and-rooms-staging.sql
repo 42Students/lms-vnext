@@ -240,7 +240,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
 -- trigger. Application accounts must not forge, mutate or delete the audit trail.
 -- This is a staging defense, not a substitute for restricting schema/DDL privileges.
 CREATE FUNCTION db02_guard_progression_event_immutability()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_OP = 'INSERT' AND pg_trigger_depth() >= 2 THEN
     RETURN NEW;
@@ -248,7 +248,7 @@ BEGIN
   RAISE EXCEPTION 'Cohort progression events are database-owned and immutable'
     USING ERRCODE = '23514';
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_cohort_progression_events_immutable
 BEFORE INSERT OR UPDATE OR DELETE ON cohort_progression_events
@@ -258,7 +258,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_progression_event_immutability();
 -- The initial July-boundary year is only a default; an explicit user-supplied
 -- legacy year override still needs a reviewed cohort creation API contract.
 CREATE FUNCTION db02_initialize_cohort_progression_state()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   start_day date;
   start_year integer;
@@ -279,7 +279,7 @@ BEGIN
   ) VALUES (NEW.id, 1, start_year, NEW.start_period_id, 0);
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_cohort_progression_initialize
 AFTER INSERT ON cohorts
