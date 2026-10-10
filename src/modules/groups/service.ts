@@ -499,7 +499,7 @@ export async function moveElectiveMember(
 
     const available = toGroup.capacity === null ||
       toGroup.activeCount < toGroup.capacity;
-    if (!available && toGroup.configJson.allowWaitlist !== true)
+    if (!available && toGroup.configJson.allowWaitlist === false)
       throw new GroupServiceError("GROUP_CAPACITY_REACHED");
     const toState = available ? "ACTIVE" as const : "WAITLISTED" as const;
     let waitlistPosition: number | null = null;
