@@ -100,8 +100,8 @@ Detailed page contract: `docs/parity/faculty.md`.
 | Contacts — Students | `/teacher/contacts/students` | none | Missing. | MISSING |
 | Notifications | `/teacher/notifications` | `/notifications` | Shared route exists; exact role feed behavior unverified. | PARTIAL |
 | Class Schedule | `/teacher/calendar` | none | Faculty schedule + course filters missing. | MISSING |
-| All Quizzes | `/teacher/allQuizzes` | per-course only | Aggregate daily-use page missing. | MISSING |
-| All Assignments | `/teacher/allAssignments` | per-course only | Aggregate daily-use page missing. | MISSING |
+| All Quizzes | `/teacher/allQuizzes` | `/teacher/allQuizzes` | Aggregate Faculty teaching-section quiz page, course/status filters, 20-row pagination, review-attempts and result-publish control are authored using existing scoped service. Create/edit/report/modal parity and runtime/browser verification remain. | PARTIAL |
+| All Assignments | `/teacher/allAssignments` | `/teacher/allAssignments` | Aggregate Faculty teaching-section assignment page, course/status filters, 20-row pagination, review-submissions and grade/publish control are authored. Create/edit/delete/report and runtime/browser verification remain. | PARTIAL |
 | Assignment report | `/teacher/report/assignment/[contentId]` | inline grading | Dedicated report/analytics/submission review parity missing. | MISSING |
 | Quiz report | `/teacher/report/quiz/[quizId]` | inline review | Dedicated report parity missing. | MISSING |
 | Self Profile | `/teacher/profile` | admin profile tooling only | Missing self-service profile. | MISSING |
