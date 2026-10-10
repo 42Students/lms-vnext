@@ -1,4 +1,8 @@
 import Link from "next/link";
+import {
+  CollegeAdminDashboardActions,
+  SuperAdminGlobalDashboardActions,
+} from "@/components/admin/admin-dashboard-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { MembershipChooser } from "@/components/auth/membership-chooser";
 import {
@@ -93,9 +97,9 @@ async function SuperAdminDashboard({
     : [null, null];
 
   const scopeLabel = collegeId
-    ? `College scope · ${colleges[0]?.name ?? "Selected college"}`
+    ? `College scope · ${colleges.find((item) => item.id === collegeId)?.name ?? "Selected college"}`
     : context.adminScope?.organizationId
-      ? `Organization scope · ${organizations[0]?.name ?? "Selected organization"}`
+      ? `Organization scope · ${organizations.find((item) => item.id === context.adminScope?.organizationId)?.name ?? "Selected organization"}`
       : "All-platform scope";
 
   return (
@@ -149,6 +153,7 @@ async function SuperAdminDashboard({
           management remains available only when the scope is cleared.
         </p>
       </section>
+      {!collegeId ? <SuperAdminGlobalDashboardActions /> : null}
     </div>
   );
 }
@@ -457,6 +462,7 @@ async function MembershipDashboard({
           </>
         ) : null}
       </div>
+      {hasWorkspace("COLLEGE_ADMIN") ? <CollegeAdminDashboardActions /> : null}
     </div>
   );
 }

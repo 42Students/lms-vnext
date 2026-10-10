@@ -520,3 +520,14 @@ A Super Admin announcement workspace is source-authored at `/admin/announcements
 ### W06 Activity detail and scope drill-in — 2026-10-10
 
 Super Admin Activity Center now links to a detail route that enforces current selected college/organization safety scope; a scoped admin cannot enumerate an event outside that scope by UUID. Global Super Admin may inspect global/all-tenant events. Structured metadata is sanitized before browser rendering. Legacy actor-type snapshot, request IP and User-Agent remain explicit DB10 persistence gaps; tests are authored but not executed, so no audit row/page is VERIFIED.
+
+
+### W06 Super Admin landing clarification (2026-10-10)
+
+Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sections/Dashboard.js` explicitly **removed** the old full college setup checklist from Super Admin and retained a global welcome/links state (Tenant Setup, Feature Controls, Activity Log), while a selected college shows AtAGlance. W06 renders a compact global link group only when a college is not selected, keeping Tenant Setup and Feature Controls **unavailable** until their exact legacy workflows exist; Activity Log links to the existing privileged `/activity` surface. Selected scope labels are now resolved by matching selected IDs rather than naively using the first list row.
+
+- [ ] Implement exact Tenant Setup and Feature Controls routes and workflows and enable corresponding links.
+- [ ] Replace scoped KPI/AtAGlance partials with source-matched metrics and browser verification of scope switch.
+- [ ] Execute `tests/unit/admin-dashboard-navigation.test.ts`, typecheck/build and Super Admin no-scope/org-scope/college-scope browser tests.
+
+**State: PARTIAL, not full dashboard parity or verified.**
