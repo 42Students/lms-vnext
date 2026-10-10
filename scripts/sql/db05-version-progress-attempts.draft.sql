@@ -39,7 +39,12 @@ ALTER TABLE lesson_contents
 ALTER TABLE learner_content_progress
   ADD COLUMN IF NOT EXISTS attempt integer NOT NULL DEFAULT 1,
   ADD COLUMN IF NOT EXISTS duration_seconds integer NOT NULL DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS first_completed_at timestamptz;
+  ADD COLUMN IF NOT EXISTS first_completed_at timestamptz,
+  -- BaseModel.is_deleted is inherited by LearnerContentProgress. Current
+  -- legacy countCompletedPerLearner excludes deleted rows; omitting this
+  -- dimension changes admin completion totals and history semantics.
+  -- Greenfield normalization uses a nullable tombstone timestamp.
+  ADD COLUMN IF NOT EXISTS deleted_at timestamptz;
 
 ALTER TABLE learner_content_progress
   ADD CONSTRAINT db05_progress_attempt_positive_ck CHECK (attempt >= 1),
@@ -94,6 +99,16 @@ BEFORE INSERT OR UPDATE ON learner_content_progress
 FOR EACH ROW EXECUTE FUNCTION db05_progress_first_completion_guard();
 
 COMMIT;
+
+-- PROGRESS DELETION SOURCE-PROOF REQUIRED:
+-- LearnerContentProgressRepository.countCompletedPerLearner applies
+--   (p.is_deleted = 0 OR p.is_deleted IS NULL)
+-- AFTER selecting MAX(attempt) across all rows. Do NOT compute MAX(attempt)
+-- only among non-deleted rows: that can resurrect an earlier completed attempt.
+-- findTopByLearnerIdAndLessonContentIdOrderByAttemptDesc is a separate path
+-- that currently does not filter deleted state; reconcile behavior per reader.
+-- Consumer/API cutover must implement explicit tombstone visibility, same-
+-- college scope, restore policy and negative replay tests before activation.
 
 -- Acceptance proof still required:
 --   1) duplicate (membership,content,attempt) -> 23505
