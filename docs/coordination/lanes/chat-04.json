@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "chatNumber": 4,
+  "lane": "W04",
+  "issueNumber": 24,
+  "title": "Placement execution, eligibility and outcomes",
+  "assignment": "FIXED",
+  "currentPhase": "DATABASE_AND_API_PARITY",
+  "executionState": "IN_PROGRESS",
+  "checkpoint": {
+    "checkpointKind": "INITIAL_AUDIT_BASELINE_NOT_NEW_EXECUTION",
+    "updatedOn": "2026-10-10",
+    "source": "Six-chat issues and committed DB source inventory; do not infer current CI from snapshot",
+    "observedMainSha": "a5235d8b7e4164f626a163eef51ca1ee2df713ab",
+    "lastLaneMergedSha": null,
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "summary": "Initial durable coordination record; inspect the lane issue's latest comments and current main for implementation detail."
+  },
+  "domain": {
+    "ids": [
+      "DB08"
+    ],
+    "historicalCandidateTables": 18,
+    "historicalCandidateFields": 280,
+    "fieldDispositionsReviewed": null,
+    "fieldSemanticsVerified": 0,
+    "approvedRetirementFields": null,
+    "fullDisposableMigrationReplay": "NOT_VERIFIED"
+  },
+  "api": {
+    "requiredOperations": null,
+    "mappedOperations": null,
+    "verifiedOperations": null,
+    "executedPassingContractTests": null
+  },
+  "qualityGates": {
+    "lint": "NOT_VERIFIED",
+    "typecheck": "NOT_VERIFIED",
+    "unit": "NOT_VERIFIED",
+    "postgresIntegration": "NOT_VERIFIED",
+    "build": "NOT_VERIFIED",
+    "browser": "NOT_VERIFIED"
+  },
+  "blockers": [
+    "W01 must promote DB08 schema and validate DB triggers",
+    "Season-dependent data/API flows and external outcomes not fully reconciled",
+    "PG/browser security tests authored but not proven passing"
+  ],
+  "handoffs": [],
+  "nextAction": "Complete cohort/batch targeting and registration, season-free placement data model, actor-concurrent Drive/offer lifecycle, and W01 DB08 migration replay.",
+  "evidenceLinks": [
+    "https://github.com/42Students/lms-vnext/issues/24"
+  ],
+  "overallPercentComplete": null,
+  "note": "No overall percentage until required DB/API operations and evidence denominators are enumerated. Zero formally verified fields does not imply zero implemented code."
+}
