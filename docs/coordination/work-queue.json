@@ -175,10 +175,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "1f4094b3271e94dbf3bc5e5515d656741178f927",
+      "latestEvidenceSha": "a8bd5e98e06ed19079aaec7befa9395184061f0e",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "OPEN — all 312 candidates only source-triaged; staged schema and SQL unregistered. No runtime fields verified or DB tests executed. Source consistency witness passed but not PostgreSQL parity.",
+      "completionNote": "IN PROGRESS; 312/312 candidates source-triaged; staged DB01 branding & DNS diagnostics not integrated, tenant domain recheck/soft-delete lifecycle mismatches and cross-domain recruiter grant expiry source gap documented; no executed CI/Postgres tests, 0 runtime-semantic fields verified.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
