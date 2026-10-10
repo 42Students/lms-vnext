@@ -7,6 +7,7 @@ import {
 } from "@/modules/identity/context";
 
 export type PlatformPermission =
+  | "identity.self.manage"
   | "admin-scope.select"
   | "organization.read"
   | "organization.manage"
@@ -112,6 +113,10 @@ export function can(
 ): boolean {
   if (!context || context.user.platformStatus !== "ACTIVE") {
     return false;
+  }
+
+  if (permission === "identity.self.manage") {
+    return true;
   }
 
   if (permission === "admin-scope.select") {
