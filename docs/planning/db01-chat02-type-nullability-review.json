@@ -17,10 +17,11 @@
       "LOCAL_TIMESTAMP_TO_TZ": 17,
       "POSSIBLE_VARCHAR_CAPACITY_NARROWING": 9,
       "NONNULL_LEGACY_DEFAULT_MISSING": 4,
-      "LEGACY_REQUIRED_TARGET_NULLABLE": 1
+      "LEGACY_REQUIRED_TARGET_NULLABLE": 1,
+      "SEMANTIC_TYPE_FAMILY_REDESIGN": 5
     },
-    "fieldsWithFlags": 52,
-    "zeroFlagFields": 24,
+    "fieldsWithFlags": 55,
+    "zeroFlagFields": 21,
     "vnextRuntimeSemanticsVerified": 0
   },
   "interpretation": [
@@ -30,7 +31,8 @@
     "INT key to UUID is intentional normalized greenfield design; no legacy record migration is needed.",
     "Timestamp without timezone vs timestamptz must be verified for deadlines/cross-timezone behavior.",
     "A Boolean soft-delete mapped to archived_at timestamp is a lifecycle redesign, not a like-for-like nullable conversion.",
-    "Passing this static report does not mean physical migrations replay, live target DB exists, or any field semantic parity is proved."
+    "Passing this static report does not mean physical migrations replay, live target DB exists, or any field semantic parity is proved.",
+    "Five nontrivial type-family redesign mappings (including faculty.department free-text to UUID, boolean deletion to timestamp/status) need exact business semantics; physical target presence alone cannot close them."
   ],
   "rows": [
     {
@@ -411,10 +413,12 @@
         "defaultValue": null
       },
       "reviewFlags": [
-        "NONNULL_LEGACY_DEFAULT_MISSING"
+        "NONNULL_LEGACY_DEFAULT_MISSING",
+        "SEMANTIC_TYPE_FAMILY_REDESIGN"
       ],
       "reviewNotes": [
-        "Default may be replaced by application state, different column semantics or enum representation; validate."
+        "Default may be replaced by application state, different column semantics or enum representation; validate.",
+        "Normalized representation changes the data family (free-text to FK UUID, boolean deletion to status/timestamp, or numeric faculty type to string); require exact producer/consumer and state conversion proof."
       ],
       "decision": "REQUIRES_SEMANTIC_REVIEW",
       "runtimeVerified": false
@@ -606,8 +610,12 @@
         "nullable": true,
         "defaultValue": null
       },
-      "reviewFlags": [],
-      "reviewNotes": [],
+      "reviewFlags": [
+        "SEMANTIC_TYPE_FAMILY_REDESIGN"
+      ],
+      "reviewNotes": [
+        "Normalized representation changes the data family (free-text to FK UUID, boolean deletion to status/timestamp, or numeric faculty type to string); require exact producer/consumer and state conversion proof."
+      ],
       "decision": "REQUIRES_SEMANTIC_REVIEW",
       "runtimeVerified": false
     },
@@ -646,8 +654,12 @@
         "nullable": true,
         "defaultValue": null
       },
-      "reviewFlags": [],
-      "reviewNotes": [],
+      "reviewFlags": [
+        "SEMANTIC_TYPE_FAMILY_REDESIGN"
+      ],
+      "reviewNotes": [
+        "Normalized representation changes the data family (free-text to FK UUID, boolean deletion to status/timestamp, or numeric faculty type to string); require exact producer/consumer and state conversion proof."
+      ],
       "decision": "REQUIRES_SEMANTIC_REVIEW",
       "runtimeVerified": false
     },
@@ -1030,11 +1042,13 @@
       },
       "reviewFlags": [
         "LEGACY_REQUIRED_TARGET_NULLABLE",
-        "NONNULL_LEGACY_DEFAULT_MISSING"
+        "NONNULL_LEGACY_DEFAULT_MISSING",
+        "SEMANTIC_TYPE_FAMILY_REDESIGN"
       ],
       "reviewNotes": [
         "May be intentional normalized state conversion; do not assume data loss.",
-        "Default may be replaced by application state, different column semantics or enum representation; validate."
+        "Default may be replaced by application state, different column semantics or enum representation; validate.",
+        "Normalized representation changes the data family (free-text to FK UUID, boolean deletion to status/timestamp, or numeric faculty type to string); require exact producer/consumer and state conversion proof."
       ],
       "decision": "REQUIRES_SEMANTIC_REVIEW",
       "runtimeVerified": false
@@ -1204,8 +1218,12 @@
         "nullable": false,
         "defaultValue": "'ACTIVE'"
       },
-      "reviewFlags": [],
-      "reviewNotes": [],
+      "reviewFlags": [
+        "SEMANTIC_TYPE_FAMILY_REDESIGN"
+      ],
+      "reviewNotes": [
+        "Normalized representation changes the data family (free-text to FK UUID, boolean deletion to status/timestamp, or numeric faculty type to string); require exact producer/consumer and state conversion proof."
+      ],
       "decision": "REQUIRES_SEMANTIC_REVIEW",
       "runtimeVerified": false
     },
