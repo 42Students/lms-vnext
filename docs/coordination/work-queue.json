@@ -650,17 +650,17 @@
       "paths": [
         "docs/planning/db-pass4-columns-db10_shared_operations.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "aca27205efd161936e48857fba3595cef9905a46",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Chat 5 source-reconciled all 19 DB10 shared-operations tables / 221 fields at family level. Ledger remains deliberately 221 UNMAPPED / 0 verified pending exact per-field semantics and runtime evidence. Confirmed active gaps: skills/synonyms/usage, log-alert signature/account/state, canonical notification-template registry, and full outbound/SMS breadth; app_setting needs split redesign; announcement/tracker/lease/outbound schemas remain unjournalled drafts.",
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:37:00.000Z",
       "startedAt": "2026-10-10T20:37:15.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-10T20:42:00.000Z",
+      "completionCommitSha": "aca27205efd161936e48857fba3595cef9905a46",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -684,6 +684,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:37:15.000Z",
           "reason": "Chat 5 started DB10 shared operational persistence source-to-vNext reconciliation."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-10T20:42:00.000Z",
+          "reason": "DB10 family-level source reconciliation committed; exact field/migration/runtime verification remains open."
         }
       ]
     },
