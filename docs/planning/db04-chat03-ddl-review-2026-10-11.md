@@ -18,11 +18,49 @@ Compared legacy `V187__profile_verification.sql` DDL against the staged vNext Dr
 | --- | ---: | --- |
 | Legacy DB04 source candidate tables | 7 | Historical candidate tables, not necessarily 7 active tables |
 | Legacy DB04 candidate fields | 103 | Exhaustiveness beyond the frozen inventory not proved |
-| DDL-to-staged schema source-reviewed in this batch | 43 | 15 verification + 10 history + 18 academic; **not** workflow verified |
-| Other DB04 fields not covered by this batch | 60 | Qualifications, registration, image and approver card need current source usage and disposition |
+| DDL-to-staged schema source-reviewed | 43 | 15 verification + 10 history + 18 academic; **not** workflow verified |
+| Repository source/disposition reviewed | **103 / 103** | All frozen candidates now have source evidence; the later 60 are disposition-reviewed, not DDL/runtime certified |
+| Remaining-batch current named producer/consumer confirmed | 27 | `qualification` 24 + `student_image` 3 |
+| Remaining-batch unresolved retirement candidates | 33 | `student_registration` 22 + `approver_id_card` 11; **not approved retirements** |
 | Formally DB/semantic verified fields | **0** | No disposable PostgreSQL verification executed |
 | Registered and replayed DB04 migration | **No** | Staged schema and SQL are not runtime contract |
 | Approved field/table retirements | **0** | No unsupported retirement inferred |
+
+
+## Remaining 60-field source/disposition pass
+
+The exact legacy oracles are still unchanged: backend `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`, frontend `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`. The remaining 60 frozen candidates were inspected against those source trees and the current vNext profile contract. This completes a **source/disposition review**, not semantic or PostgreSQL verification.
+
+### Qualification — 24 fields: ACTIVE source contract, incomplete vNext semantics
+
+`Qualification.java`, `QualificationRepository.java`, `LearnerProfileServiceImpl.java`, the learner education controller, frontend `profile/about/qualifications.js`, and `ScreeningServiceImpl.java` prove that the qualification table remains an active product contract. Current profile CRUD reads/writes the structured education fields, uses soft delete, validates learner-owned marksheet references, and the production screening service consumes program, specialization, grading type/grade and graduation year. In particular, screening explicitly accepts both **CGPA and GPA**.
+
+Current vNext nests education in `learner_profiles.profile_document.education[]`. That normalization is valid in principle, but the strict schema currently loses or changes several active semantics:
+
+- `grading_type`: vNext accepts `CGPA | Percentage | Grade`, while production screening explicitly consumes **GPA** too.
+- `is_currently_pursuing`: vNext has no explicit persisted flag; treating a blank `endYear` as equivalent is not proven.
+- `certificate_upload`: production exposes learner marksheet attachment. The staged private-receipt table can represent a secure object receipt, but there is no enforced education-item-to-receipt linkage yet.
+- `is_recent_education`: production persists/sorts the flag and qualification validation expects a single primary qualification in qualification sets; vNext has no persisted counterpart.
+- `exam_rank`: no explicit vNext field; whether `examDetails` fully supersedes it is not proven.
+- legacy `degree/field/score/description` are still read/written by the backend compatibility DTO. Because vNext is greenfield they may ultimately be retired, but that is a compatibility decision rather than a silent omission.
+- per-item create/update/tombstone history is not represented by the aggregate JSON timestamps. Whether that is acceptable needs an audit/history decision.
+
+### Student image — 3 fields: ACTIVE source contract, missing persisted vNext collection
+
+`StudentImageServiceImpl` still creates rows, serializes `image_data` as `[{imageId,imageUrl,active}]`, fetches by learner, and deactivates individual image IDs. `StudentImageController` exposes authenticated create/get/deactivate endpoints and checks learner access plus the learner-owned storage folder.
+
+No equivalent persisted image collection was found in the current vNext learner profile contract. `profile_private_document_receipts` has a `PROFILE_IMAGE` purpose, which can prove an uploaded object, but a receipt alone does not encode the legacy collection identity/active-state behavior. DB04 therefore needs either a normalized learner-image relation or an explicitly designed profile-document image collection referencing secure receipts.
+
+### student_registration — 22 fields: unresolved retirement candidate, not placement registration
+
+The exact production backend tree has no named `StudentRegistration` model/controller/service/repository and no CRM-named source path. Current learner placement registration is a **different** model/table, `PlacementRegistration -> placement_registration`, and `BatchRegistrationService` works through learner/class/batch/placement tables.
+
+That is strong evidence against blindly recreating `student_registration`, but it does **not** prove absence of native SQL, detached integrations or external CRM consumers. All 22 fields are therefore marked `UNRESOLVED_RETIREMENT_CANDIDATE`, not retired. DB01/DB02 must either prove the external roster/import path is dead or design a separate external-registration/import contract; it must not be mapped to DB08 `placement_registration` by name.
+
+### approver_id_card — 11 fields: unresolved retirement candidate
+
+The exact production backend tree has no named approver/assigned-exam model, repository, service or controller path. Named exam code that remains is learner profile qualifying-exam configuration, not an assigned-exam reviewer-card subsystem. This makes `approver_id_card` a strong retirement candidate, but native-SQL or detached consumer absence is still unproved. No vNext table should be added merely to preserve the historical name until that proof or explicit product approval exists.
+
 
 ### Observations requiring closure (not assertions of executed failures)
 
@@ -42,10 +80,10 @@ Compared legacy `V187__profile_verification.sql` DDL against the staged vNext Dr
 
 ## Next witness and integration queue
 
-1. Continue the remaining 60 source fields: `qualification` (24), `student_registration` (22), `student_image` (3), `approver_id_card` (11). Confirm current producers/consumers before deciding active vs retired; avoid duplicating DB01/DB02/DB08 work. Also finish producer/consumer reviews and SQL proof for the 43 source-reviewed proposals.
+1. Source/disposition review is now 103/103. Close the concrete qualification/image gaps, obtain DB01/DB02 disposition for `student_registration`, and prove native-SQL/external-consumer absence or explicit retirement approval for `approver_id_card`. Also finish semantic producer/consumer equivalence and SQL proof for all active mappings.
 2. With the DB03 owner, avoid concurrent edits of `src/db/schema/**`. Chat 1 exclusively integrates `drizzle/**`, schema barrel and CI. Hand off DB04 staged constraints/SQL and confirm actual replay.
 3. Execute negative SQL witnesses for bogus private object keys/digests, forged tenant/role, UPDATE/DELETE event, current-row update without event, mismatched mark section/owner and duplicate submissions/reviews.
 4. Execute snapshot privacy/grade formula and storage-backed receipt lifecycle tests. Leave GCP/malware scanner and PostgreSQL witness outcomes BLOCKED if infrastructure is unavailable.
 5. Update the field ledger with **executed** exact test source+commit SHA only; do not count these 43 source comparisons as DB_TESTED or VERIFIED.
 
-**Current disposition:** DB-007 remains `IN_PROGRESS`. No DB04 field is certified, no phase promotion, no source-runtime code or migration journal edited during this batch.
+**Current disposition:** DB-007 remains `IN_PROGRESS`. The frozen 103/103 candidate fields now have source/disposition review evidence, but **0 are semantic/runtime certified** and **0 retirements are approved**. No phase promotion. This pass changed documentation only; it did not edit shared schema/migration files or claim PostgreSQL evidence.
