@@ -6,7 +6,7 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
-import { ProjectList } from "@/components/projects/project-list";
+import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
@@ -104,7 +104,7 @@ export default async function SuperAdminProjectsPage({
 
       <ProjectAdminFilters query={query} />
 
-      <ProjectList
+      <ProjectAdminWorkspaceList
         items={result.items.map((project) => ({
           id: project.id,
           title: project.title,
