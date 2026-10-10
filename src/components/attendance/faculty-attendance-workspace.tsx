@@ -27,7 +27,9 @@ type Course = {
 type Learner = {
   membershipId: string;
   displayName: string | null;
-  email: string;
+  email: string | null;
+  phoneE164: string | null;
+  rollNumber: string | null;
 };
 
 type Session = {
@@ -51,7 +53,9 @@ type RecordRow = {
   note: string | null;
   markedAt: string;
   displayName: string | null;
-  email: string;
+  email: string | null;
+  phoneE164: string | null;
+  rollNumber: string | null;
 };
 
 export type FacultyAttendanceWorkspaceData = {
@@ -211,6 +215,8 @@ export function FacultyAttendanceWorkspace({
           membershipId: record.membershipId,
           displayName: record.displayName,
           email: record.email,
+          phoneE164: record.phoneE164,
+          rollNumber: record.rollNumber,
         });
       }
     }
@@ -562,7 +568,16 @@ export function FacultyAttendanceWorkspace({
                           {learnerName(learner)}
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {learner.email}
+                          {[
+                            learner.rollNumber
+                              ? `Roll ${learner.rollNumber}`
+                              : null,
+                            learner.email,
+                            learner.phoneE164,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ") ||
+                            "Contact details unavailable"}
                         </p>
                       </td>
                       {monthSessions.map((session) => {
@@ -719,7 +734,16 @@ export function FacultyAttendanceWorkspace({
                                 {learnerName(learner)}
                               </p>
                               <p className="mt-1 text-xs text-muted-foreground">
-                                {learner.email}
+                                {[
+                                  learner.rollNumber
+                                    ? `Roll ${learner.rollNumber}`
+                                    : null,
+                                  learner.email,
+                                  learner.phoneE164,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" · ") ||
+                                  "Contact details unavailable"}
                               </p>
                             </div>
                             <div className="flex gap-2">
