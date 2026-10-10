@@ -39,3 +39,21 @@ export function countVerifiedExternalPlacements(
 ): number {
   return offers.filter(isVerifiedExternalPlacement).length;
 }
+
+/**
+ * Off-campus offers require explicit placement-cell verification. Neither a
+ * pending submission nor a rejected/revoked offer contributes to placements.
+ * The caller keeps this decision and immutable audit event in one transaction.
+ */
+export type ExternalOfferDecision = "VERIFY" | "REJECT" | "REVOKE";
+export type ExternalOfferStatus = ExternalOfferReview["status"];
+
+export function nextExternalOfferStatus(
+  before: ExternalOfferStatus,
+  action: ExternalOfferDecision,
+): ExternalOfferStatus {
+  if (before === "SUBMITTED" && action === "VERIFY") return "VERIFIED";
+  if (before === "SUBMITTED" && action === "REJECT") return "REJECTED";
+  if (before === "VERIFIED" && action === "REVOKE") return "REVOKED";
+  throw new Error("DB08_EXTERNAL_OFFER_INVALID_TRANSITION");
+}
