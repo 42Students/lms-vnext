@@ -3729,7 +3729,7 @@
         "vnextEquivalenceStatus": "NOT_PROVEN",
         "runtimePostgresStatus": "NOT_EXECUTED",
         "identifiedGap": "vNext has no room/lecture-hall entity or room_id; section_schedule_events.location is free text and cannot preserve room identity, capacity, department scope, type or schedule FK semantics.",
-        "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+        "stagedContractPath": "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
       },
       "db02TableSourceDisposition": {
         "status": "ACTIVE_SOURCE_CONFIRMED",
@@ -5727,7 +5727,7 @@
         "vnextEquivalenceStatus": "NOT_PROVEN",
         "runtimePostgresStatus": "NOT_EXECUTED",
         "identifiedGap": "vNext academic_periods is college-scoped calendar time and cannot represent program-local term ordinal/name/credits/activity by itself.",
-        "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+        "stagedContractPath": "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
       },
       "db02TableSourceDisposition": {
         "status": "ACTIVE_SOURCE_CONFIRMED",
@@ -6257,7 +6257,7 @@
         "vnextEquivalenceStatus": "NOT_PROVEN",
         "runtimePostgresStatus": "NOT_EXECUTED",
         "identifiedGap": "vNext course_offerings stores similar values only for a cohort + academic period; it does not preserve a reusable program-term curriculum mapping.",
-        "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+        "stagedContractPath": "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
       },
       "db02TableSourceDisposition": {
         "status": "ACTIVE_SOURCE_CONFIRMED",
