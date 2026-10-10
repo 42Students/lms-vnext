@@ -90,6 +90,31 @@ async function loadJob(jobId: string) {
   return row;
 }
 
+/**
+ * An assigned learner can serve as a Drive Day coordinator even if the
+ * placement eligibility grid says INELIGIBLE, but forged or suspended
+ * membership context can never grant student roster access.
+ */
+async function hasActiveCoordinatorIdentity(context: RequestContext) {
+  const membership = context.membership;
+  if (!membership ||
+      !hasMembershipRole(context, "LEARNER") ||
+      context.user.platformStatus !== "ACTIVE") return false;
+  const [member] = await getDb().select({ id: collegeMemberships.id })
+    .from(collegeMemberships)
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "LEARNER"),
+    ))
+    .where(and(
+      eq(collegeMemberships.id, membership.id),
+      eq(collegeMemberships.userId, context.user.id),
+      eq(collegeMemberships.collegeId, membership.collegeId),
+      eq(collegeMemberships.status, "ACTIVE"),
+    )).limit(1);
+  return Boolean(member);
+}
+
 export async function hasStudentCoordinatorAssignmentToday(
   context: RequestContext,
   now: Date = new Date(),
@@ -101,6 +126,8 @@ export async function hasStudentCoordinatorAssignmentToday(
   ) {
     return false;
   }
+
+  if (!(await hasActiveCoordinatorIdentity(context))) return false;
 
   // Coordinator access is a limited exception to learner eligibility, NOT an
   // exception to the college-wide paid Placements module switch.
@@ -406,6 +433,10 @@ export async function listMyDriveDayRounds(
     );
   }
 
+  if (!(await hasActiveCoordinatorIdentity(context))) {
+    throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
+  }
+
   if (!(await resolveOptionalModuleAccess(context)).placements.enabled) {
     throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
   }
@@ -535,6 +566,9 @@ async function loadRoundAndAccess(
       "COLLEGE_ADMIN",
     )
   ) {
+    if (!(await hasActiveCoordinatorIdentity(context))) {
+      throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
+    }
     if (
       row.job.collegeId !== context.membership.collegeId ||
       !(await resolveOptionalModuleAccess(context)).placements.enabled
