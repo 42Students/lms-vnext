@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_ACTIVE_CONTRACT_RECONCILIATION_IN_PROGRESS",
+    "checkpointKind": "DB005_SOURCE_AND_STAGING_CONTRACT_IN_PROGRESS",
     "updatedOn": "2026-10-11",
     "observedMainSha": "9a9c2984e855905e50f6e22b233a4624a9bcb035",
-    "lastWorkerMergedSha": "c71a639c1bf8a95dee3c72ac7727d505720376af",
+    "lastWorkerMergedSha": "7ca737e9d7aa67a86d55e1d7110374ba81375d0c",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-005 active-contract batch: 19 persisted legacy fields source-confirmed across semester, semester_course and lecture_hall. Program-scoped curriculum terms/course mappings and first-class rooms are not equivalent to current college academic_periods/cohort-period offerings/free-text schedule location. Unregistered staging SQL committed; 0 semantic equivalence certifications and 0 PostgreSQL tests executed."
+    "summary": "DB02 now has source-backed canonical progression/term/timetable contract, unregistered staging SQL, 33 high-risk active semantic dispositions, and live vNext implementation re-diff. Missing canonical cohort current term/year, program term curriculum, lecture halls and schedule overlap constraints remain unregistered/unverified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -29,8 +29,23 @@
   "lastAuthoredTests": [],
   "lastExecutedPassingTests": [],
   "blockers": [],
-  "handoffs": [],
-  "nextAction": "Continue DB-005 with the remaining 10 DB02 tables: prove active/retired producer-consumer semantics for batch, class, class_schedule, faculty associations/mappings/teaching assignments, new_program/new_program_structure and historical program/program_structure; then hand approved schema deltas to Chat 1 and execute disposable PostgreSQL acceptance before completion.",
+  "handoffs": [
+    {
+      "toChat": 5,
+      "issue": 25,
+      "topic": "DB03 must consume DB02 canonical cohort program/term/year state; period equality is insufficient.",
+      "status": "DELIVERED",
+      "evidence": "issue comment 6101947781"
+    },
+    {
+      "toChat": 1,
+      "issue": 21,
+      "topic": "Review/register DB02 staged program terms, cohort progression/history, lecture halls and overlap invariants.",
+      "status": "DELIVERED",
+      "evidence": "issue comment 6101948064"
+    }
+  ],
+  "nextAction": "Continue DB-005 source classification across remaining 125 fields; reconcile table-level active/retired status. Await Chat 1 registration/replay of staged DB02 structures; then run disposable PG concurrency/tenant/overlap acceptance before COMPLETED/DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -47,7 +62,12 @@
     "https://github.com/42Students/lms-vnext/commit/245d6a4e5ac27a8989ae437a103872a77abd773a",
     "https://github.com/42Students/lms-vnext/commit/e3dee78622848463c4d3400b01f1618b25278640",
     "https://github.com/42Students/lms-vnext/commit/b6fc8204549d29c88dc0e3123bdccd481ddd70d3",
-    "https://github.com/42Students/lms-vnext/commit/c71a639c1bf8a95dee3c72ac7727d505720376af"
+    "https://github.com/42Students/lms-vnext/commit/c71a639c1bf8a95dee3c72ac7727d505720376af",
+    "https://github.com/42Students/lms-vnext/commit/ab090c31248d03a066b07043610ef1afe0842bbd",
+    "https://github.com/42Students/lms-vnext/commit/33643e88a28fea611986833c679d3092797ca895",
+    "https://github.com/42Students/lms-vnext/commit/1cfd5cc2e6aa9b5538b05af0105e96a2a6d577e7",
+    "https://github.com/42Students/lms-vnext/commit/b0ec8707fe8655db0b439cc07adecda0210fd6f5",
+    "https://github.com/42Students/lms-vnext/commit/7ca737e9d7aa67a86d55e1d7110374ba81375d0c"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
