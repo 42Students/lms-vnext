@@ -388,13 +388,14 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "af679b124aba3e56c1c85909b47f4600f86f9657",
+      "latestEvidenceSha": "746c9b9d012a8065e980bcf466f68732f805f945",
       "verificationEvidence": [],
       "blockers": [
-        "MIGRATION_UNREGISTERED: Three DB05 drafts (version+attempt, separate lesson discussions, slug+short title) have not been registered; Chat 1 must integrate only after compatible source contract and real database tests.",
-        "PRODUCER_CONSUMER_SOURCE_GAPS: Legacy discussions six extension fields are historical snapshot-only; DTO 5000 vs snapshot varchar255. Course display flags, parent lineage, content metadata, private assets and tenant consistency remain unresolved.",
-        "APPLICATION_WRITE_CONTRACT_MISSING: vNext course/lesson/content writers do not yet use version CAS; progress readers/writers still assume unique membership+content; new columns/indexes must not be activated before service fixes.",
-        "DATABASE_GATE_NOT_PROVEN: Node tests were authored, not executed. PostgreSQL replay/negative tests, CI, typecheck, lint, build and browser acceptance are not verified."
+        "MIGRATION_UNREGISTERED: Six DB05 SQL drafts remain unregistered. W01 owns numbered Drizzle journal/schema barrel and migration replay. Staged course-display dependency must register before metadata-extension draft.",
+        "APPLICATION_SEMANTICS_NOT_IMPLEMENTED: Current course/lesson/content writes lack version CAS; progress still uses one membership/content unique row instead of attempts; classroom messages hard-delete and display live name.",
+        "INVARIANT_ACCEPTANCE_OPEN: Parent course ancestor cycles/cross-college constraints; per-lesson discussion upstream reparent; course metadata visibility and private content safe receipts; DB06 points/deadline linking.",
+        "SOURCE_DECISIONS_OPEN: 24 DB05 mappings require verified semantic proof; of these 3 remain missing/unproven source active state (default_subscription_days, formal_title, progress.is_deleted). 14 nested MetaData source fields source-inventoried, not runtime-tested.",
+        "EXECUTED_DB_TESTS_NONE: 14 Node test definitions authored but not run; disposable PostgreSQL replay, tenant/concurrency negative, lint/typecheck/unit/build/CI not verified. Standalone source gate intentionally exits blocked."
       ],
       "completionNote": null,
       "pickedBy": 6,
@@ -429,7 +430,8 @@
         }
       ],
       "evidenceNotes": [
-        "SOURCE_EVIDENCE_CHECKPOINT: PR #59 mapped all 16 historical discussion columns in the canonical DB05 inventory to the isolated unregistered draft; 9 primary-runtime fields vs 7 preservation-only/runtime-unproven, verifiedMappings remains 0. Source assertions passed; Node/PG/CI not executed."
+        "SOURCE_EVIDENCE_CHECKPOINT: PR #59 mapped all 16 historical discussion columns in the canonical DB05 inventory to the isolated unregistered draft; 9 primary-runtime fields vs 7 preservation-only/runtime-unproven, verifiedMappings remains 0. Source assertions passed; Node/PG/CI not executed.",
+        "SOURCE_EVIDENCE_CHECKPOINT: Six distinct unregistered DB05 drafts and 14 MetaData subfield inventory source-documented; formal verified mappings 0/92; 24 semantic decisions open. 14 authored Node test definitions, not executed. Exact evidence commit 746c9b9d012a8065e980bcf466f68732f805f945. Standalone DB05 gate is fail closed."
       ]
     },
     {
