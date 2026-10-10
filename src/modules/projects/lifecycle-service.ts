@@ -346,6 +346,151 @@ export async function completeProjectSprint(
   });
 }
 
+export async function reopenProjectSprint(
+  context: RequestContext,
+  projectIdInput: string,
+  sprintIdInput: string,
+) {
+  const scope =
+    await requireProjectLifecycleAccess(
+      context,
+      projectIdInput,
+    );
+  const sprintId =
+    projectSprintIdSchema.parse(sprintIdInput);
+  const db = getDb();
+
+  try {
+    return await db.transaction(async (tx) => {
+      const [project] = await tx
+        .select({ status: projectInstances.status })
+        .from(projectInstances)
+        .where(eq(projectInstances.id, scope.project.id))
+        .for("update")
+        .limit(1);
+
+      if (!project || project.status === "ARCHIVED") {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_INVALID_STATE",
+        );
+      }
+
+      const [sprint] = await tx
+        .select()
+        .from(projectSprints)
+        .where(
+          and(
+            eq(projectSprints.id, sprintId),
+            eq(projectSprints.projectId, scope.project.id),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (!sprint) {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_NOT_FOUND",
+        );
+      }
+      if (sprint.status !== "COMPLETED") {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_INVALID_STATE",
+        );
+      }
+
+      const [release] = await tx
+        .select({ status: projectReleases.status })
+        .from(projectReleases)
+        .where(
+          and(
+            eq(projectReleases.id, sprint.releaseId),
+            eq(projectReleases.projectId, scope.project.id),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (!release || release.status === "SHIPPED") {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_INVALID_STATE",
+        );
+      }
+
+      const [activeSibling] = await tx
+        .select({ id: projectSprints.id })
+        .from(projectSprints)
+        .where(
+          and(
+            eq(projectSprints.projectId, scope.project.id),
+            eq(projectSprints.status, "ACTIVE"),
+            ne(projectSprints.id, sprint.id),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (activeSibling) {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_ALREADY_ACTIVE",
+        );
+      }
+
+      const [reopened] = await tx
+        .update(projectSprints)
+        .set({
+          status: "ACTIVE",
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(projectSprints.id, sprint.id),
+            eq(projectSprints.status, "COMPLETED"),
+          ),
+        )
+        .returning();
+
+      if (!reopened) {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_INVALID_STATE",
+        );
+      }
+
+      await tx
+        .update(projectReleases)
+        .set({
+          status: "IN_PROGRESS",
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(projectReleases.id, sprint.releaseId),
+            ne(projectReleases.status, "SHIPPED"),
+          ),
+        );
+
+      await tx
+        .update(projectInstances)
+        .set({
+          status: "ACTIVE",
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(projectInstances.id, scope.project.id),
+            ne(projectInstances.status, "ARCHIVED"),
+          ),
+        );
+
+      return reopened;
+    });
+  } catch (error) {
+    if (error instanceof ProjectsServiceError) {
+      throw error;
+    }
+    throw mapLifecycleConstraint(error);
+  }
+}
+
 export async function updateProjectTaskStatus(
   context: RequestContext,
   projectIdInput: string,
