@@ -14,7 +14,11 @@ const routes=[
   "src/app/api/placements/tpo/leads/[leadId]/activity/route.ts",
   "src/app/api/placements/tpo/leads/[leadId]/follow-ups/route.ts",
   "src/app/api/placements/tpo/leads/[leadId]/not-now/route.ts",
-  "src/app/api/placements/tpo/leads/route.ts"
+  "src/app/api/placements/tpo/leads/[leadId]/invite/route.ts",
+  "src/app/api/placements/tpo/leads/route.ts",
+  "src/app/api/public/recruiter-invite/[token]/route.ts",
+  "src/app/api/public/recruiter-invite/[token]/not-hiring/route.ts",
+  "src/app/api/public/recruiter-invite/[token]/unsubscribe/route.ts"
 ];
 
 test("DB09 routes are all unavailable until migrations and verification", () => {
