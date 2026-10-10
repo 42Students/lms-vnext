@@ -695,3 +695,6 @@ College Admin can act inside TPO in the legacy product.
 - [ ] Desktop/mobile browser checks: search, CSV download, refresh after create/edit/archive, modal keyboard interactions, pagination and empty/error states.
 - [ ] Verify bookmarked legacy `/college-admin/departments` route behavior and route-map exception.
 - [ ] Confirm archive blockers with real DB tests, including concurrent dependency creation.
+
+
+**W06 legacy department bookmarks, 2026-10-10:** authenticated, role-fenced redirects for `/college-admin/departments` -> `/college/departments` (active college membership with COLLEGE_ADMIN) and `/superadmin/departments` -> `/admin/departments` (active SUPER_ADMIN). This preserves entry URL behavior without duplicating editor logic or weakening current scope checks. `tests/unit/legacy-department-links.test.ts` authored with negative role/disabled status cases; **execution/browser evidence pending**, so the Departments family is still PARTIAL.
