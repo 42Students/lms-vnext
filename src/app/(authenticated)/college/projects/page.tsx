@@ -1,22 +1,63 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { ProjectList } from "@/components/projects/project-list";
+import {
+  ProjectAdminFilters,
+  ProjectAdminPagination,
+  type ProjectAdminCollectionQuery,
+} from "@/components/projects/project-admin-collection-controls";
 import { CreateProjectControl } from "@/components/projects/project-create-control";
-import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
-import { listProjectInstances } from "@/modules/projects/instance-service";
+import { ProjectList } from "@/components/projects/project-list";
+import { PageHeader } from "@/components/ui/page-header";
+import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 
-export default async function CollegeProjectsPage() {
+function one(
+  value: string | string[] | undefined,
+) {
+  return Array.isArray(value)
+    ? value[0]
+    : value;
+}
+
+export default async function CollegeProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<
+    Record<
+      string,
+      string | string[] | undefined
+    >
+  >;
+}) {
   const context = await getCurrentRequestContext();
   const membership = context.membership;
   if (!membership) {
     redirect("/dashboard");
   }
 
-  const [projects, templates] = await Promise.all([
-    listProjectInstances(context, membership.collegeId),
-    listAssignedProjectTemplates(context, membership.collegeId),
+  const params = await searchParams;
+  const query: ProjectAdminCollectionQuery = {
+    q: one(params.q),
+    status: one(
+      params.status,
+    ) as ProjectAdminCollectionQuery["status"],
+    page: Number(one(params.page) ?? 1),
+    pageSize: Number(
+      one(params.pageSize) ?? 25,
+    ),
+  };
+
+  const [result, templates] = await Promise.all([
+    listProjectAdminSnapshots(
+      context,
+      membership.collegeId,
+      query,
+    ),
+    listAssignedProjectTemplates(
+      context,
+      membership.collegeId,
+    ),
   ]);
 
   return (
@@ -42,17 +83,32 @@ export default async function CollegeProjectsPage() {
           />
         }
       />
+
+      <ProjectAdminFilters query={query} />
+
       <ProjectList
-        items={projects.map((project) => ({
+        items={result.items.map((project) => ({
           id: project.id,
           title: project.title,
           summary: project.summary,
           status: project.status,
           updatedAt: project.updatedAt,
+          mentorName: project.mentorName,
+          memberCount: project.memberCount,
+          progressPercent:
+            project.progressPercent,
         }))}
         basePath="/college/projects"
-        emptyTitle="No Projects yet"
-        emptyDescription="Create a Project from an assigned published template to start a team workspace."
+        emptyTitle="No Projects match these filters"
+        emptyDescription="Clear the filters, or create a Project from an assigned published template."
+      />
+
+      <ProjectAdminPagination
+        basePath="/college/projects"
+        query={query}
+        page={result.page}
+        totalPages={result.totalPages}
+        total={result.total}
       />
     </div>
   );
