@@ -77,3 +77,24 @@ Further inspected the frozen Java oracle at `21bad59d4dfaf2fa11fdeaf9353327ce105
 Legacy preview computes `capacity - booked - used` and checks overlapping assignments; the save path upserts slots separately. The vNext implementation must serialize or lock against simultaneous commits, not rely on an earlier read-only preview (otherwise two writers may overbook). A reschedule decision moving into an already-full slot must also re-check actual capacity while holding the slot lock. Different jobs must not share a mismatched slot, round or application; composite FK requirements are staged in the draft.
 
 The precise stage metadata and source names are recorded in `docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json`. All runtime SQL/CI tests remain **NOT EXECUTED**.
+
+## Additional active legacy table ownership review
+
+Another current-oracle inspection identified **70 additional field records** belonging to active persisted table workflows (this proves table use, not each field's end-to-end equivalence). The canonical ledger now retains named `legacyUsageEvidence` for:
+
+| Legacy table | Source fields | Current producers/consumers |
+| --- | ---: | --- |
+| `prep_assignment` | 7 | `TpoStudentsReadService` inserts and reads learner preparation assignments, due dates and course progress |
+| `tpo_bell` | 8 | `TpoAuditService` inserts and reads college-wide bell events |
+| `tpo_bell_read` | 4 | `TpoAuditService` inserts/reads per-reader receipt rows; a teammate opening a bell must not clear it for another |
+| `tpo_audit_log` | 9 | `TpoAuditService` writes and lists typed actor/subject audit rows |
+| `notification_outbox` | 13 | `NotificationOutboxService` persists scheduling, retries, recipient dispatch, channel routing and caps; DB10 integration required |
+| `company` | 17 | `CompanyServiceImpl` manages organization/college scoping, dedupe, soft delete and restore |
+| `industry_company` | 12 | `RecruiterPlanDriveService` and `TpoWorkspaceService` read canonical recruiter company linkage |
+| **Total** | **70** | **Active legacy table usage, NOT 70 semantic field proofs** |
+
+[Draft SQL](sql/db09-prep-bell-read-state-candidate.sql) records proposed learner preparation assignments and per-reader college bell state without pretending a notification or generic profile row replaces them. The canonical candidate deliberately leaves `assessment_ref_id` unlinked until DB06 identifies the correct source assessment type; inventing an FK to an unrelated assessment would be worse than an explicit unresolved contract.
+
+**Non-negotiable privacy/tenant tests:** one reader must not clear another's notification; wrong-college actor cannot read private bell events; prep assignment refers to an active learner within the appropriate college, with course/assessment eligibility; job notification outbox retries remain exactly-once/idempotent and suppress unconsented emails. The SQL proposals are not registered or executed.
+
+The retained metadata captures active current-source evidence for **104 fields total across the two follow-up batches** (34 + 70). These counts do not add to 279: they are different categories of evidence about rows already in the 279-field source inventory. All DB09 semantic/PG verified counts remain **zero**.
