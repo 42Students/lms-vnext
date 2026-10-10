@@ -103,6 +103,15 @@ const contexts: Record<
 };
 
 const expectedOwnActors = {
+  "identity.self.manage": [
+    "superadmin",
+    "collegeAdmin",
+    "tpo",
+    "learner",
+    "faculty",
+    "mentor",
+    "recruiter",
+  ],
   "admin-scope.select": [
     "superadmin",
   ],
@@ -265,6 +274,9 @@ describe("platform permission matrix", () => {
 
     for (const actor of membershipActors) {
       for (const permission of permissions) {
+        if (permission === "identity.self.manage") {
+          continue;
+        }
         if (
           !can(
             contexts[actor],
