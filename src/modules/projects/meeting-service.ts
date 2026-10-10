@@ -2,6 +2,7 @@ import {
   and,
   asc,
   eq,
+  inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -286,10 +287,14 @@ export async function scheduleProjectMeeting(
           projectMeetings.projectId,
           scope.project.id,
         ),
+        inArray(projectMeetings.status, ["REQUESTED", "SCHEDULED"]),
       ),
     )
     .returning();
 
+  if (!meeting) {
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  }
   return meeting;
 }
 
@@ -402,9 +407,17 @@ export async function transitionProjectMeeting(
           projectMeetings.projectId,
           scope.project.id,
         ),
+        inArray(projectMeetings.status, ["REQUESTED", "SCHEDULED"]),
+        ...(scope.access === "LEARNER" ? [
+          eq(projectMeetings.status, "REQUESTED"),
+          eq(projectMeetings.requestedByMembershipId, context.membership!.id),
+        ] : []),
       ),
     )
     .returning();
 
+  if (!cancelled) {
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  }
   return cancelled;
 }
