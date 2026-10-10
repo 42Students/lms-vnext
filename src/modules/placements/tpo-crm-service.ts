@@ -15,6 +15,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
 import {
+  checkTpoLeadContactSchema,
   createTpoFollowupSchema,
   createTpoLeadSchema,
   logTpoLeadActivitySchema,
@@ -23,16 +24,20 @@ import {
   tpoCrmCollegeIdSchema,
   tpoCrmFollowupIdSchema,
   tpoCrmLeadIdSchema,
+  updateTpoLeadSchema,
+  type CheckTpoLeadContactInput,
   type CreateTpoFollowupInput,
   type CreateTpoLeadInput,
   type LogTpoLeadActivityInput,
   type MarkTpoNotNowInput,
   type MoveTpoFollowupInput,
+  type UpdateTpoLeadInput,
 } from "./tpo-crm-validation";
 
 export type TpoCrmErrorCode =
   | "TPO_CRM_LEAD_NOT_FOUND"
   | "TPO_CRM_LEAD_DUPLICATE"
+  | "TPO_CRM_CONTACT_REQUIRED"
   | "TPO_CRM_FOLLOWUP_NOT_FOUND"
   | "TPO_CRM_FOLLOWUP_ALREADY_DONE";
 
@@ -333,4 +338,106 @@ export async function markTpoLeadNotNow(
     .returning();
   if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
   return tpoLeadView(lead);
+}
+
+/**
+ * Legacy /recruiter-leads/check: query in the authenticated college only.
+ * Return a safe projection (never expose invite token hash).
+ * Run the same normalization as create/update so UI duplicate checks agree.
+ */
+export async function checkTpoLeadContact(
+  context: RequestContext,
+  raw: CheckTpoLeadContactInput,
+) {
+  const input = checkTpoLeadContactSchema.parse(raw);
+  await requirePlacementManageScope(context, input.collegeId);
+  const isEmail = input.contact.includes("@");
+  const normalized = isEmail
+    ? input.contact.toLowerCase()
+    : normalizePhone(input.contact);
+  const [existing] = await getDb()
+    .select()
+    .from(placementTpoLeads)
+    .where(and(
+      eq(placementTpoLeads.collegeId, input.collegeId),
+      isEmail
+        ? eq(placementTpoLeads.emailNorm, normalized!)
+        : eq(placementTpoLeads.phoneNorm, normalized!),
+    ))
+    .limit(1);
+  return existing ? tpoLeadView(existing) : null;
+}
+
+/**
+ * Legacy edit action, intentionally safer on PATCH: omitted contacts are
+ * preserved, explicit null clears them. The locked row validates the
+ * effective email/phone pair before either contact can be deleted.
+ * Unique indexes are the authoritative concurrency-safe duplicate guard.
+ */
+export async function updateTpoLead(
+  context: RequestContext,
+  rawLeadId: string,
+  raw: UpdateTpoLeadInput,
+) {
+  const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
+  const input = updateTpoLeadSchema.parse(raw);
+  await requirePlacementManageScope(context, input.collegeId);
+
+  try {
+    return await getDb().transaction(async tx => {
+      const [current] = await tx
+        .select()
+        .from(placementTpoLeads)
+        .where(and(
+          eq(placementTpoLeads.collegeId, input.collegeId),
+          eq(placementTpoLeads.id, leadId),
+        ))
+        .for("update")
+        .limit(1);
+      if (!current) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+
+      const emailNorm = input.email === undefined
+        ? current.emailNorm
+        : input.email;
+      const phoneNorm = input.phone === undefined
+        ? current.phoneNorm
+        : normalizePhone(input.phone ?? undefined);
+      if (!emailNorm && !phoneNorm) {
+        throw new TpoCrmError("TPO_CRM_CONTACT_REQUIRED");
+      }
+      const source = input.source === undefined
+        ? current.source
+        : input.source ?? (current.source === "IMPORT" ? "IMPORT" : "MANUAL");
+      const [updated] = await tx.update(placementTpoLeads)
+        .set({
+          name: input.name ?? current.name,
+          designation: input.designation === undefined
+            ? current.designation
+            : input.designation,
+          emailNorm,
+          phoneNorm,
+          companyName: input.companyName ?? current.companyName,
+          source,
+          updatedAt: new Date(),
+        })
+        .where(and(
+          eq(placementTpoLeads.collegeId, input.collegeId),
+          eq(placementTpoLeads.id, leadId),
+        ))
+        .returning();
+      if (!updated) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+      return tpoLeadView(updated);
+    });
+  } catch (error) {
+    // Convert only the two known college-scoped contact uniqueness races.
+    // Never claim a random constraint failure is a duplicate lead.
+    const pgError = error as { code?: string; constraint?: string };
+    if (pgError.code === "23505" && (
+      pgError.constraint === "placement_tpo_leads_college_email_uq" ||
+      pgError.constraint === "placement_tpo_leads_college_phone_uq"
+    )) {
+      throw new TpoCrmError("TPO_CRM_LEAD_DUPLICATE");
+    }
+    throw error;
+  }
 }
