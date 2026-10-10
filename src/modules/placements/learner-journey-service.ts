@@ -17,6 +17,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listOwnAppliedPlacementResults } from "./result-service";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 
 function requireLearner(context: RequestContext) {
   if (
@@ -32,6 +33,7 @@ export async function getLearnerPlacementJourney(
   context: RequestContext,
 ) {
   const membership = requireLearner(context);
+  await requireLearnerPlacementAccess(context);
 
   const [applications, results] =
     await Promise.all([
