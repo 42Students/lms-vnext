@@ -162,14 +162,14 @@
       "paths": [
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:27:16.242Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -191,6 +191,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:26:41.998Z",
           "reason": "Chat 2 reserved next eligible global DATABASE task after checking current phase and worker checkpoint."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:27:16.242Z",
+          "reason": "Chat 2 now auditing DB01 source semantics."
         }
       ]
     },
