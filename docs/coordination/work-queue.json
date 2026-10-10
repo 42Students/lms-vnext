@@ -223,7 +223,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "e3dee78622848463c4d3400b01f1618b25278640",
+      "latestEvidenceSha": "c71a639c1bf8a95dee3c72ac7727d505720376af",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -258,7 +258,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "Chat 4 DB02 source audit: 125 legacy fields classified into 24 same-name, 32 normalized/derived, 69 no confirmed snapshot mapping; no semantic or runtime verification. See worker checkpoint and issue #24."
+      "progressNote": "Chat 4 DB02 source reconciliation now confirms 19 active persisted legacy fields across semester, semester_course and lecture_hall from exact BE/FE source producers/consumers. Staged unregistered normalized contract at scripts/sql/db02-semester-room-contract-staging.sql (program terms/curriculum rows/academic rooms plus tenant-scope guards). vNext equivalence and PostgreSQL execution remain unverified; DB-005 stays IN_PROGRESS."
     },
     {
       "id": "DB-006",
