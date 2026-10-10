@@ -87,11 +87,11 @@ Legacy contract:
 - metrics;
 - load/error/empty states.
 
-- [ ] Aggregate assignment list scope is correct.
-- [ ] Course filter/pagination match.
+- [x] Aggregate assignment list is derived from active assigned Faculty Section deliveries; tenant, assignment audience and teaching-role checks remain in the shared service.
+- [x] Course/Section filter, status filter and 20-row pagination are source-implemented; final browser parity still pending.
 - [ ] Create Assignment drawer/form matches fields and validation.
 - [ ] View assignment Faculty mode matches.
-- [ ] View Submissions modal matches.
+- [ ] View Submissions modal: existing Faculty review panel with grader action reused in aggregate page; legacy modal geometry/keyboard/accessibility not verified.
 - [ ] Report deep link works.
 - [ ] Edit assignment flow matches.
 - [ ] Delete action has equivalent confirmation/consequence behavior.
@@ -101,12 +101,12 @@ Legacy contract:
 ## Page: All Quizzes
 Legacy `QuizzesContent` runs in Faculty mode.
 
-- [ ] Aggregate quiz list and course filter match.
-- [ ] Pagination matches.
+- [x] Aggregate quiz list, Section scope, course filter and status filter source-implemented.
+- [x] Aggregate quiz list uses 20-row pagination; browser regression still pending.
 - [ ] Create quiz workflow matches.
 - [ ] Edit quiz workflow matches.
 - [ ] Delete/close lifecycle actions match.
-- [ ] View submissions/attempts action matches.
+- [ ] View attempts and result publish use existing FacultyQuizReview panel; legacy overlay/report UI behavior not fully verified.
 - [ ] Quiz Report deep link works.
 - [ ] Schedule/attempt/result-publication controls match.
 - [ ] Loading/error/empty states are verified.
@@ -191,3 +191,13 @@ Audited shared Faculty-profile sections:
 Legacy `/teacher/fileExplorer` only redirects to Courses.
 
 - [x] Classified RETIRED in master matrix; do not recreate as a product page.
+
+## 2026-10-10 W02 Faculty assessment aggregate implementation
+
+- [x] Exact legacy `/teacher/allQuizzes` and `/teacher/allAssignments` routes exist on `main`, with Faculty sidebar links, published/draft filtering, class context, progress/pagination and existing view-attempt/grade-publish modules.
+- [x] A source-authored PostgreSQL integration test checks aggregate producer scope, only assigned Section visibility, and learner-role rejection.
+- [ ] Faculty create/edit/delete and separate assignment/quiz Report routes are not yet cloned from the legacy full-screen/modal workflows.
+- [ ] Loading/failure/retry/mobile, accurate per-learner counts, and exact legacy source/browser verification remain OPEN. Existing reports and review panels are not interchangeable without the full page contract.
+- [ ] The test is authored but has **not been executed**, and W01's CI/PostgreSQL environment is not yet evidenced as passing.
+
+Reference: `docs/planning/w02-learning-assessment-closure-ledger.md` and issue #22.
