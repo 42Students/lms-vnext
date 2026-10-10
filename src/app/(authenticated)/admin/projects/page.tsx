@@ -1,13 +1,35 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { ProjectList } from "@/components/projects/project-list";
+import {
+  ProjectAdminFilters,
+  ProjectAdminPagination,
+  type ProjectAdminCollectionQuery,
+} from "@/components/projects/project-admin-collection-controls";
 import { CreateProjectControl } from "@/components/projects/project-create-control";
+import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
+import { ProjectList } from "@/components/projects/project-list";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
-import { listProjectInstances } from "@/modules/projects/instance-service";
+import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 
-export default async function SuperAdminProjectsPage() {
+function one(
+  value: string | string[] | undefined,
+) {
+  return Array.isArray(value)
+    ? value[0]
+    : value;
+}
+
+export default async function SuperAdminProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<
+    Record<
+      string,
+      string | string[] | undefined
+    >
+  >;
+}) {
   const context = await getCurrentRequestContext();
   const collegeId =
     context.adminScope?.collegeId ?? null;
@@ -15,6 +37,10 @@ export default async function SuperAdminProjectsPage() {
   if (!collegeId) {
     return (
       <div className="space-y-6">
+        <ProjectAdminNav
+          basePath="/admin/projects"
+          active="workspaces"
+        />
         <PageHeader
           eyebrow="Super Admin"
           title="Projects"
@@ -28,9 +54,28 @@ export default async function SuperAdminProjectsPage() {
     );
   }
 
-  const [projects, templates] = await Promise.all([
-    listProjectInstances(context, collegeId),
-    listAssignedProjectTemplates(context, collegeId),
+  const params = await searchParams;
+  const query: ProjectAdminCollectionQuery = {
+    q: one(params.q),
+    status: one(
+      params.status,
+    ) as ProjectAdminCollectionQuery["status"],
+    page: Number(one(params.page) ?? 1),
+    pageSize: Number(
+      one(params.pageSize) ?? 25,
+    ),
+  };
+
+  const [result, templates] = await Promise.all([
+    listProjectAdminSnapshots(
+      context,
+      collegeId,
+      query,
+    ),
+    listAssignedProjectTemplates(
+      context,
+      collegeId,
+    ),
   ]);
 
   return (
@@ -56,17 +101,32 @@ export default async function SuperAdminProjectsPage() {
           />
         }
       />
+
+      <ProjectAdminFilters query={query} />
+
       <ProjectList
-        items={projects.map((project) => ({
+        items={result.items.map((project) => ({
           id: project.id,
           title: project.title,
           summary: project.summary,
           status: project.status,
           updatedAt: project.updatedAt,
+          mentorName: project.mentorName,
+          memberCount: project.memberCount,
+          progressPercent:
+            project.progressPercent,
         }))}
         basePath="/admin/projects"
-        emptyTitle="No Projects in this college"
-        emptyDescription="Published templates can be assigned to this college and materialized into Project workspaces."
+        emptyTitle="No Projects match these filters"
+        emptyDescription="Clear the filters, or create a Project from a published template assigned to this college."
+      />
+
+      <ProjectAdminPagination
+        basePath="/admin/projects"
+        query={query}
+        page={result.page}
+        totalPages={result.totalPages}
+        total={result.total}
       />
     </div>
   );
