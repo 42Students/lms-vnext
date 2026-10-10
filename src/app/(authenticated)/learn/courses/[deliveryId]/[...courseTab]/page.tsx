@@ -10,6 +10,7 @@ import { LearnerCourseWorkspace } from "@/components/courses/learner-course-work
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { listCourseDiscussionMessages } from "@/modules/courses/discussion-service";
+import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import {
   getLearnerCourseWorkspace,
   listLearnerCourseDeliveries,
@@ -65,10 +66,16 @@ export default async function LearnerCourseTabPage({
   let content: ReactNode;
 
   if (activeTab === "home") {
-    const discussion = await listCourseDiscussionMessages(
-      context,
-      deliveryId,
-    );
+    const [discussion, display] =
+      await Promise.all([
+        listCourseDiscussionMessages(
+          context,
+          deliveryId,
+        ),
+        loadCourseDisplayContentIfReady(
+          workspace.course.id,
+        ),
+      ]);
     const courseUpdates = discussion.messages
       .filter((message) => message.senderRole !== "LEARNER")
       .sort((left, right) => {
@@ -84,6 +91,12 @@ export default async function LearnerCourseTabPage({
         workspace={workspace}
         meta={{
           courseDescription: courseMeta.courseDescription,
+          introductionText:
+            display?.introductionText ?? null,
+          bodyHtml:
+            display?.bodyHtml ?? null,
+          takeaways:
+            display?.takeaways ?? [],
           offeringType: courseMeta.offeringType,
           credits: courseMeta.credits,
           sectionName: courseMeta.sectionName,
