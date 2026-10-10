@@ -44,7 +44,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
         Leaving access takes effect immediately. The placement cell must grant access again if you need to return.
       </p>
       {error ? (
-        <div role="alert" className="mt-3 rounded-md border border-danger/30 bg-danger/5 p-3 text-sm text-danger">
+        <div role="alert" className="mt-3 rounded-md border border-error/30 bg-error/5 p-3 text-sm text-error">
           {error}
         </div>
       ) : null}
@@ -62,7 +62,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                 type="button"
                 disabled={leaving === grant.id}
                 onClick={() => void leave(grant)}
-                className="rounded-md border border-danger/30 bg-surface px-3 py-2 text-sm font-medium text-danger hover:bg-danger/5 disabled:opacity-50"
+                className="rounded-md border border-error/30 bg-surface px-3 py-2 text-sm font-medium text-error hover:bg-error/5 disabled:opacity-50"
               >
                 {leaving === grant.id ? "Leaving…" : "Leave Access"}
               </button>
