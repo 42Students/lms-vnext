@@ -417,8 +417,21 @@ export async function listMessageThreads(
     );
   }
   return getDb()
-    .select()
+    .select({
+      thread: placementTpoMessageThreads,
+      recruiterName: users.displayName,
+      recruiterEmail: users.email,
+      jobTitle: placementJobs.title,
+    })
     .from(placementTpoMessageThreads)
+    .innerJoin(
+      users,
+      eq(users.id, placementTpoMessageThreads.recruiterUserId),
+    )
+    .leftJoin(
+      placementJobs,
+      eq(placementJobs.id, placementTpoMessageThreads.jobId),
+    )
     .where(and(...conditions))
     .orderBy(
       desc(placementTpoMessageThreads.lastMessageAt),
