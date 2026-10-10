@@ -1,0 +1,3370 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-014",
+  "observedOn": "2026-10-11",
+  "status": "SOURCE_RECONCILIATION_RUNTIME_UNVERIFIED",
+  "registeredJournalHead": {
+    "idx": 40,
+    "version": "7",
+    "when": 1791591000000,
+    "tag": "0040_db03_history_actor_types",
+    "breakpoints": true
+  },
+  "registeredSnapshot": {
+    "path": "drizzle/meta/0040_snapshot.json",
+    "blobSha": "2d5064fb2e2b687e694340c2c62ddafe1c9c03cd",
+    "id": "a8d36003-4e62-4ee2-a846-d34700000040",
+    "tables": 90,
+    "foreignKeys": 211,
+    "compositeForeignKeys": 0,
+    "singleColumnForeignKeys": 211,
+    "cascadeForeignKeys": 9,
+    "checkConstraints": 201,
+    "indexes": 222,
+    "uniqueIndexes": 97,
+    "softDeleteTables": [
+      "elective_offerings",
+      "elective_slots",
+      "lms_groups"
+    ],
+    "multiParentTables": 65
+  },
+  "deltaFromPass3Snapshot0036": {
+    "oldTables": 84,
+    "newTables": 90,
+    "oldForeignKeys": 195,
+    "newForeignKeys": 211,
+    "oldCheckConstraints": 172,
+    "newCheckConstraints": 201,
+    "oldUniqueIndexes": 91,
+    "newUniqueIndexes": 97,
+    "oldSoftDeleteTables": 0,
+    "newSoftDeleteTables": 3,
+    "addedTables": [
+      "elective_offerings",
+      "elective_slots",
+      "lms_group_member_events",
+      "lms_group_members",
+      "lms_group_rules",
+      "lms_groups"
+    ],
+    "removedTables": [],
+    "oldPass3MultiParentCandidateCount": 41,
+    "currentMultiParentCount": 65,
+    "newMultiParentTables": [
+      "attendance_policies",
+      "attendance_sessions",
+      "college_memberships",
+      "elective_offerings",
+      "elective_slots",
+      "in_app_notifications",
+      "lms_group_member_events",
+      "lms_group_members",
+      "lms_groups",
+      "placement_application_screening_history",
+      "placement_application_screenings",
+      "placement_application_status_history",
+      "placement_candidate_academic_evidence",
+      "placement_eligibility_decisions",
+      "placement_job_eligibility_policies",
+      "placement_job_round_events",
+      "placement_job_rounds",
+      "placement_joining_history",
+      "placement_joining_outcomes",
+      "placement_offer_status_history",
+      "placement_offers",
+      "placement_recruiter_profiles",
+      "placement_seasons",
+      "project_template_versions"
+    ]
+  },
+  "structuralFindings": [
+    "Registered snapshot 0040 contains zero composite foreign keys; ordinary FKs still cannot prove related parents agree on tenant/project/job/course scope.",
+    "Drizzle snapshots do not encode user-defined triggers. Registered migration 0039 adds DB03 tenant/scope guards that must be audited alongside snapshot JSON.",
+    "DB03 trigger guards are source-registered but runtime-unverified while DB-001 is blocked.",
+    "Nine ON DELETE CASCADE edges remain registered; several point at user-visible operational/history children and need explicit retention/hard-delete policy.",
+    "Unique indexes on direct-college tables that omit college_id are not automatically defects; each must be documented as intentionally global or safely based on globally unique parent IDs."
+  ],
+  "registeredTriggerGuards": {
+    "lms_group_members": {
+      "trigger": "db03_member_tenant_guard",
+      "function": "db03_guard_member_tenant",
+      "protectedRelations": [
+        "group college ↔ membership college",
+        "membership/user ACTIVE state",
+        "membership role ↔ member_type"
+      ],
+      "source": "drizzle/0039_db03_scope_triggers.sql"
+    },
+    "elective_slots": {
+      "trigger": "db03_elective_slot_scope_guard",
+      "function": "db03_guard_elective_slot_scope",
+      "protectedRelations": [
+        "slot college ↔ program department college",
+        "slot college ↔ academic period college"
+      ],
+      "source": "drizzle/0039_db03_scope_triggers.sql"
+    },
+    "elective_offerings": {
+      "trigger": "db03_elective_offering_scope_guard",
+      "function": "db03_guard_elective_offering_scope",
+      "protectedRelations": [
+        "slot ↔ group college/kind",
+        "slot ↔ course college",
+        "delivery ↔ course",
+        "delivery offering ↔ section cohort/period",
+        "optional slot period ↔ delivery period"
+      ],
+      "source": "drizzle/0039_db03_scope_triggers.sql"
+    },
+    "project_instances": {
+      "trigger": "db03_project_team_scope_guard",
+      "function": "db03_guard_project_team_scope",
+      "protectedRelations": [
+        "project college ↔ team group college",
+        "team group kind=PROJECT_TEAM",
+        "team group owner_scope=COLLEGE"
+      ],
+      "source": "drizzle/0039_db03_scope_triggers.sql",
+      "partial": true
+    }
+  },
+  "multiParentRows": [
+    {
+      "table": "activity_events",
+      "parentTables": [
+        "organizations",
+        "colleges",
+        "users",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "activity_events_organization_id_organizations_id_fk",
+          "from": [
+            "organization_id"
+          ],
+          "toTable": "organizations",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "activity_events_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "activity_events_actor_user_id_users_id_fk",
+          "from": [
+            "actor_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "activity_events_actor_membership_id_college_memberships_id_fk",
+          "from": [
+            "actor_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "assignment_submissions",
+      "parentTables": [
+        "course_assignments",
+        "course_section_deliveries",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "assignment_submissions_assignment_id_course_assignments_id_fk",
+          "from": [
+            "assignment_id"
+          ],
+          "toTable": "course_assignments",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "assignment_submissions_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "assignment_submissions_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "assignment_submissions_graded_by_user_id_users_id_fk",
+          "from": [
+            "graded_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "attendance_policies",
+      "parentTables": [
+        "colleges",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "attendance_policies_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "attendance_policies_updated_by_user_id_users_id_fk",
+          "from": [
+            "updated_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "attendance_records",
+      "parentTables": [
+        "section_schedule_events",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "attendance_records_schedule_event_id_section_schedule_events_id_fk",
+          "from": [
+            "schedule_event_id"
+          ],
+          "toTable": "section_schedule_events",
+          "to": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "attendance_records_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "attendance_records_marked_by_user_id_users_id_fk",
+          "from": [
+            "marked_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "attendance_sessions",
+      "parentTables": [
+        "section_schedule_events",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "attendance_sessions_schedule_event_id_section_schedule_events_id_fk",
+          "from": [
+            "schedule_event_id"
+          ],
+          "toTable": "section_schedule_events",
+          "to": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "attendance_sessions_marked_by_user_id_users_id_fk",
+          "from": [
+            "marked_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "cohorts",
+      "parentTables": [
+        "programs",
+        "academic_periods"
+      ],
+      "foreignKeys": [
+        {
+          "name": "cohorts_program_id_programs_id_fk",
+          "from": [
+            "program_id"
+          ],
+          "toTable": "programs",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "cohorts_start_period_id_academic_periods_id_fk",
+          "from": [
+            "start_period_id"
+          ],
+          "toTable": "academic_periods",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "cohorts_expected_end_period_id_academic_periods_id_fk",
+          "from": [
+            "expected_end_period_id"
+          ],
+          "toTable": "academic_periods",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "college_memberships",
+      "parentTables": [
+        "users",
+        "colleges"
+      ],
+      "foreignKeys": [
+        {
+          "name": "college_memberships_user_id_users_id_fk",
+          "from": [
+            "user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "college_memberships_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "course_assignments",
+      "parentTables": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "course_assignments_lesson_id_course_lessons_id_fk",
+          "from": [
+            "lesson_id"
+          ],
+          "toTable": "course_lessons",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_assignments_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_assignments_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "course_discussion_messages",
+      "parentTables": [
+        "course_section_deliveries",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "course_discussion_messages_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "course_discussion_messages_sender_membership_id_college_memberships_id_fk",
+          "from": [
+            "sender_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_discussion_messages_pinned_by_user_id_users_id_fk",
+          "from": [
+            "pinned_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "course_offerings",
+      "parentTables": [
+        "courses",
+        "cohorts",
+        "academic_periods"
+      ],
+      "foreignKeys": [
+        {
+          "name": "course_offerings_course_id_courses_id_fk",
+          "from": [
+            "course_id"
+          ],
+          "toTable": "courses",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_offerings_cohort_id_cohorts_id_fk",
+          "from": [
+            "cohort_id"
+          ],
+          "toTable": "cohorts",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_offerings_academic_period_id_academic_periods_id_fk",
+          "from": [
+            "academic_period_id"
+          ],
+          "toTable": "academic_periods",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "course_quizzes",
+      "parentTables": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "course_quizzes_lesson_id_course_lessons_id_fk",
+          "from": [
+            "lesson_id"
+          ],
+          "toTable": "course_lessons",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_quizzes_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_quizzes_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "course_section_deliveries",
+      "parentTables": [
+        "course_offerings",
+        "sections"
+      ],
+      "foreignKeys": [
+        {
+          "name": "course_section_deliveries_offering_id_course_offerings_id_fk",
+          "from": [
+            "offering_id"
+          ],
+          "toTable": "course_offerings",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_section_deliveries_section_id_sections_id_fk",
+          "from": [
+            "section_id"
+          ],
+          "toTable": "sections",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "course_teaching_assignments",
+      "parentTables": [
+        "course_section_deliveries",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "course_teaching_assignments_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "course_teaching_assignments_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "elective_offerings",
+      "parentTables": [
+        "elective_slots",
+        "courses",
+        "lms_groups",
+        "course_section_deliveries"
+      ],
+      "foreignKeys": [
+        {
+          "name": "elective_offerings_slot_id_elective_slots_id_fk",
+          "from": [
+            "slot_id"
+          ],
+          "toTable": "elective_slots",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "elective_offerings_course_id_courses_id_fk",
+          "from": [
+            "course_id"
+          ],
+          "toTable": "courses",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "elective_offerings_group_id_lms_groups_id_fk",
+          "from": [
+            "group_id"
+          ],
+          "toTable": "lms_groups",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "elective_offerings_backed_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "backed_delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": true,
+      "classification": "NEW_0040_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": {
+        "trigger": "db03_elective_offering_scope_guard",
+        "function": "db03_guard_elective_offering_scope",
+        "protectedRelations": [
+          "slot ↔ group college/kind",
+          "slot ↔ course college",
+          "delivery ↔ course",
+          "delivery offering ↔ section cohort/period",
+          "optional slot period ↔ delivery period"
+        ],
+        "source": "drizzle/0039_db03_scope_triggers.sql"
+      },
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "elective_slots",
+      "parentTables": [
+        "colleges",
+        "programs",
+        "academic_periods"
+      ],
+      "foreignKeys": [
+        {
+          "name": "elective_slots_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "elective_slots_program_id_programs_id_fk",
+          "from": [
+            "program_id"
+          ],
+          "toTable": "programs",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "elective_slots_academic_period_id_academic_periods_id_fk",
+          "from": [
+            "academic_period_id"
+          ],
+          "toTable": "academic_periods",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": true,
+      "classification": "NEW_0040_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": {
+        "trigger": "db03_elective_slot_scope_guard",
+        "function": "db03_guard_elective_slot_scope",
+        "protectedRelations": [
+          "slot college ↔ program department college",
+          "slot college ↔ academic period college"
+        ],
+        "source": "drizzle/0039_db03_scope_triggers.sql"
+      },
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "faculty_profiles",
+      "parentTables": [
+        "college_memberships",
+        "departments"
+      ],
+      "foreignKeys": [
+        {
+          "name": "faculty_profiles_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "faculty_profiles_primary_department_id_departments_id_fk",
+          "from": [
+            "primary_department_id"
+          ],
+          "toTable": "departments",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "in_app_notifications",
+      "parentTables": [
+        "users",
+        "activity_events"
+      ],
+      "foreignKeys": [
+        {
+          "name": "in_app_notifications_user_id_users_id_fk",
+          "from": [
+            "user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "in_app_notifications_event_id_activity_events_id_fk",
+          "from": [
+            "event_id"
+          ],
+          "toTable": "activity_events",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "learner_content_progress",
+      "parentTables": [
+        "college_memberships",
+        "lesson_contents"
+      ],
+      "foreignKeys": [
+        {
+          "name": "learner_content_progress_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "learner_content_progress_lesson_content_id_lesson_contents_id_fk",
+          "from": [
+            "lesson_content_id"
+          ],
+          "toTable": "lesson_contents",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "learner_program_enrollments",
+      "parentTables": [
+        "college_memberships",
+        "programs",
+        "cohorts"
+      ],
+      "foreignKeys": [
+        {
+          "name": "learner_program_enrollments_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "learner_program_enrollments_program_id_programs_id_fk",
+          "from": [
+            "program_id"
+          ],
+          "toTable": "programs",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "learner_program_enrollments_cohort_id_cohorts_id_fk",
+          "from": [
+            "cohort_id"
+          ],
+          "toTable": "cohorts",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "lesson_contents",
+      "parentTables": [
+        "course_lessons",
+        "course_section_deliveries",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "lesson_contents_lesson_id_course_lessons_id_fk",
+          "from": [
+            "lesson_id"
+          ],
+          "toTable": "course_lessons",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "lesson_contents_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "lesson_contents_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "lms_group_member_events",
+      "parentTables": [
+        "lms_groups",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "lms_group_member_events_group_id_lms_groups_id_fk",
+          "from": [
+            "group_id"
+          ],
+          "toTable": "lms_groups",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "lms_group_member_events_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "lms_group_member_events_actor_user_id_users_id_fk",
+          "from": [
+            "actor_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "lms_group_members",
+      "parentTables": [
+        "lms_groups",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "lms_group_members_group_id_lms_groups_id_fk",
+          "from": [
+            "group_id"
+          ],
+          "toTable": "lms_groups",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "lms_group_members_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": {
+        "trigger": "db03_member_tenant_guard",
+        "function": "db03_guard_member_tenant",
+        "protectedRelations": [
+          "group college ↔ membership college",
+          "membership/user ACTIVE state",
+          "membership role ↔ member_type"
+        ],
+        "source": "drizzle/0039_db03_scope_triggers.sql"
+      },
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "lms_groups",
+      "parentTables": [
+        "colleges",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "lms_groups_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "lms_groups_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": true,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_application_round_exceptions",
+      "parentTables": [
+        "placement_applications",
+        "placement_job_rounds",
+        "placement_learner_requests"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_application_round_exceptions_application_id_placement_applications_id_fk",
+          "from": [
+            "application_id"
+          ],
+          "toTable": "placement_applications",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_round_exceptions_round_id_placement_job_rounds_id_fk",
+          "from": [
+            "round_id"
+          ],
+          "toTable": "placement_job_rounds",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_round_exceptions_request_id_placement_learner_requests_id_fk",
+          "from": [
+            "request_id"
+          ],
+          "toTable": "placement_learner_requests",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_application_screening_history",
+      "parentTables": [
+        "placement_applications",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_application_screening_history_application_id_placement_applications_id_fk",
+          "from": [
+            "application_id"
+          ],
+          "toTable": "placement_applications",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_screening_history_actor_user_id_users_id_fk",
+          "from": [
+            "actor_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_application_screenings",
+      "parentTables": [
+        "placement_applications",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_application_screenings_application_id_placement_applications_id_fk",
+          "from": [
+            "application_id"
+          ],
+          "toTable": "placement_applications",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_screenings_decided_by_user_id_users_id_fk",
+          "from": [
+            "decided_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_application_status_history",
+      "parentTables": [
+        "placement_applications",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_application_status_history_application_id_placement_applications_id_fk",
+          "from": [
+            "application_id"
+          ],
+          "toTable": "placement_applications",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_application_status_history_actor_user_id_users_id_fk",
+          "from": [
+            "actor_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_applications",
+      "parentTables": [
+        "placement_jobs",
+        "college_memberships",
+        "users",
+        "placement_job_role_options"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_applications_job_id_placement_jobs_id_fk",
+          "from": [
+            "job_id"
+          ],
+          "toTable": "placement_jobs",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_applications_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_applications_submitted_by_user_id_users_id_fk",
+          "from": [
+            "submitted_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_applications_role_option_id_placement_job_role_options_id_fk",
+          "from": [
+            "role_option_id"
+          ],
+          "toTable": "placement_job_role_options",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_candidate_academic_evidence",
+      "parentTables": [
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_candidate_academic_evidence_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_candidate_academic_evidence_verified_by_user_id_users_id_fk",
+          "from": [
+            "verified_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_company_relationships",
+      "parentTables": [
+        "colleges",
+        "placement_companies",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_company_relationships_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_company_relationships_company_id_placement_companies_id_fk",
+          "from": [
+            "company_id"
+          ],
+          "toTable": "placement_companies",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_company_relationships_owner_membership_id_college_memberships_id_fk",
+          "from": [
+            "owner_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_company_relationships_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_drive_day_coordinator_assignments",
+      "parentTables": [
+        "colleges",
+        "placement_jobs",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_drive_day_coordinator_assignments_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_drive_day_coordinator_assignments_job_id_placement_jobs_id_fk",
+          "from": [
+            "job_id"
+          ],
+          "toTable": "placement_jobs",
+          "to": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_drive_day_coordinator_assignments_learner_membership_id_college_memberships_id_fk",
+          "from": [
+            "learner_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_drive_day_coordinator_assignments_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_eligibility_decisions",
+      "parentTables": [
+        "colleges",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_eligibility_decisions_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_eligibility_decisions_decided_by_user_id_users_id_fk",
+          "from": [
+            "decided_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_eligibility_overrides",
+      "parentTables": [
+        "placement_jobs",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_eligibility_overrides_job_id_placement_jobs_id_fk",
+          "from": [
+            "job_id"
+          ],
+          "toTable": "placement_jobs",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_eligibility_overrides_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_eligibility_overrides_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_job_eligibility_policies",
+      "parentTables": [
+        "placement_jobs",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_job_eligibility_policies_job_id_placement_jobs_id_fk",
+          "from": [
+            "job_id"
+          ],
+          "toTable": "placement_jobs",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_job_eligibility_policies_updated_by_user_id_users_id_fk",
+          "from": [
+            "updated_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_job_round_events",
+      "parentTables": [
+        "placement_job_rounds",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_job_round_events_round_id_placement_job_rounds_id_fk",
+          "from": [
+            "round_id"
+          ],
+          "toTable": "placement_job_rounds",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_job_round_events_actor_user_id_users_id_fk",
+          "from": [
+            "actor_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_job_rounds",
+      "parentTables": [
+        "placement_jobs",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_job_rounds_job_id_placement_jobs_id_fk",
+          "from": [
+            "job_id"
+          ],
+          "toTable": "placement_jobs",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_job_rounds_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_jobs",
+      "parentTables": [
+        "colleges",
+        "placement_company_relationships",
+        "users",
+        "placement_seasons"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_jobs_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_jobs_company_relationship_id_placement_company_relationships_id_fk",
+          "from": [
+            "company_relationship_id"
+          ],
+          "toTable": "placement_company_relationships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_jobs_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_jobs_season_id_placement_seasons_id_fk",
+          "from": [
+            "season_id"
+          ],
+          "toTable": "placement_seasons",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_joining_history",
+      "parentTables": [
+        "placement_offers",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_joining_history_offer_id_placement_offers_id_fk",
+          "from": [
+            "offer_id"
+          ],
+          "toTable": "placement_offers",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_joining_history_actor_user_id_users_id_fk",
+          "from": [
+            "actor_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_joining_outcomes",
+      "parentTables": [
+        "placement_offers",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_joining_outcomes_offer_id_placement_offers_id_fk",
+          "from": [
+            "offer_id"
+          ],
+          "toTable": "placement_offers",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_joining_outcomes_recorded_by_user_id_users_id_fk",
+          "from": [
+            "recorded_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_learner_requests",
+      "parentTables": [
+        "placement_applications",
+        "placement_job_rounds",
+        "placement_offers",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_learner_requests_application_id_placement_applications_id_fk",
+          "from": [
+            "application_id"
+          ],
+          "toTable": "placement_applications",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_learner_requests_round_id_placement_job_rounds_id_fk",
+          "from": [
+            "round_id"
+          ],
+          "toTable": "placement_job_rounds",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_learner_requests_offer_id_placement_offers_id_fk",
+          "from": [
+            "offer_id"
+          ],
+          "toTable": "placement_offers",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_learner_requests_requested_by_user_id_users_id_fk",
+          "from": [
+            "requested_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_learner_requests_decided_by_user_id_users_id_fk",
+          "from": [
+            "decided_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_offer_status_history",
+      "parentTables": [
+        "placement_offers",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_offer_status_history_offer_id_placement_offers_id_fk",
+          "from": [
+            "offer_id"
+          ],
+          "toTable": "placement_offers",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_offer_status_history_actor_user_id_users_id_fk",
+          "from": [
+            "actor_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_offers",
+      "parentTables": [
+        "placement_applications",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_offers_application_id_placement_applications_id_fk",
+          "from": [
+            "application_id"
+          ],
+          "toTable": "placement_applications",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_offers_issued_by_user_id_users_id_fk",
+          "from": [
+            "issued_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_offers_responded_by_user_id_users_id_fk",
+          "from": [
+            "responded_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_offers_withdrawn_by_user_id_users_id_fk",
+          "from": [
+            "withdrawn_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_recruiter_college_grants",
+      "parentTables": [
+        "placement_recruiter_profiles",
+        "placement_company_relationships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_recruiter_college_grants_recruiter_user_id_placement_recruiter_profiles_user_id_fk",
+          "from": [
+            "recruiter_user_id"
+          ],
+          "toTable": "placement_recruiter_profiles",
+          "to": [
+            "user_id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_college_grants_company_relationship_id_placement_company_relationships_id_fk",
+          "from": [
+            "company_relationship_id"
+          ],
+          "toTable": "placement_company_relationships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_college_grants_granted_by_user_id_users_id_fk",
+          "from": [
+            "granted_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_college_grants_revoked_by_user_id_users_id_fk",
+          "from": [
+            "revoked_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_recruiter_profiles",
+      "parentTables": [
+        "users",
+        "placement_companies"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_recruiter_profiles_user_id_users_id_fk",
+          "from": [
+            "user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_profiles_company_id_placement_companies_id_fk",
+          "from": [
+            "company_id"
+          ],
+          "toTable": "placement_companies",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_recruiter_profiles_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_round_attendance",
+      "parentTables": [
+        "placement_job_rounds",
+        "placement_applications",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_round_attendance_round_id_placement_job_rounds_id_fk",
+          "from": [
+            "round_id"
+          ],
+          "toTable": "placement_job_rounds",
+          "to": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_round_attendance_application_id_placement_applications_id_fk",
+          "from": [
+            "application_id"
+          ],
+          "toTable": "placement_applications",
+          "to": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "placement_round_attendance_marked_by_user_id_users_id_fk",
+          "from": [
+            "marked_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_round_results",
+      "parentTables": [
+        "placement_job_rounds",
+        "placement_applications",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_round_results_round_id_placement_job_rounds_id_fk",
+          "from": [
+            "round_id"
+          ],
+          "toTable": "placement_job_rounds",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_round_results_application_id_placement_applications_id_fk",
+          "from": [
+            "application_id"
+          ],
+          "toTable": "placement_applications",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_round_results_submitted_by_user_id_users_id_fk",
+          "from": [
+            "submitted_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_round_results_applied_by_user_id_users_id_fk",
+          "from": [
+            "applied_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_seasons",
+      "parentTables": [
+        "colleges",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "placement_seasons_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_seasons_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "placement_seasons_closed_by_user_id_users_id_fk",
+          "from": [
+            "closed_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_evaluations",
+      "parentTables": [
+        "project_instances",
+        "project_submissions",
+        "users",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_evaluations_project_id_project_instances_id_fk",
+          "from": [
+            "project_id"
+          ],
+          "toTable": "project_instances",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_evaluations_submission_id_project_submissions_id_fk",
+          "from": [
+            "submission_id"
+          ],
+          "toTable": "project_submissions",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_evaluations_evaluator_user_id_users_id_fk",
+          "from": [
+            "evaluator_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_evaluations_evaluator_membership_id_college_memberships_id_fk",
+          "from": [
+            "evaluator_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_instances",
+      "parentTables": [
+        "colleges",
+        "project_templates",
+        "project_template_versions",
+        "users",
+        "lms_groups"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_instances_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_instances_template_id_project_templates_id_fk",
+          "from": [
+            "template_id"
+          ],
+          "toTable": "project_templates",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_instances_template_version_id_project_template_versions_id_fk",
+          "from": [
+            "template_version_id"
+          ],
+          "toTable": "project_template_versions",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_instances_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_instances_team_group_id_lms_groups_id_fk",
+          "from": [
+            "team_group_id"
+          ],
+          "toTable": "lms_groups",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": {
+        "trigger": "db03_project_team_scope_guard",
+        "function": "db03_guard_project_team_scope",
+        "protectedRelations": [
+          "project college ↔ team group college",
+          "team group kind=PROJECT_TEAM",
+          "team group owner_scope=COLLEGE"
+        ],
+        "source": "drizzle/0039_db03_scope_triggers.sql",
+        "partial": true
+      },
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_meetings",
+      "parentTables": [
+        "project_instances",
+        "college_memberships",
+        "users",
+        "project_sprints",
+        "project_tasks"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_meetings_project_id_project_instances_id_fk",
+          "from": [
+            "project_id"
+          ],
+          "toTable": "project_instances",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_requested_by_membership_id_college_memberships_id_fk",
+          "from": [
+            "requested_by_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_scheduled_by_user_id_users_id_fk",
+          "from": [
+            "scheduled_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_scheduled_by_membership_id_college_memberships_id_fk",
+          "from": [
+            "scheduled_by_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_linked_sprint_id_project_sprints_id_fk",
+          "from": [
+            "linked_sprint_id"
+          ],
+          "toTable": "project_sprints",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_linked_task_id_project_tasks_id_fk",
+          "from": [
+            "linked_task_id"
+          ],
+          "toTable": "project_tasks",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_meetings_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_members",
+      "parentTables": [
+        "project_instances",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_members_project_id_project_instances_id_fk",
+          "from": [
+            "project_id"
+          ],
+          "toTable": "project_instances",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_members_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_members_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_sprints",
+      "parentTables": [
+        "project_instances",
+        "project_releases"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_sprints_project_id_project_instances_id_fk",
+          "from": [
+            "project_id"
+          ],
+          "toTable": "project_instances",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_sprints_release_id_project_releases_id_fk",
+          "from": [
+            "release_id"
+          ],
+          "toTable": "project_releases",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_submission_reviews",
+      "parentTables": [
+        "project_instances",
+        "project_submissions",
+        "users",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_submission_reviews_project_id_project_instances_id_fk",
+          "from": [
+            "project_id"
+          ],
+          "toTable": "project_instances",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submission_reviews_submission_id_project_submissions_id_fk",
+          "from": [
+            "submission_id"
+          ],
+          "toTable": "project_submissions",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submission_reviews_reviewed_by_user_id_users_id_fk",
+          "from": [
+            "reviewed_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submission_reviews_reviewed_by_membership_id_college_memberships_id_fk",
+          "from": [
+            "reviewed_by_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_submissions",
+      "parentTables": [
+        "project_instances",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_submissions_project_id_project_instances_id_fk",
+          "from": [
+            "project_id"
+          ],
+          "toTable": "project_instances",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submissions_created_by_membership_id_college_memberships_id_fk",
+          "from": [
+            "created_by_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_submissions_submitted_by_membership_id_college_memberships_id_fk",
+          "from": [
+            "submitted_by_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_task_submissions",
+      "parentTables": [
+        "project_instances",
+        "project_tasks",
+        "college_memberships",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_task_submissions_project_id_project_instances_id_fk",
+          "from": [
+            "project_id"
+          ],
+          "toTable": "project_instances",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_task_submissions_task_id_project_tasks_id_fk",
+          "from": [
+            "task_id"
+          ],
+          "toTable": "project_tasks",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_task_submissions_submitted_by_membership_id_college_memberships_id_fk",
+          "from": [
+            "submitted_by_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_task_submissions_reviewed_by_user_id_users_id_fk",
+          "from": [
+            "reviewed_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_task_submissions_reviewed_by_membership_id_college_memberships_id_fk",
+          "from": [
+            "reviewed_by_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_tasks",
+      "parentTables": [
+        "project_instances",
+        "project_sprints"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_tasks_project_id_project_instances_id_fk",
+          "from": [
+            "project_id"
+          ],
+          "toTable": "project_instances",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_tasks_sprint_id_project_sprints_id_fk",
+          "from": [
+            "sprint_id"
+          ],
+          "toTable": "project_sprints",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_template_college_assignments",
+      "parentTables": [
+        "project_templates",
+        "project_template_versions",
+        "colleges",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_template_college_assignments_template_id_project_templates_id_fk",
+          "from": [
+            "template_id"
+          ],
+          "toTable": "project_templates",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_template_college_assignments_template_version_id_project_template_versions_id_fk",
+          "from": [
+            "template_version_id"
+          ],
+          "toTable": "project_template_versions",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_template_college_assignments_college_id_colleges_id_fk",
+          "from": [
+            "college_id"
+          ],
+          "toTable": "colleges",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_template_college_assignments_assigned_by_user_id_users_id_fk",
+          "from": [
+            "assigned_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": true,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "project_template_versions",
+      "parentTables": [
+        "project_templates",
+        "users"
+      ],
+      "foreignKeys": [
+        {
+          "name": "project_template_versions_template_id_project_templates_id_fk",
+          "from": [
+            "template_id"
+          ],
+          "toTable": "project_templates",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "project_template_versions_created_by_user_id_users_id_fk",
+          "from": [
+            "created_by_user_id"
+          ],
+          "toTable": "users",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "NEW_0040_MULTI_PARENT_CONTEXT_REVIEW",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "quiz_attempt_answers",
+      "parentTables": [
+        "quiz_attempts",
+        "quiz_questions"
+      ],
+      "foreignKeys": [
+        {
+          "name": "quiz_attempt_answers_attempt_id_quiz_attempts_id_fk",
+          "from": [
+            "attempt_id"
+          ],
+          "toTable": "quiz_attempts",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "quiz_attempt_answers_question_id_quiz_questions_id_fk",
+          "from": [
+            "question_id"
+          ],
+          "toTable": "quiz_questions",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "quiz_attempts",
+      "parentTables": [
+        "course_quizzes",
+        "course_section_deliveries",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "quiz_attempts_quiz_id_course_quizzes_id_fk",
+          "from": [
+            "quiz_id"
+          ],
+          "toTable": "course_quizzes",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "quiz_attempts_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "quiz_attempts_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "section_enrollments",
+      "parentTables": [
+        "learner_program_enrollments",
+        "sections",
+        "academic_periods"
+      ],
+      "foreignKeys": [
+        {
+          "name": "section_enrollments_learner_enrollment_id_learner_program_enrollments_id_fk",
+          "from": [
+            "learner_enrollment_id"
+          ],
+          "toTable": "learner_program_enrollments",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_enrollments_section_id_sections_id_fk",
+          "from": [
+            "section_id"
+          ],
+          "toTable": "sections",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_enrollments_academic_period_id_academic_periods_id_fk",
+          "from": [
+            "academic_period_id"
+          ],
+          "toTable": "academic_periods",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "section_faculty_assignments",
+      "parentTables": [
+        "sections",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "section_faculty_assignments_section_id_sections_id_fk",
+          "from": [
+            "section_id"
+          ],
+          "toTable": "sections",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_faculty_assignments_membership_id_college_memberships_id_fk",
+          "from": [
+            "membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "section_schedule_event_courses",
+      "parentTables": [
+        "section_schedule_events",
+        "course_section_deliveries"
+      ],
+      "foreignKeys": [
+        {
+          "name": "section_schedule_event_courses_schedule_event_id_section_schedule_events_id_fk",
+          "from": [
+            "schedule_event_id"
+          ],
+          "toTable": "section_schedule_events",
+          "to": [
+            "id"
+          ],
+          "onDelete": "cascade"
+        },
+        {
+          "name": "section_schedule_event_courses_delivery_id_course_section_deliveries_id_fk",
+          "from": [
+            "delivery_id"
+          ],
+          "toTable": "course_section_deliveries",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "section_schedule_events",
+      "parentTables": [
+        "sections",
+        "college_memberships"
+      ],
+      "foreignKeys": [
+        {
+          "name": "section_schedule_events_section_id_sections_id_fk",
+          "from": [
+            "section_id"
+          ],
+          "toTable": "sections",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "section_schedule_events_faculty_membership_id_college_memberships_id_fk",
+          "from": [
+            "faculty_membership_id"
+          ],
+          "toTable": "college_memberships",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "sections",
+      "parentTables": [
+        "cohorts",
+        "academic_periods"
+      ],
+      "foreignKeys": [
+        {
+          "name": "sections_cohort_id_cohorts_id_fk",
+          "from": [
+            "cohort_id"
+          ],
+          "toTable": "cohorts",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        },
+        {
+          "name": "sections_academic_period_id_academic_periods_id_fk",
+          "from": [
+            "academic_period_id"
+          ],
+          "toTable": "academic_periods",
+          "to": [
+            "id"
+          ],
+          "onDelete": "restrict"
+        }
+      ],
+      "hasCollegeColumn": false,
+      "hasSoftDelete": false,
+      "classification": "PASS3_KNOWN_CROSS_PARENT_CANDIDATE",
+      "registeredDbGuard": null,
+      "runtimeEvidence": "NOT_EXECUTED"
+    }
+  ],
+  "cascadeReview": [
+    {
+      "table": "placement_job_role_options",
+      "constraint": "placement_job_role_options_job_id_placement_jobs_id_fk",
+      "parentTable": "placement_jobs",
+      "fromColumns": [
+        "job_id"
+      ],
+      "classification": "CASCADE_CONTRACT_REVIEW_REQUIRED",
+      "reason": "Cascade may be correct ownership semantics, but destructive behavior needs explicit producer/retention proof.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "section_schedule_event_courses",
+      "constraint": "section_schedule_event_courses_schedule_event_id_section_schedule_events_id_fk",
+      "parentTable": "section_schedule_events",
+      "fromColumns": [
+        "schedule_event_id"
+      ],
+      "classification": "CASCADE_CONTRACT_REVIEW_REQUIRED",
+      "reason": "Cascade may be correct ownership semantics, but destructive behavior needs explicit producer/retention proof.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "attendance_sessions",
+      "constraint": "attendance_sessions_schedule_event_id_section_schedule_events_id_fk",
+      "parentTable": "section_schedule_events",
+      "fromColumns": [
+        "schedule_event_id"
+      ],
+      "classification": "HISTORY_RETENTION_REVIEW_REQUIRED",
+      "reason": "Child contains user-visible operational/history data; a hard parent delete could erase evidence. Prove parent hard-delete is impossible/approved or redesign retention.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "attendance_records",
+      "constraint": "attendance_records_schedule_event_id_section_schedule_events_id_fk",
+      "parentTable": "section_schedule_events",
+      "fromColumns": [
+        "schedule_event_id"
+      ],
+      "classification": "HISTORY_RETENTION_REVIEW_REQUIRED",
+      "reason": "Child contains user-visible operational/history data; a hard parent delete could erase evidence. Prove parent hard-delete is impossible/approved or redesign retention.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "course_discussion_messages",
+      "constraint": "course_discussion_messages_delivery_id_course_section_deliveries_id_fk",
+      "parentTable": "course_section_deliveries",
+      "fromColumns": [
+        "delivery_id"
+      ],
+      "classification": "HISTORY_RETENTION_REVIEW_REQUIRED",
+      "reason": "Child contains user-visible operational/history data; a hard parent delete could erase evidence. Prove parent hard-delete is impossible/approved or redesign retention.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_drive_day_coordinator_assignments",
+      "constraint": "placement_drive_day_coordinator_assignments_job_id_placement_jobs_id_fk",
+      "parentTable": "placement_jobs",
+      "fromColumns": [
+        "job_id"
+      ],
+      "classification": "HISTORY_RETENTION_REVIEW_REQUIRED",
+      "reason": "Child contains user-visible operational/history data; a hard parent delete could erase evidence. Prove parent hard-delete is impossible/approved or redesign retention.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_drive_day_coordinator_assignments",
+      "constraint": "placement_drive_day_coordinator_assignments_learner_membership_id_college_memberships_id_fk",
+      "parentTable": "college_memberships",
+      "fromColumns": [
+        "learner_membership_id"
+      ],
+      "classification": "HISTORY_RETENTION_REVIEW_REQUIRED",
+      "reason": "Child contains user-visible operational/history data; a hard parent delete could erase evidence. Prove parent hard-delete is impossible/approved or redesign retention.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_round_attendance",
+      "constraint": "placement_round_attendance_round_id_placement_job_rounds_id_fk",
+      "parentTable": "placement_job_rounds",
+      "fromColumns": [
+        "round_id"
+      ],
+      "classification": "HISTORY_RETENTION_REVIEW_REQUIRED",
+      "reason": "Child contains user-visible operational/history data; a hard parent delete could erase evidence. Prove parent hard-delete is impossible/approved or redesign retention.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    },
+    {
+      "table": "placement_round_attendance",
+      "constraint": "placement_round_attendance_application_id_placement_applications_id_fk",
+      "parentTable": "placement_applications",
+      "fromColumns": [
+        "application_id"
+      ],
+      "classification": "HISTORY_RETENTION_REVIEW_REQUIRED",
+      "reason": "Child contains user-visible operational/history data; a hard parent delete could erase evidence. Prove parent hard-delete is impossible/approved or redesign retention.",
+      "runtimeEvidence": "NOT_EXECUTED"
+    }
+  ],
+  "tenantUniqueScopeReview": [
+    {
+      "table": "tenant_domains",
+      "index": "tenant_domains_host_uq",
+      "columns": [
+        "lower(\"host\")"
+      ],
+      "where": null,
+      "classification": "TENANT_SCOPE_REVIEW_REQUIRED",
+      "reason": "Unique key omits direct college_id. It may be intentionally global or based on globally unique parent IDs; document that contract before calling tenant uniqueness proven."
+    },
+    {
+      "table": "project_instances",
+      "index": "project_instances_team_group_uq",
+      "columns": [
+        "team_group_id"
+      ],
+      "where": null,
+      "classification": "TENANT_SCOPE_REVIEW_REQUIRED",
+      "reason": "Unique key omits direct college_id. It may be intentionally global or based on globally unique parent IDs; document that contract before calling tenant uniqueness proven."
+    },
+    {
+      "table": "activity_events",
+      "index": "activity_events_dedupe_uq",
+      "columns": [
+        "dedupe_key"
+      ],
+      "where": "\"activity_events\".\"dedupe_key\" is not null",
+      "classification": "TENANT_SCOPE_REVIEW_REQUIRED",
+      "reason": "Unique key omits direct college_id. It may be intentionally global or based on globally unique parent IDs; document that contract before calling tenant uniqueness proven."
+    },
+    {
+      "table": "placement_eligibility_decisions",
+      "index": "placement_eligibility_decisions_scope_uq",
+      "columns": [
+        "scope_type",
+        "scope_id"
+      ],
+      "where": null,
+      "classification": "TENANT_SCOPE_REVIEW_REQUIRED",
+      "reason": "Unique key omits direct college_id. It may be intentionally global or based on globally unique parent IDs; document that contract before calling tenant uniqueness proven."
+    },
+    {
+      "table": "placement_drive_day_coordinator_assignments",
+      "index": "placement_drive_day_coordinator_assignment_uq",
+      "columns": [
+        "job_id",
+        "learner_membership_id",
+        "on_date"
+      ],
+      "where": null,
+      "classification": "TENANT_SCOPE_REVIEW_REQUIRED",
+      "reason": "Unique key omits direct college_id. It may be intentionally global or based on globally unique parent IDs; document that contract before calling tenant uniqueness proven."
+    }
+  ],
+  "runtimeVerification": {
+    "postgresReplay": "NOT_EXECUTED_DB-001_BLOCKED",
+    "directNegativeWrites": "NOT_EXECUTED_DB-001_BLOCKED",
+    "catalogIntrospection": "NOT_EXECUTED_DB-001_BLOCKED",
+    "conclusion": "Source audit can be COMPLETED; DB-014 must not be DONE_VERIFIED without executed PostgreSQL evidence."
+  }
+}
