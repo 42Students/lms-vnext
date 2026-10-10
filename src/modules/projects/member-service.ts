@@ -5,6 +5,7 @@ import {
   ilike,
   isNull,
   or,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -351,14 +352,14 @@ export async function listMyProjectInstances(
 ) {
   const membership = context.membership;
   if (
+    context.user.platformStatus !== "ACTIVE" ||
     !membership ||
     membership.status !== "ACTIVE"
   ) {
-    throw new ProjectsServiceError(
-      "PROJECT_ACCESS_DENIED",
-    );
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
-
+  // Do not trust an old project_members assignment as authorization after
+  // revoking the user's LEARNER/MENTOR role or suspending their account.
   return getDb()
     .select({
       memberId: projectMembers.id,
@@ -367,25 +368,21 @@ export async function listMyProjectInstances(
       project: projectInstances,
     })
     .from(projectMembers)
-    .innerJoin(
-      projectInstances,
-      eq(
-        projectInstances.id,
-        projectMembers.projectId,
-      ),
-    )
-    .where(
-      and(
-        eq(
-          projectMembers.membershipId,
-          membership.id,
-        ),
-        isNull(projectMembers.endedAt),
-        eq(
-          projectInstances.collegeId,
-          membership.collegeId,
-        ),
-      ),
-    )
+    .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      sql`CAST(${membershipRoles.role} AS text) = ${projectMembers.role}`,
+    ))
+    .where(and(
+      eq(projectMembers.membershipId,membership.id),
+      isNull(projectMembers.endedAt),
+      eq(projectInstances.collegeId,membership.collegeId),
+      eq(collegeMemberships.collegeId,membership.collegeId),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
     .orderBy(asc(projectInstances.title));
 }
