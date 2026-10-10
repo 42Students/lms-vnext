@@ -61,3 +61,19 @@ V193 is not a superficial table rename. It **changes stored values**: `tpo_messa
 - V190 also added **job-level** `counts_as_placed`, which must be coordinated with DB08's placement-report/offer status read model; college-level `counts_as_placed_at` does not make this job-level boolean redundant by itself.
 
 **Regression guard authored:** the existing `npm run test:db09:static` suite now includes a TypeScript AST parse check, unique CRM export count, required source-check predicates and a 279-row source-review-count test. These have been authored but not run on npm/CI in this session. Independent read-only JS assertions over the fetched ledger and CRM source **did run and pass**; those are not equivalent to TypeScript compilation or PostgreSQL acceptance.
+
+## Active legacy workflow verification follow-up (source-only)
+
+Further inspected the frozen Java oracle at `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`. The following source behavior is **active** and cannot be retired based only on a missing vNext table name:
+
+- `RecruiterPlanDriveService` writes `drive_group`, reads its `shared_form_json`, lists multiple college child `job.drive_group_id` records, and supports adding another authorized college to an existing recruiter drive group. These **five** legacy fields need a deliberate cross-college grouping model. [Draft SQL](sql/db09-multicollege-drive-group-candidate.sql) proposes groups and parent links, but requires separate per-college authorization and DB08 domain approval.
+- `TpoScheduleService` inserts, confirms and removes `round_slot`; assigns candidate applications into slots while checking capacity and conflicts; resets `round_assignment.student_confirmed_at` on move; reads and decides `reschedule_request`; and enqueues learner notifications. `RecruiterDriveWorkService` and `RecruiterTodayService` consume these rows. All **25** scheduling source fields are currently product-active, not retirement candidates. The slot/assignment/reschedule SQL remains unregistered and untested.
+- `TpoSettingsHubService` SELECTs and updates `recruiter_drive_needs_approval` and `recruiter_access_months`. V190 defines `job_types_json` and `outcome_labels_json`; JSON consumer analysis remains pending. Across these settings there are four field reviews, two with confirmed current service access and two with confirmed migration schema but unresolved consumer details.
+
+**Canonical ledger change:** 34 relevant field records have `legacyUsageEvidence` with named source files and conservative statuses. This does **not** change their `UNVERIFIED_FIELD_SEMANTICS` status or SQL/workflow verification count.
+
+### Scheduling adversarial probes grounded in the actual legacy service
+
+Legacy preview computes `capacity - booked - used` and checks overlapping assignments; the save path upserts slots separately. The vNext implementation must serialize or lock against simultaneous commits, not rely on an earlier read-only preview (otherwise two writers may overbook). A reschedule decision moving into an already-full slot must also re-check actual capacity while holding the slot lock. Different jobs must not share a mismatched slot, round or application; composite FK requirements are staged in the draft.
+
+The precise stage metadata and source names are recorded in `docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json`. All runtime SQL/CI tests remain **NOT EXECUTED**.
