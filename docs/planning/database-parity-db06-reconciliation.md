@@ -101,6 +101,8 @@ Legacy `attend` is an absence-oriented table: a present correction soft-deletes 
 
 vNext `attendance_records` is intentionally normalized to one explicit status per learner+schedule and already persists actor/time, while `attendance_sessions` records whether a session was marked.
 
+The original 21-table/248-field DB06 inventory was built from a snapshot through V150, so it does not contain one later active persisted contract: legacy migration `V156__class_schedule_attendance_marked.sql` adds `class_schedule.attendance_marked_at`. Its documented purpose is to distinguish **attendance not taken** from **attendance taken with zero absences**. vNext normalizes that cross-domain field into `attendance_sessions`: `status='MARKED'` plus `marked_at` and `marked_by_user_id`. This is a source-backed mapping, but runtime/tenant-integrity verification remains blocked with DB-001.
+
 Open gap:
 
 - current target rows can be overwritten during correction but there is no immutable attendance-correction history. Faculty parity already records audit-history as open. Add a history/event contract before DB06 can be database-certified.
