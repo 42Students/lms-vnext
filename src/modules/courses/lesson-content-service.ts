@@ -7,6 +7,7 @@ import {
   or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { applyDeliveryContentOrderIfReady } from "./lesson-content-order-service";
 import { lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -294,7 +295,7 @@ export async function listLessonContents(
     );
   }
 
-  return getDb()
+  const rows = await getDb()
     .select()
     .from(lessonContents)
     .where(and(...conditions))
@@ -303,6 +304,11 @@ export async function listLessonContents(
       asc(lessonContents.createdAt),
       asc(lessonContents.id),
     );
+
+  return applyDeliveryContentOrderIfReady(
+    rows,
+    deliveryId,
+  );
 }
 
 export async function createLessonContent(
