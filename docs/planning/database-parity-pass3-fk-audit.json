@@ -4151,5 +4151,22 @@
       ],
       "reviewStatus": "NOT_VERIFIED"
     }
-  ]
+  ],
+  "latestRegisteredReconciliation": {
+    "observedOn": "2026-10-11",
+    "registeredJournalHead": "0040_db03_history_actor_types",
+    "registeredSnapshot": "drizzle/meta/0040_snapshot.json",
+    "artifact": "docs/planning/database-parity-db014-tenant-fk-sweep.json",
+    "summaryDocument": "docs/planning/database-parity-db014-tenant-fk-sweep.md",
+    "staticGuard": "tests/db014-tenant-fk-sweep.test.mjs",
+    "currentStats": {
+      "tables": 90,
+      "foreignKeys": 211,
+      "compositeForeignKeys": 0,
+      "multiParentTables": 65,
+      "cascadeForeignKeys": 9,
+      "checkConstraints": 201
+    },
+    "note": "Original Pass-3 stats below remain historical snapshot-0036 evidence. Do not overwrite them with 0040 counts or treat registered trigger source as executed PostgreSQL proof."
+  }
 }
