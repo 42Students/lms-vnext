@@ -957,4 +957,82 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     }
   });
 
+  it("allows Faculty to replace draft Quiz questions but freezes structure after publish", async () => {
+    const structure = await createStructure();
+    const quiz = await createCourseQuiz(
+      faculty,
+      {
+        lessonId: structure.lesson.id,
+        deliveryId:
+          structure.deliveryA.id,
+        title: "C4B Editable Draft Quiz",
+        dueAt:
+          "2027-12-01T12:00:00.000Z",
+        maxAttempts: 2,
+        sequence: 0,
+        questions: quizQuestions(),
+      },
+    );
+
+    const replacement = [
+      {
+        type: "SINGLE_CHOICE" as const,
+        prompt: "Which structure is LIFO?",
+        points: 7,
+        sequence: 0,
+        options: [
+          {
+            text: "Stack",
+            correct: true,
+            sequence: 0,
+          },
+          {
+            text: "Queue",
+            correct: false,
+            sequence: 1,
+          },
+        ],
+      },
+    ];
+
+    await updateCourseQuiz(
+      faculty,
+      quiz.id,
+      { questions: replacement },
+    );
+
+    const draft = await getCourseQuiz(
+      faculty,
+      quiz.id,
+      structure.deliveryA.id,
+    );
+    expect(draft.quiz.totalPoints).toBe(7);
+    expect(draft.questions).toHaveLength(1);
+    expect(draft.questions[0]).toMatchObject({
+      prompt: "Which structure is LIFO?",
+      points: 7,
+    });
+    expect(
+      draft.questions[0]?.options.find(
+        (option) => option.correct,
+      )?.text,
+    ).toBe("Stack");
+
+    await transitionCourseQuiz(
+      faculty,
+      quiz.id,
+      { action: "PUBLISH" },
+    );
+
+    await expect(
+      updateCourseQuiz(
+        faculty,
+        quiz.id,
+        { questions: quizQuestions() },
+      ),
+    ).rejects.toMatchObject({
+      code: "QUIZ_HAS_ATTEMPTS",
+    });
+  });
+
 });
