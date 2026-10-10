@@ -321,6 +321,45 @@ describe("platform authorization policy", () => {
     ).toBe(false);
   });
 
+  it("allows only active learner/faculty memberships to manage their own profile scope", () => {
+    const ownCollege = {
+      organizationId: "org-1",
+      collegeId: "college-1",
+    };
+    const otherCollege = {
+      organizationId: "org-2",
+      collegeId: "college-2",
+    };
+
+    expect(
+      can(memberContext(["LEARNER"]), "profile.self.manage", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["FACULTY"]), "profile.self.manage", ownCollege),
+    ).toBe(true);
+    expect(
+      can(memberContext(["COLLEGE_ADMIN"]), "profile.self.manage", ownCollege),
+    ).toBe(false);
+    expect(
+      can(memberContext(["TPO"]), "profile.self.manage", ownCollege),
+    ).toBe(false);
+    expect(
+      can(memberContext(["MENTOR"]), "profile.self.manage", ownCollege),
+    ).toBe(false);
+    expect(
+      can(memberContext(["FACULTY"]), "profile.self.manage", otherCollege),
+    ).toBe(false);
+
+    const superAdmin: RequestContext = {
+      user: {
+        ...baseUser,
+        systemRoles: ["SUPER_ADMIN"],
+      },
+      membership: null,
+    };
+    expect(can(superAdmin, "profile.self.manage", ownCollege)).toBe(false);
+  });
+
   it("centralizes people management on college-admin tenant scope", () => {
     const target = {
       organizationId: "org-1",
