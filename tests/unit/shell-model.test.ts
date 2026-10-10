@@ -208,6 +208,11 @@ describe("authenticated shell model", () => {
         href: "/hr/placements",
         shortLabel: "H",
       },
+      {
+        label: "Messages",
+        href: "/hr/messages",
+        shortLabel: "M",
+      },
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Employer Recruiter",
@@ -224,6 +229,8 @@ describe("authenticated shell model", () => {
     ).toEqual([
       "Dashboard",
       "Teaching Courses",
+      "Recruiter Leads",
+      "Messages",
       "Placement Operations",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
