@@ -4,6 +4,7 @@ import { CoursesServiceError } from "./errors";
 import { getFacultyAssessmentOverview } from "./faculty-assessment-service";
 import { listAssignmentSubmissions } from "./assignment-submission-service";
 import { listQuizAttempts } from "./quiz-attempt-service";
+import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 
 const uuid = z.string().uuid();
 
@@ -62,14 +63,29 @@ export async function getFacultyQuizReport(
     "QUIZ_NOT_FOUND",
     "QUIZ_DELIVERY_MISMATCH",
   );
-  const attempts = await listQuizAttempts(context, quizId, quiz.deliveryId);
-  const learners = new Set(attempts.map((attempt) => attempt.membershipId));
+  const [attempts, rosterScope] = await Promise.all([
+    listQuizAttempts(context, quizId, quiz.deliveryId),
+    getFacultyDeliveryRoster(context, quiz.deliveryId),
+  ]);
+  const learners = new Set(
+    attempts.map((attempt) => attempt.membershipId),
+  );
+  const notAttemptedLearners =
+    rosterScope.roster.filter(
+      (learner) =>
+        !learners.has(learner.membershipId),
+    );
   return {
     quiz,
     attempts,
+    notAttemptedLearners,
     metrics: {
       ...scoreSummary(attempts),
+      eligibleLearners:
+        rosterScope.roster.length,
       uniqueLearners: learners.size,
+      notAttempted:
+        notAttemptedLearners.length,
     },
   };
 }
@@ -89,11 +105,30 @@ export async function getFacultyAssignmentReport(
     "ASSIGNMENT_NOT_FOUND",
     "ASSIGNMENT_DELIVERY_MISMATCH",
   );
-  const submissions = await listAssignmentSubmissions(
-    context,
-    assignmentId,
-    assignment.deliveryId,
+  const [submissions, rosterScope] =
+    await Promise.all([
+      listAssignmentSubmissions(
+        context,
+        assignmentId,
+        assignment.deliveryId,
+      ),
+      getFacultyDeliveryRoster(
+        context,
+        assignment.deliveryId,
+      ),
+    ]);
+  const submittedMemberships = new Set(
+    submissions.map(
+      (submission) => submission.membershipId,
+    ),
   );
+  const missingLearners =
+    rosterScope.roster.filter(
+      (learner) =>
+        !submittedMemberships.has(
+          learner.membershipId,
+        ),
+    );
   const graded = submissions.filter((submission) =>
     submission.gradingStatus === "GRADED",
   );
@@ -104,14 +139,17 @@ export async function getFacultyAssignmentReport(
   return {
     assignment,
     submissions,
+    missingLearners,
     metrics: {
+      eligibleLearners:
+        rosterScope.roster.length,
       submitted: submissions.length,
+      missing: missingLearners.length,
       late: late.length,
       graded: graded.length,
-      gradePublished: submissions.filter((item) => item.gradePublished).length,
-      // Roster of non-submitters is not part of the submission model and
-      // requires an enrollment-aware separate query before claiming parity.
-      missingLearners: null,
+      gradePublished: submissions.filter(
+        (item) => item.gradePublished,
+      ).length,
     },
   };
 }
