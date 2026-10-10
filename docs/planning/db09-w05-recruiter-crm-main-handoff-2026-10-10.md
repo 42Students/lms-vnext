@@ -43,3 +43,20 @@ W01 owns `drizzle/**`, `src/db/schema/index.ts`, common auth/tenant context, CI 
 ## Next immediate W05 item
 
 Implement **recruiter invitation lifecycle** with source-backed privacy and one-time-token race protections, alongside isolation tests; first resolve identity grant and shared notification delivery contracts with W01/W06. In parallel, implement recruiter lead stage/owner persistence and UI partial gaps without crossing W04 Drive ownership.
+
+
+## Additional W05 invite-policy batch
+
+Committed `src/modules/placements/tpo-recruiter-invite-policy.ts` and
+`tests/unit/tpo-recruiter-invite-policy.test.ts`. The policy now implements
+cryptographically random 32-byte base64url tokens, SHA-256 hash-only persistence
+contract, constant-time hash equality, 7-day expiry, rotation invalidating prior
+links, blocked joined/unsubscribed/Not-Now leads, identical public INVALID
+errors, and eligible day-four reminder rules. The companion tests are **authored
+but not executed**. There is **no public issue/preview/accept API** and no
+recruiter grant mutation yet; keep invite UI disabled until W01 identity
+agreement, DB09 migration and W06 transport/outbox coordination. Two safety
+deviations from the inspected legacy are explicit: a Not-Now lead cannot
+receive a newly minted token (legacy generated a link that preview would
+reject); validity ends exactly at expiration rather than allowing the single
+boundary instant. Both fail closed.
