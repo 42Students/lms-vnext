@@ -10,7 +10,13 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   activityEvents,
+  collegeMemberships,
+  colleges,
   inAppNotifications,
+  placementCompanyRelationships,
+  placementRecruiterCollegeGrants,
+  placementRecruiterProfiles,
+  systemRoles,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -50,6 +56,76 @@ const deliverySchema = z
 
 export type InAppNotificationDeliveryInput =
   z.input<typeof deliverySchema>;
+
+/**
+ * A producer can request a recipient ID, but that alone is not authority to
+ * send a tenant-scoped event. Check the persisted, current recipient grants.
+ * A single ineligible active recipient rejects the whole batch without writes.
+ * Global events (no organization/college) are intentionally unrestricted.
+ */
+async function assertScopedNotificationRecipients(
+  db: NotificationWriter,
+  event: { collegeId: string | null; organizationId: string | null },
+  activeUserIds: readonly string[],
+) {
+  if (activeUserIds.length === 0 ||
+      (!event.collegeId && !event.organizationId)) return;
+
+  const targetCollege = event.collegeId;
+  const targetOrganization = event.organizationId;
+  const scopeCondition = targetCollege
+    ? eq(colleges.id, targetCollege)
+    : eq(colleges.organizationId, targetOrganization!);
+  const relationshipScope = targetCollege
+    ? eq(placementCompanyRelationships.collegeId, targetCollege)
+    : eq(colleges.organizationId, targetOrganization!);
+
+  const [memberships, recruiterGrants, administrators] = await Promise.all([
+    db.select({ userId: collegeMemberships.userId })
+      .from(collegeMemberships)
+      .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
+      .where(and(
+        inArray(collegeMemberships.userId, [...activeUserIds]),
+        eq(collegeMemberships.status, "ACTIVE"),
+        eq(colleges.status, "ACTIVE"),
+        scopeCondition,
+      )),
+    db.select({ userId: placementRecruiterCollegeGrants.recruiterUserId })
+      .from(placementRecruiterCollegeGrants)
+      .innerJoin(
+        placementRecruiterProfiles,
+        eq(placementRecruiterProfiles.userId, placementRecruiterCollegeGrants.recruiterUserId),
+      )
+      .innerJoin(
+        placementCompanyRelationships,
+        eq(placementCompanyRelationships.id, placementRecruiterCollegeGrants.companyRelationshipId),
+      )
+      .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))
+      .where(and(
+        inArray(placementRecruiterCollegeGrants.recruiterUserId, [...activeUserIds]),
+        eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+        eq(placementRecruiterProfiles.status, "ACTIVE"),
+        eq(placementCompanyRelationships.status, "ACTIVE"),
+        eq(colleges.status, "ACTIVE"),
+        relationshipScope,
+      )),
+    db.select({ userId: systemRoles.userId })
+      .from(systemRoles)
+      .where(and(
+        inArray(systemRoles.userId, [...activeUserIds]),
+        eq(systemRoles.role, "SUPER_ADMIN"),
+      )),
+  ]);
+
+  const eligible = new Set([
+    ...memberships.map((row) => row.userId),
+    ...recruiterGrants.map((row) => row.userId),
+    ...administrators.map((row) => row.userId),
+  ]);
+  if (activeUserIds.some((id) => !eligible.has(id))) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+}
 
 function sanitizeNotificationRow<T extends { actionHref: string | null }>(row: T) {
   return {
@@ -91,6 +167,8 @@ async function writeInAppNotification(
       db
         .select({
           id: activityEvents.id,
+          collegeId: activityEvents.collegeId,
+          organizationId: activityEvents.organizationId,
         })
         .from(activityEvents)
         .where(
@@ -129,6 +207,10 @@ async function writeInAppNotification(
         user.platformStatus === "ACTIVE",
     )
     .map((user) => user.id);
+
+  // Re-check persisted scopes in the same transaction when called from a
+  // transactional domain producer. Never assume caller-selected IDs are safe.
+  await assertScopedNotificationRecipients(db, event, active);
 
   let delivered = 0;
   if (active.length > 0) {

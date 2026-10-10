@@ -285,3 +285,15 @@ Legacy `/e2e/superadmin-login` is a test helper.
 - [ ] Confirm all seven role-specific notification producer→consumer workflows; W02/W03/W04/W05 create domain event payloads, W06 owns shared inbox/outbox delivery, W01 owns identity/tenant primitives.
 
 **State: PARTIAL (authored, tests not executed); no page or family verification status advanced.**
+
+
+## W06 notification tenant-delivery privacy guard — additional open verification
+
+**Legacy behavior review:** source-backed security improvement to prevent a platform producer from accidentally delivering college A event contents to unrelated college B recipients. Persisted active college membership, active recruiter/company relationship grants and Super Admin system roles are accepted for matching tenant scope; globally scoped events remain globally deliverable. The write rejects a mixed unauthorized recipient batch before insertion; user-supplied delivery recipient IDs are never treated as proof of tenant authorization.
+
+- [ ] Execute the new `tests/integration/db10-notification-delivery-scope.test.ts` against seeded disposable PostgreSQL: both-college user, unrelated learner, mixed-batch atomic rejection and global-event delivery.
+- [ ] Verify suspend/revoke/grant races with transactional producer tests and closed-grant negative cases before calling this release-safe.
+- [ ] Verify recruiter notification types and all domain producers supply correct event scope and intended recipient grants; W05 owns CRM invitation and the TPO frontend.
+- [ ] Review organization-scoped and platform-global event disclosure policy with W01/W05 and document any sanctioned cross-tenant broadcasts.
+
+**This is a documented security tightening relative to the previously unaudited vNext fan-out. State remains PARTIAL / tests unrun.**
