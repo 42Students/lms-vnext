@@ -39,6 +39,10 @@ function mapLifecycleConstraint(error: unknown) {
   return error;
 }
 
+function projectAllowsExecution(status: string) {
+  return status !== "ARCHIVED" && status !== "COMPLETED";
+}
+
 async function loadRelease(
   projectId: string,
   releaseIdInput: string,
@@ -127,21 +131,48 @@ export async function startProjectSprint(
       context,
       projectIdInput,
     );
-  const sprint = await loadSprint(
-    scope.project.id,
-    sprintIdInput,
-  );
-
-  if (sprint.status !== "PLANNED") {
-    throw new ProjectsServiceError(
-      "PROJECT_SPRINT_INVALID_STATE",
-    );
-  }
-
+  const sprintId =
+    projectSprintIdSchema.parse(sprintIdInput);
   const db = getDb();
 
   try {
     return await db.transaction(async (tx) => {
+      const [project] = await tx
+        .select({ status: projectInstances.status })
+        .from(projectInstances)
+        .where(eq(projectInstances.id, scope.project.id))
+        .for("update")
+        .limit(1);
+
+      if (!project || !projectAllowsExecution(project.status)) {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_INVALID_STATE",
+        );
+      }
+
+      const [sprint] = await tx
+        .select()
+        .from(projectSprints)
+        .where(
+          and(
+            eq(projectSprints.id, sprintId),
+            eq(projectSprints.projectId, scope.project.id),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (!sprint) {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_NOT_FOUND",
+        );
+      }
+      if (sprint.status !== "PLANNED") {
+        throw new ProjectsServiceError(
+          "PROJECT_SPRINT_INVALID_STATE",
+        );
+      }
+
       const [active] = await tx
         .select({ id: projectSprints.id })
         .from(projectSprints)
@@ -155,6 +186,7 @@ export async function startProjectSprint(
             ne(projectSprints.id, sprint.id),
           ),
         )
+        .for("update")
         .limit(1);
 
       if (active) {
@@ -191,14 +223,9 @@ export async function startProjectSprint(
         })
         .where(
           and(
-            eq(
-              projectReleases.id,
-              sprint.releaseId,
-            ),
-            eq(
-              projectReleases.status,
-              "PLANNED",
-            ),
+            eq(projectReleases.id, sprint.releaseId),
+            eq(projectReleases.projectId, scope.project.id),
+            eq(projectReleases.status, "PLANNED"),
           ),
         );
 
@@ -210,14 +237,8 @@ export async function startProjectSprint(
         })
         .where(
           and(
-            eq(
-              projectInstances.id,
-              scope.project.id,
-            ),
-            eq(
-              projectInstances.status,
-              "PLANNED",
-            ),
+            eq(projectInstances.id, scope.project.id),
+            eq(projectInstances.status, "PLANNED"),
           ),
         );
 
@@ -241,55 +262,88 @@ export async function completeProjectSprint(
       context,
       projectIdInput,
     );
-  const sprint = await loadSprint(
-    scope.project.id,
-    sprintIdInput,
-  );
+  const sprintId =
+    projectSprintIdSchema.parse(sprintIdInput);
+  const db = getDb();
 
-  if (sprint.status !== "ACTIVE") {
-    throw new ProjectsServiceError(
-      "PROJECT_SPRINT_INVALID_STATE",
-    );
-  }
+  return db.transaction(async (tx) => {
+    const [project] = await tx
+      .select({ status: projectInstances.status })
+      .from(projectInstances)
+      .where(eq(projectInstances.id, scope.project.id))
+      .for("update")
+      .limit(1);
 
-  const [openTask] = await getDb()
-    .select({ id: projectTasks.id })
-    .from(projectTasks)
-    .where(
-      and(
-        eq(projectTasks.sprintId, sprint.id),
-        ne(projectTasks.status, "DONE"),
-      ),
-    )
-    .limit(1);
+    if (!project || !projectAllowsExecution(project.status)) {
+      throw new ProjectsServiceError(
+        "PROJECT_SPRINT_INVALID_STATE",
+      );
+    }
 
-  if (openTask) {
-    throw new ProjectsServiceError(
-      "PROJECT_SPRINT_HAS_OPEN_TASKS",
-    );
-  }
+    const [sprint] = await tx
+      .select()
+      .from(projectSprints)
+      .where(
+        and(
+          eq(projectSprints.id, sprintId),
+          eq(projectSprints.projectId, scope.project.id),
+        ),
+      )
+      .for("update")
+      .limit(1);
 
-  const [completed] = await getDb()
-    .update(projectSprints)
-    .set({
-      status: "COMPLETED",
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(projectSprints.id, sprint.id),
-        eq(projectSprints.status, "ACTIVE"),
-      ),
-    )
-    .returning();
+    if (!sprint) {
+      throw new ProjectsServiceError(
+        "PROJECT_SPRINT_NOT_FOUND",
+      );
+    }
+    if (sprint.status !== "ACTIVE") {
+      throw new ProjectsServiceError(
+        "PROJECT_SPRINT_INVALID_STATE",
+      );
+    }
 
-  if (!completed) {
-    throw new ProjectsServiceError(
-      "PROJECT_SPRINT_INVALID_STATE",
-    );
-  }
+    const [openTask] = await tx
+      .select({ id: projectTasks.id })
+      .from(projectTasks)
+      .where(
+        and(
+          eq(projectTasks.projectId, scope.project.id),
+          eq(projectTasks.sprintId, sprint.id),
+          ne(projectTasks.status, "DONE"),
+        ),
+      )
+      .for("update")
+      .limit(1);
 
-  return completed;
+    if (openTask) {
+      throw new ProjectsServiceError(
+        "PROJECT_SPRINT_HAS_OPEN_TASKS",
+      );
+    }
+
+    const [completed] = await tx
+      .update(projectSprints)
+      .set({
+        status: "COMPLETED",
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(projectSprints.id, sprint.id),
+          eq(projectSprints.status, "ACTIVE"),
+        ),
+      )
+      .returning();
+
+    if (!completed) {
+      throw new ProjectsServiceError(
+        "PROJECT_SPRINT_INVALID_STATE",
+      );
+    }
+
+    return completed;
+  });
 }
 
 export async function updateProjectTaskStatus(
@@ -310,56 +364,97 @@ export async function updateProjectTaskStatus(
     taskIdInput,
   );
 
-  if (input.status === "IN_REVIEW") {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_INVALID_STATE",
-    );
-  }
-
-  const [sprint] = await getDb()
-    .select({
-      status: projectSprints.status,
-    })
-    .from(projectSprints)
-    .where(eq(projectSprints.id, task.sprintId))
-    .limit(1);
-
   if (
-    !sprint ||
-    sprint.status !== "ACTIVE"
+    input.status === "IN_REVIEW" ||
+    task.status === "IN_REVIEW"
   ) {
     throw new ProjectsServiceError(
       "PROJECT_TASK_INVALID_STATE",
     );
   }
 
-  if (task.status === "IN_REVIEW") {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_INVALID_STATE",
-    );
-  }
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const [project] = await tx
+      .select({ status: projectInstances.status })
+      .from(projectInstances)
+      .where(eq(projectInstances.id, scope.project.id))
+      .for("update")
+      .limit(1);
 
-  const [updated] = await getDb()
-    .update(projectTasks)
-    .set({
-      status: input.status,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(projectTasks.id, task.id),
-        ne(projectTasks.status, "IN_REVIEW"),
-      ),
-    )
-    .returning();
+    if (!project || !projectAllowsExecution(project.status)) {
+      throw new ProjectsServiceError(
+        "PROJECT_TASK_INVALID_STATE",
+      );
+    }
 
-  if (!updated) {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_INVALID_STATE",
-    );
-  }
+    const [sprint] = await tx
+      .select({ status: projectSprints.status })
+      .from(projectSprints)
+      .where(
+        and(
+          eq(projectSprints.id, task.sprintId),
+          eq(projectSprints.projectId, scope.project.id),
+        ),
+      )
+      .for("update")
+      .limit(1);
 
-  return updated;
+    if (!sprint || sprint.status !== "ACTIVE") {
+      throw new ProjectsServiceError(
+        "PROJECT_TASK_INVALID_STATE",
+      );
+    }
+
+    const [lockedTask] = await tx
+      .select({
+        id: projectTasks.id,
+        status: projectTasks.status,
+      })
+      .from(projectTasks)
+      .where(
+        and(
+          eq(projectTasks.id, task.id),
+          eq(projectTasks.projectId, scope.project.id),
+          eq(projectTasks.sprintId, task.sprintId),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (
+      !lockedTask ||
+      lockedTask.status !== task.status ||
+      lockedTask.status === "IN_REVIEW"
+    ) {
+      throw new ProjectsServiceError(
+        "PROJECT_TASK_INVALID_STATE",
+      );
+    }
+
+    const [updated] = await tx
+      .update(projectTasks)
+      .set({
+        status: input.status,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(projectTasks.id, task.id),
+          eq(projectTasks.projectId, scope.project.id),
+          eq(projectTasks.status, task.status),
+        ),
+      )
+      .returning();
+
+    if (!updated) {
+      throw new ProjectsServiceError(
+        "PROJECT_TASK_INVALID_STATE",
+      );
+    }
+
+    return updated;
+  });
 }
 
 export async function shipProjectRelease(
@@ -372,46 +467,69 @@ export async function shipProjectRelease(
       context,
       projectIdInput,
     );
-  const release = await loadRelease(
-    scope.project.id,
-    releaseIdInput,
-  );
-
-  if (
-    release.status !== "PLANNED" &&
-    release.status !== "IN_PROGRESS"
-  ) {
-    throw new ProjectsServiceError(
-      "PROJECT_RELEASE_INVALID_STATE",
-    );
-  }
-
-  const [openSprint] = await getDb()
-    .select({ id: projectSprints.id })
-    .from(projectSprints)
-    .where(
-      and(
-        eq(
-          projectSprints.releaseId,
-          release.id,
-        ),
-        ne(
-          projectSprints.status,
-          "COMPLETED",
-        ),
-      ),
-    )
-    .limit(1);
-
-  if (openSprint) {
-    throw new ProjectsServiceError(
-      "PROJECT_RELEASE_HAS_OPEN_SPRINTS",
-    );
-  }
-
+  const releaseId =
+    projectReleaseIdSchema.parse(releaseIdInput);
   const db = getDb();
 
   return db.transaction(async (tx) => {
+    const [project] = await tx
+      .select({ status: projectInstances.status })
+      .from(projectInstances)
+      .where(eq(projectInstances.id, scope.project.id))
+      .for("update")
+      .limit(1);
+
+    if (!project || !projectAllowsExecution(project.status)) {
+      throw new ProjectsServiceError(
+        "PROJECT_RELEASE_INVALID_STATE",
+      );
+    }
+
+    const [release] = await tx
+      .select()
+      .from(projectReleases)
+      .where(
+        and(
+          eq(projectReleases.id, releaseId),
+          eq(projectReleases.projectId, scope.project.id),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!release) {
+      throw new ProjectsServiceError(
+        "PROJECT_RELEASE_NOT_FOUND",
+      );
+    }
+    if (
+      release.status !== "PLANNED" &&
+      release.status !== "IN_PROGRESS"
+    ) {
+      throw new ProjectsServiceError(
+        "PROJECT_RELEASE_INVALID_STATE",
+      );
+    }
+
+    const [openSprint] = await tx
+      .select({ id: projectSprints.id })
+      .from(projectSprints)
+      .where(
+        and(
+          eq(projectSprints.projectId, scope.project.id),
+          eq(projectSprints.releaseId, release.id),
+          ne(projectSprints.status, "COMPLETED"),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (openSprint) {
+      throw new ProjectsServiceError(
+        "PROJECT_RELEASE_HAS_OPEN_SPRINTS",
+      );
+    }
+
     const [shipped] = await tx
       .update(projectReleases)
       .set({
@@ -420,14 +538,9 @@ export async function shipProjectRelease(
       })
       .where(
         and(
-          eq(
-            projectReleases.id,
-            release.id,
-          ),
-          ne(
-            projectReleases.status,
-            "SHIPPED",
-          ),
+          eq(projectReleases.id, release.id),
+          eq(projectReleases.projectId, scope.project.id),
+          eq(projectReleases.status, release.status),
         ),
       )
       .returning();
@@ -443,31 +556,34 @@ export async function shipProjectRelease(
       .from(projectReleases)
       .where(
         and(
-          eq(
-            projectReleases.projectId,
-            scope.project.id,
-          ),
-          ne(
-            projectReleases.status,
-            "SHIPPED",
-          ),
+          eq(projectReleases.projectId, scope.project.id),
+          ne(projectReleases.status, "SHIPPED"),
         ),
       )
+      .for("update")
       .limit(1);
 
     if (!unshipped) {
-      await tx
+      const [completedProject] = await tx
         .update(projectInstances)
         .set({
           status: "COMPLETED",
           updatedAt: new Date(),
         })
         .where(
-          eq(
-            projectInstances.id,
-            scope.project.id,
+          and(
+            eq(projectInstances.id, scope.project.id),
+            ne(projectInstances.status, "ARCHIVED"),
+            ne(projectInstances.status, "COMPLETED"),
           ),
+        )
+        .returning({ id: projectInstances.id });
+
+      if (!completedProject) {
+        throw new ProjectsServiceError(
+          "PROJECT_RELEASE_INVALID_STATE",
         );
+      }
     }
 
     return shipped;
