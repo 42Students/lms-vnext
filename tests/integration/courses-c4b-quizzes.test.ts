@@ -918,4 +918,43 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       code: "23514",
     });
   });
+  it("rejects a quiz submission when a faculty close commits during the race", async () => {
+    const structure = await createStructure();
+    const quiz = await createCourseQuiz(faculty, {
+      lessonId: structure.lesson.id,
+      deliveryId: structure.deliveryA.id,
+      title: "C4B Close Race Quiz",
+      dueAt: "2027-12-01T12:00:00.000Z",
+      maxAttempts: 2,
+      sequence: 0,
+      questions: quizQuestions(),
+    });
+    await transitionCourseQuiz(faculty, quiz.id, { action: "PUBLISH" });
+    const holder = await pool.connect();
+    let began = false;
+    try {
+      await holder.query("begin");
+      began = true;
+      await holder.query("update course_quizzes set status='CLOSED' where id=$1", [quiz.id]);
+      const submission = submitCourseQuiz(learner, quiz.id, {
+        deliveryId: structure.deliveryA.id,
+        answers: [],
+      });
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      await holder.query("commit");
+      began = false;
+      await expect(submission).rejects.toMatchObject({
+        code: "QUIZ_NOT_PUBLISHED",
+      });
+      const result = await pool.query(
+        "select count(*)::int as n from quiz_attempts where quiz_id=$1",
+        [quiz.id],
+      );
+      expect(result.rows[0].n).toBe(0);
+    } finally {
+      if (began) await holder.query("rollback");
+      holder.release();
+    }
+  });
+
 });
