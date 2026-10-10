@@ -81,6 +81,19 @@ After that claim clears, the migration-integrator review should combine—not bl
 
 Promotion requires canonical Drizzle declarations, numbered migration/snapshot, zero-to-head replay, direct-SQL negative tests and service regression evidence.
 
+## Staged-candidate integration reconciliation
+
+A second pass found promotion-time collisions between the W03 drafts. Those are now resolved at the source-only layer:
+
+- `db07-w03-workspace-state-parity-candidate.sql` is the canonical workspace-state promotion input; the older admin workspace draft is explicitly superseded and must not be promoted beside it.
+- readiness override is tri-state: `TRUE` force-unlocks, `FALSE` force-blocks and `NULL` clears; both non-null values require actor/time provenance. The legacy note is optional and service-capped at 2000 characters.
+- legacy restore does not restore a saved previous status. It recalculates `ACTIVE` when an active mentor exists and `BLOCKED` otherwise, so `status_before_delete` is rejected and the target status domain must admit `BLOCKED`.
+- `db07-w03-core-project-relationship-integrity-candidate.sql` owns the active task→sprint same-project FK and composite target.
+- `db07-w03-task-backlog-and-delivery-state-candidate.sql` owns nullable `sprint_id`, `carried_over_from_sprint_id` and the carry-over same-project FK.
+- `db07-w03-task-allocation-parity-candidate.sql` no longer redeclares carry-over DDL.
+
+The detailed promotion ownership and open decisions are recorded in `docs/planning/database-parity-db07-integration-reconciliation.md`, with a static contract guard in `tests/unit/w03-db07-integration-reconciliation.test.ts`. That test is authored but not claimed executed while DB-001 remains blocked.
+
 ## Runtime gates still open
 
 - DB-001 blocks executable PostgreSQL/CI evidence.
