@@ -69,9 +69,13 @@ const primaryStyle = "inline-flex min-h-10 items-center justify-center rounded-m
 export function RecruiterLeadsWorkspace({
   collegeId,
   initialView = "table",
+  initialAdd = false,
+  initialCompany = "",
 }: {
   collegeId: string;
   initialView?: "table" | "board" | "companies";
+  initialAdd?: boolean;
+  initialCompany?: string;
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
   const [phase, setPhase] = useState<Phase>("loading");
@@ -82,8 +86,11 @@ export function RecruiterLeadsWorkspace({
   const [companies, setCompanies] = useState<CompanySummary[]>([]);
   const [companiesPhase, setCompaniesPhase] = useState<Phase>("loading");
   const [companiesError, setCompaniesError] = useState("");
-  const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState<NewLead>(EMPTY);
+  const [adding, setAdding] = useState(initialAdd);
+  const [form, setForm] = useState<NewLead>({
+    ...EMPTY,
+    companyName: initialCompany,
+  });
   const [saveError, setSaveError] = useState("");
   const [saving, setSaving] = useState(false);
   const [duplicate, setDuplicate] = useState<Lead | null>(null);
