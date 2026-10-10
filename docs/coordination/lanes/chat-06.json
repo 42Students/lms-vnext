@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_THREE_SQL_DRAFTS_AND_ALL92_SOURCE_REVIEW_UNVERIFIED",
+    "checkpointKind": "DB008_SIX_DB_DRAFTS_METADATA_SUBFIELDS_AND_GATES_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "af679b124aba3e56c1c85909b47f4600f86f9657",
-    "lastWorkerMergedSha": "af679b124aba3e56c1c85909b47f4600f86f9657",
+    "observedMainSha": "746c9b9d012a8065e980bcf466f68732f805f945",
+    "lastWorkerMergedSha": "746c9b9d012a8065e980bcf466f68732f805f945",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-008 remains IN_PROGRESS. All 92 source columns over 7 historical DB05 tables accounted for as 30 source candidates, 18 remodeled needs proof, 33 unregistered draft, 11 missing/unproven. Staged THREE isolated SQL drafts: course/lesson/content versions & learner attempts, per-content discussions, course short title/slug. Authored six Node static tests, not executed. 11 in-memory GitHub source inspections true; zero DB semantically verified, PostgreSQL and CI not executed."
+    "summary": "DB-008 IN_PROGRESS: reviewed 92/92 historical DB05 source columns; proposals 30 candidates, 38 unregistered drafts, 21 remodeled-needs-proof, 3 missing/unproven. Six isolated SQL drafts and 14 nested MetaData subfield source inventory; 24 unresolved semantic decisions, 0 formal DB-verified fields. Two Node source test files contain 14 authored tests not executed. Fail-closed standalone source readiness gate authored not run. No accepted PostgreSQL/CI/typecheck/build/browser evidence."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -29,7 +29,8 @@
     "browser": "NOT_VERIFIED"
   },
   "lastAuthoredTests": [
-    "tests/db05-source-semantic-review.test.mjs: 6 Node tests authored, not run"
+    "tests/db05-source-semantic-review.test.mjs (6 authored Node tests, not executed)",
+    "tests/db05-draft-contract-integrity.test.mjs (8 authored Node tests, not executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -57,9 +58,15 @@
       "kind": "COURSE_IDENTITY_MIGRATION_DRAFT",
       "message": "Legacy CourseDTO requires shortTitle; public slug globally reserved even for soft-deleted/archived courses; V131 lower(trim) uniqueness. Staged scripts/sql/db05-course-identity.draft.sql adding nullable fields and unique indexes (not registered). W01 gate: seed/API cutover and PostgreSQL duplicate/race tests.",
       "commitSha": "af679b124aba3e56c1c85909b47f4600f86f9657"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "SIX_DRAFTS_MIGRATION_INTEGRATION_MATRIX",
+      "message": "Six isolated DB05 SQL drafts staged in scripts/sql/. Source inventory: docs/planning/db05-course-metadata-subfields.json (14 legacy nested fields), db05-migration-readiness-manifest.json (6 draft dependencies, 8 evidence gates), db05-unresolved-semantic-decisions.json (24 open decisions). scripts/db05-migration-readiness.mjs is fail-closed and must not count as executed tests. W01 controls migrations and course_display_contents predecessor; no PROD use.",
+      "commitSha": "746c9b9d012a8065e980bcf466f68732f805f945"
     }
   ],
-  "nextAction": "Continue DB-008 at 11 missing/unproven mappings and 18 remodeled-needs-proof, especially course parent/visibility/metadata and lesson content points/deadline/tenant/ordering. Do not register drafts until services integrate and PostgreSQL/CI acceptance passes.",
+  "nextAction": "Resolve 24 DB05 remodeled/missing semantics, prioritize cross-tenant/cycle, content points/deadline vs DB06, metadata fields/readers and source-only 3 historicals. W01 to register and execute six SQL drafts after service cutover plus clean PG acceptance; do not change phase.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -83,7 +90,18 @@
     "https://github.com/42Students/lms-vnext/commit/803bddeedb39000837de63cf56d7795f9532bffb",
     "https://github.com/42Students/lms-vnext/commit/ed01ffc44112b18b35fd2ca9d805cb33703c90a6",
     "https://github.com/42Students/lms-vnext/commit/31617bc52a435895014e6b8511a5b8629df20eeb",
-    "https://github.com/42Students/lms-vnext/commit/af679b124aba3e56c1c85909b47f4600f86f9657"
+    "https://github.com/42Students/lms-vnext/commit/af679b124aba3e56c1c85909b47f4600f86f9657",
+    "https://github.com/42Students/lms-vnext/commit/5f48acc4fe0fb0847ae7a768efdccebe073ebe71",
+    "https://github.com/42Students/lms-vnext/commit/f643a588d4dfecbeb358ed2e47b5c36da95e2a71",
+    "https://github.com/42Students/lms-vnext/commit/47e9b24b0a6b380351302f2fb9d0f1ef50ab020a",
+    "https://github.com/42Students/lms-vnext/commit/dc2ce98dc2bf42591596add3e4aec8de5b27a2d4",
+    "https://github.com/42Students/lms-vnext/commit/0eea49fe2c98cca36222629eb02542116e11b9dc",
+    "https://github.com/42Students/lms-vnext/commit/f1d752426dc85e961874e9279ee93f319bfb8cd5",
+    "https://github.com/42Students/lms-vnext/commit/7694c1ffcf42ca9160cea81f0ca354905d010160",
+    "https://github.com/42Students/lms-vnext/commit/58bc859e292b8f9ccaa1ff21670b3bc0f49b107d",
+    "https://github.com/42Students/lms-vnext/commit/55f9496dd8f8629017afd4ba9a032e07ebe63d85",
+    "https://github.com/42Students/lms-vnext/commit/4a95b1d33b159fb43c16fb004176692966e26ec6",
+    "https://github.com/42Students/lms-vnext/commit/746c9b9d012a8065e980bcf466f68732f805f945"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
