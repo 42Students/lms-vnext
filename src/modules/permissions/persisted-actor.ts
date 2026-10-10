@@ -43,19 +43,23 @@ export async function assertPersistedPlatformPermission(
   context: RequestContext,
   permission: PlatformPermission,
   resource: ResourceScope = {},
+  options: { actorLock?: "share" | "update" } = {},
 ): Promise<RequestContext> {
   if (recruiterOnlyPermissions.has(permission)) {
     throw new AuthorizationError(permission);
   }
 
-  const [actor] = await tx
+  const actorQuery = tx
     .select({
       platformStatus: users.platformStatus,
     })
     .from(users)
-    .where(eq(users.id, context.user.id))
-    .for("share")
-    .limit(1);
+    .where(eq(users.id, context.user.id));
+
+  const [actor] =
+    options.actorLock === "update"
+      ? await actorQuery.for("update").limit(1)
+      : await actorQuery.for("share").limit(1);
 
   if (!actor) {
     throw new AuthorizationError(permission);
