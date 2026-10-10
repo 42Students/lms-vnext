@@ -8122,21 +8122,22 @@
       "mappingTarget": {
         "table": "placement_tpo_messages",
         "column": "sender_type",
-        "status": "TARGET_EXISTS_BUT_CONTRACT_MISMATCH"
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
       },
-      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
-      "tenantKey": "placement_tpo_messages.college_id or owning parent tenant",
-      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "semanticDefinition": "Final recruiter-era message actor vocabulary is TPO|RECRUITER. Current vNext messaging producer now resolves/persists actor.type using exactly those values.",
+      "tenantKey": "placement_tpo_message_threads.college_id and recruiter_user_id ownership",
+      "actorPermission": "Producer/schema vocabulary aligned; role and cross-college messaging authorization still requires executed integration witnesses.",
       "producerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql",
+        "src/modules/placements/tpo-messaging-service.ts"
       ],
       "consumerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
         "src/db/schema/tpo-collaboration.ts",
         "src/modules/placements/tpo-messaging-service.ts"
       ],
-      "constraintAndLifecycleEvidence": "Final V193 source and live legacy service use TPO|RECRUITER, but current vNext schema/service still constrain/emit HR. Align DB and producer before registration.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Current main tpo-messaging-service.ts emits TPO|RECRUITER and staged schema CHECK accepts the same final V193 vocabulary. No PostgreSQL/runtime message test is claimed.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -9970,9 +9971,10 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "Final canonical DB09 disposition: company/industry company, drive groups, suppression/outbox, prep, student requests, TPO audit/bell/read",
-    "result": "279/279 canonical fields disposition-reviewed; 192 MAPPED, 65 REDESIGNED, 22 BLOCKED, 0 DB/runtime verified",
+    "scope": "Final DB09 canonical disposition plus V193 messaging producer reconciliation",
+    "result": "279/279 disposition-reviewed; 193 MAPPED, 65 REDESIGNED, 21 BLOCKED, 0 DB/runtime verified",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "currentProducerEvidence": "src/modules/placements/tpo-messaging-service.ts on main uses TPO|RECRUITER",
     "evidenceDoc": "docs/planning/db09-final-91-disposition-2026-10-11.md"
   }
 }
