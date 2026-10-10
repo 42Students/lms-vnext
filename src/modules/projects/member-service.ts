@@ -544,14 +544,6 @@ export async function bulkReassignProjectMentor(
 
   for (const projectId of input.projectIds) {
     try {
-      const result =
-        await reassignProjectPrimaryMentor(
-          context,
-          projectId,
-          input.mentorMembershipId,
-          input.roleLabel,
-        );
-
       const [project] = await getDb()
         .select({
           collegeId: projectInstances.collegeId,
@@ -569,6 +561,14 @@ export async function bulkReassignProjectMentor(
           "PROJECT_ACCESS_DENIED",
         );
       }
+
+      const result =
+        await reassignProjectPrimaryMentor(
+          context,
+          projectId,
+          input.mentorMembershipId,
+          input.roleLabel,
+        );
 
       if (result.skipped) {
         skippedCount += 1;
