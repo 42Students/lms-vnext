@@ -42,7 +42,7 @@ import {
 const uuid = z.string().uuid();
 const monthSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}$/);
+  .regex(/^\d{4}-(0[1-9]|1[0-2])$/);
 const correctionSchema = z.object({
   collegeId: uuid,
   deliveryId: uuid,
