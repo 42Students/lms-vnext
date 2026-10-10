@@ -4,16 +4,22 @@ import {
   type NotificationListItem,
 } from "@/components/activity/notification-list";
 import { PageHeader } from "@/components/ui/page-header";
-import { listOwnNotifications } from "@/modules/activity/notification-service";
+import { NotificationToolbar } from "@/components/activity/notification-toolbar";
+import { countOwnUnreadNotifications, listOwnNotifications } from "@/modules/activity/notification-service";
 
-export default async function NotificationsPage() {
+export default async function NotificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
+  const params = await searchParams;
+  const view = params.view === "unread" ? "unread" : "all";
   const context =
     await getCurrentRequestContext();
-  const rows =
-    await listOwnNotifications(
-      context,
-      { limit: 60 },
-    );
+  const [rows, unreadCount] = await Promise.all([
+    listOwnNotifications(context, { limit: 100, unreadOnly: view === "unread" }),
+    countOwnUnreadNotifications(context),
+  ]);
 
   const items: NotificationListItem[] =
     rows.map(
@@ -44,7 +50,13 @@ export default async function NotificationsPage() {
         title="Notifications"
         description="Deterministic workflow updates that need your attention, separate from noisy technical events."
       />
+      <NotificationToolbar view={view} unreadCount={unreadCount} />
       <NotificationList items={items} />
+      {items.length === 100 ? (
+        <p className="text-sm text-muted-foreground">
+          Showing the latest 100 notifications. Older notifications are not included in this view.
+        </p>
+      ) : null}
     </div>
   );
 }

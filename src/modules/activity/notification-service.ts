@@ -342,3 +342,21 @@ export async function markOwnNotificationRead(
   }
   return sanitizeNotificationRow(latest);
 }
+
+/**
+ * Atomically acknowledge the entire unread inbox, including notifications
+ * beyond the first page of the UI. Never accept a client-supplied recipient ID.
+ * Concurrent calls are idempotent: each row is acknowledged at most once.
+ */
+export async function markAllOwnNotificationsRead(context: RequestContext) {
+  const rows = await getDb()
+    .update(inAppNotifications)
+    .set({ readAt: new Date() })
+    .where(and(
+      eq(inAppNotifications.userId, context.user.id),
+      isNull(inAppNotifications.readAt),
+    ))
+    .returning({ id: inAppNotifications.id });
+
+  return rows.length;
+}
