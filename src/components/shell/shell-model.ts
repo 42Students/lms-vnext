@@ -174,6 +174,11 @@ const tpoItems: ShellNavItem[] = [
 
 const recruiterItems: ShellNavItem[] = [
   {
+    label: "Today",
+    href: "/hr/home",
+    shortLabel: "T",
+  },
+  {
     label: "Hiring Workspace",
     href: "/hr/placements",
     shortLabel: "H",
