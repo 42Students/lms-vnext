@@ -75,7 +75,8 @@ export type CoursesServiceErrorCode =
   | "QUIZ_RESULTS_NOT_VISIBLE"
   | "DISCUSSION_MESSAGE_NOT_FOUND"
   | "DISCUSSION_POST_ACCESS_DENIED"
-  | "DISCUSSION_MODERATION_ACCESS_DENIED";
+  | "DISCUSSION_MODERATION_ACCESS_DENIED"
+  | "ATTENDANCE_ROSTER_CONFLICT";
 
 export class CoursesServiceError extends Error {
   constructor(
