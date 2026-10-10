@@ -14,6 +14,7 @@
 import { sql } from "drizzle-orm";
 import {
   check,
+  foreignKey,
   index,
   integer,
   pgTable,
@@ -54,6 +55,21 @@ export const identityAuthAttemptsStaged = pgTable(
     usedAt: timestamp("used_at", { withTimezone: true }),
   },
   (table) => [
+    // Requires W01 composite UNIQUE (id,user_id,college_id) on memberships.
+    // MATCH SIMPLE skips nullable membershipId; shape CHECK below closes bypass.
+    foreignKey({
+      name: "identity_auth_attempts_membership_scope_fk",
+      columns: [table.membershipId, table.userId, table.collegeId],
+      foreignColumns: [
+        collegeMemberships.id,
+        collegeMemberships.userId,
+        collegeMemberships.collegeId,
+      ],
+    }).onDelete("restrict"),
+    check(
+      "identity_auth_attempts_membership_college_shape_ck",
+      sql`${table.membershipId} IS NULL OR ${table.collegeId} IS NOT NULL`,
+    ),
     index("identity_auth_attempts_user_expiry_idx").on(
       table.userId,
       table.expiresAt,
