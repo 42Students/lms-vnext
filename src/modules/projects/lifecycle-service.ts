@@ -602,6 +602,111 @@ export async function updateProjectTaskStatus(
   });
 }
 
+export async function unshipProjectRelease(
+  context: RequestContext,
+  projectIdInput: string,
+  releaseIdInput: string,
+) {
+  const scope =
+    await requireProjectLifecycleAccess(
+      context,
+      projectIdInput,
+    );
+  const releaseId =
+    projectReleaseIdSchema.parse(releaseIdInput);
+  const db = getDb();
+
+  return db.transaction(async (tx) => {
+    const [project] = await tx
+      .select({ status: projectInstances.status })
+      .from(projectInstances)
+      .where(eq(projectInstances.id, scope.project.id))
+      .for("update")
+      .limit(1);
+
+    if (!project || project.status === "ARCHIVED") {
+      throw new ProjectsServiceError(
+        "PROJECT_RELEASE_INVALID_STATE",
+      );
+    }
+
+    const [release] = await tx
+      .select()
+      .from(projectReleases)
+      .where(
+        and(
+          eq(projectReleases.id, releaseId),
+          eq(projectReleases.projectId, scope.project.id),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!release) {
+      throw new ProjectsServiceError(
+        "PROJECT_RELEASE_NOT_FOUND",
+      );
+    }
+    if (release.status !== "SHIPPED") {
+      throw new ProjectsServiceError(
+        "PROJECT_RELEASE_INVALID_STATE",
+      );
+    }
+
+    const [startedSprint] = await tx
+      .select({ id: projectSprints.id })
+      .from(projectSprints)
+      .where(
+        and(
+          eq(projectSprints.projectId, scope.project.id),
+          eq(projectSprints.releaseId, release.id),
+          ne(projectSprints.status, "PLANNED"),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    const nextStatus =
+      startedSprint ? "IN_PROGRESS" : "PLANNED";
+
+    const [unshipped] = await tx
+      .update(projectReleases)
+      .set({
+        status: nextStatus,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(projectReleases.id, release.id),
+          eq(projectReleases.projectId, scope.project.id),
+          eq(projectReleases.status, "SHIPPED"),
+        ),
+      )
+      .returning();
+
+    if (!unshipped) {
+      throw new ProjectsServiceError(
+        "PROJECT_RELEASE_INVALID_STATE",
+      );
+    }
+
+    await tx
+      .update(projectInstances)
+      .set({
+        status: "ACTIVE",
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(projectInstances.id, scope.project.id),
+          eq(projectInstances.status, "COMPLETED"),
+        ),
+      );
+
+    return unshipped;
+  });
+}
+
 export async function shipProjectRelease(
   context: RequestContext,
   projectIdInput: string,
