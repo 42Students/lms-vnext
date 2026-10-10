@@ -337,8 +337,41 @@ export function ProjectTemplateActions({
     }
   }
 
-  if (status === "ARCHIVED") {
-    return null;
+  async function duplicate() {
+    setPending("Duplicate template");
+    try {
+      const result = (await projectMutation(
+        "/api/projects/templates/" +
+          templateId +
+          "/duplicate",
+        "POST",
+        {},
+      )) as {
+        template: { id: string; title: string };
+      };
+      showToast({
+        tone: "success",
+        title: "Template duplicated",
+        description:
+          "A new Draft copy is ready to edit.",
+      });
+      router.push(
+        "/admin/projects/templates/" +
+          result.template.id,
+      );
+      router.refresh();
+    } catch (caught) {
+      showToast({
+        tone: "error",
+        title: "Could not duplicate template",
+        description:
+          caught instanceof Error
+            ? caught.message
+            : "The request could not be completed.",
+      });
+    } finally {
+      setPending(null);
+    }
   }
 
   return (
@@ -350,7 +383,9 @@ export function ProjectTemplateActions({
             disabled={pending !== null}
             onClick={() =>
               void mutate(
-                "Publish template",
+                status === "ARCHIVED"
+                  ? "Republish template"
+                  : "Publish template",
                 "/api/projects/templates/" +
                   templateId +
                   "/publish",
@@ -358,11 +393,63 @@ export function ProjectTemplateActions({
               )
             }
           >
-            {pending === "Publish template"
+            {pending === "Publish template" ||
+            pending === "Republish template"
               ? "Publishing…"
-              : "Publish"}
+              : status === "ARCHIVED"
+                ? "Republish"
+                : "Publish"}
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={pending !== null}
+            onClick={() =>
+              void mutate(
+                "Unpublish template",
+                "/api/projects/templates/" +
+                  templateId +
+                  "/unpublish",
+                "POST",
+              )
+            }
+          >
+            {pending === "Unpublish template"
+              ? "Unpublishing…"
+              : "Unpublish"}
+          </Button>
+        )}
+
+        {status === "ARCHIVED" ? (
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={pending !== null}
+            onClick={() =>
+              void mutate(
+                "Return template to draft",
+                "/api/projects/templates/" +
+                  templateId +
+                  "/unpublish",
+                "POST",
+              )
+            }
+          >
+            Return to draft
           </Button>
         ) : null}
+
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={pending !== null}
+          onClick={() => void duplicate()}
+        >
+          {pending === "Duplicate template"
+            ? "Duplicating…"
+            : "Duplicate"}
+        </Button>
 
         {selectedCollegeId &&
         status === "PUBLISHED" ? (
@@ -394,23 +481,25 @@ export function ProjectTemplateActions({
           </Button>
         ) : null}
 
-        <Button
-          size="sm"
-          variant="secondary"
-          disabled={pending !== null}
-          onClick={() =>
-            setConfirmArchive(true)
-          }
-        >
-          Archive
-        </Button>
+        {status !== "ARCHIVED" ? (
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={pending !== null}
+            onClick={() =>
+              setConfirmArchive(true)
+            }
+          >
+            Archive
+          </Button>
+        ) : null}
       </div>
 
       <Dialog
         open={confirmArchive}
         onOpenChange={setConfirmArchive}
         title="Archive project template?"
-        description="Archived templates cannot be revised or published. Active college assignments must be revoked first."
+        description="Archiving hides this template from normal creation flows. Active college assignments must be revoked first; existing workspaces are unaffected."
         footer={
           <>
             <Button
