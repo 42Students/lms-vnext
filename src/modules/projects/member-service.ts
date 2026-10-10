@@ -3,6 +3,7 @@ import {
   asc,
   eq,
   ilike,
+  inArray,
   isNull,
   or,
   sql,
@@ -12,10 +13,12 @@ import {
   collegeMemberships,
   membershipRoles,
   projectInstances,
+  projectMeetings,
   projectMembers,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import { requirePermission } from "@/modules/permissions/policy";
 import type { ProjectMemberRole } from "./constants";
 import {
   ProjectsServiceError,
@@ -25,12 +28,16 @@ import {
   requireProjectManageAccess,
   requireProjectReadAccess,
 } from "./access";
+import { loadProjectCollegeScope } from "./scope";
 import {
   addProjectMemberInputSchema,
+  bulkProjectMentorReassignmentInputSchema,
   projectMemberCandidateQuerySchema,
+  projectMentorCandidateQuerySchema,
   projectMemberIdSchema,
   updateProjectMemberInputSchema,
   type AddProjectMemberInput,
+  type BulkProjectMentorReassignmentInput,
   type UpdateProjectMemberInput,
 } from "./validation";
 
@@ -176,6 +183,419 @@ export async function listProjectMemberCandidates(
     )
     .orderBy(asc(users.displayName), asc(collegeMemberships.id))
     .limit(query.limit);
+}
+
+export async function listProjectMentorCandidates(
+  context: RequestContext,
+  collegeIdInput: string,
+  rawQuery: unknown,
+) {
+  const college =
+    await loadProjectCollegeScope(
+      collegeIdInput,
+    );
+  requirePermission(context, "projects.manage", {
+    organizationId: college.organizationId,
+    collegeId: college.id,
+  });
+  const query =
+    projectMentorCandidateQuerySchema.parse(
+      rawQuery,
+    );
+  const search = query.q
+    ? or(
+        ilike(users.displayName, `%${query.q}%`),
+        ilike(users.email, `%${query.q}%`),
+      )
+    : undefined;
+
+  return getDb()
+    .select({
+      membershipId: collegeMemberships.id,
+      displayName: users.displayName,
+      email: users.email,
+    })
+    .from(collegeMemberships)
+    .innerJoin(
+      users,
+      eq(users.id, collegeMemberships.userId),
+    )
+    .innerJoin(
+      membershipRoles,
+      and(
+        eq(
+          membershipRoles.membershipId,
+          collegeMemberships.id,
+        ),
+        eq(membershipRoles.role, "MENTOR"),
+      ),
+    )
+    .where(
+      and(
+        eq(
+          collegeMemberships.collegeId,
+          college.id,
+        ),
+        eq(collegeMemberships.status, "ACTIVE"),
+        eq(users.platformStatus, "ACTIVE"),
+        search,
+      ),
+    )
+    .orderBy(
+      asc(users.displayName),
+      asc(collegeMemberships.id),
+    )
+    .limit(query.limit);
+}
+
+export async function reassignProjectPrimaryMentor(
+  context: RequestContext,
+  projectIdInput: string,
+  mentorMembershipId: string,
+  roleLabel = "Project Mentor",
+) {
+  const scope =
+    await requireProjectManageAccess(
+      context,
+      projectIdInput,
+    );
+  const db = getDb();
+
+  try {
+    return await db.transaction(async (tx) => {
+      const [project] = await tx
+        .select({
+          id: projectInstances.id,
+          collegeId: projectInstances.collegeId,
+          status: projectInstances.status,
+        })
+        .from(projectInstances)
+        .where(
+          and(
+            eq(
+              projectInstances.id,
+              scope.project.id,
+            ),
+            eq(
+              projectInstances.collegeId,
+              scope.collegeId,
+            ),
+          ),
+        )
+        .for("update")
+        .limit(1);
+
+      if (
+        !project ||
+        project.status === "ARCHIVED"
+      ) {
+        throw new ProjectsServiceError(
+          "PROJECT_INVALID_STATE",
+        );
+      }
+
+      const [eligibleTarget] = await tx
+        .select({
+          membershipId: collegeMemberships.id,
+          displayName: users.displayName,
+        })
+        .from(collegeMemberships)
+        .innerJoin(
+          users,
+          eq(
+            users.id,
+            collegeMemberships.userId,
+          ),
+        )
+        .innerJoin(
+          membershipRoles,
+          and(
+            eq(
+              membershipRoles.membershipId,
+              collegeMemberships.id,
+            ),
+            eq(
+              membershipRoles.role,
+              "MENTOR",
+            ),
+          ),
+        )
+        .where(
+          and(
+            eq(
+              collegeMemberships.id,
+              mentorMembershipId,
+            ),
+            eq(
+              collegeMemberships.collegeId,
+              scope.collegeId,
+            ),
+            eq(
+              collegeMemberships.status,
+              "ACTIVE",
+            ),
+            eq(users.platformStatus, "ACTIVE"),
+          ),
+        )
+        .for("share")
+        .limit(1);
+
+      if (!eligibleTarget) {
+        throw new ProjectsServiceError(
+          "PROJECT_MEMBER_ROLE_REQUIRED",
+        );
+      }
+
+      const activeMembers = await tx
+        .select()
+        .from(projectMembers)
+        .where(
+          and(
+            eq(
+              projectMembers.projectId,
+              project.id,
+            ),
+            isNull(projectMembers.endedAt),
+          ),
+        )
+        .for("update");
+
+      const currentPrimary =
+        activeMembers.find(
+          (member) =>
+            member.role === "MENTOR" &&
+            member.isPrimary,
+        ) ?? null;
+      const targetMember =
+        activeMembers.find(
+          (member) =>
+            member.membershipId ===
+            mentorMembershipId,
+        ) ?? null;
+
+      if (
+        targetMember &&
+        targetMember.role !== "MENTOR"
+      ) {
+        throw new ProjectsServiceError(
+          "PROJECT_MEMBER_ROLE_REQUIRED",
+        );
+      }
+
+      const normalizedRoleLabel =
+        roleLabel.trim() || "Project Mentor";
+      if (
+        currentPrimary?.membershipId ===
+          mentorMembershipId &&
+        (currentPrimary.roleLabel?.trim() ||
+          "Project Mentor") ===
+          normalizedRoleLabel
+      ) {
+        return {
+          projectId: project.id,
+          reassigned: false,
+          skipped: true,
+          outgoingMembershipId:
+            currentPrimary.membershipId,
+          mentorMembershipId,
+          mentorName:
+            eligibleTarget.displayName,
+        };
+      }
+
+      const now = new Date();
+      if (
+        currentPrimary &&
+        currentPrimary.id !== targetMember?.id
+      ) {
+        await tx
+          .update(projectMembers)
+          .set({
+            isPrimary: false,
+            endedAt: now,
+            updatedAt: now,
+          })
+          .where(
+            and(
+              eq(
+                projectMembers.id,
+                currentPrimary.id,
+              ),
+              isNull(projectMembers.endedAt),
+            ),
+          );
+      }
+
+      if (targetMember) {
+        await tx
+          .update(projectMembers)
+          .set({
+            isPrimary: true,
+            roleLabel: normalizedRoleLabel,
+            updatedAt: now,
+          })
+          .where(
+            and(
+              eq(
+                projectMembers.id,
+                targetMember.id,
+              ),
+              isNull(projectMembers.endedAt),
+            ),
+          );
+      } else {
+        await tx
+          .insert(projectMembers)
+          .values({
+            projectId: project.id,
+            membershipId:
+              mentorMembershipId,
+            role: "MENTOR",
+            isPrimary: true,
+            roleLabel: normalizedRoleLabel,
+            createdByUserId: context.user.id,
+          });
+      }
+
+      if (
+        currentPrimary &&
+        currentPrimary.membershipId !==
+          mentorMembershipId
+      ) {
+        await tx
+          .update(projectMeetings)
+          .set({
+            status: "CANCELLED",
+            cancellationNote:
+              "Primary mentor reassigned",
+            updatedAt: now,
+          })
+          .where(
+            and(
+              eq(
+                projectMeetings.projectId,
+                project.id,
+              ),
+              eq(
+                projectMeetings
+                  .scheduledByMembershipId,
+                currentPrimary.membershipId,
+              ),
+              inArray(
+                projectMeetings.status,
+                ["REQUESTED", "SCHEDULED"],
+              ),
+            ),
+          );
+      }
+
+      await tx
+        .update(projectInstances)
+        .set({ updatedAt: now })
+        .where(
+          eq(
+            projectInstances.id,
+            project.id,
+          ),
+        );
+
+      return {
+        projectId: project.id,
+        reassigned: true,
+        skipped: false,
+        outgoingMembershipId:
+          currentPrimary?.membershipId ?? null,
+        mentorMembershipId,
+        mentorName:
+          eligibleTarget.displayName,
+      };
+    });
+  } catch (error) {
+    if (error instanceof ProjectsServiceError) {
+      throw error;
+    }
+    throw mapMemberConstraint(error);
+  }
+}
+
+export async function bulkReassignProjectMentor(
+  context: RequestContext,
+  rawInput: BulkProjectMentorReassignmentInput,
+) {
+  const input =
+    bulkProjectMentorReassignmentInputSchema.parse(
+      rawInput,
+    );
+  const college =
+    await loadProjectCollegeScope(
+      input.collegeId,
+    );
+  requirePermission(context, "projects.manage", {
+    organizationId: college.organizationId,
+    collegeId: college.id,
+  });
+
+  let reassignedCount = 0;
+  let skippedCount = 0;
+  const failures: {
+    projectId: string;
+    code: string;
+  }[] = [];
+
+  for (const projectId of input.projectIds) {
+    try {
+      const result =
+        await reassignProjectPrimaryMentor(
+          context,
+          projectId,
+          input.mentorMembershipId,
+          input.roleLabel,
+        );
+
+      const [project] = await getDb()
+        .select({
+          collegeId: projectInstances.collegeId,
+        })
+        .from(projectInstances)
+        .where(
+          eq(projectInstances.id, projectId),
+        )
+        .limit(1);
+      if (
+        !project ||
+        project.collegeId !== input.collegeId
+      ) {
+        throw new ProjectsServiceError(
+          "PROJECT_ACCESS_DENIED",
+        );
+      }
+
+      if (result.skipped) {
+        skippedCount += 1;
+      } else {
+        reassignedCount += 1;
+      }
+    } catch (error) {
+      failures.push({
+        projectId,
+        code:
+          error instanceof ProjectsServiceError
+            ? error.code
+            : "PROJECT_REASSIGNMENT_FAILED",
+      });
+    }
+  }
+
+  return {
+    reassignedCount,
+    skippedCount,
+    failures,
+    // Legacy also clears task assignees belonging to
+    // the outgoing mentor. vNext project_tasks has no
+    // assignee column yet, so that side effect remains
+    // an explicit DB07 parity blocker.
+    taskAssignmentClearingSupported: false,
+  };
 }
 
 export async function addProjectMember(
