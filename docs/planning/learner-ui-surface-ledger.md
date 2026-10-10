@@ -240,7 +240,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L6-010 | Submitted state | AssignmentsContent | state mapping | CLOSED |
 | L6-011 | Submitted late state | AssignmentsContent | state mapping | CLOSED |
 | L6-012 | Graded state | AssignmentsContent | state mapping | CLOSED |
-| L6-013 | View/submit primary action | AssignmentsContent | aggregate component | CLOSED |
+| L6-013 | View/submit primary action | AssignmentsContent | aggregate component | FIXED |
 | L6-014 | Submission/view drawer parity | AssignmentsContent | aggregate assignment drawer | FIXED |
 | L6-015 | Submission text/link/file fields | AssignmentsContent | text/link in aggregate drawer; file awaits secure storage | BLOCKED |
 | L6-016 | Grade masked until publish | AssignmentsContent | learner service | CLOSED |
@@ -262,12 +262,12 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L7-004 | Pagination | QuizzesContent | aggregate component | CLOSED |
 | L7-005 | Not attempted state | QuizzesContent | state mapping | CLOSED |
 | L7-006 | Attempted state | QuizzesContent | state mapping | CLOSED |
-| L7-007 | Missed state | QuizzesContent | state mapping | CLOSED |
+| L7-007 | Missed state | QuizzesContent | state mapping | FIXED |
 | L7-008 | Result-published state | QuizzesContent | state mapping | CLOSED |
 | L7-009 | Due/close timing | QuizzesContent | aggregate rows | CLOSED |
 | L7-010 | Attempt count/limit | QuizzesContent | aggregate rows | CLOSED |
-| L7-011 | Take Quiz action | QuizzesContent | `/quiz?quizId=...` | CLOSED |
-| L7-012 | View Result action | QuizzesContent | standalone review | CLOSED |
+| L7-011 | Take Quiz action | QuizzesContent | `/quiz?quizId=...` | FIXED |
+| L7-012 | View Result action | QuizzesContent | standalone review | FIXED |
 | L7-013 | Correct delivery in deep link | QuizzesContent | quiz URL | CLOSED |
 | L7-014 | Loading skeleton | QuizzesContent | aggregate page | CLOSED |
 | L7-015 | Request failure/retry | QuizzesContent | aggregate page | CLOSED |
@@ -290,14 +290,14 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L8-009 | Submit confirmation | Quizpanel | confirm flow | CLOSED |
 | L8-010 | Prevent unavailable/closed attempt | Quizpanel/API | attempt gating | CLOSED |
 | L8-011 | Attempt limit enforcement | Quizpanel/API | service/UI | CLOSED |
-| L8-012 | Deadline enforcement | Quizpanel/API | service/UI | CLOSED |
+| L8-012 | Deadline enforcement | Quizpanel/API | service/UI | FIXED |
 | L8-013 | Review mode | Quizpanel/results | review UI | CLOSED |
 | L8-014 | Results withheld until publish | Quizpanel/results | result policy | CLOSED |
 | L8-015 | Correct answers shown only when allowed | Quizpanel/results | review UI | CLOSED |
 | L8-016 | Fatal load error + retry | Quizpanel boundary | error state | CLOSED |
 | L8-017 | Missing URL params recovery | Quizpanel | error + All Quizzes | CLOSED |
 | L8-018 | Browser Back behavior | Quizpanel | standalone route | FIXED |
-| L8-019 | Double-submit/race protection | Quizpanel/API | submit state/service | CLOSED |
+| L8-019 | Double-submit/race protection | Quizpanel/API | submit state/service | FIXED |
 | L8-020 | Mobile attempt layout | Quizpanel responsive | attempt UI | FIXED |
 | L8-021 | Unanswered-question warning before submit | Quizpanel | attempt submit confirmation | CLOSED |
 | L8-022 | Post-submit return to prior page | Quizpanel | delayed router.back after success | CLOSED |
@@ -813,3 +813,7 @@ After Learner closes, move to Faculty using the same ledger pattern. Do not star
 Against FE `008d113ddd9f515df65ae7fe90dba360938314f6` + BE `ed1377b744088f2ec759895658105c494337ba30`, vNext now has persisted optional-module decisions with the legacy precedence/lock semantics, Placements' college-only module switch, and the learner Placement eligibility ladder (membership → section → cohort, equivalent to legacy learner → class → batch). The learner shell consumes those results fail-closed for optional links while keeping core navigation available.
 
 L0-011 through L0-013 are now implemented at the consumer/domain level and remain `FIXED`, not `CLOSED`: CI/browser evidence is still unavailable and producer UIs must be verified in their owning admin/TPO families. Drive Day now has persisted dated coordinator assignments, applicant-conflict prevention, learner-only conditional navigation, an assigned-round landing, and a restricted roster that hides contact/result controls and permits only Present/Absent for student coordinators.
+
+## 2026-10-10 W02 quiz/assignment safety re-audit
+
+The current legacy FE `e6b09e6d` explicitly shows read-only review for expired unattempted and submitted quizzes, with no retake after deadline; BE `21bad59d` blocks opening/submitting a new attempt past due. vNext quiz list actions, transaction-time attempt guards, and assignment publish/actor guards were updated on main. Rows L7-007, L7-011, L7-012, L8-012, L8-019 and L6-013 are `FIXED`, not final `CLOSED` while PostgreSQL concurrency tests and browser/mobile parity are unexecuted. The actual source proof and remaining dependencies are in `docs/planning/w02-learning-assessment-closure-ledger.md`.
