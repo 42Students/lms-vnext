@@ -709,17 +709,17 @@
       "paths": [
         "docs/planning/database-parity-pass3-fk-audit.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "768d69c8132a5fce8b7a0886fdb6c3a688c03ff4",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Refreshed cross-domain tenant/FK source sweep from stale snapshot 0036 to registered snapshot 0040. Current registered structure: 90 tables, 211 FKs, 0 composite FKs, 65 multi-parent tables, 9 cascade FKs, 201 checks, 97 unique indexes, 3 soft-delete tables. Classified 41 existing multi-parent candidates, 24 new structural rows, DB03 trigger guards invisible to snapshots, 7 history-retention cascade edges, and 5 direct-college unique indexes whose scope needs explicit contract proof. Static guard authored/registered; runtime PostgreSQL replay/catalog/negative writes NOT executed because DB-001 remains blocked.",
       "pickedBy": 1,
       "pickedAt": "2026-10-10T20:45:34.703Z",
       "startedAt": "2026-10-10T20:45:46.374Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-10T20:51:05.367Z",
+      "completionCommitSha": "768d69c8132a5fce8b7a0886fdb6c3a688c03ff4",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -743,6 +743,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:45:46.374Z",
           "reason": "Reviewing current vNext multi-parent FK graph for cross-tenant combinations not prevented by single-column references."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-10T20:51:05.367Z",
+          "reason": "DB-014 registered-schema/source integrity sweep merged; runtime DB verification remains pending."
         }
       ]
     },
