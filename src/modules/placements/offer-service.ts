@@ -479,6 +479,9 @@ export async function actOnPlacementOffer(
       context,
       current.application.membershipId,
     );
+    // Self acceptance/decline is not a back door around paid module or the
+    // learner/class/batch placement decision. TPO withdrawal is separate.
+    await requireLearnerPlacementAccess(context);
   } else {
     await requirePlacementManageScope(
       context,
