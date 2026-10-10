@@ -73,3 +73,28 @@ test("DB09 name matches remain candidates, never automatically verified", () => 
   assert.ok(tracker.tables.some(t => t.candidateTargets.length > 0));
   assert.ok(tracker.tables.some(t => t.candidateTargets.length === 0));
 });
+
+test("DB09 CRM schema declarations parse uniquely with intact SQL checks", async () => {
+  // This source grammar guard catches accidental duplicate or truncated
+  // pgTable declarations before a numbered PostgreSQL migration is prepared.
+  const typescript = await import("typescript");
+  const ts = typescript.default ?? typescript;
+  const file = path.join(root, "src/db/schema/tpo-crm.ts");
+  const source = fs.readFileSync(file, "utf8");
+  const ast = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  assert.deepEqual(
+    ast.parseDiagnostics.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\n")),
+    [],
+    "TPO CRM staged schema must parse cleanly before migration integration",
+  );
+  const declarations = [...source.matchAll(
+    /export const (placementTpoLeads|placementTpoLeadActivities|placementTpoFollowups)\s*=\s*pgTable\s*\(/g,
+  )].map(match => match[1]);
+  assert.deepEqual(declarations, [
+    "placementTpoLeads", "placementTpoLeadActivities", "placementTpoFollowups",
+  ], "CRM must have one lead, activity and follow-up table each");
+  assert.ok(source.includes("placement_tpo_leads_phone_digits_ck"));
+  assert.ok(source.includes("placement_tpo_leads_invite_hash_ck"));
+  assert.match(source, /\^\[0-9\]\{7,20\}\$/);
+  assert.match(source, /\^\[a-f0-9\]\{64\}\$/);
+});
