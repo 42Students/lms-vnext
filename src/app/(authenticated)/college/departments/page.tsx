@@ -1,73 +1,48 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { DepartmentActions } from "@/components/admin/department-actions";
 import { DepartmentCreateForm } from "@/components/admin/department-create-form";
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table";
+import { DepartmentDirectory } from "@/components/admin/department-directory";
 import { PageHeader } from "@/components/ui/page-header";
-import { listDepartments } from "@/modules/departments/service";
-
-type DepartmentRow = Awaited<
-  ReturnType<typeof listDepartments>
->[number];
-
-const columns: DataTableColumn<DepartmentRow>[] = [
-  {
-    key: "name",
-    header: "Department",
-    cell: (department) => (
-      <span className="font-semibold text-foreground">
-        {department.name}
-      </span>
-    ),
-  },
-  {
-    key: "created",
-    header: "Created",
-    cell: (department) =>
-      department.createdAt.toISOString().slice(0, 10),
-  },
-  {
-    key: "actions",
-    header: <span className="sr-only">Actions</span>,
-    className: "text-right",
-    cell: (department) => (
-      <DepartmentActions
-        departmentId={department.id}
-        name={department.name}
-      />
-    ),
-  },
-];
+import type { DepartmentDirectoryRow } from "@/modules/admin-ui/department-directory";
+import {
+  listDepartments,
+  resolveDepartmentUsage,
+} from "@/modules/departments/service";
 
 export default async function CollegeDepartmentsPage() {
   const context = await getCurrentRequestContext();
   const membership = context.membership;
 
+  // The /college layout checks COLLEGE_ADMIN role, including active membership.
+  // The service below independently enforces department.read for the membership
+  // college. Never consume a client-provided college ID or global admin scope.
   if (!membership) {
     redirect("/dashboard");
   }
 
-  const departments = await listDepartments(
-    context,
-    membership.collegeId,
+  const departments = await listDepartments(context, membership.collegeId);
+  const usageResults = await Promise.allSettled(
+    departments.map((department) => resolveDepartmentUsage(department.id)),
   );
+  const rows: DepartmentDirectoryRow[] = departments.map((department, index) => {
+    const usage = usageResults[index];
+    return {
+      id: department.id,
+      name: department.name,
+      createdAt: department.createdAt.toISOString(),
+      usage: usage?.status === "fulfilled" ? usage.value : null,
+    };
+  });
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="College Admin"
         title="Departments"
-        description="Active departments in your college. Cross-college access is denied by the service layer."
+        description="Create, find, export and manage the departments in your college."
       />
       <DepartmentCreateForm collegeId={membership.collegeId} />
-      <DataTable
-        columns={columns}
-        rows={departments}
-        getRowKey={(department) => department.id}
-      />
+      <DepartmentDirectory rows={rows} />
     </div>
   );
 }
