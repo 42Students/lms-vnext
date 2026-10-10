@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "PICKED",
+  "activeTaskId": "DB-008",
   "blockedTaskIds": [
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB003_SOURCE_EVIDENCE_COMMITTED_BLOCKED",
+    "checkpointKind": "DB008_PICKED_SOURCE_REVIEW",
     "updatedOn": "2026-10-11",
     "observedMainSha": "7a50dcb92d28e741353dd68dc4a36132e519215f",
     "lastWorkerMergedSha": "f56b84427036c60ae5c34dbf8ccc26f695efcda2",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-003 source-only artifact and regression guard committed; manual field/constraint equality pass (91/91; 7/7). Open product/producer-consumer decision, live schema and executed DB test evidence. Task BLOCKED, not implemented-complete or verified."
+    "summary": "Chat 6 CAS picked DB-008 on the current DATABASE phase. Source review in progress; no accepted test results."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -39,7 +39,7 @@
       "commitSha": "f56b84427036c60ae5c34dbf8ccc26f695efcda2"
     }
   ],
-  "nextAction": "Pick next eligible unclaimed DATABASE task per shared queue, avoiding DB-003 until runtime/product evidence is available. Preserve source-only work on main.",
+  "nextAction": "Reconcile DB-008 DB05 course/content source semantics with current legacy and vNext evidence; update field-level contract; no false test passing.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -55,10 +55,11 @@
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
-    "DB-003"
+    "DB-003",
+    "DB-008"
   ],
   "completedTaskIds": [],
-  "lastPickedAt": "2026-10-10T20:22:42.022Z",
+  "lastPickedAt": "2026-10-10T20:27:24.145Z",
   "lastCompletedAt": null,
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
