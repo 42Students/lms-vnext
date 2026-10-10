@@ -7,6 +7,9 @@ import {
 import {
   getFacultyCourseHomeSignals,
 } from "@/modules/courses/faculty-course-home-service";
+import {
+  loadCourseDisplayContentIfReady,
+} from "@/modules/courses/course-display-service";
 
 export default async function FacultyCoursePage({
   params,
@@ -23,11 +26,16 @@ export default async function FacultyCoursePage({
       context,
       deliveryId,
     );
-  const homeSignals =
-    await getFacultyCourseHomeSignals(
-      context,
-      workspace,
-    );
+  const [homeSignals, display] =
+    await Promise.all([
+      getFacultyCourseHomeSignals(
+        context,
+        workspace,
+      ),
+      loadCourseDisplayContentIfReady(
+        workspace.course.courseId,
+      ),
+    ]);
 
   return (
     <div className="space-y-5">
@@ -62,6 +70,7 @@ export default async function FacultyCoursePage({
       <FacultyCourseWorkspace
         workspace={workspace}
         homeSignals={homeSignals}
+        display={display}
       />
     </div>
   );
