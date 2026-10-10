@@ -10,6 +10,7 @@
 CREATE TABLE identity_auth_handoffs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
   target_membership_id uuid NOT NULL
     REFERENCES college_memberships(id) ON DELETE RESTRICT,
   target_domain_id uuid NOT NULL
