@@ -1,0 +1,184 @@
+{
+  "artifact": "DB-008 course contents MetaData 14-field sub-schema contract",
+  "task": "DB-008",
+  "phase": "DATABASE",
+  "createdOn": "2026-10-11",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "vnextMainSource": [
+    "src/db/schema/course-display-staged.ts",
+    "src/modules/courses/course-display-service.ts",
+    "src/modules/courses/course-display-validation.ts"
+  ],
+  "legacySource": [
+    "src/main/java/com/_42students/lms/dto/request/MetaData.java",
+    "src/main/java/com/_42students/lms/service/impl/CourseServiceImpl.java",
+    "src/main/java/com/_42students/lms/model/Course.java"
+  ],
+  "scope": "One legacy course.contents JSON object, not 14 standalone historical SQL columns",
+  "stagedSql": "scripts/sql/db05-course-metadata-extension.draft.sql",
+  "stagedSqlDependency": "course_display_contents exists only as a separate W02 staged table; W01 integrates after service and tests",
+  "globalVerification": "NOT_VERIFIED",
+  "criticalSemantics": [
+    "Incoming null/absent legacy MetaData values preserve prior stored values reflectively rather than wiping unrelated fields",
+    "Legacy imageUrl, imageUrlLp, thumbnail use server-side http(s)-only validation; courseColor rejects injection",
+    "HtmlContent and introduction_content are sanitized with Jsoup relaxed; current vNext sanitizer/limit differs",
+    "Display-only public-safe fields are not authorization inputs",
+    "Dates and updatedOn are legacy Strings, conversion policy must be approved"
+  ],
+  "fields": [
+    {
+      "legacyField": "amount",
+      "legacyJavaType": "Integer",
+      "proposedVnextColumn": "amount",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Optional amount not confirmed as amount in current monetary flow; retain source type",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "imageUrl",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "image_url",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Legacy server validates http(s) URL or blank",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "takeaways",
+      "legacyJavaType": "List<String>",
+      "proposedVnextColumn": "takeaways",
+      "disposition": "STAGED_W02_FIELD_NEEDS_BEHAVIOR_PROOF",
+      "openIssue": "Array, ordering and merge of absent payload elements require tests",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "courseCode",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "course_code",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Not proven equal to vNext courses.code",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "courseType",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "course_type",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Display categorization, not access gate",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "courseColor",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "course_color",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "CSS color must be validated server-side",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "imageUrlLp",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "image_url_lp",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Distinct learning-path image; http(s) URL validation",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "courseCategory",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "course_category",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Display taxonomy not proven enum-compatible",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "courseEndDate",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "course_end_date_raw",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Legacy string. Must not silently cast timezone/date",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "courseStartDate",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "course_start_date_raw",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Legacy string. Must not silently cast timezone/date",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "introduction_content",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "introduction_text",
+      "disposition": "STAGED_W02_FIELD_NEEDS_BEHAVIOR_PROOF",
+      "openIssue": "Legacy HTML sanitization vs vNext bounded plain text; not equivalent by name",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "htmlContent",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "body_html",
+      "disposition": "STAGED_W02_FIELD_NEEDS_BEHAVIOR_PROOF",
+      "openIssue": "Legacy Jsoup relaxed HTML vs vNext strict sanitizer; equivalence and content length unresolved",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "updatedOn",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "legacy_updated_on_raw",
+      "disposition": "UNREGISTERED_EXTENSION",
+      "openIssue": "Display timestamp-like string; no implicit cast",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    },
+    {
+      "legacyField": "thumbnail",
+      "legacyJavaType": "String",
+      "proposedVnextColumn": "thumbnail_url",
+      "disposition": "STAGED_W02_FIELD_NEEDS_BEHAVIOR_PROOF",
+      "openIssue": "Legacy http(s) or blank vs vNext https-only; product decision required",
+      "sourceRuntimeEvidence": "LEGACY_DTO_AND_COURSE_SERVICE",
+      "dbVerified": false,
+      "consumerVerified": false,
+      "actualMigrationRegistered": false
+    }
+  ]
+}
