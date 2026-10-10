@@ -302,7 +302,7 @@ export async function applyToPlacementJob(
   // student/class/batch placement participation decision.
   await requireLearnerPlacementAccess(context);
 
-  if (job.status !== "PUBLISHED") {
+  if (job.status !== "PUBLISHED" || job.archivedAt !== null) {
     throw new PlacementsServiceError(
       "PLACEMENT_APPLICATION_JOB_NOT_OPEN",
     );
@@ -376,6 +376,43 @@ export async function applyToPlacementJob(
 
   const created = await getDb().transaction(
     async (tx) => {
+      // Lock the live job and role before inserting, not just during the
+      // earlier optimistic read. A concurrent close/archive/role-removal
+      // cannot make a new submission succeed after these changes.
+      const [liveJob] = await tx.select({
+        status: placementJobs.status,
+        archivedAt: placementJobs.archivedAt,
+        applicationDeadline: placementJobs.applicationDeadline,
+        applicationMode: placementJobs.applicationMode,
+        externalApplicationUrl: placementJobs.externalApplicationUrl,
+      }).from(placementJobs)
+        .where(eq(placementJobs.id, job.id))
+        .for("update").limit(1);
+      if (!liveJob || liveJob.status !== "PUBLISHED" ||
+          liveJob.archivedAt !== null) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_JOB_NOT_OPEN");
+      }
+      if (isPlacementApplicationDeadlinePassed(
+        liveJob.applicationDeadline, new Date(),
+      )) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_DEADLINE_PASSED");
+      }
+      const [liveRole] = await tx.select({
+        id: placementJobRoleOptions.id,
+        status: placementJobRoleOptions.status,
+        jobId: placementJobRoleOptions.jobId,
+      }).from(placementJobRoleOptions)
+        .where(eq(placementJobRoleOptions.id, roleOption.id))
+        .for("update").limit(1);
+      if (!liveRole || liveRole.status !== "ACTIVE" ||
+          liveRole.jobId !== job.id) {
+        throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_NOT_FOUND");
+      }
+      if (resolveApplicationChannel(liveJob.applicationMode, input) !== channel ||
+          (channel === "EXTERNAL" && !liveJob.externalApplicationUrl)) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_CHANNEL_INVALID");
+      }
+
       const [application] = await tx
         .insert(placementApplications)
         .values({
