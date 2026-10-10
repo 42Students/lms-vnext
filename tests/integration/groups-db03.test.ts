@@ -207,6 +207,33 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(target.rows[0]).toMatchObject({state:"ACTIVE",is_locked:true});
   });
 
+  it("uses the legacy waitlist=true default when an elective move targets a full group with empty config", async () => {
+    const { groups, candidate, programId, cohortId, sectionId, periodId } =
+      await createElectiveFixture();
+    const other = await createLearner();
+    const programEnrollmentId = randomUUID(), sectionEnrollmentId = randomUUID();
+    fixture.learnerEnrollments.push(programEnrollmentId);
+    fixture.learnerSections.push(sectionEnrollmentId);
+    await pool.query(
+      "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id) VALUES ($1,$2,$3,$4)",
+      [programEnrollmentId,other.membershipId,programId,cohortId]);
+    await pool.query(
+      "INSERT INTO section_enrollments (id,learner_enrollment_id,section_id,academic_period_id) VALUES ($1,$2,$3,$4)",
+      [sectionEnrollmentId,programEnrollmentId,sectionId,periodId]);
+    await pool.query("UPDATE lms_groups SET config_json='{}'::jsonb WHERE id=$1",[groups[1]]);
+    await joinGroup(other.ctx,groups[1],other.membershipId);
+    await joinGroup(candidate.ctx,groups[0],candidate.membershipId);
+    const moved=await moveElectiveMember(
+      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+    );
+    expect(moved.state).toBe("WAITLISTED");
+    const source=await pool.query(
+      "SELECT state FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [groups[0],candidate.membershipId],
+    );
+    expect(source.rows[0].state).toBe("REMOVED");
+  });
+
   it("rolls back a move into a full target without changing source membership", async () => {
     const { groups, candidate, programId, cohortId, sectionId, periodId } =
       await createElectiveFixture();
