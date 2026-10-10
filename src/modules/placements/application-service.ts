@@ -26,6 +26,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { evaluatePlacementEligibility } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   createPlacementApplicationInputSchema,
   placementApplicationIdSchema,
@@ -296,6 +297,9 @@ export async function applyToPlacementJob(
     context,
     job.collegeId,
   );
+  // Legacy V188: do not let per-job INCLUDE override the college switch or
+  // student/class/batch placement participation decision.
+  await requireLearnerPlacementAccess(context);
 
   if (job.status !== "PUBLISHED") {
     throw new PlacementsServiceError(
