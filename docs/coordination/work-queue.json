@@ -1159,25 +1159,35 @@
         "docs/planning/database-parity-db10-skills-contract.md",
         "tests/db10-skills-staging.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Active DB10 draft has source parity regressions: global synonym uniqueness and collapse of independently persisted skill_usage counter."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11",
+          "reason": "Chat 5 CAS-picked isolated DB10 skill schema semantics; shared migration registration remains Chat 1's."
         }
       ]
     }
