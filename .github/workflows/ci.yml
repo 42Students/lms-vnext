@@ -52,6 +52,9 @@ jobs:
       - name: Test migration journal integrity guard
         run: node --test tests/drizzle-journal-guard.test.mjs
 
+      - name: Verify DB04 promotion bundle
+        run: npm run db04:promotion:verify
+
       - name: Lint
         run: npm run lint
 
