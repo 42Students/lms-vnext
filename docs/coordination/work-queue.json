@@ -393,7 +393,7 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "c3ee0c62f8353b5b986d8d4e2b5a8a19b0f77f41",
+      "latestEvidenceSha": "7d913c9e90d0a73caac889b5c4086893131d018b",
       "verificationEvidence": [],
       "blockers": [
         "UNREGISTERED_MIGRATIONS: Seven isolated SQL drafts under scripts/sql/; Chat 1 exclusively owns registered Drizzle journal/schema barrel and replay. Metadata table dependency and 17 content-settings fields require explicit ordering. Classroom same-college guard is companion-only, NOT separately registered; canonical history draft owns columns/index.",
@@ -440,7 +440,8 @@
         "SOURCE_EVIDENCE_CHECKPOINT: Six distinct unregistered DB05 drafts and 14 MetaData subfield inventory source-documented; formal verified mappings 0/92; 24 semantic decisions open. 14 authored Node test definitions, not executed. Exact evidence commit 746c9b9d012a8065e980bcf466f68732f805f945. Standalone DB05 gate is fail closed.",
         "SOURCE_ONLY_CHECKPOINT: seven SQL drafts and 17 nested lesson-content fields inventoried; 14 course metadata fields; 25 top-level semantic decisions open. 16 Node test definitions authored, not executed. In-memory static checks passed; no runtime DB/tests. Evidence commit 7015aa1ca21566ba3fe0879cc4d5605dee522e6c. Still IN_PROGRESS.",
         "CHAT06_2026_10_11_SIX_MERGED_PR_BATCH: #63 2e6a819, #67 5d32c5d, #69 71bae0b, #70 228d6ec, #72 812704c, #74 1c18b6d. Documented source semantics, staged companion classroom same-college guard, deduplicated classroom history columns and indexes, gated migration manifest, and staged progress tombstone with latest-attempt-before-filter rule. Source-only assertions passed; Node tests authored only, PostgreSQL/CI acceptance NOT PASS. DB008 stays IN_PROGRESS, 0 verified of 92; never register migrations until Chat1 signed gates.",
-        "CHAT06_PROGRESS_LATEST_ATTEMPT_GATES: PR #75 merged c3ee0c62f8353b5b986d8d4e2b5a8a19b0f77f41. Manifest explicitly BLOCKS progress deleted_at candidate until per-reader/latest-attempt semantics, same-college tenant negatives and retake/rewatch races are executed; new Node guard authored, not run. Seven independent drafts unregistered; 0 verified DB05 fields."
+        "CHAT06_PROGRESS_LATEST_ATTEMPT_GATES: PR #75 merged c3ee0c62f8353b5b986d8d4e2b5a8a19b0f77f41. Manifest explicitly BLOCKS progress deleted_at candidate until per-reader/latest-attempt semantics, same-college tenant negatives and retake/rewatch races are executed; new Node guard authored, not run. Seven independent drafts unregistered; 0 verified DB05 fields.",
+        "CHAT06_PROGRESS_COLLEGE_SCOPE_COMPANION: PR #78 merged 7d913c9e90d0a73caac889b5c4086893131d018b. Staged unregistered SQL trigger checks content offering/period, course department college, membership college, optional delivery offering and section-period college; independent child write guard does NOT prevent later upstream reparent. Manifest gates BLOCKED and NOT_RUN, Node tests only authored; no executed PostgreSQL evidence. DB008 remains IN_PROGRESS."
       ]
     },
     {
