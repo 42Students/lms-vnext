@@ -95,11 +95,15 @@
       "paths": [
         "docs/planning/db00-historical-engine-disposition.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "BLOCKED",
+      "latestEvidenceSha": "f56b84427036c60ae5c34dbf8ccc26f695efcda2",
       "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "blockers": [
+        "PRODUCT_DECISION_REQUIRED: Decide whether the seven Smrithi persisted aggregates are active in vNext scope, externally consumed, or explicitly retired; no safe-retirement evidence yet.",
+        "PRODUCER_CONSUMER_EVIDENCE_REQUIRED: Pinned Java model census and GitHub indexed search do not prove absence of native SQL, detached services, or client dependencies.",
+        "LIVE_SCHEMA_AND_TEST_EVIDENCE_REQUIRED: Historical MySQL test snapshot through ~V150 is not a live schema; reconcile subsequent Flyway migrations and execute DB tests when CI runner is available."
+      ],
+      "completionNote": "Partial DB-003 source-audit batch committed: full 91-column historical Smrithi inventory, source indices/constraints, risk/decision matrix and authored regression guard; all seven decisions remain open, so DB-003 is BLOCKED, not COMPLETED/DONE_VERIFIED.",
       "pickedBy": 6,
       "pickedAt": "2026-10-10T20:22:09.399Z",
       "startedAt": "2026-10-10T20:22:45.059Z",
@@ -129,6 +133,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:22:45.059Z",
           "reason": "DB00 producer/consumer source audit started; worker checkpoint updated."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-10T20:26:11.795Z",
+          "reason": "Source-only evidence committed in f56b844, but no user product decision, proven consumer status, live schema, PostgreSQL run or CI evidence."
         }
       ]
     },
