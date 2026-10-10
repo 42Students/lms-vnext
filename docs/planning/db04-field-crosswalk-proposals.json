@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "workBranch": "db04-profile-verification-2026",
   "createdAt": "2026-10-10",
-  "evidence": "Legacy V187 / V161 / V165 / V192 DDL compared with staged vNext target declarations for 43 candidate fields on 2026-10-11. Source DDL crosswalk only, not semantic/runtime verification; all producer/consumer tests and disposition signoff remain open.",
+  "evidence": "As of 2026-10-11, 103/103 candidate fields have source-review entries. 25 V187+18 V161/V165/V192 DDL-to-staged compared, 24 qualification+3 image backed by current JPA/service/controller, 22 student_registration+11 approver_id_card historical snapshot only. This is NOT semantic signoff; active-usage unknown for 33, no executed PostgreSQL or migration replay, no approved retirements.",
   "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "vNextBaselineSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
   "counts": {
@@ -11,7 +11,11 @@
     "mappedProposals": 67,
     "verified": 0,
     "retirementApproved": 0,
-    "ddlToStagedSourceReviewedUnverified": 43
+    "ddlToStagedSourceReviewedUnverified": 43,
+    "sourceReviewedUnverified": 103,
+    "currentLegacySourceAndConsumerReviewedUnverified": 27,
+    "historicalSnapshotOnlyActiveUsageUnproven": 33,
+    "semanticVerified": 0
   },
   "rows": [
     {
@@ -31,7 +35,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Historical approver artifact primary key; current source usage unproven.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -50,7 +69,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Historical artifact creation timestamp; no verified active producer.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -67,7 +101,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Historical artifact soft-delete state; active usage/retirement undecided.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -86,7 +135,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Historical artifact update time; active usage/retirement undecided.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -103,7 +167,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Legacy object storage key candidate; sensitive exam document storage must not default to public access.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -120,7 +199,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Legacy representation encoding; cannot infer same as modern storage checksum.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -137,7 +231,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Legacy media classification; determine whether content format or business token.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -154,7 +263,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Legacy MIME type; validate content sniffing if still used.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -171,7 +295,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "User-uploaded filename needs sanitization and privacy consideration.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -188,7 +327,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Potential public URI; should not copy into long-lived private receipt metadata blindly.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "approver_id_card",
@@ -207,7 +361,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Exam ownership FK requires exam domain/oracle check; do not assume it is learner identity document.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -1435,7 +1604,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].id",
+        "openProbes": [
+          "Stable per-entry identity needs lifecycle proof; legacy int DB PK differs from opaque client item id.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1454,7 +1642,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: missing per-education-entry created_at",
+        "openProbes": [
+          "Profile-level timestamps cannot prove when a specific qualification was created.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1471,7 +1678,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: missing soft-delete per education entry",
+        "openProbes": [
+          "Legacy BaseModel soft deletion and findByLearnerId is_deleted=false have no equivalent in whole-array replacement.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1490,7 +1716,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: missing per-education-entry updated_at",
+        "openProbes": [
+          "Legacy entity UpdateTimestamp is per qualification; profile-level updatedAt not equivalent.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1507,7 +1752,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "STAGED: profile_private_document_receipts(MARKSHEET)",
+        "openProbes": [
+          "Current vNext education schema has no certificateUpload or receipt ID; must link by owned entry ID, not put public URLs in JSON.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1524,7 +1788,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: absent in strict educationSchema",
+        "openProbes": [
+          "Legacy education DTO round-trips degree; no strict vNext property.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1541,7 +1824,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: absent in strict educationSchema",
+        "openProbes": [
+          "Rich-text description from qualificationToDTO/dtoToQualification would be rejected/dropped.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1558,7 +1860,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].educationType",
+        "openProbes": [
+          "Direct candidate, but required/nullable semantics differ; legacy @Column nullable=false.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1575,7 +1896,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].endYear",
+        "openProbes": [
+          "Direct string candidate, vNext regex restricts 4 digits/empty; legacy nullable varchar can contain other values.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1594,7 +1934,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].examDetails",
+        "openProbes": [
+          "Legacy arbitrary Map<String,Object> may include nested objects; vNext strict scalar values only.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1611,7 +1970,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: absent in strict educationSchema",
+        "openProbes": [
+          "Legacy DTO getter/setter for rank is in active profile conversion.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1628,7 +2006,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: absent in strict educationSchema",
+        "openProbes": [
+          "Legacy DTO exposes distinct field string.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1645,7 +2042,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].gradeObtained",
+        "openProbes": [
+          "Source nullable grade maps to default string, conversion to verified snapshot requires preservation.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1662,7 +2078,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].maxGrade",
+        "openProbes": [
+          "Source length 20 vs target max 64; storage sizing not necessarily harmful; preserve exact scale.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1679,7 +2114,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].gradingType",
+        "openProbes": [
+          "Legacy DTO documents GPA in addition to CGPA, Percentage, Grade; vNext enum omits GPA.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1696,7 +2150,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].institution",
+        "openProbes": [
+          "Legacy NotBlank institution vs vNext textValue may allow blank; validate.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1713,7 +2186,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: absent in strict educationSchema",
+        "openProbes": [
+          "Cannot infer 'currently pursuing' reliably from empty endYear; distinct legacy Boolean.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1730,7 +2222,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: absent in strict educationSchema",
+        "openProbes": [
+          "Legacy sorting explicitly prioritizes recent education. Missing Boolean changes ordering/user behavior.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1747,7 +2258,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].program",
+        "openProbes": [
+          "Direct candidate, trim/max semantics may differ.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1764,7 +2294,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].qualifyingExam",
+        "openProbes": [
+          "Direct candidate; missing exam rank still blocks full qualifying exam behavior.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1781,7 +2330,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: absent in strict educationSchema",
+        "openProbes": [
+          "Legacy score distinct from normalized grade.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1798,7 +2366,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].specialization",
+        "openProbes": [
+          "Direct candidate.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1815,7 +2402,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.profile_document.education[].startYear",
+        "openProbes": [
+          "Target regex /^$|^\\d{4}$/; source string can have unknown nonyear labels.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
@@ -1834,7 +2440,26 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/Qualification.java",
+          "src/main/java/com/_42students/lms/model/BaseModel.java",
+          "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+          "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+          "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+        ],
+        "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "learner_profiles.membership_id",
+        "openProbes": [
+          "Legacy learner integer FK becomes canonical tenant membership UUID; prove identity and ownership.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_image",
@@ -1853,7 +2478,25 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/StudentImage.java",
+          "src/main/java/com/_42students/lms/service/impl/StudentImageServiceImpl.java",
+          "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+          "src/main/java/com/_42students/lms/model/ImageEntry.java"
+        ],
+        "vnextEvidence": "src/db/schema/profile-verification.ts; src/modules/people/profile-validation.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: legacy student_image aggregate row identity",
+        "openProbes": [
+          "Legacy StudentImage row contains an image_data array; target receipt ID alone does not model row+entries.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_image",
@@ -1873,7 +2516,25 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/StudentImage.java",
+          "src/main/java/com/_42students/lms/service/impl/StudentImageServiceImpl.java",
+          "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+          "src/main/java/com/_42students/lms/model/ImageEntry.java"
+        ],
+        "vnextEvidence": "src/db/schema/profile-verification.ts; src/modules/people/profile-validation.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "GAP: profile image gallery and active flags",
+        "openProbes": [
+          "Legacy JSON list has imageId,imageUrl,active, and deactivate mutates active flag; private receipt alone is not gallery lifecycle.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_image",
@@ -1890,7 +2551,25 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "src/main/java/com/_42students/lms/model/StudentImage.java",
+          "src/main/java/com/_42students/lms/service/impl/StudentImageServiceImpl.java",
+          "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+          "src/main/java/com/_42students/lms/model/ImageEntry.java"
+        ],
+        "vnextEvidence": "src/db/schema/profile-verification.ts; src/modules/people/profile-validation.ts",
+        "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+        "candidateVnextTarget": "college_memberships.id via candidate image gallery owner",
+        "openProbes": [
+          "Legacy String learner ID must resolve authorized canonical membership without cross-college access.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -1909,7 +2588,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Historical surrogate row primary key; registration/ingest identity must be decided.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -1928,7 +2622,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Tenant integer key may not equal college_id or organization_id; map parent hierarchy before normalizing.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -1947,7 +2656,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Optional org reference; compare canonical organizations and nullable intake behavior.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -1966,7 +2690,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Optional college reference; record tenant mismatch hazards before normalizing.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -1985,7 +2724,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Nullable learner relationship implies pre-enrollment intake possibility; membership_id cannot replace prematurely.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2002,7 +2756,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "External idempotency/correlation candidate; no vNext equivalent established.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2019,7 +2788,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Candidate learner_profiles.registration_number only after registration is linked to member.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2036,7 +2820,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Name captured before membership may exist; users.display_name is not necessarily same lifecycle.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2055,7 +2854,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "PII contact value possibly captured before member identity; retention/privacy review required.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2074,7 +2888,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "PII contact value may differ from registered user email; preservation and normalization need proof.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2093,7 +2922,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Nullable pending program selector may not be equivalent to active program enrollment.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2112,7 +2956,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Nullable proposed class may not be equivalent to active class membership.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2129,7 +2988,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Historical cohort label vs computed batch; exact enrollment/intake semantic not proven.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2146,7 +3020,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Requested semester vs actual calendar semester; clarify consumer use.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2163,7 +3052,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Registration lifecycle state distinct from membership status unless proven.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2180,7 +3084,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "External/manual origin provenance can matter even for greenfield; user-data backfill is not required.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2199,7 +3118,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "External synchronization timestamp; greenfield no-data-migration does not automatically retire future sync workflows.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2218,7 +3152,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Nullable structured ingest metadata; do not silently discard or leak PII.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2235,7 +3184,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Legacy optimistic row version; test concurrent intake edits before mapping.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2254,7 +3218,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Potential record-specific audit origin time; users/profiles.created_at not necessarily equivalent.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2273,7 +3252,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Potential sync/status update time; model requires dedicated provenance if active.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     },
     {
       "legacyTable": "student_registration",
@@ -2290,7 +3284,22 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceFiles": [
+          "docs/planning/database-parity-legacy-schema-snapshot.json"
+        ],
+        "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+        "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+        "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+        "openProbes": [
+          "Legacy soft-deletion lifecycle; determine recovery/visibility before irreversible delete.",
+          "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+        ]
+      }
     }
   ]
 }
