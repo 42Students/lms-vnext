@@ -1051,11 +1051,12 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "targetProposal": "lesson_contents scalar payload + lesson_content_materials staged; JSON subtype, schedule and video fields incomplete",
-      "classification": "UNREGISTERED_DRAFT",
+      "targetProposal": "Legacy ContentDataDTO JSON has 17 nested source keys; 9 have proposed UNREGISTERED lesson_content_settings table columns, 6 require remodeled/scalar/material proof, 2 DB06 assignment resource/submission types remain missing; see docs/planning/db05-lesson-content-payload-subfields.json. vNext lesson_contents scalar payload is NOT an exhaustive equivalent.",
+      "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTENTDATA_DTO_17_FIELDS_V163_RETIREMENT_SOURCE_CONFIRMED"
     },
     {
       "source": "lesson_contents.content_title",
@@ -1262,5 +1263,18 @@
       "src/db/schema/assessments.ts"
     ],
     "warning": "Proposed not verified. VNext hard deletion and dynamic sender display differ from legacy; merely adding columns does not restore behavior. Parent tenant, cycles, status/visibility flags unresolved. DB06 max_points/due_at cannot be equated to lesson-content fields absent a cross-module link."
+  },
+  "lessonContentPayloadFollowUp": {
+    "nestedInventory": "docs/planning/db05-lesson-content-payload-subfields.json",
+    "draft": "scripts/sql/db05-lesson-content-settings.draft.sql",
+    "legacySource": "ContentDataDTO.java, LessonContents.java, V163__retire_legacy_lesson_content_types.sql",
+    "sourceFieldCount": 17,
+    "classification": {
+      "UNREGISTERED_DRAFT": 9,
+      "REMODELED_NEEDS_PROOF": 6,
+      "MISSING_OR_UNPROVEN": 2
+    },
+    "status": "SOURCE_ONLY_NOT_VERIFIED",
+    "remaining": "Calendar timezone, resource privacy, HTML sanitization, class schedule and DB06 assignment resources/submission policies."
   }
 }
