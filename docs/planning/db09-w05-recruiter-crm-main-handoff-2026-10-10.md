@@ -60,3 +60,16 @@ deviations from the inspected legacy are explicit: a Not-Now lead cannot
 receive a newly minted token (legacy generated a link that preview would
 reject); validity ends exactly at expiration rather than allowing the single
 boundary instant. Both fail closed.
+
+
+## Authored browser tests (after initial handoff)
+
+`tests/e2e/tpo-recruiter-crm.spec.ts` contains three Playwright
+scenarios using seeded TPO membership: migration-closed 503 state
+(no false empty list), mocked list+board+duplicate-warning/disabled create,
+and mocked detail timeline + manual Contacted action refresh.
+**These tests were not executed**. They require `E2E_AUTH_SECRET`,
+authenticated seed accounts, a Next web server, and Chromium.
+Mocked browser data proves UI state handling only; production DB09
+schema, authorization, and invite acceptance still need true end-to-end
+tests after migrations. Keep `docs/parity/tpo.md` closure checkboxes open.
