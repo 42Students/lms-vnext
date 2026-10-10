@@ -50,14 +50,13 @@ CREATE TABLE program_term_courses (
   program_term_id uuid NOT NULL REFERENCES program_terms(id) ON DELETE RESTRICT,
   course_id uuid NOT NULL REFERENCES courses(id) ON DELETE RESTRICT,
   type course_offering_type NOT NULL DEFAULT 'CORE',
-  credits numeric(6,2),
-  display_order integer NOT NULL DEFAULT 0,
+  credits integer,
+  display_order integer NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT program_term_courses_credits_ck CHECK (credits IS NULL OR credits >= 0),
-  CONSTRAINT program_term_courses_display_order_ck CHECK (display_order >= 0),
-  CONSTRAINT program_term_courses_term_course_uq UNIQUE (program_term_id, course_id),
-  CONSTRAINT program_term_courses_term_order_uq UNIQUE (program_term_id, display_order)
+  CONSTRAINT program_term_courses_credits_ck CHECK (credits IS NULL OR credits BETWEEN 0 AND 30),
+  CONSTRAINT program_term_courses_display_order_ck CHECK (display_order >= 1),
+  CONSTRAINT program_term_courses_term_course_uq UNIQUE (program_term_id, course_id)
 );
 
 CREATE INDEX program_term_courses_course_idx
@@ -244,15 +243,16 @@ CREATE TABLE lecture_halls (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
   department_id uuid REFERENCES departments(id) ON DELETE RESTRICT,
-  name text NOT NULL,
+  name varchar(255) NOT NULL,
   capacity integer NOT NULL,
-  description text,
-  room_type varchar(64),
+  description varchar(255),
+  room_type varchar(64) NOT NULL,
   status varchar(32) NOT NULL DEFAULT 'ACTIVE',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT lecture_halls_name_ck CHECK (btrim(name) <> ''),
-  CONSTRAINT lecture_halls_capacity_ck CHECK (capacity >= 0),
+  CONSTRAINT lecture_halls_capacity_ck CHECK (capacity BETWEEN 1 AND 5000),
+  CONSTRAINT lecture_halls_room_type_ck CHECK (room_type IN ('CLASSROOM','LECTURE_HALL','LAB','SEMINAR_HALL','AUDITORIUM','CONFERENCE_ROOM')),
   CONSTRAINT lecture_halls_status_ck CHECK (status IN ('ACTIVE','ARCHIVED'))
 );
 
@@ -361,8 +361,8 @@ ALTER TABLE section_schedule_events
 -- Before registration:
 -- 1. Reconcile against latest main and any Chat 1 DB02 work.
 -- 2. Express these tables/columns in Drizzle schema under Chat 1 ownership.
--- 3. Decide whether program_term_courses.display_order must be unique or merely stable;
---    current staging chooses unique deterministic order.
+-- 3. Keep program_term_courses.display_order 1-based as the active legacy service does; do not add
+--    a uniqueness constraint until reorder concurrency has executed acceptance evidence.
 -- 4. Verify direct SQL cannot create cross-college term/course/period/hall links.
 -- 5. Run concurrent promotion with same expected version: exactly one commit must win.
 -- 6. Verify backward/jump promotions fail and immutable history matches the winner.
