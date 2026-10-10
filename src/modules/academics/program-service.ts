@@ -35,6 +35,34 @@ import {
   type UpdateProgramInput,
 } from "./validation";
 
+export function normalizeProgramDurationTerms(input: {
+  durationTerms?: number;
+  durationYears?: number;
+}) {
+  if (input.durationYears !== undefined) {
+    return input.durationYears * 2;
+  }
+  if (input.durationTerms !== undefined) {
+    return input.durationTerms;
+  }
+  throw new AcademicsServiceError("PROGRAM_NOT_FOUND");
+}
+
+export function programDurationYears(durationTerms: number) {
+  return durationTerms / 2;
+}
+
+function withLegacyProgramDuration<
+  T extends { durationTerms: number },
+>(program: T) {
+  return {
+    ...program,
+    durationYears: programDurationYears(
+      program.durationTerms,
+    ),
+  };
+}
+
 async function assertProgramUnique(
   departmentId: string,
   input: {
@@ -151,7 +179,7 @@ export async function listPrograms(
     );
   }
 
-  return db
+  const rows = await db
     .select({
       id: programs.id,
       departmentId: programs.departmentId,
@@ -173,6 +201,8 @@ export async function listPrograms(
       asc(departments.name),
       asc(programs.name),
     );
+
+  return rows.map(withLegacyProgramDuration);
 }
 
 export async function createProgram(
@@ -204,7 +234,8 @@ export async function createProgram(
           departmentId: input.departmentId,
           name: input.name,
           code: input.code,
-          durationTerms: input.durationTerms,
+          durationTerms:
+            normalizeProgramDurationTerms(input),
         })
         .returning();
 
@@ -236,7 +267,7 @@ export async function createProgram(
         },
       );
 
-      return created;
+      return withLegacyProgramDuration(created);
     });
   } catch (error) {
     throw mapProgramConstraint(error);
@@ -261,19 +292,54 @@ export async function updateProgram(
     collegeId: scope.collegeId,
   });
 
+  const targetDepartmentId =
+    input.departmentId ?? scope.departmentId;
+
+  if (targetDepartmentId !== scope.departmentId) {
+    const targetDepartment =
+      await loadAcademicDepartmentScope(
+        targetDepartmentId,
+      );
+    if (targetDepartment.collegeId !== scope.collegeId) {
+      throw new AcademicsServiceError(
+        "PROGRAM_DEPARTMENT_COLLEGE_MISMATCH",
+      );
+    }
+  }
+
   await assertProgramUnique(
-    scope.departmentId,
+    targetDepartmentId,
     input,
     programId,
   );
 
   const db = getDb();
+  const {
+    durationYears,
+    durationTerms: rawDurationTerms,
+    departmentId,
+    ...scalarInput
+  } = input;
+  const durationTerms =
+    durationYears !== undefined ||
+    rawDurationTerms !== undefined
+      ? normalizeProgramDurationTerms({
+          durationYears,
+          durationTerms: rawDurationTerms,
+        })
+      : undefined;
 
   try {
     const [updated] = await db
       .update(programs)
       .set({
-        ...input,
+        ...scalarInput,
+        ...(departmentId !== undefined
+          ? { departmentId }
+          : {}),
+        ...(durationTerms !== undefined
+          ? { durationTerms }
+          : {}),
         updatedAt: new Date(),
       })
       .where(
@@ -290,7 +356,7 @@ export async function updateProgram(
       );
     }
 
-    return updated;
+    return withLegacyProgramDuration(updated);
   } catch (error) {
     if (error instanceof AcademicsServiceError) {
       throw error;

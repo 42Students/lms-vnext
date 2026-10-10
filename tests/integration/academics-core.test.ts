@@ -113,6 +113,10 @@ async function cleanupAcademics() {
   await pool.query(
     "delete from academic_periods where code like 'A1-%'",
   );
+  await pool.query(
+    "delete from departments where name = 'A1 Parity Department' and college_id = $1",
+    [SEED_IDS.collegeA],
+  );
 }
 
 beforeEach(async () => {
@@ -319,6 +323,73 @@ describe("academics A1 against PostgreSQL", () => {
       ),
     ).resolves.toMatchObject({
       status: "ARCHIVED",
+    });
+  });
+
+  it("preserves legacy duration years and same-college department reassignment", async () => {
+    const departmentResult = await pool.query<{ id: string }>(
+      `insert into departments (college_id, name)
+       values ($1, 'A1 Parity Department')
+       returning id`,
+      [SEED_IDS.collegeA],
+    );
+    const targetDepartmentId =
+      departmentResult.rows[0]!.id;
+
+    const program = await createProgram(
+      collegeAdmin,
+      {
+        departmentId: SEED_IDS.departmentA,
+        name: "A1 Legacy Program Contract",
+        code: "A1-LEGACY-PROGRAM",
+        durationYears: 4,
+      },
+    );
+
+    expect(program).toMatchObject({
+      departmentId: SEED_IDS.departmentA,
+      durationTerms: 8,
+      durationYears: 4,
+    });
+
+    const moved = await updateProgram(
+      collegeAdmin,
+      program.id,
+      {
+        departmentId: targetDepartmentId,
+        durationYears: 3,
+      },
+    );
+
+    expect(moved).toMatchObject({
+      departmentId: targetDepartmentId,
+      durationTerms: 6,
+      durationYears: 3,
+    });
+
+    const listed = await listPrograms(
+      collegeAdmin,
+      SEED_IDS.collegeA,
+    );
+    expect(listed).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: program.id,
+          departmentId: targetDepartmentId,
+          durationTerms: 6,
+          durationYears: 3,
+        }),
+      ]),
+    );
+
+    await expect(
+      updateProgram(
+        superAdmin,
+        program.id,
+        { departmentId: SEED_IDS.departmentB },
+      ),
+    ).rejects.toMatchObject({
+      code: "PROGRAM_DEPARTMENT_COLLEGE_MISMATCH",
     });
   });
 
