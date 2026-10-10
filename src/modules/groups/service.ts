@@ -231,7 +231,9 @@ export async function joinGroup(
     const [existing] = await tx.select().from(lmsGroupMembers)
       .where(and(eq(lmsGroupMembers.groupId, groupId), eq(lmsGroupMembers.membershipId, memberId))).limit(1);
     if (existing?.state === "ACTIVE" || existing?.state === "WAITLISTED") return existing;
-    if (existing?.isLocked && existing.state === "REMOVED")
+    // Legacy kernel: a locked REMOVED row blocks self-service only. An explicit
+    // admin re-add may override the block, but the lock itself remains preserved.
+    if (existing?.isLocked && existing.state === "REMOVED" && mode === "SELF")
       throw new GroupServiceError("GROUP_MEMBERSHIP_LOCKED");
     if (slot) {
       if (group.kind !== "ELECTIVE" || group.collegeId !== slot.collegeId)
@@ -241,7 +243,9 @@ export async function joinGroup(
       await assertElectivePickLimit(tx, slot, memberId);
     }
     const available = group.capacity === null || group.activeCount < group.capacity;
-    const allowWaitlist = group.configJson.allowWaitlist === true;
+    // Legacy configFlag(..., true): absent/non-boolean configuration keeps
+    // waitlisting enabled. Only an explicit boolean false disables it.
+    const allowWaitlist = group.configJson.allowWaitlist !== false;
     if (!available && !allowWaitlist) throw new GroupServiceError("GROUP_CAPACITY_REACHED");
     const newState = available ? "ACTIVE" : "WAITLISTED";
     let waitlistPosition: number | null = null;
@@ -251,7 +255,7 @@ export async function joinGroup(
       waitlistPosition = (last?.position ?? 0) + 1;
     }
     const patch = {
-      state: newState, source: mode, isLocked: false,
+      state: newState, source: mode, isLocked: existing?.isLocked ?? false,
       waitlistPosition, joinedAt: available ? new Date() : null,
       updatedAt: new Date(),
     } as const;
@@ -340,7 +344,8 @@ export async function leaveGroup(
     const group = await lockGroup(tx, groupId);
     assertScope(context, group, mode, memberId);
     await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode, memberId });
-    if (mode === "SELF" && group.configJson.allowSelfLeave !== true)
+    // Legacy configFlag(..., true): self-leave is enabled unless explicitly false.
+    if (mode === "SELF" && group.configJson.allowSelfLeave === false)
       throw new GroupServiceError("GROUP_SELF_LEAVE_DISABLED");
     const [member] = await tx.select().from(lmsGroupMembers)
       .where(and(eq(lmsGroupMembers.groupId, groupId), eq(lmsGroupMembers.membershipId, memberId))).limit(1);
@@ -489,8 +494,8 @@ export async function moveElectiveMember(
       )).limit(1);
     if (oldTarget && ["ACTIVE", "WAITLISTED"].includes(oldTarget.state))
       throw new GroupServiceError("ELECTIVE_MOVE_TARGET_ALREADY_HELD");
-    if (oldTarget?.isLocked)
-      throw new GroupServiceError("GROUP_MEMBERSHIP_LOCKED");
+    // This is an explicit admin transfer. Legacy admin add may revive a locked
+    // REMOVED target membership and preserves the lock rather than rejecting it.
 
     const available = toGroup.capacity === null ||
       toGroup.activeCount < toGroup.capacity;
@@ -516,7 +521,7 @@ export async function moveElectiveMember(
       source: "MANUAL", context, reason: "ELECTIVE_MOVE_OUT",
     });
     const patch = {
-      state: toState, source: "MANUAL" as const, isLocked: false,
+      state: toState, source: "MANUAL" as const, isLocked: oldTarget?.isLocked ?? false,
       waitlistPosition, joinedAt: available ? now : null, updatedAt: now,
     };
     const [target] = oldTarget
