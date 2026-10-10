@@ -42,6 +42,11 @@ import {
 } from "@/modules/attendance/faculty-service";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import {
+  correctAdminAttendance,
+  getAdminAttendanceGrid,
+  getAdminAttendanceOptions,
+} from "@/modules/attendance/admin-service";
+import {
   createCourseDiscussionMessage,
   deleteCourseDiscussionMessage,
   listCourseDiscussionMessages,
@@ -1007,6 +1012,148 @@ describe("courses UI2A faculty read model", () => {
       code:
         "FACULTY_TEACHING_SCOPE_REQUIRED",
     });
+  });
+
+  it("gives College Admin a scoped attendance grid and correction path without granting Faculty admin access", async () => {
+    const structure = await createStructure();
+    const session =
+      await createFacultyAttendanceSession(
+        faculty,
+        {
+          deliveryId:
+            structure.deliveryA.id,
+          title: "FUI2A Admin Review",
+          startsAt:
+            "2026-10-02T09:00:00.000Z",
+          endsAt:
+            "2026-10-02T10:00:00.000Z",
+        },
+      );
+
+    const options =
+      await getAdminAttendanceOptions(
+        collegeAdmin,
+        SEED_IDS.collegeA,
+      );
+    expect(
+      options.deliveries.some(
+        (delivery) =>
+          delivery.deliveryId ===
+          structure.deliveryA.id,
+      ),
+    ).toBe(true);
+    expect(options.policy).toMatchObject({
+      eligibilityThresholdPercent:
+        expect.any(Number),
+      correctionWindowHours:
+        expect.any(Number),
+    });
+
+    const initial =
+      await getAdminAttendanceGrid(
+        collegeAdmin,
+        {
+          collegeId: SEED_IDS.collegeA,
+          deliveryId:
+            structure.deliveryA.id,
+          month: "2026-10",
+        },
+      );
+    expect(
+      initial.roster.map(
+        (row) => row.membershipId,
+      ),
+    ).toEqual([
+      SEED_IDS.learnerCollegeAMembership,
+    ]);
+    expect(initial.sessions).toEqual([
+      expect.objectContaining({
+        id: session.id,
+        attendanceStatus: null,
+      }),
+    ]);
+
+    await correctAdminAttendance(
+      collegeAdmin,
+      session.id,
+      {
+        collegeId: SEED_IDS.collegeA,
+        deliveryId:
+          structure.deliveryA.id,
+        membershipId:
+          SEED_IDS.learnerCollegeAMembership,
+        status: "EXCUSED",
+      },
+    );
+
+    const excused =
+      await getAdminAttendanceGrid(
+        collegeAdmin,
+        {
+          collegeId: SEED_IDS.collegeA,
+          deliveryId:
+            structure.deliveryA.id,
+          month: "2026-10",
+        },
+      );
+    expect(excused.records).toEqual([
+      expect.objectContaining({
+        membershipId:
+          SEED_IDS.learnerCollegeAMembership,
+        status: "EXCUSED",
+        markedByUserId:
+          SEED_IDS.collegeAdminUser,
+      }),
+    ]);
+    expect(excused.sessions[0]).toMatchObject({
+      attendanceStatus: "MARKED",
+      attendanceMarkedByUserId:
+        SEED_IDS.collegeAdminUser,
+    });
+
+    await correctAdminAttendance(
+      collegeAdmin,
+      session.id,
+      {
+        collegeId: SEED_IDS.collegeA,
+        deliveryId:
+          structure.deliveryA.id,
+        membershipId:
+          SEED_IDS.learnerCollegeAMembership,
+        status: "PRESENT",
+      },
+    );
+    const corrected =
+      await getAdminAttendanceGrid(
+        collegeAdmin,
+        {
+          collegeId: SEED_IDS.collegeA,
+          deliveryId:
+            structure.deliveryA.id,
+          month: "2026-10",
+        },
+      );
+    expect(corrected.records).toHaveLength(0);
+
+    await expect(
+      getAdminAttendanceOptions(
+        faculty,
+        SEED_IDS.collegeA,
+      ),
+    ).rejects.toMatchObject({
+      code: "LEARNING_ACCESS_DENIED",
+    });
+
+    if ("collegeB" in SEED_IDS) {
+      await expect(
+        getAdminAttendanceOptions(
+          collegeAdmin,
+          SEED_IDS.collegeB,
+        ),
+      ).rejects.toMatchObject({
+        code: "LEARNING_ACCESS_DENIED",
+      });
+    }
   });
 
 });
