@@ -9,7 +9,7 @@
 
 | Domain | Legacy table candidates | Legacy column candidates | Semantic/DB verified | Current state |
 | --- | ---: | ---: | ---: | --- |
-| DB00 Historical/Engine | 39 | 732 | 0 | Active-vs-retired disposition pending for all 39 |
+| DB00 Historical/Engine | 39 | 732 | 0 | **32/39 table dispositions closed**: 31 backup tables retired for greenfield + Flyway metadata replaced by Drizzle; 7 Smrithi tables remain product-decision pending |
 | DB01 Identity/Tenancy | 22 | 312 | 0 | Existing application foundation; precise field/constraint producer-consumer signoff pending |
 | DB02 Academics/Timetable | 13 | 125 | 0 | Existing application foundation; precise role, period, section and tenant FK checks pending |
 | DB03 Groups/Electives | 6 | 79 | 0 | Migrations 0037–0040 and domain flows authored, not migration/DB-runtime verified |
@@ -43,7 +43,7 @@ Source: `docs/planning/database-parity-full-domain-queue.json` plus individual D
 - Review every 103 source fields; 67 candidate mappings are proposals only and 0 are signed off.
 
 **P1 identity/academics/historical triage:**
-- Audit all DB00 39 historical/engine candidates for active/retired/replaced classification with exact source evidence; never silently discard a table because it sounds historical.
+- DB00 now explicitly closes 32/39 table dispositions in `docs/planning/db00-historical-engine-disposition.json` (641/732 field candidates by whole-table decision). The seven `smrithi_*` tables remain open until producer/consumer or explicit retirement evidence exists.
 - Audit DB01 22 and DB02 13 active domain tables for field, nullable/default, FK/cascade, tenant ownership, actor, state-machine and producer→consumer parity. Check exact current legacy code and record redesign/retirement decisions explicitly.
 - Integrate other lanes' SQL **only** after validated domain contracts and allocated migration index. W02–W06 own domain modules/schema drafts; W01 owns the registered Drizzle journal and rejects migration collisions.
 
@@ -53,3 +53,10 @@ Source: `docs/planning/database-parity-full-domain-queue.json` plus individual D
 - Greenfield: no live legacy data import/migration is needed.
 - Use `docs/planning/six-chat-closure-plan.md` and [issue #21](https://github.com/42Students/lms-vnext/issues/21) for ownership; do not force-push or copy stale branch trees to main.
 - W01 release completion requires all above gates AND the global `npm run parity:status`, `npm run parity:pages`, `npm run parity:clone-gate`, `npm run db:parity:status` checks to reflect real passing evidence.
+
+
+## Continuation update — DB00 disposition + identity handoff
+
+- DB00 source triage now explicitly closes 32/39 table dispositions: 31 historical backup/cleanup tables retired for greenfield and Flyway metadata replaced by Drizzle; seven Smrithi tables remain open. This dispositions 641/732 DB00 field candidates without calling them runtime-verified.
+- W05 recruiter identity dependency is satisfied in source by `provisionPlatformIdentityWithRuntime`; issue #25 now carries the consumption contract. Unit/PG regressions remain authored/not executed while CI has no runner.
+- Recent CI jobs still show `runner_id=0`, `steps=[]`; no green CI claim.
