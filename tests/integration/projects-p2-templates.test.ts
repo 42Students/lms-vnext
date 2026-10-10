@@ -13,9 +13,11 @@ import {
   archiveProjectTemplate,
   assignProjectTemplateToCollege,
   createProjectTemplate,
+  duplicateProjectTemplate,
   listAssignedProjectTemplates,
   publishProjectTemplate,
   reviseProjectTemplate,
+  unpublishProjectTemplate,
   revokeProjectTemplateFromCollege,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -133,7 +135,7 @@ afterAll(async () => {
 });
 
 describe("Projects P2 template persistence", () => {
-  it("pins a college assignment to an explicit published version until reassigned", async () => {
+  it("advances active college assignments when a revised template is republished", async () => {
     const created = await createProjectTemplate(
       superAdmin,
       {
@@ -194,16 +196,25 @@ describe("Projects P2 template persistence", () => {
       SEED_IDS.collegeA,
     );
     expect(assigned[0]).toMatchObject({
-      version: 1,
-      title: "P2 Version Pinning",
+      version: 2,
+      title: "P2 Version Pinning V2",
     });
 
-    await assignProjectTemplateToCollege(
-      scopedSuperAdmin,
+    await unpublishProjectTemplate(
+      superAdmin,
       created.template.id,
-      SEED_IDS.collegeA,
     );
+    expect(
+      await listAssignedProjectTemplates(
+        collegeAdmin,
+        SEED_IDS.collegeA,
+      ),
+    ).toEqual([]);
 
+    await publishProjectTemplate(
+      superAdmin,
+      created.template.id,
+    );
     assigned = await listAssignedProjectTemplates(
       collegeAdmin,
       SEED_IDS.collegeA,
@@ -212,6 +223,56 @@ describe("Projects P2 template persistence", () => {
       version: 2,
       title: "P2 Version Pinning V2",
     });
+  });
+
+  it("duplicates the current template version as a new draft without copying assignments", async () => {
+    const source = await createProjectTemplate(
+      superAdmin,
+      {
+        slug: "p2-duplicate-source",
+        title: "P2 Duplicate Source",
+        blueprint: blueprint("Duplicate"),
+      },
+    );
+    await publishProjectTemplate(
+      superAdmin,
+      source.template.id,
+    );
+    await assignProjectTemplateToCollege(
+      scopedSuperAdmin,
+      source.template.id,
+      SEED_IDS.collegeA,
+    );
+
+    const duplicated =
+      await duplicateProjectTemplate(
+        superAdmin,
+        source.template.id,
+        {
+          slug: "p2-duplicate-copy",
+          title: "P2 Duplicate Copy",
+        },
+      );
+
+    expect(duplicated.template).toMatchObject({
+      slug: "p2-duplicate-copy",
+      title: "P2 Duplicate Copy",
+      status: "DRAFT",
+      currentVersion: 1,
+      publishedVersion: null,
+    });
+    expect(duplicated.version.blueprint).toEqual(
+      source.version.blueprint,
+    );
+
+    const copyAssignments = await pool.query(
+      `select id
+         from project_template_college_assignments
+        where template_id = $1
+          and revoked_at is null`,
+      [duplicated.template.id],
+    );
+    expect(copyAssignments.rows).toHaveLength(0);
   });
 
   it("keeps global template mutation superadmin-only and assignment safety-scoped", async () => {
