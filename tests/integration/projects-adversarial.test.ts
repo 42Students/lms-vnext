@@ -26,6 +26,7 @@ import {
 } from "@/modules/projects/meeting-service";
 import {
   addProjectMember,
+  reassignProjectPrimaryMentor,
 } from "@/modules/projects/member-service";
 import {
   getProjectReadiness,
@@ -476,6 +477,112 @@ describe("Projects adversarial isolation", () => {
       ),
     ).rejects.toMatchObject({
       code: "PROJECT_SPRINT_INVALID_STATE",
+    });
+  });
+
+  it("reassigns the primary mentor atomically and rechecks the target role", async () => {
+    const targetMentorRole =
+      "76000000-0000-4000-8000-000000000004";
+    await pool.query(
+      `insert into membership_roles
+        (id, membership_id, role)
+       values ($1, $2, 'MENTOR')`,
+      [
+        targetMentorRole,
+        outsiderIds.membership,
+      ],
+    );
+
+    const templateId = await createTemplate();
+    const project = await createProject(
+      templateId,
+      "mentor-reassign",
+    );
+
+    const meeting =
+      await scheduleProjectMeeting(
+        mentor,
+        project.id,
+        null,
+        {
+          title: "Outgoing mentor meeting",
+          startsAt:
+            "2026-10-20T10:00:00+05:30",
+          endsAt:
+            "2026-10-20T10:30:00+05:30",
+          timeZone: "Asia/Kolkata",
+          meetingUrl:
+            "https://meet.example.com/reassign",
+        },
+      );
+
+    const changed =
+      await reassignProjectPrimaryMentor(
+        collegeAdmin,
+        project.id,
+        outsiderIds.membership,
+      );
+    expect(changed.reassigned).toBe(true);
+    expect(changed.outgoingMembershipId).toBe(
+      SEED_IDS.facultyCollegeAMembership,
+    );
+
+    const members = await pool.query(
+      `select membership_id, is_primary, ended_at
+       from project_members
+       where project_id = $1
+       order by started_at asc`,
+      [project.id],
+    );
+    const outgoing = members.rows.find(
+      (row) =>
+        row.membership_id ===
+        SEED_IDS.facultyCollegeAMembership,
+    );
+    const incoming = members.rows.find(
+      (row) =>
+        row.membership_id ===
+        outsiderIds.membership,
+    );
+    expect(outgoing?.ended_at).not.toBeNull();
+    expect(outgoing?.is_primary).toBe(false);
+    expect(incoming?.ended_at).toBeNull();
+    expect(incoming?.is_primary).toBe(true);
+
+    const meetingRow = await pool.query(
+      `select status, cancellation_note
+       from project_meetings where id = $1`,
+      [meeting.id],
+    );
+    expect(meetingRow.rows[0]?.status).toBe(
+      "CANCELLED",
+    );
+    expect(
+      meetingRow.rows[0]?.cancellation_note,
+    ).toBe("Primary mentor reassigned");
+
+    const noOp =
+      await reassignProjectPrimaryMentor(
+        collegeAdmin,
+        project.id,
+        outsiderIds.membership,
+      );
+    expect(noOp.skipped).toBe(true);
+
+    await pool.query(
+      `delete from membership_roles
+       where id = $1`,
+      [targetMentorRole],
+    );
+
+    await expect(
+      reassignProjectPrimaryMentor(
+        collegeAdmin,
+        project.id,
+        outsiderIds.membership,
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_MEMBER_ROLE_REQUIRED",
     });
   });
 
