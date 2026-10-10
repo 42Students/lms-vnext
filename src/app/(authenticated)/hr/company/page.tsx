@@ -64,11 +64,19 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="Employer Recruiter"
-        title="Company & Team"
-        description={result.grant.collegeName + " · " + result.company.name}
-      />
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <PageHeader
+          eyebrow="Employer Recruiter"
+          title="Company & Team"
+          description={result.grant.collegeName + " · " + result.company.name}
+        />
+        <Link
+          href="/hr/profile"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
+        >
+          Your Profile
+        </Link>
+      </div>
 
       {result.choices.length > 1 ? (
         <div className="flex flex-wrap gap-2" aria-label="College access">
