@@ -12,6 +12,7 @@ import {
   createProjectEvaluation,
 } from "@/modules/projects/evaluation-service";
 import {
+  archiveProjectInstance,
   createProjectInstance,
   getProjectInstanceWorkspace,
 } from "@/modules/projects/instance-service";
@@ -427,6 +428,54 @@ describe("Projects adversarial isolation", () => {
       ),
     ).rejects.toMatchObject({
       code: "PROJECT_ACCESS_DENIED",
+    });
+  });
+
+  it("archives projects idempotently for admins and blocks learner/lifecycle mutation", async () => {
+    const templateId = await createTemplate();
+    const project = await createProject(
+      templateId,
+      "archive",
+    );
+
+    await expect(
+      archiveProjectInstance(
+        learner,
+        project.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_ACCESS_DENIED",
+    });
+
+    const first = await archiveProjectInstance(
+      collegeAdmin,
+      project.id,
+    );
+    expect(first.status).toBe("ARCHIVED");
+    expect(first.archivedAt).not.toBeNull();
+
+    const second = await archiveProjectInstance(
+      collegeAdmin,
+      project.id,
+    );
+    expect(second.status).toBe("ARCHIVED");
+    expect(second.archivedAt?.getTime()).toBe(
+      first.archivedAt?.getTime(),
+    );
+
+    const workspace =
+      await getProjectInstanceWorkspace(
+        mentor,
+        project.id,
+      );
+    await expect(
+      startProjectSprint(
+        mentor,
+        project.id,
+        workspace.sprints[0]!.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_SPRINT_INVALID_STATE",
     });
   });
 
