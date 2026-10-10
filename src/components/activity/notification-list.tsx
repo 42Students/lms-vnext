@@ -37,9 +37,11 @@ export function NotificationList({
   const router = useRouter();
   const { showToast } = useToast();
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [groupingNow] = useState(() => new Date());
 
-  async function markRead(id: string) {
+  async function markRead(id: string, openHref?: string) {
     setPendingId(id);
+    let acknowledged = false;
     try {
       const response = await fetch(
         "/api/notifications/" + id + "/read",
@@ -48,7 +50,7 @@ export function NotificationList({
       if (!response.ok) {
         throw new Error("Could not mark notification read");
       }
-      router.refresh();
+      acknowledged = true;
     } catch (error) {
       showToast({
         tone: "error",
@@ -57,6 +59,12 @@ export function NotificationList({
       });
     } finally {
       setPendingId(null);
+      if (openHref) {
+        // A failed acknowledgment must not trap users in this page.
+        router.push(openHref);
+      } else if (acknowledged) {
+        router.refresh();
+      }
     }
   }
 
@@ -73,7 +81,7 @@ export function NotificationList({
 
   return (
     <div className="grid gap-5">
-      {groupNotificationsByDate(items, new Date()).map((group) => (
+      {groupNotificationsByDate(items, groupingNow).map((group) => (
         <section key={group.label} aria-label={group.label} className="grid gap-3">
           <h2 className="text-sm font-semibold text-muted-foreground">{group.label}</h2>
           {group.items.map((item) => (
@@ -97,12 +105,23 @@ export function NotificationList({
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-2">
                   {item.actionHref ? (
-                    <Link
-                      href={item.actionHref}
-                      className="inline-flex min-h-9 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
-                    >
-                      Open
-                    </Link>
+                    item.readAt ? (
+                      <Link
+                        href={item.actionHref}
+                        className="inline-flex min-h-9 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+                      >
+                        Open
+                      </Link>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        disabled={pendingId !== null}
+                        onClick={() => markRead(item.id, item.actionHref ?? undefined)}
+                      >
+                        {pendingId === item.id ? "Opening…" : "Open"}
+                      </Button>
+                    )
                   ) : null}
                   {!item.readAt ? (
                     <Button

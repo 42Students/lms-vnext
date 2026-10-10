@@ -113,3 +113,8 @@ Authored tests: `tests/unit/notification-groups.test.ts`, `tests/integration/db1
 On the current vNext source, `deliverInAppNotification` formerly validated only active users, not ownership of the event tenant. The new guard looks up the event's `collegeId/organizationId`, current active recipient memberships in matching active colleges, active recruiter grants + active recruiter profiles and company relationships, or active system Super Admin roles. For scoped events, any active disallowed recipient fails the entire delivery batch with `NOTIFICATION_SCOPE_MISMATCH` before writing. Platform-global events remain intentional and permit any active recipient. This is a security/privacy fix, documented as an intentional stricter contract, not proof of exact legacy semantics.
 
 Tests authored (not run): `tests/integration/db10-notification-delivery-scope.test.ts`. No Drizzle or shared auth changes; W01 retains journal ownership. Remaining: transactional and revoked-grant race tests, producer event-scope inventory, actual DB/CI/browser run evidence. No semantic parity row closed.
+
+
+### W06 older notification history and Open-read parity (2026-10-10)
+
+Added standalone `notification-cursor.ts` (strict matched ISO/UUID query cursor), user-scoped keyset `listOwnNotificationPage`, and `/notifications` Older link with preserved All/Unread mode. The `NotificationList` now attempts to acknowledge an unread notification when its own Open action is clicked; navigation is allowed after a write error rather than trapping the user. This removes the first-page-only 100-item dead end without introducing a new table or global DB change. Unit/integration tests were authored but **have not been run**. No DB10 row/family was advanced to VERIFIED.
