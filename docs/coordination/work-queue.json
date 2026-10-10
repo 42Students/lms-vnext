@@ -1,14 +1,15 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "phase": "DATABASE",
   "updatedOn": "2026-10-11",
-  "queuePolicy": "Atomic same-file GitHub blob SHA compare-and-swap for claims; fetch current main file & SHA, modify only claimed task, update_file with original SHA; on conflict re-fetch/reselect. Do not claim work with overlapping edits simultaneously. Only one active task per chat. No automatic lease stealing.",
+  "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
     "READY",
-    "CLAIMED",
+    "PICKED",
+    "IN_PROGRESS",
+    "COMPLETED",
     "BLOCKED",
-    "IN_REVIEW",
     "DONE_VERIFIED",
     "RETIRED_APPROVED"
   ],
@@ -26,12 +27,26 @@
         "scripts/db-test-prepare.ts"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-002",
@@ -48,12 +63,26 @@
         "src/db/schema/index.ts"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-003",
@@ -67,12 +96,26 @@
         "docs/planning/db00-historical-engine-disposition.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-004",
@@ -86,12 +129,26 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-005",
@@ -105,12 +162,26 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-006",
@@ -125,12 +196,26 @@
         "docs/planning/db-pass4-columns-db03_groups_and_electives.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-007",
@@ -144,12 +229,26 @@
         "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-008",
@@ -163,12 +262,26 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-009",
@@ -182,12 +295,26 @@
         "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-010",
@@ -201,12 +328,26 @@
         "docs/planning/db07-w03-field-review.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-011",
@@ -220,12 +361,26 @@
         "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-012",
@@ -239,12 +394,26 @@
         "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-013",
@@ -258,12 +427,26 @@
         "docs/planning/db-pass4-columns-db10_shared_operations.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-014",
@@ -277,12 +460,26 @@
         "docs/planning/database-parity-pass3-fk-audit.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-015",
@@ -296,12 +493,26 @@
         "docs/planning/database-parity-pass5-probe-manifest.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-016",
@@ -315,12 +526,26 @@
         "docs/planning/database-parity-master.md"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-017",
@@ -337,12 +562,26 @@
         "src/db/schema/index.ts"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-018",
@@ -359,12 +598,26 @@
         "tests/db-parity-pass5.test.mjs"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-019",
@@ -390,12 +643,26 @@
         "docs/planning/database-parity-master.md"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     },
     {
       "id": "DB-020",
@@ -415,12 +682,34 @@
         "docs/coordination/phase-state.json"
       ],
       "status": "READY",
-      "claimedBy": null,
-      "claimedAt": null,
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        }
+      ]
     }
-  ]
+  ],
+  "eventModel": {
+    "picked": "pickedBy/pickedAt plus pickHistory: reservation event. Does NOT count as implemented, complete, tested or verified.",
+    "inProgress": "IN_PROGRESS: worker has actually started implementation of picked task.",
+    "completed": "COMPLETED plus completedBy/completedAt/completionCommitSha: source work was finished and committed, but tests/independent acceptance may still be missing. Does NOT clear phase gate.",
+    "verified": "DONE_VERIFIED plus verifiedAt/verifiedBy/executed verificationEvidence: rigorous acceptance; only this closes an active required task for phase advancement.",
+    "blocked": "BLOCKED: task temporarily cannot proceed; preserve picked/completion history and next unblock condition. Can later return to READY by evidence-backed explicit change.",
+    "reassignment": "Do not erase pickHistory/completion fields. Historical picked counts report unique task IDs per worker, NOT how many are currently active. Any review/failure re-open preserves events."
+  }
 }
