@@ -7,9 +7,10 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const projectRoot = resolve(import.meta.dirname, "..");
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const inventoryPath = "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json";
 const ledgerPath = "docs/planning/db01-chat02-312-field-source-triage.json";
 const readBuffer = (path) => readFileSync(resolve(projectRoot, path));
