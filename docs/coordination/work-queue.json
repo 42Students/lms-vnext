@@ -259,14 +259,14 @@
         "src/db/schema/**",
         "docs/planning/db-pass4-columns-db03_groups_and_electives.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:27:07.841Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:27:53.876Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -288,6 +288,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:27:07.841Z",
           "reason": "Chat 5 CAS-reserved next eligible DATABASE task after refreshing shared queue and active claim paths."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:27:53.876Z",
+          "reason": "Chat 5 started source-to-vNext group/elective DB03 invariant audit, restricting edits to claimed scope."
         }
       ]
     },
