@@ -477,3 +477,6 @@ These user jobs are functionally similar to College Admin; detailed field/action
 
 ## Workspace: Audit
 - [ ] project event history/actor/time/detail/filter behavior matches.
+
+
+**W06 legacy department bookmarks, 2026-10-10:** authenticated, role-fenced redirects for `/college-admin/departments` -> `/college/departments` (active college membership with COLLEGE_ADMIN) and `/superadmin/departments` -> `/admin/departments` (active SUPER_ADMIN). This preserves entry URL behavior without duplicating editor logic or weakening current scope checks. `tests/unit/legacy-department-links.test.ts` authored with negative role/disabled status cases; **execution/browser evidence pending**, so the Departments family is still PARTIAL.
