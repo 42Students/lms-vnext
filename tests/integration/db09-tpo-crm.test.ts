@@ -27,6 +27,13 @@ import {
   moveTpoFollowup,
   updateTpoLead,
 } from "@/modules/placements/tpo-crm-service";
+import {
+  issueTpoRecruiterInvite,
+  markRecruiterInviteNotHiring,
+  previewRecruiterInvite,
+  unsubscribeRecruiterInvite,
+  TpoRecruiterInviteServiceError,
+} from "@/modules/placements/tpo-recruiter-invite-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -419,6 +426,107 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     await expect(listTpoLeadFollowups(
       tpo, SEED_IDS.collegeB, lead.id,
     )).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
+
+  it("rotates recruiter invite tokens, previews without consuming, and hides old links", async () => {
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Invite Rotation",
+      email: "rotate@example.org",
+      companyName: "Rotation Corp",
+    });
+    const first = await issueTpoRecruiterInvite(
+      tpo, SEED_IDS.collegeA, lead.id,
+      new Date("2026-10-10T08:00:00.000Z"),
+    );
+    expect(first.token).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(first.emailAvailable).toBe(true);
+    expect(first.emailed).toBe(false);
+    const preview1 = await previewRecruiterInvite(
+      first.token, new Date("2026-10-10T08:01:00.000Z"),
+    );
+    const preview2 = await previewRecruiterInvite(
+      first.token, new Date("2026-10-10T08:02:00.000Z"),
+    );
+    expect(preview1).toEqual(preview2);
+    expect(preview1.contactName).toBe("Invite Rotation");
+
+    const second = await issueTpoRecruiterInvite(
+      tpo, SEED_IDS.collegeA, lead.id,
+      new Date("2026-10-10T09:00:00.000Z"),
+    );
+    expect(second.token).not.toBe(first.token);
+    await expect(previewRecruiterInvite(
+      first.token, new Date("2026-10-10T09:01:00.000Z"),
+    )).rejects.toBeInstanceOf(TpoRecruiterInviteServiceError);
+    await expect(previewRecruiterInvite(
+      second.token, new Date("2026-10-10T09:01:00.000Z"),
+    )).resolves.toMatchObject({ collegeName: expect.any(String) });
+  });
+
+  it("denies cross-role or cross-college invite issuance", async () => {
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Invite Isolation",
+      email: "isolation-invite@example.org",
+    });
+    await expect(issueTpoRecruiterInvite(
+      learner, SEED_IDS.collegeA, lead.id,
+    )).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(issueTpoRecruiterInvite(
+      tpo, SEED_IDS.collegeB, lead.id,
+    )).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
+  it("spends a public invite exactly once when Not Hiring races", async () => {
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Invite Race",
+      email: "invite-race@example.org",
+    });
+    const invite = await issueTpoRecruiterInvite(
+      tpo, SEED_IDS.collegeA, lead.id,
+      new Date("2026-10-10T08:00:00.000Z"),
+    );
+    const settled = await Promise.allSettled([
+      markRecruiterInviteNotHiring(
+        invite.token, new Date("2026-10-10T08:05:00.000Z"),
+      ),
+      markRecruiterInviteNotHiring(
+        invite.token, new Date("2026-10-10T08:05:00.000Z"),
+      ),
+    ]);
+    expect(settled.filter(x => x.status === "fulfilled")).toHaveLength(1);
+    expect(settled.filter(x => x.status === "rejected")).toHaveLength(1);
+    const detail = await getTpoLead(tpo, SEED_IDS.collegeA, lead.id);
+    expect(detail.manualStage).toBe("NOT_NOW");
+    expect(detail.notNowReason).toContain("not hiring");
+    expect(detail.notNowUntil).toBe("2027-04-10");
+    await expect(previewRecruiterInvite(
+      invite.token, new Date("2026-10-10T08:06:00.000Z"),
+    )).rejects.toMatchObject({ code: "TPO_RECRUITER_INVITE_NOT_FOUND" });
+  });
+
+  it("unsubscribes once, invalidates the capability token and blocks reissue", async () => {
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Invite Unsubscribe",
+      email: "invite-unsubscribe@example.org",
+    });
+    const invite = await issueTpoRecruiterInvite(
+      tpo, SEED_IDS.collegeA, lead.id,
+      new Date("2026-10-10T08:00:00.000Z"),
+    );
+    await expect(unsubscribeRecruiterInvite(
+      invite.token, new Date("2026-10-10T08:05:00.000Z"),
+    )).resolves.toEqual({ status: "UNSUBSCRIBED" });
+    await expect(previewRecruiterInvite(
+      invite.token, new Date("2026-10-10T08:06:00.000Z"),
+    )).rejects.toMatchObject({ code: "TPO_RECRUITER_INVITE_NOT_FOUND" });
+    await expect(issueTpoRecruiterInvite(
+      tpo, SEED_IDS.collegeA, lead.id,
+    )).rejects.toMatchObject({ code: "TPO_RECRUITER_INVITE_NOT_ALLOWED" });
   });
 
 });
