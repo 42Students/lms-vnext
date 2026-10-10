@@ -14,7 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
-import { departments } from "./academics";
+import { departments } from "./departments";
 import { users } from "./users";
 import {
   placementApplications,
