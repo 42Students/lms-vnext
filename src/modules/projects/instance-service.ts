@@ -9,7 +9,10 @@ import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
+  collegeMemberships,
+  membershipRoles,
   projectInstances,
+  projectMembers,
   projectReleases,
   projectResources,
   projectSprints,
@@ -17,6 +20,7 @@ import {
   projectTemplateCollegeAssignments,
   projectTemplates,
   projectTemplateVersions,
+  users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -156,6 +160,62 @@ export async function createProjectInstance(
 
   try {
     return await db.transaction(async (tx) => {
+      if (input.primaryMentorMembershipId) {
+        const [mentor] = await tx
+          .select({
+            membershipId: collegeMemberships.id,
+          })
+          .from(collegeMemberships)
+          .innerJoin(
+            users,
+            eq(
+              users.id,
+              collegeMemberships.userId,
+            ),
+          )
+          .innerJoin(
+            membershipRoles,
+            and(
+              eq(
+                membershipRoles.membershipId,
+                collegeMemberships.id,
+              ),
+              eq(
+                membershipRoles.role,
+                "MENTOR",
+              ),
+            ),
+          )
+          .where(
+            and(
+              eq(
+                collegeMemberships.id,
+                input.primaryMentorMembershipId,
+              ),
+              eq(
+                collegeMemberships.collegeId,
+                college.id,
+              ),
+              eq(
+                collegeMemberships.status,
+                "ACTIVE",
+              ),
+              eq(
+                users.platformStatus,
+                "ACTIVE",
+              ),
+            ),
+          )
+          .for("share")
+          .limit(1);
+
+        if (!mentor) {
+          throw new ProjectsServiceError(
+            "PROJECT_MEMBER_ROLE_REQUIRED",
+          );
+        }
+      }
+
       const [project] = await tx
         .insert(projectInstances)
         .values({
@@ -177,6 +237,21 @@ export async function createProjectInstance(
         throw new Error(
           "Project instance insert returned no row",
         );
+      }
+
+      if (input.primaryMentorMembershipId) {
+        await tx
+          .insert(projectMembers)
+          .values({
+            projectId: project.id,
+            membershipId:
+              input.primaryMentorMembershipId,
+            role: "MENTOR",
+            isPrimary: true,
+            roleLabel: "Project Mentor",
+            createdByUserId:
+              context.user.id,
+          });
       }
 
       const releaseValues = [
