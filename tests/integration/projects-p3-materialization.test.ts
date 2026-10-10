@@ -19,6 +19,9 @@ import {
   createProjectInstance,
   getProjectInstanceWorkspace,
 } from "@/modules/projects/instance-service";
+import {
+  listProjectActivity,
+} from "@/modules/projects/activity-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -223,6 +226,21 @@ describe("Projects P3 deterministic materialization", () => {
           "projects.project.created",
       },
     ]);
+
+    const projectActivity =
+      await listProjectActivity(
+        collegeAdmin,
+        firstProject.id,
+      );
+    expect(projectActivity).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          eventType:
+            "projects.project.created",
+          subjectId: firstProject.id,
+        }),
+      ]),
+    );
 
     const firstWorkspace =
       await getProjectInstanceWorkspace(
