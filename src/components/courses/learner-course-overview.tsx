@@ -6,6 +6,9 @@ type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
 
 type CourseMeta = {
   courseDescription: string | null;
+  introductionText: string | null;
+  bodyHtml: string | null;
+  takeaways: string[];
   offeringType: string;
   credits: number | null;
   sectionName: string;
@@ -87,10 +90,11 @@ export function LearnerCourseOverview({
   const now = Date.now();
   const activityCutoff = now + 14 * 24 * 60 * 60 * 1000;
 
-  const learningTakeaways = workspace.lessons
-    .slice(0, 6)
-    .map((lesson) => lesson.name)
-    .filter(Boolean);
+  // Legacy parity: takeaways are explicitly authored Course Home metadata.
+  // Lesson titles are curriculum structure and must never be relabeled as
+  // learner outcomes when the Course has no authored takeaways.
+  const learningTakeaways =
+    meta.takeaways;
 
   const activity = workspace.lessons
     .flatMap((lesson) => [
@@ -209,12 +213,29 @@ export function LearnerCourseOverview({
             <h3 className="m-0 text-lg font-semibold text-foreground">
               About this course
             </h3>
-            <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
-              {meta.courseDescription?.trim() ||
-                workspace.learningPath?.description?.trim() ||
-                "Course description has not been added yet."}
-            </p>
-            {workspace.learningPath?.description?.trim() &&
+            {meta.introductionText?.trim() ? (
+              <p className="mt-2 text-sm font-medium leading-6 text-foreground">
+                {meta.introductionText}
+              </p>
+            ) : null}
+            {meta.bodyHtml ? (
+              <div
+                className="mt-3 space-y-2 text-sm leading-6 text-body [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_strong]:font-semibold"
+                // The DB05 service sanitizes on write and again on read,
+                // reconstructing only attribute-free formatting tags.
+                dangerouslySetInnerHTML={{
+                  __html: meta.bodyHtml,
+                }}
+              />
+            ) : (
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
+                {meta.courseDescription?.trim() ||
+                  workspace.learningPath?.description?.trim() ||
+                  "Course description has not been added yet."}
+              </p>
+            )}
+            {!meta.bodyHtml &&
+            workspace.learningPath?.description?.trim() &&
             workspace.learningPath.description.trim() !== meta.courseDescription?.trim() ? (
               <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
                 {workspace.learningPath.description}
