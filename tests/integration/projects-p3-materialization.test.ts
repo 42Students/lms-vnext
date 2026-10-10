@@ -119,6 +119,13 @@ function blueprint(label: string) {
 
 async function cleanup() {
   await pool.query(
+    `delete from project_members
+     where project_id in (
+       select id from project_instances
+       where slug like 'p3-%'
+     )`,
+  );
+  await pool.query(
     `delete from project_resources
      where project_id in (
        select id from project_instances
@@ -206,8 +213,30 @@ describe("Projects P3 deterministic materialization", () => {
             createdTemplate.template.id,
           slug: "p3-instance-v1",
           title: "P3 Instance V1",
+          primaryMentorMembershipId:
+            SEED_IDS.facultyCollegeAMembership,
         },
       );
+
+    const mentorAssignment =
+      await pool.query<{
+        membership_id: string;
+        role: string;
+        is_primary: boolean;
+      }>(
+        `select membership_id, role, is_primary
+           from project_members
+          where project_id = $1`,
+        [firstProject.id],
+      );
+    expect(mentorAssignment.rows).toEqual([
+      {
+        membership_id:
+          SEED_IDS.facultyCollegeAMembership,
+        role: "MENTOR",
+        is_primary: true,
+      },
+    ]);
 
     const createdEvent =
       await pool.query<{
@@ -368,6 +397,47 @@ describe("Projects P3 deterministic materialization", () => {
     ).rejects.toBeInstanceOf(
       AuthorizationError,
     );
+  });
+
+  it("rejects an invalid primary mentor without leaving a workspace behind", async () => {
+    const template = await createProjectTemplate(
+      superAdmin,
+      {
+        slug: "p3-invalid-mentor-template",
+        title: "P3 Invalid Mentor",
+        blueprint: blueprint("Invalid Mentor"),
+      },
+    );
+    await publishProjectTemplate(
+      superAdmin,
+      template.template.id,
+    );
+    await assignProjectTemplateToCollege(
+      scopedSuperAdmin,
+      template.template.id,
+      SEED_IDS.collegeA,
+    );
+
+    await expect(
+      createProjectInstance(
+        collegeAdmin,
+        {
+          collegeId: SEED_IDS.collegeA,
+          templateId: template.template.id,
+          slug: "p3-invalid-mentor",
+          title: "P3 Invalid Mentor",
+          primaryMentorMembershipId:
+            SEED_IDS.learnerCollegeAMembership,
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_MEMBER_ROLE_REQUIRED",
+    });
+
+    const orphan = await pool.query(
+      "select id from project_instances where slug='p3-invalid-mentor'",
+    );
+    expect(orphan.rows).toHaveLength(0);
   });
 
   it("enforces stable project slugs per college", async () => {
