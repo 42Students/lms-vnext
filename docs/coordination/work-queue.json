@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-10T20:42:35.825Z",
+  "updatedOn": "2026-10-10T20:30:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -326,7 +326,7 @@
         "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "c860e92050bda7a9f489ecfae74927fdf2fb1ec9",
+      "latestEvidenceSha": "4c9aa8f40bd6c9e4adb96f0bc7f15328f30f61c9",
       "verificationEvidence": [],
       "blockers": [
         "DB04 staged schema/migration is not registered/replayed by Chat 1; disposable PostgreSQL/CI proof remains unavailable.",
@@ -368,7 +368,7 @@
           "reason": "Chat 3 began source-backed DB04 semantic and privacy/tenant audit."
         }
       ],
-      "progressNote": "Chat 3 completed frozen-source disposition review for all 103/103 DB04 candidates. Remaining 60 reviewed: qualification 24 + student_image 3 have current named producers/consumers and concrete vNext semantic gaps; student_registration 22 + approver_id_card 11 are unresolved retirement candidates only, pending native-SQL/external-consumer proof or explicit disposition. Semantic/runtime verified fields remain 0; approved retirements remain 0; no PostgreSQL execution."
+      "progressNote": "Chat 3 reviewed all 103/103 frozen DB04 candidates and staged a non-registered education/profile-image persistence contract. Qualification (24) + student_image (3) have current named producers/consumers; contract proposes normalized education rows, GPA support, explicit pursuing state, enforceable education-document joins, and normalized learner image state. student_registration (22) + approver_id_card (11) remain unresolved retirement candidates. Semantic/runtime verified fields 0; approved retirements 0; PostgreSQL execution 0."
     },
     {
       "id": "DB-008",
