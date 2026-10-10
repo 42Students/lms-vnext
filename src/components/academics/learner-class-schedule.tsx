@@ -109,9 +109,11 @@ function dayHeading(date: Date) {
 
 function EventCard({
   event,
+  courseBasePath,
   compact = false,
 }: {
   event: LearnerScheduleEvent;
+  courseBasePath: string;
   compact?: boolean;
 }) {
   const content = (
@@ -155,7 +157,7 @@ function EventCard({
 
   return event.deliveryId ? (
     <Link
-      href={`/learn/courses/${event.deliveryId}/home`}
+      href={`${courseBasePath}/${event.deliveryId}${courseBasePath === "/learn/courses" ? "/home" : ""}`}
       className="block rounded-lg outline-none transition hover:-translate-y-px hover:shadow-sm focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       {content}
@@ -188,10 +190,12 @@ export function LearnerClassSchedule({
   courses,
   sections,
   events,
+  courseBasePath = "/learn/courses",
 }: {
   courses: readonly CourseChoice[];
   sections: readonly SectionChoice[];
   events: readonly LearnerScheduleEvent[];
+  courseBasePath?: string;
 }) {
   const [view, setView] =
     useState<LearnerScheduleView>("week");
@@ -290,7 +294,7 @@ export function LearnerClassSchedule({
           </div>
           <div className="mt-3 grid gap-3 lg:grid-cols-3">
             {upcoming.map((event) => (
-              <EventCard
+              <EventCard courseBasePath={courseBasePath}
                 key={event.id}
                 event={event}
                 compact
@@ -492,7 +496,7 @@ export function LearnerClassSchedule({
                             {dayEvents
                               .slice(0, 3)
                               .map((event) => (
-                                <EventCard
+                                <EventCard courseBasePath={courseBasePath}
                                   key={event.id}
                                   event={event}
                                   compact
@@ -539,7 +543,7 @@ export function LearnerClassSchedule({
                           {dayEvents.length > 0 ? (
                             dayEvents.map(
                               (event) => (
-                                <EventCard
+                                <EventCard courseBasePath={courseBasePath}
                                   key={event.id}
                                   event={event}
                                   compact
@@ -584,7 +588,7 @@ export function LearnerClassSchedule({
                     <div className="mt-3 space-y-2">
                       {dayEvents.length > 0 ? (
                         dayEvents.map((event) => (
-                          <EventCard
+                          <EventCard courseBasePath={courseBasePath}
                             key={event.id}
                             event={event}
                           />
