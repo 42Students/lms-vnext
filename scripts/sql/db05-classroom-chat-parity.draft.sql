@@ -21,15 +21,16 @@
 -- 4. Live PostgreSQL replay and tenant/role/negative/race tests are required.
 -- 5. Upstream course/section/period reassignment safety is separately proved.
 
+-- COMPANION-ONLY TENANT INTEGRITY DRAFT: do not register this as another
+-- source of sender_name_snapshot/deleted_at or active-timeline indexes.
+-- Canonical column+index proposal already exists in
+-- scripts/sql/db05-classroom-message-history.draft.sql and is the ONE
+-- manifest-listed classroom history draft. Chat 1 must fold this guard into
+-- that migration (or register a dependency after it) exactly once, after
+-- executed PostgreSQL tests. Two independent ALTER TABLE drafts would be an
+-- unsafe collision: original text vs varchar(255) snapshots differ.
+
 BEGIN;
-
-ALTER TABLE course_discussion_messages
-  ADD COLUMN IF NOT EXISTS sender_name_snapshot varchar(255),
-  ADD COLUMN IF NOT EXISTS deleted_at timestamptz;
-
-CREATE INDEX IF NOT EXISTS db05_class_chat_active_delivery_created_idx
-  ON course_discussion_messages (delivery_id, created_at, id)
-  WHERE deleted_at IS NULL;
 
 -- The existing independent FKs permit a sender membership from college A
 -- to reference a delivery from college B unless same-college is checked.
