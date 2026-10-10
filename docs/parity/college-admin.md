@@ -743,3 +743,15 @@ A College Admin management workspace is source-authored at `/college/announcemen
 ### W06 Activity detail drill-in — 2026-10-10
 
 The shared Activity Center now has a tenant-safe `/activity/[eventId]` drill-in showing event/action, actor, entity, scope, time and structured context. A College Admin may open only events whose persisted `collegeId` equals the active membership college; an out-of-college UUID is returned as not-found. Metadata is bounded and credential/identity-secret key names are redacted before browser rendering. This advances the "detail drill-in / expandable event context" job, but the page remains PARTIAL because exact legacy category chips, all producer coverage, request IP/User-Agent, actor-role snapshot and executed browser tests remain OPEN.
+
+
+### W06 source-matched Dashboard quick actions and setup phases (2026-10-10)
+
+Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `college-admin/dashboard.js` + `components/admin/dashboard/config.js` define **11 Quick Actions** and **14 first-time Setup Guide steps** across 5 phases. `/dashboard` now shows these rows only when the current membership carries COLLEGE_ADMIN; existing metrics remain. Each correctly available vNext destination links to its real college-scoped page, while missing exact daily-use jobs (Faculty, Students, Attendance, Assignments, Quizzes, Hiring Dashboard, read-only Contacts tabs, Semesters, Semester-Course Mapping, Batches, Classes, Faculty Assignment, Lecture Halls, Lessons and Lesson Content) remain clearly non-clickable, not falsely mapped to a generic page. This is **visible navigation parity inventory, not completed feature parity**.
+
+- [ ] Implement missing daily-use destinations and turn their non-clickable items into source-backed links one page at a time (coordinate W02 course/assessment, W04 placement UI; W06 owns master/admin pages).
+- [ ] Wire Setup Guide progress to real persisted college readiness; current phase cards do not claim completion.
+- [ ] Compare AtAGlance and AttentionBoard data/KPIs against legacy and add per-card permission/error/empty/mobile tests.
+- [ ] Execute `tests/unit/admin-dashboard-navigation.test.ts`, build/typecheck and authenticated desktop/mobile College Admin browser workflow.
+
+**State: PARTIAL / source-authored navigation only / tests not run.**
