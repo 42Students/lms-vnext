@@ -416,17 +416,17 @@
       "paths": [
         "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "a0b840d8730bf53ff08501b517c5c4369d929e68",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Source reconciliation complete: DB06 split into 9 current JPA/product contracts (120 fields) and 12 historical retirement candidates (128 fields); all 120 active fields have explicit normalized/derived/gap/security dispositions in database-parity-db06-field-reconciliation.json. Source-backed gaps include quiz shuffle flags, immutable grade history, assignment re-attempt decision, secure upload receipts, attendance correction history, and same-tenant integrity. Structural artifact check found 0 missing/extra active fields. Contract tests authored/registered but NOT executed because DB-001 runner remains blocked. No src/db/schema/** edits were made while Chat 5 owns that broad claim.",
       "pickedBy": 1,
       "pickedAt": "2026-10-10T20:30:04.201Z",
       "startedAt": "2026-10-10T20:32:30.065Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-10T20:36:31.169Z",
+      "completionCommitSha": "a0b840d8730bf53ff08501b517c5c4369d929e68",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -450,6 +450,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:32:30.065Z",
           "reason": "DB06 source-contract audit started; schema edits deferred while Chat 5 owns broad src/db/schema/** claim."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-10T20:36:31.169Z",
+          "reason": "DB06 source-semantic mapping committed; awaiting runtime/schema acceptance. Not DONE_VERIFIED."
         }
       ]
     },
