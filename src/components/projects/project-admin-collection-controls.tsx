@@ -2,8 +2,16 @@ import Link from "next/link";
 
 export type ProjectAdminCollectionQuery = {
   q?: string;
-  status?: string;
-  submissionStatus?: string;
+  status?:
+    | "PLANNED"
+    | "ACTIVE"
+    | "COMPLETED"
+    | "ARCHIVED";
+  submissionStatus?:
+    | "DRAFT"
+    | "SUBMITTED"
+    | "CHANGES_REQUESTED"
+    | "APPROVED";
   page?: number;
   pageSize?: number;
 };
