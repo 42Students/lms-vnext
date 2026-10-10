@@ -2112,7 +2112,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "docs/planning/db05-lesson-content-payload-subfields.json (17 nested fields): scripts/sql/db05-lesson-content-settings.draft.sql nine settings candidates; src/db/schema/courses.ts scalar/multi-materials six unproven; DB06 two assignment resources/allowed-submission types missing",
+          "db008SourceDisposition": "ACTIVE_TYPED_JSON_PAYLOAD_SOURCE_17_NESTED_FIELDS_STAGED_PARTIAL_NOT_VERIFIED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "ContentDataDTO.java and LessonContents.java",
+            "V163__retire_legacy_lesson_content_types.sql (active resource types)",
+            "scripts/sql/db05-lesson-content-settings.draft.sql",
+            "docs/planning/db05-lesson-content-payload-subfields.json",
+            "Not executed; no registered migration or consumer proof"
+          ]
         },
         {
           "legacyTable": "lesson_contents",
