@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "domain": "DB00_HISTORICAL_AND_ENGINE",
+  "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "generatedFrom": "docs/planning/db-pass4-columns-db00_historical_and_engine.json",
+  "evidence": [
+    "Legacy V125 explicitly retires embedded lesson-content quiz behavior in favor of first-class quizzes.",
+    "Legacy V163 explicitly creates lesson_contents_legacy_type_backup_v163 only as a reversible conversion backup.",
+    "Greenfield vNext has no legacy-data restoration requirement.",
+    "flyway_schema_history is tooling metadata and maps to Drizzle migration metadata, not an application table."
+  ],
+  "counts": {
+    "candidateTables": 39,
+    "candidateFields": 732,
+    "tableDispositionsClosed": 32,
+    "fieldCandidatesDispositionedByTableDecision": 641,
+    "pendingProductDecisionTables": 7,
+    "pendingProductDecisionFields": 91,
+    "runtimeSemanticVerifiedFields": 0
+  },
+  "tables": [
+    {
+      "table": "backup_legacy_content_progress_quiz_20260501",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 9,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "backup_legacy_content_sequence_quiz_20260501",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 6,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "backup_legacy_discussions_quiz_20260501",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 10,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "backup_legacy_lesson_contents_quiz_20260501",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 19,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "backup_legacy_quiz_attempt_20260501",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 8,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "backup_legacy_quiz_draft_20260501",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 6,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "backup_legacy_quiz_ids_20260501",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 1,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "backup_legacy_student_assignment_quiz_20260501",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 25,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_faculty_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 44,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_odd_dob_faculty_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 44,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_odd_dob_learner_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 51,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_college_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 17,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_department_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 8,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_faculty_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 44,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_job_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 33,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_learner_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 51,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_test_org_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 5,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_young_dob_faculty_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 44,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_full_lms_young_dob_learner_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 51,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_application_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 21,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_application_ids_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 3,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_company_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 17,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_company_ids_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 3,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_job_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 33,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_job_ids_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 3,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_placement_saved_job_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 4,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_project_template_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 25,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_project_template_ids_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 3,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_project_workspace_backup_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 36,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "cleanup_legacy_project_workspace_ids_20260918",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 3,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "flyway_schema_history",
+      "sourceClass": "SCHEMA_TOOL_METADATA",
+      "sourceFieldCount": 10,
+      "disposition": "REPLACED_BY_PLATFORM_MIGRATION_METADATA",
+      "target": "drizzle/meta/_journal.json",
+      "rationale": "Migration-engine metadata, replaced by the Drizzle journal/snapshot chain.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "lesson_contents_legacy_type_backup_v163",
+      "sourceClass": "HISTORICAL_BACKUP_VALIDATE_RETIREMENT",
+      "sourceFieldCount": 4,
+      "disposition": "RETIRE_GREENFIELD_BACKUP",
+      "target": null,
+      "rationale": "Historical backup/cleanup copy; greenfield vNext preserves the active canonical domain behavior rather than restoration tables.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "smrithi_application",
+      "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "sourceFieldCount": 28,
+      "disposition": "PENDING_PRODUCT_DECISION",
+      "target": null,
+      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "smrithi_college",
+      "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "sourceFieldCount": 7,
+      "disposition": "PENDING_PRODUCT_DECISION",
+      "target": null,
+      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "smrithi_college_keywords",
+      "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "sourceFieldCount": 2,
+      "disposition": "PENDING_PRODUCT_DECISION",
+      "target": null,
+      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "smrithi_education_type",
+      "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "sourceFieldCount": 9,
+      "disposition": "PENDING_PRODUCT_DECISION",
+      "target": null,
+      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "smrithi_notification_template",
+      "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "sourceFieldCount": 28,
+      "disposition": "PENDING_PRODUCT_DECISION",
+      "target": null,
+      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "smrithi_program",
+      "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "sourceFieldCount": 9,
+      "disposition": "PENDING_PRODUCT_DECISION",
+      "target": null,
+      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
+      "runtimeSemanticVerified": false
+    },
+    {
+      "table": "smrithi_specialization",
+      "sourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "sourceFieldCount": 8,
+      "disposition": "PENDING_PRODUCT_DECISION",
+      "target": null,
+      "rationale": "Persisted Smrithi subsystem requires explicit producer/consumer or retirement evidence.",
+      "runtimeSemanticVerified": false
+    }
+  ]
+}
