@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_TABLES_CLASSIFIED_STAGING_AWAITING_REGISTRATION",
+    "checkpointKind": "DB005_SOURCE_DISPOSITION_COMPLETE_TARGET_ACCEPTANCE_OPEN",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "9a9c2984e855905e50f6e22b233a4624a9bcb035",
-    "lastWorkerMergedSha": "7463858772c290eb4e3911ba6828ef9c1a05b2f2",
+    "observedMainSha": "2d313acc18ccbd903fa23556a5e0be1652a077b0",
+    "lastWorkerMergedSha": "22e7530e7ed4ba86bffc51c086d0c58f16f771f0",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 all 13 legacy tables now source-classified: 8 active source-confirmed, 3 active read-path confirmed with producer/retirement still open, 2 historical DDL-only unresolved. Canonical cohort progression, program terms/curriculum, lecture halls and schedule overlap are documented and staged but unregistered/unverified."
+    "summary": "DB02 source-side disposition is 125/125 complete: 106 active/compatibility/operational and 19 historical/no-current-consumer candidates, 0 unclassified. One canonical staging SQL remains after duplicate cleanup; static staging defects were repaired. Runtime/PostgreSQL and registered-schema verification remain open."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -45,7 +45,7 @@
       "evidence": "issue comment 6101948064"
     }
   ],
-  "nextAction": "Continue row-level disposition for remaining lower-risk fields and parallel legacy producer paths. Coordinate Chat 1 registration of DB02 staging, then execute disposable PostgreSQL tenant/concurrency/overlap acceptance. Do not mark COMPLETED/DONE_VERIFIED yet.",
+  "nextAction": "Map the 106 source-active/compatibility/operational candidates to final vNext direct/normalized/calculated/retired dispositions, especially the three overlapping faculty/course assignment contracts and compatibility-only new_program_structure. Chat 1 handoff for schema registration/zero-to-current PostgreSQL tenant, promotion-CAS and schedule-overlap acceptance remains required.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -69,7 +69,11 @@
     "https://github.com/42Students/lms-vnext/commit/b0ec8707fe8655db0b439cc07adecda0210fd6f5",
     "https://github.com/42Students/lms-vnext/commit/7ca737e9d7aa67a86d55e1d7110374ba81375d0c",
     "https://github.com/42Students/lms-vnext/commit/ba0ba344f61b3612adc0abc22207d32c9e039416",
-    "https://github.com/42Students/lms-vnext/commit/7463858772c290eb4e3911ba6828ef9c1a05b2f2"
+    "https://github.com/42Students/lms-vnext/commit/7463858772c290eb4e3911ba6828ef9c1a05b2f2",
+    "https://github.com/42Students/lms-vnext/commit/45f80e40f1677baa8aac583b9f543222ba905f1f",
+    "https://github.com/42Students/lms-vnext/commit/932b0e1ef4e3a58ebd62d86f1c142968f4cb70ec",
+    "https://github.com/42Students/lms-vnext/commit/22e7530e7ed4ba86bffc51c086d0c58f16f771f0",
+    "https://github.com/42Students/lms-vnext/commit/fbd2e374336c456e4d1562a4fd9655f524246d8b"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
