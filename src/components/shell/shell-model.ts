@@ -117,6 +117,12 @@ const facultyItems: ShellNavItem[] = [
     group: "learning",
   },
   {
+    label: "Contacts",
+    href: "/teacher/contacts/allContacts",
+    shortLabel: "C",
+    group: "account",
+  },
+  {
     label: "All Quizzes",
     href: "/teacher/allQuizzes",
     shortLabel: "Q",
