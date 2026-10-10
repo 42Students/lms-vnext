@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 const routes=[
+  "src/app/api/placements/tpo/companies/route.ts",
+  "src/app/api/placements/tpo/companies/detail/route.ts",
   "src/app/api/placements/tpo/company-visibility/route.ts",
   "src/app/api/placements/tpo/placement-rules/route.ts",
   "src/app/api/placements/tpo/follow-ups/[followupId]/done/route.ts",
