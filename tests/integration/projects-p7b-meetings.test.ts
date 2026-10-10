@@ -10,6 +10,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   addProjectMember,
+  listMyProjectInstances,
 } from "@/modules/projects/member-service";
 import {
   createProjectInstance,
@@ -544,6 +545,18 @@ describe("Projects P7B meetings", () => {
     })).rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
     const [meeting] = await listProjectMeetings(mentor,project.id);
     expect(meeting).toMatchObject({id:request.id,status:"CANCELLED"});
+  });
+
+  it("denies suspended platform accounts in both project list and direct workspace reads",async()=>{
+    const project=await createProject();
+    const disabled: RequestContext = {
+      ...mentor,
+      user:{...mentor.user,platformStatus:"SUSPENDED"},
+    };
+    await expect(listMyProjectInstances(disabled))
+      .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    await expect(listProjectMeetings(disabled,project.id))
+      .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   });
 
 });
