@@ -2369,7 +2369,23 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "CRUD identity and class_schedule.lecture_hall_id target; deletion is blocked while scheduled classes reference the room.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -2485,7 +2501,23 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Create/update field with backend range validation and admin display/export.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -2515,7 +2547,23 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Required tenant scope for CRUD/list operations.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -2545,7 +2593,23 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Optional department scope; backend verifies department belongs to the same college.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -2573,7 +2637,23 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Editable/displayed room metadata.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -2601,7 +2681,23 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Required room name; app enforces case-insensitive uniqueness within college.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -2629,10 +2725,52 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Persisted enum: CLASSROOM, LECTURE_HALL, LAB, SEMINAR_HALL, AUDITORIUM, CONFERENCE_ROOM.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         }
-      ]
+      ],
+      "legacyContractReconciliation": {
+        "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+        "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+        "activePersistedColumns": [
+          "id",
+          "capacity",
+          "college_id",
+          "dept_id",
+          "description",
+          "name",
+          "room_type"
+        ],
+        "evidenceRefs": [
+          "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+          "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+          "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+          "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+          "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+        ],
+        "vnextEquivalenceStatus": "NOT_PROVEN",
+        "runtimePostgresStatus": "NOT_EXECUTED",
+        "identifiedGap": "vNext has no room/lecture-hall entity or room_id; section_schedule_events.location is free text and cannot preserve room identity, capacity, department scope, type or schedule FK semantics.",
+        "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+      }
     },
     {
       "table": "new_program",
@@ -3794,7 +3932,22 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "CRUD identity; semester-course responses expose mapping against a concrete semester.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -3913,7 +4066,22 @@
             "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.academic_periods.status"
-            ]
+            ],
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Create defaults active; edit UI persists and displays Active/Inactive state.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -3944,7 +4112,22 @@
             "notes": "Semester has program_id and semester_number, while academic_periods is college-scoped. Matching names does not prove program-specific semester identity. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.academic_periods.name"
-            ]
+            ],
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Required trimmed semester name in create/update UI and backend.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -3977,7 +4160,22 @@
             "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.programs.id"
-            ]
+            ],
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Semester is explicitly program-scoped; create selects program and update does not permit changing it.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4008,7 +4206,22 @@
             "notes": "No program-scoped term ordinal in observed academic_periods. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.academic_periods.code"
-            ]
+            ],
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Program-local ordinal; uniqueness is (program_id, semester_number); UI treats ordinal as immutable after create.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4036,10 +4249,49 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Persisted optional total credits; editable and displayed by legacy admin UI.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         }
-      ]
+      ],
+      "legacyContractReconciliation": {
+        "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+        "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+        "activePersistedColumns": [
+          "id",
+          "is_active",
+          "name",
+          "program_id",
+          "semester_number",
+          "total_credits"
+        ],
+        "evidenceRefs": [
+          "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+          "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+          "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+          "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
+        ],
+        "vnextEquivalenceStatus": "NOT_PROVEN",
+        "runtimePostgresStatus": "NOT_EXECUTED",
+        "identifiedGap": "vNext academic_periods is college-scoped calendar time and cannot represent program-local term ordinal/name/credits/activity by itself.",
+        "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+      }
     },
     {
       "table": "semester_course",
@@ -4078,7 +4330,22 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Mapping identity is returned as mappingId and used by edit/delete flows.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4198,7 +4465,22 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Required course relation; same-college checks protect semester-course assignment.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4228,7 +4510,22 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Course order is a persisted learner/college-admin behavior; verify uniqueness and reorder races."
+            "notes": "Course order is a persisted learner/college-admin behavior; verify uniqueness and reorder races.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Persisted display order; legacy service assigns next order and UI supports reorder/edit.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4258,7 +4555,22 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Persisted per-semester course credits with legacy validation and edit surface.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4288,7 +4600,22 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Core/elective flag may align with course_offerings.type but check enum choices, exceptions, and grouping."
+            "notes": "Core/elective flag may align with course_offerings.type but check enum choices, exceptions, and grouping.",
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Persisted core/elective semantic exposed by mapping UI.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4321,10 +4648,49 @@
             "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.course_offerings.academic_period_id"
-            ]
+            ],
+            "legacyActivityEvidence": {
+              "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+              "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "behavior": "Required parent curriculum term relation used by list/add/remove/reorder operations.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ],
+              "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+              "vnextEquivalenceStatus": "NOT_PROVEN",
+              "runtimePostgresStatus": "NOT_EXECUTED"
+            }
           }
         }
-      ]
+      ],
+      "legacyContractReconciliation": {
+        "batchId": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+        "status": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+        "activePersistedColumns": [
+          "id",
+          "course_id",
+          "course_order",
+          "credits",
+          "is_mandatory",
+          "semester_id"
+        ],
+        "evidenceRefs": [
+          "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+          "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+          "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+          "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
+        ],
+        "vnextEquivalenceStatus": "NOT_PROVEN",
+        "runtimePostgresStatus": "NOT_EXECUTED",
+        "identifiedGap": "vNext course_offerings stores similar values only for a cohort + academic period; it does not preserve a reusable program-term curriculum mapping.",
+        "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+      }
     }
   ],
   "db02AuditPass": {
@@ -4344,7 +4710,8 @@
       "normalized": 32,
       "unresolved": 69,
       "semanticallyVerified": 0,
-      "postgresVerified": 0
+      "postgresVerified": 0,
+      "legacyActiveFieldsSourceConfirmed": 19
     },
     "priorityGaps": [
       "Semester and semester_course have no verified program-specific persisted equivalent; academic_periods is college-scoped. Preserve semester name/ordinal and course order/credits/mandatory flag.",
@@ -4365,6 +4732,29 @@
     ],
     "policy": "Never upgrade CANDIDATE to MAPPED/IMPLEMENTED/DB_TESTED or claim runtime success without source and execution evidence.",
     "sourceReferenceCorrection": "The legacy program and program_structure source rows originate from historical SQL inventory, not current JPA model files. Do not silently retire.",
-    "strictnessReview": "Columns that merely reference related concepts but lose class-group, lecture-hall, versioned-structure, program-scoped semester or per-program term identity were removed from candidate mapping counts and retained as related-but-NOT-equivalent evidence."
+    "strictnessReview": "Columns that merely reference related concepts but lose class-group, lecture-hall, versioned-structure, program-scoped semester or per-program term identity were removed from candidate mapping counts and retained as related-but-NOT-equivalent evidence.",
+    "producerConsumerBatches": [
+      {
+        "id": "CHAT04_DB005_ACTIVE_CONTRACT_1_2026_10_11",
+        "observedVnextMainSha": "3d623975b8ceec3bce3c3e2a74c671c52068e2d0",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+        "tables": [
+          "semester",
+          "semester_course",
+          "lecture_hall"
+        ],
+        "activePersistedFieldsSourceConfirmed": 19,
+        "semanticEquivalenceVerified": 0,
+        "postgresTestsExecuted": 0,
+        "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql",
+        "findings": [
+          "Semester is an active program-scoped curriculum term; academic_periods alone is not equivalent.",
+          "Semester-course mapping is an active reusable curriculum contract; cohort-period course_offerings alone is not equivalent.",
+          "Lecture hall is an active first-class room resource referenced by schedules; free-text event location alone is not equivalent."
+        ],
+        "warning": "Source producer/consumer confirmation proves legacy activity only. It does not certify the proposed vNext mapping or PostgreSQL behavior."
+      }
+    ]
   }
 }
