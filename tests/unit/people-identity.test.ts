@@ -39,7 +39,7 @@ class FakeIdentityDirectory implements IdentityDirectory {
     this.createCount += 1;
     const user: IdentityDirectoryUser = {
       uid: `uid-${this.createCount}`,
-      phoneNumber: input.phoneNumber,
+      phoneNumber: input.phoneNumber ?? null,
       email: input.email ?? null,
       displayName: input.displayName,
     };
@@ -77,6 +77,44 @@ describe("people identity resolution", () => {
 
     expect(first.uid).toBe(second.uid);
     expect(directory.createCount).toBe(1);
+  });
+
+  it("creates and reuses an email-only identity", async () => {
+    const directory = new FakeIdentityDirectory();
+    const input = {
+      email: "recruiter@example.com",
+      displayName: "Recruiter",
+    };
+
+    const first = await resolveOrCreateIdentity(
+      input,
+      directory,
+    );
+    const second = await resolveOrCreateIdentity(
+      input,
+      directory,
+    );
+
+    expect(first).toMatchObject({
+      uid: second.uid,
+      phoneNumber: null,
+      email: "recruiter@example.com",
+    });
+    expect(directory.createCount).toBe(1);
+  });
+
+  it("rejects identity creation without any contact", async () => {
+    const directory = new FakeIdentityDirectory();
+
+    await expect(
+      resolveOrCreateIdentity(
+        { displayName: "No Contact" },
+        directory,
+      ),
+    ).rejects.toMatchObject<Partial<PeopleServiceError>>({
+      code: "IDENTITY_CONTACT_REQUIRED",
+    });
+    expect(directory.createCount).toBe(0);
   });
 
   it("safely fills a missing email on an existing phone identity", async () => {

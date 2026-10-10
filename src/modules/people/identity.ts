@@ -8,7 +8,7 @@ export type IdentityDirectoryUser = {
 };
 
 export type IdentityDirectoryCreateInput = {
-  phoneNumber: string;
+  phoneNumber?: string;
   email?: string;
   displayName: string;
 };
@@ -39,7 +39,7 @@ export class IdentityDirectoryConflictError extends Error {
 }
 
 export type ResolveIdentityInput = {
-  phoneE164: string;
+  phoneE164?: string;
   email?: string;
   displayName: string;
 };
@@ -52,7 +52,11 @@ function assertCompatibleIdentity(
   user: IdentityDirectoryUser,
   input: ResolveIdentityInput,
 ) {
-  if (user.phoneNumber && user.phoneNumber !== input.phoneE164) {
+  if (
+    input.phoneE164 &&
+    user.phoneNumber &&
+    user.phoneNumber !== input.phoneE164
+  ) {
     throw new PeopleServiceError("IDENTITY_COLLISION");
   }
 
@@ -70,8 +74,12 @@ async function findExistingIdentity(
   directory: IdentityDirectory,
 ) {
   const [byPhone, byEmail] = await Promise.all([
-    directory.findByPhone(input.phoneE164),
-    input.email ? directory.findByEmail(input.email) : Promise.resolve(null),
+    input.phoneE164
+      ? directory.findByPhone(input.phoneE164)
+      : Promise.resolve(null),
+    input.email
+      ? directory.findByEmail(input.email)
+      : Promise.resolve(null),
   ]);
 
   if (byPhone && byEmail && byPhone.uid !== byEmail.uid) {
@@ -92,7 +100,7 @@ async function synchronizeIdentity(
 ) {
   const update: IdentityDirectoryUpdateInput = {};
 
-  if (!existing.phoneNumber) {
+  if (input.phoneE164 && !existing.phoneNumber) {
     update.phoneNumber = input.phoneE164;
   }
 
@@ -122,6 +130,12 @@ export async function resolveOrCreateIdentity(
   input: ResolveIdentityInput,
   directory: IdentityDirectory,
 ) {
+  if (!input.phoneE164 && !input.email) {
+    throw new PeopleServiceError(
+      "IDENTITY_CONTACT_REQUIRED",
+    );
+  }
+
   const existing = await findExistingIdentity(input, directory);
   if (existing) {
     return synchronizeIdentity(existing, input, directory);
@@ -129,8 +143,12 @@ export async function resolveOrCreateIdentity(
 
   try {
     return await directory.createUser({
-      phoneNumber: input.phoneE164,
-      email: input.email,
+      ...(input.phoneE164
+        ? { phoneNumber: input.phoneE164 }
+        : {}),
+      ...(input.email
+        ? { email: input.email }
+        : {}),
       displayName: input.displayName,
     });
   } catch (error) {
