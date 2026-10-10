@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   createTpoLeadSchema,
+  updateTpoLeadSchema,
+  checkTpoLeadContactSchema,
   createTpoFollowupSchema,
   logTpoLeadActivitySchema,
   markTpoNotNowSchema,
@@ -87,5 +89,58 @@ describe("DB09 recruiter CRM input contracts", () => {
     expect(() => markTpoNotNowSchema.parse({
       collegeId, revisitDate: "10/11/2026",
     })).toThrow();
+  });
+});
+
+
+describe("W05 recruiter lead edit and duplicate-check boundaries", () => {
+  it("allows updating one contact without deleting the other implicitly", () => {
+    expect(updateTpoLeadSchema.parse({
+      collegeId, name: "Corrected name",
+    })).toEqual({ collegeId, name: "Corrected name" });
+    expect(updateTpoLeadSchema.parse({
+      collegeId, phone: null,
+    })).toEqual({ collegeId, phone: null });
+    expect(updateTpoLeadSchema.parse({
+      collegeId, email: "  Edited@Example.Org  ",
+    }).email).toBe("edited@example.org");
+  });
+
+  it("rejects no-op updates and hidden owner/status/invite manipulation", () => {
+    for (const input of [
+      { collegeId },
+      { collegeId, manualStage: "CONTACTED" },
+      { collegeId, recruiterUserId: collegeId, name: "Forged" },
+      { collegeId, inviteTokenHash: "stolen", name: "Forged" },
+      { collegeId, ownerMembershipId: collegeId, name: "Forged" },
+      { collegeId, name: "   " },
+      { collegeId, companyName: "" },
+      { collegeId, source: "IMPORT" },
+    ]) {
+      expect(() => updateTpoLeadSchema.parse(input)).toThrow();
+    }
+  });
+
+  it("normalizes approved source labels and permits explicit reset", () => {
+    expect(updateTpoLeadSchema.parse({
+      collegeId, source: "Event or job fair",
+    }).source).toBe("EVENT");
+    expect(updateTpoLeadSchema.parse({
+      collegeId, source: null,
+    }).source).toBeNull();
+  });
+
+  it("validates duplicate-check email or phone, never arbitrary search", () => {
+    expect(checkTpoLeadContactSchema.parse({
+      collegeId, contact: "  LEAD@EXAMPLE.ORG  ",
+    }).contact).toBe("LEAD@EXAMPLE.ORG");
+    expect(checkTpoLeadContactSchema.parse({
+      collegeId, contact: "+91 98765 43210",
+    }).contact).toBe("+91 98765 43210");
+    for (const contact of ["", "x", "not-an-email@", "() ---", "hello world"]) {
+      expect(() => checkTpoLeadContactSchema.parse({
+        collegeId, contact,
+      })).toThrow();
+    }
   });
 });
