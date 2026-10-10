@@ -308,3 +308,12 @@ The shared `/notifications` feed now has recipient-only keyset pagination using 
 - [ ] Verify correct behavior when a notification is read or deleted while browsing historical pages; capture actual browser evidence before marking page CLOSED.
 
 **Source authored only, runtime/browser proof pending.**
+
+
+## W06 42 Tracker Super Admin triage staging — 2026-10-10
+
+A migration-gated Super Admin triage slice is now source-authored at the legacy paths `/tracker/issues` and `/tracker/issues/[publicId]`: status/severity/environment/search/sort filters, stable keyset continuation, scoped issue detail, private engineering workflow editor, optimistic version conflicts, retest pass/fail, sanitized attachment metadata and immutable activity history. API routes are under `/api/tracker/issues/**`, require a current Super Admin server context, enforce selected Super Admin college/org scope, same-origin on mutations, and return **503 `DB10_TRACKER_MIGRATIONS_PENDING`** unless `DB10_TRACKER_READY=DB10_VERIFIED`.
+
+Intentional privacy deviation remains: legacy unauthenticated issue list/detail is **not** reproduced. Public/reporting identity is still unresolved; reporter intake, screenshots, saved views, bulk actions, similar issues, logs and quick report remain OPEN. The UI explicitly renders Report issue and Logs as pending rather than fake links.
+
+Authored evidence: `tests/unit/bug-tracker-admin-validation.test.ts`, `tests/db10-tracker-route-gates.test.mjs`, `tests/integration/db10-tracker-admin.test.ts`. **No TypeScript/Vitest/PostgreSQL/browser execution evidence in this session. DB10 draft tables remain unregistered; this slice is CODE_STAGED / MIGRATION_BLOCKED, not IMPLEMENTED or VERIFIED.**

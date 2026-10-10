@@ -87,3 +87,12 @@ For data permissions:
 - [ ] Recheck all legacy and vNext SHAs, then close individual 58 field records based on executed evidence.
 
 No claims of DB10 database verification or production readiness until these gates pass.
+
+
+## W06 admin service/API/UI staging — 2026-10-10
+
+The previously pure model now has a gated persistence consumer without registering the schema: `src/modules/bug-tracker/admin-service.ts` reads scoped issues/details and performs workflow/retest compare-and-swap updates plus activity inserts in one transaction; direct attachment responses omit `storage_key`. `src/app/api/tracker/issues/**` exposes Super Admin-only reads/writes with same-origin mutation checks and a mandatory `DB10_TRACKER_READY=DB10_VERIFIED` runtime gate. `/tracker/issues` and detail pages stage list/detail/engineering/retest UI.
+
+This **does not satisfy the migration integration transaction yet** because `src/db/schema/db10-bug-tracker.draft.ts` is still unregistered and there is no migration replay. Reporter-session/public intake remains unimplemented because the legacy unauthenticated identity model cannot be copied safely without a server-authenticated reporter design. The route gate intentionally makes the staged code return 503 instead of querying nonexistent tables.
+
+Authored tests: admin validation, static route-gate enforcement, and opt-in isolated PostgreSQL scope/CAS/history/attachment-redaction/retest tests. All are **unexecuted** in this session. Field ledger remains 0 workflow-verified.
