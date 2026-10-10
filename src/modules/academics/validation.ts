@@ -37,25 +37,75 @@ export const academicDateSchema = z
     "Date is invalid",
   );
 
-export const createProgramInputSchema = z.object({
-  departmentId: departmentIdSchema,
-  name: academicNameSchema,
-  code: academicCodeSchema,
-  durationTerms: z.number().int().min(1).max(24),
-});
+const programDurationTermsSchema = z.number().int().min(1).max(24);
+const programDurationYearsSchema = z.number().int().min(1).max(10);
+
+function validateProgramDuration(
+  value: {
+    durationTerms?: number;
+    durationYears?: number;
+  },
+  ctx: z.RefinementCtx,
+  required: boolean,
+) {
+  if (
+    required &&
+    value.durationTerms === undefined &&
+    value.durationYears === undefined
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["durationYears"],
+      message: "Program duration is required",
+    });
+    return;
+  }
+
+  if (
+    value.durationTerms !== undefined &&
+    value.durationYears !== undefined &&
+    value.durationTerms !== value.durationYears * 2
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["durationYears"],
+      message:
+        "durationYears must match durationTerms using two academic terms per year",
+    });
+  }
+}
+
+export const createProgramInputSchema = z
+  .object({
+    departmentId: departmentIdSchema,
+    name: academicNameSchema,
+    code: academicCodeSchema,
+    durationTerms: programDurationTermsSchema.optional(),
+    durationYears: programDurationYearsSchema.optional(),
+  })
+  .superRefine((value, ctx) =>
+    validateProgramDuration(value, ctx, true),
+  );
 
 export const updateProgramInputSchema = z
   .object({
+    departmentId: departmentIdSchema.optional(),
     name: academicNameSchema.optional(),
     code: academicCodeSchema.optional(),
-    durationTerms: z.number().int().min(1).max(24).optional(),
+    durationTerms: programDurationTermsSchema.optional(),
+    durationYears: programDurationYearsSchema.optional(),
   })
   .refine(
     (value) =>
+      value.departmentId !== undefined ||
       value.name !== undefined ||
       value.code !== undefined ||
-      value.durationTerms !== undefined,
+      value.durationTerms !== undefined ||
+      value.durationYears !== undefined,
     "At least one program field is required",
+  )
+  .superRefine((value, ctx) =>
+    validateProgramDuration(value, ctx, false),
   );
 
 export const createAcademicPeriodInputSchema = z
