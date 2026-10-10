@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 2,
+  "system": "LMS vNext shared-phase six-chat system",
+  "repository": "42Students/lms-vnext",
+  "branch": "main",
+  "currentPhase": "DATABASE",
+  "updatedOn": "2026-10-11",
+  "workerCount": 6,
+  "phaseOrder": [
+    "DATABASE",
+    "API",
+    "UI",
+    "RELEASE"
+  ],
+  "phases": {
+    "DATABASE": {
+      "state": "ACTIVE",
+      "scope": "All legacy database domains DB00–DB10 plus complete source semantic reconciliation, normalized persisted models, migration replay and verified constraints",
+      "requiredGates": [
+        "Every active historical data concept/field classified and mapped or explicitly justified as retired",
+        "All approved DB structures are registered; clean PostgreSQL migration replay and snapshot drift checks succeed",
+        "Tenant, authorization, FK, deletion, uniqueness, audit/history, state-machine and concurrency database invariants are proven with executed tests",
+        "No active DB migration, privacy, missing-table/field or cross-domain consistency blocker remains",
+        "Reconcile DB00–DB10 source inventories against fresh legacy oracles and sign off global DB gate"
+      ],
+      "certifiedAt": null,
+      "evidence": []
+    },
+    "API": {
+      "state": "LOCKED",
+      "scope": "All LMS API and service operations for every role/domain, including state transitions, permission/error/side effects and cross-role workflows",
+      "requiredGates": [
+        "Global legacy API/service/UI-initiated user-job inventory completed across every role and domain",
+        "Each required operation mapped to tested vNext API/service or approved redesign/retirement",
+        "Authorization, tenant, input, error, concurrency and side-effect contracts pass executed integration tests",
+        "Full producer-to-consumer domain and cross-role workflows pass",
+        "No open required API/service parity rows remain"
+      ],
+      "certifiedAt": null,
+      "evidence": []
+    },
+    "UI": {
+      "state": "LOCKED",
+      "scope": "All seven account + shared/public route/section/action/modal/state/mobile/accessibility clone parity",
+      "requiredGates": [
+        "Global route/navigation/section/action/modal inventory reconciled to frozen legacy FE/BE SHAs",
+        "Master and detailed page parity counters have zero required unresolved rows",
+        "Seven-account and shared cross-role browser regression suites pass",
+        "Clone parity gate reports READY YES on current main"
+      ],
+      "certifiedAt": null,
+      "evidence": []
+    },
+    "RELEASE": {
+      "state": "LOCKED",
+      "scope": "Full system integration, infrastructure, security, adversarial audit and production launch",
+      "requiredGates": [
+        "Full CI and migration/test suite green on target release commit",
+        "Live Identity Platform/Cloud SQL/GCS/outbound/provider integration and smoke validated",
+        "Security/adversarial/load/restore/rollback acceptance passed",
+        "Production launch and post-launch verification accepted"
+      ],
+      "certifiedAt": null,
+      "evidence": []
+    }
+  },
+  "globalHistoricalInventorySnapshot": {
+    "observedOn": "2026-10-10",
+    "tableCandidates": 199,
+    "fieldCandidates": 2829,
+    "formalRuntimeSemanticVerifiedFields": 0,
+    "warning": "Source candidates not necessarily active; 0 verified does not mean 0 implemented."
+  },
+  "transitionRule": "A future active chat may promote DATABASE→API→UI→RELEASE only after independently verifying ALL phase gate requirements with exact commit/test evidence, all required queue items DONE_VERIFIED or approved retirement, and no blocking dependencies. CAS-update phase-state and activate eligible next-phase queue items. No worker changes phase alone.",
+  "compatibility": "This document supersedes old domain-ownership assignments in docs/planning/six-chat-closure-plan.md and issue #21–#26 bodies; those are historical records."
+}
