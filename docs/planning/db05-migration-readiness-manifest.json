@@ -149,12 +149,13 @@
     ],
     "classifications": {
       "candidate": 30,
-      "draft": 38,
-      "redesignedNeedsProof": 21,
+      "draft": 37,
+      "redesignedNeedsProof": 22,
       "missingOrUnproven": 3
     },
     "nestedLessonContentDataFields": 17,
-    "nestedLessonContentDataOpen": 17
+    "nestedLessonContentDataOpen": 17,
+    "outstandingSemanticDecisions": 25
   },
   "testFiles": [
     "tests/db05-source-semantic-review.test.mjs",
