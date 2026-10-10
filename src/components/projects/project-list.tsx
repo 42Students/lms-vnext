@@ -13,6 +13,7 @@ export type ProjectListItem = {
   memberCount?: number;
   progressPercent?: number;
   attention?: readonly string[];
+  href?: string;
 };
 
 function statusTone(status: string) {
@@ -66,7 +67,7 @@ export function ProjectList({
       {items.map((item) => (
         <Link
           key={item.id}
-          href={basePath + "/" + item.id}
+          href={item.href ?? basePath + "/" + item.id}
           className="group flex min-h-56 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
         >
           <div className="flex items-start justify-between gap-3">
