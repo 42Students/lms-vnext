@@ -95,14 +95,14 @@
       "paths": [
         "docs/planning/db00-historical-engine-disposition.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 6,
       "pickedAt": "2026-10-10T20:22:09.399Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:22:45.059Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -124,6 +124,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:22:09.399Z",
           "reason": "Automation-triggered substantive DB00 source audit, reserved by available Chat 6 worker after live queue and checkpoint review."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:22:45.059Z",
+          "reason": "DB00 producer/consumer source audit started; worker checkpoint updated."
         }
       ]
     },
