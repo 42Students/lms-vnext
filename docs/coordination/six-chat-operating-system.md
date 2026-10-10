@@ -1,4 +1,4 @@
-# LMS vNext — Six-chat shared-phase operating system (v2)
+# LMS vNext — Six-chat shared-phase operating system (v3)
 
 **Effective:** 2026-10-11 IST · **Repository:** `42Students/lms-vnext` · **Branch:** `main` · **Workers:** Chats 1–6, interchangeable.
 **Authoritative state:** [phase-state.json](phase-state.json) + [work-queue.json](work-queue.json) + [six independent chat checkpoints](lanes/) + GitHub issues [#21–#26](https://github.com/42Students/lms-vnext/issues).
@@ -28,17 +28,33 @@ When a ChatGPT Project has [chatgpt-project-instructions.md](chatgpt-project-ins
 
 The **shared queue** `docs/coordination/work-queue.json` contains task IDs, phase, prerequisites, touched areas, status, owner chat, and evidence. The **global phase** is in `phase-state.json`. Every task is a *temporary batch*, never a permanent domain lane. Work may span one or more backend domains; chats can later take tasks anywhere in the LMS.
 
-1. Fetch newest `main` and shared state; if the worker has a `CLAIMED` task, reconcile that before claiming another.
-2. Eligible task is in the current global phase, `READY`, all required dependencies are `DONE_VERIFIED` or `RETIRED_APPROVED`, no conflicting claimed task edits the same files, and its `restriction` permits this chat. Select lowest numerical priority, then lowest task ID. **All six may use the same queue.**
-3. Claim **using GitHub contents API optimistic concurrency**: read the queue's current blob `sha`, update only that task to `CLAIMED`, set `claimedBy` and timestamp, then `update_file` against that original SHA. If the update fails/conflicts, **re-fetch and reselect**; never overwrite another worker's queue update. Verify the committed claim appears in newest `main` before editing production source.
-4. Update the worker's own `chat-0N.json` with current task ID and checkpoint. Each worker is the sole writer to its own checkpoint; the shared queue is a single CAS-constrained coordination file, not a stale full-tree merge target.
+1. Fetch newest `main` and shared state; if the worker has a `PICKED` or `IN_PROGRESS` task, reconcile that before picking another.
+2. Eligible task is in the current global phase, `READY`, all required dependencies are `DONE_VERIFIED` or `RETIRED_APPROVED`, no conflicting picked/in-progress task edits the same files, and its `restriction` permits this chat. Select lowest numerical priority, then lowest task ID. **All six may use the same queue.**
+3. **PICK** using GitHub contents API optimistic concurrency: read the queue's current blob `sha`, update only that task to `PICKED`, set `pickedBy`, `pickedAt`, append an immutable `pickHistory` event `{chatNumber,pickedAt}`, append `statusHistory`, then `update_file` against that original SHA. If the update fails/conflicts, **re-fetch and reselect**; never overwrite another worker's queue update. Verify the committed claim appears in newest `main` before editing production source.
+4. Update the worker's own `chat-0N.json` with current task ID, `pickedTaskIds` and checkpoint. Picking creates a reservation, **not a completion**. Once implementation starts, update task status to `IN_PROGRESS` and set `startedAt`. Each worker is the sole writer to its own checkpoint; the shared queue is a single CAS-constrained coordination file, not a stale full-tree merge target.
 5. Work the exact **claimed** task with source/oracle evidence and tests. Reconcile latest `main` before every push, no force push. If additional files overlap another worker's claim, negotiate a smaller task/contract via the two issue threads before changing them.
-6. Mark `DONE_VERIFIED` only with executed accepted evidence, exact committed implementation SHA, field dispositions/proofs, test names and results. `IN_REVIEW` means source-complete but missing independent/runtime proof; `BLOCKED` means no unblocked progress on this task; neither closes the phase. Record blockers in task and own issue.
-7. **When finished early:** release the task as `DONE_VERIFIED`/`IN_REVIEW`/`BLOCKED`, then claim the next eligible task **within the same phase**; repeat while the current user turn and tools permit. If no eligible task exists, inspect blocked tasks, offer independent peer review/CI help *without stealing an existing claim*, or identify/document a real untracked gap as a fresh non-duplicating task. Never mark worker permanently DONE or start the next phase prematurely.
+6. When committed implementation is finished, mark `COMPLETED` with `completedAt`, `completedBy`, `completionCommitSha`, completion notes, `statusHistory`, and append that task ID to the completing worker's `completedTaskIds`. This means **completed implementation**, NOT verified. Mark `DONE_VERIFIED` only after executed accepted evidence, with `verifiedAt`, `verifiedBy` and concrete test/results in `verificationEvidence`; update the verifying worker's `verifiedTaskIds`. `BLOCKED` or `COMPLETED` does not close the phase. Record blockers in queue and issue.
+7. **When finished early:** release the task as `COMPLETED` (awaiting verification), `DONE_VERIFIED` (accepted), or `BLOCKED` (with documented blocker); then pick the next eligible task **within the same phase**; repeat while the current user turn and tools permit. If no eligible task exists, inspect blocked tasks, offer independent peer review/CI help *without stealing an existing claim*, or identify/document a real untracked gap as a fresh non-duplicating task. Never mark worker permanently DONE or start the next phase prematurely.
 8. If a previous owner appears stale, **do not silently steal**; check its checkpoint/issue commits, and reassign only with explicit recorded coordination and CAS update. A time-stale timestamp does not prove the other conversation is inactive.
 9. New issues/fields found during work become new queue items through the same SHA-checked update. Keep the queue exhaustive and monotonic; "there are no READY tasks" does not prove the phase is complete.
 
 **Necessary concurrency limitation:** GitHub blob-SHA updates reduce stale-file overwrite conflicts but are not a lock over arbitrary source files or a distributed transactional scheduler. Always inspect current changes and coordinate overlapping paths. A task claim is a reservation record, not an autonomous worker process.
+
+## 1A. Three different tracking events — never conflate them
+
+| Event | When it happens | Required recorded information | Counts as finished? |
+|---|---|---|---|
+| **PICKED** | A worker reserves an eligible queue task | `pickedBy`, `pickedAt`, append `pickHistory`; update worker's `pickedTaskIds` | **No** |
+| **IN_PROGRESS** | Worker actually starts implementing picked work | `startedAt`; worker has one active task | **No** |
+| **COMPLETED** | All intended changes for the batch are **committed**; acceptance may not run yet | `completedBy`, `completedAt`, `completionCommitSha`, `completionNote`; update `completedTaskIds` | **Code done; phase gate not met** |
+| **DONE_VERIFIED** | Acceptance/integration executed successfully, source requirements checked | `verifiedBy`, `verifiedAt`, `verificationEvidence`, exact SHA; update `verifiedTaskIds` | **Yes, closes this required task** |
+| **BLOCKED** | Cannot advance or verify, with documented reason | `blockers`, `statusHistory`; preserve pick/completion history | **No** |
+
+- **Global task counts:** `READY`, `PICKED`, `IN_PROGRESS`, `COMPLETED` (awaiting proof), `DONE_VERIFIED`, `BLOCKED`, approved retirement; additionally **ever picked** and **ever completed** from durable event fields.
+- **Chat stats:** per-worker *unique tasks ever picked*, *tasks whose implementation that worker completed*, *tasks the worker independently verified*. A picked task can later be completed by another chat. The three numbers must not be treated as independent, additive percentages.
+- A completed but unverified task is available for **review/testing**, not re-implementation. Reviewer must avoid stealing the original worker's implementation credit; record the verifier independently.
+- Reopening or reassigning a task **must not erase** past pick/completion timestamps. Record the new event; a later accepted pass is attached to the current implementation SHA.
+- A worker with no picked task should pick another READY item. A phase cannot advance while required tasks remain `PICKED`, `IN_PROGRESS`, `COMPLETED` or `BLOCKED`.
 
 ## 2. Cross-workstream shared writers
 
@@ -64,7 +80,7 @@ Chat 1..6 = six worker IDs tracked in `docs/coordination/lanes/chat-01.json` .. 
 
 The offline `node scripts/six-chat-status.mjs` (or `--lane 4`, `--json`) reads current working tree phase, queue, workers and detailed page checklist. It does not consult live GitHub or run CI; fresh status queries also inspect current GitHub HEAD/issue/PR/CI.
 
-**Report for one chat:** global phase, active task and age, completed verified vs blocked/review tasks, latest verified merged SHAs, tests authored/executed/passed, next eligible task and dependencies. **All chat stats:** one row per worker **plus one global phase/queue breakdown**, DB source candidates/disposition evidence, API operation inventory (if measured), UI parity gate (if phase active), CI and launch proof. Never invent a completion percentage: use only closed/eligible fully enumerated denominators and distinguish authored vs proven.
+**Report for one chat:** global phase, active task and age; three distinct lifetime counts **PICKED / COMPLETED / VERIFIED**, with task IDs and last timestamps; blocked tasks, latest merged SHAs, tests authored/executed/passed, next eligible task and dependencies. **All chat stats:** one row per worker **plus one global phase/queue breakdown**, DB source candidates/disposition evidence, API operation inventory (if measured), UI parity gate (if phase active), CI and launch proof. Never invent a completion percentage: use only closed/eligible fully enumerated denominators and distinguish authored vs proven.
 
 ## 5. Phase work rules
 
@@ -94,4 +110,4 @@ Suggested manual chat titles: `LMS vNext | Chat 1` through `LMS vNext | Chat 6`.
 3. Six GitHub issues remain durable worker journals; do **not** close them when a batch is complete.
 4. Existing historical code, API and UI changes remain preserved; only new priority follows the strict global phase.
 5. Seeded queue is a **starting audit backlog, not a certified exhaustive inventory**. Workers must extend it for any proven missing active scope before certifying a phase.
-6. All task and test completion claims require exact merged SHA, relevant executed evidence and refreshed legacy oracle SHA. Missing runtime is `IN_REVIEW` or `BLOCKED`, never `DONE_VERIFIED`.
+6. All task and test completion claims require exact merged SHA, relevant executed evidence and refreshed legacy oracle SHA. Missing runtime can be `COMPLETED` (implementation complete, awaiting testing) or `BLOCKED`, never `DONE_VERIFIED`.
