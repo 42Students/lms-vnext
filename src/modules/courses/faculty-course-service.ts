@@ -8,6 +8,8 @@ import {
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
+  collegeMemberships,
+  membershipRoles,
   courseOfferings,
   courseSectionDeliveries,
   courseTeachingAssignments,
@@ -35,6 +37,7 @@ function requireFacultyMembership(
   context: RequestContext,
 ) {
   if (
+    context.user.platformStatus !== "ACTIVE" ||
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
     !context.membership.roles.includes("FACULTY")
@@ -86,6 +89,24 @@ export async function listFacultyCourseDeliveries(
         courseTeachingAssignments.startedAt,
     })
     .from(courseTeachingAssignments)
+    // A stale identity cookie cannot preserve faculty read access once the
+    // authoritative membership is suspended, reassigned or de-roled.
+    .innerJoin(
+      collegeMemberships,
+      and(
+        eq(collegeMemberships.id, courseTeachingAssignments.membershipId),
+        eq(collegeMemberships.userId, context.user.id),
+        eq(collegeMemberships.collegeId, membership.collegeId),
+        eq(collegeMemberships.status, "ACTIVE"),
+      ),
+    )
+    .innerJoin(
+      membershipRoles,
+      and(
+        eq(membershipRoles.membershipId, collegeMemberships.id),
+        eq(membershipRoles.role, "FACULTY"),
+      ),
+    )
     .innerJoin(
       courseSectionDeliveries,
       eq(
