@@ -37,6 +37,34 @@ function memberContext(
 }
 
 describe("platform authorization policy", () => {
+  it("allows any active platform user to manage only their own identity record", () => {
+    const recruiter: RequestContext = {
+      user: baseUser,
+      membership: null,
+      recruiter: {
+        userId: baseUser.id,
+        companyId: "company-1",
+        companyName: "Company",
+        title: "Recruiter",
+        status: "ACTIVE",
+        grants: [],
+      },
+    };
+    expect(can(recruiter, "identity.self.manage")).toBe(true);
+    expect(
+      can(
+        {
+          ...recruiter,
+          user: {
+            ...baseUser,
+            platformStatus: "DISABLED",
+          },
+        },
+        "identity.self.manage",
+      ),
+    ).toBe(false);
+  });
+
   it("fails closed for missing or disabled identity", () => {
     expect(can(null, "college.read", { collegeId: "college-1" })).toBe(false);
 
