@@ -373,6 +373,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -743,6 +751,13 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -999,6 +1014,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -1217,6 +1240,13 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -1581,6 +1611,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -1763,6 +1801,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -1815,6 +1861,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -2051,6 +2105,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -2271,6 +2333,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -2417,6 +2487,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -2597,6 +2675,13 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -2797,6 +2882,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -2999,6 +3092,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -3259,6 +3360,13 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -3429,6 +3537,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -3731,6 +3847,13 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -3953,6 +4076,13 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -4219,6 +4349,13 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -4709,6 +4846,13 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -4877,6 +5021,14 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "RETIREMENT_CANDIDATE_NOT_APPROVED",
+      "reconciliationStatus": "NO_CURRENT_JPA_OR_ROUTE_EVIDENCE_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED",
+      "reconciliationEvidence": [
+        "HISTORICAL_SCHEMA_SNAPSHOT",
+        "CURRENT_JPA_ENTITY_CENSUS_ABSENCE",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST_ABSENCE",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     },
     {
@@ -5393,7 +5545,40 @@
           "verifiedMapping": null,
           "validationEvidence": null
         }
+      ],
+      "sourceDisposition": "ACTIVE_SOURCE_CONTRACT",
+      "reconciliationStatus": "SOURCE_ACTIVE_TARGET_SEMANTICS_REVIEWED_RUNTIME_UNVERIFIED",
+      "reconciliationEvidence": [
+        "CURRENT_JPA_ENTITY_CENSUS",
+        "CURRENT_PRODUCT_ROUTE_MANIFEST",
+        "DB06_SOURCE_RECONCILIATION_2026_10_11"
       ]
     }
-  ]
+  ],
+  "reconciliation": {
+    "observedOn": "2026-10-11",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "evidenceDocument": "docs/planning/database-parity-db06-reconciliation.md",
+    "activeSourceContracts": {
+      "tables": 9,
+      "fields": 120,
+      "disposition": "CURRENT_JPA_ENTITY_AND_PRODUCT_JOB_EVIDENCE"
+    },
+    "historicalCandidates": {
+      "tables": 12,
+      "fields": 128,
+      "disposition": "RETIREMENT_CANDIDATE_ONLY_LIVE_NATIVE_SQL_CONFIRMATION_REQUIRED"
+    },
+    "targetGaps": [
+      "course_quizzes lacks persisted shuffle_questions/shuffle_options despite active legacy write/read behavior",
+      "assignment grading lacks immutable grade-change/publish history equivalent to grade_audit_log",
+      "assignment re-attempt semantics unresolved; current vNext unique assignment+membership row conflicts with legacy attempt_number concept",
+      "assignment upload receipt persistence remains required even with private-object storage helper",
+      "attendance correction lacks immutable history/audit persistence",
+      "same-tenant schedule/membership/actor integrity needs executed negative database evidence"
+    ],
+    "runtimeVerification": "BLOCKED_BY_DB-001",
+    "schemaMutationStatus": "DEFERRED_DUE_ACTIVE_SHARED_SCHEMA_CLAIM"
+  }
 }
