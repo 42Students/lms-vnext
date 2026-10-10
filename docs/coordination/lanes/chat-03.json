@@ -12,13 +12,13 @@
     "DB-007"
   ],
   "checkpoint": {
-    "checkpointKind": "DB09_V162_14_OF_279_SOURCE_FIELDS_REVIEWED",
+    "checkpointKind": "DB09_138_OF_279_SOURCE_FIELDS_REVIEWED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "6e9682ebb3abb9288769a324ed5e4339311d388b",
-    "lastWorkerMergedSha": "76fe7d2de82771e73c719e302ec641bb3f9bd8e8",
+    "observedMainSha": "c196248ebf5af11bbb0fba07ee1eb5cc3705397a",
+    "lastWorkerMergedSha": "c196248ebf5af11bbb0fba07ee1eb5cc3705397a",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-007 blocked with 103/103 source review notes, 33 historical usage undecided and zero semantic/DB verified. DB-012 is Chat 3 active task. 14/279 DB09 policy/privacy fields received V162 source comparison; read-only ledger assertions passed. No PostgreSQL migration/test proof."
+    "summary": "DB-012 active. Canonical DB09 ledger now 138/279 source-reviewed: 135 MAPPED, 3 BLOCKED, 141 UNMAPPED, 0 workflow/runtime verified. Recruiter CRM DB guards and collaboration contract updates are authored; no PostgreSQL/CI execution. Current sender producer HR->RECRUITER mismatch and two TPO settings remain blocked."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -31,12 +31,10 @@
   "lastAuthoredTests": [],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "DB04 staged schema/migration not registered or replayed by Chat 1; disposable PostgreSQL/CI evidence unavailable.",
-    "DB-006 overlaps src/db/schema/**; no staged Drizzle schema edits were made in this pass.",
-    "Qualification semantic gaps: vNext grading enum omits production-screened GPA; explicit currently-pursuing state and marksheet-to-education receipt linkage are absent; isRecentEducation/examRank need explicit disposition.",
-    "Student image semantic gap: active legacy imageId/imageUrl/active collection has no persisted vNext equivalent; PROFILE_IMAGE receipt alone is not equivalent.",
-    "student_registration needs DB01/DB02 native-SQL/external-sync disposition and must not be confused with placement_registration.",
-    "approver_id_card retirement requires native-SQL/detached-consumer proof or explicit approval."
+    "No disposable PostgreSQL/CI execution evidence.",
+    "Current vNext TPO messaging producer emits HR while final V193 database contract is RECRUITER.",
+    "job_types_json and outcome_labels_json require canonical DB08/DB09 persistence ownership.",
+    "141 DB09 source fields remain to reconcile, including scheduling, company memory and shared operational overlap."
   ],
   "handoffs": [
     {
@@ -50,7 +48,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Continue DB-012 with remaining 265 DB09 source fields, privacy projection and message/recruiter CRM relationships; preserve database-only phase and single-writer migration journal.",
+  "nextAction": "Continue DB-012 remaining 141 fields; prioritize active scheduling/assignment/reschedule persistence, company/industry-company normalization, prep assignment, and explicit DB08/DB10 cross-domain handoffs. Keep runtime verification at zero until executable PostgreSQL evidence exists.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -76,7 +74,12 @@
     "https://github.com/42Students/lms-vnext/commit/b9cec52054c993e827b3f5c880159d611c13a020",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db04-qualification-image-persistence-contract.md",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db09-chat03-v162-policy-privacy-audit.md",
-    "https://github.com/42Students/lms-vnext/commit/6dfe802939a43b6c6f115ea8f1bca866691c741f"
+    "https://github.com/42Students/lms-vnext/commit/6dfe802939a43b6c6f115ea8f1bca866691c741f",
+    "https://github.com/42Students/lms-vnext/commit/fa5061dc209e47950c55b7bac673b1f731efd59d",
+    "https://github.com/42Students/lms-vnext/commit/01bd093d2ef7f624cb339bdba3d8907bb00e6734",
+    "https://github.com/42Students/lms-vnext/commit/782da06cc52542408a1f21b79205a261de1f76fc",
+    "https://github.com/42Students/lms-vnext/commit/d87e292a4fcc1f25cd96a4be98f465e838b2991e",
+    "https://github.com/42Students/lms-vnext/commit/c196248ebf5af11bbb0fba07ee1eb5cc3705397a"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
