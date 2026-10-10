@@ -7501,7 +7501,10 @@
     "stagedIntegrityContracts": [
       "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
       "docs/planning/sql/db07-w03-task-allocation-parity-candidate.sql",
-      "docs/planning/sql/db07-w03-workspace-state-parity-candidate.sql"
+      "docs/planning/sql/db07-w03-workspace-state-parity-candidate.sql",
+      "docs/planning/sql/db07-w03-task-backlog-and-delivery-state-candidate.sql",
+      "docs/planning/sql/db07-w03-unrepresented-project-history-candidate.sql",
+      "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
     ],
     "evidenceDocument": "docs/planning/database-parity-db07-reconciliation.md",
     "runtimeVerification": "BLOCKED_BY_DB-001",
@@ -7520,7 +7523,19 @@
         "status_before_delete rejected; restore recalculates ACTIVE with mentor or BLOCKED without mentor",
         "project status domain needs BLOCKED for exact restore parity",
         "task carry-over DDL must be declared once"
-      ]
+      ],
+      "tenantIntegrityDraft": "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql",
+      "tenantIntegrityStaticGuard": "tests/unit/w03-db07-tenant-integrity-draft.test.ts"
+    },
+    "projectTeamAtomicity": {
+      "sourceEvidence": [
+        "src/modules/groups/service.ts::attachProjectTeamGroup",
+        "src/modules/groups/service.ts::mirrorProjectTeamMember",
+        "src/modules/projects/member-service.ts::PROJECT_TEAM_GROUP_MANAGED"
+      ],
+      "disposition": "STAGED_DEFERRED_FINAL_STATE_DB_GUARD",
+      "runtimeVerified": false,
+      "staticGuard": "tests/unit/w03-db07-tenant-integrity-draft.test.ts"
     }
   }
 }
