@@ -12,6 +12,7 @@ export type ProjectListItem = {
   mentorName?: string | null;
   memberCount?: number;
   progressPercent?: number;
+  attention?: readonly string[];
 };
 
 function statusTone(status: string) {
@@ -83,11 +84,21 @@ export function ProjectList({
                 {item.title}
               </h2>
             </div>
-            <StatusBadge
-              tone={statusTone(item.status)}
-            >
-              {statusLabel(item.status)}
-            </StatusBadge>
+            <div className="flex flex-wrap justify-end gap-1.5">
+              <StatusBadge
+                tone={statusTone(item.status)}
+              >
+                {statusLabel(item.status)}
+              </StatusBadge>
+              {item.attention?.map((label) => (
+                <StatusBadge
+                  key={label}
+                  tone="warning"
+                >
+                  {label}
+                </StatusBadge>
+              ))}
+            </div>
           </div>
 
           <p className="mt-3 line-clamp-3 text-sm leading-6 text-body">
