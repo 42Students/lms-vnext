@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
+import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
+import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
+import { getAdminCourseDisplayContent } from "@/modules/courses/course-display-service";
 import {
   AdminOfferingLearningOverview,
 } from "./admin-offering-learning-overview";
@@ -24,6 +27,14 @@ export async function AdminOfferingLearningPage({
       context,
       offeringId,
     );
+  const displayEnabled =
+    courseDisplayRuntimeEnabled();
+  const display = displayEnabled
+    ? await getAdminCourseDisplayContent(
+        context,
+        workspace.offering.courseId,
+      )
+    : null;
 
   return (
     <div className="space-y-6">
@@ -47,6 +58,25 @@ export async function AdminOfferingLearningPage({
           >
             Back to Courses
           </Link>
+        }
+      />
+      <AdminCourseDisplayEditor
+        courseId={workspace.offering.courseId}
+        enabled={displayEnabled}
+        initial={
+          display
+            ? {
+                introductionText:
+                  display.introductionText,
+                bodyHtml:
+                  display.bodyHtml,
+                takeaways:
+                  display.takeaways,
+                thumbnailUrl:
+                  display.thumbnailUrl,
+                version: display.version,
+              }
+            : null
         }
       />
       <AdminOfferingLearningOverview
