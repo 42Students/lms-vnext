@@ -116,7 +116,18 @@ The following legacy values may be redesigned as calculated values **only with e
 
 Calculated redesign does not mean “unmapped.” The producer, filter semantics, tenant scope and race behavior must still be recorded in the DB02 row-level audit.
 
-## 7. Staged database proposal
+## 7. Parallel legacy structures still requiring disposition
+
+The second source sweep found legacy persistence that must **not** be retired merely because newer tables exist:
+
+- `new_program_structure` is still read by `NewProgramServiceImpl.fetchProgramDetails`, including name, start/end dates, status and ordered/listed course IDs. Its exact producer path and relationship to the newer `semester` / `semester_course` model still require classification.
+- `faculty_course_mapping` is still queried for active faculty→course/class mappings, class instructor lookup and faculty metrics.
+- `faculty_course_associations` is still queried for active faculty↔course relationships and supports deactivation.
+- `faculty_teaching_assignment` is independently active and carries class, batch, semester, academic-year, role and start/end lifecycle. It cannot be collapsed into the two older mapping tables without a deliberate compatibility decision.
+
+These may ultimately be normalized into `course_teaching_assignments`, deliveries and program-term curriculum, but the active repository/read contracts must first be mapped to equivalent vNext producers/consumers. Until then their DB02 status is **ACTIVE/READ-PATH CONFIRMED, PRODUCER OR RETIREMENT DISPOSITION OPEN**.
+
+## 8. Staged database proposal
 
 `scripts/sql/db02-academic-progression-and-rooms-staging.sql` contains an **unregistered** PostgreSQL proposal for:
 
@@ -129,7 +140,7 @@ Calculated redesign does not mean “unmapped.” The producer, filter semantics
 
 **Chat 1 remains the only worker allowed to register numbered Drizzle migrations or the shared schema barrel.** The staging SQL must be reviewed against current main before registration.
 
-## 8. Acceptance required before DB-005 can be DONE_VERIFIED
+## 9. Acceptance required before DB-005 can be DONE_VERIFIED
 
 DB-005 remains open until all of these are executed and attached to exact SHAs:
 
