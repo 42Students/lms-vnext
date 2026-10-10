@@ -31,10 +31,10 @@
     "sourceTables": 7,
     "sourceFields": 92,
     "byClass": {
-      "SOURCE_CANDIDATE": 31,
-      "MISSING_OR_UNPROVEN": 14,
+      "SOURCE_CANDIDATE": 30,
+      "MISSING_OR_UNPROVEN": 11,
       "REMODELED_NEEDS_PROOF": 18,
-      "UNREGISTERED_DRAFT": 29
+      "UNREGISTERED_DRAFT": 33
     }
   },
   "criticalOpenRisks": [
@@ -355,22 +355,24 @@
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: abbreviated course title",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "scripts/sql/db05-course-identity.draft.sql: courses.short_title nullable staging only; API must require nonblank <=255",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_COURSE_DTO_REPOSITORY_FLYWAY_CONFIRMED"
     },
     {
       "source": "course.slug",
       "sourceType": "varchar(64)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: URL identity; courses.code is not proven equivalent",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "scripts/sql/db05-course-identity.draft.sql: courses.slug global unique even archived; legacy public URL identifier, distinct from courses.code",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_COURSE_DTO_REPOSITORY_FLYWAY_CONFIRMED"
     },
     {
       "source": "course.version",
@@ -388,22 +390,24 @@
       "sourceType": "varchar(255)",
       "sourceNullable": "NOT_NULL",
       "sourceRiskFlags": [],
-      "targetProposal": "courses_active_department_name_uq (lower only; legacy LOWER(TRIM) generated key)",
-      "classification": "SOURCE_CANDIDATE",
+      "targetProposal": "scripts/sql/db05-course-identity.draft.sql: lower(btrim(name)) active per department; legacy V131 generated key",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_COURSE_DTO_REPOSITORY_FLYWAY_CONFIRMED"
     },
     {
       "source": "course.short_title_key",
       "sourceType": "varchar(255)",
       "sourceNullable": "NOT_NULL",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: legacy uniqueness for abbreviated course title",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "scripts/sql/db05-course-identity.draft.sql: lower(btrim(short_title)) active per department; legacy V131 generated key",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_COURSE_DTO_REPOSITORY_FLYWAY_CONFIRMED"
     },
     {
       "source": "discussions.id",
@@ -1179,5 +1183,17 @@
     "currentSourceProvenance": "BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5; FE SHA e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
     "sourceContractNote": "Actual legacy /api/v1/discussion POST/GET is tied to lessonContentId and trusted principal. Historical reply/resolution/attachment columns found in snapshot are not used by inspected active DiscussionController/Service/DTO. They remain unverified, nullable draft ideas; require source/consumer evidence before enabling.",
     "tests": "Static source inspection only; no runtime PostgreSQL, Node, FE or CI acceptance executed."
+  },
+  "courseIdentityFollowUp": {
+    "stagedDraft": "scripts/sql/db05-course-identity.draft.sql",
+    "legacyRefs": [
+      "src/main/java/com/_42students/lms/model/Course.java",
+      "src/main/java/com/_42students/lms/dto/request/CourseDTO.java",
+      "src/main/java/com/_42students/lms/repository/CourseRepository.java",
+      "src/main/java/com/_42students/lms/service/impl/CourseServiceImpl.java",
+      "src/main/resources/db/migration/V131__course_lesson_unique_names.sql"
+    ],
+    "notes": "ShortTitle is a required authored string distinct from vNext code; slug is globally reserved even for archived rows; V131 lower(trim) uniqueness. These four mappings are unregistered drafts, not implemented/verified. Other course flags, parent and display semantics remain unresolved.",
+    "tests": "None of Node, Postgres, CI, typecheck or build executed."
   }
 }
