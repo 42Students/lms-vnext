@@ -44,3 +44,25 @@ test("contract gates tenant, history, race and migration acceptance", () => {
     assert.ok(contract.includes(term), term);
   }
 });
+
+test("readiness manifest blocks progress tombstone until consumer and PostgreSQL proofs", () => {
+  const manifest = JSON.parse(read("../docs/planning/db05-migration-readiness-manifest.json"));
+  const draft = manifest.artifacts.find((a) => a.id === "db05-version-progress");
+  assert.ok(draft);
+  assert.equal(draft.registered, false);
+  assert.equal(draft.executedAgainstPostgres, false);
+  assert.equal(draft.sourceDeletionContract.candidateColumn, "learner_content_progress.deleted_at");
+  assert.equal(draft.sourceDeletionContract.consumerVerified, false);
+  assert.equal(draft.sourceDeletionContract.postgresVerified, false);
+  for (const prerequisite of [
+    "PROGRESS_TOMBSTONE_PER_READER_POLICY",
+    "PROGRESS_LATEST_ATTEMPT_BEFORE_DELETION_FILTER",
+    "PROGRESS_MEMBERSHIP_CONTENT_TENANT_NEGATIVE",
+  ]) {
+    assert.ok(draft.prereqs.includes(prerequisite), prerequisite);
+  }
+  assert.ok(manifest.gates.some((gate) =>
+    gate.id === "PROGRESS_LATEST_ATTEMPT_SOFT_DELETE_CONSUMERS" && gate.status === "BLOCKED"));
+  assert.ok(manifest.gates.some((gate) =>
+    gate.id === "PROGRESS_SOFT_DELETE_TENANT_RACE_NEGATIVE" && gate.status === "NOT_RUN"));
+});
