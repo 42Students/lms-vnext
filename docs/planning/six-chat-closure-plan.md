@@ -1,3 +1,7 @@
+> **SUPERSEDED FOR CURRENT ASSIGNMENTS (2026-10-11):** This file is retained as a **historical record of the initial domain-scoped six-chat implementation effort**. Its permanent Chat 1–6 domain boundaries, copy/paste worker prompts and individual continuation directions are **not current execution authority**. The user replaced them with one global DATABASE → API → UI → RELEASE wave where all six chats claim temporary tasks across the entire LMS. Read `docs/coordination/six-chat-operating-system.md`, `docs/coordination/phase-state.json` and `docs/coordination/work-queue.json` instead. Chat 1 remains shared Drizzle migration/schema-barrel/CI integrator to avoid collisions; old source changes and issue history remain valid. **Do not follow the old domain assignment table below for new work.**
+
+---
+
 # LMS vNext — Six-chat remaining-work closure plan
 
 **Effective:** 2026-10-10 IST  
