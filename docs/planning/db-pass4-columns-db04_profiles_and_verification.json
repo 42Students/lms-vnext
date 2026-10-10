@@ -35,9 +35,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Historical approver artifact primary key; current source usage unproven.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -55,9 +70,24 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Historical artifact creation timestamp; no verified active producer.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -73,9 +103,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Historical artifact soft-delete state; active usage/retirement undecided.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -93,9 +138,24 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Historical artifact update time; active usage/retirement undecided.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -111,9 +171,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Legacy object storage key candidate; sensitive exam document storage must not default to public access.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -129,9 +204,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Legacy representation encoding; cannot infer same as modern storage checksum.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -147,9 +237,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Legacy media classification; determine whether content format or business token.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -165,9 +270,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Legacy MIME type; validate content sniffing if still used.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -183,9 +303,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "User-uploaded filename needs sanitization and privacy consideration.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -201,9 +336,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Potential public URI; should not copy into long-lived private receipt metadata blindly.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "approver_id_card",
@@ -221,9 +371,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Exam ownership FK requires exam domain/oracle check; do not assume it is learner identity document.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         }
       ]
     },
@@ -257,9 +422,19 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Resolve legacy learner integer to canonical membership UUID; prohibit wrong-college membership linkage."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -279,9 +454,19 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "decimal(4,2) to integer hundredths; prove exact conversion, null and cap values."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -307,9 +492,19 @@
           ],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Nullable nonnegative number and context-sensitive eligibility; DB constraint and producer tests."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -335,9 +530,19 @@
           ],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Nullable nonnegative number and context-sensitive eligibility; DB constraint and producer tests."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -357,9 +562,19 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "decimal(5,2) to basis-points integer; verify rounding and nullable unknowns."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -379,9 +594,19 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "decimal(5,2) to basis-points integer; verify rounding and nullable unknowns."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -401,9 +626,19 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "decimal(5,2) to basis-points integer; verify rounding and nullable unknowns."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -423,9 +658,19 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "decimal(5,2) to basis-points integer; verify rounding and nullable unknowns."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -451,9 +696,19 @@
           ],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Legacy default 0; vNext nullable and no DB default. Distinguish omitted vs actual zero."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -479,9 +734,19 @@
           ],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Legacy NOT NULL DEFAULT FALSE; vNext check default matching plus source writer."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -507,9 +772,19 @@
           ],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Year null and range policy; legacy INT vs vNext year check; verify source import/creator validation."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -529,9 +804,19 @@
           "riskFlags": [
             "POTENTIAL_PERSONAL_OR_SECRET_DATA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Source is learner academic record; vNext profile JSON target requires explicit privacy and profile readers review."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -557,9 +842,19 @@
           ],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "SELF vs VERIFIED cannot be fabricated; verify reviewer + verifiedAt checks and producer semantics."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -577,9 +872,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Greenfield means no legacy migration, but importer-created vNext records may still need provenance. Retire only with workflow signoff."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -599,9 +904,19 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Greenfield means no old data migration; future importer provenance needs deliberate design or approved retirement."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -629,9 +944,19 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Source ON UPDATE CURRENT_TIMESTAMP; target Drizzle updatedAt has default now but needs guaranteed update-on-write producer/test."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -654,9 +979,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V165__tpo_v1_complete.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "V165 adds display/filter label; check cohort/filter producer and display, not just current enrollment join."
+            ]
+          }
         },
         {
           "legacyTable": "learner_academic_record",
@@ -681,9 +1016,19 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V192__academic_marks_as_earned.sql",
+            "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "V192 original grade/scale/max; the approved mark and derived percentage must round-trip under college rule; staged mark table and placement read-model are distinct."
+            ]
+          }
         }
       ]
     },
@@ -713,9 +1058,19 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -733,9 +1088,19 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Legacy integer learner identifier; vNext canonical membership UUID. Prove membership identity and tenant scope before source-mapped signoff."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -751,9 +1116,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -769,9 +1144,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -789,9 +1174,19 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Require only masked identity and private receipt references; staged SQL lacks JSONB payload invariant."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -809,9 +1204,19 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Retained during UPDATE_PENDING; prove direct SQL cannot forge VERIFIED state without review and event."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -829,9 +1234,19 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -849,9 +1264,19 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -867,9 +1292,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Legacy ADMIN/SUPER_ADMIN/TPO vs vNext COLLEGE_ADMIN/SUPER_ADMIN/TPO; role translation and producer readers require verification."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -887,9 +1322,19 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Legacy actor id semantics may differ by actor type; verify lookup to canonical user UUID."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -905,9 +1350,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -923,9 +1378,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -943,9 +1408,19 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -961,9 +1436,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Not a direct current-row vNext column; verify the last VERIFIED event retains correct reviewer name while UPDATE_PENDING/sent-back changes decidedByName."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification",
@@ -981,9 +1466,19 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         }
       ]
     },
@@ -1013,9 +1508,19 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1033,9 +1538,19 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Target event uses verification_id FK; membership/college is derived through immutable parent; prove tenant filtered readers."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1051,9 +1566,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Target section is derived from immutable verification parent; prevent mismatched event action/section semantics."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1069,9 +1594,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1087,9 +1622,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1107,9 +1652,19 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Legacy integer actor id must resolve to canonical user; cross-college role authorization cannot be inferred from users FK."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1125,9 +1680,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1143,9 +1708,19 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1163,9 +1738,19 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "JSONB privacy must not rely exclusively on application validation; stage event immutability/DB permissions and redaction probes."
+            ]
+          }
         },
         {
           "legacyTable": "profile_verification_event",
@@ -1183,9 +1768,19 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+            "vnextEvidence": "src/db/schema/profile-verification.ts",
+            "openProbes": [
+              "Order via committed revision number rather than assuming timestamp-only ordering."
+            ]
+          }
         }
       ]
     },
@@ -1215,9 +1810,28 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].id",
+            "openProbes": [
+              "Stable per-entry identity needs lifecycle proof; legacy int DB PK differs from opaque client item id.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1235,9 +1849,28 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: missing per-education-entry created_at",
+            "openProbes": [
+              "Profile-level timestamps cannot prove when a specific qualification was created.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1253,9 +1886,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: missing soft-delete per education entry",
+            "openProbes": [
+              "Legacy BaseModel soft deletion and findByLearnerId is_deleted=false have no equivalent in whole-array replacement.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1273,9 +1925,28 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: missing per-education-entry updated_at",
+            "openProbes": [
+              "Legacy entity UpdateTimestamp is per qualification; profile-level updatedAt not equivalent.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1291,9 +1962,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "STAGED: profile_private_document_receipts(MARKSHEET)",
+            "openProbes": [
+              "Current vNext education schema has no certificateUpload or receipt ID; must link by owned entry ID, not put public URLs in JSON.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1309,9 +1999,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: absent in strict educationSchema",
+            "openProbes": [
+              "Legacy education DTO round-trips degree; no strict vNext property.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1327,9 +2036,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: absent in strict educationSchema",
+            "openProbes": [
+              "Rich-text description from qualificationToDTO/dtoToQualification would be rejected/dropped.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1345,9 +2073,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].educationType",
+            "openProbes": [
+              "Direct candidate, but required/nullable semantics differ; legacy @Column nullable=false.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1363,9 +2110,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].endYear",
+            "openProbes": [
+              "Direct string candidate, vNext regex restricts 4 digits/empty; legacy nullable varchar can contain other values.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1383,9 +2149,28 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].examDetails",
+            "openProbes": [
+              "Legacy arbitrary Map<String,Object> may include nested objects; vNext strict scalar values only.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1401,9 +2186,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: absent in strict educationSchema",
+            "openProbes": [
+              "Legacy DTO getter/setter for rank is in active profile conversion.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1419,9 +2223,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: absent in strict educationSchema",
+            "openProbes": [
+              "Legacy DTO exposes distinct field string.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1437,9 +2260,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].gradeObtained",
+            "openProbes": [
+              "Source nullable grade maps to default string, conversion to verified snapshot requires preservation.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1455,9 +2297,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].maxGrade",
+            "openProbes": [
+              "Source length 20 vs target max 64; storage sizing not necessarily harmful; preserve exact scale.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1473,9 +2334,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].gradingType",
+            "openProbes": [
+              "Legacy DTO documents GPA in addition to CGPA, Percentage, Grade; vNext enum omits GPA.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1491,9 +2371,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].institution",
+            "openProbes": [
+              "Legacy NotBlank institution vs vNext textValue may allow blank; validate.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1509,9 +2408,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: absent in strict educationSchema",
+            "openProbes": [
+              "Cannot infer 'currently pursuing' reliably from empty endYear; distinct legacy Boolean.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1527,9 +2445,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: absent in strict educationSchema",
+            "openProbes": [
+              "Legacy sorting explicitly prioritizes recent education. Missing Boolean changes ordering/user behavior.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1545,9 +2482,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].program",
+            "openProbes": [
+              "Direct candidate, trim/max semantics may differ.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1563,9 +2519,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].qualifyingExam",
+            "openProbes": [
+              "Direct candidate; missing exam rank still blocks full qualifying exam behavior.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1581,9 +2556,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: absent in strict educationSchema",
+            "openProbes": [
+              "Legacy score distinct from normalized grade.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1599,9 +2593,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].specialization",
+            "openProbes": [
+              "Direct candidate.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1617,9 +2630,28 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.profile_document.education[].startYear",
+            "openProbes": [
+              "Target regex /^$|^\\d{4}$/; source string can have unknown nonyear labels.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "qualification",
@@ -1637,9 +2669,28 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/Qualification.java",
+              "src/main/java/com/_42students/lms/model/BaseModel.java",
+              "src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java",
+              "src/main/java/com/_42students/lms/repository/QualificationRepository.java",
+              "src/main/java/com/_42students/lms/dto/profile/EducationDTO.java"
+            ],
+            "vnextEvidence": "src/modules/people/profile-validation.ts; src/db/schema/profiles.ts; src/db/schema/profile-verification.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "learner_profiles.membership_id",
+            "openProbes": [
+              "Legacy learner integer FK becomes canonical tenant membership UUID; prove identity and ownership.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         }
       ]
     },
@@ -1669,9 +2720,27 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/StudentImage.java",
+              "src/main/java/com/_42students/lms/service/impl/StudentImageServiceImpl.java",
+              "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+              "src/main/java/com/_42students/lms/model/ImageEntry.java"
+            ],
+            "vnextEvidence": "src/db/schema/profile-verification.ts; src/modules/people/profile-validation.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: legacy student_image aggregate row identity",
+            "openProbes": [
+              "Legacy StudentImage row contains an image_data array; target receipt ID alone does not model row+entries.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_image",
@@ -1690,9 +2759,27 @@
             "POTENTIAL_PERSONAL_OR_SECRET_DATA",
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/StudentImage.java",
+              "src/main/java/com/_42students/lms/service/impl/StudentImageServiceImpl.java",
+              "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+              "src/main/java/com/_42students/lms/model/ImageEntry.java"
+            ],
+            "vnextEvidence": "src/db/schema/profile-verification.ts; src/modules/people/profile-validation.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "GAP: profile image gallery and active flags",
+            "openProbes": [
+              "Legacy JSON list has imageId,imageUrl,active, and deactivate mutates active flag; private receipt alone is not gallery lifecycle.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_image",
@@ -1708,9 +2795,27 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/model/StudentImage.java",
+              "src/main/java/com/_42students/lms/service/impl/StudentImageServiceImpl.java",
+              "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+              "src/main/java/com/_42students/lms/model/ImageEntry.java"
+            ],
+            "vnextEvidence": "src/db/schema/profile-verification.ts; src/modules/people/profile-validation.ts",
+            "candidateDisposition": "ACTIVE_CURRENT_LEGACY_WORKFLOW_RETAIN_REQUIRED",
+            "candidateVnextTarget": "college_memberships.id via candidate image gallery owner",
+            "openProbes": [
+              "Legacy String learner ID must resolve authorized canonical membership without cross-college access.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         }
       ]
     },
@@ -1740,9 +2845,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Historical surrogate row primary key; registration/ingest identity must be decided.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1760,9 +2880,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Tenant integer key may not equal college_id or organization_id; map parent hierarchy before normalizing.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1780,9 +2915,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Optional org reference; compare canonical organizations and nullable intake behavior.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1800,9 +2950,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Optional college reference; record tenant mismatch hazards before normalizing.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1820,9 +2985,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Nullable learner relationship implies pre-enrollment intake possibility; membership_id cannot replace prematurely.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1838,9 +3018,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "External idempotency/correlation candidate; no vNext equivalent established.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1856,9 +3051,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Candidate learner_profiles.registration_number only after registration is linked to member.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1874,9 +3084,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Name captured before membership may exist; users.display_name is not necessarily same lifecycle.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1894,9 +3119,24 @@
           "riskFlags": [
             "POTENTIAL_PERSONAL_OR_SECRET_DATA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "PII contact value possibly captured before member identity; retention/privacy review required.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1914,9 +3154,24 @@
           "riskFlags": [
             "POTENTIAL_PERSONAL_OR_SECRET_DATA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "PII contact value may differ from registered user email; preservation and normalization need proof.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1934,9 +3189,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Nullable pending program selector may not be equivalent to active program enrollment.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1954,9 +3224,24 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Nullable proposed class may not be equivalent to active class membership.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1972,9 +3257,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Historical cohort label vs computed batch; exact enrollment/intake semantic not proven.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -1990,9 +3290,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Requested semester vs actual calendar semester; clarify consumer use.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -2008,9 +3323,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Registration lifecycle state distinct from membership status unless proven.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -2026,9 +3356,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "External/manual origin provenance can matter even for greenfield; user-data backfill is not required.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -2046,9 +3391,24 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "External synchronization timestamp; greenfield no-data-migration does not automatically retire future sync workflows.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -2066,9 +3426,24 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Nullable structured ingest metadata; do not silently discard or leak PII.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -2084,9 +3459,24 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Legacy optimistic row version; test concurrent intake edits before mapping.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -2104,9 +3494,24 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Potential record-specific audit origin time; users/profiles.created_at not necessarily equivalent.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -2124,9 +3529,24 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Potential sync/status update time; model requires dedicated provenance if active.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         },
         {
           "legacyTable": "student_registration",
@@ -2142,11 +3562,37 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
+          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+            "reviewedAt": "2026-10-11",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "docs/planning/database-parity-legacy-schema-snapshot.json"
+            ],
+            "vnextEvidence": "No validated vNext equivalent; cross-domain source investigation required",
+            "candidateDisposition": "UNDECIDED_PENDING_ADDITIONAL_CURRENT_USAGE_EVIDENCE",
+            "candidateVnextTarget": "UNDECIDED: not mapped; historical field candidate",
+            "openProbes": [
+              "Legacy soft-deletion lifecycle; determine recovery/visibility before irreversible delete.",
+              "Source-review only: no executed PostgreSQL/test evidence or domain signoff."
+            ]
+          }
         }
       ]
     }
-  ]
+  ],
+  "sourceReviewSummary": {
+    "reviewedOn": "2026-10-11",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "reviewedCandidateFields": 103,
+    "legacyCurrentWorkflowSourceConfirmedFields": 27,
+    "historicalCandidateFieldsWithActiveUsageUnconfirmed": 33,
+    "priorDdlToStagedComparedFields": 43,
+    "formalSemanticOrRuntimeVerifiedFields": 0,
+    "retirementsApproved": 0,
+    "warning": "Every candidate has a source-review note, NOT an accepted semantic mapping. Current legacy DB catalog unknown; migration and DB integration tests not executed. Existing counts.sameNameCandidateFields are not verified."
+  }
 }
