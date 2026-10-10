@@ -51,10 +51,10 @@ CREATE TABLE profile_verification_events (
 );
 CREATE INDEX profile_verification_events_created_idx ON profile_verification_events(verification_id,created_at);
 
-CREATE TABLE learner_private_document_receipts (
+CREATE TABLE profile_private_document_receipts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   owning_membership_id uuid NOT NULL REFERENCES college_memberships(id) ON DELETE RESTRICT,
-  purpose varchar(32) NOT NULL CHECK (purpose IN ('AADHAAR','PAN','MARKSHEET','RESUME')),
+  purpose varchar(32) NOT NULL CHECK (purpose IN ('AADHAAR','PAN','MARKSHEET','RESUME','PROFILE_IMAGE')),
   education_entry_id uuid,
   private_object_key text NOT NULL CHECK (position('://' IN private_object_key)=0),
   object_generation varchar(80) NOT NULL,
@@ -67,10 +67,10 @@ CREATE TABLE learner_private_document_receipts (
   uploaded_at timestamptz NOT NULL DEFAULT now(),
   revoked_at timestamptz,
   retention_until timestamptz,
-  CONSTRAINT learner_private_doc_generation_uq UNIQUE (private_object_key,object_generation)
+  CONSTRAINT profile_private_doc_generation_uq UNIQUE (private_object_key,object_generation)
 );
-CREATE INDEX learner_private_doc_member_purpose_idx
-  ON learner_private_document_receipts(owning_membership_id,purpose);
+CREATE INDEX profile_private_doc_member_purpose_idx
+  ON profile_private_document_receipts(owning_membership_id,purpose);
 
 CREATE TABLE profile_verification_settings (
   college_id uuid PRIMARY KEY REFERENCES colleges(id) ON DELETE RESTRICT,
