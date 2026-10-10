@@ -6,6 +6,9 @@ import {
   courseLessonIdSchema,
   courseSectionDeliveryIdSchema,
 } from "./validation";
+import {
+  assignmentFileSubmissionSchema,
+} from "./assignment-file-validation";
 
 export const courseAssignmentIdSchema =
   z.string().uuid();
@@ -125,6 +128,7 @@ export const submitAssignmentInputSchema =
     [
       textSubmissionSchema,
       linkSubmissionSchema,
+      assignmentFileSubmissionSchema,
     ],
   );
 
