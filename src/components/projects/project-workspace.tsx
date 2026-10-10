@@ -292,6 +292,20 @@ export function ProjectWorkspace({
         }
       />
 
+      {readOnly ? (
+        <section
+          role="status"
+          className="rounded-xl border border-border bg-muted p-4"
+        >
+          <p className="m-0 text-sm font-semibold text-foreground">
+            Archived workspace · read only
+          </p>
+          <p className="mt-1 text-sm leading-6 text-body">
+            Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled.
+          </p>
+        </section>
+      ) : null}
+
       {show("summary") || show("readiness") ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Metric
