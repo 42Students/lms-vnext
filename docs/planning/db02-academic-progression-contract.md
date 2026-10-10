@@ -35,6 +35,8 @@ Use one persisted, college-safe source of truth for each cohort:
 
 A college academic period is a **calendar object**. A program term is a **curriculum identity**. Do not use a period UUID as a substitute for a program-specific semester number.
 
+The progression journal is database-owned audit history. Application roles must not directly insert, update, delete **or truncate** event rows. Identity cleanup may null an event's actor FK without altering any other event field; that FK cleanup must not trigger the promotion state machine or create a synthetic progression event.
+
 ### Cohort lifecycle dates remain distinct from calendar periods
 
 Legacy batch `startDate` / `endDate` are nullable and independently editable. The production admin API can clear or change them without changing a college-wide academic period. Therefore `cohorts.start_period_id` / `expected_end_period_id` are not exact replacements.
@@ -124,6 +126,8 @@ The current vNext `section_schedule_events.location text` cannot enforce hall FK
 ### Required vNext behavior
 
 Persist `lecture_halls` as a tenant-owned resource and optionally attach `section_schedule_events.lecture_hall_id`. Keep `location` for free-form/off-campus locations. Database constraints/triggers must prevent cross-college hall linkage. The final registered migration should use a PostgreSQL-safe overlap invariant (e.g. exclusion constraints with reviewed `btree_gist` support) or an equally strong serializable/locking design.
+
+Hall archival must also serialize with booking creation: an active booking validates and locks the hall row, while an ACTIVE→ARCHIVED transition must reject any active/future `SCHEDULED` event. This prevents a race where both transactions independently observe a valid state and commit an archived hall with a future booking.
 
 ## 5. Faculty teaching lifecycle
 
@@ -218,9 +222,9 @@ DB-005 remains open until all of these are executed and attached to exact SHAs:
 6. offering-term tests proving program mismatch rejection, CORE curriculum membership enforcement and term-bound ELECTIVE support;
 7. broad faculty-course association tests proving pre-delivery association, active-pair uniqueness and historical deactivation;
 8. concurrent cohort promotion test proving one winner for the same expected version;
-9. term jump/backward update rejection;
+9. term jump/backward rejection plus immutable-journal tests for direct INSERT/UPDATE/DELETE/TRUNCATE and actor-FK cleanup without fake promotion history;
 10. program-term uniqueness and ordered curriculum tests;
-11. same faculty/section/hall overlap rejection and adjacent non-overlap acceptance;
+11. same faculty/section/hall overlap rejection and adjacent non-overlap acceptance, including a concurrent hall-archive vs future-booking race with exactly one valid winner;
 12. schedule cancellation/soft-history behavior with attendance retained;
 13. re-check current legacy BE/FE heads before final certification.
 
