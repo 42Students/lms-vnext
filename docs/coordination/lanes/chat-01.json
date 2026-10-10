@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "WORKING",
+  "activeTaskId": "DB-014",
   "blockedTaskIds": [
     "DB-001"
   ],
   "checkpoint": {
-    "checkpointKind": "DB010_SOURCE_RECONCILIATION_COMPLETED",
+    "checkpointKind": "DB014_IN_PROGRESS",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a9a1dc2b3fb617d0294eec93c0893b9000485402",
+    "observedMainSha": "4654cd3fb8222edfae5ed5a7e42f23f9edfc4017",
     "lastWorkerMergedSha": "9593a4c75790fd5412031be53ab1de85cee842af",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-010 source reconciliation complete: 16 Project tables / 358 fields explicitly dispositioned, 0 missing/extra, four missing history/comment target concepts retained, project-team atomicity and tenant-scoped event integrity tracked. Runtime tests not executed; migration promotion blocked by DB-001→DB-002→DB-017."
+    "summary": "DB-014 active: cross-domain tenant FK integrity sweep. Focus: multi-parent rows where individually valid FKs can compose cross-college/project/course relationships."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -38,7 +38,7 @@
     "DB-001: GitHub Actions job cannot start; repo admin needs runner/billing/provisioning investigation and fresh CI execution."
   ],
   "handoffs": [],
-  "nextAction": "Refresh shared DATABASE queue and claim the next eligible unowned priority task. DB-010 awaits runtime/migration verification.",
+  "nextAction": "Classify current multi-parent tenant consistency risks, stage structural witnesses without claiming runtime pass, and hand migration enforcement to DB-017 where required.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -65,13 +65,14 @@
   "pickedTaskIds": [
     "DB-001",
     "DB-009",
-    "DB-010"
+    "DB-010",
+    "DB-014"
   ],
   "completedTaskIds": [
     "DB-009",
     "DB-010"
   ],
-  "lastPickedAt": "2026-10-10T20:37:11.412Z",
+  "lastPickedAt": "2026-10-10T20:45:34.703Z",
   "lastCompletedAt": "2026-10-10T20:45:05.515Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
