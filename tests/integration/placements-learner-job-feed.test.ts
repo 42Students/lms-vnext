@@ -16,6 +16,7 @@ import {
 } from "@/modules/placements/job-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -166,6 +167,7 @@ async function createPublishedJob(
 
 beforeEach(async () => {
   await cleanup();
+  await enableSeedLearnerPlacementAccess(pool);
 });
 
 afterAll(async () => {
