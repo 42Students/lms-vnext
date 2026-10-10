@@ -50,3 +50,14 @@ The exported `src/db/schema/tpo-crm.ts` was structurally broken: seven table dec
 5. Mark each source field as `DB_TESTED`/`WORKFLOW_VERIFIED` only with executed evidence and independent review. Unknown historical fields cannot be retired implicitly.
 
 **Current task status: IN_PROGRESS.** Source review 279/279; no formal completed/verified DB09 field claims; no production or disposable database writes in this authoring batch.
+
+## Final legacy recruiter code migration (V193) — blocker found during continued audit
+
+V193 is not a superficial table rename. It **changes stored values**: `tpo_message.sender_type` from `HR` to `RECRUITER`; `tpo_saved_view.scope` from `LEADS` to `RECRUITER_LEADS`; `tpo_bell_read.reader_type` and `notification_outbox.recipient_type` to `RECRUITER`; and several audit actor/action/subject codes. The current staged vNext `tpo-collaboration.ts` still accepts `HR` for message sender and `LEADS` for saved views. Those current producers must be transitioned together with the schema CHECK to avoid breaking writes.
+
+- Canonical DB09 ledger now records **7 source-confirmed V193 code/provenance cases**, all **runtime UNVERIFIED**.
+- [SQL handoff: final recruiter codes](sql/db09-final-recruiter-codes-candidate.sql) is **NOT REGISTERED/EXECUTED**. It will require explicit vNext enum value rewrites, current service producer changes and role/privacy tests.
+- [SQL handoff: missing recruiter settings](sql/db09-college-recruiter-settings-candidate.sql) stages `job_types`, `outcome_labels`, `recruiter_access_months` (legacy default 6, zero=indefinite), and `recruiter_drive_needs_approval` (legacy default TRUE), preserving V185/V190/V193 semantics for integration review.
+- V190 also added **job-level** `counts_as_placed`, which must be coordinated with DB08's placement-report/offer status read model; college-level `counts_as_placed_at` does not make this job-level boolean redundant by itself.
+
+**Regression guard authored:** the existing `npm run test:db09:static` suite now includes a TypeScript AST parse check, unique CRM export count, required source-check predicates and a 279-row source-review-count test. These have been authored but not run on npm/CI in this session. Independent read-only JS assertions over the fetched ledger and CRM source **did run and pass**; those are not equivalent to TypeScript compilation or PostgreSQL acceptance.
