@@ -290,6 +290,23 @@ export type ReviseProjectTemplateInput = z.infer<
   typeof reviseProjectTemplateInputSchema
 >;
 
+export const duplicateProjectTemplateInputSchema = z
+  .object({
+    slug: projectKeySchema.optional(),
+    title: titleSchema.optional(),
+    summary: z
+      .string()
+      .trim()
+      .min(1)
+      .max(2000)
+      .optional(),
+  })
+  .strict();
+
+export type DuplicateProjectTemplateInput = z.infer<
+  typeof duplicateProjectTemplateInputSchema
+>;
+
 export const projectInstanceIdSchema = z.string().uuid();
 
 export const createProjectInstanceInputSchema = z
