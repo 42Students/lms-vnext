@@ -49,13 +49,15 @@ export function TpoMessageWorkspace({
   mode,
   collegeId,
   collegeName,
+  initialThreadId = "",
 }: {
   mode: "tpo" | "recruiter";
   collegeId: string;
   collegeName: string;
+  initialThreadId?: string;
 }) {
   const [threads, setThreads] = useState<ThreadRow[]>([]);
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = useState(initialThreadId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [phase, setPhase] = useState<Phase>("loading");
   const [messagePhase, setMessagePhase] = useState<Phase>("ready");
@@ -100,7 +102,10 @@ export function TpoMessageWorkspace({
       setSelectedId(current =>
         current && rows.some(row => row.thread.id === current)
           ? current
-          : rows[0]?.thread.id ?? "",
+          : initialThreadId &&
+              rows.some(row => row.thread.id === initialThreadId)
+            ? initialThreadId
+            : rows[0]?.thread.id ?? "",
       );
       setPhase("ready");
     } catch {
@@ -108,7 +113,7 @@ export function TpoMessageWorkspace({
       setPhase("error");
       setError("Messages could not be loaded. Try again.");
     }
-  }, [base, collegeId]);
+  }, [base, collegeId, initialThreadId]);
 
   const loadMessages = useCallback(async (
     threadId: string,
