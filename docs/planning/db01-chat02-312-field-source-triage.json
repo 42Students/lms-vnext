@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 116,
+    "postV150ActivenessVerified": 136,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 134,
-    "postV150ActivenessReviewNote": "116 legacy source candidates under active source table/workflow evidence (not per-field target equivalence); 0 vNext runtime-semantic verified."
+    "postV150ActivenessReviewedFields": 154,
+    "postV150ActivenessReviewNote": "136 active-source candidates (legacy table/workflow), not individually field-consumer verified and not vNext target parity; 0 VNext runtime-semantic verified."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -5172,12 +5172,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Role catalog PK retired only with signed redesign",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "role",
@@ -5190,12 +5191,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "SOURCE_SEMANTICS_UNRESOLVED",
       "candidateTarget": null,
       "rationaleOrBlocker": "Inspect current legacy repository/service reads and writes, post-V150 migrations and normalized vNext model; no automatic equivalence.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "role",
@@ -5206,12 +5208,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Legacy role disable semantics not proved",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "role",
@@ -5224,12 +5227,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "SOURCE_SEMANTICS_UNRESOLVED",
       "candidateTarget": null,
       "rationaleOrBlocker": "Inspect current legacy repository/service reads and writes, post-V150 migrations and normalized vNext model; no automatic equivalence.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "role",
@@ -5240,12 +5244,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Role description may be static catalog; explicit retirement decision",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "role",
@@ -5256,12 +5261,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "membership_roles.role / system_roles.role",
       "rationaleOrBlocker": "Enum conversion must preserve semantic role set",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5509,12 +5515,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5527,12 +5534,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.created_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5543,12 +5551,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.platform_status",
       "rationaleOrBlocker": "Legacy soft delete vs DISABLED revocation unproven",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5561,12 +5570,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.updated_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5577,12 +5587,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Super-admin/business title consumer unknown",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5595,12 +5606,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.email",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5611,12 +5623,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.display_name",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5629,12 +5642,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Managed identity provider redesign; never mirror legacy password",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5647,12 +5661,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.phone_e164",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5663,12 +5678,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Identity external identifier meaning not established",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5679,12 +5695,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Check current username-login/lookup consumer before retirement",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user",
@@ -5695,12 +5712,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "membership_roles.role / system_roles.role",
       "rationaleOrBlocker": "Legacy global user_type to scoped roles is not 1:1",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user_roles",
@@ -5713,12 +5731,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.id / college_memberships.user_id",
       "rationaleOrBlocker": "Global-vs-scoped role assignment requires disambiguation",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user_roles",
@@ -5731,12 +5750,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "membership_roles.role / system_roles.role",
       "rationaleOrBlocker": "FK-to-role name/enum conversion requires proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 UserServiceImpl.java:loadUserByUsername reads User.roles and creates authorities ROLE_*, save(UserDto) persists User with USER/ADMIN role links, UserDao and RoleServiceImpl resolve records. Canonical vNext user+membership/system roles is redesign, not one-to-one proven."
     },
     {
       "legacyTable": "user_session",
@@ -6063,6 +6083,31 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Organization.java"
       ],
       "proof": "Organization fetch/update/delete and college org linkage; does NOT confirm all optional columns or retirement semantics."
+    },
+    "user_roles": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java"
+      ],
+      "proof": "UserServiceImpl authenticates User.roles through join USER_ROLES and creates USER/ADMIN role assignments; vNext role semantics require explicit global-vs-membership authorization crosswalk."
+    },
+    "role": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Role.java"
+      ],
+      "proof": "RoleServiceImpl retrieves legacy Role by name, UserServiceImpl creates USER and ADMIN role associations. Does not prove all role catalog rows map to vNext enum values."
+    },
+    "user": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/UserDao.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java"
+      ],
+      "proof": "Current UserServiceImpl authenticates by username, reads roles and saves user/role records. Managed auth provider replacement requires explicit migration of behavior, not passwords."
     }
   }
 }
