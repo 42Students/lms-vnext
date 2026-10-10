@@ -64,3 +64,31 @@ test("DB02 draft prevents overlapping faculty, section, and room bookings", () =
   assert.match(sql, /tstzrange\(starts_at, ends_at, '\[\)'\) WITH &&/);
   assert.match(sql, /status = 'SCHEDULED'/);
 });
+
+test("term-bound course offerings are tenant and program scoped", () => {
+  assert.match(sql, /ADD COLUMN program_term_id uuid NOT NULL/);
+  assert.match(sql, /db02_course_offering_program_term_guard/);
+  assert.match(sql, /term_program <> cohort_program/);
+  assert.match(sql, /course_college <> cohort_college OR period_college <> cohort_college/);
+  assert.match(sql, /NEW\.type = 'CORE'/);
+});
+
+test("faculty course pool is persisted and tenant scoped", () => {
+  assert.match(sql, /CREATE TABLE faculty_course_associations\s*\(/);
+  assert.match(sql, /db02_faculty_course_association_scope_guard/);
+  assert.match(sql, /membership_college <> course_college/);
+  assert.match(sql, /ended_at timestamptz/);
+});
+
+test("DB02 draft prevents reductions below configured or current terms", () => {
+  assert.match(sql, /db02_program_duration_reduction_guard/);
+  assert.match(sql, /current_term_number > NEW\.duration_terms/);
+  assert.match(sql, /pt\.term_number > NEW\.duration_terms/);
+  assert.match(sql, /FOR SHARE OF p/);
+});
+
+test("schedule instructor is active, authorized, and from the section college", () => {
+  assert.match(sql, /faculty_membership_id AND status = 'ACTIVE'/);
+  assert.match(sql, /mr\.role = 'FACULTY'/);
+  assert.match(sql, /faculty_college <> section_college/);
+});
