@@ -345,25 +345,35 @@
       "paths": [
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 6,
+      "pickedAt": "2026-10-10T20:27:24.145Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 6,
+          "pickedAt": "2026-10-10T20:27:24.145Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-10T20:27:24.145Z",
+          "reason": "Chat 6 CAS claim for source-backed DATABASE reconciliation."
         }
       ]
     },
