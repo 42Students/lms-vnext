@@ -12,11 +12,11 @@
   "checkpoint": {
     "checkpointKind": "DB04_103_OF_103_SOURCE_DISPOSITION_REVIEWED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "cc3868e86040c950a9f547771ebe9e161d1155af",
-    "lastWorkerMergedSha": "fa42a4c49e4331028cd75b826c98df26c688e4a8",
+    "observedMainSha": "6d284341410a5c607cb433394a15c1e2409d3af6",
+    "lastWorkerMergedSha": "b9cec52054c993e827b3f5c880159d611c13a020",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-007 remains active. Frozen DB04 source/disposition review is now 103/103 candidates: prior 43 DDL-to-staged mappings plus remaining 60. qualification (24) and student_image (3) have current named producers/consumers and concrete vNext contract gaps; student_registration (22) and approver_id_card (11) are unresolved retirement candidates, not approved retirements. Zero DB04 fields are semantic/runtime certified; no PostgreSQL acceptance executed."
+    "summary": "DB-007 remains active. Frozen DB04 source/disposition review is 103/103. A non-registered persistence contract is staged for normalized education rows and learner profile images, including GPA parity, explicit pursuing state, enforceable education-document receipt joins, image active-state persistence and PostgreSQL witness requirements. student_registration/approver_id_card remain unresolved retirement candidates. Zero DB04 fields are semantic/runtime certified; no PostgreSQL acceptance executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -48,7 +48,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Continue DB-007 by resolving active qualification/image DB contract gaps in a non-conflicting staging surface, obtaining DB01/DB02 disposition for student_registration and retirement proof for approver_id_card, then execute PostgreSQL privacy/tenant/history witnesses when infrastructure/Chat 1 integration permits. Do not mark COMPLETED or DONE_VERIFIED yet.",
+  "nextAction": "Coordinate the staged education/image contract with Chat 1 after shared schema ownership clears; obtain DB01/DB02 disposition for student_registration and native-SQL/external-consumer proof for approver_id_card; then implement only approved schema through the integrator and execute PostgreSQL tenant/privacy/history/concurrency witnesses. Keep DB-007 IN_PROGRESS.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -69,7 +69,10 @@
     "https://github.com/42Students/lms-vnext/commit/3d88d0278f200923cb7dbc0e1e4452cc353e4e71",
     "https://github.com/42Students/lms-vnext/commit/c860e92050bda7a9f489ecfae74927fdf2fb1ec9",
     "https://github.com/42Students/lms-vnext/commit/fa42a4c49e4331028cd75b826c98df26c688e4a8",
-    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db04-field-crosswalk-proposals.json"
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db04-field-crosswalk-proposals.json",
+    "https://github.com/42Students/lms-vnext/commit/4c9aa8f40bd6c9e4adb96f0bc7f15328f30f61c9",
+    "https://github.com/42Students/lms-vnext/commit/b9cec52054c993e827b3f5c880159d611c13a020",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db04-qualification-image-persistence-contract.md"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
