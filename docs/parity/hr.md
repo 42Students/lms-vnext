@@ -9,6 +9,13 @@ Recruiter sessions are college-scoped. The global/college-less state is a choose
 ## Page: HR Home — college chooser state
 **Legacy:** `/hr/home` when no college membership is active.
 
+> **2026-10-10 W05 partial implementation:** `/hr/home` now renders recruiter
+> company context, active college-access cards, a no-active-access state and safe
+> links into Company & Team / Hiring Workspace. `/hr/colleges` redirects here.
+> This is **not closed**: pending invitations, persisted active-college switching,
+> account-load retry, college logos/valid-until and the college-scoped Today task
+> dashboard remain open.
+
 Legacy contract:
 - greeting + company;
 - pending invitations;
@@ -255,6 +262,13 @@ Legacy:
 
 ## Page: Company & Team shell
 **Legacy:** `/hr/company` with query-state tabs Company, Team, Reports.
+
+> **2026-10-10 W05 partial implementation:** `/hr/company` now has an explicit
+> active-grant college chooser, Company and Team query-state tabs, company
+> relationship context, tenant-scoped active teammate reads and a You marker.
+> Recruiter shell navigation now links to this surface. This is **not closed**:
+> legacy Reports, per-teammate drive counts, industry/logo parity, Your Profile
+> CTA, custom load/retry states and executed browser/runtime evidence remain open.
 
 - [ ] active tab persists in URL.
 - [ ] Company & Team header/active-college context matches.
