@@ -95,7 +95,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-classroom-message-history.draft.sql -> course_discussion_messages.deleted_at",
+          "db008SourceDisposition": "LEGACY_CLASSROOM_SERVICE_SOURCE_CONFIRMED_DRAFT_ONLY",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source ClassroomMessage.java",
+            "legacy source ClassroomServiceImpl.java",
+            "legacy source ClassroomMessageRepository.java",
+            "staged draft only; no registered migration or execution"
+          ]
         },
         {
           "legacyTable": "classroom_messages",
@@ -173,7 +182,15 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-classroom-message-history.draft.sql -> course_discussion_messages.sender_name_snapshot",
+          "db008SourceDisposition": "LEGACY_CLASSROOM_SERVICE_SOURCE_CONFIRMED_DRAFT_ONLY",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source ClassroomMessage.java",
+            "legacy source ClassroomServiceImpl.java",
+            "staged draft only; no registered migration or execution"
+          ]
         },
         {
           "legacyTable": "classroom_messages",
@@ -391,7 +408,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-course-parent-facets.draft.sql -> courses.allowed_for_display",
+          "db008SourceDisposition": "LEGACY_PERSISTED_DTO_FIELD_SEMANTIC_VALUES_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source Course.java",
+            "legacy source CourseDTO.java",
+            "legacy source CourseServiceImpl.java",
+            "staged draft only; no registered migration or execution"
+          ]
         },
         {
           "legacyTable": "course",
@@ -433,7 +459,16 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-course-parent-facets.draft.sql -> courses.created_by_organization_id",
+          "db008SourceDisposition": "LEGACY_PERSISTED_DTO_FIELD_SCOPE_SECURITY_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source Course.java",
+            "legacy source CourseDTO.java",
+            "legacy source CourseServiceImpl.java",
+            "staged draft only; no registered migration or execution"
+          ]
         },
         {
           "legacyTable": "course",
@@ -537,7 +572,16 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-course-metadata-extension.draft.sql + W02 course_display_contents -> full 14 MetaData source fields; see docs/planning/db05-course-metadata-subfields.json",
+          "db008SourceDisposition": "LEGACY_JSON_PAYLOAD_ACTIVE_14_SUBFIELDS_SOURCE_CONFIRMED_W02_PARTIAL_STAGED",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source Course.java",
+            "legacy source MetaData.java",
+            "legacy source CourseServiceImpl.java",
+            "staged draft only; no registered migration or execution"
+          ]
         },
         {
           "legacyTable": "course",
@@ -559,7 +603,16 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-course-parent-facets.draft.sql -> courses.parent_course_id",
+          "db008SourceDisposition": "LEGACY_PERSISTED_DTO_FIELD_CYCLE_TENANT_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source Course.java",
+            "legacy source CourseDTO.java",
+            "legacy source CourseServiceImpl.java",
+            "staged draft only; no registered migration or execution"
+          ]
         },
         {
           "legacyTable": "course",
@@ -579,7 +632,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-course-identity.draft.sql -> courses.short_title",
+          "db008SourceDisposition": "LEGACY_COURSE_DTO_REQUIRED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source Course.java",
+            "legacy source CourseDTO.java",
+            "legacy source CourseRepository.java",
+            "legacy source V131__course_lesson_unique_names.sql",
+            "staged draft only; no registered migration or execution"
+          ]
         },
         {
           "legacyTable": "course",
@@ -599,7 +662,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-course-identity.draft.sql -> courses.slug (globally reserved even deleted)",
+          "db008SourceDisposition": "LEGACY_COURSE_SLUG_REPOSITORY_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source Course.java",
+            "legacy source CourseRepository.java",
+            "legacy source CourseServiceImpl.java",
+            "staged draft only; no registered migration or execution"
+          ]
         },
         {
           "legacyTable": "course",
@@ -1439,7 +1511,16 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-version-progress-attempts.draft.sql -> learner_content_progress.attempt (new composite unique key)",
+          "db008SourceDisposition": "LEGACY_CURRENT_ATTEMPT_READ_SERVICE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacy source LearnerContentProgress.java",
+            "legacy source LearnerContentProgressServiceImpl.java",
+            "legacy source V132__learner_content_progress_attempt.sql",
+            "staged draft only; no registered migration or execution"
+          ]
         }
       ]
     },
