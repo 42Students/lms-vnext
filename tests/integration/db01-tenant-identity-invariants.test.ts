@@ -12,12 +12,17 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
  * migration files, schemas, or application services.
  */
 const connectionString =
-  process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
+  process.env.TEST_DATABASE_URL;
 if (!connectionString) {
   throw new Error("TEST_DATABASE_URL or DATABASE_URL is required for DB01 database witnesses");
 }
 
 const pool = new Pool({ connectionString, max: 1 });
+
+// Test only against the dedicated disposable database. Never fall back to a production URL.
+if (!process.env.TEST_DATABASE_URL) {
+  throw new Error("DB01 negative witnesses require explicit TEST_DATABASE_URL");
+}
 
 async function withRollback(run: (client: PoolClient) => Promise<void>) {
   const client = await pool.connect();
