@@ -528,7 +528,7 @@ export async function getOwnPlacementParticipationAccess(context: RequestContext
       activeMembership.userId !== context.user.id) {
     return { showPlacements: false, canSelfApply: false };
   }
-  const [enrollment] = await getDb().select({
+  const enrollments = await getDb().select({
     id: learnerProgramEnrollments.id,
     programId: learnerProgramEnrollments.programId,
     cohortId: learnerProgramEnrollments.cohortId,
@@ -543,10 +543,13 @@ export async function getOwnPlacementParticipationAccess(context: RequestContext
     .where(and(
       eq(learnerProgramEnrollments.membershipId, membershipId),
       eq(learnerProgramEnrollments.status, "ACTIVE"),
-    )).limit(1);
-  if (!enrollment || enrollment.collegeId !== collegeId) {
+    )).limit(2);
+  // A corrupted duplicate active enrollment must never grant eligibility from
+  // whichever cohort PostgreSQL happens to return first.
+  if (enrollments.length !== 1 || enrollments[0].collegeId !== collegeId) {
     return { showPlacements: false, canSelfApply: false };
   }
+  const enrollment = enrollments[0];
   const activeSections = await getDb().select({
     id: sections.id,
     cohortId: sections.cohortId,
