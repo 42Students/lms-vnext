@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 214,
+    "postV150ActivenessVerified": 282,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 238,
-    "postV150ActivenessReviewNote": "214 legacy source fields/table active; includes 10 JPA base lifecycle/optimistic lock semantics. Do not count as vNext runtime verification, still 0."
+    "postV150ActivenessReviewedFields": 312,
+    "postV150ActivenessReviewNote": "All 312/312 DB01 candidates now have explicit current-source dispositions. 282 have direct active-workflow proof and 6 more are active persistence/concurrency lifecycle metadata. Explicit retired/pending/DDL-only exceptions remain documented per row. Runtime semantic verification remains 0."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -1297,7 +1297,13 @@
       "rationaleOrBlocker": "Legacy actor int to canonical identity/membership UUID requires reconciliation",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines id (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines id (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1310,13 +1316,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
+      "postV150Active": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.created_at / faculty_profiles.created_at",
       "rationaleOrBlocker": "Legacy person vs membership timestamps need ownership choice.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines created_at (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines created_at (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java@9ab2159da0c1717bd3abaa1dd83b3fd1d3d64035"
+      ],
+      "postV150EvidenceSummary": "Current faculty entity extends BaseModel with audited persistence timestamps; active create/update flows exercise this lifecycle metadata even when profile services do not call the timestamp getter directly."
     },
     {
       "legacyTable": "faculty",
@@ -1333,7 +1343,14 @@
       "rationaleOrBlocker": "Soft delete vs disabled/ended decision",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines is_deleted (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines is_deleted (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java@9ab2159da0c1717bd3abaa1dd83b3fd1d3d64035",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtService.java@0134fed9351efa4cdcd2bb54693d3bb07a2da6e5"
+      ],
+      "postV150EvidenceSummary": "Current admin lifecycle explicitly suspends/reactivates faculty accounts and persists/reuses this state; authentication/security paths treat inactive/deleted state as fail-closed."
     },
     {
       "legacyTable": "faculty",
@@ -1352,7 +1369,14 @@
       "rationaleOrBlocker": "Role/membership-specific vs actor-wide suspension needs proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Faculty.suspendedAt. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Faculty.suspendedAt. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java@9ab2159da0c1717bd3abaa1dd83b3fd1d3d64035",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtService.java@0134fed9351efa4cdcd2bb54693d3bb07a2da6e5"
+      ],
+      "postV150EvidenceSummary": "Current admin lifecycle explicitly suspends/reactivates faculty accounts and persists/reuses this state; authentication/security paths treat inactive/deleted state as fail-closed."
     },
     {
       "legacyTable": "faculty",
@@ -1369,7 +1393,14 @@
       "rationaleOrBlocker": "Suspension reason may belong to user or membership",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Faculty.suspensionReason. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Faculty.suspensionReason. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java@9ab2159da0c1717bd3abaa1dd83b3fd1d3d64035",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtService.java@0134fed9351efa4cdcd2bb54693d3bb07a2da6e5"
+      ],
+      "postV150EvidenceSummary": "Current admin lifecycle explicitly suspends/reactivates faculty accounts and persists/reuses this state; authentication/security paths treat inactive/deleted state as fail-closed."
     },
     {
       "legacyTable": "faculty",
@@ -1382,13 +1413,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
+      "postV150Active": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.updated_at / faculty_profiles.updated_at",
       "rationaleOrBlocker": "Legacy person vs membership timestamps need ownership choice.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines updated_at (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines updated_at (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java@9ab2159da0c1717bd3abaa1dd83b3fd1d3d64035"
+      ],
+      "postV150EvidenceSummary": "Current faculty entity extends BaseModel with audited persistence timestamps; active create/update flows exercise this lifecycle metadata even when profile services do not call the timestamp getter directly."
     },
     {
       "legacyTable": "faculty",
@@ -1401,12 +1436,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1419,12 +1460,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1437,12 +1484,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1455,12 +1508,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1471,12 +1530,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1495,7 +1560,13 @@
       "rationaleOrBlocker": "Membership and role-scoped tenancy",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl register/update + AdminUserLifecycleController scoped suspension. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl register/update + AdminUserLifecycleController scoped suspension. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1514,7 +1585,13 @@
       "rationaleOrBlocker": "Identity provider must be authoritative for login email",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl register/update and unique email check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl register/update and unique email check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1533,7 +1610,13 @@
       "rationaleOrBlocker": "Normalized and verified E.164 candidate",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl normalize/register/update and unique phone check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl normalize/register/update and unique phone check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1552,7 +1635,13 @@
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl enrollment/update contact-phone handling. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl enrollment/update contact-phone handling. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1565,12 +1654,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1581,12 +1676,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "faculty_profiles.primary_department_id",
       "rationaleOrBlocker": "Legacy free-text department vs FK requires source writes",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1599,12 +1700,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "faculty_profiles.primary_department_id",
       "rationaleOrBlocker": "Legacy FK and departmental role semantics need proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1615,12 +1722,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1633,12 +1746,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1651,12 +1770,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1667,12 +1792,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "faculty_profiles.employment_type",
       "rationaleOrBlocker": "Enum mapping not proven",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1689,7 +1820,13 @@
       "rationaleOrBlocker": "Canonical identity name not yet active",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update and mapped display name. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update and mapped display name. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1702,12 +1839,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1718,12 +1861,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1737,12 +1886,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1755,12 +1910,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1777,7 +1938,13 @@
       "rationaleOrBlocker": "Canonical identity name not yet active",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update and course-faculty display. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update and course-faculty display. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1788,12 +1955,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1806,12 +1979,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1830,7 +2009,13 @@
       "rationaleOrBlocker": "Derived through tenant relationship; verify org history",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: UserPrincipal.fromFaculty reads organizationId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: UserPrincipal.fromFaculty reads organizationId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1843,12 +2028,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1861,12 +2052,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1877,12 +2074,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1895,12 +2098,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1913,12 +2122,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1929,12 +2144,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1947,12 +2168,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1963,12 +2190,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -1987,7 +2220,14 @@
       "rationaleOrBlocker": "Managed identity revocation epoch and stale-token rejection need proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: TokenVersionServiceImpl increment and UserPrincipal.fromFaculty reads tokenVersion. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: TokenVersionServiceImpl increment and UserPrincipal.fromFaculty reads tokenVersion. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java@9ab2159da0c1717bd3abaa1dd83b3fd1d3d64035",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtService.java@0134fed9351efa4cdcd2bb54693d3bb07a2da6e5"
+      ],
+      "postV150EvidenceSummary": "Current JWT issuance/authentication carries and compares faculty.token_version; suspension/session invalidation bumps the version so stale tokens fail."
     },
     {
       "legacyTable": "faculty",
@@ -2004,7 +2244,13 @@
       "rationaleOrBlocker": "Legacy faculty unique identifier consumers unresolved",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl update faculty.uniqueId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl update faculty.uniqueId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -2021,7 +2267,13 @@
       "rationaleOrBlocker": "Legacy string to scoped enum",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update sets FACULTY; UserPrincipal.fromFaculty. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update sets FACULTY; UserPrincipal.fromFaculty. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -2032,12 +2284,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -2048,13 +2306,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
+      "postV150Active": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Optimistic-lock race semantics require persisted version or tested alternative",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy faculty model @Version persisted optimistic lock and facultyServiceImpl save/update; source active, target version/concurrency test missing."
+      "sourceWorkflowEvidence": "Legacy faculty model @Version persisted optimistic lock and facultyServiceImpl save/update; source active, target version/concurrency test missing.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java@9ab2159da0c1717bd3abaa1dd83b3fd1d3d64035"
+      ],
+      "postV150EvidenceSummary": "Current faculty entity uses @Version optimistic locking; this is active concurrency semantics, not an inert column. vNext may replace the mechanism only with an explicitly tested alternative."
     },
     {
       "legacyTable": "faculty",
@@ -2065,12 +2327,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -2081,12 +2349,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -2097,12 +2371,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -2113,12 +2393,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -2129,12 +2415,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty",
@@ -2145,12 +2437,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current faculty profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2455,7 +2753,13 @@
       "rationaleOrBlocker": "Legacy int actor vs canonical user and role membership",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines id (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines id (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2468,13 +2772,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
+      "postV150Active": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.created_at / learner_profiles.created_at",
       "rationaleOrBlocker": "Legacy person vs membership timestamps need ownership choice.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines created_at (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines created_at (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Learner.java@e016c0f8e7e0890f5ff72a3ca3e95e3982d3e444"
+      ],
+      "postV150EvidenceSummary": "Current learner entity extends BaseModel with audited persistence timestamps; active create/update flows exercise this lifecycle metadata even when profile services do not call the timestamp getter directly."
     },
     {
       "legacyTable": "learner",
@@ -2491,7 +2799,13 @@
       "rationaleOrBlocker": "State semantics ambiguous",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines is_deleted (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines is_deleted (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2510,7 +2824,13 @@
       "rationaleOrBlocker": "Actor-scope review required",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Learner.suspendedAt. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Learner.suspendedAt. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2527,7 +2847,14 @@
       "rationaleOrBlocker": "Same scope review",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController updates learner.suspensionReason. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController updates learner.suspensionReason. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Learner.java@e016c0f8e7e0890f5ff72a3ca3e95e3982d3e444",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtService.java@0134fed9351efa4cdcd2bb54693d3bb07a2da6e5"
+      ],
+      "postV150EvidenceSummary": "Current admin lifecycle explicitly suspends/reactivates learner accounts and persists/reuses this state; authentication/security paths treat inactive/deleted state as fail-closed."
     },
     {
       "legacyTable": "learner",
@@ -2540,13 +2867,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
+      "postV150Active": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.updated_at / learner_profiles.updated_at",
       "rationaleOrBlocker": "Legacy person vs membership timestamps need ownership choice.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines updated_at (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines updated_at (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Learner.java@e016c0f8e7e0890f5ff72a3ca3e95e3982d3e444"
+      ],
+      "postV150EvidenceSummary": "Current learner entity extends BaseModel with audited persistence timestamps; active create/update flows exercise this lifecycle metadata even when profile services do not call the timestamp getter directly."
     },
     {
       "legacyTable": "learner",
@@ -2559,12 +2890,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2577,12 +2914,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2595,12 +2938,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2613,12 +2962,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2629,12 +2984,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2647,12 +3008,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "section_enrollments.section_id",
       "rationaleOrBlocker": "Historical vs current class enrollment needs time-scope proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2671,7 +3038,13 @@
       "rationaleOrBlocker": "Must prove tenant-scoped enrollment",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and AdminUserLifecycleController scoped suspend. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and AdminUserLifecycleController scoped suspend. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2690,7 +3063,13 @@
       "rationaleOrBlocker": "Managed identity ownership needed",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and unique email check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and unique email check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2709,7 +3088,13 @@
       "rationaleOrBlocker": "Requires normalization verification",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl normalize/register and schedule SMS writes. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl normalize/register and schedule SMS writes. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2728,7 +3113,13 @@
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl contact alternate/duplicate handling. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl contact alternate/duplicate handling. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2741,12 +3132,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2757,12 +3154,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2773,12 +3176,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2791,12 +3200,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2809,12 +3224,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2827,12 +3248,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2849,7 +3276,13 @@
       "rationaleOrBlocker": "Canonical identity name staged only",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and learner DTO read. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and learner DTO read. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2862,12 +3295,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2878,12 +3317,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2896,12 +3341,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2915,12 +3366,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2933,12 +3390,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2955,7 +3418,13 @@
       "rationaleOrBlocker": "Canonical identity name staged only",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and learner DTO read. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and learner DTO read. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2966,12 +3435,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -2984,12 +3459,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3008,7 +3489,13 @@
       "rationaleOrBlocker": "Derived organization candidate",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: UserPrincipal.fromLearner reads organizationId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: UserPrincipal.fromLearner reads organizationId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3021,12 +3508,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3039,12 +3532,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3055,12 +3554,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3071,12 +3576,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3089,12 +3600,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "learner_program_enrollments.program_id",
       "rationaleOrBlocker": "Historical multi-program vs scalar field requires reconciliation",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3107,12 +3624,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3125,12 +3648,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "DB04 private-document receipt policy; not public URL",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3141,12 +3670,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "learner_profiles.roll_number",
       "rationaleOrBlocker": "Scoped uniqueness depends on college/program rules",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3159,12 +3694,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3175,12 +3716,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3199,7 +3746,14 @@
       "rationaleOrBlocker": "Identity stale-token revocation witness required",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: TokenVersionServiceImpl increments and UserPrincipal.fromLearner reads tokenVersion. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: TokenVersionServiceImpl increments and UserPrincipal.fromLearner reads tokenVersion. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Learner.java@e016c0f8e7e0890f5ff72a3ca3e95e3982d3e444",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtService.java@0134fed9351efa4cdcd2bb54693d3bb07a2da6e5"
+      ],
+      "postV150EvidenceSummary": "Current JWT issuance/authentication carries and compares learner.token_version; suspension/session invalidation bumps the version so stale tokens fail."
     },
     {
       "legacyTable": "learner",
@@ -3210,12 +3764,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3232,7 +3792,13 @@
       "rationaleOrBlocker": "Legacy identity/key consumption unresolved",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl update stores learner.uniqueId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl update stores learner.uniqueId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3249,7 +3815,13 @@
       "rationaleOrBlocker": "Scoped role vs legacy type",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl creates LEARNER and UserPrincipal.fromLearner reads userType. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl creates LEARNER and UserPrincipal.fromLearner reads userType. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3262,12 +3834,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3278,12 +3856,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "DB04 private-media receipt policy, not raw URL",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3294,12 +3878,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3310,13 +3900,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
+      "postV150Active": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Optimistic-lock race semantics require witness",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
       "verificationEvidence": null,
-      "sourceWorkflowEvidence": "Legacy learner model @Version persisted optimistic lock and learnerServiceImpl save/update; source active, target version/concurrency test missing."
+      "sourceWorkflowEvidence": "Legacy learner model @Version persisted optimistic lock and learnerServiceImpl save/update; source active, target version/concurrency test missing.",
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Learner.java@e016c0f8e7e0890f5ff72a3ca3e95e3982d3e444"
+      ],
+      "postV150EvidenceSummary": "Current learner entity uses @Version optimistic locking; this is active concurrency semantics, not an inert column. vNext may replace the mechanism only with an explicitly tested alternative."
     },
     {
       "legacyTable": "learner",
@@ -3327,12 +3921,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "DB02 import workflow; source active disposition",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3343,12 +3943,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3359,12 +3965,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3375,12 +3987,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3391,12 +4009,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3407,12 +4031,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3423,12 +4053,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V155__split_current_permanent_address_location.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner",
@@ -3441,12 +4077,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V189__learner_coding_profiles.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "postV150EvidenceSummary": "Current learner profile/core service/controller directly reads and/or writes this field. This proves source activeness only; DB04/DB02 still own sensitive-profile/enrollment target shape and runtime acceptance where applicable."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -6518,6 +7160,28 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java"
       ],
       "proof": "Inherited ID, timestamps, is_deleted and explicit JPA @Version are active persisted concepts for learner/faculty. vNext source current status, FK and concurrency still open."
+    },
+    "learnerFacultyProfileAndIdentity": {
+      "status": "SOURCE_ACTIVENESS_COMPLETE_CROSS_DOMAIN_TARGET_ACCEPTANCE_REMAINS",
+      "directServiceFields": 96,
+      "lifecycleSecurityFields": 6,
+      "persistenceLifecycleFields": 6,
+      "learnerSources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerProfileServiceImpl.java@1153a7a7408386047f018f8d682baa0c92d2c3aa",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java@e21edce8fc7a6075017fc067f7d5acf286fef36b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/LearnerController.java@776864f594e28a28fe3052ee0237c101b6d9d4c3"
+      ],
+      "facultySources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyProfileServiceImpl.java@3315fe8ba6f3f9dad0534b05995014b4e0dc9780",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java@b865704e1b176bc988e84a991140c08f355c38d7",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "lifecycleSources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtService.java@0134fed9351efa4cdcd2bb54693d3bb07a2da6e5"
+      ],
+      "note": "All 108 learner/faculty DB01 overlap fields now have current production source dispositions. This does not override DB02/DB04 ownership of normalized academic/profile schemas, private-document policy, or runtime verification."
     }
   }
 }
