@@ -41,8 +41,10 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     eq(sections.status, "ACTIVE"),
     eq(sections.cohortId, courseOfferings.cohortId),
     eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
-    // Access requires an ACTIVE same-college PRIMARY program/section, but
-    // need NOT belong to the slot's program: cross-program electives are valid.
+    // Legacy ElectiveService.classEligibilityError requires the learner's
+    // primary section program to match the slot, even though V167's comment
+    // describes broader cross-program allocation. Do not retain stale access
+    // after the learner changes their primary program.
     sql<boolean>`exists (
       select 1 from learner_program_enrollments lpe
       join section_enrollments se on se.learner_enrollment_id = lpe.id
@@ -56,6 +58,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
         and (${electiveSlots.academicPeriodId} is null
              or se.academic_period_id = ${electiveSlots.academicPeriodId})
         and pd.college_id = ${collegeId}
+        and lpe.program_id = ${electiveSlots.programId}
     )`,
   ];
   if (deliveryId) conditions.push(eq(electiveOfferings.backedDeliveryId, deliveryId));
