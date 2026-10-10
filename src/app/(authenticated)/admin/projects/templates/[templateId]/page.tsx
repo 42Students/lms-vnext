@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
+import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getProjectTemplateDetail } from "@/modules/projects/template-service";
 
@@ -39,17 +40,37 @@ export default async function SuperAdminProjectTemplateDetailPage({
           "Global project template."
         }
         actions={
-          <StatusBadge
-            tone={
-              detail.template.status === "PUBLISHED"
-                ? "success"
-                : detail.template.status === "ARCHIVED"
-                  ? "neutral"
-                  : "warning"
-            }
-          >
-            {detail.template.status}
-          </StatusBadge>
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusBadge
+              tone={
+                detail.template.status === "PUBLISHED"
+                  ? "success"
+                  : detail.template.status === "ARCHIVED"
+                    ? "neutral"
+                    : "warning"
+              }
+            >
+              {detail.template.status}
+            </StatusBadge>
+            <ProjectTemplateActions
+              templateId={detail.template.id}
+              title={detail.template.title}
+              status={detail.template.status}
+              selectedCollegeId={
+                context.adminScope?.collegeId ?? null
+              }
+              assignedToSelectedCollege={
+                Boolean(
+                  context.adminScope?.collegeId &&
+                    detail.assignments.some(
+                      (assignment) =>
+                        assignment.collegeId ===
+                        context.adminScope?.collegeId,
+                    ),
+                )
+              }
+            />
+          </div>
         }
       />
       {detail.currentVersion ? (
