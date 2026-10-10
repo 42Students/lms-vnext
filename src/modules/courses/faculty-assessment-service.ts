@@ -67,6 +67,35 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
   assignments.sort(orderByDueTitle);
   quizzes.sort(orderByDueTitle);
 
+  const lessonChoices = scopes.flatMap(
+    ({ course, workspace }) =>
+      workspace.lessons.map((lesson) => {
+        const sequences = [
+          ...lesson.contents.map(
+            (item) => item.sequence,
+          ),
+          ...lesson.assignments.map(
+            (item) => item.sequence,
+          ),
+          ...lesson.quizzes.map(
+            (item) => item.sequence,
+          ),
+        ];
+        return {
+          deliveryId: course.deliveryId,
+          courseCode: course.courseCode,
+          courseName: course.courseName,
+          sectionName: course.sectionName,
+          lessonId: lesson.id,
+          lessonName: lesson.name,
+          nextSequence:
+            sequences.length === 0
+              ? 0
+              : Math.max(...sequences) + 1,
+        };
+      }),
+  );
+
   return {
     courses: courses.map((course) => ({
       deliveryId: course.deliveryId,
@@ -74,6 +103,7 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
       courseName: course.courseName,
       sectionName: course.sectionName,
     })),
+    lessonChoices,
     assignments,
     quizzes,
   };
