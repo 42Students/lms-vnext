@@ -297,8 +297,6 @@ export async function reviseProjectTemplate(
     projectTemplateIdSchema.parse(templateIdInput);
   const input =
     reviseProjectTemplateInputSchema.parse(rawInput);
-  const existing = await loadTemplate(templateId);
-
   const db = getDb();
 
   try {
@@ -429,7 +427,6 @@ export async function publishProjectTemplate(
       )
       .set({
         templateVersionId: version.id,
-        updatedAt: now,
       })
       .where(
         and(
