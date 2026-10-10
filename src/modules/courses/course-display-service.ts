@@ -32,7 +32,7 @@ function toView(
   return {
     courseId: row.courseId,
     introductionText: row.introductionText,
-    bodyHtml: row.bodyHtml,
+    bodyHtml: sanitizeCourseDisplayHtml(row.bodyHtml),
     takeaways: row.takeaways,
     thumbnailUrl: row.thumbnailUrl,
     version: row.version,
