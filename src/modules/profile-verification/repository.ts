@@ -30,7 +30,7 @@ export function createProfileVerificationRepository(
       .where(eq(profilePrivateDocumentReceipts.owningMembershipId, membershipId));
     return rows.map(r => ({
       id:r.id, owningMembershipId:r.owningMembershipId,
-      purpose:r.purpose as Receipt["purpose"], educationEntryId:r.educationEntryId,
+      purpose:r.purpose as Receipt["purpose"], relatedEntryId:r.relatedEntryId,
       scanStatus:r.scanStatus as Receipt["scanStatus"], privateObjectKey:r.privateObjectKey,
       objectGeneration:r.objectGeneration, sha256Hex:r.sha256Hex, mimeType:r.mimeType,
       sizeBytes:r.sizeBytes, revokedAt:r.revokedAt, retentionUntil:r.retentionUntil,
@@ -52,7 +52,7 @@ export function createProfileVerificationRepository(
       : [];
     // No object verifier means NO verified receipts, regardless of CLEAN metadata.
     const accepted = verifiedObjects.filter(x => x.verified &&
-      usablePrivateReceipt(x.receipt,membershipId,x.receipt.purpose,new Date(),x.receipt.educationEntryId))
+      usablePrivateReceipt(x.receipt,membershipId,x.receipt.purpose,new Date(),x.receipt.relatedEntryId))
       .map(x => x.receipt);
     const education = profile.education.map(e => ({
       id:e.id, educationType:e.educationType, gradeObtained:e.gradeObtained,
@@ -62,8 +62,8 @@ export function createProfileVerificationRepository(
       hasAadhaarNumber:!!profile.identity.aadhaarNumber,
       hasPanNumber:!!profile.identity.panNumber, receipts:accepted, now:new Date(),
     });
-    const doc = (purpose: Receipt["purpose"], educationEntryId: string | null = null) =>
-      accepted.find(r => r.purpose === purpose && r.educationEntryId === educationEntryId)?.id;
+    const doc = (purpose: Receipt["purpose"], relatedEntryId: string | null = null) =>
+      accepted.find(r => r.purpose === purpose && r.relatedEntryId === relatedEntryId)?.id;
     const mask = (raw:string) => raw ? "XXXXXXXX" + raw.slice(-4) : "";
     const raw: SafeSnapshot = section === "IDENTITY"
       ? { aadhaarNumber:mask(profile.identity.aadhaarNumber),
