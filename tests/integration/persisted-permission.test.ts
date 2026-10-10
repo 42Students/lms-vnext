@@ -285,6 +285,39 @@ describe(
       ).rejects.toBeInstanceOf(AuthorizationError);
     });
 
+    it("rechecks platform status for self identity writes without requiring a membership", async () => {
+      await expect(
+        getDb().transaction((tx) =>
+          assertPersistedPlatformPermission(
+            tx,
+            superAdmin,
+            "identity.self.manage",
+          ),
+        ),
+      ).resolves.toMatchObject({
+        user: {
+          platformStatus: "ACTIVE",
+        },
+      });
+
+      await pool.query(
+        `update users
+         set platform_status = 'DISABLED'
+         where id = $1`,
+        [SEED_IDS.superAdminUser],
+      );
+
+      await expect(
+        getDb().transaction((tx) =>
+          assertPersistedPlatformPermission(
+            tx,
+            superAdmin,
+            "identity.self.manage",
+          ),
+        ),
+      ).rejects.toBeInstanceOf(AuthorizationError);
+    });
+
     it("rechecks the persisted SUPER_ADMIN role", async () => {
       await expect(
         assertManage(superAdmin),
