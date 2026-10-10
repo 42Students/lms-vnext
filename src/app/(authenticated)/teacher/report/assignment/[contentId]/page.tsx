@@ -15,7 +15,7 @@ export default async function FacultyAssignmentReportPage({
   const { contentId } = await params;
   const { deliveryId } = await searchParams;
   const report = await getFacultyAssignmentReport(context, contentId, deliveryId ?? null);
-  const { assignment, submissions, metrics } = report;
+  const { assignment, submissions, missingLearners, metrics } = report;
   const formatDate = (value: Date) =>
     new Intl.DateTimeFormat("en-IN", {
       dateStyle: "medium", timeStyle: "short",
@@ -31,12 +31,13 @@ export default async function FacultyAssignmentReportPage({
         title={assignment.title}
         description={`${assignment.courseName} · ${assignment.sectionName} · ${assignment.lessonName}`}
       />
-      <div className="grid gap-3 sm:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
+          ["Eligible learners", metrics.eligibleLearners],
           ["Submitted", metrics.submitted],
+          ["Not submitted", metrics.missing],
           ["Submitted late", metrics.late],
           ["Graded", metrics.graded],
-          ["Published", metrics.gradePublished],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
@@ -83,9 +84,37 @@ export default async function FacultyAssignmentReportPage({
           </table>
         )}
       </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">
+          Not submitted
+        </h2>
+        {missingLearners.length === 0 ? (
+          <p className="mt-3 text-sm text-body">
+            Every currently eligible learner has submitted.
+          </p>
+        ) : (
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {missingLearners.map((learner) => (
+              <li
+                key={learner.membershipId}
+                className="rounded-lg bg-surface-subtle p-3"
+              >
+                <p className="m-0 text-sm font-semibold text-foreground">
+                  {learner.displayName || learner.email}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {learner.email}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <p className="text-sm text-muted-foreground">
-        Missing-student roster, score distribution, CSV/PDF export and
-        interactive grading drill-down remain open parity items.
+        Score distribution, CSV/PDF export and interactive grading drill-down
+        remain open parity items.
       </p>
     </div>
   );
