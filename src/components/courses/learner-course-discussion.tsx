@@ -34,8 +34,10 @@ function formatTime(value: string) {
 
 export function LearnerCourseDiscussion({
   deliveryId,
+  moderate = false,
 }: {
   deliveryId: string;
+  moderate?: boolean;
 }) {
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
   const [canPost, setCanPost] = useState(true);
@@ -44,6 +46,7 @@ export function LearnerCourseDiscussion({
   const [draft, setDraft] = useState("");
   const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pinningId, setPinningId] = useState<string | null>(null);
   const [atBottom, setAtBottom] = useState(true);
   const [unseenCount, setUnseenCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -195,12 +198,52 @@ export function LearnerCourseDiscussion({
     }
   }
 
+  async function togglePin(messageId: string) {
+    if (!moderate || pinningId) return;
+    setPinningId(messageId);
+    try {
+      const response = await fetch(
+        `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions/${encodeURIComponent(messageId)}`,
+        { method: "PATCH" },
+      );
+      if (!response.ok) {
+        throw new Error("discussion_pin_failed");
+      }
+      const payload = await response.json();
+      const updated = payload?.message;
+      if (updated?.id) {
+        setMessages((current) =>
+          current.map((item) =>
+            item.id === updated.id
+              ? {
+                  ...item,
+                  pinned: Boolean(updated.pinned),
+                  updatedAt:
+                    typeof updated.updatedAt === "string"
+                      ? updated.updatedAt
+                      : item.updatedAt,
+                }
+              : item,
+          ),
+        );
+      } else {
+        await load(true);
+      }
+    } catch {
+      setLoadError(true);
+    } finally {
+      setPinningId(null);
+    }
+  }
+
   return (
     <div className="space-y-5">
       <div>
         <h2 className="sr-only">Discussions</h2>
         <p className="m-0 text-sm text-body">
-          Ask questions, share context, and keep course conversations visible to your class and faculty.
+          {moderate
+            ? "Guide the class conversation, answer questions, pin important context, and moderate messages."
+            : "Ask questions, share context, and keep course conversations visible to your class and faculty."}
         </p>
       </div>
 
@@ -300,8 +343,25 @@ export function LearnerCourseDiscussion({
                     <p className={`${row.grouped ? "mt-0" : "mt-2"} whitespace-pre-wrap text-sm leading-6 text-body`}>
                       {row.item.messageText}
                     </p>
-                    {row.item.isMine && canPost ? (
-                      <div className="mt-2">
+                    {canPost &&
+                    (moderate || row.item.isMine) ? (
+                      <div className="mt-2 flex flex-wrap items-center gap-3">
+                        {moderate ? (
+                          <button
+                            type="button"
+                            disabled={pinningId !== null}
+                            onClick={() =>
+                              void togglePin(row.item.id)
+                            }
+                            className="text-xs font-semibold text-primary-text hover:underline disabled:opacity-50"
+                          >
+                            {pinningId === row.item.id
+                              ? "Saving…"
+                              : row.item.pinned
+                                ? "Unpin"
+                                : "Pin"}
+                          </button>
+                        ) : null}
                         <button
                           type="button"
                           disabled={deletingId === row.item.id}
@@ -338,7 +398,9 @@ export function LearnerCourseDiscussion({
             </p>
           ) : null}
           <p className="mb-3 text-xs leading-5 text-muted-foreground">
-            Have a doubt about anything in this course? Feel free to ask here.
+            {moderate
+              ? "Post an announcement, answer a learner, or add class context."
+              : "Have a doubt about anything in this course? Feel free to ask here."}
           </p>
           <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
             Write a message
