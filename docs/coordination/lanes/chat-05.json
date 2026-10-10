@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-022",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB022_SKILLS_SOURCE_SEMANTIC_HARDENING",
+    "checkpointKind": "DB022_SKILLS_SOURCE_AND_STAGE_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "6c6cddff9b901d84b022b6a89938b6aac0db469e",
-    "lastWorkerMergedSha": "d02f9cadb3defbcfad04072fbb7cdbe76179b003",
+    "observedMainSha": "7c8b3954c0fd136a64bac67b3eba691f61db87c5",
+    "lastWorkerMergedSha": "a1095bba2b37eb914581eac9521e01b7d5ba2433",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-022 source audit: legacy has independent skills.usage_count and skill_usage(skill_name) counters and synonym search can match multiple skills; existing draft would collapse both and make synonym globally unique."
+    "summary": "DB-022 completed source/staging review of 3 DB10 skills tables and 15 historical fields: independent skill_usage free-text counter restored, alias search nonunique, 3-table staging SQL + 9 negative witnesses, 39 in-process source checks pass, 5 static Node tests authored but NOT run. Nothing runtime-verified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -31,7 +31,8 @@
     "tests/integration/groups-db03.test.ts: locked REMOVED self-block + admin revival lock preservation",
     "tests/integration/groups-db03.test.ts: elective move lock preservation and default waitlist behavior",
     "tests/db-parity-pass5.test.mjs: DB15 23 race probes remain NOT_RUN, source paths exist, and blocker/state counts stay explicit (authored, not executed)",
-    "tests/db08-outcome-fidelity-staging.test.mjs: six authored static contract tests, not executed"
+    "tests/db08-outcome-fidelity-staging.test.mjs: six authored static contract tests, not executed",
+    "tests/db10-skills-staging.test.mjs: five static source contract tests authored NOT_EXECUTED"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -49,7 +50,7 @@
     "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
     "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified."
   ],
-  "nextAction": "Correct isolated DB10 skills Drizzle draft; stage SQL and source-contract/static tests; leave journal/barrel untouched.",
+  "nextAction": "Check shared DATABASE queue for eligible tasks; if none, coordinate Chat 1 migration integration and verified DB15/DB21/DB22 negative test runner evidence. No jump to API.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -81,7 +82,8 @@
     "DB-011",
     "DB-013",
     "DB-015",
-    "DB-021"
+    "DB-021",
+    "DB-022"
   ],
   "lastPickedAt": "2026-10-11",
   "lastCompletedAt": "2026-10-11",
@@ -91,7 +93,8 @@
     "DB-011",
     "DB-013",
     "DB-015",
-    "DB-021"
+    "DB-021",
+    "DB-022"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
