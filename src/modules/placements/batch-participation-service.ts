@@ -553,6 +553,7 @@ export async function getOwnPlacementParticipationAccess(context: RequestContext
   const activeSections = await getDb().select({
     id: sections.id,
     cohortId: sections.cohortId,
+    status: sections.status,
   }).from(sectionEnrollments)
     .innerJoin(sections, and(
       eq(sections.id, sectionEnrollments.sectionId),
@@ -564,7 +565,9 @@ export async function getOwnPlacementParticipationAccess(context: RequestContext
     )).limit(2);
   // Inconsistency or two current sections is ambiguous. Fail closed.
   if (activeSections.length > 1 ||
-      (activeSections[0] && activeSections[0].cohortId !== enrollment.cohortId)) {
+      (activeSections[0] &&
+       (activeSections[0].cohortId !== enrollment.cohortId ||
+        activeSections[0].status !== "ACTIVE"))) {
     return { showPlacements: false, canSelfApply: false };
   }
   const sectionId = activeSections[0]?.id;
