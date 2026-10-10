@@ -1,0 +1,1755 @@
+{
+  "schemaVersion": 1,
+  "scope": "DB03 79 legacy fields vs declared vNext Drizzle 0040 snapshot; source-only check",
+  "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "vnextSnapshot": "drizzle/meta/0040_snapshot.json",
+  "vnextSnapshotBlobSha": "2d5064fb2e2b687e694340c2c62ddafe1c9c03cd",
+  "sourceCrosswalk": "docs/planning/database-parity-db03-79-field-crosswalk.json",
+  "sourceCrosswalkBlobSha": "b1154fe950e0e871d3dc1252b4cde00242049c76",
+  "warning": "Declared snapshot path existence does NOT verify physical PostgreSQL replay, source/business semantics, producer/consumer behavior, child-parent constraints, version/precision compatibility, or row status. NO tests were executed.",
+  "counts": {
+    "historicalColumns": 79,
+    "sourceSnapshotTargetsPresent": 79,
+    "sourceSnapshotTargetsMissing": 0,
+    "sourceRiskTagged": 43,
+    "runtimeVerified": 0
+  },
+  "columns": [
+    {
+      "legacyColumn": "elective_offering.id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": "gen_random_uuid()"
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.slot_id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.slot_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.course_id",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.course_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.group_id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.group_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.backed_class_id",
+      "legacyType": "int",
+      "proposedKind": "SEMANTIC_REDESIGN",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.backed_delivery_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Legacy GROUP_BACKED class has all per-class content/attendance/course surfaces; vNext backed delivery and group roster consumers need end-to-end proof.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": true,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.capacity",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.capacity",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.status",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.status",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": "'ACTIVE'"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.created_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.created_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.updated_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.updated_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.is_deleted",
+      "legacyType": "boolean",
+      "proposedKind": "SOFT_DELETE_TIMESTAMP",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.deleted_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.version",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings.version",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": "0"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_offering.active_course_key",
+      "legacyType": "bigint",
+      "proposedKind": "DERIVED_UNIQUE_INDEX",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_offerings_slot_active_course_uq",
+          "snapshotPresent": true,
+          "kind": "INDEX",
+          "snapshotTable": "public.elective_offerings"
+        }
+      ],
+      "sourceRisk": "Generated nullable key replaced with PostgreSQL partial unique index; verify concurrent ACTIVE duplicate and archive/re-offer.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": "gen_random_uuid()"
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.college_id",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.college_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.program_id",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.program_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.semester_number",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.semester_number",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.academic_year",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.academic_year",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.name",
+      "legacyType": "varchar(150)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.name",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(150)",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.description",
+      "legacyType": "varchar(1000)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.description",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(1000)",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.credits",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.credits",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": "3"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.min_pick",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.min_pick",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": "1"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.max_pick",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.max_pick",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": "1"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.status",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.status",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": "'ACTIVE'"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.created_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.created_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.updated_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.updated_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.is_deleted",
+      "legacyType": "boolean",
+      "proposedKind": "SOFT_DELETE_TIMESTAMP",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.deleted_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "elective_slot.version",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "elective_slots.version",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": "0"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": "gen_random_uuid()"
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.kind",
+      "legacyType": "varchar(40)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.kind",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(40)",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.owner_scope",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.owner_scope",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": "'COLLEGE'"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.college_id",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.college_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.name",
+      "legacyType": "varchar(150)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.name",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(150)",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.description",
+      "legacyType": "varchar(1000)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.description",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(1000)",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.status",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.status",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": "'DRAFT'"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.capacity",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.capacity",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.active_count",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.active_count",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": "0"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.self_join_open_from",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.self_join_open_from",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.self_join_open_until",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.self_join_open_until",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.academic_year",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.academic_year",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.semester_number",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.semester_number",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.config_json",
+      "legacyType": "json",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.config_json",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "jsonb",
+          "snapshotNotNull": true,
+          "snapshotDefault": "'{}'::jsonb"
+        }
+      ],
+      "sourceRisk": "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.created_by_type",
+      "legacyType": "varchar(20)",
+      "proposedKind": "HISTORICAL_SNAPSHOT_PERSISTED",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.created_by_type",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Now durably persisted on new group creation; verify actor role conversion and historical values against legacy producer.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.created_by_id",
+      "legacyType": "int",
+      "proposedKind": "IDENTITY_REDESIGN",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.created_by_user_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Legacy polymorphic int type/id becomes canonical UUID; confirm original actor identity semantics.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.created_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.created_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.updated_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.updated_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.is_deleted",
+      "legacyType": "boolean",
+      "proposedKind": "SOFT_DELETE_TIMESTAMP",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.deleted_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Old boolean -> nullable deletion timestamp; verify active predicates and restore semantics.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group.version",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_groups.version",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": "0"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": "gen_random_uuid()"
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.group_id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.group_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.member_type",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.member_type",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": "'LEARNER'"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.member_id",
+      "legacyType": "int",
+      "proposedKind": "IDENTITY_REDESIGN",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.membership_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Legacy numeric member ID mapped to scoped college membership; cross-college and nonlearner types require deliberate policy.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.state",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.state",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.source",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.source",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.is_locked",
+      "legacyType": "boolean",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.is_locked",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "boolean",
+          "snapshotNotNull": true,
+          "snapshotDefault": "false"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.waitlist_position",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.waitlist_position",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.note",
+      "legacyType": "varchar(500)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.note",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(500)",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.joined_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.joined_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.created_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.created_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.updated_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.updated_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member.version",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_members.version",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": true,
+          "snapshotDefault": "0"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": "gen_random_uuid()"
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.group_id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.group_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.member_type",
+      "legacyType": "varchar(20)",
+      "proposedKind": "HISTORICAL_SNAPSHOT_PERSISTED",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.member_type",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": "'LEARNER'"
+        }
+      ],
+      "sourceRisk": "Now independently persisted per append-only group member event; verify event producer pathways.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.member_id",
+      "legacyType": "int",
+      "proposedKind": "IDENTITY_REDESIGN",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.membership_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Source numeric member ID mapped to college membership UUID.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.from_state",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.from_state",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.to_state",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.to_state",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.source",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.source",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.actor_type",
+      "legacyType": "varchar(20)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.actor_type",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(20)",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.actor_id",
+      "legacyType": "int",
+      "proposedKind": "IDENTITY_REDESIGN",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.actor_user_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "Legacy polymorphic actor ID now user UUID; original role type retained separately.",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.reason",
+      "legacyType": "varchar(500)",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.reason",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "varchar(500)",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_member_event.created_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_member_events.created_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_rule.id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_rules.id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": "gen_random_uuid()"
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_rule.group_id",
+      "legacyType": "bigint",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_rules.group_id",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "uuid",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "INTEGER_KEY_TO_UUID_MAPPING",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_rule.criteria_json",
+      "legacyType": "json",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_rules.criteria_json",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "jsonb",
+          "snapshotNotNull": true,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_rule.auto_refresh",
+      "legacyType": "boolean",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_rules.auto_refresh",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "boolean",
+          "snapshotNotNull": true,
+          "snapshotDefault": "false"
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_rule.last_run_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_rules.last_run_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_rule.last_run_matched",
+      "legacyType": "int",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_rules.last_run_matched",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "integer",
+          "snapshotNotNull": false,
+          "snapshotDefault": null
+        }
+      ],
+      "sourceRisk": null,
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_rule.created_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_rules.created_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    },
+    {
+      "legacyColumn": "lms_group_rule.updated_at",
+      "legacyType": "datetime",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "targetEvidence": [
+        {
+          "target": "lms_group_rules.updated_at",
+          "snapshotPresent": true,
+          "kind": "COLUMN",
+          "snapshotType": "timestamp with time zone",
+          "snapshotNotNull": true,
+          "snapshotDefault": "now()"
+        }
+      ],
+      "sourceRisk": "TIMEZONE_AND_DEADLINE_SEMANTICS",
+      "sourceSnapshotVerified": true,
+      "runtimeSemanticsVerified": false,
+      "actualMigrationReplayVerified": false,
+      "requiredSourceReview": false,
+      "completion": "UNVERIFIED"
+    }
+  ]
+}
