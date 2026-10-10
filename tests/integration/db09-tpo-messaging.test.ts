@@ -81,12 +81,12 @@ async function cleanup() {
     [recruiterUserId],
   );
   await pool.query(
-    "delete from placement_company_relationships where created_by_user_id = $1",
-    [SEED_IDS.facultyUser],
+    "delete from placement_company_relationships where company_id in (select id from placement_companies where name = $1)",
+    ["Messaging Systems"],
   );
   await pool.query(
-    "delete from placement_companies where created_by_user_id = $1",
-    [SEED_IDS.facultyUser],
+    "delete from placement_companies where name = $1",
+    ["Messaging Systems"],
   );
   await pool.query(
     "delete from users where id = $1",
