@@ -34,6 +34,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "./errors";
 import { listActiveElectiveDeliveryIds, listBoundElectiveDeliveryIds } from "@/modules/groups/roster-access";
+import { applyDeliveryContentOrderIfReady } from "./lesson-content-order-service";
 import { sql } from "drizzle-orm";
 import {
   requireLearningReadAccess,
@@ -776,6 +777,15 @@ export async function getLearnerCourseWorkspace(
   }
 
   const lessonList = [...lessons.values()];
+  await Promise.all(
+    lessonList.map(async (lesson) => {
+      lesson.contents =
+        await applyDeliveryContentOrderIfReady(
+          lesson.contents,
+          deliveryId,
+        );
+    }),
+  );
   const lessonIds = lessonList.map(
     (lesson) => lesson.id,
   );
