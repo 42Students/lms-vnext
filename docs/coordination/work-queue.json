@@ -175,10 +175,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "cb33d09d4f169ca3e39aae71333fdb62dbe75ea0",
+      "latestEvidenceSha": "1f4094b3271e94dbf3bc5e5515d656741178f927",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "OPEN — all 312 candidates only source-triaged; staged schema and SQL unregistered. No runtime fields verified or DB tests executed. Source consistency witness passed but not PostgreSQL parity.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
