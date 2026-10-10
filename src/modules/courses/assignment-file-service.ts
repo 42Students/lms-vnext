@@ -1,16 +1,20 @@
 import "server-only";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  assignmentSubmissionFiles,
   courseUploadReceipts,
 } from "@/db/schema/course-upload-receipts-staged";
 import type { RequestContext } from "@/modules/identity/context";
+import { can } from "@/modules/permissions/policy";
 import {
   createPrivateUploadGrant,
+  createPrivateReadGrant,
   readPrivateObjectAttestation,
 } from "@/modules/storage/private-object-storage";
 import {
+  loadAssignmentSubmissionScope,
   loadCourseAssignmentScope,
 } from "./assignment-scope";
 import {
@@ -22,6 +26,7 @@ import {
   assignmentFilesRuntimeEnabled,
 } from "./assignment-file-readiness";
 import {
+  requireDeliveryContentMutation,
   requireLearningReadAccess,
 } from "./learning-access";
 import { CoursesServiceError } from "./errors";
@@ -263,5 +268,153 @@ export async function prepareAssignmentFileReceipt(
   return {
     receipt,
     attestation,
+  };
+}
+
+
+export type AssignmentFileMetadata = {
+  originalName: string;
+  mimeType: string;
+  sizeBytes: number;
+};
+
+export async function listAssignmentFileMetadataIfReady(
+  submissionIds: readonly string[],
+) {
+  const result = new Map<
+    string,
+    AssignmentFileMetadata
+  >();
+  if (
+    !assignmentFilesRuntimeEnabled() ||
+    submissionIds.length === 0
+  ) {
+    return result;
+  }
+
+  const rows = await getDb()
+    .select({
+      submissionId:
+        assignmentSubmissionFiles.assignmentSubmissionId,
+      originalName:
+        assignmentSubmissionFiles.originalName,
+      mimeType:
+        assignmentSubmissionFiles.mimeType,
+      sizeBytes:
+        assignmentSubmissionFiles.sizeBytes,
+    })
+    .from(assignmentSubmissionFiles)
+    .where(
+      inArray(
+        assignmentSubmissionFiles.assignmentSubmissionId,
+        [...submissionIds],
+      ),
+    );
+
+  for (const row of rows) {
+    result.set(row.submissionId, {
+      originalName: row.originalName,
+      mimeType: row.mimeType,
+      sizeBytes: row.sizeBytes,
+    });
+  }
+  return result;
+}
+
+export async function createAssignmentFileReadGrant(
+  context: RequestContext,
+  submissionId: string,
+) {
+  if (!assignmentFilesRuntimeEnabled()) {
+    throw new Error(
+      "DB06_ASSIGNMENT_FILES_MIGRATIONS_PENDING",
+    );
+  }
+
+  const submission =
+    await loadAssignmentSubmissionScope(
+      submissionId,
+    );
+  const assignment =
+    await loadCourseAssignmentScope(
+      submission.assignmentId,
+      true,
+    );
+
+  if (
+    context.membership?.id ===
+      submission.membershipId &&
+    context.membership.status ===
+      "ACTIVE" &&
+    context.membership.roles.includes(
+      "LEARNER",
+    )
+  ) {
+    const access =
+      await requireLearningReadAccess(
+        context,
+        assignment.offeringId,
+        submission.deliveryId,
+      );
+    if (access !== "LEARNER") {
+      throw new CoursesServiceError(
+        "LEARNING_ACCESS_DENIED",
+      );
+    }
+  } else if (
+    can(context, "courses.manage", {
+      organizationId:
+        submission.organizationId,
+      collegeId: submission.collegeId,
+    })
+  ) {
+    // College/Super Admin within persisted scope.
+  } else {
+    await requireDeliveryContentMutation(
+      context,
+      submission.deliveryId,
+    );
+  }
+
+  const [file] = await getDb()
+    .select({
+      objectKey:
+        assignmentSubmissionFiles.objectKey,
+      originalName:
+        assignmentSubmissionFiles.originalName,
+      mimeType:
+        assignmentSubmissionFiles.mimeType,
+      sizeBytes:
+        assignmentSubmissionFiles.sizeBytes,
+    })
+    .from(assignmentSubmissionFiles)
+    .where(
+      eq(
+        assignmentSubmissionFiles.assignmentSubmissionId,
+        submissionId,
+      ),
+    )
+    .limit(1);
+
+  if (!file) {
+    throw new CoursesServiceError(
+      "ASSIGNMENT_SUBMISSION_NOT_FOUND",
+    );
+  }
+
+  const grant =
+    await createPrivateReadGrant({
+      objectKey: file.objectKey,
+      collegeId: submission.collegeId,
+      ownerMembershipId:
+        submission.membershipId,
+    });
+
+  return {
+    readUrl: grant.readUrl,
+    expiresAt: grant.expiresAt,
+    originalName: file.originalName,
+    mimeType: file.mimeType,
+    sizeBytes: file.sizeBytes,
   };
 }
