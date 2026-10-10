@@ -42,7 +42,7 @@ A domain may intentionally expose an ordinary HTTP(S) link. That is an external-
 | Project resources | live schema stores optional HTTP(S) `url` and description | validation makes this explicitly an HTTP(S) external-link surface | shared adapter exposes a `project-resource` namespace but no receipt-backed project file relation is active. Decide external-link-only vs private-file product type before using upload storage | **EXTERNAL LINK ONLY TODAY** |
 | Project task/final submission URLs | current project schema/service stores HTTP(S) submission/source/demo URLs | explicitly validated external URLs | these are not private uploads; if private artifacts are added, use a separate receipt-backed file relation rather than overloading URL columns | **EXTERNAL LINK ONLY TODAY** |
 | Bug tracker screenshots | DB10 schema/service are draft/gated | private intent, size/MIME/count checks, key not returned from admin reads | draft attachment has only key/name/MIME/size: no immutable generation, digest, scan, revocation, retention; current `bug-tracker/<issue>/...` owner model is not compatible with membership-scoped private adapter | **STAGED — NEED ISSUE/REPORTER PRIVATE OWNER CONTRACT** |
-| Placement academic evidence | live normalized numeric/verification fields | source/verifier metadata; no private file key in the reviewed table | document evidence such as resume/offer-letter must not be inferred from these numeric rows. Receipt-backed document ownership remains staged elsewhere | **DATA ONLY; DOC CONTRACT SEPARATE** |
+| Placement academic evidence / offers | live normalized numeric/verification + structured offer lifecycle fields | academic source/verifier metadata; offer status/CTC/joining lifecycle; no private evidence or offer-letter object key in the reviewed live tables | document evidence such as resume/offer-letter must not be inferred from numeric or offer rows. DB04's staged receipt-purpose names do not create an active placement document relation | **DATA ONLY; DOC CONTRACT SEPARATE** |
 | Learner profile JSON | live `learner_profiles.profile_document` | validated structured JSON; raw Aadhaar/PAN blocked | contains ordinary PII such as address/DOB/contact data at application level. Database/storage encryption and retention policy must be explicitly documented; do not add national-ID secrets to this JSON | **LIVE PII, SECRET-ID FAIL-CLOSED** |
 
 ## Source-confirmed privacy decisions
@@ -66,6 +66,10 @@ If Project later accepts file uploads, add a receipt-backed file relation with p
 Bug reports may originate from a reporter-access identity rather than a college membership. Forcing bug screenshots into the current `private/<college>/<membership>/...` shape would invent fake membership ownership.
 
 Before DB10 promotion, define a private issue/report-owner key namespace and persist the same generation/hash/scan/revocation/retention guarantees as membership-owned objects. The parent issue/report owner must be the authorization anchor, and signed reads must remain server-authorized.
+
+### Placement object-path exception
+
+The reviewed placement schema has one `placement_companies.logo_object_path`. This is company branding metadata, not candidate identity/evidence. It should be treated as a public/brand asset contract (with its own upload/type/cache policy) rather than forced into the private evidence receipt model. Candidate academic evidence and offers currently contain structured data only; there is no active resume/offer-letter private-object FK in those rows.
 
 ## Cross-domain minimum receipt contract
 
@@ -92,6 +96,10 @@ The migration integrator should treat the following as the minimum conceptual co
 - immutable generation+key uniqueness
 
 For consumed receipts, ownership/purpose/object identity must become immutable. Revocation/retention/deletion metadata may evolve only through explicit state transitions; changing the object key or generation in-place is not an update path.
+
+## Staged lifecycle overlay
+
+`docs/planning/sql/db16-private-object-receipt-overlay-candidate.sql` is the migration-integrator overlay for existing **staged** DB04/DB06 receipt models. It adds scan attester/time, auditable revocation, retention/deletion state and object-identity immutability. It deliberately does not register a migration and does not create bug/project file tables.
 
 ## Storage configuration gate
 
