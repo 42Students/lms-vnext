@@ -71,6 +71,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Batches.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING_REKEY",
+              "target": "cohorts.id",
+              "rationale": "Canonical cohort UUID replaces legacy numeric batch identity.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -120,6 +129,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_CANONICAL_STATE",
+              "target": "cohort_progression_state.current_academic_year_start",
+              "rationale": "Persist start year; compatibility API formats canonical YYYY-YY.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -158,7 +176,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "createBatch persists trimmed name; uniqueness checked per program."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING",
+              "target": "cohorts.name",
+              "rationale": "Batch display name maps to cohort name.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -211,6 +238,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Batches.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "cohorts.created_at",
+              "rationale": "Canonical creation timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -257,6 +293,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_CANONICAL_STATE",
+              "target": "cohort_progression_state.current_term_number",
+              "rationale": "Persisted one-step promotion cursor, bounded by program duration.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -301,6 +346,15 @@
               "targetCandidate": "learner_program_enrollments + active section enrollment counts",
               "evidence": "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DERIVED_CANONICAL_COUNT",
+              "target": "learner_program_enrollments filtered by cohort/status",
+              "rationale": "Server-managed count is derived from canonical active cohort enrollment; exact legacy filter equivalence remains an acceptance test.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -342,7 +396,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "createBatch rejects end before start."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_COMPATIBILITY_STATE",
+              "target": "cohorts.end_date",
+              "rationale": "Optional independently editable batch lifecycle date preserved separately from college period.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -390,7 +453,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "createBatch persists program; promotion resolves program duration/curriculum."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING_FK",
+              "target": "cohorts.program_id",
+              "rationale": "Cohort remains owned by one program.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -431,7 +503,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "createBatch validates date order; start date can derive academic year."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_COMPATIBILITY_STATE",
+              "target": "cohorts.start_date",
+              "rationale": "Optional independently editable batch lifecycle date preserved separately from college period.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -477,7 +558,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "promotion refuses non-ACTIVE batch."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_NORMALIZED_ENUM",
+              "target": "cohorts.status",
+              "rationale": "Legacy ACTIVE/INACTIVE/COMPLETED are preserved; vNext may additionally use PLANNED/ARCHIVED.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -530,6 +620,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Batches.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "cohorts.updated_at",
+              "rationale": "Canonical update timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -542,6 +641,24 @@
           "BatchRepository.java"
         ],
         "note": "Canonical cohort progression and derived usage counts are live."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "TARGET_DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "kinds": [
+          "DIRECT_EXISTING_REKEY",
+          "NORMALIZED_CANONICAL_STATE",
+          "DIRECT_EXISTING",
+          "DIRECT_OPERATIONAL_METADATA",
+          "STAGED_CANONICAL_STATE",
+          "DERIVED_CANONICAL_COUNT",
+          "STAGED_COMPATIBILITY_STATE",
+          "DIRECT_EXISTING_FK",
+          "STAGED_NORMALIZED_ENUM"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -609,6 +726,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING_REKEY",
+              "target": "sections.id",
+              "rationale": "Canonical section UUID replaces legacy numeric class identity.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -665,6 +791,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "sections.created_at",
+              "rationale": "Canonical creation timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -709,6 +844,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_LIFECYCLE",
+              "target": "sections.status",
+              "rationale": "Legacy deleted/filter state projects to ARCHIVED for compatibility; primary legacy delete itself is hard-delete.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -765,6 +909,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "sections.updated_at",
+              "rationale": "Canonical update timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -805,7 +958,16 @@
               "source": "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab",
               "proof": "elective eligibility resolves section batch and rejects missing batch."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_RELATION",
+              "target": "sections.cohort_id",
+              "rationale": "Legacy batch maps to cohort.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -849,6 +1011,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "sections.description",
+              "rationale": "Live class CRUD description is preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -893,6 +1064,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_COMPATIBILITY_STATE",
+              "target": "sections.end_date",
+              "rationale": "Legacy-only lifecycle metadata round-trips without becoming schedule authority.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -937,6 +1117,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "sections.minimum_capacity",
+              "rationale": "Legacy minimum students persisted with >=0 and <= capacity checks.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -991,6 +1180,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING",
+              "target": "sections.name",
+              "rationale": "Class name maps to section name.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1032,7 +1230,16 @@
               "source": "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab",
               "proof": "elective eligibility rejects primary section program mismatch."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DERIVED_RELATION",
+              "target": "sections.cohort_id -> cohorts.program_id",
+              "rationale": "Program ownership is canonical through cohort, avoiding a redundant class-level program FK.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -1076,6 +1283,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_COMPATIBILITY_STATE",
+              "target": "sections.start_date",
+              "rationale": "Legacy-only lifecycle metadata round-trips without becoming schedule authority.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1122,6 +1338,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_DIRECT_FIELD",
+              "target": "sections.capacity",
+              "rationale": "Legacy maximum students maps to section capacity; staged acceptance enforces legacy 1..500 compatibility bound.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1167,7 +1392,16 @@
               "source": "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab",
               "proof": "GROUP_BACKED is rejected as learner primary section; SECTION semantics are observable."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_POLYMORPHIC_RELATION",
+              "target": "sections + elective_offerings.backed_delivery_id",
+              "rationale": "Ordinary class is a section; GROUP_BACKED is identified by an elective offering whose backed delivery targets that section.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -1214,7 +1448,16 @@
               "source": "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab",
               "proof": "group-backed class linkage is part of elective backed-delivery design; cannot be silently dropped."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_POLYMORPHIC_RELATION",
+              "target": "elective_offerings.group_id via backed_delivery_id -> course_section_deliveries.section_id",
+              "rationale": "Group-backed roster linkage is already explicit in elective offering + LMS group relations.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         }
       ],
@@ -1225,6 +1468,25 @@
           "ElectiveService.java"
         ],
         "note": "Primary section program/batch/type semantics are live."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "TARGET_DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "kinds": [
+          "DIRECT_EXISTING_REKEY",
+          "DIRECT_OPERATIONAL_METADATA",
+          "NORMALIZED_LIFECYCLE",
+          "NORMALIZED_RELATION",
+          "STAGED_DIRECT_FIELD",
+          "STAGED_COMPATIBILITY_STATE",
+          "DIRECT_EXISTING",
+          "DERIVED_RELATION",
+          "NORMALIZED_DIRECT_FIELD",
+          "NORMALIZED_POLYMORPHIC_RELATION"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -1289,6 +1551,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING_REKEY",
+              "target": "section_schedule_events.id",
+              "rationale": "Canonical schedule-event UUID replaces legacy numeric identity.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1342,6 +1613,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "section_schedule_events.created_at",
+              "rationale": "Canonical creation timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1393,6 +1673,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_HISTORY_LIFECYCLE",
+              "target": "section_schedule_events.status = 'CANCELLED'",
+              "rationale": "Cancellation removes the event from scheduled-resource semantics while retaining the row/history.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1446,6 +1735,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "section_schedule_events.updated_at",
+              "rationale": "Canonical update timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1495,6 +1793,15 @@
                 "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
               ],
               "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_NORMALIZED_FK",
+              "target": "section_schedule_events.section_id",
+              "rationale": "Legacy class maps to section.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1545,6 +1852,15 @@
                 "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
               ],
               "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_RELATION",
+              "target": "section_schedule_event_courses.delivery_id -> course_section_deliveries.offering_id -> course_offerings.course_id",
+              "rationale": "Schedule event course is resolved through the concrete delivery.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1593,6 +1909,15 @@
                 "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
               ],
               "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_NORMALIZED_TIMESTAMP",
+              "target": "section_schedule_events.ends_at",
+              "rationale": "Legacy string time becomes timezone-aware timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1642,6 +1967,15 @@
                 "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
               ],
               "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_MEMBERSHIP_FK",
+              "target": "section_schedule_events.faculty_membership_id",
+              "rationale": "Faculty identity becomes tenant-scoped college membership.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1693,6 +2027,15 @@
                 "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FK",
+              "target": "section_schedule_events.lecture_hall_id",
+              "rationale": "First-class schedulable room relation replaces free-text-only location.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1741,6 +2084,15 @@
                 "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
               ],
               "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_NORMALIZED_TIMESTAMP",
+              "target": "section_schedule_events.starts_at",
+              "rationale": "Legacy string time becomes timezone-aware timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1787,7 +2139,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
               "proof": "title is persisted and used in schedule notification."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING",
+              "target": "section_schedule_events.title",
+              "rationale": "Schedule title maps directly.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -1837,6 +2198,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_ATTENDANCE_LIFECYCLE",
+              "target": "attendance_sessions.status + attendance_sessions.marked_at",
+              "rationale": "Attendance marking state/timestamp belongs to the attendance session, not duplicated on the schedule event.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -1849,6 +2219,25 @@
           "ClassScheduleRepository.java"
         ],
         "note": "Scheduling, overlap checks, attendance linkage and soft-history semantics are live."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "TARGET_DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "kinds": [
+          "DIRECT_EXISTING_REKEY",
+          "DIRECT_OPERATIONAL_METADATA",
+          "NORMALIZED_HISTORY_LIFECYCLE",
+          "DIRECT_NORMALIZED_FK",
+          "NORMALIZED_RELATION",
+          "DIRECT_NORMALIZED_TIMESTAMP",
+          "NORMALIZED_MEMBERSHIP_FK",
+          "STAGED_DIRECT_FK",
+          "DIRECT_EXISTING",
+          "NORMALIZED_ATTENDANCE_LIFECYCLE"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -3426,6 +3815,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_REKEY",
+              "target": "lecture_halls.id",
+              "rationale": "Canonical UUID room identity.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3468,6 +3866,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/LectureHallRepository.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_OPERATIONAL_METADATA",
+              "target": "lecture_halls.created_at",
+              "rationale": "Creation timestamp.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3508,6 +3915,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/LectureHallRepository.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_NORMALIZED_LIFECYCLE",
+              "target": "lecture_halls.status",
+              "rationale": "Compatibility deleted/restore state projects to ACTIVE/ARCHIVED; legacy primary delete was hard-delete after dependency guard.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3550,6 +3966,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/LectureHallRepository.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_OPERATIONAL_METADATA",
+              "target": "lecture_halls.updated_at",
+              "rationale": "Update timestamp.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3617,6 +4042,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "lecture_halls.capacity",
+              "rationale": "Legacy 1..5000 capacity preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3686,6 +4120,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FK",
+              "target": "lecture_halls.college_id",
+              "rationale": "Room tenant ownership preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3755,6 +4198,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FK",
+              "target": "lecture_halls.department_id",
+              "rationale": "Optional department scope preserved with same-college guard.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3822,6 +4274,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "lecture_halls.description",
+              "rationale": "Room description preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3889,6 +4350,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "lecture_halls.name",
+              "rationale": "Required case-insensitive college-scoped room name.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3956,6 +4426,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_ENUM",
+              "target": "lecture_halls.room_type",
+              "rationale": "CLASSROOM/LECTURE_HALL/LAB/SEMINAR_HALL/AUDITORIUM/CONFERENCE_ROOM preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -3993,6 +4472,21 @@
           "LectureHallRepository.java"
         ],
         "note": "Tenant-owned schedulable resource with delete protection and overlap locking."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "TARGET_DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "kinds": [
+          "STAGED_DIRECT_REKEY",
+          "STAGED_OPERATIONAL_METADATA",
+          "STAGED_NORMALIZED_LIFECYCLE",
+          "STAGED_DIRECT_FIELD",
+          "STAGED_DIRECT_FK",
+          "STAGED_DIRECT_ENUM"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -4059,6 +4553,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING_REKEY",
+              "target": "programs.id",
+              "rationale": "Canonical program UUID replaces legacy numeric identity.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4114,6 +4617,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "programs.created_at",
+              "rationale": "Creation timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4157,6 +4669,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_LIFECYCLE",
+              "target": "programs.status = 'ARCHIVED'",
+              "rationale": "Legacy filter/restore compatibility maps to canonical archival state; current primary legacy delete is hard-delete.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4212,6 +4733,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "programs.updated_at",
+              "rationale": "Update timestamp.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4259,6 +4789,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_NORMALIZED_FK",
+              "target": "programs.department_id",
+              "rationale": "Department ownership preserved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4304,6 +4843,15 @@
               "transform": "durationTerms = durationYears * 2; read compatibility durationYears = durationTerms / 2",
               "evidence": "src/modules/academics/program-service.ts@c38b6a63947a257520db11e949113e2d6be4969c",
               "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "NORMALIZED_UNIT_CONVERSION",
+              "target": "programs.duration_terms",
+              "rationale": "Legacy promotion source explicitly defines max semesters as duration_years * 2; compatibility API stores years as two terms per year.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4357,6 +4905,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "DIRECT_EXISTING",
+              "target": "programs.name",
+              "rationale": "Program name preserved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -4367,6 +4924,21 @@
           "NewProgramServiceImpl.java@8149df6879e0cdfc6362d1c302b01537decac77c"
         ],
         "note": "Program name/department/duration years and delete guards are live."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "TARGET_DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "kinds": [
+          "DIRECT_EXISTING_REKEY",
+          "DIRECT_OPERATIONAL_METADATA",
+          "NORMALIZED_LIFECYCLE",
+          "DIRECT_NORMALIZED_FK",
+          "NORMALIZED_UNIT_CONVERSION",
+          "DIRECT_EXISTING"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -4418,6 +4990,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_STORAGE_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Backend compatibility entity has no current production-FE consumer; do not create a second curriculum store until API parity decides projection/removal.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4460,6 +5041,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_STORAGE_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Operational metadata retires with the compatibility storage if API removal/projection is approved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4500,6 +5090,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "RETIRE_NO_CURRENT_CONSUMER",
+              "target": "none",
+              "rationale": "Inherited field has no current producer/consumer evidence.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4542,6 +5141,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_STORAGE_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Operational metadata retires with the compatibility storage if API removal/projection is approved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4587,6 +5195,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_API_PROJECTION_CANDIDATE",
+              "target": "program_term_courses.course_id",
+              "rationale": "If compatibility API is retained, ordered courses should project from canonical curriculum rather than JSON persistence; exact legacy grouping requires API acceptance.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4627,6 +5244,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_API_RETIREMENT_OPEN",
+              "target": "none",
+              "rationale": "Program-level structure date has no safe canonical equivalent and no current FE consumer; retain only if an API consumer is proven.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4667,6 +5293,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_API_PROJECTION_CANDIDATE",
+              "target": "program_terms.name",
+              "rationale": "If retained, compatibility name can project from canonical program term; row correspondence must be defined by API parity.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4713,6 +5348,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_API_PROJECTION_CANDIDATE",
+              "target": "program_terms.program_id",
+              "rationale": "If retained, program scope projects from canonical term.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4753,6 +5397,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_API_RETIREMENT_OPEN",
+              "target": "none",
+              "rationale": "Program-level structure date has no safe canonical equivalent and no current FE consumer; retain only if an API consumer is proven.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4793,6 +5446,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "COMPATIBILITY_API_PROJECTION_CANDIDATE",
+              "target": "program_terms.is_active",
+              "rationale": "If retained, active/inactive projection can derive from canonical term; COMPLETED-style compatibility semantics require API acceptance.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -4805,6 +5467,19 @@
           "NewProgramStructureRepository.java@d818841277cdbb2e42d23e78f4e4a2c24cd1028b"
         ],
         "note": "fetchProgramDetails exposes structure dates/status/course IDs; relationship to newer Semester model is unresolved."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "COMPATIBILITY_STORAGE_RETIREMENT_OR_PROJECTION_OPEN",
+        "kinds": [
+          "COMPATIBILITY_STORAGE_RETIREMENT_PROPOSED",
+          "RETIRE_NO_CURRENT_CONSUMER",
+          "COMPATIBILITY_API_PROJECTION_CANDIDATE",
+          "COMPATIBILITY_API_RETIREMENT_OPEN"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -4851,6 +5526,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "No current Program model/producer; current /program/create delegates to NewProgramService/new_program.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4888,6 +5572,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Retires with historical table.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4923,6 +5616,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Retires with historical table.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4960,6 +5662,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Retires with historical table.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -4997,6 +5708,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Canonical active program relation is programs.department_id sourced from legacy new_program, not this historical DDL.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5032,6 +5752,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "No current producer/consumer proved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5067,6 +5796,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Canonical active name comes from new_program -> programs.name.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5102,6 +5840,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "No current producer/consumer proved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -5112,6 +5859,16 @@
           "historical SQL inventory"
         ],
         "note": "No current Program.java model found; requires explicit retirement proof."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "RETIREMENT_PROPOSED_NOT_FINAL",
+        "kinds": [
+          "HISTORICAL_DDL_RETIREMENT_PROPOSED"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -5158,6 +5915,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "No current model/producer found for the older program_structure table.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5195,6 +5961,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Retires with historical table.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5230,6 +6005,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Retires with historical table.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5267,6 +6051,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Retires with historical table.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5307,6 +6100,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "Older JSON curriculum storage is superseded by active semester/semester_course contract and canonical program_term_courses.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5342,6 +6144,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "No current producer/consumer proved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5377,6 +6188,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "No current producer/consumer proved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5414,6 +6234,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "No current producer/consumer proved for this older table.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5449,6 +6278,15 @@
               "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
               "source": "database-parity historical SQL inventory",
               "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "HISTORICAL_DDL_RETIREMENT_PROPOSED",
+              "target": "none",
+              "rationale": "No current producer/consumer proved.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -5459,6 +6297,16 @@
           "historical SQL inventory"
         ],
         "note": "No current ProgramStructure.java model found; requires explicit retirement proof."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "RETIREMENT_PROPOSED_NOT_FINAL",
+        "kinds": [
+          "HISTORICAL_DDL_RETIREMENT_PROPOSED"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -5525,6 +6373,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_REKEY",
+              "target": "program_terms.id",
+              "rationale": "Canonical program-term UUID replaces legacy numeric semester identity.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5568,6 +6425,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterManagement.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_OPERATIONAL_METADATA",
+              "target": "program_terms.created_at",
+              "rationale": "Creation timestamp.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5609,6 +6475,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterManagement.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "RETIRE_COMPATIBILITY_FILTER_NO_PRODUCER",
+              "target": "none",
+              "rationale": "Legacy repository/recycle paths understand the inherited flag, but primary semester delete hard-deletes after guards; canonical term activity remains separate.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5652,6 +6527,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterManagement.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_OPERATIONAL_METADATA",
+              "target": "program_terms.updated_at",
+              "rationale": "Update timestamp.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5713,6 +6597,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_LIFECYCLE",
+              "target": "program_terms.is_active",
+              "rationale": "Active/inactive curriculum term state preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5774,6 +6667,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "program_terms.name",
+              "rationale": "Required program-specific semester name preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5837,6 +6739,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FK",
+              "target": "program_terms.program_id",
+              "rationale": "Program ownership preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5898,6 +6809,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "program_terms.term_number",
+              "rationale": "1-based program-scoped term ordinal preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -5956,6 +6876,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "program_terms.total_credits",
+              "rationale": "Persisted total credits preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -5991,6 +6920,21 @@
           "SemesterRepository.java"
         ],
         "note": "Program-scoped semester identity/name/activity/credits are live and promotion-coupled."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "TARGET_DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "kinds": [
+          "STAGED_DIRECT_REKEY",
+          "STAGED_OPERATIONAL_METADATA",
+          "RETIRE_COMPATIBILITY_FILTER_NO_PRODUCER",
+          "STAGED_DIRECT_LIFECYCLE",
+          "STAGED_DIRECT_FIELD",
+          "STAGED_DIRECT_FK"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -6057,6 +7001,15 @@
                 "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
                 "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_REKEY",
+              "target": "program_term_courses.id",
+              "rationale": "Canonical UUID curriculum-row identity.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -6099,6 +7052,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterCourseRepository.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterCourseMapping.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_OPERATIONAL_METADATA",
+              "target": "program_term_courses.created_at",
+              "rationale": "Creation timestamp.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -6139,6 +7101,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterCourseRepository.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterCourseMapping.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "RETIRE_COMPATIBILITY_FILTER_NO_PRODUCER",
+              "target": "none",
+              "rationale": "Current removal paths hard-delete curriculum mappings; inherited legacy filter has no independent current delete producer.",
+              "registrationStatus": "DESIGN_DISPOSITION_ONLY",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -6181,6 +7152,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterCourseRepository.java",
                 "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterCourseMapping.js"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_OPERATIONAL_METADATA",
+              "target": "program_term_courses.updated_at",
+              "rationale": "Update timestamp.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -6243,6 +7223,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FK",
+              "target": "program_term_courses.course_id",
+              "rationale": "Curriculum course relation preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -6303,6 +7292,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "program_term_courses.display_order",
+              "rationale": "Legacy 1-based ordering preserved; reorder concurrency still requires acceptance.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -6363,6 +7361,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FIELD",
+              "target": "program_term_courses.credits",
+              "rationale": "Legacy nullable/0..30 credits preserved.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -6423,6 +7430,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_NORMALIZED_ENUM",
+              "target": "program_term_courses.type",
+              "rationale": "true -> CORE, false -> ELECTIVE for canonical curriculum classification.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -6486,6 +7502,15 @@
                 "docs/planning/db02-academic-progression-contract.md"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+              "kind": "STAGED_DIRECT_FK",
+              "target": "program_term_courses.program_term_id",
+              "rationale": "Legacy semester parent maps to canonical program term.",
+              "registrationStatus": "UNREGISTERED_STAGING",
+              "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -6521,6 +7546,21 @@
           "SemesterCourseRepository.java"
         ],
         "note": "Ordered curriculum, mandatory/elective and credits are live."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "status": "TARGET_DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "kinds": [
+          "STAGED_DIRECT_REKEY",
+          "STAGED_OPERATIONAL_METADATA",
+          "RETIRE_COMPATIBILITY_FILTER_NO_PRODUCER",
+          "STAGED_DIRECT_FK",
+          "STAGED_DIRECT_FIELD",
+          "STAGED_NORMALIZED_ENUM"
+        ],
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     }
   ],
@@ -6555,7 +7595,11 @@
       "Temporal state transitions, soft deletion, actor-scoped ACL/tenancy and multi-tenant FK relationships lack disposable PostgreSQL verification.",
       "Three overlapping legacy faculty/course assignment contracts remain source-active: broad faculty_course_associations, class-specific faculty_course_mapping, and richer faculty_teaching_assignment. vNext must preserve their observable APIs/permissions through one normalized model or documented projections rather than blindly recreating all three tables.",
       "new_program_structure is still exposed by compatibility backend APIs but has no current production frontend surface; its courseIds JSON/date/status contract should be explicitly normalized or retired during API parity, not duplicated beside canonical program_terms.",
-      "Several BaseModel is_deleted fields are compatibility/filter consumers while primary delete services still hard-delete. Preserve observable filtering/history where required, but do not claim universal soft-delete parity until producer paths are reconciled."
+      "Several BaseModel is_deleted fields are compatibility/filter consumers while primary delete services still hard-delete. Preserve observable filtering/history where required, but do not claim universal soft-delete parity until producer paths are reconciled.",
+      "Target design is now dispositioned for 125/125 DB02 legacy fields, but none is runtime-certified. Registered Drizzle schema, services/fixtures and PostgreSQL acceptance remain required.",
+      "Legacy cohort INACTIVE is reversible and cannot be represented solely by vNext ARCHIVED; staging adds INACTIVE while preserving PLANNED/ARCHIVED for richer vNext lifecycle.",
+      "Legacy batch and class lifecycle dates are independently authored compatibility state; staging preserves nullable cohort/section dates while academic periods and schedule events remain calendar authority.",
+      "new_program_structure is a backend compatibility store with no current production-FE consumer. No duplicate canonical table is proposed; API parity must either project canonical terms/curriculum or explicitly retire that compatibility API."
     ],
     "followUpEvidenceRequired": [
       "Read academic setup and timetable service/endpoint writes against pinned and newest backend/FE source SHAs; classify each unconfirmed field as active, retired or calculated",
@@ -6706,6 +7750,26 @@
         "semanticEquivalenceVerified": 0,
         "postgresTestsExecuted": 0,
         "warning": "These are target design dispositions, not executed equivalence. faculty_course_mapping compatibility producer order and legacy API projections remain API-phase acceptance work."
+      },
+      {
+        "id": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+        "addedTargetDispositions": 99,
+        "totalTargetDispositions": 125,
+        "missing": 0,
+        "stagingCommits": [
+          "06e6d2071da4175d22d0be97dd142910d06b3ba5",
+          "b831439bf2c65bc551e64c0ae49e67ace8cf6576",
+          "c2f3546ced7598feb4033149db682eb032d4d96b",
+          "24747d85c75aec28bfa6d8e0ba4d77bd7950f7fb"
+        ],
+        "contractCommits": [
+          "67e8bcf061ba9d60b7b22eee104ed4b8ed21a6b3",
+          "eda6b4c121cfe47d7826a9f34eac70d19d14d4a6",
+          "a61e27052e1dcbf2ec6991d24329595b139ba080",
+          "f3753396e5645aec8812dc0598e7da04437305fb"
+        ],
+        "postgresTestsExecuted": 0,
+        "semanticEquivalenceVerified": 0
       }
     ],
     "canonicalTargetDecisions": [
@@ -6718,6 +7782,61 @@
         "electiveRule": "ELECTIVE offering remains program-term bound but is not required to be in the fixed curriculum mapping.",
         "runtimePostgresStatus": "NOT_EXECUTED"
       }
-    ]
+    ],
+    "targetDispositionCoverage": {
+      "passId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
+      "totalLegacyCandidates": 125,
+      "targetDispositionRecorded": 125,
+      "missingTargetDisposition": 0,
+      "byTargetKind": {
+        "DIRECT_EXISTING_REKEY": 4,
+        "NORMALIZED_CANONICAL_STATE": 1,
+        "DIRECT_EXISTING": 4,
+        "DIRECT_OPERATIONAL_METADATA": 12,
+        "STAGED_CANONICAL_STATE": 1,
+        "DERIVED_CANONICAL_COUNT": 1,
+        "STAGED_COMPATIBILITY_STATE": 4,
+        "DIRECT_EXISTING_FK": 1,
+        "STAGED_NORMALIZED_ENUM": 2,
+        "NORMALIZED_LIFECYCLE": 5,
+        "NORMALIZED_RELATION": 7,
+        "STAGED_DIRECT_FIELD": 10,
+        "DERIVED_RELATION": 1,
+        "NORMALIZED_DIRECT_FIELD": 1,
+        "NORMALIZED_POLYMORPHIC_RELATION": 2,
+        "NORMALIZED_HISTORY_LIFECYCLE": 1,
+        "DIRECT_NORMALIZED_FK": 2,
+        "DIRECT_NORMALIZED_TIMESTAMP": 2,
+        "NORMALIZED_MEMBERSHIP_FK": 4,
+        "STAGED_DIRECT_FK": 6,
+        "NORMALIZED_ATTENDANCE_LIFECYCLE": 1,
+        "DIRECT_STAGED_REKEY": 1,
+        "DIRECT_STAGED_FK": 1,
+        "COMPATIBILITY_PROJECTION_REKEY": 1,
+        "EXPLICIT_RETIREMENT_CANDIDATE": 1,
+        "DIRECT_REKEY": 1,
+        "COMPATIBILITY_FILTER_RETIRED_TO_LIFECYCLE": 1,
+        "NORMALIZED_ACADEMIC_CONTEXT": 1,
+        "DIRECT_LIFECYCLE": 2,
+        "DIRECT_ENUM": 1,
+        "NORMALIZED_STABLE_TERM": 1,
+        "STAGED_DIRECT_REKEY": 3,
+        "STAGED_OPERATIONAL_METADATA": 6,
+        "STAGED_NORMALIZED_LIFECYCLE": 1,
+        "STAGED_DIRECT_ENUM": 1,
+        "NORMALIZED_UNIT_CONVERSION": 1,
+        "COMPATIBILITY_STORAGE_RETIREMENT_PROPOSED": 3,
+        "RETIRE_NO_CURRENT_CONSUMER": 1,
+        "COMPATIBILITY_API_PROJECTION_CANDIDATE": 4,
+        "COMPATIBILITY_API_RETIREMENT_OPEN": 2,
+        "HISTORICAL_DDL_RETIREMENT_PROPOSED": 17,
+        "RETIRE_COMPATIBILITY_FILTER_NO_PRODUCER": 2,
+        "STAGED_DIRECT_LIFECYCLE": 1
+      },
+      "sourceClassificationComplete": true,
+      "semanticEquivalenceVerifiedFields": 0,
+      "postgresVerifiedFields": 0,
+      "note": "Design disposition is complete, but staged/direct/normalized/retirement labels are NOT runtime equivalence. Retirement-proposed rows still require final consumer/product acceptance."
+    }
   }
 }
