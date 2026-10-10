@@ -10,13 +10,19 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_SOURCE_RECONCILIATION_PARTIAL",
+    "checkpointKind": "DB004_312_FIELD_TRIAGE_AND_STAGED_BRANDING",
     "updatedOn": "2026-10-11",
     "observedMainSha": "cb33d09d4f169ca3e39aae71333fdb62dbe75ea0",
-    "lastWorkerMergedSha": "cb33d09d4f169ca3e39aae71333fdb62dbe75ea0",
+    "lastWorkerMergedSha": "1f4094b3271e94dbf3bc5e5515d656741178f927",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Source-inspected DB01 22 table / 312 field candidate inventory. Source-level evidence for tenant_domain.last_found_values missing and college_branding 10 override fields not in canonical college/domain tables. Wrote gap-and-test contract; 0 runtime semantic fields verified; no tests executed."
+    "summary": "Source triaged exactly 312 DB01 field candidates across 22 table candidates, source consistency check PASS. 44 direct structural and 51 normalized candidates, 21 staging candidates, 196 unresolved/provider/cross-domain source cases. Drafted unregistered Drizzle branding table and SQL, authored repeatable source verifier (not executed under node). No runtime semantic fields verified, no npm/CI/PG tests executed; DB-004 remains IN_PROGRESS.",
+    "staticSourceConsistencyWitness": {
+      "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
+      "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
+      "postgresEvidence": false,
+      "runnerEvidence": false
+    }
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -24,13 +30,19 @@
     "unit": "NOT_VERIFIED",
     "postgresIntegration": "NOT_VERIFIED",
     "build": "NOT_VERIFIED",
-    "browser": "NOT_VERIFIED"
+    "browser": "NOT_VERIFIED",
+    "sourceTriageConsistency": "PASS_IN_PROCESS_SOURCE_CHECK_NOT_RUNTIME"
   },
-  "lastAuthoredTests": [],
+  "lastAuthoredTests": [
+    "scripts/verify-db01-field-triage.mjs"
+  ],
   "lastExecutedPassingTests": [],
   "blockers": [],
-  "handoffs": [],
-  "nextAction": "Continue DB-004: map all 312 DB01 candidate fields across 22 source tables to active vNext storage/provider/approved retirement; inspect post-V150 source; stage schema decisions for Chat 1; add and run acceptance tests. Do not mark source review as DONE_VERIFIED.",
+  "handoffs": [
+    "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
+    "DB-004 → DB09/issue #25: recruiter grant expiry, revocation reason, capability, version and tenant FK parity"
+  ],
+  "nextAction": "Complete DB-004 beyond source triage: inspect post-V150 active-vs-retired migrations and all source writers for 312 fields, resolve active provider/session/grant/branding semantics, coordinate Drizzle schema promotion with W01, get actual PostgreSQL/CI negative test evidence, then mark COMPLETED and DONE_VERIFIED only with proof.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -45,7 +57,13 @@
   "evidenceLinks": [
     "https://github.com/42Students/lms-vnext/issues/22",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-source-reconciliation.md",
-    "https://github.com/42Students/lms-vnext/commit/cb33d09d4f169ca3e39aae71333fdb62dbe75ea0"
+    "https://github.com/42Students/lms-vnext/commit/cb33d09d4f169ca3e39aae71333fdb62dbe75ea0",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-312-field-source-triage.json",
+    "https://github.com/42Students/lms-vnext/blob/main/src/db/schema/db01-tenant-branding.staged.ts",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql",
+    "https://github.com/42Students/lms-vnext/blob/main/scripts/verify-db01-field-triage.mjs",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6101942559",
+    "https://github.com/42Students/lms-vnext/issues/25#issuecomment-6101944195"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
