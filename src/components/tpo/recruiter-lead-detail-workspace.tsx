@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 type Lead = {
@@ -74,6 +75,7 @@ async function readResponse<T>(response: Response): Promise<T> {
 export function RecruiterLeadDetailWorkspace({
   collegeId, leadId,
 }: { collegeId: string; leadId: string }) {
+  const router = useRouter();
   const [lead, setLead] = useState<Lead | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [followups, setFollowups] = useState<Followup[]>([]);
@@ -214,6 +216,35 @@ export function RecruiterLeadDetailWorkspace({
     if (ok) setNotNowOpen(false);
   }
 
+  async function openMessageThread() {
+    if (!lead?.recruiterUserId) return;
+    setSaving(true);
+    setActionError("");
+    try {
+      const response = await fetch("/api/placements/tpo/messages", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          collegeId,
+          recruiterUserId: lead.recruiterUserId,
+        }),
+      });
+      const payload = await readResponse<{
+        thread: { id: string };
+      }>(response);
+      router.push(
+        "/tpo/messages?threadId=" +
+          encodeURIComponent(payload.thread.id),
+      );
+    } catch (cause) {
+      setActionError(
+        cause instanceof Error ? cause.message : "Could not open messages.",
+      );
+      setSaving(false);
+    }
+  }
+
   async function createInviteLink() {
     setSaving(true);
     setActionError("");
@@ -274,6 +305,16 @@ export function RecruiterLeadDetailWorkspace({
             </div>
             <div className="flex flex-wrap gap-2">
               <button type="button" className={button} onClick={openEdit}>Edit details</button>
+              {lead.recruiterUserId ? (
+                <button
+                  type="button"
+                  className={button}
+                  disabled={saving}
+                  onClick={() => void openMessageThread()}
+                >
+                  Message recruiter
+                </button>
+              ) : null}
               {lead.manualStage !== "CONTACTED" ? (
                 <button type="button" className={button} disabled={saving} onClick={() => void mutate(
                   base + "/contacted", "POST", { collegeId },
