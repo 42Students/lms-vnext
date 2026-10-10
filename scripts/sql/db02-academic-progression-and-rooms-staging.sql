@@ -24,6 +24,27 @@ CREATE TABLE program_terms (
 CREATE INDEX program_terms_program_active_idx
   ON program_terms(program_id, is_active, term_number);
 
+CREATE FUNCTION db02_guard_program_term_bounds()
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  max_terms integer;
+BEGIN
+  SELECT duration_terms INTO max_terms FROM programs WHERE id=NEW.program_id FOR SHARE;
+  IF max_terms IS NULL THEN
+    RAISE EXCEPTION 'Unknown program' USING ERRCODE='23503';
+  END IF;
+  IF NEW.term_number > max_terms THEN
+    RAISE EXCEPTION 'Program term exceeds configured program duration'
+      USING ERRCODE='23514';
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_program_term_bounds_guard
+BEFORE INSERT OR UPDATE OF program_id, term_number ON program_terms
+FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_bounds();
+
 CREATE TABLE program_term_courses (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   program_term_id uuid NOT NULL REFERENCES program_terms(id) ON DELETE RESTRICT,
@@ -176,37 +197,45 @@ CREATE TRIGGER db02_cohort_progression_state_guard
 BEFORE INSERT OR UPDATE ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
 
--- Every successful state transition must have exactly one matching history row.
--- Services should update progression state and insert the event in one SERIALIZABLE
--- or compare-and-set transaction using the caller's expected version.
-CREATE FUNCTION db02_guard_progression_event_matches_state()
-RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE
-  current_state cohort_progression_state%ROWTYPE;
+-- Database-owned history: a direct SQL update cannot advance canonical state without
+-- producing a matching immutable event. Application code must NOT insert a duplicate event.
+CREATE FUNCTION db02_record_cohort_progression_event()
+RETURNS trigger LANGUAGE plpgsql AS $
 BEGIN
-  SELECT * INTO current_state
-    FROM cohort_progression_state
-   WHERE cohort_id = NEW.cohort_id
-   FOR SHARE;
-
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Cohort progression state does not exist' USING ERRCODE='23503';
-  END IF;
-
-  IF NEW.to_term_number <> current_state.current_term_number
-     OR NEW.to_academic_year_start IS DISTINCT FROM current_state.current_academic_year_start
-     OR NEW.to_period_id IS DISTINCT FROM current_state.current_period_id
-     OR NEW.state_version <> current_state.version THEN
-    RAISE EXCEPTION 'Progression history must describe the committed cohort state'
-      USING ERRCODE='23514';
-  END IF;
+  INSERT INTO cohort_progression_events (
+    cohort_id,
+    from_term_number,
+    to_term_number,
+    from_academic_year_start,
+    to_academic_year_start,
+    from_period_id,
+    to_period_id,
+    actor_user_id,
+    reason,
+    state_version
+  ) VALUES (
+    NEW.cohort_id,
+    OLD.current_term_number,
+    NEW.current_term_number,
+    OLD.current_academic_year_start,
+    NEW.current_academic_year_start,
+    OLD.current_period_id,
+    NEW.current_period_id,
+    NEW.updated_by_user_id,
+    'COHORT_PROMOTION',
+    NEW.version
+  );
   RETURN NEW;
 END;
-$$;
+$;
 
-CREATE TRIGGER db02_cohort_progression_event_guard
-BEFORE INSERT ON cohort_progression_events
-FOR EACH ROW EXECUTE FUNCTION db02_guard_progression_event_matches_state();
+CREATE TRIGGER db02_cohort_progression_history
+AFTER UPDATE ON cohort_progression_state
+FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
+
+-- State updates still need a compare-and-set predicate (cohort_id + expected version)
+-- in the service transaction. The DB trigger guarantees monotonicity/version/history;
+-- the update predicate decides the single concurrent winner.
 
 -- ---------------------------------------------------------------------------
 -- 3) Lecture halls as tenant-owned resources
