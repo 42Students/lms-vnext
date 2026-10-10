@@ -12,6 +12,8 @@ import { createProgram } from "@/modules/academics/program-service";
 import { createAcademicPeriod } from "@/modules/academics/period-service";
 import { createCohort } from "@/modules/academics/cohort-service";
 import { createSection } from "@/modules/academics/section-service";
+import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
+import { assignLearnerToSection } from "@/modules/academics/roster-service";
 import { createCourse } from "@/modules/courses/course-service";
 import { createCourseOffering } from "@/modules/courses/offering-service";
 import { createCourseSectionDelivery } from "@/modules/courses/delivery-service";
@@ -28,6 +30,12 @@ import {
 import { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
 import { getFacultyClassSchedule } from "@/modules/courses/faculty-schedule-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
+import {
+  createFacultyAttendanceSession,
+  getFacultyAttendanceWorkspace,
+  markFacultyAttendance,
+} from "@/modules/attendance/faculty-service";
+import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -217,6 +225,22 @@ async function cleanupUI2A() {
     "delete from courses where code like 'FUI2A-%'",
   );
   await pool.query(
+    `delete from section_enrollments
+     where learner_enrollment_id in (
+       select lpe.id
+       from learner_program_enrollments lpe
+       join programs p on p.id = lpe.program_id
+       where p.code like 'FUI2A-%'
+     )`,
+  );
+  await pool.query(
+    `delete from learner_program_enrollments
+     where program_id in (
+       select id from programs
+       where code like 'FUI2A-%'
+     )`,
+  );
+  await pool.query(
     `delete from sections
      where cohort_id in (
        select c.id
@@ -322,6 +346,26 @@ async function createStructure() {
         sectionId: sectionB.id,
       },
     );
+
+  // FUI2A learner enrollment is required for Faculty attendance roster tests.
+  const learnerEnrollment =
+    await createLearnerProgramEnrollment(
+      collegeAdmin,
+      {
+        membershipId:
+          SEED_IDS.learnerCollegeAMembership,
+        programId: program.id,
+        cohortId: cohort.id,
+      },
+    );
+  await assignLearnerToSection(
+    collegeAdmin,
+    {
+      learnerEnrollmentId:
+        learnerEnrollment.id,
+      sectionId: sectionA.id,
+    },
+  );
 
   await createCourseTeachingAssignment(
     collegeAdmin,
@@ -594,6 +638,163 @@ describe("courses UI2A faculty read model", () => {
       .toBe(false);
     await expect(getFacultyClassSchedule(learner)).rejects.toMatchObject({
       code: "FACULTY_TEACHING_SCOPE_REQUIRED",
+    });
+  });
+
+  it("round-trips Faculty attendance marking into the learner view and supports correction back to present", async () => {
+    const structure = await createStructure();
+    const session = await createFacultyAttendanceSession(
+      faculty,
+      {
+        deliveryId: structure.deliveryA.id,
+        title: "FUI2A Attendance Lab",
+        startsAt: "2026-10-01T09:00:00.000Z",
+        endsAt: "2026-10-01T10:00:00.000Z",
+        location: "Lab 1",
+      },
+    );
+
+    const initial =
+      await getFacultyAttendanceWorkspace(
+        faculty,
+        structure.deliveryA.id,
+      );
+    expect(
+      initial.roster.map(
+        (row) => row.membershipId,
+      ),
+    ).toEqual([
+      SEED_IDS.learnerCollegeAMembership,
+    ]);
+    expect(initial.sessions).toEqual([
+      expect.objectContaining({
+        id: session.id,
+        attendanceStatus: null,
+      }),
+    ]);
+
+    await expect(
+      markFacultyAttendance(
+        faculty,
+        session.id,
+        {
+          deliveryId:
+            structure.deliveryA.id,
+          absentMembershipIds: [],
+          presentMembershipIds: [],
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "ATTENDANCE_ROSTER_CONFLICT",
+    });
+
+    const absentResult =
+      await markFacultyAttendance(
+        faculty,
+        session.id,
+        {
+          deliveryId:
+            structure.deliveryA.id,
+          absentMembershipIds: [
+            SEED_IDS.learnerCollegeAMembership,
+          ],
+          presentMembershipIds: [],
+        },
+      );
+    expect(absentResult).toMatchObject({
+      markedAbsent: 1,
+      markedPresent: 0,
+    });
+
+    const absentWorkspace =
+      await getLearnerAttendanceWorkspace(
+        learner,
+      );
+    const absentRecord =
+      absentWorkspace.records.find(
+        (row) => row.id === session.id,
+      );
+    expect(absentRecord).toMatchObject({
+      status: "ABSENT",
+    });
+
+    const corrected =
+      await markFacultyAttendance(
+        faculty,
+        session.id,
+        {
+          deliveryId:
+            structure.deliveryA.id,
+          absentMembershipIds: [],
+          presentMembershipIds: [
+            SEED_IDS.learnerCollegeAMembership,
+          ],
+        },
+      );
+    expect(corrected).toMatchObject({
+      markedAbsent: 0,
+      markedPresent: 1,
+    });
+
+    const correctedWorkspace =
+      await getLearnerAttendanceWorkspace(
+        learner,
+      );
+    const correctedRecord =
+      correctedWorkspace.records.find(
+        (row) => row.id === session.id,
+      );
+    expect(correctedRecord).toMatchObject({
+      status: "PRESENT",
+    });
+
+    const exceptionRows =
+      await pool.query(
+        `select status
+           from attendance_records
+          where schedule_event_id = $1`,
+        [session.id],
+      );
+    expect(exceptionRows.rows).toHaveLength(0);
+  });
+
+  it("keeps Faculty attendance scheduling and marking inside exact teaching scope", async () => {
+    const structure = await createStructure();
+
+    await expect(
+      createFacultyAttendanceSession(
+        learner,
+        {
+          deliveryId:
+            structure.deliveryA.id,
+          title: "Unauthorized session",
+          startsAt:
+            "2026-10-01T09:00:00.000Z",
+          endsAt:
+            "2026-10-01T10:00:00.000Z",
+        },
+      ),
+    ).rejects.toMatchObject({
+      code:
+        "FACULTY_TEACHING_SCOPE_REQUIRED",
+    });
+
+    await expect(
+      createFacultyAttendanceSession(
+        faculty,
+        {
+          deliveryId:
+            structure.deliveryB.id,
+          title: "Wrong Section",
+          startsAt:
+            "2026-10-01T09:00:00.000Z",
+          endsAt:
+            "2026-10-01T10:00:00.000Z",
+        },
+      ),
+    ).rejects.toMatchObject({
+      code:
+        "FACULTY_TEACHING_SCOPE_REQUIRED",
     });
   });
 
