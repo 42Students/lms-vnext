@@ -22,6 +22,10 @@ const index = read("src/db/schema/index.ts");
 const candidate = read("docs/planning/db04-proposed-migration.sql");
 const storage = read("src/modules/storage/private-object-storage.ts");
 const verifier = read("src/modules/profile-verification/gcs-private-receipts.ts");
+const profiles = read("src/db/schema/profiles.ts");
+const facultyDocument = read("src/modules/people/faculty-profile-document.ts");
+const facultyAdapter = read("src/modules/people/faculty-profile-self.staged.ts");
+const facultySql = read("docs/planning/sql/db04-faculty-profile-document-staging.sql");
 const journal = JSON.parse(read("drizzle/meta/_journal.json"));
 const errors = [];
 
@@ -41,6 +45,39 @@ for (const token of [
   "profile_verifications_id_member_uq",
 ]) {
   if (!candidate.includes(token)) errors.push("Candidate SQL invariant missing: " + token);
+}
+
+for (const token of [
+  "profile_document jsonb",
+  "profile_document_version integer",
+  "faculty_profiles_profile_document_object_ck",
+  "faculty_profiles_profile_document_version_ck",
+]) {
+  if (!facultySql.includes(token)) errors.push("Faculty profile staged SQL invariant missing: " + token);
+}
+
+for (const token of [
+  "facultyProfileDocumentSchema",
+  "profileImageDocumentId",
+  "aadhaarLast4",
+  "panMasked",
+  "publications",
+  "awards",
+]) {
+  if (!facultyDocument.includes(token)) errors.push("Faculty profile document invariant missing: " + token);
+}
+if (facultyDocument.includes("resumeDocumentId")) {
+  errors.push("Faculty profile document must not add learner-only Resume parity");
+}
+
+for (const token of [
+  "assertPersistedPlatformPermission",
+  '"profile.self.manage"',
+  '"FACULTY_PROFILE_VERSION_CONFLICT"',
+  "profile_document_version",
+  "for update",
+]) {
+  if (!facultyAdapter.includes(token)) errors.push("Faculty profile staged adapter invariant missing: " + token);
 }
 
 for (const token of [
@@ -69,8 +106,13 @@ const registered = entries.filter((entry) =>
   typeof entry?.tag === "string" && entry.tag.toLowerCase().includes("db04"),
 );
 
+const facultyColumnsActive =
+  profiles.includes('profileDocument: jsonb("profile_document")') &&
+  profiles.includes('profileDocumentVersion: integer("profile_document_version")');
+
 if (!exported) {
   if (registered.length) errors.push("DB04 is journal-registered while its schema barrel export is absent");
+  if (facultyColumnsActive) errors.push("Faculty profile DB04 columns are active before DB04 migration registration");
   const drizzleDir = path.join(ROOT, "drizzle");
   for (const name of readdirSync(drizzleDir).filter((name) => name.endsWith(".sql"))) {
     const sql = readFileSync(path.join(drizzleDir, name), "utf8");
@@ -93,7 +135,13 @@ if (!exported) {
       for (const [, table] of pairs) {
         if (!sql.includes(table)) errors.push("Registered DB04 SQL missing table: " + table);
       }
+      if (!sql.includes("profile_document_version")) {
+        errors.push("Registered DB04 SQL missing Faculty profile document columns");
+      }
     }
+  }
+  if (!facultyColumnsActive) {
+    errors.push("DB04 is registered but Faculty profile document columns are absent from profiles.ts");
   }
 }
 
@@ -104,5 +152,5 @@ if (errors.length) {
 process.stdout.write(
   "DB04 promotion preflight: " +
     (exported ? "REGISTERED_SOURCE_ONLY" : "STAGED_READY") +
-    "; 6 target tables; runtime PostgreSQL replay is still required.\n",
+    "; 6 target tables + Faculty profile document columns; runtime PostgreSQL replay is still required.\n",
 );
