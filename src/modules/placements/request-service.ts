@@ -32,6 +32,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
 import {
   createPlacementRequestInputSchema,
@@ -412,6 +413,7 @@ export async function createPlacementRequest(
   rawInput: CreatePlacementRequestInput,
 ) {
   const membership = requireLearner(context);
+  await requireLearnerPlacementAccess(context);
   const input =
     createPlacementRequestInputSchema.parse(
       rawInput,
@@ -1101,6 +1103,7 @@ export async function listOwnPlacementRequests(
   context: RequestContext,
 ) {
   const membership = requireLearner(context);
+  await requireLearnerPlacementAccess(context);
   return requestListQuery()
     .where(
       eq(
@@ -1156,6 +1159,7 @@ export async function getLearnerPlacementRequestWorkspace(
   context: RequestContext,
 ) {
   const membership = requireLearner(context);
+  await requireLearnerPlacementAccess(context);
   const db = getDb();
 
   const [requests, rounds, offers] =
