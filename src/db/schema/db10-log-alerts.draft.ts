@@ -7,6 +7,11 @@
  * export. No runtime producer is claimed by this draft.
  *
  * Legacy evidence: V157, V158, V164 and LogAlertSignature/LogAlertState.
+ *
+ * V158's account=<numeric ID>/<ROLE> log marker is an opaque, role-typed
+ * legacy identity, NOT a foreign key to the vNext users table. Keep only an
+ * application-keyed hash of a *verified* typed identity for blast radius.
+ * Unauthenticated/untrusted markers do not supply a trusted account identity.
  */
 import { sql } from "drizzle-orm";
 import {
@@ -21,7 +26,6 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { users } from "./users";
 
 export const db10LogAlertSignatures = pgTable(
   "log_alert_signatures",
@@ -32,7 +36,8 @@ export const db10LogAlertSignatures = pgTable(
     sampleMessage: varchar("sample_message", { length: 500 }),
     firstSeenAt: timestamp("first_seen_at", { withTimezone: true }).notNull(),
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull(),
-    occurrenceCount: bigint("occurrence_count", { mode: "number" }).notNull().default(1),
+    // PostgreSQL bigint can exceed Number.MAX_SAFE_INTEGER. Never coerce into JS number.
+    occurrenceCount: bigint("occurrence_count", { mode: "bigint" }).notNull().default(1n),
     muted: boolean("muted").notNull().default(false),
     fixStatus: varchar("fix_status", { length: 16 }).notNull().default("OPEN"),
     fixedInCommit: varchar("fixed_in_commit", { length: 64 }),
@@ -71,14 +76,34 @@ export const db10LogAlertSignatureAccounts = pgTable(
     signatureId: uuid("signature_id")
       .notNull()
       .references(() => db10LogAlertSignatures.id, { onDelete: "cascade" }),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "restrict" }),
+    /** HMAC-SHA256 of the server-verified typed account identity; never a raw
+     * account ID, display name, phone or cross-tenant user FK. Unauthenticated
+     * logs have no account marker and do not create a blast-radius row. */
+    accountKeyHash: varchar("account_key_hash", { length: 64 }).notNull(),
     firstSeenAt: timestamp("first_seen_at", { withTimezone: true }).notNull(),
   },
   (t) => [
-    primaryKey({ columns: [t.signatureId, t.userId] }),
-    index("db10_log_alert_signature_accounts_user_idx").on(t.userId, t.firstSeenAt),
+    primaryKey({ columns: [t.signatureId, t.accountKeyHash] }),
+    index("db10_log_alert_signature_accounts_hash_idx").on(t.accountKeyHash, t.firstSeenAt),
+    check("db10_log_alert_signature_accounts_hash_ck",
+      sql`${t.accountKeyHash} ~ '^[0-9a-f]{64}
+  ],
+);
+
+export const db10LogAlertStates = pgTable(
+  "log_alert_states",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    stateKey: varchar("state_key", { length: 64 }).notNull(),
+    pollCursorAt: timestamp("poll_cursor_at", { withTimezone: true }),
+    adminLastViewedAt: timestamp("admin_last_viewed_at", { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("db10_log_alert_states_key_uq").on(t.stateKey),
+    check("db10_log_alert_states_key_ck", sql`length(trim(${t.stateKey})) > 0`),
+  ],
+);
+`),
   ],
 );
 
