@@ -14,6 +14,7 @@ import {
   placementApplicationScreenings,
   placementCompanyRelationships,
   placementCompanies,
+  placementDriveDayCoordinatorAssignments,
   placementJobs,
   placementJobRoleOptions,
   users,
@@ -397,6 +398,21 @@ export async function applyToPlacementJob(
       )) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_DEADLINE_PASSED");
       }
+      // The manager's coordinator assignment writer takes the same job-row
+      // lock. A learner cannot become both applicant and coordinator for one
+      // drive, including different assignment dates.
+      const [coordinator] = await tx.select({
+        id: placementDriveDayCoordinatorAssignments.id,
+      }).from(placementDriveDayCoordinatorAssignments)
+        .where(and(
+          eq(placementDriveDayCoordinatorAssignments.jobId, job.id),
+          eq(placementDriveDayCoordinatorAssignments.collegeId, job.collegeId),
+          eq(placementDriveDayCoordinatorAssignments.learnerMembershipId, membership.id),
+        )).limit(1);
+      if (coordinator) {
+        throw new PlacementsServiceError("PLACEMENT_COORDINATOR_APPLICANT_CONFLICT");
+      }
+
       const [liveRole] = await tx.select({
         id: placementJobRoleOptions.id,
         status: placementJobRoleOptions.status,
