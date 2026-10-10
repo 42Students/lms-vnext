@@ -104,6 +104,23 @@
       "vnextRuntimeSemanticVerified": 0,
       "interpretation": "Current legacy source table/workflow disposition, NOT VNext semantic parity or independent DB field testing",
       "sourceLedgerBlob": "96e9f9f47f2d58408ff1bbb680660d1245f65efa"
+    },
+    "tenantDomainTombstoneDraft": {
+      "pullRequest": 73,
+      "branch": "chat-02-db004-tenant-domain-tombstone",
+      "headSha": "19ef2488bbe71fdd36408b5ece202ec3c3f3c1fe",
+      "status": "DRAFT_CI_FAILED_UNREGISTERED",
+      "source": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 model/TenantDomain.java + BaseModel.java + TenantDomainRepository.java",
+      "proposedSql": "docs/planning/sql/db01-tenant-domain-tombstone-staging.sql",
+      "contract": "docs/planning/db01-tenant-domain-tombstone-contract.md",
+      "authoredStaticTest": "tests/unit/db01-domain-tombstone-contract.test.ts",
+      "authoredTestCases": 3,
+      "sourceConsistency": "PASS_IN_PROCESS_SOURCE_ONLY",
+      "ciRunNumber": 1507,
+      "ciRunId": 38085930214,
+      "ciConclusion": "failure",
+      "runtimeVerified": false,
+      "decisionRequired": "Keep all-time hostname uniqueness; coordinated API/resolver and DB tombstone activation; concurrency tests before promotion"
     }
   },
   "qualityGates": {
@@ -121,12 +138,14 @@
     "tests/integration/db01-tenant-identity-invariants.test.ts",
     "tests/db01-auth-handoff-contract.test.ts",
     "tests/integration/db01-identity-fk-invariants.test.ts",
-    "tests/db01-auth-staging-contract.test.mjs"
+    "tests/db01-auth-staging-contract.test.mjs",
+    "tests/unit/db01-domain-tombstone-contract.test.ts"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
     "GitHub CI is currently failing before workflow steps across unrelated main pushes and PR #65 (latest DB01 run #1393); no runner output is available, so authored database witnesses cannot be credited as executed.",
-    "DB-004 PR #65 remains draft: 14 authored PostgreSQL witnesses, 0 accepted runtime passes; CI run #1453 failed before retrievable steps."
+    "DB-004 PR #65 remains draft: 14 authored PostgreSQL witnesses, 0 accepted runtime passes; CI run #1453 failed before retrievable steps.",
+    "Draft PR #73 tombstone contract unregistered; CI #1507 failed; requires Chat 1 migration and later API/resolver atomic delete/filter decisions, 0 PostgreSQL passes."
   ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
@@ -137,7 +156,7 @@
     "DB-004 → Chat 1/issue #21: promote only one auth-attempt/handoff schema including parent composite unique/FKs and 2-minute TTL after PG replay; do not mix closed unmerged PR#61/#64.",
     "DB-004 → legacy security review: UserController /register / UserServiceImpl assigns ADMIN role, current security matcher appears only authenticated; no exploitation claim."
   ],
-  "nextAction": "Continue DB-004 on DATABASE: coordinate W01 staged tenant/auth migration parent composite constraints and disposable PostgreSQL integration; source-review remaining 150 unresolved DB01 candidates without clobbering DB02/04/09 workers; independently review legacy admin registration privilege path. Never mark staged schemas/test authorship DONE_VERIFIED.",
+  "nextAction": "Continue DB-004 within DATABASE only: W01 migration reviewer resolves reset safety and tombstone/branding/DNS/session schema; recover CI; execute and attest 14 DB01 PostgreSQL witnesses plus 3 tombstone static tests; finish 312 candidate field semantic proof, don't count source review as runtime parity.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -174,7 +193,10 @@
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102068335",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-auth-otp-handoff-contract.md",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/sql/db01-auth-tenant-composite-fks-staging.sql",
-    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-auth-staging-contract.test.mjs"
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-auth-staging-contract.test.mjs",
+    "https://github.com/42Students/lms-vnext/pull/73",
+    "https://github.com/42Students/lms-vnext/commit/19ef2488bbe71fdd36408b5ece202ec3c3f3c1fe",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102125261"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
