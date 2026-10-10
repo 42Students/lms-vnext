@@ -124,6 +124,20 @@ const facultyItems: ShellNavItem[] = [
     group: "account",
   },
   {
+    label: "Notifications",
+    href: "/teacher/notifications",
+    shortLabel: "N",
+    icon: "/assets/images/common/notification.svg",
+    group: "account",
+  },
+  {
+    label: "Class Schedule",
+    href: "/teacher/calendar",
+    shortLabel: "S",
+    icon: "/assets/images/common/calender.svg",
+    group: "tracking",
+  },
+  {
     label: "All Quizzes",
     href: "/teacher/allQuizzes",
     shortLabel: "Q",
@@ -138,13 +152,6 @@ const facultyItems: ShellNavItem[] = [
     icon: "/assets/images/common/assignment.svg",
     activeIcon: "/assets/images/common/assignment-active.svg",
     group: "learning",
-  },
-  {
-    label: "Class Schedule",
-    href: "/teacher/calendar",
-    shortLabel: "S",
-    icon: "/assets/images/common/calender.svg",
-    group: "tracking",
   },
 ];
 
