@@ -46,3 +46,41 @@ test("DB05 draft records legacy concurrency and progress-history contracts", () 
   assert.match(draft, /first_completed_at is immutable/);
   assert.match(draft, /version-aware|version=version\+1/i);
 });
+
+const discussionDraft = readFileSync(
+  join(root, "scripts/sql/db05-lesson-content-discussions.draft.sql"), "utf8"
+);
+
+test("DB05 keeps lesson content discussions separate from classroom delivery chat", () => {
+  assert.match(discussionDraft, /NOT A REGISTERED DRIZZLE MIGRATION/i);
+  assert.match(discussionDraft, /CREATE TABLE IF NOT EXISTS lesson_content_discussions/);
+  assert.doesNotMatch(discussionDraft, /CREATE TABLE(?: IF NOT EXISTS)? course_discussion_messages/);
+  assert.match(discussionDraft, /lesson_content_id uuid NOT NULL REFERENCES lesson_contents/);
+  assert.match(discussionDraft, /author_membership_id uuid NOT NULL REFERENCES college_memberships/);
+  assert.match(discussionDraft, /FOREIGN KEY \(parent_discussion_id, lesson_content_id\)/);
+  assert.match(discussionDraft, /db05_lesson_discussions_tenant_guard/);
+  assert.match(discussionDraft, /scoped_college_id IS DISTINCT FROM NEW\.college_id/);
+  assert.match(discussionDraft, /author_college_id IS DISTINCT FROM NEW\.college_id/);
+  assert.match(discussionDraft, /resolver_college_id IS DISTINCT FROM NEW\.college_id/);
+  const discussions = review.fields.filter((row) => row.source.startsWith("discussions."));
+  assert.equal(discussions.length, 16);
+  assert.ok(discussions.every((row) => row.classification === "UNREGISTERED_DRAFT"));
+  assert.ok(discussions.every((row) => row.semanticVerification === "NOT_VERIFIED"));
+});
+
+test("DB05 historical discussion extensions remain unverified", () => {
+  const snapshotOnly = [
+    "parent_discussion_id",
+    "discussion_status",
+    "is_faculty_answer",
+    "resolved_at",
+    "resolved_by",
+    "attachment_url",
+  ];
+  for (const col of snapshotOnly) {
+    const item = review.fields.find((row) => row.source === `discussions.${col}`);
+    assert.ok(item, col);
+    assert.equal(item.sourceContractStatus, "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN");
+    assert.equal(item.runtimeDatabaseVerification, "NOT_RUN");
+  }
+});
