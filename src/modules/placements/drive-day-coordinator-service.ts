@@ -959,58 +959,80 @@ export async function markDriveDayAttendance(
   }
 
   const db = getDb();
-  const [existing] = await db
-    .select({
-      id: placementRoundAttendance.id,
-    })
-    .from(placementRoundAttendance)
-    .where(
-      and(
-        eq(
-          placementRoundAttendance.roundId,
-          roundId,
-        ),
-        eq(
-          placementRoundAttendance.applicationId,
-          parsed.applicationId,
-        ),
-      ),
-    )
-    .limit(1);
+  return db.transaction(async (tx) => {
+    // The roster read is only a candidate projection; authorization must be
+    // rechecked with database row locks before an attendance write.
+    if (!roster.access.fullAccess) {
+      const member = context.membership;
+      if (!member) {
+        throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
+      }
+      const [assignment] = await tx.select({
+        id: placementDriveDayCoordinatorAssignments.id,
+      }).from(placementDriveDayCoordinatorAssignments)
+        .where(and(
+          eq(placementDriveDayCoordinatorAssignments.jobId, roster.round.jobId),
+          eq(placementDriveDayCoordinatorAssignments.collegeId, member.collegeId),
+          eq(placementDriveDayCoordinatorAssignments.learnerMembershipId, member.id),
+          eq(placementDriveDayCoordinatorAssignments.onDate, dateInIndia(now)),
+        )).for("share").limit(1);
+      const [round] = await tx.select({
+        scheduledAt: placementJobRounds.scheduledAt,
+        status: placementJobRounds.status,
+      }).from(placementJobRounds)
+        .where(and(
+          eq(placementJobRounds.id, roundId),
+          eq(placementJobRounds.jobId, roster.round.jobId),
+        )).for("share").limit(1);
+      if (!assignment || !round || !coordinatorRoundOnDutyDate({
+        scheduledAt: round.scheduledAt,
+        roundStatus: round.status,
+        dutyDate: dateInIndia(now),
+      })) {
+        throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
+      }
+    }
 
-  if (existing) {
-    const [updated] = await db
-      .update(placementRoundAttendance)
-      .set({
-        status: parsed.status,
-        room: parsed.room ?? null,
-        markedByUserId: context.user.id,
-        markedAt: now,
-        updatedAt: now,
-      })
-      .where(
-        eq(
-          placementRoundAttendance.id,
-          existing.id,
-        ),
-      )
-      .returning();
-    return updated;
-  }
+    const [candidate] = await tx.select({
+      id: placementApplications.id,
+    }).from(placementApplications)
+      .innerJoin(placementApplicationScreenings, eq(
+        placementApplicationScreenings.applicationId,
+        placementApplications.id,
+      ))
+      .where(and(
+        eq(placementApplications.id, parsed.applicationId),
+        eq(placementApplications.jobId, roster.round.jobId),
+        eq(placementApplications.status, "SUBMITTED"),
+        eq(placementApplicationScreenings.status, "SHORTLISTED"),
+      )).for("share").limit(1);
+    if (!candidate) {
+      throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_CANDIDATE_NOT_FOUND");
+    }
 
-  const [created] = await db
-    .insert(placementRoundAttendance)
-    .values({
+    // ON CONFLICT makes two simultaneous check-ins converge to one durable
+    // row rather than a unique-constraint error from SELECT -> INSERT.
+    const [written] = await tx.insert(placementRoundAttendance).values({
       roundId,
-      applicationId:
-        parsed.applicationId,
+      applicationId: parsed.applicationId,
       status: parsed.status,
       room: parsed.room ?? null,
       markedByUserId: context.user.id,
       markedAt: now,
       updatedAt: now,
-    })
-    .returning();
-
-  return created;
+    }).onConflictDoUpdate({
+      target: [
+        placementRoundAttendance.roundId,
+        placementRoundAttendance.applicationId,
+      ],
+      set: {
+        status: parsed.status,
+        room: parsed.room ?? null,
+        markedByUserId: context.user.id,
+        markedAt: now,
+        updatedAt: now,
+      },
+    }).returning();
+    return written;
+  });
 }
