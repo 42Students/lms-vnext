@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import {
   getCandidatePreferences,
   upsertCandidatePreferences,
@@ -12,6 +13,7 @@ export const runtime = "nodejs";
 export async function GET() {
   try {
     const context = await getCurrentRequestContext();
+    await requireLearnerPlacementAccess(context);
     const preferences =
       await getCandidatePreferences(context);
     return NextResponse.json({ preferences });
@@ -30,6 +32,7 @@ export async function PUT(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
+    await requireLearnerPlacementAccess(context);
     const body = await request.json();
     const preferences =
       await upsertCandidatePreferences(
