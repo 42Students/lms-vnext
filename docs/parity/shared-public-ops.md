@@ -317,3 +317,10 @@ A migration-gated Super Admin triage slice is now source-authored at the legacy 
 Intentional privacy deviation remains: legacy unauthenticated issue list/detail is **not** reproduced. Public/reporting identity is still unresolved; reporter intake, screenshots, saved views, bulk actions, similar issues, logs and quick report remain OPEN. The UI explicitly renders Report issue and Logs as pending rather than fake links.
 
 Authored evidence: `tests/unit/bug-tracker-admin-validation.test.ts`, `tests/db10-tracker-route-gates.test.mjs`, `tests/integration/db10-tracker-admin.test.ts`. **No TypeScript/Vitest/PostgreSQL/browser execution evidence in this session. DB10 draft tables remain unregistered; this slice is CODE_STAGED / MIGRATION_BLOCKED, not IMPLEMENTED or VERIFIED.**
+
+
+## W06 Announcements shared-operations staging — 2026-10-10
+
+Legacy `announcements` is now represented as a distinct DB10 draft model rather than being incorrectly treated as `in_app_notifications`. Source-authored code covers six audience types, explicit tenant scope, create/edit/retarget, schedule, expiry, pin, soft delete/restore and recipient visibility. Admin management pages are staged at `/college/announcements` and `/admin/announcements`; recipient read API is `GET /api/announcements/mine`. Every DB-backed route/page is migration-gated by `DB10_ANNOUNCEMENTS_READY=DB10_VERIFIED` and performs no table query while disabled.
+
+**State: CODE_STAGED / MIGRATION_BLOCKED.** W01 must register/replay the table; W02 must place the recipient feed into Learner/Faculty owned notification surfaces. Tests are authored but unexecuted. No announcement parity row is VERIFIED.

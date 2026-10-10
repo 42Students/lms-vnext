@@ -128,3 +128,8 @@ No schema or migration change. `src/modules/activity/date-boundary.ts` defines d
 ### W06 Tracker admin triage code stage (2026-10-10)
 
 DB10 bug-tracker draft consumers now exist for Super Admin list/detail/workflow/retest, but are guarded by `DB10_TRACKER_READY=DB10_VERIFIED`. Selected Super Admin college/org scope is applied server-side; non-Super Admin access is rejected. Workflow and retest updates use the pure legacy-compatible state machine, conditional `id + version` update and same-transaction immutable activity append. Detail attachment projection intentionally excludes storage keys. No DB schema barrel, migration or journal was modified; W01 remains migration owner. PostgreSQL tests are opt-in and were not run here.
+
+
+### W06 Announcements domain stage (2026-10-10)
+
+Legacy `announcements` (13 source fields including V127 schedule/expiry/pin) now has an isolated normalized Drizzle proposal in `db10-announcements.draft.ts` plus service/API/admin UI/recipient-read consumers. Explicit org/college scope is persisted; receiver_value becomes a typed UUID receiverId; is_deleted becomes actor-attributed soft-delete timestamps; optimistic version is additive. No schema barrel or Drizzle journal edit was made. See `database-parity-db10-announcements.md` for W01 activation and unexecuted tests.

@@ -510,3 +510,8 @@ The existing `/admin/people` list previously fetched only `limit=100, offset=0`.
 ### W06 Activity Center calendar-boundary correction — 2026-10-10
 
 The shared Super Admin/College Admin Activity Center now treats date-only From/To query values as full **Asia/Kolkata** days rather than UTC-midnight instants; explicit offset-aware datetimes remain exact and ambiguous timezone-less datetimes fail validation. This prevents a selected `To` date from hiding events later that day in India. Unit regression authored at `tests/unit/activity-date-boundary.test.ts`; **not executed**. This does not close the broader Super Admin activity/audit parity rows.
+
+
+### W06 Super Admin announcements staging — 2026-10-10
+
+A Super Admin announcement workspace is source-authored at `/admin/announcements`. Listing honors global→organization→college admin safety scope; creation requires a selected college because concrete audience options must be tenant-resolved. Retargeting re-authorizes both old and new scopes. Migration/runtime/browser gates remain OPEN; no completion claim.
