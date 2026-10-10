@@ -467,8 +467,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L15-008 | Waiting on employer link bucket | AssessmentsContent | assessments page | GAP |
 | L15-009 | No deadline bucket | AssessmentsContent | assessments page | GAP |
 | L15-010 | Overdue bucket | AssessmentsContent | assessments page | GAP |
-| L15-011 | Employer-link unavailable state | AssessmentsContent | career rounds | GAP |
-| L15-012 | External assessment launch | AssessmentsContent | career rounds | GAP |
+| L15-011 | Employer-link unavailable state | AssessmentsContent | career rounds | FIXED |
+| L15-012 | External assessment launch | AssessmentsContent | career rounds | FIXED |
 | L15-013 | Time-critical leave confirmation | AssessmentsContent | assessments page | GAP |
 | L15-014 | Local non-authoritative submitted reminder | assessments route | assessments page | GAP |
 | L15-015 | Undo/dismiss/change reminder | AssessmentsContent | assessments page | GAP |
@@ -498,6 +498,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L16-017 | Withdrawal request | InterviewsContent | learner requests | GAP |
 | L16-018 | Loading/error/empty | InterviewsContent | interviews page | GAP |
 | L16-019 | Mobile interview actions/modals | InterviewsContent responsive | interviews page | UNCHECKED |
+| L16-020 | Deterministic assessment vs interview round-kind classification | Rounds are typed TEST/VENDOR_TEST/GD/INTERVIEW; names editable | learner-career-rounds typed policy | FIXED |
 
 ## L17 — Career Calendar
 
