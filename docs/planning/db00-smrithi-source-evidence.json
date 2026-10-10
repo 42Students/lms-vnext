@@ -1,0 +1,950 @@
+{
+  "schemaVersion": 1,
+  "taskId": "DB-003",
+  "kind": "LEGACY_SOURCE_EVIDENCE_NOT_RUNTIME_VERIFICATION",
+  "capturedOn": "2026-10-11",
+  "sourceSystem": "42Students/lms",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceFiles": [
+    "src/test/resources/db/mysql-schema-snapshot.sql",
+    "docs/planning/database-parity-legacy-schema-snapshot.json",
+    "docs/planning/db-pass4-columns-db00_historical_and_engine.json",
+    "docs/planning/db00-historical-engine-disposition.json",
+    "docs/planning/database-parity-jpa-entity-census.json"
+  ],
+  "snapshotCaveat": "This is a checked-in legacy TEST MySQL schema snapshot, reportedly through V150 dated Sep 21 2026. Not a 2026-10-09 live schema. Newer V151–V194 migrations, Hibernate ddl-auto update, and new runtime triggers may change/drop tables. No business table rows were copied.",
+  "jpaCaveat": "Pinned 118-model Java annotation census contains no Smrithi-named @Entity; this does not rule out native SQL, detached/external producers, non-model packages, or deployed clients.",
+  "repoSearchCaveat": "GitHub code search of the pinned legacy repository for 'smrithi' / 'Smrithi' returned zero indexed matches on 2026-10-11. This is not a full repository content scan and cannot prove absence of producers or consumers.",
+  "requiresExplicitProductSignoff": true,
+  "declaredNoLegacyDataMigration": true,
+  "counts": {
+    "tables": 7,
+    "sourceFields": 91,
+    "unprovenRetirementDecisions": 7,
+    "verifiedRuntimeFields": 0
+  },
+  "tables": [
+    {
+      "table": "smrithi_application",
+      "sourceFieldCount": 28,
+      "fields": [
+        {
+          "column": "id",
+          "type": "int",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "academic_data",
+          "type": "json",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "json DEFAULT NULL",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ]
+        },
+        {
+          "column": "application_id",
+          "type": "varchar(255)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(255) NOT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "application_source",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "application_stage",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "application_status",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "career_data",
+          "type": "json",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "json DEFAULT NULL",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ]
+        },
+        {
+          "column": "college",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "decision_reason",
+          "type": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "text",
+          "riskFlags": []
+        },
+        {
+          "column": "email",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ]
+        },
+        {
+          "column": "is_account_active",
+          "type": "bit(1)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "is_email_verified",
+          "type": "bit(1)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ]
+        },
+        {
+          "column": "is_phone_verified",
+          "type": "bit(1)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ]
+        },
+        {
+          "column": "job_application_source",
+          "type": "varchar(50)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "job_slug",
+          "type": "varchar(32)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(32) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "last_pap_reengagement_date",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "learner_id",
+          "type": "int",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "int DEFAULT NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "name",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "pap_reengagement_count",
+          "type": "int",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "int DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "password_hash",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ]
+        },
+        {
+          "column": "phone",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": [
+            "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+          ]
+        },
+        {
+          "column": "rejection_reason",
+          "type": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "text",
+          "riskFlags": []
+        },
+        {
+          "column": "resubmission_count",
+          "type": "int",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "int DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "reviewed_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "reviewed_by",
+          "type": "int",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "int DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "is_deleted",
+          "type": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "tinyint(1) NOT NULL DEFAULT '0'",
+          "riskFlags": []
+        }
+      ],
+      "declaredIndexAndConstraints": [
+        "PRIMARY KEY (`id`)",
+        "UNIQUE KEY `UK_mhd9jj3u55fslpedkiivg7cgc` (`application_id`)",
+        "UNIQUE KEY `uq_smrithi_email` (`email`)",
+        "UNIQUE KEY `uq_smrithi_phone` (`phone`)"
+      ],
+      "highPrioritySemantics": [
+        "password_hash",
+        "email",
+        "phone",
+        "is_email_verified",
+        "is_phone_verified",
+        "academic_data",
+        "career_data",
+        "application_stage",
+        "application_status",
+        "learner_id"
+      ],
+      "finding": "Recruitment/application record, authentication-like hash and verification flags; decide if Smrithi external candidate onboarding is part of LMS vNext.",
+      "legacySourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "ledgerDisposition": "PENDING_PRODUCT_DECISION",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY",
+      "producerEvidence": "NOT_ESTABLISHED",
+      "consumerEvidence": "NOT_ESTABLISHED",
+      "runtimeDbPresence": "NOT_VERIFIED",
+      "vnextPersistenceDecision": "PENDING_PRODUCT_DECISION",
+      "safeToRetire": false,
+      "requiredNextEvidence": [
+        "Identify current deployed application/API/UI and external integrators that read or write this table, not just Java entity names.",
+        "Reconcile the V151–V194 migration chain and runtime schema metadata against the historical snapshot.",
+        "If retained, map every active field/constraint with tenant and data-security invariants and execute PostgreSQL tests; if retired, record explicit product approval and verify no live consumer."
+      ]
+    },
+    {
+      "table": "smrithi_college",
+      "sourceFieldCount": 7,
+      "fields": [
+        {
+          "column": "id",
+          "type": "int",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "is_deleted",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "riskFlags": []
+        },
+        {
+          "column": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "description",
+          "type": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "text",
+          "riskFlags": []
+        },
+        {
+          "column": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '1'",
+          "riskFlags": []
+        },
+        {
+          "column": "name",
+          "type": "varchar(255)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(255) NOT NULL",
+          "riskFlags": []
+        }
+      ],
+      "declaredIndexAndConstraints": [
+        "PRIMARY KEY (`id`)",
+        "UNIQUE KEY `UK_javptp6b7tj2fc54shkeoef5b` (`name`)"
+      ],
+      "highPrioritySemantics": [
+        "name",
+        "is_active",
+        "is_deleted"
+      ],
+      "finding": "Independent college reference catalog; determine whether separate Smrithi college lookup is actively consumed.",
+      "legacySourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "ledgerDisposition": "PENDING_PRODUCT_DECISION",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY",
+      "producerEvidence": "NOT_ESTABLISHED",
+      "consumerEvidence": "NOT_ESTABLISHED",
+      "runtimeDbPresence": "NOT_VERIFIED",
+      "vnextPersistenceDecision": "PENDING_PRODUCT_DECISION",
+      "safeToRetire": false,
+      "requiredNextEvidence": [
+        "Identify current deployed application/API/UI and external integrators that read or write this table, not just Java entity names.",
+        "Reconcile the V151–V194 migration chain and runtime schema metadata against the historical snapshot.",
+        "If retained, map every active field/constraint with tenant and data-security invariants and execute PostgreSQL tests; if retired, record explicit product approval and verify no live consumer."
+      ]
+    },
+    {
+      "table": "smrithi_college_keywords",
+      "sourceFieldCount": 2,
+      "fields": [
+        {
+          "column": "college_id",
+          "type": "int",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "int NOT NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "keyword",
+          "type": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(255) DEFAULT NULL",
+          "riskFlags": []
+        }
+      ],
+      "declaredIndexAndConstraints": [
+        "KEY `FKidhjh1kudpsrs1nked8i4ncte` (`college_id`)",
+        "CONSTRAINT `FKidhjh1kudpsrs1nked8i4ncte` FOREIGN KEY (`college_id`) REFERENCES `smrithi_college` (`id`)"
+      ],
+      "highPrioritySemantics": [
+        "college_id",
+        "keyword"
+      ],
+      "finding": "College autocomplete aliases with an explicit FK; map/retire together with college catalog only.",
+      "legacySourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "ledgerDisposition": "PENDING_PRODUCT_DECISION",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY",
+      "producerEvidence": "NOT_ESTABLISHED",
+      "consumerEvidence": "NOT_ESTABLISHED",
+      "runtimeDbPresence": "NOT_VERIFIED",
+      "vnextPersistenceDecision": "PENDING_PRODUCT_DECISION",
+      "safeToRetire": false,
+      "requiredNextEvidence": [
+        "Identify current deployed application/API/UI and external integrators that read or write this table, not just Java entity names.",
+        "Reconcile the V151–V194 migration chain and runtime schema metadata against the historical snapshot.",
+        "If retained, map every active field/constraint with tenant and data-security invariants and execute PostgreSQL tests; if retired, record explicit product approval and verify no live consumer."
+      ]
+    },
+    {
+      "table": "smrithi_education_type",
+      "sourceFieldCount": 9,
+      "fields": [
+        {
+          "column": "id",
+          "type": "int",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "is_deleted",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "riskFlags": []
+        },
+        {
+          "column": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "display_order",
+          "type": "int",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "int DEFAULT '0'",
+          "riskFlags": []
+        },
+        {
+          "column": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '1'",
+          "riskFlags": []
+        },
+        {
+          "column": "label",
+          "type": "varchar(100)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(100) NOT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "name",
+          "type": "varchar(50)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(50) NOT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "requires_institution_autocomplete",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "riskFlags": []
+        }
+      ],
+      "declaredIndexAndConstraints": [
+        "PRIMARY KEY (`id`)",
+        "UNIQUE KEY `UK_fqaqluhs5p9ahvicpt716omyf` (`name`)"
+      ],
+      "highPrioritySemantics": [
+        "name",
+        "display_order",
+        "requires_institution_autocomplete"
+      ],
+      "finding": "Education catalog with active/display-order/autocomplete behavior; verify external form consumers.",
+      "legacySourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "ledgerDisposition": "PENDING_PRODUCT_DECISION",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY",
+      "producerEvidence": "NOT_ESTABLISHED",
+      "consumerEvidence": "NOT_ESTABLISHED",
+      "runtimeDbPresence": "NOT_VERIFIED",
+      "vnextPersistenceDecision": "PENDING_PRODUCT_DECISION",
+      "safeToRetire": false,
+      "requiredNextEvidence": [
+        "Identify current deployed application/API/UI and external integrators that read or write this table, not just Java entity names.",
+        "Reconcile the V151–V194 migration chain and runtime schema metadata against the historical snapshot.",
+        "If retained, map every active field/constraint with tenant and data-security invariants and execute PostgreSQL tests; if retired, record explicit product approval and verify no live consumer."
+      ]
+    },
+    {
+      "table": "smrithi_notification_template",
+      "sourceFieldCount": 28,
+      "fields": [
+        {
+          "column": "id",
+          "type": "int",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "is_deleted",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "riskFlags": []
+        },
+        {
+          "column": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "action_url",
+          "type": "varchar(500)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "body",
+          "type": "text",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "text NOT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "channel",
+          "type": "varchar(20)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(20) NOT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "created_by",
+          "type": "int",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "int DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "description",
+          "type": "varchar(500)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "dlt_entity_id",
+          "type": "varchar(100)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(100) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "dlt_template_id",
+          "type": "varchar(100)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(100) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "example_data",
+          "type": "json",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "json DEFAULT NULL",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ]
+        },
+        {
+          "column": "external_template_id",
+          "type": "varchar(200)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(200) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "html_body",
+          "type": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "text",
+          "riskFlags": []
+        },
+        {
+          "column": "icon",
+          "type": "varchar(50)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "is_active",
+          "type": "bit(1)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "is_default",
+          "type": "bit(1)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "is_dlt_compliant",
+          "type": "bit(1)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "is_sample",
+          "type": "bit(1)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "bit(1) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "language",
+          "type": "varchar(10)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(10) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "merge_variable_mapping",
+          "type": "json",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "json DEFAULT NULL",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ]
+        },
+        {
+          "column": "notification_type",
+          "type": "varchar(50)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "sms_variable_format",
+          "type": "varchar(50)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(50) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "subject",
+          "type": "varchar(500)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "varchar(500) DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "template_key",
+          "type": "varchar(100)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(100) NOT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "updated_by",
+          "type": "int",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "int DEFAULT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "variable_schema",
+          "type": "json",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "json DEFAULT NULL",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ]
+        },
+        {
+          "column": "version",
+          "type": "int",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "int DEFAULT NULL",
+          "riskFlags": []
+        }
+      ],
+      "declaredIndexAndConstraints": [
+        "PRIMARY KEY (`id`)",
+        "UNIQUE KEY `uk_smrithi_template` (`template_key`,`channel`,`language`,`version`)",
+        "KEY `idx_smrithi_key_channel_active` (`template_key`,`channel`,`is_active`)",
+        "KEY `idx_smrithi_language` (`language`)"
+      ],
+      "highPrioritySemantics": [
+        "template_key",
+        "channel",
+        "language",
+        "version",
+        "dlt_entity_id",
+        "dlt_template_id",
+        "merge_variable_mapping",
+        "variable_schema",
+        "sms_variable_format"
+      ],
+      "finding": "Versioned multi-channel notification templates, DLT identifiers and merge schemas; must not be equated with generic LMS notification templates without producer/consumer review.",
+      "legacySourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "ledgerDisposition": "PENDING_PRODUCT_DECISION",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY",
+      "producerEvidence": "NOT_ESTABLISHED",
+      "consumerEvidence": "NOT_ESTABLISHED",
+      "runtimeDbPresence": "NOT_VERIFIED",
+      "vnextPersistenceDecision": "PENDING_PRODUCT_DECISION",
+      "safeToRetire": false,
+      "requiredNextEvidence": [
+        "Identify current deployed application/API/UI and external integrators that read or write this table, not just Java entity names.",
+        "Reconcile the V151–V194 migration chain and runtime schema metadata against the historical snapshot.",
+        "If retained, map every active field/constraint with tenant and data-security invariants and execute PostgreSQL tests; if retired, record explicit product approval and verify no live consumer."
+      ]
+    },
+    {
+      "table": "smrithi_program",
+      "sourceFieldCount": 9,
+      "fields": [
+        {
+          "column": "id",
+          "type": "int",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "is_deleted",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "riskFlags": []
+        },
+        {
+          "column": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "description",
+          "type": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "text",
+          "riskFlags": []
+        },
+        {
+          "column": "education_type",
+          "type": "varchar(255)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(255) NOT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "education_type_id",
+          "type": "int",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "int DEFAULT NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '1'",
+          "riskFlags": []
+        },
+        {
+          "column": "name",
+          "type": "varchar(255)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(255) NOT NULL",
+          "riskFlags": []
+        }
+      ],
+      "declaredIndexAndConstraints": [
+        "PRIMARY KEY (`id`)",
+        "UNIQUE KEY `UK9x2g86f593h41faaxt1dd71qt` (`name`,`education_type`)"
+      ],
+      "highPrioritySemantics": [
+        "education_type",
+        "education_type_id",
+        "name"
+      ],
+      "finding": "Education-type-scoped program names; education_type_id exists without declared FK in snapshot. Verify relation and deletion semantics.",
+      "legacySourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "ledgerDisposition": "PENDING_PRODUCT_DECISION",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY",
+      "producerEvidence": "NOT_ESTABLISHED",
+      "consumerEvidence": "NOT_ESTABLISHED",
+      "runtimeDbPresence": "NOT_VERIFIED",
+      "vnextPersistenceDecision": "PENDING_PRODUCT_DECISION",
+      "safeToRetire": false,
+      "requiredNextEvidence": [
+        "Identify current deployed application/API/UI and external integrators that read or write this table, not just Java entity names.",
+        "Reconcile the V151–V194 migration chain and runtime schema metadata against the historical snapshot.",
+        "If retained, map every active field/constraint with tenant and data-security invariants and execute PostgreSQL tests; if retired, record explicit product approval and verify no live consumer."
+      ]
+    },
+    {
+      "table": "smrithi_specialization",
+      "sourceFieldCount": 8,
+      "fields": [
+        {
+          "column": "id",
+          "type": "int",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        },
+        {
+          "column": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "is_deleted",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '0'",
+          "riskFlags": []
+        },
+        {
+          "column": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "sourceDefinition": "datetime(6) DEFAULT NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ]
+        },
+        {
+          "column": "description",
+          "type": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "text",
+          "riskFlags": []
+        },
+        {
+          "column": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "sourceDefinition": "tinyint(1) DEFAULT '1'",
+          "riskFlags": []
+        },
+        {
+          "column": "name",
+          "type": "varchar(255)",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "varchar(255) NOT NULL",
+          "riskFlags": []
+        },
+        {
+          "column": "program_id",
+          "type": "int",
+          "nullable": "NOT_NULL",
+          "sourceDefinition": "int NOT NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ]
+        }
+      ],
+      "declaredIndexAndConstraints": [
+        "PRIMARY KEY (`id`)"
+      ],
+      "highPrioritySemantics": [
+        "program_id",
+        "name"
+      ],
+      "finding": "Specialization has program_id without a declared FK in snapshot; verify producer linkage and integrity if active.",
+      "legacySourceClass": "LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION",
+      "ledgerDisposition": "PENDING_PRODUCT_DECISION",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT_ONLY",
+      "producerEvidence": "NOT_ESTABLISHED",
+      "consumerEvidence": "NOT_ESTABLISHED",
+      "runtimeDbPresence": "NOT_VERIFIED",
+      "vnextPersistenceDecision": "PENDING_PRODUCT_DECISION",
+      "safeToRetire": false,
+      "requiredNextEvidence": [
+        "Identify current deployed application/API/UI and external integrators that read or write this table, not just Java entity names.",
+        "Reconcile the V151–V194 migration chain and runtime schema metadata against the historical snapshot.",
+        "If retained, map every active field/constraint with tenant and data-security invariants and execute PostgreSQL tests; if retired, record explicit product approval and verify no live consumer."
+      ]
+    }
+  ]
+}
