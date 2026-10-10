@@ -607,7 +607,8 @@
         "docs/planning/sql/db09-crm-scoped-fk-candidate.sql",
         "scripts/verify-db09-crm-source.mjs",
         "docs/planning/db09-chat03-tenant-integrity-review.md",
-        "tests/db-parity-db09-tracker.test.mjs"
+        "tests/db-parity-db09-tracker.test.mjs",
+        "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
@@ -658,6 +659,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Chat 3 extends narrow claim to existing DB09 static test suite for CRM source grammar/duplicate declaration regression."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Chat 3 stages isolated DB09 cross-tenant collaboration FK migration candidate; no shared Drizzle migration or barrel edits."
         }
       ]
     },
