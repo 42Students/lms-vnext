@@ -1,0 +1,426 @@
+{
+  "schemaVersion": 2,
+  "phase": "DATABASE",
+  "updatedOn": "2026-10-11",
+  "queuePolicy": "Atomic same-file GitHub blob SHA compare-and-swap for claims; fetch current main file & SHA, modify only claimed task, update_file with original SHA; on conflict re-fetch/reselect. Do not claim work with overlapping edits simultaneously. Only one active task per chat. No automatic lease stealing.",
+  "sourceBaseline": "2026-10-10 inventory and six-chat issues",
+  "taskStates": [
+    "READY",
+    "CLAIMED",
+    "BLOCKED",
+    "IN_REVIEW",
+    "DONE_VERIFIED",
+    "RETIRED_APPROVED"
+  ],
+  "tasks": [
+    {
+      "id": "DB-001",
+      "phase": "DATABASE",
+      "title": "Unblock CI runner and disposable PostgreSQL",
+      "scope": "Verify runner allocation/permissions, restore executable CI plus isolated PostgreSQL test harness; record exact logs and no false passing tests",
+      "priority": 1,
+      "dependsOn": [],
+      "restriction": "CORE_INFRA",
+      "paths": [
+        ".github/workflows/**",
+        "scripts/db-test-prepare.ts"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-002",
+      "phase": "DATABASE",
+      "title": "Replay registered migration journal from zero",
+      "scope": "W01-only replay of Drizzle 0000..latest on clean PostgreSQL with schema/snapshot/FK/check/index inspection and documented reproducible outputs",
+      "priority": 1,
+      "dependsOn": [
+        "DB-001"
+      ],
+      "restriction": "MIGRATION_INTEGRATOR",
+      "paths": [
+        "drizzle/**",
+        "src/db/schema/index.ts"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-003",
+      "phase": "DATABASE",
+      "title": "Reconcile DB00 historical active-vs-retired",
+      "scope": "Close unresolved Smrithi and historical tables with source producer-consumer evidence and explicit approved dispositions",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db00-historical-engine-disposition.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-004",
+      "phase": "DATABASE",
+      "title": "Reconcile DB01 tenant and identity field semantics",
+      "scope": "Map active tenancy, users, memberships, account/role, organization and recruiter identity fields into canonical vNext structures; draft missing schema",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-005",
+      "phase": "DATABASE",
+      "title": "Reconcile DB02 academic and schedule schema",
+      "scope": "Map departments, programs, periods, cohorts, sections, enrollments, timetable, faculty assignments, promotions and historical lineage",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-006",
+      "phase": "DATABASE",
+      "title": "Reconcile DB03 groups/electives invariants",
+      "scope": "Audit 79 group/elective historical fields and all membership, waitlist, history, lock, seat, join/leave and project-group atomicity requirements",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/**",
+        "docs/planning/db-pass4-columns-db03_groups_and_electives.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-007",
+      "phase": "DATABASE",
+      "title": "Reconcile DB04 profile verification and private documents",
+      "scope": "Audit 103 source fields, verifier snapshots/consent/events and privacy; stage missing normalized schema and identity secure-receipt contract",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-008",
+      "phase": "DATABASE",
+      "title": "Reconcile DB05 courses/content persisted concepts",
+      "scope": "Map course authored display/lesson ordering/content targeting/discussions/videos/private assets and audit versioning; stage missing schemas",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db-pass4-columns-db05_courses_and_content.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-009",
+      "phase": "DATABASE",
+      "title": "Reconcile DB06 assessments and attendance persisted concepts",
+      "scope": "Map quiz attempts/answer snapshots, assignment receipt, grading/grade-audit, attendance correction, schedule sessions and state history",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-010",
+      "phase": "DATABASE",
+      "title": "Reconcile DB07 projects and history/task invariants",
+      "scope": "Review missing task comments/history, allocation, project-team atomicity, workspace delete/restore, multi-parent FKs and tenant-scoped events",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db07-w03-field-review.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-011",
+      "phase": "DATABASE",
+      "title": "Reconcile DB08 placement policy and outcomes",
+      "scope": "Review placement cohort eligibility, registration history/undo, offers/outcomes, paid access, Drive coordinator and season retirement constraints",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-012",
+      "phase": "DATABASE",
+      "title": "Reconcile DB09 TPO and recruiter CRM persistence",
+      "scope": "Map 279 source fields including recruiter lead-stage policy, pending grants, invitations, suppressions, messaging/calendar/privacy and reports",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-013",
+      "phase": "DATABASE",
+      "title": "Reconcile DB10 shared operational persistence",
+      "scope": "Map notifications/outbox, audit, announcements, tracker, scheduled leases, settings and external delivery retained/retired state",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db-pass4-columns-db10_shared_operations.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-014",
+      "phase": "DATABASE",
+      "title": "Cross-domain tenant FK integrity sweep",
+      "scope": "Audit multi-parent records, tenant-consistency triggers, cascade/soft-delete, unique constraints, snapshot version history across DB01–DB10",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-pass3-fk-audit.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-015",
+      "phase": "DATABASE",
+      "title": "Database state transition and race inventory",
+      "scope": "Audit concurrency/lock/optimistic version semantics for groups, academics, quizzes, projects, placements and shared communications",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-pass5-probe-manifest.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-016",
+      "phase": "DATABASE",
+      "title": "Private document, identity and storage schema safety",
+      "scope": "Cross-domain private object receipts, audit, sensitive profile/placement/assignment fields, retention, revocation and encryption controls",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-master.md"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-017",
+      "phase": "DATABASE",
+      "title": "Reconcile staged schemas and migration dependency order",
+      "scope": "W01 migration integrator maps DB01–DB10 staging drafts to registered journal entries, allocates sequencing and documents integration handoffs",
+      "priority": 3,
+      "dependsOn": [
+        "DB-002"
+      ],
+      "restriction": "MIGRATION_INTEGRATOR",
+      "paths": [
+        "drizzle/**",
+        "src/db/schema/index.ts"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-018",
+      "phase": "DATABASE",
+      "title": "Negative DB integration witness suite",
+      "scope": "Build and execute wrong-tenant/role, direct SQL, concurrency and missing-parent regression tests against approved schema once PG available",
+      "priority": 3,
+      "dependsOn": [
+        "DB-001"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "tests/integration/**",
+        "tests/db-parity-pass5.test.mjs"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-019",
+      "phase": "DATABASE",
+      "title": "Global active field disposition audit",
+      "scope": "Second-pass independent audit over all 2,829 source candidates ensuring active/mapped/retired/external disposition and no unjustified omissions",
+      "priority": 4,
+      "dependsOn": [
+        "DB-003",
+        "DB-004",
+        "DB-005",
+        "DB-006",
+        "DB-007",
+        "DB-008",
+        "DB-009",
+        "DB-010",
+        "DB-011",
+        "DB-012",
+        "DB-013"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-master.md"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    },
+    {
+      "id": "DB-020",
+      "phase": "DATABASE",
+      "title": "Fresh DB schema drift, readiness and phase-gate certification",
+      "scope": "Verify actual committed/live disposable schema, journal replay, source freeze, field ledger, integrity tests and zero unexplained blockers; prepare evidence for phase barrier",
+      "priority": 4,
+      "dependsOn": [
+        "DB-002",
+        "DB-017",
+        "DB-018",
+        "DB-019"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-master.md",
+        "docs/coordination/phase-state.json"
+      ],
+      "status": "READY",
+      "claimedBy": null,
+      "claimedAt": null,
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null
+    }
+  ]
+}
