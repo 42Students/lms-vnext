@@ -103,6 +103,7 @@ export async function requireLearnerPlacementAccess(
   const currentSections = await db.select({
     id: sections.id,
     cohortId: sections.cohortId,
+    status: sections.status,
   }).from(sectionEnrollments)
     .innerJoin(sections, and(
       eq(sections.id, sectionEnrollments.sectionId),
@@ -114,7 +115,8 @@ export async function requireLearnerPlacementAccess(
     )).limit(2);
   if (currentSections.length > 1 ||
       (currentSections[0] &&
-       currentSections[0].cohortId !== current.cohortId)) {
+       (currentSections[0].cohortId !== current.cohortId ||
+        currentSections[0].status !== "ACTIVE"))) {
     throw new AuthorizationError("placements.read");
   }
 
