@@ -54,8 +54,8 @@ CREATE INDEX profile_verification_events_created_idx ON profile_verification_eve
 CREATE TABLE profile_private_document_receipts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   owning_membership_id uuid NOT NULL REFERENCES college_memberships(id) ON DELETE RESTRICT,
-  purpose varchar(32) NOT NULL CHECK (purpose IN ('AADHAAR','PAN','MARKSHEET','RESUME','PROFILE_IMAGE')),
-  education_entry_id uuid,
+  purpose varchar(32) NOT NULL CHECK (purpose IN ('AADHAAR','PAN','MARKSHEET','RESUME','PROFILE_IMAGE','EDUCATION_CERTIFICATE','CERTIFICATION','EXPERIENCE_CERTIFICATE','OFFER_LETTER')),
+  related_entry_id uuid,
   private_object_key text NOT NULL CHECK (position('://' IN private_object_key)=0),
   object_generation varchar(80) NOT NULL,
   sha256_hex varchar(64) NOT NULL CHECK (length(sha256_hex)=64),
