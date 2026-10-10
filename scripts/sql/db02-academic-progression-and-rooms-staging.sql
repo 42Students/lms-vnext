@@ -25,7 +25,7 @@ CREATE INDEX program_terms_program_active_idx
   ON program_terms(program_id, is_active, term_number);
 
 CREATE FUNCTION db02_guard_program_term_bounds()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   max_terms integer;
 BEGIN
@@ -39,7 +39,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_program_term_bounds_guard
 BEFORE INSERT OR UPDATE OF program_id, term_number ON program_terms
@@ -199,7 +199,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
 -- Database-owned history: a direct SQL update cannot advance canonical state without
 -- producing a matching immutable event. Application code must NOT insert a duplicate event.
 CREATE FUNCTION db02_record_cohort_progression_event()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   INSERT INTO cohort_progression_events (
     cohort_id,
@@ -226,7 +226,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_cohort_progression_history
 AFTER UPDATE ON cohort_progression_state
