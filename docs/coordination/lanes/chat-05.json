@@ -6,17 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "PICKED",
+  "executionState": "IN_PROGRESS",
   "activeTaskId": "DB-006",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB006_CLAIMED",
+    "checkpointKind": "DB006_SOURCE_PARITY_CORRECTION_STAGED_IN_DRAFT_PR",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "bb204ff46c77c1c33b204b6ea4c4b9fe017651d4",
+    "observedMainSha": "003395f98b588ff1dd2eff24cf0617ce09c01231",
     "lastWorkerMergedSha": null,
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "CAS-picked global DATABASE DB-006 groups/electives reconciliation; no implementation or tests yet."
+    "stagedBranch": "chat5-db006-elective-program-oracle-20261011",
+    "stagedCommitSha": "f9c23a536f4da3a900fb0c17130225c6459391a5",
+    "draftPullRequest": 55,
+    "summary": "DB-006 source-oracle audit found vNext allowed cross-program elective joins contrary to legacy ElectiveService.classEligibilityError; staged code+negative PostgreSQL regression+audit doc in draft PR #55. No runtime tests executed; 79 field DB evidence and semester/year parity remain open."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -26,11 +29,19 @@
     "build": "NOT_VERIFIED",
     "browser": "NOT_VERIFIED"
   },
-  "lastAuthoredTests": [],
+  "lastAuthoredTests": [
+    "tests/integration/groups-db03-roster.test.ts (draft PR #55; cross-program denial and stale roster access; unexecuted)"
+  ],
   "lastExecutedPassingTests": [],
-  "blockers": [],
-  "handoffs": [],
-  "nextAction": "Reconcile DB03 79 source-field candidates and state-history, membership, waitlist, locking and project-group invariants. Stage findings safely without modifying Chat 1-owned migration/barrel files.",
+  "blockers": [
+    "DB006: clean disposable PostgreSQL migration replay and DB03 integration execution unavailable in this chat; draft PR #55 remains unverified.",
+    "DB006/DB02: semester/current-academic-year eligibility lacks a proven vNext persisted equivalent of legacy Batch.currentSemester/academicYear.",
+    "DB006: 79 field-level source-to-schema invariants not signed off; snapshot-only mappings are not PostgreSQL workflow verification."
+  ],
+  "handoffs": [
+    "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55."
+  ],
+  "nextAction": "Review draft PR #55, obtain lint/typecheck/build and isolated Postgres execution; then continue remaining DB03 79-field active semantics, source constraint and multi-parent invariants. Keep task DB-006 IN_PROGRESS until evidence exists.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -42,7 +53,8 @@
     "note": "Historical ownership/coverage snapshot, NOT a current worker assignment. Do not sum per-chat old domain counts."
   },
   "evidenceLinks": [
-    "https://github.com/42Students/lms-vnext/issues/25"
+    "https://github.com/42Students/lms-vnext/issues/25",
+    "https://github.com/42Students/lms-vnext/pull/55"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
