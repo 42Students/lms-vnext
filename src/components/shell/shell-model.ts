@@ -132,6 +132,13 @@ const facultyItems: ShellNavItem[] = [
     activeIcon: "/assets/images/common/assignment-active.svg",
     group: "learning",
   },
+  {
+    label: "Class Schedule",
+    href: "/teacher/calendar",
+    shortLabel: "S",
+    icon: "/assets/images/common/calender.svg",
+    group: "tracking",
+  },
 ];
 
 const mentorItems: ShellNavItem[] = [
