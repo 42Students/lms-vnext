@@ -123,7 +123,7 @@ CREATE TABLE cohort_progression_events (
   to_academic_year_start integer,
   from_period_id uuid REFERENCES academic_periods(id) ON DELETE RESTRICT,
   to_period_id uuid REFERENCES academic_periods(id) ON DELETE RESTRICT,
-  actor_user_id uuid REFERENCES users(id) ON DELETE SET NULL,
+  actor_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
   reason text,
   state_version bigint NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -235,6 +235,55 @@ FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
 -- State updates still need a compare-and-set predicate (cohort_id + expected version)
 -- in the service transaction. The DB trigger guarantees monotonicity/version/history;
 -- the update predicate decides the single concurrent winner.
+
+-- An explicit event is only valid when written by the cohort-state AFTER UPDATE
+-- trigger. Application accounts must not forge, mutate or delete the audit trail.
+-- This is a staging defense, not a substitute for restricting schema/DDL privileges.
+CREATE FUNCTION db02_guard_progression_event_immutability()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF TG_OP = 'INSERT' AND pg_trigger_depth() >= 2 THEN
+    RETURN NEW;
+  END IF;
+  RAISE EXCEPTION 'Cohort progression events are database-owned and immutable'
+    USING ERRCODE = '23514';
+END;
+$;
+
+CREATE TRIGGER db02_cohort_progression_events_immutable
+BEFORE INSERT OR UPDATE OR DELETE ON cohort_progression_events
+FOR EACH ROW EXECUTE FUNCTION db02_guard_progression_event_immutability();
+
+-- Ensure every newly created cohort has exactly one canonical term/year row.
+-- The initial July-boundary year is only a default; an explicit user-supplied
+-- legacy year override still needs a reviewed cohort creation API contract.
+CREATE FUNCTION db02_initialize_cohort_progression_state()
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  start_day date;
+  start_year integer;
+BEGIN
+  SELECT start_date INTO start_day FROM academic_periods
+   WHERE id = NEW.start_period_id;
+  IF start_day IS NULL THEN
+    RAISE EXCEPTION 'Cohort start academic period is missing'
+      USING ERRCODE = '23503';
+  END IF;
+  start_year := EXTRACT(YEAR FROM start_day)::integer;
+  IF EXTRACT(MONTH FROM start_day) < 7 THEN
+    start_year := start_year - 1;
+  END IF;
+  INSERT INTO cohort_progression_state (
+    cohort_id, current_term_number, current_academic_year_start,
+    current_period_id, version
+  ) VALUES (NEW.id, 1, start_year, NEW.start_period_id, 0);
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_cohort_progression_initialize
+AFTER INSERT ON cohorts
+FOR EACH ROW EXECUTE FUNCTION db02_initialize_cohort_progression_state();
 
 -- ---------------------------------------------------------------------------
 -- 3) Lecture halls as tenant-owned resources
