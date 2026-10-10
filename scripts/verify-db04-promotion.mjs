@@ -5,7 +5,7 @@ const ROOT = process.cwd();
 const pairs = [
   ["profileVerifications", "profile_verifications"],
   ["profileVerificationEvents", "profile_verification_events"],
-  ["learnerPrivateDocumentReceipts", "learner_private_document_receipts"],
+  ["profilePrivateDocumentReceipts", "profile_private_document_receipts"],
   ["profileVerificationSettings", "profile_verification_settings"],
   ["profileVerificationTpoGrants", "profile_verification_tpo_grants"],
   ["profileVerificationAcademicMarks", "profile_verification_academic_marks"],
