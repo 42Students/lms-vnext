@@ -45,7 +45,7 @@ export async function ProjectAdminAtRiskPage({
   const context = await getCurrentRequestContext();
   const query: ProjectAdminCollectionQuery = {
     q: one(searchParams.q),
-    status: one(searchParams.status),
+    status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
     page: Number(one(searchParams.page) ?? 1),
     pageSize: Number(
       one(searchParams.pageSize) ?? 25,
