@@ -38,11 +38,9 @@ import { CoursesServiceError } from "@/modules/courses/errors";
 import {
   listActiveDeliveryLearners,
 } from "@/modules/courses/delivery-roster";
+import { indiaAttendanceMonthWindow } from "./month-window";
 
 const uuid = z.string().uuid();
-const monthSchema = z
-  .string()
-  .regex(/^\d{4}-(0[1-9]|1[0-2])$/);
 const correctionSchema = z.object({
   collegeId: uuid,
   deliveryId: uuid,
@@ -260,19 +258,6 @@ async function requireAdminDelivery(
   };
 }
 
-function monthWindow(monthInput: string) {
-  const month = monthSchema.parse(monthInput);
-  const [year, number] =
-    month.split("-").map(Number);
-  const start = new Date(
-    Date.UTC(year!, number! - 1, 1),
-  );
-  const end = new Date(
-    Date.UTC(year!, number!, 1),
-  );
-  return { month, start, end };
-}
-
 export async function getAdminAttendanceGrid(
   context: RequestContext,
   rawInput: {
@@ -287,7 +272,7 @@ export async function getAdminAttendanceGrid(
       rawInput.collegeId,
       rawInput.deliveryId,
     );
-  const window = monthWindow(rawInput.month);
+  const window = indiaAttendanceMonthWindow(rawInput.month);
 
   const sessions = await getDb()
     .select({
