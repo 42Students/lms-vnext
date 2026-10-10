@@ -158,6 +158,22 @@ describe("W04 coordinator same-day / tenant authorization", () => {
       applicationId: application.id, status: "PRESENT",
     }, dutyNow);
     expect(marked.status).toBe("PRESENT");
+    // Concurrent retry from two mobile sessions must not throw a unique
+    // constraint error or create duplicate attendance rows.
+    const retries = await Promise.all([
+      markDriveDayAttendance(coordinator, todayRound.id, {
+        applicationId: application.id, status: "PRESENT",
+      }, dutyNow),
+      markDriveDayAttendance(coordinator, todayRound.id, {
+        applicationId: application.id, status: "PRESENT",
+      }, dutyNow),
+    ]);
+    expect(retries.every(row => row.status === "PRESENT")).toBe(true);
+    const count = await pool.query<{ total: string }>(
+      "select count(*)::text as total from placement_round_attendance where round_id=$1 and application_id=$2",
+      [todayRound.id, application.id],
+    );
+    expect(count.rows[0]?.total).toBe("1");
   });
 
   it("revokes roster access immediately when assignment is removed", async () => {
