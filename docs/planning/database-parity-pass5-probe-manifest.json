@@ -444,9 +444,10 @@
     "Negative inserts, concurrent races, migration replay, permission denial and real catalog comparison remain untested.",
     "Run only on a disposable PostgreSQL database seeded with synthetic non-sensitive records.",
     "Join predicates and source columns verified against committed Drizzle 0036, NOT live schema.",
-    "raceProbes are source-audit requirements, not executed results. SOURCE_PROTECTED_NEEDS_EXECUTION does not mean PASS; SOURCE_CONFIRMED_GAP requires implementation before DB phase certification; DRAFT_UNIMPLEMENTED has no registered runtime contract."
+    "raceProbes are source-audit requirements, not executed results. SOURCE_PROTECTED_NEEDS_EXECUTION does not mean PASS; SOURCE_CONFIRMED_GAP requires implementation before DB phase certification; DRAFT_UNIMPLEMENTED has no registered runtime contract.",
+    "Race source protection is not acceptance: every P5-R* scenario remains NOT_RUN until the disposable PostgreSQL gate is available."
   ],
-  "raceAuditObservedMain": "58bc859e292b8f9ccaa1ff21670b3bc0f49b107d",
+  "raceAuditObservedMain": "c54b37a14b7f55bbb00997af4605e8af1ed1070c",
   "raceProbes": [
     {
       "id": "P5-R01",
@@ -521,21 +522,21 @@
     {
       "id": "P5-R08",
       "domain": "SHARED_OPS",
-      "state": "DRAFT_UNIMPLEMENTED",
+      "state": "SOURCE_PROTECTED_DRAFT_UNMIGRATED",
       "purpose": "Scheduled-job lease takeover fences a stale worker",
-      "source": "src/db/schema/db10-scheduled-job-leases.draft.ts",
-      "currentProtection": "Draft adds locked_until and a positive fence but no registered migration or acquire/renew/release producer exists.",
-      "requiredWitness": "Worker A acquires fence n and stalls past expiry; worker B acquires n+1; any later A heartbeat/finalization using fence n must fail and B must retain ownership.",
+      "source": "src/modules/operations/postgres-scheduled-job-lease-store.ts; src/db/schema/db10-scheduled-job-leases.draft.ts",
+      "currentProtection": "The PostgreSQL lease store uses DB clock authority, atomic INSERT..ON CONFLICT takeover, monotonically increasing fence, and holder+fence+unexpired predicates for renew/current checks. The schema remains a draft outside the active migration journal.",
+      "requiredWitness": "After the draft is registered on disposable PostgreSQL: worker A acquires fence n and stalls past expiry; worker B acquires n+1; A renew/current/finalization using n must fail while B retains ownership.",
       "executionEvidence": "NOT_RUN"
     },
     {
       "id": "P5-R09",
       "domain": "SHARED_OPS",
-      "state": "DRAFT_UNIMPLEMENTED",
+      "state": "PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP",
       "purpose": "Outbound dispatcher retry/claim races do not create duplicate logical sends or allow stale claim updates",
-      "source": "src/db/schema/db10-outbound-messages.draft.ts",
-      "currentProtection": "Draft has idempotency_key, claim expiry and claim_fence, but no registered schema or verified sender state machine.",
-      "requiredWitness": "Race two claimers on one due message and separately simulate provider acceptance followed by worker crash/retry; prove one current claim owner, monotonic fence and stable logical idempotency key.",
+      "source": "src/modules/operations/outbound-delivery-queue.ts; src/db/schema/db10-outbound-messages.draft.ts",
+      "currentProtection": "Queue insertion is atomic/idempotent by unique idempotency_key, validates request_digest on duplicate, and refuses an active suppression at enqueue time. The schema remains a draft and no verified dispatcher/claimer state machine currently closes claim/provider/retry races.",
+      "requiredWitness": "After registration and dispatcher implementation: race two enqueue calls and two claimers for one logical message; prove one logical message, one current claim owner, monotonic fence, stable request digest, and no duplicate provider send after crash/retry.",
       "executionEvidence": "NOT_RUN"
     },
     {
@@ -547,6 +548,162 @@
       "currentProtection": "Draft has unique (environment,signature_hash), occurrence_count and triage fields but no runtime upsert producer.",
       "requiredWitness": "Insert the same new signature concurrently from multiple workers; prove one signature row, exact occurrence_count increment, monotonic first/last seen and no lost FIXED→regressed transition.",
       "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R11",
+      "domain": "ACADEMICS",
+      "state": "SOURCE_CONFIRMED_GAP",
+      "purpose": "Schedule creation/update must not commit after its academic period is concurrently CLOSED",
+      "source": "src/modules/academics/schedule-service.ts; src/modules/academics/period-service.ts",
+      "currentProtection": "createSectionScheduleEvent/updateSectionScheduleEvent load and validate period status before the write transaction. The schedule transaction does not lock/re-read academic_periods, while transitionAcademicPeriod can CAS ACTIVE->CLOSED independently.",
+      "requiredWitness": "T1 validates an ACTIVE period and pauses; T2 CLOSES the period and commits; T1 resumes create/update. T1 must fail or serialize behind the period transition rather than commit a SCHEDULED event into a CLOSED period.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R12",
+      "domain": "ACADEMICS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Concurrent COMPLETE versus WITHDRAW on one learner program enrollment leaves parent and active section enrollments in one coherent terminal state",
+      "source": "src/modules/academics/enrollment-service.ts",
+      "currentProtection": "The transaction first updates active child section enrollments and then CAS-updates the parent only from ACTIVE. A losing parent CAS throws, rolling back its child updates with the transaction.",
+      "requiredWitness": "Race COMPLETE and WITHDRAW from ACTIVE; exactly one parent transition commits and every formerly-active section enrollment has the same terminal status as the winning parent, with no mixed child state.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R13",
+      "domain": "COURSES",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Concurrent assignment submissions cannot double-submit a learner or consume one upload receipt twice",
+      "source": "src/modules/courses/assignment-submission-service.ts",
+      "currentProtection": "Submission holds a shared assignment lock, rechecks persisted learner identity/role, locks FILE upload receipts FOR UPDATE, conditionally consumes an unrevoked/unconsumed receipt, and relies on assignment_submissions_assignment_membership_uq for one learner submission.",
+      "requiredWitness": "Race two submissions for one learner/assignment, including two uses of the same FILE receipt. Exactly one submission/receipt consumption commits, no orphan file row remains, and the loser maps to the expected conflict.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R14",
+      "domain": "PROJECTS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Two concurrent sprint starts/reopens cannot create more than one ACTIVE sprint for a project",
+      "source": "src/modules/projects/lifecycle-service.ts",
+      "currentProtection": "Lifecycle mutations lock the project then target sprint, inspect active sibling rows under lock, use state CAS, and have project_sprints_active_project_uq as a final invariant.",
+      "requiredWitness": "Race starts of two PLANNED sprints (and separately a reopen against a start); prove at most one ACTIVE sprint and coherent project/release state.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R15",
+      "domain": "PLACEMENTS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Application submission cannot win against a concurrent job close/archive, role deactivation, or drive-day coordinator assignment",
+      "source": "src/modules/placements/application-service.ts",
+      "currentProtection": "The application transaction locks/rechecks the job and selected role; the coordinator writer is documented to take the same job-row lock; insert uses conflict-safe application uniqueness.",
+      "requiredWitness": "Pause application after precheck and concurrently close/archive job, deactivate role, or assign the learner as coordinator. Whichever conflicting mutation orders first must make the incompatible application fail, with no screening/history/event residue.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R16",
+      "domain": "PLACEMENTS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Eligibility bulk decide, later decide, and undo serialize without stale undo or split current/event history",
+      "source": "src/modules/placements/batch-participation-service.ts",
+      "currentProtection": "Every eligibility writer/undo takes the college row FOR UPDATE. Undo verifies latest event/current state for every touched scope before modifying any row, then writes current state plus append-only reversal events in one transaction.",
+      "requiredWitness": "Race DECIDE/DECIDE and DECIDE/UNDO over overlapping scopes; prove serialized current decisions, append-only ordered events, and stale undo rejection without partial reversal.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R17",
+      "domain": "PLACEMENTS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Offer issuance and response races cannot create duplicate active offers or contradictory ACCEPTED/DECLINED histories",
+      "source": "src/modules/placements/offer-service.ts",
+      "currentProtection": "Offer issuance runs SERIALIZABLE, locks application/screening and rechecks round readiness; response locks the offer FOR UPDATE and CAS-transitions from ISSUED. Joining outcome creation is conflict-safe.",
+      "requiredWitness": "Race two offer issuers, then separately ACCEPT versus DECLINE on one ISSUED offer. Prove one active version/one terminal response and exactly matching history/activity rows.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R18",
+      "domain": "SHARED_OPS",
+      "state": "SOURCE_PROTECTED_DRAFT_UNMIGRATED",
+      "purpose": "Concurrent announcement edit/delete/restore cannot silently overwrite a newer version",
+      "source": "src/modules/announcements/service.ts; src/db/schema/db10-announcements.draft.ts",
+      "currentProtection": "Mutations require expectedVersion and update with id+version plus deleted-state predicates; zero-row update becomes STALE_VERSION. Schema is still a draft, so runtime protection is not registered.",
+      "requiredWitness": "After migration registration, race edit/edit, edit/delete and restore/delete from one version; exactly one version increment wins and the loser returns STALE_VERSION.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R19",
+      "domain": "SHARED_OPS",
+      "state": "SOURCE_PROTECTED_DRAFT_UNMIGRATED",
+      "purpose": "Bug-tracker workflow updates cannot lose a concurrent change or commit state without its immutable activity",
+      "source": "src/modules/bug-tracker/admin-service.ts; src/db/schema/db10-bug-tracker.draft.ts",
+      "currentProtection": "Admin workflow update runs in one transaction, computes a state-machine transition, CAS-updates by loaded version, then appends activity; stale version aborts the transaction. Schema is not registered.",
+      "requiredWitness": "After migration registration, race two workflow transitions from the same version; one wins, one is STALE_VERSION, and only the committed transition has a matching activity row.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R20",
+      "domain": "SHARED_OPS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Duplicate in-app delivery and concurrent read acknowledgement remain idempotent",
+      "source": "src/modules/activity/notification-service.ts; drizzle/0028_activity_notifications_foundation.sql",
+      "currentProtection": "Delivery uses unique(user_id,event_id)+ON CONFLICT DO NOTHING; read uses read_at IS NULL conditional update and refetches the committed row if another reader wins.",
+      "requiredWitness": "Race duplicate delivery for one user/event and race two mark-read calls; prove one notification row, accurate duplicate accounting, and one durable read timestamp with both callers observing committed state.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R21",
+      "domain": "SHARED_OPS",
+      "state": "SOURCE_CONFIRMED_GAP",
+      "purpose": "A suppression created after enqueue but before provider dispatch must prevent the send",
+      "source": "src/modules/operations/outbound-delivery-queue.ts",
+      "currentProtection": "The queue explicitly documents that enqueue-time suppression is insufficient because unsubscribe/bounce can race after insertion; every sender MUST re-check durable suppression before dispatch. No verified sender currently exists.",
+      "requiredWitness": "After dispatcher implementation, enqueue unsuppressed message, insert suppression before claim/send, then run dispatcher. Provider must not be called and the row must end in a non-send suppressed state.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R22",
+      "domain": "ACADEMICS",
+      "state": "SOURCE_POLICY_UNDECIDED",
+      "purpose": "Concurrent edits to one scheduled event need an explicit lost-update policy",
+      "source": "src/modules/academics/schedule-service.ts",
+      "currentProtection": "updateSectionScheduleEvent CAS-checks only status=SCHEDULED. Two editors can both read the same event and sequentially overwrite overlapping fields with no version/expectedUpdatedAt token.",
+      "requiredWitness": "Define whether last-write-wins is intentional. If not, add optimistic versioning and race two edits from the same version so one fails stale; if yes, record the policy and test field-level merge/overwrite expectations.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R23",
+      "domain": "GROUPS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Leave/waitlist promotion racing a new join cannot overfill the group or promote two learners into one seat",
+      "source": "src/modules/groups/service.ts",
+      "currentProtection": "Join and leave/promotion paths serialize through the same group FOR UPDATE lock (and elective slot first when applicable) before capacity/waitlist state changes and event writes.",
+      "requiredWitness": "With a full group and waitlist, race an ACTIVE leave against a new join; prove capacity is never exceeded, at most one learner consumes the released seat, waitlist positions remain coherent and events match committed states.",
+      "executionEvidence": "NOT_RUN"
     }
-  ]
+  ],
+  "raceAudit": {
+    "taskId": "DB-015",
+    "chatNumber": 5,
+    "reviewedOn": "2026-10-11",
+    "kind": "SOURCE_AUDITED_CONCURRENCY_AND_STATE_TRANSITION_WITNESSES_NOT_EXECUTED",
+    "totalScenarios": 23,
+    "stateCounts": {
+      "SOURCE_CONFIRMED_GAP": 4,
+      "SOURCE_PROTECTED_NEEDS_EXECUTION": 13,
+      "SOURCE_PROTECTED_DRAFT_UNMIGRATED": 3,
+      "PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP": 1,
+      "DRAFT_UNIMPLEMENTED": 1,
+      "SOURCE_POLICY_UNDECIDED": 1
+    },
+    "runtimeVerified": 0,
+    "blockingGaps": [
+      "P5-R01",
+      "P5-R02",
+      "P5-R09",
+      "P5-R10",
+      "P5-R11",
+      "P5-R21",
+      "P5-R22"
+    ],
+    "note": "Source protection is not a PASS. Every scenario requires disposable-PostgreSQL execution through the negative witness gate; confirmed gaps require implementation or explicit policy before DATABASE certification."
+  }
 }
