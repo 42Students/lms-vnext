@@ -184,3 +184,30 @@ test("DB06 source-backed target gaps cannot disappear without an explicit decisi
     "NORMALIZED_TO_HISTORY_AND_STATUS",
   );
 });
+
+
+test("DB06 reconciliation includes post-V150 attendance-session persistence", () => {
+  const postSnapshot =
+    ledger.reconciliation.snapshotBoundary?.postSnapshotDb06Evidence ?? [];
+  const attendanceMarked = postSnapshot.find(
+    (entry) =>
+      entry.migration ===
+        "src/main/resources/db/migration/V156__class_schedule_attendance_marked.sql" &&
+      entry.legacyTable === "class_schedule" &&
+      entry.legacyColumn === "attendance_marked_at",
+  );
+
+  assert.ok(attendanceMarked, "V156 attendance_marked_at must not disappear from DB06 reconciliation");
+  assert.equal(
+    attendanceMarked.sourceDisposition,
+    "ACTIVE_CROSS_DOMAIN_SOURCE_CONTRACT",
+  );
+  assert.match(
+    attendanceMarked.normalizedVnextMapping,
+    /attendance_sessions\.status/,
+  );
+  assert.equal(
+    attendanceMarked.mappingStatus,
+    "SOURCE_MAPPED_RUNTIME_UNVERIFIED",
+  );
+});
