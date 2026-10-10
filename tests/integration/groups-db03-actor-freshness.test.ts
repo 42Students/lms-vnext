@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import { createGroup, joinGroup, leaveGroup, transitionGroup } from "@/modules/groups/service";
 import { upsertGroupRule } from "@/modules/groups/rules-service";
+import { createElectiveSlot, createElectiveOffering } from "@/modules/electives/service";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -15,6 +16,8 @@ const pool = new Pool({connectionString:databaseUrl,max:2});
 type Account = { userId:string; membershipId:string; context:RequestContext };
 const accounts: Account[] = [];
 const groups: string[] = [];
+const slots: string[] = [];
+const programs: string[] = [];
 const label=()=> "DB03-ACTOR-" + randomUUID();
 
 async function newActor(role: "LEARNER" | "COLLEGE_ADMIN"): Promise<Account> {
@@ -49,6 +52,12 @@ afterAll(async()=>{
     if(events.rows[0].n!==0) throw new Error("Rejected DB03 actor write unexpectedly emitted events");
     await pool.query("DELETE FROM lms_group_members WHERE group_id=$1",[groupId]);
     await pool.query("DELETE FROM lms_groups WHERE id=$1",[groupId]);
+  }
+  for(const slotId of slots.reverse()) {
+    await pool.query("DELETE FROM elective_slots WHERE id=$1",[slotId]);
+  }
+  for(const programId of programs.reverse()) {
+    await pool.query("DELETE FROM programs WHERE id=$1",[programId]);
   }
   for(const a of accounts.reverse()) {
     await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[a.membershipId]);
@@ -116,4 +125,33 @@ describe("DB03 actor persistence guards against stale request contexts",()=>{
     await expect(joinGroup(actor.context,group.id,actor.membershipId))
       .rejects.toMatchObject({code:"GROUP_ACTOR_NOT_AUTHORIZED"});
   });
+  it("blocks revoked college admins in elective slot and offering writers",async()=>{
+    const actor=await newActor("COLLEGE_ADMIN");
+    const programId=randomUUID();
+    programs.push(programId);
+    await pool.query(
+      "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
+      [programId,SEED_IDS.departmentA,label(),label()],
+    );
+    const slotInput={collegeId:SEED_IDS.collegeA,programId,
+      semesterNumber:1,name:label(),credits:3,minPick:1,maxPick:1};
+    const seedAdmin:RequestContext={
+      user:{id:SEED_IDS.collegeAdminUser,identityUid:"seed-college-admin",
+        platformStatus:"ACTIVE",systemRoles:[]},
+      membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
+        organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
+    };
+    const slot=await createElectiveSlot(seedAdmin,slotInput);
+    slots.push(slot.id);
+    await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[actor.membershipId]);
+    await expect(createElectiveSlot(actor.context,{...slotInput,name:label()}))
+      .rejects.toMatchObject({code:"GROUP_ACTOR_NOT_AUTHORIZED"});
+    await expect(createElectiveOffering(actor.context,{
+      slotId:slot.id,courseId:randomUUID(),groupId:randomUUID(),
+      backedDeliveryId:randomUUID(),
+    })).rejects.toMatchObject({code:"GROUP_ACTOR_NOT_AUTHORIZED"});
+    const rows=await pool.query("SELECT count(*)::int AS n FROM elective_offerings WHERE slot_id=$1",[slot.id]);
+    expect(rows.rows[0].n).toBe(0);
+  });
+
 });
