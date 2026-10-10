@@ -99,7 +99,17 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "normalized/persisted YYYY-YY; promotion may advance year and electives compare start-year."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_CANONICAL_PERSISTED_STATE",
+              "targetProposal": "cohort_progression_state",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/cohort-service.ts@20d9cc788679a482f92f57f14a98e05e43713e35",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -215,7 +225,17 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "starts at 1; promotion compare-and-set advances exactly one term; direct correction disabled."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_CANONICAL_PERSISTED_STATE",
+              "targetProposal": "cohort_progression_state",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/cohort-service.ts@20d9cc788679a482f92f57f14a98e05e43713e35",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -253,7 +273,13 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "server resets to 0 on create; response derives learner membership usage count."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "REDESIGN_AS_CALCULATED_REQUIRES_FILTER_PROOF",
+              "targetCandidate": "learner_program_enrollments + active section enrollment counts",
+              "evidence": "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -1134,7 +1160,17 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "vnextImplementationDisposition": {
+              "status": "REDESIGNED_TO_STATUS_SOURCE_REVIEWED",
+              "target": "section_schedule_events.status=CANCELLED",
+              "gap": "Must prove cancellation preserves attendance/history and all legacy readers exclude cancelled rows.",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            }
           }
         },
         {
@@ -1216,7 +1252,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
               "proof": "same-college validation and schedule conflict locking use class."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "NORMALIZED_IMPLEMENTED_SOURCE_REVIEWED",
+              "target": "section_schedule_events.section_id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            }
           }
         },
         {
@@ -1258,7 +1303,15 @@
               "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
               "proof": "course is validated against class college and persisted."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "NORMALIZED_SPLIT_MAPPING_SOURCE_REVIEWED",
+              "target": "section_schedule_event_courses.delivery_id -> course_section_deliveries -> course_offerings.course_id",
+              "evidence": [
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            }
           }
         },
         {
@@ -1296,7 +1349,17 @@
               "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
               "proof": "schedule overlap and time-range queries consume persisted end time."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "NORMALIZED_IMPLEMENTED_SOURCE_REVIEWED",
+              "target": "section_schedule_events.ends_at",
+              "improvement": "legacy string timestamp becomes timestamptz with end>start validation",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            }
           }
         },
         {
@@ -1336,7 +1399,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
               "proof": "faculty tenant scope and overlap lock/check are enforced."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "NORMALIZED_IMPLEMENTED_SOURCE_REVIEWED",
+              "target": "section_schedule_events.faculty_membership_id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            }
           }
         },
         {
@@ -1377,7 +1449,17 @@
               "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
               "proof": "lecture hall tenant scope, row lock and overlap conflicts are enforced."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_TYPED_SCHEDULE_HALL_FK",
+              "currentVnext": "section_schedule_events.location is free text",
+              "targetProposal": "section_schedule_events.lecture_hall_id -> lecture_halls.id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -1415,7 +1497,17 @@
               "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
               "proof": "schedule overlap and time-range queries consume persisted start time."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "NORMALIZED_IMPLEMENTED_SOURCE_REVIEWED",
+              "target": "section_schedule_events.starts_at",
+              "improvement": "legacy string timestamp becomes timestamptz",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            }
           }
         },
         {
@@ -2517,6 +2609,16 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "vnextImplementationDisposition": {
+              "status": "MISSING_TYPED_LECTURE_HALL_MODEL",
+              "targetProposal": "lecture_halls.id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48",
+                "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
             }
           }
         },
@@ -2649,6 +2751,16 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "vnextImplementationDisposition": {
+              "status": "MISSING_TYPED_LECTURE_HALL_MODEL",
+              "targetProposal": "lecture_halls.capacity",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48",
+                "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
             }
           }
         },
@@ -2695,6 +2807,16 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "vnextImplementationDisposition": {
+              "status": "MISSING_TYPED_LECTURE_HALL_MODEL",
+              "targetProposal": "lecture_halls.college_id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48",
+                "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
             }
           }
         },
@@ -2741,6 +2863,16 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "vnextImplementationDisposition": {
+              "status": "MISSING_TYPED_LECTURE_HALL_MODEL",
+              "targetProposal": "lecture_halls.department_id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48",
+                "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
             }
           }
         },
@@ -2785,6 +2917,16 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "vnextImplementationDisposition": {
+              "status": "MISSING_TYPED_LECTURE_HALL_MODEL",
+              "targetProposal": "lecture_halls.description",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48",
+                "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
             }
           }
         },
@@ -2829,6 +2971,16 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "vnextImplementationDisposition": {
+              "status": "MISSING_TYPED_LECTURE_HALL_MODEL",
+              "targetProposal": "lecture_halls.name",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48",
+                "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
             }
           }
         },
@@ -2873,6 +3025,16 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "vnextImplementationDisposition": {
+              "status": "MISSING_TYPED_LECTURE_HALL_MODEL",
+              "targetProposal": "lecture_halls.room_type",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48",
+                "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
             }
           }
         }
@@ -3141,7 +3303,14 @@
               "source": "src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java@8149df6879e0cdfc6362d1c302b01537decac77c",
               "proof": "program duration bounds batch promotion; duration reduction blocked when cohorts progressed beyond new max."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "NORMALIZED_IMPLEMENTED_SOURCE_REVIEWED",
+              "target": "programs.duration_terms",
+              "transform": "durationTerms = durationYears * 2; read compatibility durationYears = durationTerms / 2",
+              "evidence": "src/modules/academics/program-service.ts@c38b6a63947a257520db11e949113e2d6be4969c",
+              "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            }
           }
         },
         {
@@ -4327,7 +4496,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "promotion refuses missing/deleted/inactive target semester."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_SCOPED_TERM_MODEL",
+              "targetProposal": "program_terms.is_active",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4379,7 +4557,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "create/update rejects blank name."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_SCOPED_TERM_MODEL",
+              "targetProposal": "program_terms.name",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4433,7 +4620,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "semester identity and list are scoped by program."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_SCOPED_TERM_MODEL",
+              "targetProposal": "program_terms.program_id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4485,7 +4681,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "unique per program and used by promotion destination lookup."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_SCOPED_TERM_MODEL",
+              "targetProposal": "program_terms.term_number",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4534,7 +4739,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "create/update and responses persist total credits."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_SCOPED_TERM_MODEL",
+              "targetProposal": "program_terms.total_credits",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         }
       ],
@@ -4756,7 +4970,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "semester curriculum maps exact course; duplicate membership prevented at service/repository level."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_TERM_CURRICULUM_MODEL",
+              "targetProposal": "program_term_courses.course_id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4807,7 +5030,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "curriculum listings explicitly order by course_order."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_TERM_CURRICULUM_MODEL",
+              "targetProposal": "program_term_courses.display_order",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4858,7 +5090,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "semester-course credits are persisted and exposed."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_TERM_CURRICULUM_MODEL",
+              "targetProposal": "program_term_courses.credits",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4909,7 +5150,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "response exposes mandatory/elective curriculum property."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_TERM_CURRICULUM_MODEL",
+              "targetProposal": "program_term_courses.type",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -4963,7 +5213,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
               "proof": "ordered curriculum belongs to exact semester."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextImplementationDisposition": {
+              "status": "MISSING_PROGRAM_TERM_CURRICULUM_MODEL",
+              "targetProposal": "program_term_courses.program_term_id",
+              "evidence": [
+                "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+                "docs/planning/db02-academic-progression-contract.md"
+              ],
+              "runtimeAcceptance": "NOT_EXECUTED"
+            }
           }
         }
       ],
@@ -5077,6 +5336,30 @@
         "DB03 elective eligibility must consume DB02 current program/term/year state rather than derive a competing value."
       ],
       "note": "Source activity/semantics are confirmed for selected high-risk rows only. Mapping implementation and PostgreSQL acceptance remain unverified."
+    },
+    "vnextImplementationReview": {
+      "at": "2026-10-11",
+      "status": "SOURCE_REVIEWED_NOT_RUNTIME_VERIFIED",
+      "evidence": [
+        "src/db/schema/academics.ts@701a268c85cb8f1f8a418330fe11834ab2c4d5bc",
+        "src/modules/academics/cohort-service.ts@20d9cc788679a482f92f57f14a98e05e43713e35",
+        "src/modules/academics/program-service.ts@c38b6a63947a257520db11e949113e2d6be4969c",
+        "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48",
+        "src/modules/academics/faculty-assignment-service.ts@39bc8bed5ae58d00cb2589bb0e9fba9f0e682a75"
+      ],
+      "confirmedExisting": [
+        "Program duration-year compatibility normalizes to duration_terms at 2 terms/year.",
+        "Cohorts, academic periods, sections and typed membership enrollments are normalized and tenant-scoped in services.",
+        "Schedule event section/faculty/time/course-delivery relationships exist with timestamptz validation."
+      ],
+      "confirmedGaps": [
+        "No canonical persisted cohort current term / academic-year state or immutable promotion history.",
+        "No program-scoped semester/term entity and ordered reusable curriculum mapping.",
+        "No lecture_halls resource or typed schedule hall FK.",
+        "Current schedule service validates time inside period but contains no same-faculty/same-section/same-hall overlap invariant; staged DB exclusion constraints are proposed.",
+        "DB02 migration registration and PostgreSQL acceptance are still absent."
+      ],
+      "stagedEvidenceCommit": "1cfd5cc2e6aa9b5538b05af0105e96a2a6d577e7"
     }
   }
 }
