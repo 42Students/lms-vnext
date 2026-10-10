@@ -469,14 +469,14 @@
       "paths": [
         "docs/planning/db07-w03-field-review.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-10T20:37:11.412Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:37:20.502Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -498,6 +498,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:37:11.412Z",
           "reason": "Chat 1 CAS retry after queue race; DB07 projects/history/task invariant reconciliation."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:37:20.502Z",
+          "reason": "Reviewing existing DB07 W03 field ledger and staged relationship/task/workspace integrity drafts."
         }
       ]
     },
