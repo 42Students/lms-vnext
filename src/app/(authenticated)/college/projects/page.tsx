@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectList } from "@/components/projects/project-list";
 import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { PageHeader } from "@/components/ui/page-header";
+import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { listProjectInstances } from "@/modules/projects/instance-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 
@@ -20,6 +21,10 @@ export default async function CollegeProjectsPage() {
 
   return (
     <div className="space-y-6">
+      <ProjectAdminNav
+        basePath="/college/projects"
+        active="workspaces"
+      />
       <PageHeader
         eyebrow="College Admin"
         title="Projects"

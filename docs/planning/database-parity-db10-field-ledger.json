@@ -12,7 +12,7 @@
     "fields": 221,
     "verified": 0,
     "unmapped": 221,
-    "sourceReviewedFields": 62
+    "sourceReviewedFields": 75
   },
   "records": [
     {
@@ -331,17 +331,34 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Greenfield UUID primary key replacing legacy bigint identity.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.id",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-02",
@@ -355,17 +372,34 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Creation instant; vNext uses timestamptz.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.created_at",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-03",
@@ -377,17 +411,34 @@
       "defaultValue": "NULL",
       "riskFlags": [],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Legacy soft-delete boolean normalized to actor-attributed deletion lifecycle.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Soft-delete and restore retained; normalized to deleted_at/deleted_by_user_id with optimistic version.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.deleted_at + announcements.deleted_by_user_id",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-04",
@@ -399,17 +450,34 @@
       "defaultValue": "NULL",
       "riskFlags": [],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Announcement body. vNext stages plain-text rendering as an intentional rich-HTML safety deviation.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.message",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-05",
@@ -421,17 +489,34 @@
       "defaultValue": "NULL",
       "riskFlags": [],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Exact legacy audience enum: COLLEGE, PROGRAM, DEPARTMENT, LEARNER, FACULTY, CLASS.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.receiver_type",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-06",
@@ -443,17 +528,34 @@
       "defaultValue": "NULL",
       "riskFlags": [],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Polymorphic legacy numeric receiver value normalized to UUID target; server resolves target scope.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.receiver_id",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-07",
@@ -467,17 +569,34 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Authenticated canonical user; never accepted from request JSON.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.sender_user_id",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-08",
@@ -489,17 +608,34 @@
       "defaultValue": "NULL",
       "riskFlags": [],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Server-derived sender role snapshot.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.sender_type",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-09",
@@ -511,17 +647,34 @@
       "defaultValue": "NULL",
       "riskFlags": [],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Announcement title, trimmed and bounded to 255.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.title",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-10",
@@ -535,17 +688,34 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Last mutation instant; vNext uses timestamptz.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.updated_at",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-11",
@@ -559,17 +729,34 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Optional visibility start instant; admin list still sees scheduled rows.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.scheduled_at",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-12",
@@ -583,17 +770,34 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Optional exclusive recipient visibility end instant.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.expires_at",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-13",
@@ -605,17 +809,34 @@
       "defaultValue": "'0'",
       "riskFlags": [],
       "vnextTableCandidates": [
-        "in_app_notifications"
+        "announcements"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Recipient ordering flag; pinned rows sort before normal rows.",
+      "tenantScope": "Explicit organization_id + college_id derived server-side from receiver target; recipient scope is persisted membership/enrollment/assignment.",
+      "writers": [
+        "src/modules/announcements/service.ts:createAnnouncement",
+        "src/modules/announcements/service.ts:updateAnnouncement",
+        "src/modules/announcements/service.ts:deleteAnnouncement",
+        "src/modules/announcements/service.ts:restoreAnnouncement"
+      ],
+      "readers": [
+        "src/modules/announcements/service.ts:listAnnouncementsForAdmin",
+        "src/modules/announcements/service.ts:listVisibleAnnouncementsForMembership"
+      ],
+      "historyAndDeleteSemantics": "Announcement mutations are optimistic-versioned; row is retained through soft deletion.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "announcements.is_pinned",
+      "evidenceScope": "SOURCE_REVIEW_AND_VNEXT_DRAFT_PROPOSAL_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/Announcement.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AnnouncementRepository.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:controller/AnnouncementController.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V127__announcement_schedule_expiry_pin.sql",
+        "42Students/lms-vnext:src/db/schema/db10-announcements.draft.ts"
+      ]
     },
     {
       "id": "DB10-APP_SETTING-01",
