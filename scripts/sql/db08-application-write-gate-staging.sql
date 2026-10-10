@@ -59,7 +59,7 @@ BEGIN
     RAISE EXCEPTION 'College placement module disabled' USING ERRCODE='23514';
   END IF;
 
-  SELECT count(*),min(le.cohort_id),min(le.id)
+  SELECT count(*), (array_agg(le.cohort_id))[1], (array_agg(le.id))[1]
     INTO enrollment_count,current_cohort,enrollment_id
     FROM learner_program_enrollments le
     JOIN cohorts c ON c.id=le.cohort_id AND c.program_id=le.program_id
@@ -71,7 +71,7 @@ BEGIN
     RAISE EXCEPTION 'Invalid or ambiguous active academic enrollment' USING ERRCODE='23514';
   END IF;
 
-  SELECT count(*),min(s.id) INTO section_count,current_section
+  SELECT count(*), (array_agg(s.id))[1] INTO section_count,current_section
     FROM section_enrollments se
     JOIN sections s ON s.id=se.section_id
       AND s.academic_period_id=se.academic_period_id
