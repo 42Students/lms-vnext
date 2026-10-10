@@ -63,6 +63,14 @@ async function cleanup() {
   await pool.query("delete from placement_jobs");
   await pool.query("delete from placement_company_relationships");
   await pool.query("delete from placement_companies");
+  await pool.query(
+    "delete from placement_eligibility_decisions where scope_type='MEMBERSHIP' and scope_id=$1",
+    [coordinatorMembershipId],
+  );
+  await pool.query(
+    "delete from learner_program_enrollments where membership_id=$1",
+    [coordinatorMembershipId],
+  );
   await pool.query("delete from membership_roles where id = $1", [coordinatorRoleId]);
   await pool.query("delete from college_memberships where id = $1", [coordinatorMembershipId]);
   await pool.query("delete from users where id = $1", [coordinatorUserId]);
@@ -206,6 +214,59 @@ describe("W04 coordinator same-day / tenant authorization", () => {
       .rejects.toThrow("Missing permission: placements.manage");
     const managerView = await getDriveDayRoster(tpo, tomorrowRound.id, dutyNow);
     expect(managerView.access).toMatchObject({ fullAccess: true, coordinator: false });
+  });
+
+  it("rejects adding an existing applicant as a Drive Day coordinator", async () => {
+    const { job } = await setup();
+    await expect(assignDriveDayCoordinator(tpo, job.id, {
+      learnerMembershipId: SEED_IDS.learnerCollegeAMembership,
+      onDate: "2026-10-20",
+    })).rejects.toMatchObject({ code: "PLACEMENT_COORDINATOR_APPLICANT_CONFLICT" });
+  });
+
+  it("serializes application versus coordinator assignment so neither role can coexist", async () => {
+    const { job } = await setup();
+    await pool.query(
+      `insert into learner_program_enrollments(membership_id,program_id,cohort_id,status)
+       select $1,program_id,cohort_id,'ACTIVE'
+         from learner_program_enrollments
+        where membership_id=$2 and status='ACTIVE'`,
+      [coordinatorMembershipId, SEED_IDS.learnerCollegeAMembership],
+    );
+    await pool.query(
+      `insert into placement_eligibility_decisions
+         (college_id,scope_type,scope_id,status,decided_by_user_id)
+       values($1,'MEMBERSHIP',$2,'ELIGIBLE',$3)`,
+      [SEED_IDS.collegeA, coordinatorMembershipId, SEED_IDS.collegeAdminUser],
+    );
+
+    // Already a coordinator, so an application must be rejected, not silently
+    // accepted by a job-specific eligibility INCLUDE.
+    await expect(applyToPlacementJob(coordinator, job.id, {}))
+      .rejects.toMatchObject({ code: "PLACEMENT_COORDINATOR_APPLICANT_CONFLICT" });
+
+    // Remove today's assignment, then race the two writers for tomorrow.
+    const rows = await pool.query<{ id: string }>(
+      "select id from placement_drive_day_coordinator_assignments where job_id=$1 and learner_membership_id=$2",
+      [job.id, coordinatorMembershipId],
+    );
+    for (const row of rows.rows) {
+      await removeDriveDayCoordinator(tpo, job.id, row.id);
+    }
+
+    const decisions = await Promise.allSettled([
+      applyToPlacementJob(coordinator, job.id, {}),
+      assignDriveDayCoordinator(tpo, job.id, {
+        learnerMembershipId: coordinatorMembershipId,
+        onDate: "2026-10-21",
+      }),
+    ]);
+    expect(decisions.filter(result => result.status === "fulfilled")).toHaveLength(1);
+    const loser = decisions.find(result => result.status === "rejected");
+    expect(loser).toMatchObject({
+      status: "rejected",
+      reason: expect.objectContaining({ code: "PLACEMENT_COORDINATOR_APPLICANT_CONFLICT" }),
+    });
   });
 
 });
