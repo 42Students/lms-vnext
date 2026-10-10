@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T02:15:00+05:30",
+  "updatedOn": "2026-10-10T20:41:19.334Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -223,7 +223,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "c71a639c1bf8a95dee3c72ac7727d505720376af",
+      "latestEvidenceSha": "7ca737e9d7aa67a86d55e1d7110374ba81375d0c",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -258,7 +258,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "Chat 4 DB02 source reconciliation now confirms 19 active persisted legacy fields across semester, semester_course and lecture_hall from exact BE/FE source producers/consumers. Staged unregistered normalized contract at scripts/sql/db02-semester-room-contract-staging.sql (program terms/curriculum rows/academic rooms plus tenant-scope guards). vNext equivalence and PostgreSQL execution remain unverified; DB-005 stays IN_PROGRESS."
+      "progressNote": "Chat 4 DB02: 125-field artifact retained; 33 high-risk fields have source-backed semantics, live vNext academics implementation re-diffed, and missing canonical cohort term/year, program-term curriculum, lecture-hall/overlap invariants staged in scripts/sql. No PG/runtime verification."
     },
     {
       "id": "DB-006",
