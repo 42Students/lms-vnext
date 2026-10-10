@@ -342,10 +342,7 @@ export async function listProjectInstances(
     .select()
     .from(projectInstances)
     .where(
-      and(
-        eq(projectInstances.collegeId, college.id),
-        ne(projectInstances.status, "ARCHIVED"),
-      ),
+      eq(projectInstances.collegeId, college.id),
     )
     .orderBy(asc(projectInstances.title));
 }
