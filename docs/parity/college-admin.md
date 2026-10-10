@@ -88,7 +88,7 @@ Legacy contract:
 - [ ] Department Chair/Vice Chair legacy-noise fields remain absent unless a real current user job exists.
 - [ ] Load/error/empty states match.
 
-**W06 shared-component handoff:** the Super Admin `/admin/departments` directory controls (search/export/paging/dependency counts) are source-authored for reuse, but the distinct legacy College Admin `/college-admin/departments` route has **not** been restored or browser-verified. This row remains OPEN until college-admin role routing, source parity and regression tests are done.
+**W06 College Admin directory implementation (2026-10-10):** the existing College Admin `/college/departments` page now reuses `DepartmentDirectory`, matching the Super Admin search, CSV export, refresh, ten-row pagination and Programs/Courses/Faculty dependency counts. The `/college` layout enforces an active COLLEGE_ADMIN membership; server list uses only the active membership collegeId and the `department.read` service permission check. Each usage lookup is made only on IDs returned by that authorized query. Failed usage lookups show unknown (—), not 0. Legacy `/college-admin/departments` URL/bookmark is not yet aliased; browser behavior is not yet verified. Authored code does not advance this page to DONE.
 
 ## Page: Programs
 **Legacy:** `/college-admin/programs`
@@ -688,3 +688,10 @@ College Admin can act inside TPO in the legacy product.
 - [ ] project audit/history event coverage matches.
 - [ ] actor/time/detail representation matches.
 - [ ] filters/empty/error states match.
+
+
+### W06 College Admin Departments outstanding verification
+- [ ] Execute `tests/unit/admin-department-directory.test.ts`; confirm College Admin unauthorized-role redirect and negative cross-college API access.
+- [ ] Desktop/mobile browser checks: search, CSV download, refresh after create/edit/archive, modal keyboard interactions, pagination and empty/error states.
+- [ ] Verify bookmarked legacy `/college-admin/departments` route behavior and route-map exception.
+- [ ] Confirm archive blockers with real DB tests, including concurrent dependency creation.
