@@ -5,6 +5,7 @@ import {
   asc,
   eq,
   gte,
+  inArray,
   isNull,
   lt,
 } from "drizzle-orm";
@@ -15,7 +16,6 @@ import {
   attendancePolicies,
   attendanceRecords,
   attendanceSessions,
-  collegeMemberships,
   colleges,
   courseOfferings,
   courseSectionDeliveries,
@@ -395,12 +395,12 @@ export async function getAdminAttendanceGrid(
           .where(
             // The unique delivery/Section session list is tenant-authorized
             // above; constrain records to those exact sessions.
-            attendanceRecords.scheduleEventId
-              .in(
-                sessions.map(
-                  (session) => session.id,
-                ),
+            inArray(
+              attendanceRecords.scheduleEventId,
+              sessions.map(
+                (session) => session.id,
               ),
+            ),
           );
 
   return {
