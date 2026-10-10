@@ -621,7 +621,7 @@
         "docs/planning/db09-chat03-round-scheduling-audit.md"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "730e88e554076168a2db247e6a03d182f1930aa3",
+      "latestEvidenceSha": "9be61c40b97199f89db3d92524167e2cccf05d12",
       "verificationEvidence": [],
       "blockers": [
         "No disposable PostgreSQL/CI runtime evidence; authored DB09 guards/tests are not executed.",
@@ -632,7 +632,9 @@
         "Chat 1 exclusively must integrate/check Drizzle migrations and disposable PostgreSQL replay; DB09 candidate SQL is not registered or executed.",
         "DB08 round/job/request and DB10 notifications/suppression domain owners must reconcile dependencies before verified database parity.",
         "Legacy V193 recruiter actor/scope code values differ from current vNext messaging/saved-view checks; API/DB atomic transition and tests pending.",
-        "Latest CI verify job 38085854862 failed with zero steps; runtime tests not executed."
+        "Latest CI verify job 38085854862 failed with zero steps; runtime tests not executed.",
+        "Active legacy 5-field drive group + 25-field scheduling and 4-setting evidence requires target persistence/producer/consumer end-to-end proof; migration proposals are not live.",
+        "Final V193 actor code migration conflicts with currently staged TPO message sender/lead-view scope codes; coordinate API service and database constraints."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -696,7 +698,7 @@
           "reason": "Reserve isolated DB09 round-slot/assignment/reschedule source and staging artifacts after finding active V165 tables without direct vNext equivalents."
         }
       ],
-      "progressNote": "Chat 3 2026-10-11: 279/279 DB09 source fields now carry explicit source-vs-declared-column candidate evidence: 14 V162 direct source analyses +139 same-name declaration candidates +45 rename candidates +81 no demonstrated target field. All 279 remain UNVERIFIED, zero PostgreSQL executed. Corrected malformed exported tpo-crm.ts (62c5f1c), authored DB09 static regression tests (2d51c71, ad3a419) NOT EXECUTED, staged CRM same-college FK, round capacity/assignment/reschedule, four missing recruiter settings, and final V193 recruiter-code SQL drafts. Read-only connector source/ledger assertions executed and passed. Full details docs/planning/db09-chat03-source-reconciliation-2026-10-11.md. Current CI verify job failed with zero steps (run 38085854862); no passing runtime gates."
+      "progressNote": "Chat 3 source inventory comparison: 279/279 DB09 fields reviewed as candidates, 0 semantic/DB-verified (14 direct V162 comparisons, 139 name matches, 45 explicit rename candidates, 81 no declared field match). Further FROZEN LEGACY SERVICE evidence confirms 34 still-active rows: 5 drive_group, 25 slot/assignment/reschedule, 4 recruiter settings (2 JSON consumer follow-ups open). DB09 malformed tpo-crm Drizzle repaired (62c5f1c); source-regression tests authored, Node/TS/PG unexecuted; connector read-only assertions passed. Candidate SQL for scoped CRM FKs, round scheduling, multi-college groups, four recruiter settings and V193 recruiter code changes NOT applied. CI run 38085854862 verify job failed before steps. No API/UI or phase promotion."
     },
     {
       "id": "DB-013",
