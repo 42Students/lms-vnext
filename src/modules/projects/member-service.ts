@@ -59,6 +59,7 @@ async function loadEligibleMembership(
       id: collegeMemberships.id,
       collegeId: collegeMemberships.collegeId,
       status: collegeMemberships.status,
+      platformStatus: users.platformStatus,
       displayName: users.displayName,
     })
     .from(collegeMemberships)
@@ -84,7 +85,7 @@ async function loadEligibleMembership(
     )
     .limit(1);
 
-  if (!membership) {
+  if (!membership || membership.platformStatus !== "ACTIVE") {
     throw new ProjectsServiceError(
       "PROJECT_MEMBER_ROLE_REQUIRED",
     );
@@ -168,6 +169,7 @@ export async function listProjectMemberCandidates(
       and(
         eq(collegeMemberships.collegeId, scope.collegeId),
         eq(collegeMemberships.status, "ACTIVE"),
+        eq(users.platformStatus, "ACTIVE"),
         isNull(projectMembers.id),
         search,
       ),
