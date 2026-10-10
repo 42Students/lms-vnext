@@ -345,14 +345,14 @@
       "paths": [
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 6,
       "pickedAt": "2026-10-10T20:27:24.145Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:27:49.890Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -374,6 +374,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:27:24.145Z",
           "reason": "Chat 6 CAS claim for source-backed DATABASE reconciliation."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:27:49.890Z",
+          "reason": "Chat 6 begins legacy-vNext DB05 field, relationship and state contract audit."
         }
       ]
     },
