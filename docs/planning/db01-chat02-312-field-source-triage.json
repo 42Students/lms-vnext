@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 180,
+    "postV150ActivenessVerified": 204,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 204,
-    "postV150ActivenessReviewNote": "180 legacy source fields have direct active-workflow proof; 204/312 fields have explicit current-source dispositions. The remaining 108 fields are faculty, learner cross-domain learner/faculty rows. Runtime semantic verification remains 0."
+    "postV150ActivenessReviewedFields": 228,
+    "postV150ActivenessReviewNote": "204 active legacy source fields/table workflow candidates; 31 identity fields now have explicit individual code callsite evidence. Not a vNext DB/API parity result; runtime-semantic verified 0."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -1343,12 +1343,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.suspended_at",
       "rationaleOrBlocker": "Role/membership-specific vs actor-wide suspension needs proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Faculty.suspendedAt. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1359,12 +1360,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.suspension_reason",
       "rationaleOrBlocker": "Suspension reason may belong to user or membership",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Faculty.suspensionReason. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1483,12 +1485,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.college_id",
       "rationaleOrBlocker": "Membership and role-scoped tenancy",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl register/update + AdminUserLifecycleController scoped suspension. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1501,12 +1504,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.email",
       "rationaleOrBlocker": "Identity provider must be authoritative for login email",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl register/update and unique email check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1519,12 +1523,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.phone_e164",
       "rationaleOrBlocker": "Normalized and verified E.164 candidate",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl normalize/register/update and unique phone check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1537,12 +1542,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl enrollment/update contact-phone handling. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1673,12 +1679,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.given_name (STAGED W01)",
       "rationaleOrBlocker": "Canonical identity name not yet active",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update and mapped display name. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1760,12 +1767,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.family_name (STAGED W01)",
       "rationaleOrBlocker": "Canonical identity name not yet active",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update and course-faculty display. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1812,12 +1820,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.organization_id via college_memberships.college_id",
       "rationaleOrBlocker": "Derived through tenant relationship; verify org history",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: UserPrincipal.fromFaculty reads organizationId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1968,12 +1977,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Managed identity revocation epoch and stale-token rejection need proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: TokenVersionServiceImpl increment and UserPrincipal.fromFaculty reads tokenVersion. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1984,12 +1994,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Legacy faculty unique identifier consumers unresolved",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl update faculty.uniqueId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -2000,12 +2011,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "membership_roles.role",
       "rationaleOrBlocker": "Legacy string to scoped enum",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: FacultyServiceImpl create/update sets FACULTY; UserPrincipal.fromFaculty. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -2484,12 +2496,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.suspended_at",
       "rationaleOrBlocker": "Actor-scope review required",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController suspend/resume updates Learner.suspendedAt. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2500,12 +2513,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.suspension_reason",
       "rationaleOrBlocker": "Same scope review",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: AdminUserLifecycleController updates learner.suspensionReason. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2642,12 +2656,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.college_id",
       "rationaleOrBlocker": "Must prove tenant-scoped enrollment",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and AdminUserLifecycleController scoped suspend. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2660,12 +2675,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.email",
       "rationaleOrBlocker": "Managed identity ownership needed",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and unique email check. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2678,12 +2694,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.phone_e164",
       "rationaleOrBlocker": "Requires normalization verification",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl normalize/register and schedule SMS writes. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2696,12 +2713,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB04_OR_DB02",
       "candidateTarget": null,
       "rationaleOrBlocker": "Learner/Faculty profile or enrollment persistence belongs to DB04/DB02; inspect sensitive/private-data contract, typed JSON and profile review history, do not assume generic JSON covers active semantics.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl contact alternate/duplicate handling. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2816,12 +2834,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.given_name (STAGED W01)",
       "rationaleOrBlocker": "Canonical identity name staged only",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and learner DTO read. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2921,12 +2940,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.family_name (STAGED W01)",
       "rationaleOrBlocker": "Canonical identity name staged only",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl register/update and learner DTO read. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2973,12 +2993,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.organization_id via college_memberships.college_id",
       "rationaleOrBlocker": "Derived organization candidate",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: UserPrincipal.fromLearner reads organizationId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -3163,12 +3184,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Identity stale-token revocation witness required",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: TokenVersionServiceImpl increments and UserPrincipal.fromLearner reads tokenVersion. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -3195,12 +3217,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Legacy identity/key consumption unresolved",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl update stores learner.uniqueId. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -3211,12 +3234,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "membership_roles.role",
       "rationaleOrBlocker": "Scoped role vs legacy type",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: LearnerServiceImpl creates LEARNER and UserPrincipal.fromLearner reads userType. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -4414,7 +4438,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
       ],
-      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: RecruiterAuthService current actor profile reads recruiter firstName. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "recruiter",
@@ -4436,7 +4461,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
       ],
-      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: RecruiterAuthService current actor profile reads recruiter lastName. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "recruiter",
@@ -4460,7 +4486,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
       ],
-      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: RecruiterAuthService current actor profile reads contactMobile. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "recruiter",
@@ -4484,7 +4511,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
       ],
-      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: RecruiterAuthService current actor profile reads contactMail; PublicMobileAuth email-first login. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "recruiter",
@@ -4554,7 +4582,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
       ],
-      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: PublicMobileAuthController checks suspendedAt for recruiter login. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "recruiter",
@@ -4600,7 +4629,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
       ],
-      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: TokenVersionServiceImpl increments Recruiter.tokenVersion and UserPrincipal.fromRecruiter reads it. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "recruiter",
@@ -4740,7 +4770,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
       ],
-      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5: Recruiter.isUsable rejects soft-deleted rows; current auth path requires active recruiter. Confirms current legacy producer/consumer only; target type/FK/runtime parity remains unverified."
     },
     {
       "legacyTable": "recruiter",
@@ -6454,6 +6485,18 @@
         "recruiter_college_access_capability.granted_at"
       ],
       "note": "Source activeness only. DB09 still owns target mapping/lifecycle acceptance, including valid_until enforcement, grant audit/history, company relationship integrity and capability representation."
+    },
+    "person_identity_fields": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/TokenVersionServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/UserPrincipal.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java"
+      ],
+      "proof": "31 specific learner/faculty/recruiter identity fields have direct source reads/writes for contacts, name, tenant, suspension, token revocation and role; no vNext semantic acceptance."
     }
   }
 }
