@@ -189,6 +189,12 @@ const recruiterItems: ShellNavItem[] = [
     shortLabel: "C",
     group: "account",
   },
+  {
+    label: "Profile",
+    href: "/hr/profile",
+    shortLabel: "P",
+    group: "account",
+  },
 ];
 
 const collegeAdminItems: ShellNavItem[] = [
