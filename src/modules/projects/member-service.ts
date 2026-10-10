@@ -9,6 +9,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   membershipRoles,
@@ -498,6 +500,40 @@ export async function reassignProjectPrimaryMentor(
             project.id,
           ),
         );
+
+      await recordActivityEventInTransaction(
+        tx,
+        context,
+        {
+          eventType:
+            ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_REASSIGNED,
+          collegeId: project.collegeId,
+          organizationId:
+            scope.organizationId,
+          subjectType:
+            "project_instance",
+          subjectId: project.id,
+          subjectLabel:
+            scope.project.title,
+          summary:
+            "Primary Project mentor reassigned",
+          metadata: {
+            projectId: project.id,
+            outgoingMembershipId:
+              currentPrimary?.membershipId ?? null,
+            incomingMembershipId:
+              mentorMembershipId,
+          },
+          groupKey:
+            "projects:instance:" +
+            project.id,
+          dedupeKey:
+            "projects:instance:" +
+            project.id +
+            ":mentor-reassigned:" +
+            now.toISOString(),
+        },
+      );
 
       return {
         projectId: project.id,
