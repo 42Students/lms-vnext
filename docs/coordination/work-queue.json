@@ -1212,17 +1212,22 @@
         "docs/planning/database-parity-db10-log-alerts-contract.md",
         "tests/db10-log-alerts-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "2e620990187638e34bd2df8b784c1eaababcd7f3",
       "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "blockers": [
+        "MIGRATION_NOT_REGISTERED: Log alert schema and SQL are draft-only; Chat 1 must register/replay.",
+        "IDENTITY_AND_PRIVACY_RUNTIME_PENDING: Verified identity source, HMAC key rotation, sample redaction and retention not implemented.",
+        "INGESTION_CONCURRENCY_OPEN: Atomic upsert, cursor/lease coupling and regression single-alert semantics need PostgreSQL proof.",
+        "TEST_EVIDENCE_NOT_RUN: Five authored Node tests and all PostgreSQL witnesses remain unexecuted pending DB-001 runner."
+      ],
+      "completionNote": "Source-corrected DB10 log-alerts draft: legacy account marker is not a users.id FK, so blast-radius table now holds opaque HMAC-SHA256 digest keyed to server-verified typed identity; occurrence_count is true bigint mode, not precision-losing JavaScript number. Staged 3-table SQL, explicit 24-field source contract/10 negative witnesses, 5 static Node tests authored not executed; 45 in-process source checks passed. Zero runtime/PostgreSQL tests. Requires Chat 1 migration registration and production producer/key/lease/redaction decisions.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11",
       "startedAt": "2026-10-11",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11",
+      "completionCommitSha": "2e620990187638e34bd2df8b784c1eaababcd7f3",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1246,6 +1251,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Source reviewed identity cardinality and bigint risks; staged persistence contract work begins."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11",
+          "reason": "Corrected staged identity and integer semantics; logged 10 privacy/concurrency acceptance witnesses; no runtime acceptance claimed."
         }
       ]
     }
