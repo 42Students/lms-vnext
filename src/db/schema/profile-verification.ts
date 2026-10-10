@@ -51,7 +51,7 @@ export const profilePrivateDocumentReceipts = pgTable("profile_private_document_
   owningMembershipId: uuid("owning_membership_id").notNull()
     .references(() => collegeMemberships.id, {onDelete: "restrict"}),
   purpose: varchar("purpose", {length: 32}).notNull(),
-  educationEntryId: uuid("education_entry_id"),
+  relatedEntryId: uuid("related_entry_id"),
   privateObjectKey: text("private_object_key").notNull(),
   objectGeneration: varchar("object_generation", {length: 80 }).notNull(),
   sha256Hex: varchar("sha256_hex", {length: 64}).notNull(),
@@ -67,7 +67,7 @@ export const profilePrivateDocumentReceipts = pgTable("profile_private_document_
   index("profile_private_doc_member_purpose_idx").on(t.owningMembershipId, t.purpose),
   uniqueIndex("profile_private_doc_generation_uq").on(t.privateObjectKey, t.objectGeneration),
   check("profile_private_doc_purpose_ck",
-    sql`${t.purpose} in ('AADHAAR','PAN','MARKSHEET','RESUME','PROFILE_IMAGE')`),
+    sql`${t.purpose} in ('AADHAAR','PAN','MARKSHEET','RESUME','PROFILE_IMAGE','EDUCATION_CERTIFICATE','CERTIFICATION','EXPERIENCE_CERTIFICATE','OFFER_LETTER')`),
   check("profile_private_doc_scan_ck",
     sql`${t.scanStatus} in ('PENDING','CLEAN','REJECTED')`),
   check("profile_private_doc_size_ck",
