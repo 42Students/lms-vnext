@@ -20,6 +20,7 @@ import {
   upsertVerifiedAcademicEvidence,
 } from "@/modules/placements/eligibility-service";
 import {
+  closePlacementJob,
   createPlacementJob,
   publishPlacementJob,
 } from "@/modules/placements/job-service";
@@ -396,6 +397,24 @@ describe("Placement P5 applications", () => {
       code:
         "PLACEMENT_APPLICATION_ALREADY_WITHDRAWN",
     });
+  });
+
+  it("denies new submissions after a published drive is closed", async () => {
+    const job = await createJob();
+    await publishPlacementJob(tpo, job.id);
+    await closePlacementJob(tpo, job.id);
+
+    await expect(
+      applyToPlacementJob(learner, job.id, {}),
+    ).rejects.toMatchObject({
+      code: "PLACEMENT_APPLICATION_JOB_NOT_OPEN",
+    });
+
+    const applications = await pool.query(
+      "SELECT id FROM placement_applications WHERE job_id=$1",
+      [job.id],
+    );
+    expect(applications.rows).toHaveLength(0);
   });
 
   it("blocks expired jobs and cross-college learner substitution", async () => {
