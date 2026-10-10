@@ -703,7 +703,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.id",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -733,7 +740,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.created_at",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -753,7 +767,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.is_deleted",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -783,7 +804,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.updated_at",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -803,7 +831,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.content_text",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -825,7 +860,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.lesson_content_id",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -845,7 +887,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.author_display_name_snapshot",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -865,7 +914,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.sequence",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -887,7 +943,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.author_membership_id",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -907,7 +970,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "lesson_content_discussions.author_handle_snapshot",
+          "runtimeEvidenceStatus": "PRIMARY_LEGACY_RUNTIME_CONFIRMED_STAGED_VNEXT_UNREGISTERED",
+          "runtimeEvidence": [
+            "legacy Discussions.java + DiscussionDTO.java",
+            "legacy DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "vNext src/db/schema/lesson-content-discussions-staged.ts"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -929,7 +999,13 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": null,
+          "runtimeEvidenceStatus": "SNAPSHOT_COLUMN_NO_PRIMARY_RUNTIME_CONSUMER_FOUND_RETIREMENT_UNAPPROVED",
+          "runtimeEvidence": [
+            "column present in historical DB05 snapshot inventory",
+            "not exposed by inspected current legacy Discussions.java/DiscussionDTO/DiscussionResponseDTO/DiscussionController/DiscussionServiceImpl/DiscussionRepository primary path"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -949,7 +1025,13 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": null,
+          "runtimeEvidenceStatus": "SNAPSHOT_COLUMN_NO_PRIMARY_RUNTIME_CONSUMER_FOUND_RETIREMENT_UNAPPROVED",
+          "runtimeEvidence": [
+            "column present in historical DB05 snapshot inventory",
+            "not exposed by inspected current legacy Discussions.java/DiscussionDTO/DiscussionResponseDTO/DiscussionController/DiscussionServiceImpl/DiscussionRepository primary path"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -969,7 +1051,13 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": null,
+          "runtimeEvidenceStatus": "SNAPSHOT_COLUMN_NO_PRIMARY_RUNTIME_CONSUMER_FOUND_RETIREMENT_UNAPPROVED",
+          "runtimeEvidence": [
+            "column present in historical DB05 snapshot inventory",
+            "not exposed by inspected current legacy Discussions.java/DiscussionDTO/DiscussionResponseDTO/DiscussionController/DiscussionServiceImpl/DiscussionRepository primary path"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -991,7 +1079,13 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": null,
+          "runtimeEvidenceStatus": "SNAPSHOT_COLUMN_NO_PRIMARY_RUNTIME_CONSUMER_FOUND_RETIREMENT_UNAPPROVED",
+          "runtimeEvidence": [
+            "column present in historical DB05 snapshot inventory",
+            "not exposed by inspected current legacy Discussions.java/DiscussionDTO/DiscussionResponseDTO/DiscussionController/DiscussionServiceImpl/DiscussionRepository primary path"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -1011,7 +1105,13 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": null,
+          "runtimeEvidenceStatus": "SNAPSHOT_COLUMN_NO_PRIMARY_RUNTIME_CONSUMER_FOUND_RETIREMENT_UNAPPROVED",
+          "runtimeEvidence": [
+            "column present in historical DB05 snapshot inventory",
+            "not exposed by inspected current legacy Discussions.java/DiscussionDTO/DiscussionResponseDTO/DiscussionController/DiscussionServiceImpl/DiscussionRepository primary path"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -1031,7 +1131,13 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": null,
+          "runtimeEvidenceStatus": "SNAPSHOT_COLUMN_NO_PRIMARY_RUNTIME_CONSUMER_FOUND_RETIREMENT_UNAPPROVED",
+          "runtimeEvidence": [
+            "column present in historical DB05 snapshot inventory",
+            "not exposed by inspected current legacy Discussions.java/DiscussionDTO/DiscussionResponseDTO/DiscussionController/DiscussionServiceImpl/DiscussionRepository primary path"
+          ]
         }
       ]
     },
@@ -2175,5 +2281,17 @@
         }
       ]
     }
-  ]
+  ],
+  "db008Review": {
+    "reviewedOn": "2026-10-11",
+    "worker": 6,
+    "taskId": "DB-008",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "vnextBaseSha": "b6fc8204549d29c88dc0e3123bdccd481ddd70d3",
+    "reviewArtifact": "docs/planning/db05-chat06-source-semantic-review.json",
+    "finding": "Legacy discussions and classroom_messages are distinct persisted concepts. Ten primary discussion runtime fields now have an unregistered normalized vNext staging target; six historical extension columns remain explicitly unproven and not retired.",
+    "verifiedFields": 0,
+    "sourceReviewedFields": 16,
+    "warning": "SOURCE_REVIEWED is not semantic/runtime verification. verifiedMapping remains null until registered migration plus producer/consumer and PostgreSQL evidence pass."
+  }
 }
