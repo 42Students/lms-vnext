@@ -773,10 +773,10 @@
         "docs/planning/database-parity-pass5-probe-manifest.json"
       ],
       "status": "COMPLETED",
-      "latestEvidenceSha": "4bbb16b2cf2603764873e68cd061281de343bc85",
+      "latestEvidenceSha": "7abfea349617109528e4f8e81026cd6508836064",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "Chat 5 added a 10-probe cross-domain concurrency/state-transition inventory covering groups, academics, quizzes, projects, placements and shared operations. Source-confirmed gaps: placement application eligibility/module revocation after precheck and learner enrollment into a cohort that changes state after precheck. Five source-protected flows still require execution; three shared-ops lease/outbound/log-alert races are draft-unimplemented. Static assertions were authored; no PostgreSQL race probe executed.",
+      "completionNote": "Chat 5 source-audited and merged a 23-scenario cross-domain state-transition/race inventory. 13 scenarios are source-protected but NOT_RUN; 3 protections exist only in unmigrated drafts; 7 remain blocking implementation/policy/dispatcher gaps: P5-R01 placement access revocation race, P5-R02 learner enrollment vs cohort lifecycle, P5-R09 outbound claim/dispatcher completeness, P5-R10 log-alert runtime producer, P5-R11 academic schedule vs period close, P5-R21 suppression-after-enqueue pre-send recheck, and P5-R22 scheduled-event lost-update policy. Static guard updated for all 23 scenarios. No PostgreSQL race witness or runtime verification is claimed.",
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:44:00.000Z",
       "startedAt": "2026-10-10T20:44:15.000Z",
