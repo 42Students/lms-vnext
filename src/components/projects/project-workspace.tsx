@@ -432,6 +432,7 @@ export function ProjectWorkspace({
                             projectId={workspace.project.id}
                             sprintId={sprint.id}
                             status={sprint.status}
+                            releaseStatus={release.status}
                           />
                         ) : null}
                       </div>
