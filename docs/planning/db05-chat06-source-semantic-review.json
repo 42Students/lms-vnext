@@ -32,8 +32,8 @@
     "sourceFields": 92,
     "byClass": {
       "SOURCE_CANDIDATE": 30,
-      "UNREGISTERED_DRAFT": 38,
-      "REMODELED_NEEDS_PROOF": 21,
+      "UNREGISTERED_DRAFT": 37,
+      "REMODELED_NEEDS_PROOF": 22,
       "MISSING_OR_UNPROVEN": 3
     }
   },
