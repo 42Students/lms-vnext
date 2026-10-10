@@ -83,8 +83,8 @@ test("DB05 proposed mappings are not incorrectly promoted to verified", () => {
   assert.ok(review.fields.every(f => f.semanticVerification === "NOT_VERIFIED" && f.runtimeDatabaseVerification === "NOT_RUN"));
   assert.deepEqual(review.counts.byClass, {
     SOURCE_CANDIDATE: 30,
-    UNREGISTERED_DRAFT: 38,
-    REMODELED_NEEDS_PROOF: 21,
+    UNREGISTERED_DRAFT: 37,
+    REMODELED_NEEDS_PROOF: 22,
     MISSING_OR_UNPROVEN: 3,
   });
 });
@@ -120,7 +120,7 @@ test("DB05 unresolved decisions track exactly the remodeled and unproven source 
   assert.deepEqual(unresolved.items.map(i => i.source).sort(), expected);
   assert.equal(unresolved.totalOutstanding, expected.length);
   assert.equal(unresolved.missingOrUnproven, 3);
-  assert.equal(unresolved.remodeledNeedProof, 21);
+  assert.equal(unresolved.remodeledNeedProof, 22);
   assert.equal(unresolved.formalDbVerified, 0);
   assert.ok(unresolved.items.every(i => i.disposition === "OPEN" && !i.verified && !i.postgresExecuted));
   for (const field of ["course.default_subscription_days", "course.formal_title", "learner_content_progress.is_deleted"]) {
@@ -137,4 +137,35 @@ test("DB05 readiness checker fails closed on staged migrations and unrun Postgre
   assert.match(readinessScript, /runtimeDatabaseVerification !== "PASS"/);
   assert.match(readinessScript, /if \(!report\.ready\) process\.exitCode = 2/);
   assert.ok(readiness.artifacts.every(item => !item.registered && !item.executedAgainstPostgres));
+});
+
+const payload = json("docs/planning/db05-lesson-content-payload-subfields.json");
+const payloadSql = read("scripts/sql/db05-lesson-content-settings.draft.sql");
+
+test("DB05 payload inventory preserves 17 legacy JSON keys without pretending DB06 parity", () => {
+  const expected = [
+    "fileDTO", "htmlContent", "allowDiscussions", "viewAfterSchedule",
+    "viewBeforeSchedule", "text", "duration", "dueDate", "link",
+    "resourceMaterials", "assignmentResources", "allowedSubmissionTypes",
+    "calendarEventId", "timeZone", "endTime", "startTime", "thumbnail"
+  ];
+  assert.deepEqual(payload.fields.map(f => f.legacyField).sort(), expected.sort());
+  assert.equal(payload.fields.length, 17);
+  assert.equal(payload.fields.filter(f => f.classification === "UNREGISTERED_DRAFT").length, 9);
+  assert.equal(payload.fields.filter(f => f.classification === "MISSING_OR_UNPROVEN").length, 2);
+  assert.ok(payload.fields.every(f => !f.verified && !f.postgresExecuted && !f.producerConsumerVerified));
+  assert.equal(readiness.sourceReview.nestedLessonContentDataFields, 17);
+  assert.equal(unresolved.totalOutstanding, 25);
+});
+
+test("DB05 settings draft preserves flags and timezone without embedding private upload data", () => {
+  assert.match(payloadSql, /NOT A REGISTERED MIGRATION/);
+  for (const key of ["allow_discussions", "view_after_schedule", "view_before_schedule", "html_content",
+    "plain_text", "legacy_due_date_raw", "calendar_event_id", "calendar_time_zone", "thumbnail_url"]) {
+    assert.match(payloadSql, new RegExp("\\b" + key + "\\b"), key);
+  }
+  assert.match(payloadSql, /lesson_content_id uuid PRIMARY KEY/);
+  assert.match(payloadSql, /version bigint NOT NULL DEFAULT 0/);
+  assert.doesNotMatch(payloadSql, /upload_token_hash|raw_file_bytes/);
+  assert.match(payloadSql, /DB06 assignmentResources and allowedSubmissionTypes remain unmapped/);
 });
