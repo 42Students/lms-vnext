@@ -34,6 +34,10 @@ import {
   unsubscribeRecruiterInvite,
   TpoRecruiterInviteServiceError,
 } from "@/modules/placements/tpo-recruiter-invite-service";
+import {
+  getTpoCompanyMemory,
+  listTpoCompanies,
+} from "@/modules/placements/tpo-company-memory-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -527,6 +531,61 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     await expect(issueTpoRecruiterInvite(
       tpo, SEED_IDS.collegeA, lead.id,
     )).rejects.toMatchObject({ code: "TPO_RECRUITER_INVITE_NOT_ALLOWED" });
+  });
+
+
+  it("groups legal-suffix aliases into one tenant-scoped Company Memory view", async () => {
+    const first = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Alice HR",
+      email: "alice-company@example.org",
+      companyName: "Acme Pvt. Ltd.",
+    });
+    const second = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Bob HR",
+      email: "bob-company@example.org",
+      companyName: "ACME LIMITED",
+    });
+    await logTpoLeadActivity(tpo, first.id, {
+      collegeId: SEED_IDS.collegeA,
+      type: "CALL",
+      note: "Discussed campus hiring",
+    });
+
+    const companies = await listTpoCompanies(tpo, SEED_IDS.collegeA);
+    const acme = companies.find(row => row.key === "acme");
+    expect(acme).toBeDefined();
+    expect(acme?.contacts).toBe(2);
+    expect(acme?.studentsPlaced).toBeNull();
+    expect(acme?.studentsPlacedEvidence)
+      .toBe("PENDING_W04_COUNTS_AS_PLACED_POLICY");
+
+    const detail = await getTpoCompanyMemory(
+      tpo, SEED_IDS.collegeA, "acme corporation",
+    );
+    expect(detail.people.map(person => person.id).sort())
+      .toEqual([first.id, second.id].sort());
+    expect(detail.timeline).toHaveLength(1);
+    expect(detail.timeline[0]?.person).toBe("Alice HR");
+    expect(detail.documents).toEqual([]);
+    expect(detail.documentsStatus)
+      .toBe("PENDING_DB09_SHARE_LINK_PERSISTENCE");
+  });
+
+  it("keeps Company Memory tenant-scoped and returns not-found without cross-college leakage", async () => {
+    await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Private Contact",
+      email: "private-company@example.org",
+      companyName: "Tenant Only Ltd",
+    });
+
+    await expect(listTpoCompanies(learner, SEED_IDS.collegeA))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(getTpoCompanyMemory(
+      tpo, SEED_IDS.collegeB, "Tenant Only",
+    )).rejects.toBeInstanceOf(AuthorizationError);
   });
 
 });
