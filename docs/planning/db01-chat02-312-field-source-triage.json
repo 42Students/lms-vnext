@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 136,
+    "postV150ActivenessVerified": 142,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 154,
-    "postV150ActivenessReviewNote": "136 active-source candidates (legacy table/workflow), not individually field-consumer verified and not vNext target parity; 0 VNext runtime-semantic verified."
+    "postV150ActivenessReviewedFields": 162,
+    "postV150ActivenessReviewNote": "142 legacy source fields are under direct active workflow evidence; 162 fields have explicit current-source activeness/retirement dispositions. Department chair/vice-chair are backend compatibility fields but current product UI-retired. This is source evidence only; runtimeSemanticVerifiedFields remains 0."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -942,12 +942,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "departments.id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Department.java@ecef4d72b2f6cfc914912d875ffce0a4be98165b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/DepartmentRepository.java@ed472b3dae70d723a67ad578adae0305c37bac50",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java@65d035839691df9e7c5e2823a242760c76d5b3dc",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/DepartmentController.java@754d6caf34832f4fb6750d13cdcc1b40feceafae"
+      ],
+      "postV150EvidenceSummary": "Current scoped department create/list/update/delete uses college, name and soft-delete lifecycle; delete is guarded by linked programs/faculty/courses and name uniqueness is enforced within active college scope."
     },
     {
       "legacyTable": "department",
@@ -960,12 +967,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "departments.created_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Department.java@ecef4d72b2f6cfc914912d875ffce0a4be98165b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/DepartmentRepository.java@ed472b3dae70d723a67ad578adae0305c37bac50",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java@65d035839691df9e7c5e2823a242760c76d5b3dc",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/DepartmentController.java@754d6caf34832f4fb6750d13cdcc1b40feceafae"
+      ],
+      "postV150EvidenceSummary": "Current scoped department create/list/update/delete uses college, name and soft-delete lifecycle; delete is guarded by linked programs/faculty/courses and name uniqueness is enforced within active college scope."
     },
     {
       "legacyTable": "department",
@@ -976,12 +990,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "departments.archived_at",
       "rationaleOrBlocker": "Soft-delete/archive shape and undo need proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Department.java@ecef4d72b2f6cfc914912d875ffce0a4be98165b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/DepartmentRepository.java@ed472b3dae70d723a67ad578adae0305c37bac50",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java@65d035839691df9e7c5e2823a242760c76d5b3dc",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/DepartmentController.java@754d6caf34832f4fb6750d13cdcc1b40feceafae"
+      ],
+      "postV150EvidenceSummary": "Current scoped department create/list/update/delete uses college, name and soft-delete lifecycle; delete is guarded by linked programs/faculty/courses and name uniqueness is enforced within active college scope."
     },
     {
       "legacyTable": "department",
@@ -994,12 +1015,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "departments.updated_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Department.java@ecef4d72b2f6cfc914912d875ffce0a4be98165b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/DepartmentRepository.java@ed472b3dae70d723a67ad578adae0305c37bac50",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java@65d035839691df9e7c5e2823a242760c76d5b3dc",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/DepartmentController.java@754d6caf34832f4fb6750d13cdcc1b40feceafae"
+      ],
+      "postV150EvidenceSummary": "Current scoped department create/list/update/delete uses college, name and soft-delete lifecycle; delete is guarded by linked programs/faculty/courses and name uniqueness is enforced within active college scope."
     },
     {
       "legacyTable": "department",
@@ -1012,12 +1040,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "departments.college_id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Department.java@ecef4d72b2f6cfc914912d875ffce0a4be98165b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/DepartmentRepository.java@ed472b3dae70d723a67ad578adae0305c37bac50",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java@65d035839691df9e7c5e2823a242760c76d5b3dc",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/DepartmentController.java@754d6caf34832f4fb6750d13cdcc1b40feceafae"
+      ],
+      "postV150EvidenceSummary": "Current scoped department create/list/update/delete uses college, name and soft-delete lifecycle; delete is guarded by linked programs/faculty/courses and name uniqueness is enforced within active college scope."
     },
     {
       "legacyTable": "department",
@@ -1030,12 +1065,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "BACKEND_COMPAT_ONLY_FRONTEND_PRODUCT_FIELD_RETIRED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
-      "rationaleOrBlocker": "DB02 ownership; admin chair optionality and role guard need review",
+      "rationaleOrBlocker": "Current frontend explicitly retires chair/vice-chair from the department product surface; backend compatibility alone is not a parity requirement. Keep omitted unless a later requirement revives department leadership.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java@65d035839691df9e7c5e2823a242760c76d5b3dc",
+        "lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2:src/pages/superadmin/sections/Departments.js@ec2b9293267cfa747a30e4727df80d32cef01130"
+      ],
+      "postV150EvidenceSummary": "Backend still accepts/validates optional leadership IDs for compatibility, but current shared College Admin/Super Admin Departments UI explicitly no longer edits or shows chair/vice-chair and states nothing in the product reads them. Do not add vNext columns absent a revived product requirement."
     },
     {
       "legacyTable": "department",
@@ -1048,12 +1088,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "BACKEND_COMPAT_ONLY_FRONTEND_PRODUCT_FIELD_RETIRED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
-      "rationaleOrBlocker": "DB02 ownership; admin vice-chair optionality and role guard need review",
+      "rationaleOrBlocker": "Current frontend explicitly retires chair/vice-chair from the department product surface; backend compatibility alone is not a parity requirement. Keep omitted unless a later requirement revives department leadership.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java@65d035839691df9e7c5e2823a242760c76d5b3dc",
+        "lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2:src/pages/superadmin/sections/Departments.js@ec2b9293267cfa747a30e4727df80d32cef01130"
+      ],
+      "postV150EvidenceSummary": "Backend still accepts/validates optional leadership IDs for compatibility, but current shared College Admin/Super Admin Departments UI explicitly no longer edits or shows chair/vice-chair and states nothing in the product reads them. Do not add vNext columns absent a revived product requirement."
     },
     {
       "legacyTable": "department",
@@ -1064,12 +1109,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "departments.name",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Department.java@ecef4d72b2f6cfc914912d875ffce0a4be98165b",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/DepartmentRepository.java@ed472b3dae70d723a67ad578adae0305c37bac50",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java@65d035839691df9e7c5e2823a242760c76d5b3dc",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/DepartmentController.java@754d6caf34832f4fb6750d13cdcc1b40feceafae"
+      ],
+      "postV150EvidenceSummary": "Current scoped department create/list/update/delete uses college, name and soft-delete lifecycle; delete is guarded by linked programs/faculty/courses and name uniqueness is enforced within active college scope."
     },
     {
       "legacyTable": "email_verification_token",
@@ -6108,6 +6160,22 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java"
       ],
       "proof": "Current UserServiceImpl authenticates by username, reads roles and saves user/role records. Managed auth provider replacement requires explicit migration of behavior, not passwords."
+    },
+    "department": {
+      "status": "ACTIVE_TABLE_WITH_TWO_PRODUCT_RETIRED_FIELDS",
+      "activeFields": [
+        "id",
+        "created_at",
+        "is_deleted",
+        "updated_at",
+        "college_id",
+        "name"
+      ],
+      "retiredCompatibilityFields": [
+        "dept_chair_id",
+        "dept_vice_chair_id"
+      ],
+      "proof": "Department CRUD is active and college-scoped. Current shared admin frontend intentionally omits chair/vice-chair and documents them as unread product fields."
     }
   }
 }
