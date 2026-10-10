@@ -26,6 +26,7 @@ import {
 } from "@/modules/placements/result-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -202,6 +203,7 @@ async function scheduleRound(
 
 beforeEach(async () => {
   await cleanup();
+  await enableSeedLearnerPlacementAccess(pool);
 });
 
 afterAll(async () => {
