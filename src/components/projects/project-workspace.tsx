@@ -957,15 +957,57 @@ export function ProjectWorkspace({
       </div>
 
       {show("audit") ? (
-        <section className="rounded-xl border border-warning-border bg-warning-subtle p-5">
-          <h2 className="m-0 text-lg font-semibold text-foreground">
-            Project audit
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-body">
-            Project audit history is not available yet. DB07 immutable audit tables
-            are staged, but W01 must register and replay the shared migration before
-            this route can truthfully expose the legacy audit timeline.
-          </p>
+        <section className="space-y-3">
+          <div>
+            <h2 className="m-0 text-lg font-semibold text-foreground">
+              Activity
+            </h2>
+            <p className="mt-1 text-sm text-body">
+              Persisted Project events visible inside this workspace.
+            </p>
+          </div>
+
+          {workspace.activity.length === 0 ? (
+            <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
+              No persisted Project activity yet.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {workspace.activity.map((event) => (
+                <article
+                  key={event.id}
+                  className="rounded-xl border border-border bg-surface p-4"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="m-0 text-sm font-semibold text-foreground">
+                        {event.summary}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {event.actorDisplayName ?? "System"}
+                        {" · "}
+                        {formatDateTime(event.occurredAt)}
+                      </p>
+                    </div>
+                    <StatusBadge tone={tone(event.importance)}>
+                      {event.eventType
+                        .split(".")
+                        .slice(1)
+                        .join(" ")}
+                    </StatusBadge>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+
+          <div className="rounded-xl border border-warning-border bg-warning-subtle p-4">
+            <p className="m-0 text-xs leading-5 text-body">
+              Legacy also keeps immutable meeting/resource/delivery history and task comments.
+              Those DB07 tables remain staged until W01 registers and replays the shared migration,
+              so this feed intentionally does not claim full legacy audit parity yet.
+            </p>
+          </div>
         </section>
       ) : null}
     </div>
