@@ -614,13 +614,18 @@
         "docs/planning/sql/db09-job-outcome-settings-candidate.sql"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "d87e292a4fcc1f25cd96a4be98f465e838b2991e",
+      "latestEvidenceSha": "730e88e554076168a2db247e6a03d182f1930aa3",
       "verificationEvidence": [],
       "blockers": [
         "No disposable PostgreSQL/CI runtime evidence; authored DB09 guards/tests are not executed.",
         "Current vNext TPO messaging producer still emits legacy HR while final database source/schema contract is RECRUITER.",
         "tpo_college_settings.job_types_json and outcome_labels_json have no confirmed canonical vNext persistence target yet.",
-        "Remaining 141 source fields include active scheduling/slot/assignment and cross-domain operations requiring explicit mapping/redesign."
+        "Remaining 141 source fields include active scheduling/slot/assignment and cross-domain operations requiring explicit mapping/redesign.",
+        "31-table/279-field semantic producer-to-consumer proof and 81 no-declared-target concepts remain unresolved; name matches are NOT mappings.",
+        "Chat 1 exclusively must integrate/check Drizzle migrations and disposable PostgreSQL replay; DB09 candidate SQL is not registered or executed.",
+        "DB08 round/job/request and DB10 notifications/suppression domain owners must reconcile dependencies before verified database parity.",
+        "Legacy V193 recruiter actor/scope code values differ from current vNext messaging/saved-view checks; API/DB atomic transition and tests pending.",
+        "Latest CI verify job 38085854862 failed with zero steps; runtime tests not executed."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -679,7 +684,7 @@
           "reason": "Stage missing V190 TPO custom job-type and outcome-label settings as isolated candidate SQL; migration integrator only."
         }
       ],
-      "progressNote": "Chat 3 has source-reviewed 138/279 DB09 fields. Canonical ledger: 135 MAPPED proposals, 3 BLOCKED, 141 UNMAPPED, 0 WORKFLOW_VERIFIED. First 52 cover V162 policy/privacy + recruiter CRM; next 86 cover messages, secure sharing, settings/prefs/saved views, student/team notes, recruiter-private notes/read-through. Staged schema now uses final RECRUITER message code, expanded saved-view scopes/share-event actions, recruiter access months + drive-approval settings; current vNext message producer still emits HR so sender_type remains blocked. Tests/PG not executed."
+      "progressNote": "Chat 3 2026-10-11: 279/279 DB09 source fields now carry explicit source-vs-declared-column candidate evidence: 14 V162 direct source analyses +139 same-name declaration candidates +45 rename candidates +81 no demonstrated target field. All 279 remain UNVERIFIED, zero PostgreSQL executed. Corrected malformed exported tpo-crm.ts (62c5f1c), authored DB09 static regression tests (2d51c71, ad3a419) NOT EXECUTED, staged CRM same-college FK, round capacity/assignment/reschedule, four missing recruiter settings, and final V193 recruiter-code SQL drafts. Read-only connector source/ledger assertions executed and passed. Full details docs/planning/db09-chat03-source-reconciliation-2026-10-11.md. Current CI verify job failed with zero steps (run 38085854862); no passing runtime gates."
     },
     {
       "id": "DB-013",
