@@ -171,6 +171,12 @@ const recruiterItems: ShellNavItem[] = [
     href: "/hr/placements",
     shortLabel: "H",
   },
+  {
+    label: "Company & Team",
+    href: "/hr/company",
+    shortLabel: "C",
+    group: "account",
+  },
 ];
 
 const collegeAdminItems: ShellNavItem[] = [
