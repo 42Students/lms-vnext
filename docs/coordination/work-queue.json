@@ -228,7 +228,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "22e7530e7ed4ba86bffc51c086d0c58f16f771f0",
+      "latestEvidenceSha": "8d348b9da606aab3e83d35af6b940939dae235b2",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -263,7 +263,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 source-side disposition is complete for 125/125 legacy candidates: 106 active/compatibility/operational and 19 historical or no-current-consumer candidates, 0 unclassified. Table-level source pass is also complete. Canonical unregistered staging is scripts/sql/db02-academic-progression-and-rooms-staging.sql; PL/pgSQL quoting and source-aligned curriculum/order/room constraints were repaired in 932b0e1. Runtime/PostgreSQL equivalence, registered Drizzle migration, replay and concurrency acceptance remain unverified; DB-005 stays IN_PROGRESS."
+      "progressNote": "DB02 source and target design disposition is complete for 125/125 legacy candidates. Canonical unregistered staging now covers program terms/curriculum, stable offering program-term identity, cohort progression/history + INACTIVE + lifecycle dates, section min/max/description + legacy dates, lecture halls/overlap/hall-archive race, and broad faculty-course pool with ACTIVE FACULTY guard. Current-main static reconciliation found 0 malformed PL/pgSQL delimiters and confirmed actor SET NULL, journal TRUNCATE guard, scoped progression triggers and hall row locking. Registered Drizzle integration, zero-to-current PostgreSQL replay and runtime acceptance remain unexecuted; runtime verified=0 and DB-005 stays IN_PROGRESS."
     },
     {
       "id": "DB-006",
