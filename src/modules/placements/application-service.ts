@@ -27,6 +27,7 @@ import { evaluatePlacementEligibility } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   createPlacementApplicationInputSchema,
   placementApplicationIdSchema,
@@ -308,11 +309,7 @@ export async function applyToPlacementJob(
   }
 
   const now = new Date();
-  if (
-    job.applicationDeadline &&
-    now.getTime() >
-      job.applicationDeadline.getTime()
-  ) {
+  if (isPlacementApplicationDeadlinePassed(job.applicationDeadline, now)) {
     throw new PlacementsServiceError(
       "PLACEMENT_APPLICATION_DEADLINE_PASSED",
     );
