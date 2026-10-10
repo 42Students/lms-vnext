@@ -20,11 +20,13 @@ export default async function LearnerProjectPage({
       ? "tasks"
       : tab === "activity"
         ? "audit"
-        : tab === "team" ||
-            tab === "sprints" ||
-            tab === "resources"
-          ? tab
-          : "overview";
+        : tab === "delivery"
+          ? "delivery"
+          : tab === "team" ||
+              tab === "sprints" ||
+              tab === "resources"
+            ? tab
+            : "overview";
   const access = await requireProjectReadAccess(
     context,
     projectId,
