@@ -10,13 +10,13 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_DB01_FIELD_SEMANTIC_RECONCILIATION",
+    "checkpointKind": "DB004_SOURCE_RECONCILIATION_PARTIAL",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a5235d8b7e4164f626a163eef51ca1ee2df713ab",
-    "lastWorkerMergedSha": null,
+    "observedMainSha": "cb33d09d4f169ca3e39aae71333fdb62dbe75ea0",
+    "lastWorkerMergedSha": "cb33d09d4f169ca3e39aae71333fdb62dbe75ea0",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-004 reserved by Chat 2. Beginning source-first reconciliation of DB01 identity/tenant semantics. No field is runtime-verified yet."
+    "summary": "Source-inspected DB01 22 table / 312 field candidate inventory. Source-level evidence for tenant_domain.last_found_values missing and college_branding 10 override fields not in canonical college/domain tables. Wrote gap-and-test contract; 0 runtime semantic fields verified; no tests executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,7 +30,7 @@
   "lastExecutedPassingTests": [],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "Compare all DB01 legacy table/field candidates against current legacy JPA/services and vNext Drizzle schemas; write source-grounded mapping, keep unverified rows open; stage migration changes for Chat 1 if required.",
+  "nextAction": "Continue DB-004: map all 312 DB01 candidate fields across 22 source tables to active vNext storage/provider/approved retirement; inspect post-V150 source; stage schema decisions for Chat 1; add and run acceptance tests. Do not mark source review as DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -43,7 +43,9 @@
     "note": "Historical ownership/coverage snapshot, NOT a current worker assignment. Do not sum per-chat old domain counts."
   },
   "evidenceLinks": [
-    "https://github.com/42Students/lms-vnext/issues/22"
+    "https://github.com/42Students/lms-vnext/issues/22",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-source-reconciliation.md",
+    "https://github.com/42Students/lms-vnext/commit/cb33d09d4f169ca3e39aae71333fdb62dbe75ea0"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
