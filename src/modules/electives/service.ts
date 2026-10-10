@@ -1,4 +1,4 @@
-import { and, count, eq, inArray } from "drizzle-orm";
+import { and, count, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -9,6 +9,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { loadAcademicPeriodScope, loadProgramScope } from "@/modules/academics/scope";
 import { postgresConstraintName } from "@/modules/academics/errors";
+import { assertPersistedGroupActor } from "@/modules/groups/actor-access";
 
 const uuid = z.string().uuid();
 const slotInput = z.object({
@@ -66,7 +67,9 @@ export async function createElectiveSlot(context: RequestContext, raw: unknown) 
       throw new ElectivesServiceError("ELECTIVE_PERIOD_INVALID");
     }
   }
-  const [slot] = await getDb().insert(electiveSlots).values({
+  return getDb().transaction(async tx => {
+    await assertPersistedGroupActor(tx, context, { collegeId: input.collegeId, mode: "MANUAL" });
+    const [slot] = await tx.insert(electiveSlots).values({
     collegeId: input.collegeId,
     programId: input.programId,
     academicPeriodId: input.academicPeriodId ?? null,
@@ -78,7 +81,8 @@ export async function createElectiveSlot(context: RequestContext, raw: unknown) 
     minPick: input.minPick,
     maxPick: input.maxPick,
   }).returning();
-  return slot!;
+    return slot!;
+  });
 }
 
 export async function createElectiveOffering(context: RequestContext, raw: unknown) {
@@ -91,6 +95,7 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
       throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
     }
     requirePermission(context, "academics.manage", { collegeId: slot.collegeId });
+    await assertPersistedGroupActor(tx, context, { collegeId: slot.collegeId, mode: "MANUAL" });
     const [group] = await tx.select().from(lmsGroups)
       .where(eq(lmsGroups.id, input.groupId)).for("update");
     if (!group || group.ownerScope !== "COLLEGE" ||
