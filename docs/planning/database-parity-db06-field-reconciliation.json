@@ -1,0 +1,1670 @@
+{
+  "schemaVersion": 1,
+  "domain": "DB06_ASSESSMENTS_AND_ATTENDANCE",
+  "generatedOn": "2026-10-11",
+  "sourceLedger": "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+  "vnextObservedSha": "d44887b17805aceaee42c7fddd63a415b017c6f8",
+  "evidenceDocument": "docs/planning/database-parity-db06-reconciliation.md",
+  "policy": "Source-semantic disposition only. runtimeVerified=false everywhere until disposable PostgreSQL/live-schema evidence executes.",
+  "counts": {
+    "activeTables": 9,
+    "activeSourceFields": 120,
+    "fieldDispositions": 120,
+    "runtimeVerifiedFields": 0
+  },
+  "tables": [
+    {
+      "legacyTable": "assignment_upload_receipt",
+      "sourceFieldCount": 19,
+      "targetTable": "assignment_upload_receipts",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "AssignmentServiceImpl",
+        "CURRENT_ASSIGNMENT_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_upload_receipts.id",
+          "reason": "UUID primary key in normalized target.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "receipt_id",
+          "sourceType": "varchar(64)",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "SECURITY_REDESIGN_REQUIRED",
+          "targetRef": "assignment_upload_receipts.receipt_id / token_hash",
+          "reason": "Opaque one-time receipt identity; never trust raw client-selected paths.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "storage_key",
+          "sourceType": "varchar(1024)",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "SECURITY_REDESIGN_REQUIRED",
+          "targetRef": "assignment_upload_receipts.object_key",
+          "reason": "Private GCS object key.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "public_url",
+          "sourceType": "varchar(2048)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "RETIRE_SECURITY_ANTI_PATTERN",
+          "targetRef": "null",
+          "reason": "Public URL must not be authoritative for private assignment objects.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "folder",
+          "sourceType": "varchar(80)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "private object namespace",
+          "reason": "Namespace is encoded by server-owned object contract.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "upload_type",
+          "sourceType": "varchar(80)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_upload_receipts.upload_type",
+          "reason": "Retain only if multiple submission asset policies query it.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "owner_user_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "assignment_upload_receipts.owner_membership_id",
+          "reason": "Tenant-scoped membership replaces global user integer.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "owner_user_type",
+          "sourceType": "varchar(40)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "DERIVED_METADATA_NOT_PERSISTED",
+          "targetRef": "college_memberships.role",
+          "reason": "Role is canonical membership data.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "lesson_content_id",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "assignment_upload_receipts.assignment_id",
+          "reason": "Bind receipt to canonical assignment/delivery scope.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "declared_content_type",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "SECURITY_REDESIGN_REQUIRED",
+          "targetRef": "assignment_upload_receipts.expected_content_type",
+          "reason": "Expected signed-upload MIME.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "declared_content_length",
+          "sourceType": "bigint",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "SECURITY_REDESIGN_REQUIRED",
+          "targetRef": "assignment_upload_receipts.expected_size_bytes",
+          "reason": "Expected signed-upload size.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "actual_content_type",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "SECURITY_REDESIGN_REQUIRED",
+          "targetRef": "assignment_upload_receipts.attested_content_type",
+          "reason": "Scanner/object metadata attestation.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "actual_content_length",
+          "sourceType": "bigint",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "SECURITY_REDESIGN_REQUIRED",
+          "targetRef": "assignment_upload_receipts.attested_size_bytes",
+          "reason": "Scanner/object metadata attestation.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "expires_at",
+          "sourceType": "datetime",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_upload_receipts.expires_at",
+          "reason": "One-time receipt expiry.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "consumed_at",
+          "sourceType": "datetime",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_upload_receipts.consumed_at",
+          "reason": "Atomic anti-replay marker.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "student_assignment_id",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "assignment_upload_receipts.assignment_submission_id",
+          "reason": "Final receipt consumption links to created submission.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_upload_receipts.created_at",
+          "reason": "Receipt creation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceType": "datetime",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_upload_receipts.updated_at",
+          "reason": "Receipt lifecycle update time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_LIFECYCLE",
+          "targetRef": "assignment_upload_receipts.status/consumed_at/expires_at",
+          "reason": "Receipt validity is explicit, not generic soft-delete.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "attend",
+      "sourceFieldCount": 9,
+      "targetTable": "attendance_records",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "AttendanceRepository",
+        "CURRENT_ATTENDANCE_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "attendance_records.id",
+          "reason": "Integer identity becomes UUID.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "attendance_records.marked_at / attendance history occurred_at",
+          "reason": "Legacy row creation marks original absence; correction history needs separate event time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TO_HISTORY_AND_STATUS",
+          "targetRef": "attendance_records.status + attendance_correction_events",
+          "reason": "Legacy presence/absence uses soft-delete toggling; normalized target keeps explicit status and must retain correction history.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceType": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "attendance_records.updated_at",
+          "reason": "Last mutation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "class_schedule_id",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "attendance_records.schedule_event_id",
+          "reason": "Canonical Section schedule event replaces legacy schedule integer.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "drop_class_reason",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "attendance_records.note",
+          "reason": "Free-text reason/note mapping; exact visibility rules remain API/UI work.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "student_id",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "attendance_records.membership_id",
+          "reason": "Tenant-scoped learner membership.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "marked_by",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "attendance_records.marked_by_user_id",
+          "reason": "Actor mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "attendance_status",
+          "sourceType": "varchar(20)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "attendance_records.status",
+          "reason": "Legacy absence/null plus EXCUSED/MEDICAL/LATE becomes explicit status.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "grade_audit_log",
+      "sourceFieldCount": 9,
+      "targetTable": "assignment_grade_events",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "AssignmentServiceImpl",
+        "CURRENT_ASSIGNMENT_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "bigint",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.id",
+          "reason": "UUID primary key in normalized target.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "student_assignment_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.assignment_submission_id",
+          "reason": "Grade-history parent.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "graded_by",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.actor_user_id",
+          "reason": "Authenticated grading/publish actor.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "previous_points",
+          "sourceType": "bigint",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.previous_points",
+          "reason": "Immutable before value.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "new_points",
+          "sourceType": "bigint",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.new_points",
+          "reason": "Immutable after value.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "previous_grading_status",
+          "sourceType": "varchar(20)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.previous_grading_status",
+          "reason": "Immutable before state.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "new_grading_status",
+          "sourceType": "varchar(20)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.new_grading_status",
+          "reason": "Immutable after state.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "action",
+          "sourceType": "varchar(50)",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.action",
+          "reason": "GRADE/REGRADE/PUBLISH lifecycle action.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "assignment_grade_events.occurred_at",
+          "reason": "Immutable event time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "quiz_answers",
+      "sourceFieldCount": 9,
+      "targetTable": "quiz_attempt_answers",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "QuizServiceImpl",
+        "CURRENT_QUIZ_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempt_answers.id",
+          "reason": "Integer identity becomes UUID.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "attempt_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempt_answers.attempt_id",
+          "reason": "Direct parent mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "question_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempt_answers.question_id",
+          "reason": "Direct question reference plus vNext snapshots.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "selected_option_ids",
+          "sourceType": "varchar(500)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempt_answers.selected_option_ids",
+          "reason": "Legacy comma/string representation becomes typed JSONB UUID array.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "correct",
+          "sourceType": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempt_answers.correct",
+          "reason": "Persisted correctness snapshot.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "points_awarded",
+          "sourceType": "bigint",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempt_answers.points_awarded",
+          "reason": "Persisted awarded points.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
+          "targetRef": "attempt/answer retention policy",
+          "reason": "Submitted assessment history should not be silently hard-deleted; confirm any current delete/restore producer.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempt_answers.created_at",
+          "reason": "Immutable answer creation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "REDESIGNED_IMMUTABLE_OR_REPLACED",
+          "targetRef": "null",
+          "reason": "Target row is immutable or replaced rather than updated in place; runtime producer review still required.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "quiz_attempts",
+      "sourceFieldCount": 11,
+      "targetTable": "quiz_attempts",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "QuizServiceImpl",
+        "CURRENT_QUIZ_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempts.id",
+          "reason": "Integer identity becomes UUID.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "quiz_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempts.quiz_id",
+          "reason": "Direct parent mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "learner_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "quiz_attempts.membership_id",
+          "reason": "Tenant-scoped learner membership replaces global learner integer.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "attempt_number",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'1'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempts.attempt_number",
+          "reason": "Sequential per learner+quiz and used for max-attempt enforcement.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "status",
+          "sourceType": "varchar(20)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'SUBMITTED'",
+          "riskFlags": [],
+          "decision": "PENDING_RETIRE_IF_CONSTANT",
+          "targetRef": "null",
+          "reason": "Current source writes SUBMITTED only; producer/consumer sweep must prove no other persisted states before retirement.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "score",
+          "sourceType": "bigint",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempts.score",
+          "reason": "Persisted earned score.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "max_score",
+          "sourceType": "bigint",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempts.max_score",
+          "reason": "Persisted denominator snapshot.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "submitted_at",
+          "sourceType": "datetime",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempts.submitted_at",
+          "reason": "Submission timestamp.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
+          "targetRef": "attempt/answer retention policy",
+          "reason": "Submitted assessment history should not be silently hard-deleted; confirm any current delete/restore producer.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_attempts.created_at",
+          "reason": "Creation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "REDESIGNED_IMMUTABLE_OR_REPLACED",
+          "targetRef": "null",
+          "reason": "Target row is immutable or replaced rather than updated in place; runtime producer review still required.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "quiz_options",
+      "sourceFieldCount": 8,
+      "targetTable": "quiz_options",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "QuizServiceImpl",
+        "CURRENT_QUIZ_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_options.id",
+          "reason": "Integer identity becomes UUID.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "question_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_options.question_id",
+          "reason": "Direct parent mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "option_text",
+          "sourceType": "text",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_options.option_text",
+          "reason": "Direct semantic mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "correct",
+          "sourceType": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_options.is_correct",
+          "reason": "Correct-answer definition.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "sequence",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_options.sequence",
+          "reason": "Ordering contract.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "REDESIGNED_MUTATION_POLICY",
+          "targetRef": "quiz definition transaction",
+          "reason": "Legacy rows can be replaced before attempts; after attempts questions are frozen.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_options.created_at",
+          "reason": "Creation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "REDESIGNED_IMMUTABLE_OR_REPLACED",
+          "targetRef": "null",
+          "reason": "Target row is immutable or replaced rather than updated in place; runtime producer review still required.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "quiz_questions",
+      "sourceFieldCount": 9,
+      "targetTable": "quiz_questions",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "QuizServiceImpl",
+        "CURRENT_QUIZ_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_questions.id",
+          "reason": "Integer identity becomes UUID.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "quiz_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_questions.quiz_id",
+          "reason": "Direct parent mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "question_type",
+          "sourceType": "varchar(30)",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_questions.question_type",
+          "reason": "Active SINGLE/MULTIPLE choice semantics.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "prompt",
+          "sourceType": "text",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_questions.prompt",
+          "reason": "Direct semantic mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "points",
+          "sourceType": "bigint",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'1'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_questions.points",
+          "reason": "Direct semantic mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "sequence",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_questions.sequence",
+          "reason": "Ordering contract.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "REDESIGNED_MUTATION_POLICY",
+          "targetRef": "quiz definition transaction",
+          "reason": "Legacy rows can be replaced before attempts; after attempts questions are frozen.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_questions.created_at",
+          "reason": "Creation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "quiz_questions.updated_at",
+          "reason": "Last mutation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "quizzes",
+      "sourceFieldCount": 19,
+      "targetTable": "course_quizzes",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "QuizServiceImpl",
+        "CURRENT_QUIZ_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.id",
+          "reason": "Integer identity becomes UUID.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "lesson_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.lesson_id",
+          "reason": "Direct lesson identity, integer→UUID redesign.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "course_id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "course_quizzes.lesson_id → learning path/offering course",
+          "reason": "Course scope is derivable from canonical lesson/offering; avoid duplicate mutable course_id.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "class_id",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "course_quizzes.delivery_id",
+          "reason": "Legacy class audience becomes explicit Section delivery.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "faculty_id",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "course_quizzes.created_by_user_id + active teaching authorization",
+          "reason": "Creator is persisted; continuing management authorization comes from teaching assignments rather than a mutable owner integer.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "title",
+          "sourceType": "varchar(255)",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.title",
+          "reason": "Direct semantic mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "description",
+          "sourceType": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.description",
+          "reason": "Direct semantic mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "status",
+          "sourceType": "varchar(20)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'DRAFT'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.status",
+          "reason": "DRAFT/PUBLISHED lifecycle is active.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "due_at",
+          "sourceType": "datetime",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.due_at",
+          "reason": "Deadline persists as timezone-aware timestamp in vNext.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "max_attempts",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'1'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.max_attempts",
+          "reason": "Active attempt-limit behavior.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "total_points",
+          "sourceType": "bigint",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.total_points",
+          "reason": "Persisted aggregate/validation field.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "active",
+          "sourceType": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'1'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_LIFECYCLE",
+          "targetRef": "course_quizzes.status",
+          "reason": "Legacy active flag is redundant with normalized lifecycle.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "enabled",
+          "sourceType": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'1'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_LIFECYCLE",
+          "targetRef": "course_quizzes.status",
+          "reason": "Legacy enabled flag is redundant with normalized lifecycle.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_LIFECYCLE",
+          "targetRef": "course_quizzes.status",
+          "reason": "Archive/lifecycle state replaces generic soft-delete.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.created_at",
+          "reason": "Creation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceType": "datetime",
+          "nullable": "NOT_NULL",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.updated_at",
+          "reason": "Last mutation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_grade_published",
+          "sourceType": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'1'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "course_quizzes.results_published",
+          "reason": "Active learner result visibility gate.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "shuffle_questions",
+          "sourceType": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "course_quizzes.shuffle_questions",
+          "reason": "Actively written and read by legacy QuizServiceImpl; missing in vNext schema.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "shuffle_options",
+          "sourceType": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_REQUIRED",
+          "targetRef": "course_quizzes.shuffle_options",
+          "reason": "Actively written and read by legacy QuizServiceImpl; missing in vNext schema.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    },
+    {
+      "legacyTable": "student_assignment",
+      "sourceFieldCount": 27,
+      "targetTable": "assignment_submissions",
+      "sourceEvidence": [
+        "JPA_ENTITY",
+        "AssignmentServiceImpl",
+        "CURRENT_ASSIGNMENT_ROUTES"
+      ],
+      "fields": [
+        {
+          "legacyField": "id",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": null,
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.id",
+          "reason": "Integer identity becomes UUID.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "created_at",
+          "sourceType": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.created_at",
+          "reason": "Creation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_deleted",
+          "sourceType": "tinyint(1)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
+          "targetRef": "assignment submission lifecycle/history",
+          "reason": "Do not copy soft-delete blindly; confirm learner/faculty delete/restore requirements.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "updated_at",
+          "sourceType": "datetime(6)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.updated_at",
+          "reason": "Last mutation time.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "assignment_name",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "course_assignments.title",
+          "reason": "Assignment title belongs to canonical assignment definition unless immutable report snapshot evidence requires duplication.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "faculty_id",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "course_assignments.created_by_user_id / assignment_submissions.graded_by_user_id",
+          "reason": "Legacy field conflates author/grader context; vNext separates them.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "assignment_contents",
+          "sourceType": "json",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "decision": "SECURITY_REDESIGN_REQUIRED",
+          "targetRef": "assignment_submission_assets / private object receipt",
+          "reason": "Legacy JSON file object must become private object references with attestation.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "graded",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "assignment_submissions.grading_status",
+          "reason": "Boolean/int graded flag is redundant with explicit grading state.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "grading_date",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.graded_at",
+          "reason": "String date is replaced by timezone-aware timestamp.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "html_content",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.text_content",
+          "reason": "Written response payload; sanitization/rich-text compatibility remains API/UI work.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "submission_type",
+          "sourceType": "varchar(64)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.submission_type",
+          "reason": "Active payload discriminator; multi-part/file expansion may require a child asset relation.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "submission_link",
+          "sourceType": "text",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": null,
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.submission_url",
+          "reason": "External/repository link mapping.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "submission_assets",
+          "sourceType": "json",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+          ],
+          "decision": "SECURITY_REDESIGN_REQUIRED",
+          "targetRef": "assignment_submission_assets / assignment_upload_receipts",
+          "reason": "Active multi-part/file contract cannot remain opaque JSON authoritative storage.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "lesson_content_id",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "assignment_submissions.assignment_id → course_assignments.lesson_id",
+          "reason": "Submission references canonical assignment rather than generic lesson-content row.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "points",
+          "sourceType": "bigint",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "course_assignments.max_points",
+          "reason": "Maximum belongs to assignment definition.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "points_obtained",
+          "sourceType": "bigint",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.points_awarded",
+          "reason": "Earned grade.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "student_first_name",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "DERIVED_METADATA_NOT_PERSISTED",
+          "targetRef": "college_memberships → users/profiles",
+          "reason": "Canonical identity should supply current display name unless historical snapshot requirement is proven.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "student_id",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "INTEGER_KEY_TO_UUID_MAPPING"
+          ],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "assignment_submissions.membership_id",
+          "reason": "Tenant-scoped learner membership replaces global learner integer.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "student_last_name",
+          "sourceType": "varchar(255)",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "DERIVED_METADATA_NOT_PERSISTED",
+          "targetRef": "college_memberships → users/profiles",
+          "reason": "Canonical identity should supply current display name unless historical snapshot requirement is proven.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "version",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.version",
+          "reason": "Optimistic grading lock.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "grading_status",
+          "sourceType": "varchar(20)",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'NOT_GRADED'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.grading_status",
+          "reason": "Explicit grading state.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "graded_by",
+          "sourceType": "int",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.graded_by_user_id",
+          "reason": "Last grader actor.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "graded_at",
+          "sourceType": "datetime",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [
+            "TIMEZONE_AND_DEADLINE_SEMANTICS"
+          ],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.graded_at",
+          "reason": "Last grading timestamp.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "previous_points",
+          "sourceType": "bigint",
+          "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
+          "targetRef": "assignment_grade_events.previous_points",
+          "reason": "Do not retain mutable previous_points if immutable grade events are authoritative.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "attempt_number",
+          "sourceType": "int",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'1'",
+          "riskFlags": [],
+          "decision": "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
+          "targetRef": "assignment_submissions.attempt_number / child attempt model",
+          "reason": "Legacy explicitly supports re-attempt numbering; current unique assignment+membership key prevents multiple persisted attempts.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "is_grade_published",
+          "sourceType": "tinyint(1)",
+          "nullable": "NOT_NULL",
+          "defaultValue": "'0'",
+          "riskFlags": [],
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.grade_published",
+          "reason": "Learner visibility gate.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        },
+        {
+          "legacyField": "semester_number",
+          "sourceType": "tinyint",
+          "nullable": "NULL_ALLOWED",
+          "defaultValue": "NULL",
+          "riskFlags": [],
+          "decision": "NORMALIZED_RELATION_OR_DERIVED",
+          "targetRef": "assignment delivery → offering.academic_period_id",
+          "reason": "Prefer immutable academic-period scope; prove this preserves legacy semester-scoped attempt reset.",
+          "runtimeVerified": false,
+          "validationEvidence": null
+        }
+      ]
+    }
+  ]
+}
