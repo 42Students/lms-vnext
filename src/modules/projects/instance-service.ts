@@ -21,7 +21,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { collegeIdSchema } from "@/modules/academics/validation";
-import { requireProjectReadAccess } from "./access";
+import { requireProjectManageAccess, requireProjectReadAccess } from "./access";
 import { loadProjectCollegeScope } from "./scope";
 import {
   ProjectsServiceError,
@@ -348,6 +348,100 @@ export async function listProjectInstances(
       ),
     )
     .orderBy(asc(projectInstances.title));
+}
+
+export async function archiveProjectInstance(
+  context: RequestContext,
+  projectIdInput: string,
+) {
+  const scope =
+    await requireProjectManageAccess(
+      context,
+      projectIdInput,
+    );
+  const db = getDb();
+
+  return db.transaction(async (tx) => {
+    const [project] = await tx
+      .select()
+      .from(projectInstances)
+      .where(
+        and(
+          eq(projectInstances.id, scope.project.id),
+          eq(projectInstances.collegeId, scope.collegeId),
+        ),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!project) {
+      throw new ProjectsServiceError(
+        "PROJECT_NOT_FOUND",
+      );
+    }
+
+    if (project.status === "ARCHIVED") {
+      return project;
+    }
+
+    const now = new Date();
+    const [archived] = await tx
+      .update(projectInstances)
+      .set({
+        status: "ARCHIVED",
+        archivedAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(projectInstances.id, project.id),
+          eq(projectInstances.collegeId, scope.collegeId),
+          ne(projectInstances.status, "ARCHIVED"),
+        ),
+      )
+      .returning();
+
+    if (!archived) {
+      const [current] = await tx
+        .select()
+        .from(projectInstances)
+        .where(eq(projectInstances.id, project.id))
+        .limit(1);
+      if (current?.status === "ARCHIVED") {
+        return current;
+      }
+      throw new ProjectsServiceError(
+        "PROJECT_INVALID_STATE",
+      );
+    }
+
+    await recordActivityEventInTransaction(
+      tx,
+      context,
+      {
+        eventType:
+          ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_UPDATED,
+        collegeId: scope.collegeId,
+        organizationId: scope.organizationId,
+        subjectType: "project",
+        subjectId: archived.id,
+        subjectLabel: archived.title,
+        summary:
+          `Project ${archived.title} archived`,
+        metadata: {
+          projectId: archived.id,
+          previousStatus: project.status,
+          status: archived.status,
+        },
+        groupKey:
+          `project:${archived.id}`,
+        dedupeKey:
+          `project:${archived.id}:archived:${now.toISOString()}`,
+      },
+    );
+
+    return archived;
+  });
 }
 
 export async function getProjectInstanceWorkspace(
