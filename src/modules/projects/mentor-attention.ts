@@ -1,0 +1,74 @@
+/**
+ * Mentor attention rules are pure, so stale/reopen/archival edge cases are
+ * regression-tested without pretending browser or DB execution is complete.
+ */
+export type MentorProjectAttentionSource = {
+  projectId: string;
+  projectTitle: string;
+  projectStatus: string;
+  projectUpdatedAt: Date;
+  lastActivityAt: Date | null;
+  submission: {id: string;status: string;submittedAt: Date | null} | null;
+  meetings: readonly {
+    id: string; status: string;title: string; startsAt: Date;
+  }[];
+};
+export type MentorProjectAttention = {
+  key: string;
+  kind: "REVIEW" | "STALLED" | "REQUESTED" | "MEETING_SOON";
+  title: string;
+  description: string;
+  href: string;
+  occurredAt: string;
+};
+
+export function deriveMentorProjectAttention(
+  projects: readonly MentorProjectAttentionSource[],
+  now: Date,
+): MentorProjectAttention[] {
+  const alerts: MentorProjectAttention[]=[];
+  const timestamp=now.getTime();
+  for (const project of projects) {
+    if (project.projectStatus==="ARCHIVED") continue;
+    const href="/mentor/projects/"+encodeURIComponent(project.projectId);
+    if (project.submission?.status==="SUBMITTED" && project.submission.submittedAt) {
+      alerts.push({
+        key:"review:"+project.submission.id,kind:"REVIEW",
+        title:"Delivery awaiting your review",
+        description:project.projectTitle+" has a learner submission to review.",
+        href:href+"?tab=delivery",
+        occurredAt:project.submission.submittedAt.toISOString(),
+      });
+    }
+    // Avoid a stale alarm for records without any trustworthy activity signal.
+    const last=project.lastActivityAt ?? project.projectUpdatedAt;
+    const lastMillis=last.getTime();
+    const stalled=project.projectStatus==="ACTIVE" && Number.isFinite(lastMillis) &&
+      timestamp-lastMillis >= 7*24*60*60*1000;
+    if (stalled) alerts.push({
+      key:"stalled:"+project.projectId,kind:"STALLED",
+      title:"Project may be stalled",
+      description:project.projectTitle+" has no recent recorded activity.",
+      href,occurredAt:last.toISOString(),
+    });
+    for (const meeting of project.meetings) {
+      if (meeting.status==="REQUESTED") {
+        alerts.push({
+          key:"request:"+meeting.id,kind:"REQUESTED",
+          title:"Meeting request pending",
+          description:project.projectTitle+": "+meeting.title,
+          href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
+        });
+      } else if (meeting.status==="SCHEDULED") {
+        const delta=meeting.startsAt.getTime()-timestamp;
+        if (delta>=0 && delta<=48*60*60*1000) alerts.push({
+          key:"soon:"+meeting.id,kind:"MEETING_SOON",
+          title:"Upcoming project meeting",
+          description:project.projectTitle+": "+meeting.title,
+          href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
+        });
+      }
+    }
+  }
+  return alerts.sort((a,b)=>b.occurredAt.localeCompare(a.occurredAt)||a.key.localeCompare(b.key));
+}
