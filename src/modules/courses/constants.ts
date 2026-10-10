@@ -71,6 +71,7 @@ export type CourseAssignmentStatus =
 export const ASSIGNMENT_SUBMISSION_TYPES = [
   "TEXT",
   "LINK",
+  "FILE",
 ] as const;
 export type AssignmentSubmissionType =
   (typeof ASSIGNMENT_SUBMISSION_TYPES)[number];
