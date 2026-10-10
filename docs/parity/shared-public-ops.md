@@ -324,3 +324,8 @@ Authored evidence: `tests/unit/bug-tracker-admin-validation.test.ts`, `tests/db1
 Legacy `announcements` is now represented as a distinct DB10 draft model rather than being incorrectly treated as `in_app_notifications`. Source-authored code covers six audience types, explicit tenant scope, create/edit/retarget, schedule, expiry, pin, soft delete/restore and recipient visibility. Admin management pages are staged at `/college/announcements` and `/admin/announcements`; recipient read API is `GET /api/announcements/mine`. Every DB-backed route/page is migration-gated by `DB10_ANNOUNCEMENTS_READY=DB10_VERIFIED` and performs no table query while disabled.
 
 **State: CODE_STAGED / MIGRATION_BLOCKED.** W01 must register/replay the table; W02 must place the recipient feed into Learner/Faculty owned notification surfaces. Tests are authored but unexecuted. No announcement parity row is VERIFIED.
+
+
+## W06 scheduled-job distributed lease staging — 2026-10-10
+
+A PostgreSQL-backed, fail-closed lease adapter is now source-authored for DB10 scheduled work, using database time, atomic expired-row takeover and monotonically increasing fencing tokens. It is **not active**: `scheduled_job_leases` remains an unregistered draft table and no user-facing scheduler has been rewired. Real concurrency tests are authored but unexecuted. External delivery exactly-once semantics remain OPEN until durable outbox/idempotency is implemented and each irreversible send validates current fence.
