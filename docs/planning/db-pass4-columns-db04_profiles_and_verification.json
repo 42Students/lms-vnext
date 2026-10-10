@@ -35,7 +35,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -70,7 +70,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -103,7 +103,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -138,7 +138,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -171,7 +171,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -204,7 +204,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -237,7 +237,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -270,7 +270,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -303,7 +303,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -336,7 +336,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -371,7 +371,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -422,7 +422,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -454,7 +454,7 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -492,7 +492,7 @@
           ],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -530,7 +530,7 @@
           ],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -562,7 +562,7 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -594,7 +594,7 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -626,7 +626,7 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -658,7 +658,7 @@
           "riskFlags": [
             "PRECISION_ROUNDING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -696,7 +696,7 @@
           ],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -734,7 +734,7 @@
           ],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -772,7 +772,7 @@
           ],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -804,7 +804,7 @@
           "riskFlags": [
             "POTENTIAL_PERSONAL_OR_SECRET_DATA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -842,7 +842,7 @@
           ],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -872,7 +872,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -904,7 +904,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -944,7 +944,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -979,7 +979,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1016,7 +1016,7 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1058,7 +1058,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1088,7 +1088,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1116,7 +1116,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1144,7 +1144,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1174,7 +1174,7 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1204,7 +1204,7 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1234,7 +1234,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1264,7 +1264,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1292,7 +1292,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1322,7 +1322,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1350,7 +1350,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1378,7 +1378,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1408,7 +1408,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1436,7 +1436,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1466,7 +1466,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1508,7 +1508,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1538,7 +1538,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1566,7 +1566,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1594,7 +1594,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1622,7 +1622,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1652,7 +1652,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1680,7 +1680,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1708,7 +1708,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1738,7 +1738,7 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1768,7 +1768,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1810,7 +1810,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1849,7 +1849,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1886,7 +1886,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1925,7 +1925,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1962,7 +1962,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -1999,7 +1999,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2036,7 +2036,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2073,7 +2073,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2110,7 +2110,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2149,7 +2149,7 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2186,7 +2186,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2223,7 +2223,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2260,7 +2260,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2297,7 +2297,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2334,7 +2334,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2371,7 +2371,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2408,7 +2408,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2445,7 +2445,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2482,7 +2482,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2519,7 +2519,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2556,7 +2556,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2593,7 +2593,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2630,7 +2630,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": true,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2669,7 +2669,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2720,7 +2720,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2759,7 +2759,7 @@
             "POTENTIAL_PERSONAL_OR_SECRET_DATA",
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2795,7 +2795,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2845,7 +2845,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2880,7 +2880,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2915,7 +2915,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2950,7 +2950,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -2985,7 +2985,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3018,7 +3018,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3051,7 +3051,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3084,7 +3084,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3119,7 +3119,7 @@
           "riskFlags": [
             "POTENTIAL_PERSONAL_OR_SECRET_DATA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3154,7 +3154,7 @@
           "riskFlags": [
             "POTENTIAL_PERSONAL_OR_SECRET_DATA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3189,7 +3189,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3224,7 +3224,7 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3257,7 +3257,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3290,7 +3290,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3323,7 +3323,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3356,7 +3356,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3391,7 +3391,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3426,7 +3426,7 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3459,7 +3459,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3494,7 +3494,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3529,7 +3529,7 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3562,7 +3562,7 @@
           "candidateExactNameMatches": [],
           "sourceJPAColumnAnnotated": false,
           "riskFlags": [],
-          "reviewStatus": "SOURCE_REVIEWED_NOT_SEMANTICALLY_VERIFIED",
+          "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
           "sourceReview": {
@@ -3593,6 +3593,6 @@
     "priorDdlToStagedComparedFields": 43,
     "formalSemanticOrRuntimeVerifiedFields": 0,
     "retirementsApproved": 0,
-    "warning": "Every candidate has a source-review note, NOT an accepted semantic mapping. Current legacy DB catalog unknown; migration and DB integration tests not executed. Existing counts.sameNameCandidateFields are not verified."
+    "warning": "Source-review entries are supplementary evidence. Every reviewStatus deliberately remains UNVERIFIED_FIELD_SEMANTICS to keep existing machine counters conservative; no DB integration/witness or verified field mapping."
   }
 }
