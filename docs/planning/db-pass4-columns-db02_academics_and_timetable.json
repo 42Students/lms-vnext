@@ -3249,8 +3249,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "sourceJavaReference": null,
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3279,8 +3280,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "sourceJavaReference": null,
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3307,8 +3309,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "sourceJavaReference": null,
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3337,8 +3340,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "sourceJavaReference": null,
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3367,8 +3371,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "sourceJavaReference": null,
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3395,8 +3400,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "sourceJavaReference": null,
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3423,8 +3429,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "sourceJavaReference": null,
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3451,8 +3458,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "sourceJavaReference": null,
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         }
       ]
@@ -3493,8 +3501,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "sourceJavaReference": null,
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3523,8 +3532,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "sourceJavaReference": null,
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3551,8 +3561,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "sourceJavaReference": null,
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3581,8 +3592,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "sourceJavaReference": null,
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3613,8 +3625,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "Historical program structure separate from newer one; active-vs-retired decision must be source-proven."
+            "sourceJavaReference": null,
+            "notes": "Historical program structure separate from newer one; active-vs-retired decision must be source-proven.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3641,8 +3654,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "sourceJavaReference": null,
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3669,8 +3683,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "sourceJavaReference": null,
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3699,8 +3714,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "sourceJavaReference": null,
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         },
         {
@@ -3727,8 +3743,9 @@
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
-            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "sourceJavaReference": null,
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
           }
         }
       ]
@@ -4334,6 +4351,7 @@
       "Execute zero-to-current migration replay and academic negative integration tests with disposable PostgreSQL; record exact SHAs and run IDs",
       "Independently re-audit source revisions before marking DB-005 DONE_VERIFIED"
     ],
-    "policy": "Never upgrade CANDIDATE to MAPPED/IMPLEMENTED/DB_TESTED or claim runtime success without source and execution evidence."
+    "policy": "Never upgrade CANDIDATE to MAPPED/IMPLEMENTED/DB_TESTED or claim runtime success without source and execution evidence.",
+    "sourceReferenceCorrection": "The legacy program and program_structure source rows originate from historical SQL inventory, not current JPA model files. Do not silently retire."
   }
 }
