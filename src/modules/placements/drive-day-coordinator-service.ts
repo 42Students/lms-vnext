@@ -255,127 +255,79 @@ export async function assignDriveDayCoordinator(
   jobIdInput: string,
   input: PlacementDriveDayCoordinatorInput,
 ) {
-  const jobId =
-    placementJobIdSchema.parse(jobIdInput);
-  const parsed =
-    placementDriveDayCoordinatorInputSchema.parse(
-      input,
-    );
+  const jobId = placementJobIdSchema.parse(jobIdInput);
+  const parsed = placementDriveDayCoordinatorInputSchema.parse(input);
   const { job } = await loadJob(jobId);
-  await requirePlacementManageScope(
-    context,
-    job.collegeId,
-  );
+  await requirePlacementManageScope(context, job.collegeId);
 
-  const db = getDb();
-  const [learner] = await db
-    .select({
+  // Both learner Apply and coordinator Assign lock this SAME job row before
+  // testing for the opposite role. Without a shared lock, two independent
+  // read-before-write checks can each pass and commit incompatible roles.
+  return getDb().transaction(async (tx) => {
+    const [lockedJob] = await tx.select({
+      id: placementJobs.id,
+    }).from(placementJobs)
+      .where(and(
+        eq(placementJobs.id, jobId),
+        eq(placementJobs.collegeId, job.collegeId),
+      ))
+      .for("update").limit(1);
+    if (!lockedJob) {
+      throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+    }
+
+    const [learner] = await tx.select({
       membershipId: collegeMemberships.id,
-    })
-    .from(collegeMemberships)
-    .innerJoin(
-      membershipRoles,
-      and(
-        eq(
-          membershipRoles.membershipId,
-          collegeMemberships.id,
-        ),
+    }).from(collegeMemberships)
+      .innerJoin(membershipRoles, and(
+        eq(membershipRoles.membershipId, collegeMemberships.id),
         eq(membershipRoles.role, "LEARNER"),
-      ),
-    )
-    .where(
-      and(
-        eq(
-          collegeMemberships.id,
-          parsed.learnerMembershipId,
-        ),
-        eq(
-          collegeMemberships.collegeId,
-          job.collegeId,
-        ),
-        eq(
-          collegeMemberships.status,
-          "ACTIVE",
-        ),
-      ),
-    )
-    .limit(1);
+      ))
+      .where(and(
+        eq(collegeMemberships.id, parsed.learnerMembershipId),
+        eq(collegeMemberships.collegeId, job.collegeId),
+        eq(collegeMemberships.status, "ACTIVE"),
+      )).limit(1);
+    if (!learner) {
+      throw new PlacementsServiceError("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
+    }
 
-  if (!learner) {
-    throw new PlacementsServiceError(
-      "PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND",
-    );
-  }
+    const [application] = await tx.select({
+      id: placementApplications.id,
+    }).from(placementApplications)
+      .where(and(
+        eq(placementApplications.jobId, jobId),
+        eq(placementApplications.membershipId, learner.membershipId),
+      )).limit(1);
+    if (application) {
+      throw new PlacementsServiceError("PLACEMENT_COORDINATOR_APPLICANT_CONFLICT");
+    }
 
-  const [application] = await db
-    .select({ id: placementApplications.id })
-    .from(placementApplications)
-    .where(
-      and(
-        eq(
-          placementApplications.jobId,
-          jobId,
-        ),
-        eq(
-          placementApplications.membershipId,
-          learner.membershipId,
-        ),
-      ),
-    )
-    .limit(1);
+    const [created] = await tx.insert(placementDriveDayCoordinatorAssignments)
+      .values({
+        collegeId: job.collegeId,
+        jobId,
+        learnerMembershipId: learner.membershipId,
+        onDate: parsed.onDate,
+        createdByUserId: context.user.id,
+      }).onConflictDoNothing()
+      .returning({ id: placementDriveDayCoordinatorAssignments.id });
+    if (created) return created;
 
-  if (application) {
-    throw new PlacementsServiceError(
-      "PLACEMENT_COORDINATOR_APPLICANT_CONFLICT",
-    );
-  }
-
-  const [existing] = await db
-    .select({
-      id:
-        placementDriveDayCoordinatorAssignments.id,
-    })
-    .from(
-      placementDriveDayCoordinatorAssignments,
-    )
-    .where(
-      and(
-        eq(
-          placementDriveDayCoordinatorAssignments.jobId,
-          jobId,
-        ),
-        eq(
-          placementDriveDayCoordinatorAssignments.learnerMembershipId,
-          learner.membershipId,
-        ),
-        eq(
-          placementDriveDayCoordinatorAssignments.onDate,
-          parsed.onDate,
-        ),
-      ),
-    )
-    .limit(1);
-
-  if (existing) return existing;
-
-  const [created] = await db
-    .insert(
-      placementDriveDayCoordinatorAssignments,
-    )
-    .values({
-      collegeId: job.collegeId,
-      jobId,
-      learnerMembershipId:
-        learner.membershipId,
-      onDate: parsed.onDate,
-      createdByUserId: context.user.id,
-    })
-    .returning({
-      id:
-        placementDriveDayCoordinatorAssignments.id,
-    });
-
-  return created;
+    const [existing] = await tx.select({
+      id: placementDriveDayCoordinatorAssignments.id,
+    }).from(placementDriveDayCoordinatorAssignments)
+      .where(and(
+        eq(placementDriveDayCoordinatorAssignments.jobId, jobId),
+        eq(placementDriveDayCoordinatorAssignments.collegeId, job.collegeId),
+        eq(placementDriveDayCoordinatorAssignments.learnerMembershipId, learner.membershipId),
+        eq(placementDriveDayCoordinatorAssignments.onDate, parsed.onDate),
+      )).limit(1);
+    if (!existing) {
+      throw new PlacementsServiceError("PLACEMENT_COORDINATOR_ASSIGNMENT_NOT_FOUND");
+    }
+    return existing;
+  });
 }
 
 export async function removeDriveDayCoordinator(
