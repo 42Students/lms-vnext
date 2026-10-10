@@ -18,6 +18,7 @@ DECLARE
   resolved_organization_id uuid;
   actor_membership_user_id uuid;
   actor_membership_college_id uuid;
+  actor_membership_status text;
 BEGIN
   IF NEW.college_id IS NOT NULL THEN
     SELECT c.organization_id
@@ -34,13 +35,15 @@ BEGIN
   END IF;
 
   IF NEW.actor_membership_id IS NOT NULL THEN
-    SELECT cm.user_id, cm.college_id
-      INTO actor_membership_user_id, actor_membership_college_id
+    SELECT cm.user_id, cm.college_id, cm.status::text
+      INTO actor_membership_user_id, actor_membership_college_id,
+           actor_membership_status
       FROM college_memberships cm
      WHERE cm.id = NEW.actor_membership_id;
 
     IF NEW.college_id IS NULL
        OR actor_membership_user_id IS NULL
+       OR actor_membership_status <> 'ACTIVE'
        OR actor_membership_user_id IS DISTINCT FROM NEW.actor_user_id
        OR actor_membership_college_id IS DISTINCT FROM NEW.college_id THEN
       RAISE EXCEPTION
@@ -208,6 +211,12 @@ BEGIN
   ) THEN
     RAISE EXCEPTION
       'group event member role mismatch'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF (NEW.actor_type = 'SYSTEM') IS DISTINCT FROM (NEW.actor_user_id IS NULL) THEN
+    RAISE EXCEPTION
+      'group event SYSTEM actor shape mismatch'
       USING ERRCODE = '23514';
   END IF;
 
