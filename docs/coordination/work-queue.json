@@ -606,7 +606,8 @@
         "src/db/schema/tpo-crm.ts",
         "docs/planning/sql/db09-crm-scoped-fk-candidate.sql",
         "scripts/verify-db09-crm-source.mjs",
-        "docs/planning/db09-chat03-tenant-integrity-review.md"
+        "docs/planning/db09-chat03-tenant-integrity-review.md",
+        "tests/db-parity-db09-tracker.test.mjs"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
@@ -652,6 +653,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Chat 3 reserved isolated DB09 scoped FK candidate, static schema-source guard and tenant-integrity findings; no shared migrations/barrel/CI."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Chat 3 extends narrow claim to existing DB09 static test suite for CRM source grammar/duplicate declaration regression."
         }
       ]
     },
