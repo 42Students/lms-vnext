@@ -3257,6 +3257,15 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "finalLegacyCodeAudit": {
+            "legacy": "RECRUITER",
+            "vnext": null,
+            "state": "DB10_HANDOFF_REQUIRED",
+            "fix": "outbox recipient discriminator and reliable delivery need DB10 service signoff",
+            "source": "V193__recruiter_naming.sql",
+            "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
           }
         },
         {
@@ -7232,6 +7241,15 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "finalLegacyCodeAudit": {
+            "legacy": "TPO | RECRUITER | SYSTEM | STUDENT",
+            "vnext": null,
+            "state": "ACTOR_KIND_PROVENANCE_NOT_MAPPED",
+            "fix": "translate stable audit actor kinds to canonical actor + verified membership role snapshots",
+            "source": "V193__recruiter_naming.sql",
+            "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
           }
         },
         {
@@ -7300,6 +7318,15 @@
               "enforce status transitions, concurrency and audit history"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "finalLegacyCodeAudit": {
+            "legacy": "RECRUITER_*",
+            "vnext": null,
+            "state": "EVENT_KEY_RENAME_NOT_PROVEN",
+            "fix": "verify consumers for renamed audit event actions",
+            "source": "V193__recruiter_naming.sql",
+            "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
           }
         },
         {
@@ -7333,6 +7360,15 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "finalLegacyCodeAudit": {
+            "legacy": "RECRUITER_LEAD",
+            "vnext": null,
+            "state": "EVENT_SUBJECT_RENAME_NOT_PROVEN",
+            "fix": "derive canonical subject code with migration provenance",
+            "source": "V193__recruiter_naming.sql",
+            "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
           }
         },
         {
@@ -7826,6 +7862,15 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "finalLegacyCodeAudit": {
+            "legacy": "RECRUITER",
+            "vnext": null,
+            "state": "NO_VNEXT_READER_SCOPE_PROVEN",
+            "fix": "prove per-reader read receipts and eventual ownership",
+            "source": "V193__recruiter_naming.sql",
+            "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
           }
         },
         {
@@ -9146,6 +9191,15 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "finalLegacyCodeAudit": {
+            "legacy": "TPO | RECRUITER",
+            "vnext": "TPO | HR",
+            "state": "STAGED_CODE_MISMATCH",
+            "fix": "coordinate schema constraint and messaging producer switch; API currently writes HR",
+            "source": "V193__recruiter_naming.sql",
+            "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
           }
         },
         {
@@ -9746,6 +9800,15 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "finalLegacyCodeAudit": {
+            "legacy": "RECRUITER_LEADS",
+            "vnext": "LEADS",
+            "state": "STAGED_CODE_MISMATCH",
+            "fix": "reconcile saved-view input and schema code without losing stored filters",
+            "source": "V193__recruiter_naming.sql",
+            "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
           }
         },
         {
@@ -11367,6 +11430,8 @@
     "noDeclaredEquivalentIdentified": 81,
     "semanticallyVerified": 0,
     "postgresDbTested": 0,
-    "approvedRetirements": 0
+    "approvedRetirements": 0,
+    "finalLegacyCodeCasesFlagged": 7,
+    "codeCasesSource": "V193__recruiter_naming.sql; no runtime PostgreSQL or consumer certification"
   }
 }
