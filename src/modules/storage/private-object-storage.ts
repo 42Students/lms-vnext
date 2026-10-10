@@ -81,6 +81,44 @@ export function validatePrivateUploadRequest(input: PrivateUploadRequest) {
   return { ...input, contentType, maxSizeBytes, expiresInMs };
 }
 
+export type PrivateReadRequest = {
+  objectKey: string;
+  collegeId: string;
+  ownerMembershipId: string;
+  expiresInMs?: number;
+};
+
+export function validatePrivateReadRequest(
+  input: PrivateReadRequest,
+) {
+  requireUuid(input.collegeId);
+  requireUuid(input.ownerMembershipId);
+  const prefix =
+    `private/${input.collegeId}/${input.ownerMembershipId}/`;
+  if (
+    !input.objectKey.startsWith(prefix) ||
+    input.objectKey.includes("..") ||
+    input.objectKey.includes("://") ||
+    input.objectKey.includes("\\")
+  ) {
+    throw new PrivateObjectStorageError(
+      "PRIVATE_STORAGE_INVALID_SCOPE",
+    );
+  }
+  const expiresInMs =
+    input.expiresInMs ?? 5 * 60 * 1000;
+  if (
+    !Number.isSafeInteger(expiresInMs) ||
+    expiresInMs < 60_000 ||
+    expiresInMs > 15 * 60 * 1000
+  ) {
+    throw new PrivateObjectStorageError(
+      "PRIVATE_STORAGE_INVALID_SIZE",
+    );
+  }
+  return { ...input, expiresInMs };
+}
+
 export function buildPrivateObjectKey(
   input: Pick<PrivateUploadRequest, "collegeId" | "ownerMembershipId" | "namespace">,
   objectId = randomUUID(),
@@ -178,5 +216,52 @@ export async function readPrivateObjectAttestation(
     sha256Hex,
     scanStatus: "CLEAN" as const,
     scanner: "lms-vnext-privileged-scanner" as const,
+  };
+}
+
+
+/**
+ * Produces a short-lived, generation-bound read URL after the caller has
+ * already authorized access to the owning membership.
+ *
+ * The object must still pass the same tenant scope, malware scan and checksum
+ * attestation as a profile-verification receipt. Public bucket URLs are never
+ * returned or persisted.
+ */
+export async function createPrivateReadGrant(
+  raw: PrivateReadRequest,
+) {
+  const input = validatePrivateReadRequest(raw);
+  const attestation =
+    await readPrivateObjectAttestation(
+      input.objectKey,
+      {
+        collegeId: input.collegeId,
+        ownerMembershipId:
+          input.ownerMembershipId,
+      },
+    );
+  const bucket = await privateBucket();
+  const expiresAt = new Date(
+    Date.now() + input.expiresInMs,
+  );
+  const [readUrl] = await bucket
+    .file(input.objectKey, {
+      generation: attestation.generation,
+    })
+    .getSignedUrl({
+      version: "v4",
+      action: "read",
+      expires: expiresAt,
+    });
+
+  return {
+    objectKey: input.objectKey,
+    readUrl,
+    expiresAt,
+    generation: attestation.generation,
+    contentType: attestation.contentType,
+    sizeBytes: attestation.sizeBytes,
+    sha256Hex: attestation.sha256Hex,
   };
 }
