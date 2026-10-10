@@ -9,6 +9,8 @@ import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
 import { CourseDisplayReadOnly } from "./course-display-read-only";
+import { FacultyContentOrderEditor } from "./faculty-content-order-editor";
+import { lessonContentOrderRuntimeEnabled } from "@/modules/courses/lesson-content-order-readiness";
 import type { CourseDisplayContentView } from "@/modules/courses/course-display-service";
 import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 import {
@@ -523,6 +525,18 @@ export function FacultyCourseWorkspace({
                         nextQuizSequence={
                           nextSequence
                         }
+                      />
+
+                      <FacultyContentOrderEditor
+                        lessonId={lesson.id}
+                        deliveryId={course.deliveryId}
+                        enabled={lessonContentOrderRuntimeEnabled()}
+                        items={lesson.contents.map(
+                          (item) => ({
+                            id: item.id,
+                            title: item.title,
+                          }),
+                        )}
                       />
 
                       {itemCount === 0 ? (
