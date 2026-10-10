@@ -52,6 +52,17 @@ describe("W03 mentor calendar legacy behavior", () => {
     expect(mentorMeetingDisplayStatus(item("requested","REQUESTED",old,oldEnd),now)).toBe("REQUESTED");
     expect(mentorMeetingDisplayStatus(item("cancel","CANCELLED",old,oldEnd),now)).toBe("CANCELLED");
   });
+  it("uses the meeting timezone at midnight, independent of server local time",()=>{
+    const instant = new Date("2026-10-10T19:00:00Z"); // Oct 11 in Kolkata
+    const previousLocalDay = item("before","SCHEDULED",
+      "2026-10-10T17:30:00Z","2026-10-10T18:00:00Z");
+    const sameLocalDay = item("same","SCHEDULED",
+      "2026-10-10T18:45:00Z","2026-10-10T19:15:00Z");
+    expect(mentorMeetingDisplayStatus(previousLocalDay,instant)).toBe("MISSED");
+    expect(mentorMeetingDisplayStatus(sameLocalDay,instant)).toBe("SCHEDULED");
+    expect(mentorMeetingDisplayStatus({...previousLocalDay,timeZone:"Invalid/Zone"},instant))
+      .toBe("SCHEDULED");
+  });
   it("hides cancelled, javascript and data meeting URLs",()=>{
     const safe=item("ok","SCHEDULED",future,futureEnd,{meetingUrl:"https://meet.example.com/room"});
     expect(safeMentorMeetingJoinUrl(safe)).toBe("https://meet.example.com/room");
