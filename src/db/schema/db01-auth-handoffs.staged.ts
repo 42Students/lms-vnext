@@ -11,6 +11,7 @@
 import { sql } from "drizzle-orm";
 import {
   check,
+  foreignKey,
   index,
   pgTable,
   timestamp,
@@ -19,6 +20,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
+import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { tenantDomains } from "./tenant-domains";
 
@@ -29,6 +31,9 @@ export const identityAuthHandoffsStaged = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
     targetMembershipId: uuid("target_membership_id")
       .notNull()
       .references(() => collegeMemberships.id, { onDelete: "restrict" }),
@@ -43,6 +48,22 @@ export const identityAuthHandoffsStaged = pgTable(
     consumedAt: timestamp("consumed_at", { withTimezone: true }),
   },
   (table) => [
+    // W01 must first register composite parent uniqueness on memberships,
+    // and tenant_domains(id,college_id), before promoting this staging file.
+    foreignKey({
+      name: "identity_auth_handoffs_membership_scope_fk",
+      columns: [table.targetMembershipId, table.userId, table.collegeId],
+      foreignColumns: [
+        collegeMemberships.id,
+        collegeMemberships.userId,
+        collegeMemberships.collegeId,
+      ],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "identity_auth_handoffs_domain_scope_fk",
+      columns: [table.targetDomainId, table.collegeId],
+      foreignColumns: [tenantDomains.id, tenantDomains.collegeId],
+    }).onDelete("restrict"),
     uniqueIndex("identity_auth_handoffs_code_mac_uq").on(table.codeMac),
     index("identity_auth_handoffs_user_expiry_idx").on(table.userId, table.expiresAt),
     index("identity_auth_handoffs_domain_expiry_idx").on(
