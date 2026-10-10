@@ -9,7 +9,7 @@ export function tpoCrmApiErrorResponse(error: unknown) {
       error.code === "TPO_CRM_FOLLOWUP_NOT_FOUND";
     return NextResponse.json(
       { error: error.code },
-      { status: notFound ? 404 : 409 },
+      { status: notFound ? 404 : error.code === "TPO_CRM_CONTACT_REQUIRED" ? 422 : 409 },
     );
   }
   return apiErrorResponse(error);
