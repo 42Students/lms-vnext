@@ -46,7 +46,7 @@ export const profileVerifications = pgTable("profile_verifications", {
 
 
 /** Private GCS upload receipts. No raw bytes, base64 blobs or public URLs. */
-export const learnerPrivateDocumentReceipts = pgTable("learner_private_document_receipts", {
+export const profilePrivateDocumentReceipts = pgTable("profile_private_document_receipts", {
   id: uuid("id").defaultRandom().primaryKey(),
   owningMembershipId: uuid("owning_membership_id").notNull()
     .references(() => collegeMemberships.id, {onDelete: "restrict"}),
@@ -64,17 +64,17 @@ export const learnerPrivateDocumentReceipts = pgTable("learner_private_document_
   revokedAt: timestamp("revoked_at", {withTimezone: true}),
   retentionUntil: timestamp("retention_until", {withTimezone: true}),
 }, (t) => [
-  index("learner_private_doc_member_purpose_idx").on(t.owningMembershipId, t.purpose),
-  uniqueIndex("learner_private_doc_generation_uq").on(t.privateObjectKey, t.objectGeneration),
-  check("learner_private_doc_purpose_ck",
-    sql`${t.purpose} in ('AADHAAR','PAN','MARKSHEET','RESUME')`),
-  check("learner_private_doc_scan_ck",
+  index("profile_private_doc_member_purpose_idx").on(t.owningMembershipId, t.purpose),
+  uniqueIndex("profile_private_doc_generation_uq").on(t.privateObjectKey, t.objectGeneration),
+  check("profile_private_doc_purpose_ck",
+    sql`${t.purpose} in ('AADHAAR','PAN','MARKSHEET','RESUME','PROFILE_IMAGE')`),
+  check("profile_private_doc_scan_ck",
     sql`${t.scanStatus} in ('PENDING','CLEAN','REJECTED')`),
-  check("learner_private_doc_size_ck",
+  check("profile_private_doc_size_ck",
     sql`${t.sizeBytes} > 0 and ${t.sizeBytes} <= 26214400`),
-  check("learner_private_doc_no_public_url_ck",
+  check("profile_private_doc_no_public_url_ck",
     sql`position('://' in ${t.privateObjectKey}) = 0`),
-  check("learner_private_doc_sha256_ck",
+  check("profile_private_doc_sha256_ck",
     sql`char_length(${t.sha256Hex}) = 64`),
 ]);
 
