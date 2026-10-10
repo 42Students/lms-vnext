@@ -136,6 +136,19 @@ A second pass found promotion-time collisions between the W03 drafts. Those are 
 
 The detailed promotion ownership and open decisions are recorded in `docs/planning/database-parity-db07-integration-reconciliation.md`, with a static contract guard in `tests/unit/w03-db07-integration-reconciliation.test.ts`. That test is authored but not claimed executed while DB-001 remains blocked.
 
+## Tenant and project-team integrity
+
+The existing services already perform same-college checks, but direct SQL can bypass them through globally valid UUIDs. The staged `db07-w03-tenant-project-integrity-candidate.sql` adds promotion inputs for:
+
+- project→team-group same-college composite FK plus `COLLEGE / PROJECT_TEAM / non-deleted` shape validation;
+- same-college membership guards for project members, task submissions, final submissions, evaluations and meetings;
+- same-college actor guards for the staged project history/comment tables, with canonical `SUPER_ADMIN` role as the cross-college exception rather than trusting a caller-provided actor type;
+- deferred project-team roster equality between ACTIVE `lms_group_members` and active LEARNER `project_members`.
+
+The deferred mirror is source-backed by current `src/modules/groups/service.ts`: `attachProjectTeamGroup` permits only an empty same-college `PROJECT_TEAM`, and `mirrorProjectTeamMember` writes group membership and the corresponding learner project-member state inside the same transaction. `src/modules/projects/member-service.ts` separately rejects direct learner add/end while a project is team-group managed. The staged constraints therefore validate final transaction state without imposing write order.
+
+Static contract coverage is authored in `tests/unit/w03-db07-tenant-integrity-draft.test.ts`; execution is still not claimed while DB-001 blocks the runner/PostgreSQL gate.
+
 ## Runtime gates still open
 
 - DB-001 blocks executable PostgreSQL/CI evidence.
