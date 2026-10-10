@@ -597,14 +597,14 @@
       "paths": [
         "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 3,
       "pickedAt": "2026-10-11T02:14:00+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T02:15:00+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -626,6 +626,11 @@
           "status": "PICKED",
           "at": "2026-10-11T02:14:00+05:30",
           "reason": "Chat 3 took next eligible global DATABASE task after releasing blocked DB-007; inspect DB09 source vs staged schema."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T02:15:00+05:30",
+          "reason": "Chat 3 began frozen V162 college placement/privacy settings comparison against staged TPO policy schema."
         }
       ]
     },
