@@ -16,9 +16,15 @@ export default async function LearnerProjectPage({
   const { projectId } = await params;
   const { tab } = await searchParams;
   const activeSection =
-    tab === "team" || tab === "sprints" || tab === "board" || tab === "resources" || tab === "activity"
-      ? tab
-      : "overview";
+    tab === "board"
+      ? "tasks"
+      : tab === "activity"
+        ? "audit"
+        : tab === "team" ||
+            tab === "sprints" ||
+            tab === "resources"
+          ? tab
+          : "overview";
   const access = await requireProjectReadAccess(
     context,
     projectId,
