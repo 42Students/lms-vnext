@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-022",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB021_STAGED_OUTCOME_FIDELITY_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB022_SKILLS_SOURCE_SEMANTIC_HARDENING",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "321a4c7f3ea41076bda733bb5bafe148d00335c8",
+    "observedMainSha": "6c6cddff9b901d84b022b6a89938b6aac0db469e",
     "lastWorkerMergedSha": "d02f9cadb3defbcfad04072fbb7cdbe76179b003",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-021 staged 23 missing DB08 persistence columns and 11 required acceptance witnesses in isolated SQL/docs/test; 43 source-text checks passed in-process, six authored static Node tests and all PostgreSQL negatives NOT_RUN, integration restricted to Chat 1."
+    "summary": "DB-022 source audit: legacy has independent skills.usage_count and skill_usage(skill_name) counters and synonym search can match multiple skills; existing draft would collapse both and make synonym globally unique."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -49,7 +49,7 @@
     "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
     "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified."
   ],
-  "nextAction": "Refresh DATABASE queue, coordinate DB-021 migration/producer handoff with Chat 1; pick next eligible non-overlapping item, or independently source-review unclaimed active gaps.",
+  "nextAction": "Correct isolated DB10 skills Drizzle draft; stage SQL and source-contract/static tests; leave journal/barrel untouched.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -73,7 +73,8 @@
     "DB-011",
     "DB-013",
     "DB-015",
-    "DB-021"
+    "DB-021",
+    "DB-022"
   ],
   "completedTaskIds": [
     "DB-006",
