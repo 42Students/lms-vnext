@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
+import { quizOverviewActionState } from "./quiz-overview-state";
 
 type CourseChoice = {
   id: string;
@@ -134,44 +135,6 @@ function assignmentState(
     label: "Not submitted",
     tone: "neutral" as const,
     action: "Submit",
-  };
-}
-
-function quizState(
-  item: LearnerQuizOverviewItem,
-) {
-  if (
-    item.status === "CLOSED" &&
-    item.resultsPublished &&
-    item.attemptsUsed > 0
-  ) {
-    return {
-      label: "Results published",
-      tone: "success" as const,
-      action: "View Result",
-    };
-  }
-
-  if (item.progressStatus === "COMPLETED") {
-    return {
-      label: "Submitted",
-      tone: "info" as const,
-      action: "Open quiz",
-    };
-  }
-
-  if (item.progressStatus === "MISSED") {
-    return {
-      label: "Missed",
-      tone: "error" as const,
-      action: "Open quiz",
-    };
-  }
-
-  return {
-    label: "Not attempted",
-    tone: "neutral" as const,
-    action: "Open quiz",
   };
 }
 
@@ -338,10 +301,10 @@ export function LearnerAssessmentOverview({
             const state =
               item.kind === "ASSIGNMENT"
                 ? assignmentState(item)
-                : quizState(item);
+                : quizOverviewActionState(item);
             const href =
               item.kind === "QUIZ"
-                ? `/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${item.progressStatus === "COMPLETED" || item.progressStatus === "MISSED" || item.status === "CLOSED" ? "&review=true" : ""}`
+                ? `/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review ? "&review=true" : ""}`
                 : `/learn/courses/${item.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`;
 
             return (
