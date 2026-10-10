@@ -178,6 +178,8 @@ export function ProjectWorkspace({
     (mode !== "ADMIN" &&
       activeSection === "team" &&
       section === "meetings");
+  const readOnly =
+    workspace.project.status === "ARCHIVED";
   const tasksBySprint = new Map<
     string,
     Workspace["tasks"]
@@ -351,7 +353,7 @@ export function ProjectWorkspace({
                 Prepare the final draft early; submit it after all execution work is complete.
               </p>
             </div>
-            <LearnerFinalDeliveryControl
+            {!readOnly ? <LearnerFinalDeliveryControl
               projectId={workspace.project.id}
               latest={
                 workspace.finalDelivery.submissions.at(-1) ??
@@ -363,7 +365,7 @@ export function ProjectWorkspace({
               canSubmitDraft={
                 readiness.finalSubmission.canSubmitDraft
               }
-            />
+            /> : null}
           </div>
         </section>
       ) : null}
@@ -391,7 +393,7 @@ export function ProjectWorkspace({
               Project responsibility.
             </p>
           </div>
-          {mode === "ADMIN" ? (
+          {mode === "ADMIN" && !readOnly ? (
             <AddProjectMemberControl
               projectId={workspace.project.id}
             />
@@ -427,7 +429,7 @@ export function ProjectWorkspace({
                     : label(member.role)}
                 </StatusBadge>
               </div>
-              {mode === "ADMIN" ? (
+              {mode === "ADMIN" && !readOnly ? (
                 <ProjectMemberActions
                   projectId={workspace.project.id}
                   member={{
@@ -477,7 +479,7 @@ export function ProjectWorkspace({
                   <StatusBadge tone={tone(release.status)}>
                     {label(release.status)}
                   </StatusBadge>
-                  {mode !== "LEARNER" ? (
+                  {mode !== "LEARNER" && !readOnly ? (
                     <ReleaseLifecycleActions
                       projectId={workspace.project.id}
                       releaseId={release.id}
@@ -512,7 +514,7 @@ export function ProjectWorkspace({
                         >
                           {label(sprint.status)}
                         </StatusBadge>
-                        {mode !== "LEARNER" ? (
+                        {mode !== "LEARNER" && !readOnly ? (
                           <SprintLifecycleActions
                             projectId={workspace.project.id}
                             sprintId={sprint.id}
@@ -569,6 +571,7 @@ export function ProjectWorkspace({
                               </div>
                             </div>
                             {mode === "LEARNER" &&
+                            !readOnly &&
                             sprint.status === "ACTIVE" &&
                             task.status !== "DONE" &&
                             task.status !== "IN_REVIEW" ? (
@@ -579,7 +582,7 @@ export function ProjectWorkspace({
                                 />
                               </div>
                             ) : null}
-                            {mode !== "LEARNER" ? (
+                            {mode !== "LEARNER" && !readOnly ? (
                               <div className="mt-3 flex flex-wrap items-end gap-2">
                                 <TaskLifecycleActions
                                   projectId={workspace.project.id}
@@ -710,6 +713,7 @@ export function ProjectWorkspace({
                     ) : null}
 
                     {mode !== "LEARNER" &&
+                    !readOnly &&
                     submission.status ===
                       "SUBMITTED" ? (
                       <div className="mt-3">
@@ -721,6 +725,7 @@ export function ProjectWorkspace({
                     ) : null}
 
                     {mode !== "LEARNER" &&
+                    !readOnly &&
                     submission.status ===
                       "APPROVED" &&
                     !evaluation ? (
@@ -761,7 +766,7 @@ export function ProjectWorkspace({
                 Project team.
               </p>
             </div>
-            {mode !== "LEARNER" ? (
+            {mode !== "LEARNER" && !readOnly ? (
               <CreateProjectResourceControl
                 projectId={workspace.project.id}
               />
@@ -809,7 +814,7 @@ export function ProjectWorkspace({
                         Open resource ↗
                       </a>
                     ) : null}
-                    {mode !== "LEARNER" ? (
+                    {mode !== "LEARNER" && !readOnly ? (
                       <ProjectResourceActions
                         projectId={workspace.project.id}
                         resource={{
@@ -841,11 +846,11 @@ export function ProjectWorkspace({
                 conversations.
               </p>
             </div>
-            {mode === "LEARNER" ? (
+            {!readOnly && mode === "LEARNER" ? (
               <RequestProjectMeetingControl
                 projectId={workspace.project.id}
               />
-            ) : (
+            ) : !readOnly ? (
               <ScheduleProjectMeetingControl
                 projectId={workspace.project.id}
                 sprints={workspace.sprints.map(
@@ -862,7 +867,7 @@ export function ProjectWorkspace({
                   }),
                 )}
               />
-            )}
+            ) : null}
           </div>
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
@@ -918,6 +923,7 @@ export function ProjectWorkspace({
                       </a>
                     ) : null}
                     {mode !== "LEARNER" &&
+                    !readOnly &&
                     (meeting.status === "REQUESTED" ||
                       meeting.status === "SCHEDULED") ? (
                       <div className="mt-3">
@@ -940,14 +946,16 @@ export function ProjectWorkspace({
                         />
                       </div>
                     ) : null}
-                    <ProjectMeetingTransitionActions
-                      projectId={workspace.project.id}
-                      meeting={meeting}
-                      mode={mode}
-                      currentMembershipId={
-                        currentMembershipId
-                      }
-                    />
+                    {!readOnly ? (
+                      <ProjectMeetingTransitionActions
+                        projectId={workspace.project.id}
+                        meeting={meeting}
+                        mode={mode}
+                        currentMembershipId={
+                          currentMembershipId
+                        }
+                      />
+                    ) : null}
                   </article>
                 );
               })
