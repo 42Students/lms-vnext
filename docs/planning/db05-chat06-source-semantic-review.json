@@ -32,9 +32,9 @@
     "sourceFields": 92,
     "byClass": {
       "SOURCE_CANDIDATE": 30,
-      "MISSING_OR_UNPROVEN": 11,
-      "REMODELED_NEEDS_PROOF": 18,
-      "UNREGISTERED_DRAFT": 33
+      "UNREGISTERED_DRAFT": 38,
+      "REMODELED_NEEDS_PROOF": 21,
+      "MISSING_OR_UNPROVEN": 3
     }
   },
   "criticalOpenRisks": [
@@ -93,11 +93,12 @@
       "sourceType": "tinyint(1)",
       "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: deleted classroom message record",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "scripts/sql/db05-classroom-message-history.draft.sql: course_discussion_messages.deleted_at, current vNext hard DELETE must be replaced",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CLASSROOM_SERVICE_CONFIRMED"
     },
     {
       "source": "classroom_messages.course_id",
@@ -143,13 +144,14 @@
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: historic sender name snapshot",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "scripts/sql/db05-classroom-message-history.draft.sql: course_discussion_messages.sender_name_snapshot, current vNext dynamic name join not equivalent",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "ClassroomMessage.java @Column sender_name String",
-      "sourceReviewFinding": "Legacy message author display snapshot persists independently from sender_id; resolving current user name later loses historical rename semantics."
+      "sourceReviewFinding": "Legacy message author display snapshot persists independently from sender_id; resolving current user name later loses historical rename semantics.",
+      "sourceContractStatus": "LEGACY_CLASSROOM_SERVICE_CONFIRMED"
     },
     {
       "source": "classroom_messages.sender_role",
@@ -250,13 +252,14 @@
       "sourceType": "int",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: legacy visibility policy vs courses.status must be reconciled",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "scripts/sql/db05-course-parent-facets.draft.sql: courses.allowed_for_display, integer value semantics/consumers still unproven",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "Course.java @Column allowed_for_display Integer",
-      "sourceReviewFinding": "Persisted tri-state/int display policy; cannot infer equivalence to vNext courses.status; keep unproven."
+      "sourceReviewFinding": "Persisted tri-state/int display policy; cannot infer equivalence to vNext courses.status; keep unproven.",
+      "sourceContractStatus": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED_SEMANTICS_UNKNOWN"
     },
     {
       "source": "course.course_name",
@@ -276,13 +279,14 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_DIRECT_FIELD: authored organization attribution",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "scripts/sql/db05-course-parent-facets.draft.sql: courses.created_by_organization_id, client payload source but must derive/trust organization context",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "Course.java @Column created_by_org_id Integer",
-      "sourceReviewFinding": "Nullable authored-organization attribution, not equivalent to vNext department_id; requires tenant identity mapping."
+      "sourceReviewFinding": "Nullable authored-organization attribution, not equivalent to vNext department_id; requires tenant identity mapping.",
+      "sourceContractStatus": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED_SEMANTICS_UNKNOWN"
     },
     {
       "source": "course.default_subscription_days",
@@ -350,13 +354,14 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_DIRECT_FIELD: parent/derivative course lineage",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "scripts/sql/db05-course-parent-facets.draft.sql: courses.parent_course_id, explicit legacy 0=clear; tenant/cycle checks missing",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "Course.java @Column parent_course_id int",
-      "sourceReviewFinding": "Legacy primitive int defaults to zero for absent parent; a nullable vNext UUID parent FK must normalize sentinel zero and prevent cycles/cross-college links."
+      "sourceReviewFinding": "Legacy primitive int defaults to zero for absent parent; a nullable vNext UUID parent FK must normalize sentinel zero and prevent cycles/cross-college links.",
+      "sourceContractStatus": "LEGACY_COURSE_DTO_SERVICE_PERSISTENCE_CONFIRMED"
     },
     {
       "source": "course.short_title",
@@ -1092,13 +1097,14 @@
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: historical denormalized display snapshot",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "vNext lesson_contents.lesson_id -> course_lessons -> learning_path/offering -> courses.name; denormalized legacy snapshot semantics after rename not proved",
+      "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column course_name String",
-      "sourceReviewFinding": "Legacy denormalized content-level course-name snapshot is persisted; deriving live course name changes historical display behavior."
+      "sourceReviewFinding": "Legacy denormalized content-level course-name snapshot is persisted; deriving live course name changes historical display behavior.",
+      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_DENORMALIZED"
     },
     {
       "source": "lesson_contents.enabled",
@@ -1142,13 +1148,14 @@
       "sourceType": "bigint",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: may map to DB06 assignment grading but not confirmed",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "course_assignments.max_points is a DB06 candidate only for ASSIGNMENT content; no lesson_content_id FK/integrated mapping, other types unknown",
+      "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column points long",
-      "sourceReviewFinding": "Legacy persisted primitive long points is content-scoped; cannot silently substitute assignment grade max points."
+      "sourceReviewFinding": "Legacy persisted primitive long points is content-scoped; cannot silently substitute assignment grade max points.",
+      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_PERSISTED"
     },
     {
       "source": "lesson_contents.sequence",
@@ -1168,13 +1175,14 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "targetProposal": "NO_DIRECT_FIELD: evaluate DB06 assignment deadline vs content-specific due date",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "course_assignments.due_at is a DB06 candidate only for ASSIGNMENT; legacy lesson_contents.deadline is independent persisted field, no exact mapping",
+      "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column deadline LocalDateTime",
-      "sourceReviewFinding": "Legacy content submission deadline is LocalDateTime; vNext starts_at/ends_at are availability windows, not proven equivalent; timezone conversion requires policy."
+      "sourceReviewFinding": "Legacy content submission deadline is LocalDateTime; vNext starts_at/ends_at are availability windows, not proven equivalent; timezone conversion requires policy.",
+      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_PERSISTED"
     },
     {
       "source": "lesson_contents.version",
@@ -1232,5 +1240,27 @@
       "lesson_contents.course_name"
     ],
     "finding": "Entity declarations prove persistence but do not establish active producer/consumer semantics or approve a migration; all eight fields remain MISSING_OR_UNPROVEN."
+  },
+  "courseParentAndClassroomHistoryFollowUp": {
+    "drafts": [
+      "scripts/sql/db05-course-parent-facets.draft.sql",
+      "scripts/sql/db05-classroom-message-history.draft.sql"
+    ],
+    "legacySource": [
+      "Course.java",
+      "CourseDTO.java",
+      "CourseServiceImpl.java",
+      "ClassroomMessage.java",
+      "ClassroomServiceImpl.java",
+      "ClassroomMessageRepository.java",
+      "LessonContents.java"
+    ],
+    "vnextSource": [
+      "src/db/schema/courses.ts",
+      "src/db/schema/discussions.ts",
+      "src/modules/courses/discussion-service.ts",
+      "src/db/schema/assessments.ts"
+    ],
+    "warning": "Proposed not verified. VNext hard deletion and dynamic sender display differ from legacy; merely adding columns does not restore behavior. Parent tenant, cycles, status/visibility flags unresolved. DB06 max_points/due_at cannot be equated to lesson-content fields absent a cross-module link."
   }
 }
