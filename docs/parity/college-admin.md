@@ -738,3 +738,8 @@ Authored regression: `tests/unit/activity-date-boundary.test.ts` covers IST→UT
 ### W06 College Admin announcements staging — 2026-10-10
 
 A College Admin management workspace is source-authored at `/college/announcements` with server-derived own-college audience targets, create/edit/retarget, schedule/expiry, pin, soft delete/restore, active/deleted views and stable older-page continuation. Cross-college target IDs are resolved and rejected server-side. The page is deliberately inactive until W01 promotes DB10 Announcements; browser evidence is absent, so this is **not a DONE page**.
+
+
+### W06 Activity detail drill-in — 2026-10-10
+
+The shared Activity Center now has a tenant-safe `/activity/[eventId]` drill-in showing event/action, actor, entity, scope, time and structured context. A College Admin may open only events whose persisted `collegeId` equals the active membership college; an out-of-college UUID is returned as not-found. Metadata is bounded and credential/identity-secret key names are redacted before browser rendering. This advances the "detail drill-in / expandable event context" job, but the page remains PARTIAL because exact legacy category chips, all producer coverage, request IP/User-Agent, actor-role snapshot and executed browser tests remain OPEN.
