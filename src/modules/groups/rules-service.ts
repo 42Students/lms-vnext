@@ -8,6 +8,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { assertPersistedGroupActor } from "./actor-access";
 import {
   groupRuleCriteriaSchema, matchesGroupRuleCandidate,
   type GroupRuleCriteria,
@@ -31,6 +32,7 @@ async function requireGroupManagement(tx:Tx,context:RequestContext,groupId:strin
       group.ownerScope!=="COLLEGE" || !group.collegeId)
     throw new GroupRuleServiceError("GROUP_RULE_GROUP_NOT_MANAGEABLE");
   requirePermission(context,"academics.manage",{collegeId:group.collegeId});
+  await assertPersistedGroupActor(tx, context, {collegeId:group.collegeId,mode:"MANUAL"});
   // Electives require slot-scoped locks and project teams require transactional
   // mirrors; never write either through this generic rule runner.
   if (group.kind==="ELECTIVE" || group.kind==="PROJECT_TEAM")
