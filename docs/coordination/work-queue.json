@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-10T20:41:19.334Z",
+  "updatedOn": "2026-10-10T20:42:35.825Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -223,7 +223,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "7ca737e9d7aa67a86d55e1d7110374ba81375d0c",
+      "latestEvidenceSha": "7463858772c290eb4e3911ba6828ef9c1a05b2f2",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -258,7 +258,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "Chat 4 DB02: 125-field artifact retained; 33 high-risk fields have source-backed semantics, live vNext academics implementation re-diffed, and missing canonical cohort term/year, program-term curriculum, lecture-hall/overlap invariants staged in scripts/sql. No PG/runtime verification."
+      "progressNote": "DB02 source sweep now classifies all 13 legacy tables: 8 ACTIVE_SOURCE_CONFIRMED, 3 ACTIVE_READ_PATH_CONFIRMED_PRODUCER_OPEN, 2 HISTORICAL_DDL_ONLY_UNRESOLVED. 33 high-risk fields have source semantic dispositions; live vNext gaps and unregistered staging contract remain. No runtime/PG verification."
     },
     {
       "id": "DB-006",
