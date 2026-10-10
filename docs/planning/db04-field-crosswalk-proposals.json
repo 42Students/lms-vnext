@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "workBranch": "db04-profile-verification-2026",
   "createdAt": "2026-10-10",
-  "evidence": "Legacy V187 DDL and staged vNext schema source-reviewed for 25 fields on 2026-10-11; producer/consumer review, active/retired decisions, registered migration and executed PostgreSQL remain incomplete. No field is semantically or runtime verified.",
+  "evidence": "Legacy V187 / V161 / V165 / V192 DDL compared with staged vNext target declarations for 43 candidate fields on 2026-10-11. Source DDL crosswalk only, not semantic/runtime verification; all producer/consumer tests and disposition signoff remain open.",
   "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "vNextBaselineSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
   "counts": {
@@ -11,7 +11,7 @@
     "mappedProposals": 67,
     "verified": 0,
     "retirementApproved": 0,
-    "ddlToStagedSourceReviewedUnverified": 25
+    "ddlToStagedSourceReviewedUnverified": 43
   },
   "rows": [
     {
@@ -226,7 +226,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Resolve legacy learner integer to canonical membership UUID; prohibit wrong-college membership linkage."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -245,7 +255,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "decimal(4,2) to integer hundredths; prove exact conversion, null and cap values."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -262,7 +282,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Nullable nonnegative number and context-sensitive eligibility; DB constraint and producer tests."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -279,7 +309,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Nullable nonnegative number and context-sensitive eligibility; DB constraint and producer tests."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -298,7 +338,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "decimal(5,2) to basis-points integer; verify rounding and nullable unknowns."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -317,7 +367,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "decimal(5,2) to basis-points integer; verify rounding and nullable unknowns."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -336,7 +396,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "decimal(5,2) to basis-points integer; verify rounding and nullable unknowns."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -355,7 +425,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "decimal(5,2) to basis-points integer; verify rounding and nullable unknowns."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -372,7 +452,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Legacy default 0; vNext nullable and no DB default. Distinguish omitted vs actual zero."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -389,7 +479,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Legacy NOT NULL DEFAULT FALSE; vNext check default matching plus source writer."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -406,7 +506,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Year null and range policy; legacy INT vs vNext year check; verify source import/creator validation."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -425,7 +535,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Source is learner academic record; vNext profile JSON target requires explicit privacy and profile readers review."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -442,7 +562,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "SELF vs VERIFIED cannot be fabricated; verify reviewer + verifiedAt checks and producer semantics."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -459,7 +589,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Greenfield means no legacy migration, but importer-created vNext records may still need provenance. Retire only with workflow signoff."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -478,7 +618,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Greenfield means no old data migration; future importer provenance needs deliberate design or approved retirement."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -497,7 +647,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Source ON UPDATE CURRENT_TIMESTAMP; target Drizzle updatedAt has default now but needs guaranteed update-on-write producer/test."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -514,7 +674,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V165__tpo_v1_complete.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "V165 adds display/filter label; check cohort/filter producer and display, not just current enrollment join."
+        ]
+      }
     },
     {
       "legacyTable": "learner_academic_record",
@@ -533,7 +703,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V192__academic_marks_as_earned.sql",
+        "vnextEvidence": "src/db/schema/placements.ts; src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "V192 original grade/scale/max; the approved mark and derived percentage must round-trip under college rule; staged mark table and placement read-model are distinct."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
