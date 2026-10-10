@@ -239,6 +239,9 @@ These user jobs are functionally similar to College Admin; detailed field/action
 - [ ] Full Departments create/search/export/edit/delete contract from College Admin is present.
 - [ ] Clear/global scope cannot mutate an unintended college.
 
+**W06 2026-10-10 source batch (not browser-verified):** `/admin/departments` now renders the legacy-style existing-departments search, CSV export of filtered rows (formula-injection protected), Refresh, page controls and per-department active Programs/Courses/Faculty counts. Counts are obtained from the existing server resolver after an authorized selected-college list read. Any failed count stays unknown (—), never falsely zero. Current Rename/Archive dialogs and server-side dependency blockers remain in place. Added `tests/unit/admin-department-directory.test.ts`; execution/desktop/mobile/export download still OPEN. The entire full Departments contract remains PARTIAL.
+
+
 ## Page: Programs
 - [ ] College scope context matches.
 - [ ] Full Program create/dependency/edit/delete contract is present.
