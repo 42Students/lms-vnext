@@ -733,3 +733,8 @@ College Admin can act inside TPO in the legacy product.
 Legacy College Admin audit is college-scoped and calendar-driven; vNext already improves the old first-page-only audit feed with keyset paging and grouped meaningful events. W06 found a date-only correctness bug in vNext: browser `<input type="date">` values such as `2026-10-10` were coerced as UTC midnight, so the `To` filter could exclude almost the entire selected day for India users. The shared activity query now interprets date-only From/To as **00:00:00.000–23:59:59.999 Asia/Kolkata**, while preserving explicitly offset ISO datetimes and rejecting timezone-ambiguous datetimes. The page labels the calendar filters as IST.
 
 Authored regression: `tests/unit/activity-date-boundary.test.ts` covers IST→UTC boundaries, invalid calendar dates, ambiguous timestamps and explicit-offset preservation. **Not executed in this session; browser/DB evidence remains OPEN.** Activity Log stays PARTIAL until taxonomy/producer coverage, detail drill-in, error states and browser checks are verified.
+
+
+### W06 College Admin announcements staging — 2026-10-10
+
+A College Admin management workspace is source-authored at `/college/announcements` with server-derived own-college audience targets, create/edit/retarget, schedule/expiry, pin, soft delete/restore, active/deleted views and stable older-page continuation. Cross-college target IDs are resolved and rejected server-side. The page is deliberately inactive until W01 promotes DB10 Announcements; browser evidence is absent, so this is **not a DONE page**.
