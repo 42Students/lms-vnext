@@ -41,3 +41,24 @@ The current legacy `prod-2026` source tree contains no Smrithi-named source path
 ## Guard
 
 `tests/db00-retirement-disposition.test.mjs` cross-checks the ledger against the source census. It is a source-level guard, not PostgreSQL runtime evidence.
+
+
+## 2026-10-11 DB-003 Smrithi evidence sweep (source-only)
+
+**Machine-level 91-column evidence:** [db00-smrithi-source-evidence.json](db00-smrithi-source-evidence.json). Each of the seven tables now has its complete checked-in snapshot column definitions, source risk flags, declared keys/FKs/indexes, high-priority semantic fields, and a concrete verification checklist. The existing 32 decided historical/tool rows and the 7 **PENDING_PRODUCT_DECISION** rows are unchanged. This is **not** a DB run, external-consumer search, permission to retire, or finished DB00 reconciliation.
+
+The MySQL file `src/test/resources/db/mysql-schema-snapshot.sql` is a checked-in **test snapshot reportedly through V150 (approximately 2026-09-21)**, not proof of the live database at the 2026-10-07 backend oracle. Later migrations (V151–V194), Hibernate/native SQL or another deployed client may change actual persistence. The pinned JPA entity census covers 118 model Java sources and has **no Smrithi-named entity**, and GitHub's indexed search for `smrithi` returned no result; neither fact excludes external writers/readers or non-indexed references.
+
+| Table | Source fields | Key unresolved product/data invariant |
+| --- | ---: | --- |
+| `smrithi_application` | 28 | Candidate/application account state, password hash, verified email/phone, academic/career JSON, unique application ID/email/phone; confirm auth and recruitment consumer ownership |
+| `smrithi_college` | 7 | Independent college-name catalog and lifecycle; separate from LMS college identity unless proven equivalent |
+| `smrithi_college_keywords` | 2 | Autocomplete keywords with a **declared FK** to Smrithi college; retire together only |
+| `smrithi_education_type` | 9 | Form-type, order, activation and institution autocomplete behavior |
+| `smrithi_notification_template` | 28 | Composite unique `(template_key, channel, language, version)`, DLT/template IDs, merge schemas; compare outbound service before any consolidation |
+| `smrithi_program` | 9 | Unique `(name, education_type)`; `education_type_id` has **no declared FK** in this snapshot |
+| `smrithi_specialization` | 8 | `program_id` has **no declared FK** in this snapshot; validate intended referential semantics if retained |
+
+**Decision gate:** Establish live database/table presence and producer/consumer ownership (including other services and web/mobile clients); inspect V151–V194 and native queries; then obtain an explicit product decision: retain with a complete mapped/DB-tested contract, or retire with signed-off no-consumer evidence. Because `smrithi_application` contains personal and credential-like fields, never copy customer data or treat absence of a Java entity as proof of safe deletion.
+
+**New regression guard:** `tests/db00-retirement-disposition.test.mjs` now compares all 91 fields and historical SQL constraints with the evidence file, and refuses to treat undecided rows as safely retired. Authored test only; no claim that CI, disposable PostgreSQL or a live consumer investigation has passed.
