@@ -7506,6 +7506,21 @@
     "evidenceDocument": "docs/planning/database-parity-db07-reconciliation.md",
     "runtimeVerification": "BLOCKED_BY_DB-001",
     "schemaMutationStatus": "DEFERRED_DUE_ACTIVE_SHARED_SCHEMA_CLAIM",
-    "note": "All 16 source tables have current JPA entity evidence. No retirement approved. Existing target hints remain hypotheses until producer/consumer and DB execution evidence."
+    "note": "All 16 source tables have current JPA entity evidence. No retirement approved. Existing target hints remain hypotheses until producer/consumer and DB execution evidence.",
+    "integrationReconciliation": {
+      "document": "docs/planning/database-parity-db07-integration-reconciliation.md",
+      "staticGuard": "tests/unit/w03-db07-integration-reconciliation.test.ts",
+      "testExecution": "NOT_EXECUTED_DB-001_BLOCKED",
+      "canonicalWorkspaceDraft": "docs/planning/sql/db07-w03-workspace-state-parity-candidate.sql",
+      "supersededWorkspaceDraft": "docs/planning/sql/db07-w03-admin-workspace-state-candidate.sql",
+      "activeTaskSprintFkOwner": "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+      "carryOverOwner": "docs/planning/sql/db07-w03-task-backlog-and-delivery-state-candidate.sql",
+      "decisions": [
+        "readiness_override is tri-state TRUE/FALSE/NULL with provenance for non-null values",
+        "status_before_delete rejected; restore recalculates ACTIVE with mentor or BLOCKED without mentor",
+        "project status domain needs BLOCKED for exact restore parity",
+        "task carry-over DDL must be declared once"
+      ]
+    }
   }
 }
