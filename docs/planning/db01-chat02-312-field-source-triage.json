@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 66,
+    "postV150ActivenessVerified": 94,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 84,
-    "postV150ActivenessReviewNote": "66 legacy source fields have direct current workflow proof. 84 identity-provider/session fields have an explicit current-source disposition. LoginUser is source-retired from live auth; AuthToken is model-only/no workflow found; EmailVerificationToken has a repository but still lacks a proven current callsite. Source evidence only; runtimeSemanticVerifiedFields remains 0."
+    "postV150ActivenessReviewedFields": 112,
+    "postV150ActivenessReviewNote": "94 frozen DB01 source fields classified to confirmed active table/workflow from legacy controller/services; includes 28 new domain/branding candidates. This is active-source evidence, not per-field target parity; vNext runtime semantic verified remains 0."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -656,12 +656,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.college_id (STAGED; legacy surrogate id replaced by college key)",
       "rationaleOrBlocker": "No historic data migration; confirm no independent branded-record references.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -674,12 +675,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.created_at (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -692,12 +694,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.updated_at (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -708,12 +711,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.archived_at (STAGED)",
       "rationaleOrBlocker": "Status/archive semantics require source review.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -726,12 +730,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.college_id (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -742,12 +747,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.logo_url (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -758,12 +764,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.favicon_url (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -774,12 +781,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.login_background_url (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -792,12 +800,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.login_background_url_mobile (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -808,12 +817,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.primary_color (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -824,12 +834,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.secondary_color (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -842,12 +853,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.support_email (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -860,12 +872,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.support_phone (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -876,12 +889,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.terms_url (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "college_branding",
@@ -892,12 +906,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_branding.privacy_url (STAGED)",
       "rationaleOrBlocker": "Draft not exported by index or migrated; public bootstrap behavior/validation still open.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:getBranding/upsertBranding/onboardingReadiness; CollegeBrandingRepository.java:findActiveByCollegeId; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "department",
@@ -5237,12 +5252,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5255,12 +5271,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.created_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5273,12 +5290,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.updated_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5289,12 +5307,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Removed/revoked hostname must fail closed; no active marker in current target",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5307,12 +5326,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.college_id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5323,12 +5343,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.host",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5339,12 +5360,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.is_primary",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5357,12 +5379,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.verification_token",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5375,12 +5398,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.verified_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5391,12 +5415,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.is_verified",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5409,12 +5434,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.last_checked_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5425,12 +5451,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.last_check_result",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "tenant_domain",
@@ -5441,12 +5468,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "tenant_domains.last_found_values (STAGED SQL ONLY)",
       "rationaleOrBlocker": "Untrusted TXT diagnostic redaction and max 500-char retention require agreement",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "lms@21bad59d:TenantAdminController.java:createDomain/updateDomain/deleteDomain/ensureVerificationToken/verifyDomain; TenantDomainVerificationService.java:verify; TenantResolutionService.java:resolveCollegeFromHost; PublicTenantController.java:tenant-bootstrap."
     },
     {
       "legacyTable": "user",
@@ -5978,6 +6006,24 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
       ],
       "proof": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
+    },
+    "tenant_domain": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/TenantAdminController.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/TenantResolutionService.java"
+      ],
+      "proof": "Tenant admin CRUD and DNS verify/recheck are active; delete soft-deletes/mangles host for reclaim; public resolver uses verified active host. Active table-source proof, not vNext semantic verification."
+    },
+    "college_branding": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/TenantAdminController.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/PublicTenantController.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
+      ],
+      "proof": "Tenant admin reads/upserts ten branding fields; onboarding-readiness reads logo/background/color; public tenant-bootstrap returns ten branding overrides. Active table-source proof, not vNext semantic verification."
     }
   }
 }
