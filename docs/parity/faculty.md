@@ -112,13 +112,13 @@ Legacy `QuizzesContent` runs in Faculty mode.
 - [ ] Loading/error/empty states are verified.
 
 ## Page: Class Schedule
-- [ ] Faculty schedule is derived from assigned classes/courses.
-- [ ] Calendar navigation matches.
-- [ ] Class/course filters match.
-- [ ] Session time/location/course/class context matches.
-- [ ] Empty/loading/error states.
-- [ ] Timezone behavior.
-- [ ] Mobile list/calendar behavior.
+- [x] Faculty schedule is source-derived from **persisted active course teaching assignments** and active Faculty role.
+- [x] Day/week/month navigation reuses the learner calendar component, with distinct Faculty course links.
+- [x] Exact Faculty course/Section filters are populated by active teacher deliveries.
+- [x] Active Section event time, faculty/location, Course title and class context are rendered from authorized Section events.
+- [ ] Empty calendar state exists; loading/error/retry need a real browser acceptance pass.
+- [ ] Date formatting currently uses en-IN client locale; verify authored source timezone, IST boundary and per-college timezone policy.
+- [ ] Mobile calendar and navigation require Playwright/browser proof.
 
 ## Page: Assignment Report
 **Legacy:** `/teacher/report/assignment/[contentId]`
@@ -201,3 +201,9 @@ Legacy `/teacher/fileExplorer` only redirects to Courses.
 - [ ] The test is authored but has **not been executed**, and W01's CI/PostgreSQL environment is not yet evidenced as passing.
 
 Reference: `docs/planning/w02-learning-assessment-closure-ledger.md` and issue #22.
+
+### W02 Faculty Class Schedule — 2026-10-10
+
+- [x] Source-authored legacy `/teacher/calendar` route and Faculty sidebar link. A new `getFacultyClassSchedule` read service scopes Section events and course links to authoritative persisted active teaching assignments; campus and user role checks fail closed.
+- [x] Reused day/week/month calendar with `/teach/courses/:deliveryId` Faculty links (instead of learner links). An additional disposable-Postgres integration case asserts Section A and general events are visible but Section B events are excluded.
+- [ ] PostgreSQL integration, role-revocation, timezone, mobile and browser tests are **authored/not executed**, never passing evidence.
