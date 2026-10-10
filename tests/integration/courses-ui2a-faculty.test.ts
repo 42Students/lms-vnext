@@ -40,6 +40,13 @@ import {
   markFacultyAttendance,
 } from "@/modules/attendance/faculty-service";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
+import {
+  createCourseDiscussionMessage,
+  deleteCourseDiscussionMessage,
+  listCourseDiscussionMessages,
+  toggleCourseDiscussionPin,
+} from "@/modules/courses/discussion-service";
+import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -845,6 +852,110 @@ describe("courses UI2A faculty read model", () => {
     ).toEqual([
       SEED_IDS.learnerCollegeAMembership,
     ]);
+  });
+
+  it("uses the exact delivery roster for Students and keeps Faculty discussion moderation section-scoped", async () => {
+    const structure = await createStructure();
+
+    const rosterScope =
+      await getFacultyDeliveryRoster(
+        faculty,
+        structure.deliveryA.id,
+      );
+    expect(
+      rosterScope.roster.map(
+        (row) => row.membershipId,
+      ),
+    ).toEqual([
+      SEED_IDS.learnerCollegeAMembership,
+    ]);
+    await expect(
+      getFacultyDeliveryRoster(
+        faculty,
+        structure.deliveryB.id,
+      ),
+    ).rejects.toMatchObject({
+      code:
+        "FACULTY_TEACHING_SCOPE_REQUIRED",
+    });
+
+    const learnerMessage =
+      await createCourseDiscussionMessage(
+        learner,
+        structure.deliveryA.id,
+        {
+          messageText:
+            "Can you explain the queue example?",
+        },
+      );
+
+    const facultyMessage =
+      await createCourseDiscussionMessage(
+        faculty,
+        structure.deliveryA.id,
+        {
+          messageText:
+            "Yes — I will pin the key explanation.",
+        },
+      );
+
+    await expect(
+      toggleCourseDiscussionPin(
+        learner,
+        facultyMessage.id,
+      ),
+    ).rejects.toMatchObject({
+      code:
+        "DISCUSSION_MODERATION_ACCESS_DENIED",
+    });
+
+    const pinned =
+      await toggleCourseDiscussionPin(
+        faculty,
+        facultyMessage.id,
+      );
+    expect(pinned.pinned).toBe(true);
+
+    const feed =
+      await listCourseDiscussionMessages(
+        faculty,
+        structure.deliveryA.id,
+      );
+    expect(feed.canPost).toBe(true);
+    expect(
+      feed.messages.map((message) => [
+        message.id,
+        message.pinned,
+      ]),
+    ).toEqual([
+      [learnerMessage.id, false],
+      [facultyMessage.id, true],
+    ]);
+
+    await deleteCourseDiscussionMessage(
+      faculty,
+      learnerMessage.id,
+    );
+    const afterDelete =
+      await listCourseDiscussionMessages(
+        faculty,
+        structure.deliveryA.id,
+      );
+    expect(
+      afterDelete.messages.map(
+        (message) => message.id,
+      ),
+    ).toEqual([facultyMessage.id]);
+
+    await expect(
+      listCourseDiscussionMessages(
+        faculty,
+        structure.deliveryB.id,
+      ),
+    ).rejects.toMatchObject({
+      code:
+        "FACULTY_TEACHING_SCOPE_REQUIRED",
+    });
   });
 
 });
