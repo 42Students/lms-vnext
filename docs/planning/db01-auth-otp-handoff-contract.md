@@ -23,6 +23,8 @@ The current legacy `PublicMobileAuthController.java` actually calls `MobileLogin
 
 Current vNext `src/auth/session.ts` verifies Firebase session cookies, with provider-global `revokeRefreshTokens`. Current `src/app/api/auth/session/route.ts` creates/deletes cookies, but this **does not itself** prove all legacy OTP fallback / admin device session / cross-host user jobs are reproduced. Any provider-only decision must list the exact managed provider API capability for the user job; where the provider cannot supply it, retain a minimal privacy-safe persistence layer or explicitly negotiate product redesign.
 
+**Current vNext source result (2026-10-11):** the server-side session route accepts an already-minted Firebase `idToken`, validates recent sign-in, and exchanges it for the HttpOnly `lms_session` cookie. `firebase-identity-directory.ts` provisions/looks up provider users, but the current `main` tree has no application phone/email sign-in implementation that obtains that `idToken` (no checked-in phone OTP verifier / email sign-in client flow was found in the auth tree). Therefore the active legacy learner/faculty/mobile OTP jobs are **not provider-replaced yet**. The staged `identity_auth_attempts` contract remains a candidate database responsibility until the later API phase proves which abuse-budget, fallback, replay, tenant-binding and recovery jobs are wholly delegated to Identity Platform.
+
 ### Unregistered schema drafts
 
 | Artifact | Safe staging purpose |
@@ -58,4 +60,4 @@ A closed, unmerged `PR #61` also contains an alternative staging shape for devic
 - Secret scanner: no raw OTP/JWT/refresh token columns, unsafe logging or public-code querystrings.
 - Privacy/cleanup: expired/used records purged within approved retention, without silently losing required security audit.
 
-**Current quality evidence:** DB01 has a source-only triage ledger for 312 candidate fields, with 41 legacy source candidates now backed by active auth controllers/services. **Zero VNext fields are runtime-semantic verified**, and the staged model/SQL here has **not** been run through typecheck, CI, PostgreSQL replay or runtime integration. Do not advance DB-004 beyond IN_PROGRESS based on these drafts.
+**Current quality evidence:** DB01 has a source-only triage ledger for 312 candidate fields, with 66 legacy source fields now backed by direct active auth workflows; all 84 identity-provider/session candidates have an explicit current-source disposition. **Zero VNext fields are runtime-semantic verified**, and the staged model/SQL here has **not** been run through typecheck, CI, PostgreSQL replay or runtime integration. Do not advance DB-004 beyond IN_PROGRESS based on these drafts.
