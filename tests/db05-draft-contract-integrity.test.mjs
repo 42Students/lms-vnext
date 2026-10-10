@@ -110,3 +110,20 @@ test("DB05 migration manifest blocks unregistered drafts until real gates pass",
   assert.ok(readiness.gates.some(g => g.id === "CLEAN_POSTGRES_REPLAY" && g.status === "NOT_RUN"));
   assert.ok(readiness.gates.some(g => g.id === "REGISTERED_DRIZZLE_MIGRATION" && g.status === "BLOCKED"));
 });
+
+const unresolved = json("docs/planning/db05-unresolved-semantic-decisions.json");
+
+test("DB05 unresolved decisions track exactly the remodeled and unproven source fields", () => {
+  const expected = review.fields
+    .filter(f => f.classification === "REMODELED_NEEDS_PROOF" || f.classification === "MISSING_OR_UNPROVEN")
+    .map(f => f.source).sort();
+  assert.deepEqual(unresolved.items.map(i => i.source).sort(), expected);
+  assert.equal(unresolved.totalOutstanding, expected.length);
+  assert.equal(unresolved.missingOrUnproven, 3);
+  assert.equal(unresolved.remodeledNeedProof, 21);
+  assert.equal(unresolved.formalDbVerified, 0);
+  assert.ok(unresolved.items.every(i => i.disposition === "OPEN" && !i.verified && !i.postgresExecuted));
+  for (const field of ["course.default_subscription_days", "course.formal_title", "learner_content_progress.is_deleted"]) {
+    assert.ok(unresolved.items.some(item => item.source === field && item.classification === "MISSING_OR_UNPROVEN"));
+  }
+});
