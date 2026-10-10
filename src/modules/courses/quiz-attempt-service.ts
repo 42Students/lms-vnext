@@ -13,6 +13,7 @@ import {
   quizOptions,
   quizQuestions,
   collegeMemberships,
+  membershipRoles,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -311,10 +312,8 @@ export async function submitCourseQuiz(
   try {
     return await getDb().transaction(
       async (tx) => {
-        // Serialize attempts per quiz across workers. A concurrent faculty
-        // CLOSE/update or a second learner submission updates/locks this same
-        // row, so neither a deadline change nor a max-attempt change can race
-        // with the counted insert.
+        // A shared quiz row lock prevents a concurrent faculty CLOSE/update
+        // while this attempt commits without serializing different learners.
         const [lockedQuiz] = await tx
           .select({
             status: courseQuizzes.status,
@@ -325,7 +324,7 @@ export async function submitCourseQuiz(
           })
           .from(courseQuizzes)
           .where(eq(courseQuizzes.id, quizId))
-          .for("update")
+          .for("share")
           .limit(1);
 
         if (!lockedQuiz || lockedQuiz.status !== "PUBLISHED") {
@@ -357,6 +356,24 @@ export async function submitCourseQuiz(
             persistedMember.userId !== context.user.id ||
             persistedMember.collegeId !== membership.collegeId ||
             context.user.platformStatus !== "ACTIVE") {
+          throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+        }
+
+        // Serialize concurrent retries for this learner and quiz only.
+        await tx.execute(
+          sql`select pg_advisory_xact_lock(
+            hashtext(${quizId + ":" + membership.id}), 6206001)`,
+        );
+        const [activeLearnerRole] = await tx
+          .select({ id: membershipRoles.id })
+          .from(membershipRoles)
+          .where(and(
+            eq(membershipRoles.membershipId, membership.id),
+            eq(membershipRoles.role, "LEARNER"),
+          ))
+          .for("share")
+          .limit(1);
+        if (!activeLearnerRole) {
           throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
         }
 
