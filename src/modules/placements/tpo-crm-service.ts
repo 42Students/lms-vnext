@@ -462,3 +462,31 @@ export async function getTpoLead(
   if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
   return tpoLeadView(lead);
 }
+
+/** Full follow-up list for a recruiter lead detail page (not only overdue). */
+export async function listTpoLeadFollowups(
+  context: RequestContext,
+  rawCollegeId: string,
+  rawLeadId: string,
+) {
+  const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
+  const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
+  await requirePlacementManageScope(context, collegeId);
+  const [lead] = await getDb()
+    .select({ id: placementTpoLeads.id })
+    .from(placementTpoLeads)
+    .where(and(
+      eq(placementTpoLeads.collegeId, collegeId),
+      eq(placementTpoLeads.id, leadId),
+    ))
+    .limit(1);
+  if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+  return getDb()
+    .select()
+    .from(placementTpoFollowups)
+    .where(and(
+      eq(placementTpoFollowups.collegeId, collegeId),
+      eq(placementTpoFollowups.leadId, leadId),
+    ))
+    .orderBy(asc(placementTpoFollowups.dueAt), asc(placementTpoFollowups.id));
+}
