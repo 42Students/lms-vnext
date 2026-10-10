@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_SIX_MERGES_PROGRESS_TOMBSTONE_AND_CLASSROOM_GATES_STAGED_UNVERIFIED",
+    "checkpointKind": "DB008_SEVEN_MERGED_SOURCE_CONTRACT_BATCHES_PROGRESS_GATES_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "f4efe30db3cc1943f5e15a7e8b7c2dc91830f99b",
-    "lastWorkerMergedSha": "1c18b6da4d139bcc9bd2efd8f9bb0bb3a902fa86",
+    "observedMainSha": "04855d147b91de616327f86827b7516803a6fed0",
+    "lastWorkerMergedSha": "c3ee0c62f8353b5b986d8d4e2b5a8a19b0f77f41",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-008 remains IN_PROGRESS after six merged PRs #63/#67/#69/#70/#72/#74. 92 top-level DB05 fields inventoried, counts at latest source checkpoint 30 candidates/37 drafts/22 remodeled/3 missing, 0 verified. Seven manifest-listed SQL drafts unregistered; classroom same-college SQL is companion-only and no duplicate history columns. Legacy progress deletion now has unregistered deleted_at candidate with latest-attempt-before-deletion-filter caveat. Added Node static tests but suites not executed; no PostgreSQL, CI, lint, typecheck or build pass proof. 25 decisions remain open until formal consumer/PG reconciliation."
+    "summary": "Seven merged Chat6 DB-008 batches #63/#67/#69/#70/#72/#74/#75: staged classroom history and tenant guard without duplicate columns, course/content source semantic contracts, staged progress tombstone and fail-closed latest-attempt consumer/tenant/race manifest gates. No runtime/Node/PostgreSQL/CI acceptance: DB05 92 source fields, 0 formal verified; 7 independent SQL draft migrations remain unregistered; at least 25 unresolved semantics at last review. DB008 IN_PROGRESS."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -79,9 +79,15 @@
       "kind": "CLASSROOM_HISTORY_DEDUP_AND_PROGRESS_ATTEMPT_TOMBSTONE",
       "message": "PR #70 deduped classroom sender snapshot+deleted_at under manifest-listed history draft, companion-only tenant trigger; PR #72 added blocked same-college and upstream-reparent gates; PR #74 added progress.deleted_at to unregistered version/attempt draft. Legacy admin progress count SELECT MAX(attempt) before is_deleted filter; do not resurrect earlier completion. Migrations require Chat1 PG tests and app cutover; no runtime evidence.",
       "commitSha": "1c18b6da4d139bcc9bd2efd8f9bb0bb3a902fa86"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "PROGRESS_ATTEMPT_SOFT_DELETE_FAIL_CLOSED_GATES",
+      "message": "PR #75 added manifest gates for latest-attempt-before-deletion-filter parity, cross-college membership/content negatives, and rewatch/retake races. Draft deleted_at is UNREGISTERED; consumer verified false and PostgreSQL NOT_RUN. W01 must integrate only with compatible consumers/tests.",
+      "commitSha": "c3ee0c62f8353b5b986d8d4e2b5a8a19b0f77f41"
     }
   ],
-  "nextAction": "Continue DB008 at 25 unresolved DB05 semantics, especially progress deletion/attempt per-reader parity, course history/restore, DB06 assessment linkage, private asset authorization. Chat 1 to register 7 independent drafts plus classroom tenant companion only after consumer changes, upstream reparent safety, negative PostgreSQL and full tests; no global phase promotion.",
+  "nextAction": "Resolve DB05 25 open semantics using source/runtime proof; prioritize historical-only fields, progress deletion per-reader behavior, DB06 assignment/content identity, parent-course and upstream same-college constraints, content settings/private assets. Chat1 migration registration only after app cutover and executed clean PostgreSQL replay/negative/race suite; stay DATABASE.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -132,7 +138,9 @@
     "https://github.com/42Students/lms-vnext/pull/70",
     "https://github.com/42Students/lms-vnext/pull/72",
     "https://github.com/42Students/lms-vnext/pull/74",
-    "https://github.com/42Students/lms-vnext/commit/1c18b6da4d139bcc9bd2efd8f9bb0bb3a902fa86"
+    "https://github.com/42Students/lms-vnext/commit/1c18b6da4d139bcc9bd2efd8f9bb0bb3a902fa86",
+    "https://github.com/42Students/lms-vnext/pull/75",
+    "https://github.com/42Students/lms-vnext/commit/c3ee0c62f8353b5b986d8d4e2b5a8a19b0f77f41"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
