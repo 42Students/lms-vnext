@@ -123,6 +123,20 @@
       "ciConclusion": "failure",
       "runtimeVerified": false,
       "decisionRequired": "Keep all-time hostname uniqueness; coordinated API/resolver and DB tombstone activation; concurrency tests before promotion"
+    },
+    "db01PromotionManifest": {
+      "state": "SOURCE_VALIDATED_STAGED_ONLY",
+      "file": "docs/planning/db01-chat02-migration-integration-manifest.json",
+      "dependencyTest": "tests/db01-integration-manifest.test.mjs",
+      "sourceWitness": {
+        "passed": true,
+        "dependencyNodes": 10,
+        "sourceFiles": 12,
+        "runner": "GITHUB_CONNECTOR_SOURCE_ONLY",
+        "nodeExecuted": false,
+        "postgresExecuted": false
+      },
+      "handoffToChat1": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102207455"
     }
   },
   "qualityGates": {
@@ -141,7 +155,8 @@
     "tests/db01-auth-handoff-contract.test.ts",
     "tests/integration/db01-identity-fk-invariants.test.ts",
     "tests/db01-auth-staging-contract.test.mjs",
-    "tests/unit/db01-domain-tombstone-contract.test.ts"
+    "tests/unit/db01-domain-tombstone-contract.test.ts",
+    "tests/db01-integration-manifest.test.mjs"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -156,9 +171,10 @@
     "DB-004 → Chat 1/issue #21: select provider-only vs provider-cookie+device-session sidecar; block faculty-for-anyone revocation privilege escalation.",
     "DB-004 → Chat 1/issue #21: auth-attempt/device-session/cross-host-handoff artifacts are staged only; select one canonical token-safe shape and register only after CI/PostgreSQL replay is available.",
     "DB-004 → Chat 1/issue #21: promote only one auth-attempt/handoff schema including parent composite unique/FKs and 2-minute TTL after PG replay; do not mix closed unmerged PR#61/#64.",
-    "DB-004 → legacy security review: UserController /register / UserServiceImpl assigns ADMIN role, current security matcher appears only authenticated; no exploitation claim."
+    "DB-004 → legacy security review: UserController /register / UserServiceImpl assigns ADMIN role, current security matcher appears only authenticated; no exploitation claim.",
+    "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only)."
   ],
-  "nextAction": "Review active-vs-retired source disposition contract with DB02/DB04/DB09 peers and submit narrow W01 migration integration proposal; guard 312 source rows with Node script (execute when CI works); get actual Postgres migration replay and scoped negative tests and Firebase provider acceptance. Do not mark DB004 complete until implemented, then independently verified.",
+  "nextAction": "After 312/312 legacy source dispositions, unblock DB01 target by coordinating W01 canonical Drizzle migration and Postgres runner; execute repeatable Node manifest/triage scripts and actual DB/identity/tenant negative cases on latest main; only then complete and verify DB-004.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -200,7 +216,10 @@
     "https://github.com/42Students/lms-vnext/commit/19ef2488bbe71fdd36408b5ece202ec3c3f3c1fe",
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102125261",
     "https://github.com/42Students/lms-vnext/commit/706f5b33fae79b8ca87438eb685c8673eb57cebb",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102174900"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102174900",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-migration-integration-manifest.json",
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-integration-manifest.test.mjs",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102207455"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
