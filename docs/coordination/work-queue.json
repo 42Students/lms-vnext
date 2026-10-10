@@ -374,9 +374,14 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "latestEvidenceSha": "5d39ce3e8ef2f5b942324c990235d4a0b163a20f",
       "verificationEvidence": [],
-      "blockers": [],
+      "blockers": [
+        "MIGRATION_UNREGISTERED: DB05 version/progress and per-content-discussion SQL remain staged; Chat 1 alone registers migrations after data-service CAS/attempt-aware consumers and replay proof.",
+        "LEGACY_DB_SEMANTIC_SOURCE_GAP: Discussed 16 source discussion columns, but six extension fields are historical snapshot only; backend DTO/service does not prove their active producers. Legacy varchar(255) vs DTO 5000-character validation remains unresolved.",
+        "DATABASE_EXECUTION_UNVERIFIED: No disposable PostgreSQL replay, negative tenant/concurrent writes, Node/CI, typecheck or build acceptance on current main.",
+        "PERSISTED_PARITY_NOT_CLOSED: Other DB05 missing/unproven source fields, metadata, display policy, lesson order, private assets and tenant consistency remain open."
+      ],
       "completionNote": null,
       "pickedBy": 6,
       "pickedAt": "2026-10-10T20:27:24.145Z",
