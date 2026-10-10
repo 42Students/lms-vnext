@@ -1,0 +1,1649 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-004",
+  "worker": "CHAT_02",
+  "purpose": "Source-vs-declared-target physical type/default/nullability discrepancy screening only; not runtime mismatch or historical data migration evidence.",
+  "evidence": {
+    "legacySource": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "sourceInventoryBlob": "52f91b969deea6bb6cb9a9f5553688f6805fa26c",
+    "snapshotPresenceLedger": "docs/planning/db01-chat02-snapshot-column-presence.json",
+    "snapshotPresenceBlob": "31cabc702022145443987286a7d31eb1649f7137"
+  },
+  "counts": {
+    "directPhysicalCandidates": 76,
+    "flagOccurrences": {
+      "INT_IDENTIFIER_TO_UUID": 19,
+      "LEGACY_OPTIONAL_TARGET_REQUIRED": 20,
+      "LOCAL_TIMESTAMP_TO_TZ": 17,
+      "POSSIBLE_VARCHAR_CAPACITY_NARROWING": 9,
+      "NONNULL_LEGACY_DEFAULT_MISSING": 4,
+      "LEGACY_REQUIRED_TARGET_NULLABLE": 1
+    },
+    "fieldsWithFlags": 52,
+    "zeroFlagFields": 24,
+    "vnextRuntimeSemanticsVerified": 0
+  },
+  "interpretation": [
+    "MySQL VARCHAR vs normalized E.164/postal code intentionally differ; shorter capacity alone is not a bug without workflow proof.",
+    "MySQL nullable legacy field tightened to not-null in greenfield is often correct, but requires a creation/validation contract.",
+    "Legacy DEFAULT NULL is equivalent to no SQL default on a nullable target; do not flag as missing default.",
+    "INT key to UUID is intentional normalized greenfield design; no legacy record migration is needed.",
+    "Timestamp without timezone vs timestamptz must be verified for deadlines/cross-timezone behavior.",
+    "A Boolean soft-delete mapped to archived_at timestamp is a lifecycle redesign, not a like-for-like nullable conversion.",
+    "Passing this static report does not mean physical migrations replay, live target DB exists, or any field semantic parity is proved."
+  ],
+  "rows": [
+    {
+      "legacyField": "college.id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "colleges.id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": "gen_random_uuid()"
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.created_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.is_deleted",
+      "legacy": {
+        "sqlType": "tinyint(1)",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "'0'"
+      },
+      "vnext": {
+        "target": "colleges.status",
+        "pgType": "college_status",
+        "nullable": false,
+        "defaultValue": "'ACTIVE'"
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.updated_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.address_line1",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.address_line1",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.address_line2",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.address_line2",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.city",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.city",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.country",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.country",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.landmark",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.landmark",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.logo",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.logo_object_path",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.name",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.name",
+        "pgType": "text",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.org_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.organization_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.pin_code",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.postal_code",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.state",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.state",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "college.unique_id",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "colleges.code",
+        "pgType": "varchar(64)",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "department.id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "departments.id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": "gen_random_uuid()"
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "department.created_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "departments.created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "department.is_deleted",
+      "legacy": {
+        "sqlType": "tinyint(1)",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "'0'"
+      },
+      "vnext": {
+        "target": "departments.archived_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "NONNULL_LEGACY_DEFAULT_MISSING"
+      ],
+      "reviewNotes": [
+        "Default may be replaced by application state, different column semantics or enum representation; validate."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "department.updated_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "departments.updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "department.college_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "departments.college_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "department.name",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "departments.name",
+        "pgType": "text",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.suspended_at",
+      "legacy": {
+        "sqlType": "datetime",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "college_memberships.suspended_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.suspension_reason",
+      "legacy": {
+        "sqlType": "varchar(500)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "college_memberships.suspension_reason",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.college_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "college_memberships.college_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.contact_mail",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.email",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.contact_mobile",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.phone_e164",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.department",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "faculty_profiles.primary_department_id",
+        "pgType": "uuid",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.dept_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "faculty_profiles.primary_department_id",
+        "pgType": "uuid",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.faculty_type",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "faculty_profiles.employment_type",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "faculty.user_type",
+      "legacy": {
+        "sqlType": "varchar(22)",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "'FACULTY'"
+      },
+      "vnext": {
+        "target": "membership_roles.role",
+        "pgType": "membership_role",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "NONNULL_LEGACY_DEFAULT_MISSING"
+      ],
+      "reviewNotes": [
+        "Default may be replaced by application state, different column semantics or enum representation; validate."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.suspended_at",
+      "legacy": {
+        "sqlType": "datetime",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "college_memberships.suspended_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.suspension_reason",
+      "legacy": {
+        "sqlType": "varchar(500)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "college_memberships.suspension_reason",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.class_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "section_enrollments.section_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.college_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "college_memberships.college_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.contact_mail",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.email",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.contact_mobile",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.phone_e164",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.program_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "learner_program_enrollments.program_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.roll_number",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "learner_profiles.roll_number",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "learner.user_type",
+      "legacy": {
+        "sqlType": "varchar(22)",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "'LEARNER'"
+      },
+      "vnext": {
+        "target": "membership_roles.role",
+        "pgType": "membership_role",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "NONNULL_LEGACY_DEFAULT_MISSING"
+      ],
+      "reviewNotes": [
+        "Default may be replaced by application state, different column semantics or enum representation; validate."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "organization.id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "organizations.id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": "gen_random_uuid()"
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "organization.created_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "organizations.created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "organization.is_deleted",
+      "legacy": {
+        "sqlType": "tinyint(1)",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "'0'"
+      },
+      "vnext": {
+        "target": "organizations.status",
+        "pgType": "organization_status",
+        "nullable": false,
+        "defaultValue": "'ACTIVE'"
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "organization.updated_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "organizations.updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "organization.name",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "organizations.name",
+        "pgType": "text",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter.contact_mobile",
+      "legacy": {
+        "sqlType": "varchar(15)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "users.phone_e164",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter.contact_mail",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "users.email",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter.is_deleted",
+      "legacy": {
+        "sqlType": "boolean",
+        "nullable": "NOT_NULL",
+        "defaultValue": "FALSE"
+      },
+      "vnext": {
+        "target": "placement_recruiter_profiles.archived_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_REQUIRED_TARGET_NULLABLE",
+        "NONNULL_LEGACY_DEFAULT_MISSING"
+      ],
+      "reviewNotes": [
+        "May be intentional normalized state conversion; do not assume data loss.",
+        "Default may be replaced by application state, different column semantics or enum representation; validate."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": "gen_random_uuid()"
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.status",
+      "legacy": {
+        "sqlType": "varchar(20)",
+        "nullable": "NOT_NULL",
+        "defaultValue": "'ACTIVE'"
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.status",
+        "pgType": "varchar(24)",
+        "nullable": false,
+        "defaultValue": "'ACTIVE'"
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_by_user_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.granted_by_user_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.revoked_by_user_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.revoked_by_user_id",
+        "pgType": "uuid",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.revoked_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.revoked_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.created_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NOT_NULL",
+        "defaultValue": "CURRENT_TIMESTAMP(6)"
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.updated_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NOT_NULL",
+        "defaultValue": "CURRENT_TIMESTAMP(6)"
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.is_deleted",
+      "legacy": {
+        "sqlType": "boolean",
+        "nullable": "NOT_NULL",
+        "defaultValue": "FALSE"
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.status",
+        "pgType": "varchar(24)",
+        "nullable": false,
+        "defaultValue": "'ACTIVE'"
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.hiring_for_company_id",
+      "legacy": {
+        "sqlType": "bigint",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "placement_company_relationships.company_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access.recruiter_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.recruiter_user_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "recruiter_college_access_capability.access_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "placement_recruiter_college_grants.id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": "gen_random_uuid()"
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "tenant_domains.id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": "gen_random_uuid()"
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.created_at",
+      "legacy": {
+        "sqlType": "datetime",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "CURRENT_TIMESTAMP"
+      },
+      "vnext": {
+        "target": "tenant_domains.created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.updated_at",
+      "legacy": {
+        "sqlType": "datetime",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "CURRENT_TIMESTAMP"
+      },
+      "vnext": {
+        "target": "tenant_domains.updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.college_id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "tenant_domains.college_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.host",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "tenant_domains.host",
+        "pgType": "varchar(255)",
+        "nullable": false,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.is_primary",
+      "legacy": {
+        "sqlType": "tinyint(1)",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "'0'"
+      },
+      "vnext": {
+        "target": "tenant_domains.is_primary",
+        "pgType": "boolean",
+        "nullable": false,
+        "defaultValue": false
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.verification_token",
+      "legacy": {
+        "sqlType": "varchar(64)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "tenant_domains.verification_token",
+        "pgType": "varchar(255)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.verified_at",
+      "legacy": {
+        "sqlType": "datetime",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "tenant_domains.verified_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.is_verified",
+      "legacy": {
+        "sqlType": "tinyint(1)",
+        "nullable": "NOT_NULL",
+        "defaultValue": "'0'"
+      },
+      "vnext": {
+        "target": "tenant_domains.is_verified",
+        "pgType": "boolean",
+        "nullable": false,
+        "defaultValue": false
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.last_checked_at",
+      "legacy": {
+        "sqlType": "datetime",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "tenant_domains.last_checked_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "tenant_domain.last_check_result",
+      "legacy": {
+        "sqlType": "varchar(32)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "tenant_domains.last_check_result",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "user.id",
+      "legacy": {
+        "sqlType": "int",
+        "nullable": "NOT_NULL",
+        "defaultValue": null
+      },
+      "vnext": {
+        "target": "users.id",
+        "pgType": "uuid",
+        "nullable": false,
+        "defaultValue": "gen_random_uuid()"
+      },
+      "reviewFlags": [
+        "INT_IDENTIFIER_TO_UUID"
+      ],
+      "reviewNotes": [
+        "Intentional greenfield normalization; compare externally visible stable keys and joins."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "user.created_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "user.is_deleted",
+      "legacy": {
+        "sqlType": "tinyint(1)",
+        "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+        "defaultValue": "'0'"
+      },
+      "vnext": {
+        "target": "users.platform_status",
+        "pgType": "user_platform_status",
+        "nullable": false,
+        "defaultValue": "'ACTIVE'"
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "user.updated_at",
+      "legacy": {
+        "sqlType": "datetime(6)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "defaultValue": "now()"
+      },
+      "reviewFlags": [
+        "LEGACY_OPTIONAL_TARGET_REQUIRED",
+        "LOCAL_TIMESTAMP_TO_TZ"
+      ],
+      "reviewNotes": [
+        "Requires intentional vNext creation/default/validation contract, no legacy backfill required.",
+        "Explicit UTC/IST input and deadline semantics must be tested. Source type alone cannot prove timezone behavior."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "user.email",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.email",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "user.name",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.display_name",
+        "pgType": "text",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [],
+      "reviewNotes": [],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    },
+    {
+      "legacyField": "user.phone",
+      "legacy": {
+        "sqlType": "varchar(255)",
+        "nullable": "NULL_ALLOWED",
+        "defaultValue": "NULL"
+      },
+      "vnext": {
+        "target": "users.phone_e164",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "defaultValue": null
+      },
+      "reviewFlags": [
+        "POSSIBLE_VARCHAR_CAPACITY_NARROWING"
+      ],
+      "reviewNotes": [
+        "vNext may normalize/validate a tighter canonical format; compare actual input domain not migration length alone."
+      ],
+      "decision": "REQUIRES_SEMANTIC_REVIEW",
+      "runtimeVerified": false
+    }
+  ]
+}
