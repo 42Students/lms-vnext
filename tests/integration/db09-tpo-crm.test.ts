@@ -82,6 +82,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       "'placement_tpo_lead_activities'::regclass AND NOT tgisinternal",
     )).rows.map(x => x.tgname);
     expect(triggers).toContain("db09_lead_activity_immutable");
+    expect(triggers).toContain("db09_lead_activity_actor_scope_guard");
   });
 
   beforeEach(async () => {
@@ -167,6 +168,34 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     if (rejected?.status !== "rejected") throw new Error("Missing rejection");
     expect(rejected.reason).toBeInstanceOf(TpoCrmError);
     expect(rejected.reason.code).toBe("TPO_CRM_LEAD_DUPLICATE");
+  });
+
+  it("rejects malformed invite hashes and forged activity actors at the database boundary", async () => {
+    if (!pool) throw new Error("Isolated database missing");
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "DB guard lead",
+      email: "db-guard@example.org",
+    });
+
+    await expect(pool.query(
+      "UPDATE placement_tpo_leads SET invite_token_hash = $1 WHERE id = $2",
+      ["not-a-sha256-digest", lead.id],
+    )).rejects.toMatchObject({ code: "23514" });
+
+    await expect(pool.query(
+      "INSERT INTO placement_tpo_lead_activities " +
+      "(college_id, lead_id, type, is_system, created_by_user_id) " +
+      "VALUES ($1, $2, 'NOTE', false, $3)",
+      [SEED_IDS.collegeA, lead.id, SEED_IDS.superAdminUser],
+    )).rejects.toMatchObject({ code: "23514" });
+
+    await expect(pool.query(
+      "INSERT INTO placement_tpo_lead_activities " +
+      "(college_id, lead_id, type, is_system, created_by_user_id) " +
+      "VALUES ($1, $2, 'SYSTEM', true, $3)",
+      [SEED_IDS.collegeA, lead.id, SEED_IDS.facultyUser],
+    )).rejects.toMatchObject({ code: "23514" });
   });
 
   it("tracks follow-up due, move and completion; refuses moving done follow-ups", async () => {
