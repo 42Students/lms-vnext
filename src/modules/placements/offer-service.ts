@@ -33,6 +33,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
 import {
   issuePlacementOfferInputSchema,
@@ -970,6 +971,7 @@ export async function listOwnPlacementOffers(
       "placements.read",
     );
   }
+  await requireLearnerPlacementAccess(context);
 
   return getDb()
     .select({
