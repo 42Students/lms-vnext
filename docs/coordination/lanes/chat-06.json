@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_DISCUSSION_CONTRACT_CANONICAL_INVENTORY_GUARDED_UNVERIFIED",
+    "checkpointKind": "DB008_THREE_SQL_DRAFTS_AND_ALL92_SOURCE_REVIEW_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "ffc07b0ed478a6a5c44a8aba2950e5d72dc8f66a",
-    "lastWorkerMergedSha": "803bddeedb39000837de63cf56d7795f9532bffb",
+    "observedMainSha": "af679b124aba3e56c1c85909b47f4600f86f9657",
+    "lastWorkerMergedSha": "af679b124aba3e56c1c85909b47f4600f86f9657",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-008 remains IN_PROGRESS. All 92/92 historical DB05 source rows are inventoried; current semantic review classes are 31 SOURCE_CANDIDATE, 18 REMODELED_NEEDS_PROOF, 29 UNREGISTERED_DRAFT, 14 MISSING_OR_UNPROVEN, with zero VERIFIED mappings. Lesson-content discussions are now explicitly separate from classroom chat: all 16 historical discussion columns have an isolated unregistered staging target, 9 are confirmed on the inspected primary legacy runtime path, and 7 are preservation-only/runtime-unproven. Canonical inventory annotations + static regression guard merged via PR #59. Connector source assertions passed; no Node/PostgreSQL/CI acceptance executed."
+    "summary": "DB-008 remains IN_PROGRESS. All 92 source columns over 7 historical DB05 tables accounted for as 30 source candidates, 18 remodeled needs proof, 33 unregistered draft, 11 missing/unproven. Staged THREE isolated SQL drafts: course/lesson/content versions & learner attempts, per-content discussions, course short title/slug. Authored six Node static tests, not executed. 11 in-memory GitHub source inspections true; zero DB semantically verified, PostgreSQL and CI not executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -29,8 +29,7 @@
     "browser": "NOT_VERIFIED"
   },
   "lastAuthoredTests": [
-    "tests/db05-source-semantic-review.test.mjs (expanded DB05 static guards; repository Node suite not executed here)",
-    "tests/db05-lesson-discussion-inventory-evidence.test.mjs (3 static tests authored; repository Node suite not executed here)"
+    "tests/db05-source-semantic-review.test.mjs: 6 Node tests authored, not run"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -52,9 +51,15 @@
       "kind": "MIGRATION_INTEGRATOR_ONLY",
       "message": "Chat 1: DB05 discussion persistence is staged only in scripts/sql/db05-lesson-content-discussions.draft.sql; do not register until migration order, retroactive tenant-scope safety, private attachment ACL, producer/consumer contracts and disposable PostgreSQL negative/race evidence pass. Version/progress draft also still requires attempt-aware consumers and optimistic CAS writes.",
       "commitSha": "803bddeedb39000837de63cf56d7795f9532bffb"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "COURSE_IDENTITY_MIGRATION_DRAFT",
+      "message": "Legacy CourseDTO requires shortTitle; public slug globally reserved even for soft-deleted/archived courses; V131 lower(trim) uniqueness. Staged scripts/sql/db05-course-identity.draft.sql adding nullable fields and unique indexes (not registered). W01 gate: seed/API cutover and PostgreSQL duplicate/race tests.",
+      "commitSha": "af679b124aba3e56c1c85909b47f4600f86f9657"
     }
   ],
-  "nextAction": "Continue DB-008 within DATABASE on the remaining 14 MISSING_OR_UNPROVEN and 18 REMODELED_NEEDS_PROOF mappings (course metadata/display policy, content_data/video/private assets, per-delivery order, status/restore and tenant consistency). Keep all migration drafts unregistered; do not promote phase or claim runtime verification.",
+  "nextAction": "Continue DB-008 at 11 missing/unproven mappings and 18 remodeled-needs-proof, especially course parent/visibility/metadata and lesson content points/deadline/tenant/ordering. Do not register drafts until services integrate and PostgreSQL/CI acceptance passes.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -75,7 +80,10 @@
     "https://github.com/42Students/lms-vnext/commit/f562e05b542db46cb5353e616df121f1285d651f",
     "https://github.com/42Students/lms-vnext/commit/5d39ce3e8ef2f5b942324c990235d4a0b163a20f",
     "https://github.com/42Students/lms-vnext/pull/59",
-    "https://github.com/42Students/lms-vnext/commit/803bddeedb39000837de63cf56d7795f9532bffb"
+    "https://github.com/42Students/lms-vnext/commit/803bddeedb39000837de63cf56d7795f9532bffb",
+    "https://github.com/42Students/lms-vnext/commit/ed01ffc44112b18b35fd2ca9d805cb33703c90a6",
+    "https://github.com/42Students/lms-vnext/commit/31617bc52a435895014e6b8511a5b8629df20eeb",
+    "https://github.com/42Students/lms-vnext/commit/af679b124aba3e56c1c85909b47f4600f86f9657"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
