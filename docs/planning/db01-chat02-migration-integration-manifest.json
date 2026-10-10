@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "documentType": "DB01_CANDIDATE_PROMOTION_MANIFEST",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "globalPhase": "DATABASE",
+  "state": "STAGED_UNREGISTERED_NOT_EXECUTED",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+  "governingRule": "Only Chat 1 registers numbered Drizzle migrations, edits src/db/schema/index.ts or centralized database/CI tooling.",
+  "inventory": {
+    "path": "docs/planning/db01-chat02-312-field-source-triage.json",
+    "candidateTables": 22,
+    "candidateFields": 312,
+    "sourceDispositioned": 312,
+    "vnextRuntimeSemanticVerified": 0
+  },
+  "parentKeys": [
+    {
+      "id": "DB01-UK-MEMBERSHIP",
+      "requiredBefore": [
+        "DB01-OTP-FK",
+        "DB01-HANDOFF-FK"
+      ],
+      "table": "college_memberships",
+      "columns": [
+        "id",
+        "user_id",
+        "college_id"
+      ],
+      "constraint": "college_memberships_id_user_college_uq",
+      "source": "docs/planning/sql/db01-auth-tenant-composite-fks-staging.sql",
+      "state": "NOT_REGISTERED"
+    },
+    {
+      "id": "DB01-UK-TENANT-DOMAIN",
+      "requiredBefore": [
+        "DB01-HANDOFF-FK"
+      ],
+      "table": "tenant_domains",
+      "columns": [
+        "id",
+        "college_id"
+      ],
+      "constraint": "tenant_domains_id_college_uq",
+      "source": "docs/planning/sql/db01-auth-tenant-composite-fks-staging.sql",
+      "state": "NOT_REGISTERED"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "DB01-PERSON-NAME",
+      "feature": "Canonical given/family names and optimistic identity-profile version",
+      "owner": "CHAT_01",
+      "schema": "src/db/schema/users.ts",
+      "stagingSql": "docs/planning/sql/db01-person-name-staging.sql",
+      "dependencies": [],
+      "status": "STAGED_W01",
+      "decision": "Do not parse given/family names from display_name and do not update Identity Platform email with DB-only mutation",
+      "tests": [
+        "optimistic race",
+        "provider sync failure and retry",
+        "disabled persisted actor denial"
+      ]
+    },
+    {
+      "id": "DB01-TENANT-BRANDING",
+      "feature": "Per-college public branding display and admin edit contract",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/db01-tenant-branding.staged.ts",
+      "stagingSql": "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql",
+      "dependencies": [],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "One row per college, preserve 10 branding fields, URL/object path and privacy policy need explicit validation",
+      "tests": [
+        "cross-tenant read and write denial",
+        "branding fallback and archived college exclusion",
+        "unsafe content/URL rejection"
+      ]
+    },
+    {
+      "id": "DB01-DOMAIN-DIAGNOSTIC",
+      "feature": "Persisted DNS TXT proof diagnosis bounded to 500 chars",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/tenant-domains.ts",
+      "stagingSql": "docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql",
+      "dependencies": [],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "Untrusted TXT values require redaction/retention and restricted admin read; verified recheck cannot silently revoke proof",
+      "tests": [
+        "verified recheck failure leaves verified true",
+        "wrong-TXT vs absent-TXT diagnosis",
+        "host update revokes old proof",
+        "single verified primary"
+      ]
+    },
+    {
+      "id": "DB01-DEVICE-SESSION",
+      "feature": "Per-device session listing and revoke-one parity without raw provider cookies",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/db01-device-sessions.staged.ts",
+      "stagingSql": "docs/planning/sql/db01-device-session-staging.sql",
+      "dependencies": [],
+      "status": "STAGED_OPTIONAL_PENDING_PLATFORM_DESIGN",
+      "decision": "Choose provider-only with proven device revoke equivalence OR provider cookie and scoped keyed-session digest; never create insecure duplicate auth authority",
+      "tests": [
+        "one-device revoke without all-device revoke",
+        "current actor owns session",
+        "persisted revoke/expire checked on each authorized request",
+        "legacy FACULTY privilege escalation must not be cloned"
+      ]
+    },
+    {
+      "id": "DB01-OTP-TABLE",
+      "feature": "Server-side OTP challenge budget, email fallback and bounded expiry with keyed MAC",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/db01-auth-attempts.staged.ts",
+      "stagingSql": "docs/planning/sql/db01-auth-attempts-staging.sql",
+      "dependencies": [],
+      "status": "STAGED_OPTIONAL_PENDING_PROVIDER_PROOF",
+      "decision": "Prefer managed provider OTP only if exact login user jobs documented; raw 6-digit short OTP must not be stored",
+      "tests": [
+        "10 concurrent attempts <=5 successful reservations",
+        "wrong-college and wrong-membership FK denials",
+        "replayed or expired OTP rejected",
+        "email-only recruiter challenge never uses dummy SMS OTP"
+      ]
+    },
+    {
+      "id": "DB01-OTP-FK",
+      "feature": "Composite user membership and college key scope on challenge",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/db01-auth-attempts.staged.ts",
+      "stagingSql": "docs/planning/sql/db01-auth-tenant-composite-fks-staging.sql",
+      "dependencies": [
+        "DB01-UK-MEMBERSHIP",
+        "DB01-OTP-TABLE"
+      ],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "nullable membership requires CHECK college present; parent composite uniqueness must be registered first",
+      "tests": [
+        "user/member mismatch FK 23503",
+        "college/member mismatch FK 23503",
+        "membership without college CHECK 23514"
+      ]
+    },
+    {
+      "id": "DB01-HANDOFF-TABLE",
+      "feature": "Single-use cross-host identity handoff, 2-minute TTL and host binding",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/db01-auth-handoffs.staged.ts",
+      "stagingSql": "docs/planning/sql/db01-auth-handoffs-staging.sql",
+      "dependencies": [],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "Never persist or return raw Firebase/legacy refresh/access tokens; bind high-entropy code MAC to current valid host/member",
+      "tests": [
+        "expired handoff unusable",
+        "concurrent consume exactly one winner",
+        "change host, user status or membership rejects consume",
+        "no raw bearer data"
+      ]
+    },
+    {
+      "id": "DB01-HANDOFF-FK",
+      "feature": "Composite owner/membership/college and verified domain/college constraints",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/db01-auth-handoffs.staged.ts",
+      "stagingSql": "docs/planning/sql/db01-auth-tenant-composite-fks-staging.sql",
+      "dependencies": [
+        "DB01-UK-MEMBERSHIP",
+        "DB01-UK-TENANT-DOMAIN",
+        "DB01-HANDOFF-TABLE"
+      ],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "Domain and member college must match, and member user must match handoff user; FKs alone do not prove active/verified state",
+      "tests": [
+        "member/user mismatch FK 23503",
+        "member/domain college mismatch FK 23503",
+        "verify current persisted actor+domain on consume"
+      ]
+    }
+  ],
+  "deprecatedAlternatives": [
+    {
+      "pullRequest": 61,
+      "state": "CLOSED_UNMERGED_SUPERSEDED",
+      "reason": "Alternative device session and cross-host schema shape; do not promote alongside current candidate"
+    },
+    {
+      "pullRequest": 64,
+      "state": "CLOSED_UNMERGED_SUPERSEDED",
+      "reason": "Prior cross-host staged draft; do not register duplicate tables"
+    }
+  ],
+  "readiness": {
+    "candidateDraftsPrepared": true,
+    "canonicalProductPolicyApproved": false,
+    "schemaBarrelExported": false,
+    "numberedMigrationRegistered": false,
+    "disposablePostgresCleanReplayPassed": false,
+    "postgresNegativeOrConcurrencyTestsPassing": false,
+    "providerEndToEndVerified": false,
+    "CIStatus": "FAILURE_NO_TRUSTWORTHY_STEP_OUTPUT",
+    "phaseGateReady": false
+  },
+  "promotionChecklist": [
+    "Chat 1 review active legacy source semantic contracts and approve redesign/retirements field by field.",
+    "Reject duplicate tables and choose a single optional platform session/OTP approach before table promotion.",
+    "Register parent composite keys before child FK constraints and generate one consistent Drizzle migration/snapshot; never run raw candidate SQL directly.",
+    "Check source declaration vs generated migration drift, empty and latest DB replay, exact SHA references.",
+    "Verify private storage/branding URL policy, hostname ownership and provider session/OTP acceptance independently.",
+    "Run all negative cross-tenant, FK, replay and concurrency tests on disposable Postgres and retain logs.",
+    "Record either accepted source parity or explicit justified intentional security exception for each live legacy behavior.",
+    "Only after all implementation and executed acceptance update DB-004 to COMPLETED then DONE_VERIFIED; no worker may advance the shared phase alone."
+  ]
+}
