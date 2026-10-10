@@ -496,3 +496,55 @@ export async function listTpoLeadFollowups(
       asc(placementTpoFollowups.id),
     );
 }
+
+/**
+ * Legacy hand-set "Contacted" status. Only manual statuses can be written:
+ * NEVER allow a client to claim Invited/Joined/Recruited/Drive Planned.
+ * A row lock and one append-only system event give an idempotent history.
+ */
+export async function markTpoLeadContacted(
+  context: RequestContext,
+  rawCollegeId: string,
+  rawLeadId: string,
+) {
+  const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
+  const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
+  await requirePlacementManageScope(context, collegeId);
+  return getDb().transaction(async tx => {
+    const [current] = await tx
+      .select()
+      .from(placementTpoLeads)
+      .where(and(
+        eq(placementTpoLeads.collegeId, collegeId),
+        eq(placementTpoLeads.id, leadId),
+      ))
+      .for("update")
+      .limit(1);
+    if (!current) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+    if (current.manualStage === "CONTACTED") return tpoLeadView(current);
+
+    const [updated] = await tx
+      .update(placementTpoLeads)
+      .set({
+        manualStage: "CONTACTED",
+        notNowReason: null,
+        notNowUntil: null,
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(placementTpoLeads.collegeId, collegeId),
+        eq(placementTpoLeads.id, leadId),
+      ))
+      .returning();
+    if (!updated) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+    await tx.insert(placementTpoLeadActivities).values({
+      collegeId,
+      leadId,
+      type: "SYSTEM",
+      isSystem: true,
+      note: "Manual stage changed to Contacted",
+      createdByUserId: context.user.id,
+    });
+    return tpoLeadView(updated);
+  });
+}
