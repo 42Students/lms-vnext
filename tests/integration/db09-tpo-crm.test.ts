@@ -13,14 +13,17 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   TpoCrmError,
   addTpoFollowup,
+  checkTpoLeadContact,
   createTpoLead,
   finishTpoFollowup,
+  getTpoLead,
   listDueTpoFollowups,
   listTpoLeadActivities,
   listTpoLeads,
   logTpoLeadActivity,
   markTpoLeadNotNow,
   moveTpoFollowup,
+  updateTpoLead,
 } from "@/modules/placements/tpo-crm-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
@@ -223,4 +226,127 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       [event.id],
     )).rejects.toMatchObject({ code: "23514" });
   });
+
+  it("can check a recruiter duplicate without disclosing a raw invite hash", async () => {
+    if (!pool) throw new Error("Isolated database missing");
+    const created = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Existing contact",
+      email: "  One@Example.Org ",
+      phone: "+91 98765 43210",
+    });
+    await pool.query(
+      "UPDATE placement_tpo_leads SET invite_token_hash = $1 WHERE id = $2",
+      ["b".repeat(64), created.id],
+    );
+    for (const contact of ["one@example.org", "+91 98765 43210"]) {
+      const match = await checkTpoLeadContact(tpo, {
+        collegeId: SEED_IDS.collegeA, contact,
+      });
+      expect(match?.id).toBe(created.id);
+      expect(match).not.toHaveProperty("inviteTokenHash");
+    }
+    expect(await checkTpoLeadContact(tpo, {
+      collegeId: SEED_IDS.collegeA, contact: "unknown@example.org",
+    })).toBeNull();
+    const detail = await getTpoLead(tpo, SEED_IDS.collegeA, created.id);
+    expect(detail).not.toHaveProperty("inviteTokenHash");
+    expect(detail.id).toBe(created.id);
+  });
+
+  it("edits recruiter contact atomically while preserving omitted details and lifecycle", async () => {
+    const created = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Edit contact",
+      email: "existing@example.org",
+      phone: "+91 98765 43210",
+      source: "Alumni",
+      designation: "HR Director",
+    });
+    await markTpoLeadNotNow(tpo, created.id, {
+      collegeId: SEED_IDS.collegeA,
+      reason: "Revisit later",
+      revisitDate: "2027-02-01",
+    });
+
+    const updated = await updateTpoLead(tpo, created.id, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Corrected recruiter",
+      email: "new@example.org",
+      source: null,
+    });
+    expect(updated.name).toBe("Corrected recruiter");
+    expect(updated.emailNorm).toBe("new@example.org");
+    expect(updated.phoneNorm).toBe("9876543210");
+    expect(updated.source).toBe("MANUAL");
+    expect(updated.designation).toBe("HR Director");
+    expect(updated.manualStage).toBe("NOT_NOW");
+    expect(updated.notNowUntil).toBe("2027-02-01");
+
+    await expect(updateTpoLead(tpo, created.id, {
+      collegeId: SEED_IDS.collegeA,
+      email: null, phone: null,
+    })).rejects.toMatchObject({ code: "TPO_CRM_CONTACT_REQUIRED" });
+
+    const afterFailed = await getTpoLead(tpo, SEED_IDS.collegeA, created.id);
+    expect(afterFailed.emailNorm).toBe("new@example.org");
+    expect(afterFailed.phoneNorm).toBe("9876543210");
+    const singleContact = await updateTpoLead(tpo, created.id, {
+      collegeId: SEED_IDS.collegeA,
+      phone: null,
+    });
+    expect(singleContact.phoneNorm).toBeNull();
+    expect(singleContact.emailNorm).toBe("new@example.org");
+  });
+
+  it("makes a racing duplicate edit lose without corrupting either contact", async () => {
+    const [a, b] = await Promise.all([
+      createTpoLead(tpo, {
+        collegeId: SEED_IDS.collegeA,
+        name: "A", email: "a@example.org",
+      }),
+      createTpoLead(tpo, {
+        collegeId: SEED_IDS.collegeA,
+        name: "B", email: "b@example.org",
+      }),
+    ]);
+    const settled = await Promise.allSettled([
+      updateTpoLead(tpo, a.id, {
+        collegeId: SEED_IDS.collegeA, email: "shared@example.org",
+      }),
+      updateTpoLead(tpo, b.id, {
+        collegeId: SEED_IDS.collegeA, email: "SHARED@EXAMPLE.ORG",
+      }),
+    ]);
+    expect(settled.filter(x => x.status === "fulfilled")).toHaveLength(1);
+    const loser = settled.find(x => x.status === "rejected");
+    expect(loser).toMatchObject({
+      status: "rejected",
+      reason: { code: "TPO_CRM_LEAD_DUPLICATE" },
+    });
+    const all = await listTpoLeads(tpo, SEED_IDS.collegeA);
+    expect(all.filter(x => x.emailNorm === "shared@example.org")).toHaveLength(1);
+    expect(all).toHaveLength(2);
+  });
+
+  it("denies unauthorized lead lookup, detail and edits even by known IDs", async () => {
+    const created = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Isolated lead", email: "isolate@example.org",
+    });
+    await expect(checkTpoLeadContact(learner, {
+      collegeId: SEED_IDS.collegeA, contact: "isolate@example.org",
+    })).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(getTpoLead(learner, SEED_IDS.collegeA, created.id))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(updateTpoLead(learner, created.id, {
+      collegeId: SEED_IDS.collegeA, name: "Forged",
+    })).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(getTpoLead(tpo, SEED_IDS.collegeB, created.id))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(updateTpoLead(tpo, created.id, {
+      collegeId: SEED_IDS.collegeB, name: "Cross college",
+    })).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
 });
