@@ -193,3 +193,74 @@ A source-shape review checked 18 listed invariants (files, guards, tracking and 
 3. Neither SQL/PostgreSQL tests nor lint/typecheck/Vitest/build/E2E/browser ran successfully in this workstream. GitHub Actions currently reports failed jobs without assigned runner/step evidence. Test files are **authored**, not **passing**.
 4. Old job/season APIs, recruiter/manager module gating, complete offer breakdown and external verified outcome workflows, secure private letters, per-drive round/applicant integrity and the full placement pages/modal/status parity remain open.
 5. Source-derived field inventory: 18 legacy DB08 tables / 280 fields, **0 semantically runtime verified**. This checkpoint is deliberately **not** a DONE claim.
+
+
+## Chat 5 global DB-011 reconciliation — 2026-10-11
+
+This checkpoint reconciles the historical DB08 workstream into the global
+DATABASE queue. It does **not** supersede the 280-field evidence gate and does
+not claim runtime verification.
+
+### Source-review result
+
+- All **18 legacy tables / 280 fields** are present in the canonical source census
+  and now carry source-reviewed **domain candidate sets** on current `main`.
+- Exact field semantic status remains **280 UNVERIFIED / 0 runtime verified** in
+  `database-parity-db08-field-ledger.json`; candidate table presence is not
+  field parity.
+- The current canonical model is the one already integrated on `main`.
+  The archived alternate DB08 branch remains superseded and must not be merged
+  wholesale.
+
+### Blocking source mismatches confirmed from latest legacy V188/V190
+
+1. **Season retirement is not implemented.** Legacy V188 and the locked
+   Batches/Eligibility design remove `placement_season` and all
+   `season_id` drive/registration/report filters. Current vNext still has an
+   active `placement_seasons` model and requires
+   `placement_jobs.season_id NOT NULL`. Cohort targets are source-authored but
+   not an active journalled replacement yet.
+2. **DB08 A/B/C/D candidate schemas are not active migrations.**
+   `placement-batches.ts`, `placement-registration.ts`,
+   `placement-debarments.ts`, `placement-external.ts`, and
+   `placement-job-cohorts.ts` are not exported through the schema barrel and
+   their staged SQL is not a numbered Drizzle migration. Only the migration
+   integrator may perform that shared registration work.
+3. **Placed-count policy gap.** Latest legacy `job.counts_as_placed` persists
+   the per-drive decision used by placed counts/held-offer logic. No equivalent
+   persisted field was found in current `placement_jobs` or role options.
+4. **Non-placement outcome gap.** Latest legacy
+   `placement_registration.outcome_label` and `outcome_detail` persist
+   college-specific Higher Studies/Entrepreneurship/Competitive Exam outcome
+   detail. The canonical `placement_batch_registrations` candidate does not
+   currently persist those fields.
+5. **Offer fidelity gap.** Current `placement_offers` preserves core role,
+   annual CTC, joining date, expiry and lifecycle history, but does not yet
+   persist the full legacy fixed/variable/joining-bonus breakup, bond terms and
+   dispute/revocation metadata as explicit equivalents.
+6. **Audit identity decision needed.** Eligibility current/event candidates use
+   durable actor user IDs and append-only reversal events. Legacy also snapshots
+   actor/decider type and display name and carried `undone_at`; the stronger
+   reversal model is sound, but snapshot retention needs an explicit
+   preserve/redesign disposition rather than silent loss.
+
+### Source contracts that are represented
+
+The current services do source-author the important two-gate learner rule
+(paid college Placements module **and** resolved inherited eligibility), the
+MEMBERSHIP > SECTION > COHORT precedence, atomic bulk decide/append-only undo
+logic, batch-specific registration windows/consent history, dedicated external
+offers without fake jobs, debarment history, and the limited Drive Day
+coordinator exception that never bypasses the paid college module switch.
+
+These claims are source inspection only. The runner/disposable PostgreSQL gate
+is still blocked, so no authored DB08 unit/integration suite is reported as
+passing.
+
+### Global queue disposition
+
+DB-011 may be marked **COMPLETED for source reconciliation only** after this
+checkpoint and the source census update are committed. It must remain
+**not DONE_VERIFIED**. DB-019 must disposition the exact 280 field mappings and
+DB-020 must require the season retirement/migration integration plus executable
+PostgreSQL evidence before the DATABASE phase can advance.
