@@ -623,7 +623,7 @@
         "src/modules/placements/tpo-messaging-service.ts"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "ac494434fb829ed4aa5bc604e49169bd1bf7d56d",
+      "latestEvidenceSha": "361ac5456c066a3311cc131fb190c8550a4433c3",
       "verificationEvidence": [],
       "blockers": [
         "No disposable PostgreSQL/CI runtime evidence; authored DB09 guards/tests are not executed.",
@@ -641,7 +641,8 @@
         "V193 messaging actor producer now uses RECRUITER but downstream API/UI clients still require compatibility acceptance.",
         "DB09 round slots/assignments/reschedules need actual migration and transactional capacity-concurrency tests; source artifacts alone do not enforce availability.",
         "V190 job.counts_as_placed depends on DB08 job/outcomes integration; custom college settings SQL remains unregistered.",
-        "DB09 tenant scoped FKs for leads/shares/notes/jobs/applications are staged, not in generated migrations."
+        "DB09 tenant scoped FKs for leads/shares/notes/jobs/applications are staged, not in generated migrations.",
+        "Active legacy prep assignment and per-reader TPO bell state have no demonstrated registered vNext schema; candidate SQL waits for Chat 1/DB06/DB10 reconciliation."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -710,7 +711,7 @@
           "reason": "Narrow necessary DB09 producer compatibility fix in tpo-messaging-service.ts: legacy HR actor writes conflict with final RECRUITER CHECK per V193; no API signature or authorization change."
         }
       ],
-      "progressNote": "DB09 source inventory: 279/279 source candidate notes (14 V162 comparison, 265 target declaration comparisons) but ALL 279 still UNVERIFIED. Chat 3 repaired tpo-crm.ts duplicate/unterminated SQL declarations (62c5f1c), normalized V193 messaging actor HR -> RECRUITER (13a9772), authored/extended static guard (621660d/e62c1e1), staged CRM/collaboration same-tenant FK SQL and V190 custom job/outcome settings, audited 25 round scheduling source fields (candidate already authored by parallel worker). Read-only source compatibility assertions PASS. No PostgreSQL, CI, Node guard or browser execution proven."
+      "progressNote": "Chat 3 DATABASE source review: 279/279 DB09 historic field candidates have conservative evidence, ALL UNVERIFIED (14 direct V162, 139 name matching, 45 renamed candidates, 81 no declared column). 104 field records now have named current legacy table/producer evidence: 34 group/scheduling/recruiter-settings +70 prep, TPO bell/read, TPO audit, notification outbox, companies. Source vs target are NOT semantically mapped or DB-tested. Fixed malformed tpo-crm.ts on main (62c5f1c), authored static tests (unexecuted), staged SQL for CRM scoped FK, round slots, multi-college drive groups, recruiter settings/V193 codes, prep/bell. All proposals unregistered. CI verify run 38085854862 failed with no job steps. Evidence doc 361ac54."
     },
     {
       "id": "DB-013",
