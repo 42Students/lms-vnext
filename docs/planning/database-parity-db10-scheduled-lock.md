@@ -1,6 +1,6 @@
 # DB10 Scheduled-Job Lease — Legacy Contract and Mainline Progress
 
-**Ownership:** DB10 Shared Operations · **Branch:** main · **Status:** source-reviewed + pure policy staged, NOT migrated or connected.
+**Ownership:** DB10 Shared Operations · **Branch:** main · **Status:** source-reviewed + PostgreSQL adapter staged, NOT migrated/verified.
 
 Legacy reference: 42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5
 - src/main/resources/db/migration/V135__scheduled_job_lock.sql
@@ -64,3 +64,17 @@ For side effects, use an outbox/delivery idempotency key (for example recipient 
 - [ ] Prove per-account scope and retention where applicable.
 
 The current implementation is staged-only and intentionally should not be mistaken for a production-ready distributed lock.
+
+
+## W06 PostgreSQL adapter staging — 2026-10-10
+
+W06 added `src/db/schema/db10-scheduled-job-leases.draft.ts` and `src/modules/operations/postgres-scheduled-job-lease-store.ts`. The adapter fulfills the previously documented SQL contract rather than emulating a lock in memory:
+
+- claim: one `INSERT ... ON CONFLICT DO UPDATE ... WHERE locked_until <= clock_timestamp()` statement;
+- takeover: atomically increments `fence` exactly once;
+- held lease: returns null, including same worker before expiry (no eager release);
+- renewal: requires matching `job_name + locked_by + fence` and a non-expired DB-time lease, without changing the fence;
+- current check: database-clock `exists` check against the same holder/fence;
+- invalid names/holders/TTL/fence are rejected before SQL.
+
+**Still not production-ready:** the table is an unregistered W06 draft; there is no migration replay, no job wired to this adapter and no durable outbox/fencing check on each external side effect. The existing `scheduled-job-runner.ts` correctly fails closed around storage errors, but exactly-once notifications still require durable idempotency. Authored `tests/integration/db10-scheduled-job-lease-store.test.ts` runs 20 concurrent claim attempts, takeover/fence, renewal and input checks only when an isolated DB is explicitly enabled; it was **not run in this session**. `tests/db10-scheduled-job-lease-store.test.mjs` statically guards the SQL/fencing shape; also unexecuted.
