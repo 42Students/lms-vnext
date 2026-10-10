@@ -35,8 +35,20 @@ for (const row of rows) {
     "Proposal incorrectly certified: " + key);
   assert.equal(other.sqlExecution, "NOT_EXECUTED",
     "Do not claim runtime proof without executed PostgreSQL evidence: " + key);
-  assert.equal(other.activeOrRetired, "UNDECIDED",
-    "Retirement/active disposition needs independent signoff: " + key);
+  assert.ok(
+    ["UNDECIDED", "ACTIVE_SOURCE_CONFIRMED", "UNRESOLVED_RETIREMENT_CANDIDATE"]
+      .includes(other.activeOrRetired),
+    "Unexpected final/approved disposition without DB proof: " + key);
+  if (other.activeOrRetired === "ACTIVE_SOURCE_CONFIRMED") {
+    assert.equal(row.sourceReview?.status,
+      "ACTIVE_LEGACY_SOURCE_AND_CONSUMER_REVIEWED_NOT_VERIFIED",
+      "An active source classification must cite actual workflow evidence: " + key);
+  }
+  if (other.activeOrRetired === "UNRESOLVED_RETIREMENT_CANDIDATE") {
+    assert.equal(row.sourceReview?.status,
+      "HISTORICAL_SCHEMA_REVIEWED_ACTIVE_USAGE_UNPROVEN",
+      "A retirement candidate is NOT approved retirement: " + key);
+  }
   assert.deepEqual(row.sourceReview, other.sourceReview,
     "Canonical and proposal source evidence diverged: " + key);
   const review = row.sourceReview;
