@@ -23,12 +23,20 @@ export default async function FacultyCoursePage({
 
   return (
     <div className="space-y-5">
-      <Link
-        href="/teach/courses"
-        className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
-      >
-        ← My Teaching Courses
-      </Link>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link
+          href="/teach/courses"
+          className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+        >
+          ← My Teaching Courses
+        </Link>
+        <Link
+          href={`/teacher/courses/${deliveryId}/attendanceDetail`}
+          className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+        >
+          Attendance
+        </Link>
+      </div>
       <FacultyCourseWorkspace
         workspace={workspace}
       />
