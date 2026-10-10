@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_LESSON_DISCUSSION_SEPARATION_STAGED_UNVERIFIED",
+    "checkpointKind": "DB008_DISCUSSION_CONTRACT_CANONICAL_INVENTORY_GUARDED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "5d39ce3e8ef2f5b942324c990235d4a0b163a20f",
-    "lastWorkerMergedSha": "5d39ce3e8ef2f5b942324c990235d4a0b163a20f",
+    "observedMainSha": "ffc07b0ed478a6a5c44a8aba2950e5d72dc8f66a",
+    "lastWorkerMergedSha": "803bddeedb39000837de63cf56d7795f9532bffb",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-008 in progress. Source-reviewed 92/92 columns of 7 snapshot DB05 tables; all 16 discussions mapped to separate UNREGISTERED source draft. Proposed classes: 31 candidate, 18 remodeled, 29 draft, 14 missing/unproven. In-memory remote static integrity check 9/9; 5 authored Node tests NOT executed. No actual PostgreSQL/CI/lint/typecheck/build/browser gates passed. Zero semantically DB-verified fields."
+    "summary": "DB-008 remains IN_PROGRESS. All 92/92 historical DB05 source rows are inventoried; current semantic review classes are 31 SOURCE_CANDIDATE, 18 REMODELED_NEEDS_PROOF, 29 UNREGISTERED_DRAFT, 14 MISSING_OR_UNPROVEN, with zero VERIFIED mappings. Lesson-content discussions are now explicitly separate from classroom chat: all 16 historical discussion columns have an isolated unregistered staging target, 9 are confirmed on the inspected primary legacy runtime path, and 7 are preservation-only/runtime-unproven. Canonical inventory annotations + static regression guard merged via PR #59. Connector source assertions passed; no Node/PostgreSQL/CI acceptance executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -29,7 +29,8 @@
     "browser": "NOT_VERIFIED"
   },
   "lastAuthoredTests": [
-    "tests/db05-source-semantic-review.test.mjs (5 Node static tests authored; not executed)"
+    "tests/db05-source-semantic-review.test.mjs (expanded DB05 static guards; repository Node suite not executed here)",
+    "tests/db05-lesson-discussion-inventory-evidence.test.mjs (3 static tests authored; repository Node suite not executed here)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -42,18 +43,18 @@
     },
     {
       "taskId": "DB-008",
-      "kind": "MIGRATION_INTEGRATOR_ONLY",
-      "message": "W01 review scripts/sql/db05-version-progress-attempts.draft.sql; DO NOT register before progress consumer reads/writes support attempts and course write services use optimistic version compare. Review all 92 field hypotheses in docs/planning/db05-chat06-source-semantic-review.json. Missing/non-equivalent fields and legacy V163 semantics remain open.",
-      "commitSha": "1ac1c47c63b62688e97d0875768aee7153d257c2"
-    },
-    {
-      "taskId": "DB-008",
       "kind": "LESSON_CONTENT_DISCUSSION_MIGRATION_DRAFT",
       "message": "Legacy lesson-content GET/POST distinct from classroom chat. Staged scripts/sql/db05-lesson-content-discussions.draft.sql with author/lesson tenant guard and composite parent FK, plus docs/planning/db05-lesson-content-discussions-contract.md. 16 source columns scoped; 6 historical-only not proved active. W01 owns numbered migrations; no registration without consumer and PostgreSQL tests.",
       "commitSha": "5d39ce3e8ef2f5b942324c990235d4a0b163a20f"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "MIGRATION_INTEGRATOR_ONLY",
+      "message": "Chat 1: DB05 discussion persistence is staged only in scripts/sql/db05-lesson-content-discussions.draft.sql; do not register until migration order, retroactive tenant-scope safety, private attachment ACL, producer/consumer contracts and disposable PostgreSQL negative/race evidence pass. Version/progress draft also still requires attempt-aware consumers and optimistic CAS writes.",
+      "commitSha": "803bddeedb39000837de63cf56d7795f9532bffb"
     }
   ],
-  "nextAction": "Continue DB008 producer/consumer field audit, slug/display/metadata/lesson sequence/attachment gaps and per-content comment API scope; W01 alone registers drafts after attempted scoped-consumer+optimistic updates and real DB suite pass.",
+  "nextAction": "Continue DB-008 within DATABASE on the remaining 14 MISSING_OR_UNPROVEN and 18 REMODELED_NEEDS_PROOF mappings (course metadata/display policy, content_data/video/private assets, per-delivery order, status/restore and tenant consistency). Keep all migration drafts unregistered; do not promote phase or claim runtime verification.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -72,7 +73,9 @@
     "https://github.com/42Students/lms-vnext/commit/b797fcd0df2cdd6cbb277244814470285c293e26",
     "https://github.com/42Students/lms-vnext/commit/bb4eb531a510d05305e2231621ca14674334e542",
     "https://github.com/42Students/lms-vnext/commit/f562e05b542db46cb5353e616df121f1285d651f",
-    "https://github.com/42Students/lms-vnext/commit/5d39ce3e8ef2f5b942324c990235d4a0b163a20f"
+    "https://github.com/42Students/lms-vnext/commit/5d39ce3e8ef2f5b942324c990235d4a0b163a20f",
+    "https://github.com/42Students/lms-vnext/pull/59",
+    "https://github.com/42Students/lms-vnext/commit/803bddeedb39000837de63cf56d7795f9532bffb"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
