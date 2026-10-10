@@ -268,3 +268,20 @@ Legacy `/e2e/superadmin-login` is a test helper.
 
 - [x] Classified RETIRED as product UI.
 - [ ] vNext E2E/auth harness covers equivalent deterministic test setup without a production backdoor.
+
+
+# Shared Notification Feed — W06 source-backed parity checkpoint (2026-10-10)
+
+**Legacy oracle:** `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2` TPO `src/pages/tpo/notifications.js`; legacy backend `lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`. The legacy TPO feed has All/Unread tabs, Mark all as read, Today/Yesterday/This week/Earlier buckets and a linked detail/open action.
+
+**vNext W06 implementation authored:** `/notifications?view=all|unread` filters at the DB reader, counts the whole authenticated user's unread inbox (not merely the 100 rendered rows), `POST /api/notifications/read-all` acknowledges all unread rows atomically for the authenticated user's ID only, and the shared list groups by local India calendar day. 403 same-origin protection applies to writes. The legacy TPO-specific page remains W05-owned and may consume this shared contract; W06 does not edit TPO routes. The Learner-specific page stays W02-owned; the shared notification list component is reusable.
+
+**Evidence still required before CLOSED:**
+- [ ] Run focused Vitest date-bucket/unit tests and TypeScript/lint/build against the merged revision.
+- [ ] Run DB10 PostgreSQL tests (105-row truncation, cross-user isolation, repeated/concurrent bulk acknowledgments) on disposable seeded PostgreSQL; confirm CI job executed.
+- [ ] Browser test All/Unread deep links, mark-all state, keyboard/focus/accessibility, responsive desktop/mobile and error retry.
+- [ ] Verify legacy TPO link-open automatically marks its row read; current shared list keeps an explicit Mark read action, so W05/this lane must agree on parity strategy.
+- [ ] Implement pagination or Load more; UI currently caps 100 and **explicitly says so** rather than claiming full-history presentation. Import and producer coverage of announcements and legacy role-specific notifications remain open.
+- [ ] Confirm all seven role-specific notification producer→consumer workflows; W02/W03/W04/W05 create domain event payloads, W06 owns shared inbox/outbox delivery, W01 owns identity/tenant primitives.
+
+**State: PARTIAL (authored, tests not executed); no page or family verification status advanced.**
