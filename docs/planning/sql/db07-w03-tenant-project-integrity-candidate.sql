@@ -17,6 +17,154 @@ ALTER TABLE project_instances
   REFERENCES lms_groups(college_id, id)
   ON DELETE RESTRICT;
 
+-- A same-college group can still be the wrong group kind. Project linkage is
+-- valid only for a non-deleted college-owned PROJECT_TEAM group.
+CREATE OR REPLACE FUNCTION w03_assert_project_team_group_shape()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $
+BEGIN
+  IF NEW.team_group_id IS NOT NULL
+     AND NOT EXISTS (
+       SELECT 1
+         FROM lms_groups g
+        WHERE g.id = NEW.team_group_id
+          AND g.college_id = NEW.college_id
+          AND g.owner_scope = 'COLLEGE'
+          AND g.kind = 'PROJECT_TEAM'
+          AND g.deleted_at IS NULL
+     ) THEN
+    RAISE EXCEPTION
+      'group % is not an attachable project-team scope for project %',
+      NEW.team_group_id, NEW.id
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER project_instances_team_group_shape
+BEFORE INSERT OR UPDATE OF college_id, team_group_id
+ON project_instances
+FOR EACH ROW
+EXECUTE FUNCTION w03_assert_project_team_group_shape();
+
+-- groups/service.ts mirrors ACTIVE PROJECT_TEAM members to active LEARNER
+-- project_members in the same transaction. A DEFERRABLE constraint trigger can
+-- therefore enforce the final-state equality without depending on whether the
+-- group row or project-member row is written first.
+CREATE OR REPLACE FUNCTION w03_assert_project_team_member_pair(
+  checked_project_id uuid,
+  checked_group_id uuid,
+  checked_membership_id uuid
+)
+RETURNS void
+LANGUAGE plpgsql
+AS $
+DECLARE
+  group_active boolean;
+  project_active boolean;
+BEGIN
+  IF checked_project_id IS NULL
+     OR checked_group_id IS NULL
+     OR checked_membership_id IS NULL THEN
+    RETURN;
+  END IF;
+
+  SELECT EXISTS (
+    SELECT 1
+      FROM lms_group_members gm
+     WHERE gm.group_id = checked_group_id
+       AND gm.membership_id = checked_membership_id
+       AND gm.state = 'ACTIVE'
+  ) INTO group_active;
+
+  SELECT EXISTS (
+    SELECT 1
+      FROM project_members pm
+     WHERE pm.project_id = checked_project_id
+       AND pm.membership_id = checked_membership_id
+       AND pm.role = 'LEARNER'
+       AND pm.ended_at IS NULL
+  ) INTO project_active;
+
+  IF group_active IS DISTINCT FROM project_active THEN
+    RAISE EXCEPTION
+      'PROJECT_TEAM roster mirror mismatch project %, group %, membership %',
+      checked_project_id, checked_group_id, checked_membership_id
+      USING ERRCODE = '23514';
+  END IF;
+END;
+$;
+
+CREATE OR REPLACE FUNCTION w03_check_project_member_team_mirror()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $
+DECLARE
+  project_id_value uuid;
+  group_id_value uuid;
+  membership_id_value uuid;
+BEGIN
+  project_id_value := COALESCE(NEW.project_id, OLD.project_id);
+  membership_id_value := COALESCE(NEW.membership_id, OLD.membership_id);
+
+  SELECT team_group_id
+    INTO group_id_value
+    FROM project_instances
+   WHERE id = project_id_value;
+
+  IF group_id_value IS NOT NULL THEN
+    PERFORM w03_assert_project_team_member_pair(
+      project_id_value, group_id_value, membership_id_value
+    );
+  END IF;
+
+  RETURN COALESCE(NEW, OLD);
+END;
+$;
+
+CREATE CONSTRAINT TRIGGER project_members_team_roster_mirror
+AFTER INSERT OR UPDATE OR DELETE
+ON project_members
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW
+EXECUTE FUNCTION w03_check_project_member_team_mirror();
+
+CREATE OR REPLACE FUNCTION w03_check_group_member_project_mirror()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $
+DECLARE
+  group_id_value uuid;
+  membership_id_value uuid;
+  project_id_value uuid;
+BEGIN
+  group_id_value := COALESCE(NEW.group_id, OLD.group_id);
+  membership_id_value := COALESCE(NEW.membership_id, OLD.membership_id);
+
+  SELECT p.id
+    INTO project_id_value
+    FROM project_instances p
+   WHERE p.team_group_id = group_id_value;
+
+  IF project_id_value IS NOT NULL THEN
+    PERFORM w03_assert_project_team_member_pair(
+      project_id_value, group_id_value, membership_id_value
+    );
+  END IF;
+
+  RETURN COALESCE(NEW, OLD);
+END;
+$;
+
+CREATE CONSTRAINT TRIGGER lms_group_members_project_team_roster_mirror
+AFTER INSERT OR UPDATE OR DELETE
+ON lms_group_members
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW
+EXECUTE FUNCTION w03_check_group_member_project_mirror();
+
 -- Generic same-college membership guard. The trigger takes one or more
 -- membership-column names and validates every non-null membership against the
 -- college of NEW.project_id. This avoids copying college_id onto every child.
@@ -191,8 +339,11 @@ EXECUTE FUNCTION w03_assert_project_actor_same_college('commenter_user_id');
 -- 5. canonical SUPER_ADMIN actor remains allowed without a college membership.
 -- 6. normal same-college writes still pass after zero-to-head replay.
 --
--- Project-team learner mirroring remains a service transaction invariant for
--- now. Current member-service refuses direct LEARNER add/end when team_group_id
--- is present (PROJECT_TEAM_GROUP_MANAGED). Promotion must inspect the actual
--- group-member mutation/materialization path before adding a bidirectional DB
--- mirror trigger, otherwise valid transaction ordering could be broken.
+-- Source confirmation for project-team atomicity:
+-- groups/service.ts mirrorProjectTeamMember writes ACTIVE/REMOVED group state
+-- and the corresponding LEARNER project_members row in the SAME transaction;
+-- attachProjectTeamGroup requires a same-college PROJECT_TEAM group and both
+-- rosters empty. project member-service independently rejects direct LEARNER
+-- add/end while team_group_id is present (PROJECT_TEAM_GROUP_MANAGED).
+-- The deferred triggers above therefore validate final transactional equality
+-- without dictating write order.
