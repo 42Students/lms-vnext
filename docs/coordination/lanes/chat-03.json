@@ -12,13 +12,13 @@
     "DB-007"
   ],
   "checkpoint": {
-    "checkpointKind": "DB09_138_OF_279_SOURCE_FIELDS_REVIEWED",
+    "checkpointKind": "DB09_279_SOURCE_FIELDS_COMPARED_0_DB_VERIFIED",
     "updatedOn": "2026-10-11",
     "observedMainSha": "c196248ebf5af11bbb0fba07ee1eb5cc3705397a",
-    "lastWorkerMergedSha": "c196248ebf5af11bbb0fba07ee1eb5cc3705397a",
+    "lastWorkerMergedSha": "730e88e554076168a2db247e6a03d182f1930aa3",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-012 active. Canonical DB09 ledger now 138/279 source-reviewed: 135 MAPPED, 3 BLOCKED, 141 UNMAPPED, 0 workflow/runtime verified. Recruiter CRM DB guards and collaboration contract updates are authored; no PostgreSQL/CI execution. Current sender producer HR->RECRUITER mismatch and two TPO settings remain blocked."
+    "summary": "DB012 source review 279/279 candidate fields (14 V162 direct, 139 same-name candidates, 45 renamed, 81 unmatched). Critical tpo-crm.ts structural repair on main at 62c5f1c. Multiple SQL migration candidates and static tests authored. Read-only source/ledger assertions PASSED; Node/TS/PG/CI verify not run (CI job failed before steps). Zero DB09 semantically or runtime VERIFIED; V193 actor code mismatches require coordinated service/schema fixes."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -48,7 +48,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Continue DB-012 remaining 141 fields; prioritize active scheduling/assignment/reschedule persistence, company/industry-company normalization, prep assignment, and explicit DB08/DB10 cross-domain handoffs. Keep runtime verification at zero until executable PostgreSQL evidence exists.",
+  "nextAction": "Continue DB-012: resolve 81 missing/relocated concepts with legacy consumers, prioritize recruiter-code V193 and college privacy, reconcile DB08/DB10 dependencies; wait for Chat 1 registered migration + disposable PostgreSQL witness before marking field statuses or task DONE.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -79,7 +79,12 @@
     "https://github.com/42Students/lms-vnext/commit/01bd093d2ef7f624cb339bdba3d8907bb00e6734",
     "https://github.com/42Students/lms-vnext/commit/782da06cc52542408a1f21b79205a261de1f76fc",
     "https://github.com/42Students/lms-vnext/commit/d87e292a4fcc1f25cd96a4be98f465e838b2991e",
-    "https://github.com/42Students/lms-vnext/commit/c196248ebf5af11bbb0fba07ee1eb5cc3705397a"
+    "https://github.com/42Students/lms-vnext/commit/c196248ebf5af11bbb0fba07ee1eb5cc3705397a",
+    "https://github.com/42Students/lms-vnext/commit/62c5f1ccc545200dd1b60c66e8250d1ce033a671",
+    "https://github.com/42Students/lms-vnext/commit/ab9eb0626fc755a6a7bc697b484bb9216cfc7e49",
+    "https://github.com/42Students/lms-vnext/commit/ad3a4190c60901a4d120f9a17bfc18e4259e7408",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db09-chat03-source-reconciliation-2026-10-11.md",
+    "https://github.com/42Students/lms-vnext/actions/runs/38085854862"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
