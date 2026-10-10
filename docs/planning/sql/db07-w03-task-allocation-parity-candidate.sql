@@ -20,7 +20,6 @@ ALTER TABLE project_tasks
   ADD COLUMN task_type varchar(20) NOT NULL DEFAULT 'STORY',
   ADD COLUMN approach text,
   ADD COLUMN blocker_reason text,
-  ADD COLUMN carried_over_from_sprint_id uuid,
   ADD COLUMN removed_from_template boolean NOT NULL DEFAULT false,
   ADD COLUMN version bigint NOT NULL DEFAULT 0,
   ADD COLUMN created_by_user_id uuid,
@@ -30,10 +29,6 @@ ALTER TABLE project_tasks
   ADD CONSTRAINT project_tasks_assignee_same_project_fk
   FOREIGN KEY (project_id, assignee_project_member_id)
   REFERENCES project_members(project_id, id)
-  ON DELETE RESTRICT,
-  ADD CONSTRAINT project_tasks_carryover_same_project_fk
-  FOREIGN KEY (project_id, carried_over_from_sprint_id)
-  REFERENCES project_sprints(project_id, id)
   ON DELETE RESTRICT,
   ADD CONSTRAINT project_tasks_created_by_user_fk
   FOREIGN KEY (created_by_user_id)
@@ -66,6 +61,11 @@ CREATE INDEX IF NOT EXISTS
   project_tasks_due_date_idx
   ON project_tasks(project_id, due_date)
   WHERE due_date IS NOT NULL;
+
+-- Carry-over storage/FK ownership belongs to
+-- db07-w03-task-backlog-and-delivery-state-candidate.sql because that draft
+-- also makes sprint_id nullable for the legacy backlog transition. Do not add
+-- carried_over_from_sprint_id a second time from this allocation draft.
 
 -- Intended semantic mappings from legacy project_task:
 -- task_key                 -> project_tasks.template_key
