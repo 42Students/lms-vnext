@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
   and,
   asc,
@@ -23,10 +24,12 @@ import {
 } from "./errors";
 import {
   createProjectTemplateInputSchema,
+  duplicateProjectTemplateInputSchema,
   projectTemplateIdSchema,
   publishableProjectTemplateBlueprintSchema,
   reviseProjectTemplateInputSchema,
   type CreateProjectTemplateInput,
+  type DuplicateProjectTemplateInput,
   type ReviseProjectTemplateInput,
 } from "./validation";
 
@@ -296,12 +299,6 @@ export async function reviseProjectTemplate(
     reviseProjectTemplateInputSchema.parse(rawInput);
   const existing = await loadTemplate(templateId);
 
-  if (existing.status === "ARCHIVED") {
-    throw new ProjectsServiceError(
-      "PROJECT_TEMPLATE_ARCHIVED",
-    );
-  }
-
   const db = getDb();
 
   try {
@@ -315,16 +312,13 @@ export async function reviseProjectTemplate(
           updatedAt: new Date(),
         })
         .where(
-          and(
-            eq(projectTemplates.id, templateId),
-            ne(projectTemplates.status, "ARCHIVED"),
-          ),
+          eq(projectTemplates.id, templateId),
         )
         .returning();
 
       if (!template) {
         throw new ProjectsServiceError(
-          "PROJECT_TEMPLATE_ARCHIVED",
+          "PROJECT_TEMPLATE_NOT_FOUND",
         );
       }
 
@@ -361,44 +355,227 @@ export async function publishProjectTemplate(
   );
   const templateId =
     projectTemplateIdSchema.parse(templateIdInput);
-  const template = await loadTemplate(templateId);
+  const db = getDb();
 
-  if (template.status === "ARCHIVED") {
-    throw new ProjectsServiceError(
-      "PROJECT_TEMPLATE_ARCHIVED",
+  return db.transaction(async (tx) => {
+    const [template] = await tx
+      .select()
+      .from(projectTemplates)
+      .where(eq(projectTemplates.id, templateId))
+      .for("update")
+      .limit(1);
+
+    if (!template) {
+      throw new ProjectsServiceError(
+        "PROJECT_TEMPLATE_NOT_FOUND",
+      );
+    }
+
+    const [version] = await tx
+      .select()
+      .from(projectTemplateVersions)
+      .where(
+        and(
+          eq(
+            projectTemplateVersions.templateId,
+            templateId,
+          ),
+          eq(
+            projectTemplateVersions.version,
+            template.currentVersion,
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (!version) {
+      throw new ProjectsServiceError(
+        "PROJECT_TEMPLATE_VERSION_NOT_FOUND",
+      );
+    }
+
+    publishableProjectTemplateBlueprintSchema.parse(
+      version.blueprint,
     );
-  }
 
-  const version = await loadTemplateVersion(
-    templateId,
-    template.currentVersion,
-  );
-  publishableProjectTemplateBlueprintSchema.parse(
-    version.blueprint,
-  );
-
-  const [published] = await getDb()
-    .update(projectTemplates)
-    .set({
-      status: "PUBLISHED",
-      publishedVersion: template.currentVersion,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
+    const now = new Date();
+    const [published] = await tx
+      .update(projectTemplates)
+      .set({
+        status: "PUBLISHED",
+        publishedVersion:
+          template.currentVersion,
+        archivedAt: null,
+        updatedAt: now,
+      })
+      .where(
         eq(projectTemplates.id, templateId),
-        ne(projectTemplates.status, "ARCHIVED"),
-      ),
-    )
-    .returning();
+      )
+      .returning();
 
-  if (!published) {
-    throw new ProjectsServiceError(
-      "PROJECT_TEMPLATE_ARCHIVED",
+    if (!published) {
+      throw new ProjectsServiceError(
+        "PROJECT_TEMPLATE_NOT_FOUND",
+      );
+    }
+
+    // Legacy college assignments point at the template, not a historical
+    // version. Existing workspaces stay pinned to their materialized version,
+    // but future workspaces in every currently assigned college must use the
+    // newly published version without a manual re-assignment step.
+    await tx
+      .update(
+        projectTemplateCollegeAssignments,
+      )
+      .set({
+        templateVersionId: version.id,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(
+            projectTemplateCollegeAssignments.templateId,
+            templateId,
+          ),
+          isNull(
+            projectTemplateCollegeAssignments.revokedAt,
+          ),
+        ),
+      );
+
+    return published;
+  });
+}
+
+export async function unpublishProjectTemplate(
+  context: RequestContext,
+  templateIdInput: string,
+) {
+  requirePermission(
+    context,
+    "project-template.manage",
+  );
+  const templateId =
+    projectTemplateIdSchema.parse(templateIdInput);
+  const db = getDb();
+
+  return db.transaction(async (tx) => {
+    const [template] = await tx
+      .select()
+      .from(projectTemplates)
+      .where(eq(projectTemplates.id, templateId))
+      .for("update")
+      .limit(1);
+
+    if (!template) {
+      throw new ProjectsServiceError(
+        "PROJECT_TEMPLATE_NOT_FOUND",
+      );
+    }
+
+    const [draft] = await tx
+      .update(projectTemplates)
+      .set({
+        status: "DRAFT",
+        publishedVersion: null,
+        archivedAt: null,
+        updatedAt: new Date(),
+      })
+      .where(
+        eq(projectTemplates.id, templateId),
+      )
+      .returning();
+
+    return draft!;
+  });
+}
+
+export async function duplicateProjectTemplate(
+  context: RequestContext,
+  templateIdInput: string,
+  rawInput: DuplicateProjectTemplateInput = {},
+) {
+  requirePermission(
+    context,
+    "project-template.manage",
+  );
+  const templateId =
+    projectTemplateIdSchema.parse(templateIdInput);
+  const input =
+    duplicateProjectTemplateInputSchema.parse(
+      rawInput,
     );
-  }
+  const source = await loadTemplate(templateId);
+  const sourceVersion =
+    await loadTemplateVersion(
+      templateId,
+      source.currentVersion,
+    );
+  const suffix = randomUUID().slice(0, 8);
+  const generatedSlug =
+    source.slug.slice(0, 49) +
+    "-copy-" +
+    suffix;
+  const slug =
+    input.slug ?? generatedSlug;
+  const title =
+    input.title ??
+    (source.title + " Copy").slice(
+      0,
+      200,
+    );
+  const summary =
+    input.summary ??
+    sourceVersion.summary ??
+    source.summary ??
+    undefined;
+  const db = getDb();
 
-  return published;
+  try {
+    return await db.transaction(async (tx) => {
+      const [template] = await tx
+        .insert(projectTemplates)
+        .values({
+          slug,
+          title,
+          summary: summary ?? null,
+          status: "DRAFT",
+          currentVersion: 1,
+          publishedVersion: null,
+          archivedAt: null,
+          createdByUserId:
+            context.user.id,
+        })
+        .returning();
+
+      if (!template) {
+        throw new Error(
+          "Project template duplicate insert returned no row",
+        );
+      }
+
+      const [version] = await tx
+        .insert(projectTemplateVersions)
+        .values({
+          templateId: template.id,
+          version: 1,
+          title,
+          summary: summary ?? null,
+          blueprint:
+            sourceVersion.blueprint,
+          changeNote:
+            "Duplicated from " +
+            source.title,
+          createdByUserId:
+            context.user.id,
+        })
+        .returning();
+
+      return { template, version };
+    });
+  } catch (error) {
+    throw mapTemplateConstraint(error);
+  }
 }
 
 export async function archiveProjectTemplate(
