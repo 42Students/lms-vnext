@@ -382,13 +382,13 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "803bddeedb39000837de63cf56d7795f9532bffb",
+      "latestEvidenceSha": "af679b124aba3e56c1c85909b47f4600f86f9657",
       "verificationEvidence": [],
       "blockers": [
-        "MIGRATION_UNREGISTERED: DB05 version/progress and per-content-discussion SQL remain staged; Chat 1 alone registers migrations after data-service CAS/attempt-aware consumers and replay proof.",
-        "LEGACY_DB_SEMANTIC_SOURCE_GAP: Discussed 16 source discussion columns, but six extension fields are historical snapshot only; backend DTO/service does not prove their active producers. Legacy varchar(255) vs DTO 5000-character validation remains unresolved.",
-        "DATABASE_EXECUTION_UNVERIFIED: No disposable PostgreSQL replay, negative tenant/concurrent writes, Node/CI, typecheck or build acceptance on current main.",
-        "PERSISTED_PARITY_NOT_CLOSED: Other DB05 missing/unproven source fields, metadata, display policy, lesson order, private assets and tenant consistency remain open."
+        "MIGRATION_UNREGISTERED: Three DB05 drafts (version+attempt, separate lesson discussions, slug+short title) have not been registered; Chat 1 must integrate only after compatible source contract and real database tests.",
+        "PRODUCER_CONSUMER_SOURCE_GAPS: Legacy discussions six extension fields are historical snapshot-only; DTO 5000 vs snapshot varchar255. Course display flags, parent lineage, content metadata, private assets and tenant consistency remain unresolved.",
+        "APPLICATION_WRITE_CONTRACT_MISSING: vNext course/lesson/content writers do not yet use version CAS; progress readers/writers still assume unique membership+content; new columns/indexes must not be activated before service fixes.",
+        "DATABASE_GATE_NOT_PROVEN: Node tests were authored, not executed. PostgreSQL replay/negative tests, CI, typecheck, lint, build and browser acceptance are not verified."
       ],
       "completionNote": null,
       "pickedBy": 6,
