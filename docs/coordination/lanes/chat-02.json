@@ -10,39 +10,53 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_312_FIELD_TRIAGE_AND_STAGED_BRANDING",
+    "checkpointKind": "DB004_312_FIELD_TRIAGE_BRANDING_AND_DEVICE_SESSION_STAGING",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "cb33d09d4f169ca3e39aae71333fdb62dbe75ea0",
+    "observedMainSha": "58344f786e56b967a997a985a6280c220cced608",
     "lastWorkerMergedSha": "1f4094b3271e94dbf3bc5e5515d656741178f927",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Source triaged exactly 312 DB01 field candidates across 22 table candidates, source consistency check PASS. 44 direct structural and 51 normalized candidates, 21 staging candidates, 196 unresolved/provider/cross-domain source cases. Drafted unregistered Drizzle branding table and SQL, authored repeatable source verifier (not executed under node). No runtime semantic fields verified, no npm/CI/PG tests executed; DB-004 remains IN_PROGRESS.",
+    "summary": "Source triaged exactly 312 DB01 field candidates across 22 table candidates. Tenant branding and tenant-domain DNS diagnostics are staged on main. Token-safe per-device session persistence is staged separately in PR #61 because legacy targeted session revocation is not represented by vNext's current account-wide Firebase revokeRefreshTokens flow. DB-004 remains IN_PROGRESS; no runtime semantic or PostgreSQL verification is claimed.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
       "postgresEvidence": false,
       "runnerEvidence": false
+    },
+    "deviceSessionStaging": {
+      "pullRequest": 61,
+      "branch": "chat-02-db004-device-session-contract",
+      "headSha": "0298f6d1d3cdee64d8bd0f95e09efa96df405a69",
+      "status": "OPEN_CI_FAILED_UNMERGED",
+      "authoredTest": "tests/db01-device-session-contract.test.ts",
+      "ciRun": 1256,
+      "ciConclusion": "failure",
+      "note": "CI job logs are unavailable through the connected GitHub action. Concurrent PR #55 also had a failing CI run (#1230), so a shared-base issue is plausible but not proven."
     }
   },
   "qualityGates": {
-    "lint": "NOT_VERIFIED",
-    "typecheck": "NOT_VERIFIED",
-    "unit": "NOT_VERIFIED",
+    "lint": "NOT_VERIFIED_PR61_CI_FAILED",
+    "typecheck": "NOT_VERIFIED_PR61_CI_FAILED",
+    "unit": "NOT_VERIFIED_PR61_CI_FAILED",
     "postgresIntegration": "NOT_VERIFIED",
-    "build": "NOT_VERIFIED",
+    "build": "NOT_VERIFIED_PR61_CI_FAILED",
     "browser": "NOT_VERIFIED",
     "sourceTriageConsistency": "PASS_IN_PROCESS_SOURCE_CHECK_NOT_RUNTIME"
   },
   "lastAuthoredTests": [
-    "scripts/verify-db01-field-triage.mjs"
+    "scripts/verify-db01-field-triage.mjs",
+    "tests/db01-device-session-contract.test.ts"
   ],
   "lastExecutedPassingTests": [],
-  "blockers": [],
+  "blockers": [
+    "PR #61 CI run #1256 failed; logs are unavailable through the connector, so the device-session staging batch stays unmerged pending diagnosis or a clean rerun."
+  ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
-    "DB-004 → DB09/issue #25: recruiter grant expiry, revocation reason, capability, version and tenant FK parity"
+    "DB-004 → DB09/issue #25: recruiter grant expiry, revocation reason, capability, version and tenant FK parity",
+    "DB-004 → Chat 1/issue #21 after acceptance: promote identity_device_sessions only if targeted per-device revocation remains required; never persist raw Firebase tokens/cookies."
   ],
-  "nextAction": "Complete DB-004 beyond source triage: inspect post-V150 active-vs-retired migrations and all source writers for 312 fields, resolve active provider/session/grant/branding semantics, coordinate Drizzle schema promotion with W01, get actual PostgreSQL/CI negative test evidence, then mark COMPLETED and DONE_VERIFIED only with proof.",
+  "nextAction": "Continue DB-004 active-vs-retired/source-writer reconciliation for identity-provider/token/OTP/session cases; diagnose or rerun PR #61 CI before merge; then coordinate accepted session/branding/domain schema promotion with Chat 1 and obtain disposable PostgreSQL negative-test evidence.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
