@@ -49,6 +49,9 @@ jobs:
       - name: Verify migration journal integrity
         run: npm run db:journal:verify
 
+      - name: Test migration journal integrity guard
+        run: node --test tests/drizzle-journal-guard.test.mjs
+
       - name: Lint
         run: npm run lint
 
