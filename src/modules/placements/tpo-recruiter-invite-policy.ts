@@ -11,6 +11,7 @@ import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
  */
 export const RECRUITER_INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const TOKEN_SHAPE = /^[a-zA-Z0-9_-]{43}$/;
+
 const HASH_SHAPE = /^[a-f0-9]{64}$/;
 
 export type RecruiterInviteLeadState = Readonly<{
@@ -37,6 +38,21 @@ export class RecruiterInviteError extends Error {
 
 function validDate(value: Date | null): value is Date {
   return value instanceof Date && Number.isFinite(value.getTime());
+}
+
+/** Fast public-boundary shape check before touching storage. */
+export function isRecruiterInviteTokenShape(
+  token: string | null | undefined,
+): token is string {
+  return typeof token === "string" && TOKEN_SHAPE.test(token);
+}
+
+/** Hash lookup key. Never persist or log the raw invitation token. */
+export function recruiterInviteTokenHash(token: string): string {
+  if (!isRecruiterInviteTokenShape(token)) {
+    throw new RecruiterInviteError("INVITE_INVALID");
+  }
+  return createHash("sha256").update(token, "utf8").digest("hex");
 }
 
 export function canIssueRecruiterInvite(
@@ -79,8 +95,7 @@ export function isRecruiterInviteUsable(
   now = new Date(),
 ): boolean {
   if (
-    !token ||
-    !TOKEN_SHAPE.test(token) ||
+    !isRecruiterInviteTokenShape(token) ||
     !lead ||
     !lead.inviteTokenHash ||
     !HASH_SHAPE.test(lead.inviteTokenHash) ||
@@ -95,7 +110,7 @@ export function isRecruiterInviteUsable(
 
   // Timing-safe comparison helps avoid making the public preview endpoint a
   // hash-prefix oracle. Token *lookup* must still use hash, never raw token.
-  const actual = createHash("sha256").update(token, "utf8").digest();
+  const actual = Buffer.from(recruiterInviteTokenHash(token), "hex");
   const expected = Buffer.from(lead.inviteTokenHash, "hex");
   return actual.length === expected.length && timingSafeEqual(actual, expected);
 }
