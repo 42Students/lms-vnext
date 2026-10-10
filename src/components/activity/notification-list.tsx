@@ -37,6 +37,7 @@ export function NotificationList({
   const router = useRouter();
   const { showToast } = useToast();
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [groupingNow] = useState(() => new Date());
 
   async function markRead(id: string, openHref?: string) {
     setPendingId(id);
@@ -80,7 +81,7 @@ export function NotificationList({
 
   return (
     <div className="grid gap-5">
-      {groupNotificationsByDate(items, new Date()).map((group) => (
+      {groupNotificationsByDate(items, groupingNow).map((group) => (
         <section key={group.label} aria-label={group.label} className="grid gap-3">
           <h2 className="text-sm font-semibold text-muted-foreground">{group.label}</h2>
           {group.items.map((item) => (
