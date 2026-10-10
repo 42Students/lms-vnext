@@ -178,6 +178,37 @@ ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_program_term_scope();
 
 -- ---------------------------------------------------------------------------
+-- 1c) Cohort/class CRUD state that is not equivalent to college-wide periods
+-- ---------------------------------------------------------------------------
+-- Legacy batch dates are optional, independently editable lifecycle metadata. Period FKs
+-- remain the scheduling/calendar anchors, but cannot reproduce arbitrary batch-specific dates.
+ALTER TABLE cohorts
+  ADD COLUMN start_date date,
+  ADD COLUMN end_date date;
+
+ALTER TABLE cohorts
+  ADD CONSTRAINT cohorts_lifecycle_date_order_ck
+  CHECK (start_date IS NULL OR end_date IS NULL OR end_date >= start_date);
+
+-- Legacy class description and lower_limit are live admin CRUD fields. sections.capacity is the
+-- upper limit. Keep vNext capacity nullable for non-legacy creation flows, while compatibility
+-- producers must provide it and obey the legacy 1..500 bound.
+ALTER TABLE sections
+  ADD COLUMN description text,
+  ADD COLUMN minimum_capacity integer NOT NULL DEFAULT 0;
+
+ALTER TABLE sections
+  DROP CONSTRAINT IF EXISTS sections_capacity_ck;
+
+ALTER TABLE sections
+  ADD CONSTRAINT sections_capacity_ck
+    CHECK (capacity IS NULL OR capacity BETWEEN 1 AND 500),
+  ADD CONSTRAINT sections_minimum_capacity_ck
+    CHECK (minimum_capacity >= 0),
+  ADD CONSTRAINT sections_capacity_range_ck
+    CHECK (capacity IS NULL OR minimum_capacity <= capacity);
+
+-- ---------------------------------------------------------------------------
 -- 2) Canonical cohort progression state + immutable history
 -- ---------------------------------------------------------------------------
 CREATE TABLE cohort_progression_state (
@@ -614,12 +645,14 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 -- 3. Keep program_term_courses.display_order 1-based as the active legacy service does; do not add
 --    a uniqueness constraint until reorder concurrency has executed acceptance evidence.
 -- 4. Verify direct SQL cannot create cross-college term/course/period/hall/faculty-association links.
--- 5. Verify every offering has stable program-term identity; CORE course/term mismatches fail
+-- 5. Verify cohort start/end dates remain independently editable and ordered; verify legacy
+--    class min/max/description round-trip with min >= 0, max 1..500 and min <= max.
+-- 6. Verify every offering has stable program-term identity; CORE course/term mismatches fail
 --    while term-bound ELECTIVE offerings remain supported.
--- 6. Verify a broad faculty-course association can exist before delivery, rejects cross-college
+-- 7. Verify a broad faculty-course association can exist before delivery, rejects cross-college
 --    links, deactivates historically and cannot duplicate an active pair.
--- 7. Run concurrent promotion with same expected version: exactly one commit must win.
--- 8. Verify backward/jump promotions fail and immutable history matches the winner.
--- 9. Verify same-resource overlap fails while back-to-back [start,end) sessions succeed.
--- 10. Verify CANCELLED events release the scheduling resource while attendance/history remains.
--- 11. No production data backfill is required: vNext is greenfield.
+-- 8. Run concurrent promotion with same expected version: exactly one commit must win.
+-- 9. Verify backward/jump promotions fail and immutable history matches the winner.
+-- 10. Verify same-resource overlap fails while back-to-back [start,end) sessions succeed.
+-- 11. Verify CANCELLED events release the scheduling resource while attendance/history remains.
+-- 12. No production data backfill is required: vNext is greenfield.
