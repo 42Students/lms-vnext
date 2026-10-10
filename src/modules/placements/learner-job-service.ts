@@ -18,6 +18,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   evaluatePlacementEligibility,
   type PlacementEligibilityResult,
@@ -165,10 +166,9 @@ export async function listLearnerPlacementJobs(
         eligibility = await pending;
       }
 
-      const deadlinePassed = Boolean(
-        row.job.applicationDeadline &&
-          row.job.applicationDeadline.getTime() <
-            now.getTime(),
+      const deadlinePassed = isPlacementApplicationDeadlinePassed(
+        row.job.applicationDeadline,
+        now,
       );
 
       return {
