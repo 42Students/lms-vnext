@@ -61,6 +61,32 @@ for (const { key, row } of rows) {
   classes[entry.category] = (classes[entry.category] ?? 0) + 1;
 }
 assert.deepEqual(classes, ledger.summary.classifications);
+// Source disposition coverage is separate from vNext runtime verification.
+// An unresolved/implicit legacy source state must never masquerade as closed.
+const activeWorkflowCount = ledger.rows.filter(
+  (row) => row.postV150Active === "ACTIVE_WORKFLOW_CONFIRMED",
+).length;
+const undisposed = ledger.rows
+  .filter((row) =>
+    !row.postV150Active || row.postV150Active === "NOT_DETERMINED",
+  )
+  .map(keyOf);
+assert.deepEqual(
+  undisposed,
+  [],
+  "DB01 needs an explicit post-V150 source disposition for every candidate",
+);
+assert.equal(
+  ledger.summary.postV150ActivenessReviewedFields,
+  rows.length,
+  "source activeness review counter drift",
+);
+assert.equal(
+  ledger.summary.postV150ActivenessVerified,
+  activeWorkflowCount,
+  "legacy active-workflow source counter drift",
+);
+
 assert.equal(ledger.summary.sourceTriageRows, rows.length);
 assert.equal(ledger.summary.runtimeSemanticVerifiedFields, 0);
 assert.equal(ledger.summary.dbTestsExecuted, 0);
@@ -91,5 +117,6 @@ assert.ok(
 console.log(
   "DB01 SOURCE TRIAGE CONSISTENT: " +
   `${inventory.tables.length} source table candidates, ${rows.length} fields, ` +
-  "0 runtime-verified. This does NOT pass PostgreSQL/semantic parity.",
+  `${activeWorkflowCount} active-workflow source candidates, 0 runtime-verified. ` +
+  "This does NOT pass PostgreSQL/semantic parity.",
 );
