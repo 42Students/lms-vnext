@@ -78,3 +78,81 @@ test("DB00 leaves exactly seven Smrithi product decisions open", () => {
     "smrithi_specialization",
   ]);
 });
+
+const smrithiEvidence = JSON.parse(
+  readFileSync(
+    "docs/planning/db00-smrithi-source-evidence.json",
+    "utf8",
+  ),
+);
+const snapshot = JSON.parse(
+  readFileSync(
+    "docs/planning/database-parity-legacy-schema-snapshot.json",
+    "utf8",
+  ),
+);
+
+test("DB00 Smrithi source inventory preserves exact field and constraint evidence", () => {
+  const pending = disposition.tables
+    .filter((row) => row.disposition === "PENDING_PRODUCT_DECISION")
+    .map((row) => row.table)
+    .sort();
+  const sourceByTable = new Map(inventory.tables.map((row) => [row.table, row]));
+  const snapshotByTable = new Map(snapshot.tables.map((row) => [row.name, row]));
+
+  assert.equal(smrithiEvidence.legacyBackendSha, inventory.sourceSha);
+  assert.equal(snapshot.sourceSha, inventory.sourceSha);
+  assert.deepEqual(smrithiEvidence.tables.map((row) => row.table).sort(), pending);
+  assert.equal(smrithiEvidence.counts.tables, smrithiEvidence.tables.length);
+  assert.equal(
+    smrithiEvidence.counts.sourceFields,
+    smrithiEvidence.tables.reduce((total, row) => total + row.fields.length, 0),
+  );
+  assert.equal(
+    smrithiEvidence.counts.unprovenRetirementDecisions,
+    pending.length,
+  );
+
+  for (const row of smrithiEvidence.tables) {
+    const sourceRow = sourceByTable.get(row.table);
+    const snapshotRow = snapshotByTable.get(row.table);
+    assert.ok(sourceRow, "missing source census for " + row.table);
+    assert.ok(snapshotRow, "missing SQL snapshot for " + row.table);
+    assert.equal(row.sourceFieldCount, sourceRow.sourceFieldCount);
+    assert.deepEqual(
+      row.fields.map((field) => ({
+        column: field.column,
+        type: field.type,
+        nullable: field.nullable,
+        sourceDefinition: field.sourceDefinition,
+        riskFlags: field.riskFlags,
+      })),
+      sourceRow.rows.map((field) => ({
+        column: field.legacyColumn,
+        type: field.sourceType,
+        nullable: field.nullable,
+        sourceDefinition: field.sourceDefinition,
+        riskFlags: field.riskFlags || [],
+      })),
+      "source field evidence drift for " + row.table,
+    );
+    assert.deepEqual(
+      row.declaredIndexAndConstraints,
+      snapshotRow.indexAndConstraintClauses || [],
+      "source unique/FK/index drift for " + row.table,
+    );
+    assert.equal(row.ledgerDisposition, "PENDING_PRODUCT_DECISION");
+    assert.equal(row.safeToRetire, false);
+    assert.equal(row.runtimeDbPresence, "NOT_VERIFIED");
+    assert.equal(row.producerEvidence, "NOT_ESTABLISHED");
+    assert.equal(row.consumerEvidence, "NOT_ESTABLISHED");
+    assert.equal(row.vnextPersistenceDecision, "PENDING_PRODUCT_DECISION");
+    for (const name of row.highPrioritySemantics) {
+      assert.ok(
+        row.fields.some((field) => field.column === name),
+        "risk field missing from " + row.table + ": " + name,
+      );
+    }
+    assert.ok(row.requiredNextEvidence.length >= 3);
+  }
+});
