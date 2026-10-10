@@ -35,6 +35,22 @@ Use one persisted, college-safe source of truth for each cohort:
 
 A college academic period is a **calendar object**. A program term is a **curriculum identity**. Do not use a period UUID as a substitute for a program-specific semester number.
 
+### Cohort lifecycle dates remain distinct from calendar periods
+
+Legacy batch `startDate` / `endDate` are nullable and independently editable. The production admin API can clear or change them without changing a college-wide academic period. Therefore `cohorts.start_period_id` / `expected_end_period_id` are not exact replacements.
+
+DB02 stages nullable `cohorts.start_date` and `cohorts.end_date` with `end_date >= start_date` when both are present. Period references continue to bound academic scheduling; the dates preserve the existing batch CRUD contract.
+
+### Class/section CRUD state
+
+Legacy class CRUD still persists:
+
+- `description`;
+- `lower_limit` with minimum 0;
+- `upper_limit` with range 1..500 and `lower_limit <= upper_limit`.
+
+DB02 maps `upper_limit -> sections.capacity` and stages `sections.minimum_capacity` plus `sections.description`. The old class `start_date/end_date` fields are compatibility metadata for older callers and are not a second source of academic scheduling truth; compatibility APIs may project the section's academic-period window instead of adding another authoritative date pair.
+
 ## 2. Program-specific semester / curriculum identity
 
 Legacy `SemesterServiceImpl`, `SemesterRepository` and `SemesterCourseRepository` prove these active persisted semantics:
@@ -178,6 +194,7 @@ These may ultimately be normalized into `course_teaching_assignments`, deliverie
 
 - program terms and ordered curriculum mappings;
 - stable program-term identity on every course offering, with CORE curriculum enforcement;
+- cohort lifecycle dates plus section description/minimum-capacity parity;
 - cohort progression state + immutable history;
 - lecture halls and schedule hall linkage;
 - broad faculty-course association pool independent of deliveries;
@@ -195,13 +212,14 @@ DB-005 remains open until all of these are executed and attached to exact SHAs:
 2. register reviewed schema through Chat 1;
 3. zero-to-current migration replay on disposable PostgreSQL;
 4. negative tests for cross-college program/period/hall/faculty-course links;
-5. offering-term tests proving program mismatch rejection, CORE curriculum membership enforcement and term-bound ELECTIVE support;
-6. broad faculty-course association tests proving pre-delivery association, active-pair uniqueness and historical deactivation;
-7. concurrent cohort promotion test proving one winner for the same expected version;
-8. term jump/backward update rejection;
-9. program-term uniqueness and ordered curriculum tests;
-10. same faculty/section/hall overlap rejection and adjacent non-overlap acceptance;
-11. schedule cancellation/soft-history behavior with attendance retained;
-12. re-check current legacy BE/FE heads before final certification.
+5. cohort lifecycle date round-trip/order tests plus class description/minimum/maximum validation;
+6. offering-term tests proving program mismatch rejection, CORE curriculum membership enforcement and term-bound ELECTIVE support;
+7. broad faculty-course association tests proving pre-delivery association, active-pair uniqueness and historical deactivation;
+8. concurrent cohort promotion test proving one winner for the same expected version;
+9. term jump/backward update rejection;
+10. program-term uniqueness and ordered curriculum tests;
+11. same faculty/section/hall overlap rejection and adjacent non-overlap acceptance;
+12. schedule cancellation/soft-history behavior with attendance retained;
+13. re-check current legacy BE/FE heads before final certification.
 
 No source review, staging SQL or authored test alone counts as PASS.
