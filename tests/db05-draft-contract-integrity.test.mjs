@@ -96,8 +96,8 @@ test("DB05 migration manifest blocks unregistered drafts until real gates pass",
   assert.equal(readiness.phase, "DATABASE");
   assert.equal(readiness.status, "SOURCE_STAGED_BLOCKED");
   assert.equal(readiness.migrationIntegratorChat, 1);
-  assert.equal(readiness.artifacts.length, 6);
-  assert.equal(new Set(readiness.artifacts.map(a => a.path)).size, 6);
+  assert.equal(readiness.artifacts.length, 7);
+  assert.equal(new Set(readiness.artifacts.map(a => a.path)).size, 7);
   for (const item of readiness.artifacts) {
     assert.equal(item.registered, false, item.id);
     assert.equal(item.executedAgainstPostgres, false, item.id);
