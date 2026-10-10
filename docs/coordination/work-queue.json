@@ -1212,14 +1212,14 @@
         "docs/planning/database-parity-db10-log-alerts-contract.md",
         "tests/db10-log-alerts-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-11",
-      "startedAt": null,
+      "startedAt": "2026-10-11",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -1241,6 +1241,11 @@
           "status": "PICKED",
           "at": "2026-10-11",
           "reason": "Chat 5 reserved isolated DB10 log-alert schema privacy/counter hardening."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Source reviewed identity cardinality and bigint risks; staged persistence contract work begins."
         }
       ]
     }
