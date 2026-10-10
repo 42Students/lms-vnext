@@ -43,6 +43,13 @@ The existing field crosswalk now carries preliminary evidence for **279/279** so
 6. Confirm atomic update/rollback after owner college changes, insert conflicts, and cross-tenant joins under concurrent transactions.
 7. Execute schema compile, migration generation/replay, typecheck and negative tests; attach actual logs, commit SHAs and database version. **Never convert authored tests or source checks into DB_TESTED**.
 
+## Late legacy migrations V185/V190 — settings are not the whole behavior
+
+- Legacy V185 added recruiter college access duration (6 months default; **0 = no expiry**) and recruiter-drive approval (default required). The latest staged `placement_tpo_college_settings` has both fields, but existence of columns does not prove that issued grants expire or that pending recruiter drives follow the specified workflow. No runtime witness was executed.
+- Legacy V190 added `tpo_college_settings.job_types_json` and `outcome_labels_json`. These remain **absent** from staged `src/db/schema/tpo-collaboration.ts` at review time. Their nullable source shape was staged in [custom job-type/outcome settings SQL](sql/db09-job-outcome-settings-candidate.sql); do not treat this candidate as registered or tested.
+- **Cross-domain DB08 dependency:** V190 also added `job.counts_as_placed` with default true and explicitly set Internship false. Current `src/db/schema/placements.ts` `placement_jobs` lacks that property in source review. Placed counts, uplift, held-offer policy and reporting must consume an immutable per-drive choice, not a mutable global type label. DB08 owner/integrator must authorize the change.
+- Four canonical ledger rows received specific V185/V190 `sourceReview.deepDive` facts; their `reviewStatus` remains `UNVERIFIED_FIELD_SEMANTICS`.
+
 ## Handoff status
 
 `DB-012`: IN_PROGRESS; 279/279 *source candidate annotations*, zero database verified. `DB-007`: BLOCKED pending registration/PG/legacy-use disposition. Global phase remains DATABASE; API/UI/RELEASE still LOCKED.
