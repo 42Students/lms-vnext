@@ -157,6 +157,7 @@ const mentorItems: ShellNavItem[] = [
 
 const tpoItems: ShellNavItem[] = [
   { label: "Recruiter Leads", href: "/tpo/recruiters", shortLabel: "R" },
+  { label: "Messages", href: "/tpo/messages", shortLabel: "M" },
   {
     label: "Placement Operations",
     href: "/tpo/placements",
@@ -170,6 +171,7 @@ const recruiterItems: ShellNavItem[] = [
     href: "/hr/placements",
     shortLabel: "H",
   },
+  { label: "Messages", href: "/hr/messages", shortLabel: "M" },
 ];
 
 const collegeAdminItems: ShellNavItem[] = [
