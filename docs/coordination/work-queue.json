@@ -374,7 +374,7 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "5d39ce3e8ef2f5b942324c990235d4a0b163a20f",
+      "latestEvidenceSha": "803bddeedb39000837de63cf56d7795f9532bffb",
       "verificationEvidence": [],
       "blockers": [
         "MIGRATION_UNREGISTERED: DB05 version/progress and per-content-discussion SQL remain staged; Chat 1 alone registers migrations after data-service CAS/attempt-aware consumers and replay proof.",
@@ -413,6 +413,9 @@
           "at": "2026-10-10T20:27:49.890Z",
           "reason": "Chat 6 begins legacy-vNext DB05 field, relationship and state contract audit."
         }
+      ],
+      "evidenceNotes": [
+        "SOURCE_EVIDENCE_CHECKPOINT: PR #59 mapped all 16 historical discussion columns in the canonical DB05 inventory to the isolated unregistered draft; 9 primary-runtime fields vs 7 preservation-only/runtime-unproven, verifiedMappings remains 0. Source assertions passed; Node/PG/CI not executed."
       ]
     },
     {
