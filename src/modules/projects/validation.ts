@@ -299,6 +299,7 @@ export const createProjectInstanceInputSchema = z
     slug: projectKeySchema,
     title: titleSchema,
     summary: z.string().trim().min(1).max(2000).optional(),
+    primaryMentorMembershipId: z.string().uuid().optional(),
   })
   .strict();
 
