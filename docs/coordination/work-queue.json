@@ -698,14 +698,14 @@
       "paths": [
         "docs/planning/database-parity-pass3-fk-audit.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-10T20:45:34.703Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:45:46.374Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -727,6 +727,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:45:34.703Z",
           "reason": "Chat 1 CAS claim after DB-010 completion; cross-domain tenant FK integrity sweep."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:45:46.374Z",
+          "reason": "Reviewing current vNext multi-parent FK graph for cross-tenant combinations not prevented by single-column references."
         }
       ]
     },
