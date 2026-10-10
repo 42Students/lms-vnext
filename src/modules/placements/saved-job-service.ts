@@ -3,12 +3,8 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import { placementJobs } from "@/db/schema";
 import { placementSavedJobs } from "@/db/schema/placement-external";
-import {
-  hasMembershipRole,
-  type RequestContext,
-} from "@/modules/identity/context";
-import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
-import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
+import type { RequestContext } from "@/modules/identity/context";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { listLearnerPlacementJobs } from "./learner-job-service";
 import { PlacementsServiceError } from "./errors";
 
@@ -18,24 +14,13 @@ const savedJobId = z.string().uuid();
  * DB08 saved-job source stage only. No routes should call these functions
  * before placement_saved_jobs is added to the numbered Drizzle migration.
  */
-function requireLearner(context: RequestContext) {
-  if (!context.membership || !hasMembershipRole(context, "LEARNER")) {
-    throw new AuthorizationError("placements.read");
-  }
-  requirePermission(context, "placements.read", {
-    collegeId: context.membership.collegeId,
-  });
-  return context.membership;
+async function requireVisiblePlacements(context: RequestContext) {
+  // Use journaled eligibility decisions and the common paid-module guard.
+  // The DB08 lifecycle table is not yet registered; this saved-job service
+  // cannot depend on it until W01's migration lands.
+  return requireLearnerPlacementAccess(context);
 }
 
-async function requireVisiblePlacements(context: RequestContext) {
-  const learner = requireLearner(context);
-  const access = await getOwnPlacementParticipationAccess(context);
-  if (!access.showPlacements) {
-    throw new AuthorizationError("placements.read");
-  }
-  return learner;
-}
 
 /**
  * Save only an actual published job in the learner's authorized job feed.
