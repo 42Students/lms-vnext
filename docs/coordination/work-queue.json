@@ -325,7 +325,7 @@
       "paths": [
         "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
       ],
-      "status": "IN_PROGRESS",
+      "status": "BLOCKED",
       "latestEvidenceSha": "4c9aa8f40bd6c9e4adb96f0bc7f15328f30f61c9",
       "verificationEvidence": [],
       "blockers": [
@@ -334,7 +334,8 @@
         "ACTIVE GAP: vNext education contract omits legacy-screened GPA, explicit currently-pursuing state and enforced marksheet-to-education receipt linkage; isRecentEducation/examRank compatibility needs explicit disposition.",
         "ACTIVE GAP: legacy student_image has current create/get/deactivate persistence semantics but vNext has no persisted learner image collection; PROFILE_IMAGE receipt alone is not equivalent.",
         "DISPOSITION REQUIRED: student_registration is distinct from placement_registration and needs DB01/DB02 native-SQL/external-sync audit before retirement or redesign.",
-        "RETIREMENT PROOF REQUIRED: approver_id_card has no named current producer/consumer path but native-SQL/detached consumer absence is unproved."
+        "RETIREMENT PROOF REQUIRED: approver_id_card has no named current producer/consumer path but native-SQL/detached consumer absence is unproved.",
+        "DB04 source audit is documented; final 33 historical fields need native/detached producer evidence or approved retirement, plus migrator-owned SQL/Drizzle integration and disposable PostgreSQL witness. Unblock with actual proof, not audit-only counts."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -366,6 +367,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T01:58:00+05:30",
           "reason": "Chat 3 began source-backed DB04 semantic and privacy/tenant audit."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11T02:14:00+05:30",
+          "reason": "Chat 3 released DB-007 after 103/103 source notes; semantic/retirement and runtime DB gates remain blocked. Claims retained."
         }
       ],
       "progressNote": "Chat 3 reviewed all 103/103 frozen DB04 candidates and staged a non-registered education/profile-image persistence contract. Qualification (24) + student_image (3) have current named producers/consumers; contract proposes normalized education rows, GPA support, explicit pursuing state, enforceable education-document joins, and normalized learner image state. student_registration (22) + approver_id_card (11) remain unresolved retirement candidates. Semantic/runtime verified fields 0; approved retirements 0; PostgreSQL execution 0."
@@ -586,25 +592,35 @@
       "paths": [
         "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T02:14:00+05:30",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T02:14:00+05:30"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T02:14:00+05:30",
+          "reason": "Chat 3 took next eligible global DATABASE task after releasing blocked DB-007; inspect DB09 source vs staged schema."
         }
       ]
     },
