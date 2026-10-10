@@ -84,6 +84,36 @@ The exact production backend tree has no named approver/assigned-exam model, rep
 2. With the DB03 owner, avoid concurrent edits of `src/db/schema/**`. Chat 1 exclusively integrates `drizzle/**`, schema barrel and CI. Hand off DB04 staged constraints/SQL and confirm actual replay.
 3. Execute negative SQL witnesses for bogus private object keys/digests, forged tenant/role, UPDATE/DELETE event, current-row update without event, mismatched mark section/owner and duplicate submissions/reviews.
 4. Execute snapshot privacy/grade formula and storage-backed receipt lifecycle tests. Leave GCP/malware scanner and PostgreSQL witness outcomes BLOCKED if infrastructure is unavailable.
-5. Update the field ledger with **executed** exact test source+commit SHA only; do not count these 43 source comparisons as DB_TESTED or VERIFIED.
+5. Update the field ledger with **executed** exact test source+commit SHA only; do not count any of the 103 source-review entries as DB_TESTED or VERIFIED.
 
 **Current disposition:** DB-007 remains `IN_PROGRESS`. The frozen 103/103 candidate fields now have source/disposition review evidence, but **0 are semantic/runtime certified** and **0 retirements are approved**. No phase promotion. This pass changed documentation only; it did not edit shared schema/migration files or claim PostgreSQL evidence.
+
+## 2026-10-11 Chat 3 continuation — remaining 60-field source-review outcome
+
+**All 103 field candidates now carry `sourceReview` evidence in both** the canonical `db-pass4-columns-db04_profiles_and_verification.json` and `db04-field-crosswalk-proposals.json`. The canonical `reviewStatus` remains `UNVERIFIED_FIELD_SEMANTICS` for all 103, and no retirements or runtime verification are credited.
+
+| Legacy table | Fields | Current source evidence | Open semantic status |
+| --- | ---: | --- | --- |
+| `qualification` | 24 | Active `Qualification.java`, `BaseModel.java`, `LearnerProfileServiceImpl.java`, `QualificationRepository.java`, `EducationDTO.java` | Active and required; several fields lost in vNext strict education JSON |
+| `student_image` | 3 | Active `StudentImage.java`, `StudentImageServiceImpl.java`, `StudentImageController.java` | Active gallery and per-image deactivate behavior lacks a demonstrated target |
+| `student_registration` | 22 | Historical schema snapshot; no exact-name Java entity found in inspected model tree | **Unknown active/retired**; require current producer/consumer and source audit, especially pre-enrollment/external sync |
+| `approver_id_card` | 11 | Historical schema snapshot, `assigned_exam_id` relationship | **Unknown active/retired**; require assessment/exam system audit; never classify private objects as learner identity without evidence |
+
+### Concrete vNext gaps: active qualification model
+
+Legacy `EducationDTO` and `LearnerProfileServiceImpl.qualificationToDTO/dtoToQualification` carry distinct fields `degree`, `field`, `score`, `description`, `examRank`, `isCurrentlyPursuing`, `isRecentEducation`, and `certificateUpload`. VNext `src/modules/people/profile-validation.ts` has a **strict** `educationSchema` without these keys, meaning an exact as-is payload cannot round-trip. In addition:
+
+- Legacy `Qualification extends BaseModel` tracks *per qualification* `created_at`, `updated_at`, `is_deleted`; vNext `learner_profiles.profile_document.education[]` only has a profile-level timestamp and deletes entries through array replacement. This is not a verified semantic equivalent.
+- Legacy education sorting prioritizes `isRecentEducation`; vNext lacks the flag.
+- Legacy `EducationDTO` accepts GPA as a grading category; current vNext enum only includes CGPA, Percentage and Grade. Legacy `examDetails` is `Map<String,Object>`, whereas vNext limits each value to a primitive. Both require compatibility decisions.
+- Legacy marksheet `certificateUpload` is active source data. A staged `MARKSHEET` receipt is safer than persistent public URLs but must be linked to the owning qualification and proven in a real upload/read lifecycle.
+
+### Concrete vNext gaps: active student image workflow
+
+The legacy image controller supports create/get/deactivate under `/api/v1/learner-images`; `image_data` serializes a list of `imageId`, `imageUrl`, and integer `active`. A profile image storage receipt does **not** by itself implement stable gallery entries and deactivation. The new [education+media candidate SQL](sql/db04-education-media-candidate.sql) stages separate education-entry/media tables, `row_version`, soft-deletion and same-owner receipt FKs. This is a proposal, not an integrated migration. The separate [receipt-hardening candidate SQL](sql/db04-private-receipt-hardening-candidate.sql) stages exact object-key, hash and generation-format checks matching the server verifier. None has been executed.
+
+### Updated privacy observation
+
+The current `upsertOwnLearnerProfileDocument` and `drizzleProfileRepository.upsertLearnerProfileDocument` **explicitly reject** raw Aadhaar/PAN values while private storage is unavailable. This is a fail-closed behavior, not evidence of an exposed production write route. However, staged generic JSONB columns still need SQL-level privilege/redaction evidence, and an actual private vault/receipt flow remains BLOCKED for usable identity submission. Do not infer a vulnerability exploit or a passing safety gate from source inspection alone.
+
+**Handoff to migration/CI integrator:** Chat 1 reviews `docs/planning/sql/db04-education-media-candidate.sql` and `docs/planning/sql/db04-private-receipt-hardening-candidate.sql`, reconciles them with the schema barrel/journal, and owns disposable PostgreSQL replay. Chat 3 retains DB-007 IN_PROGRESS until source usage, integration/witness outcomes and signoff are available. API/UI waves remain locked.
