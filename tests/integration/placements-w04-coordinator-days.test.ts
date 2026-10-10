@@ -1,0 +1,179 @@
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { Pool } from "pg";
+import { closeDatabaseConnection } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { createPlacementCompany } from "@/modules/placements/company-service";
+import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
+import { createPlacementRound, actOnPlacementRound } from "@/modules/placements/round-service";
+import { applyToPlacementJob } from "@/modules/placements/application-service";
+import { decidePlacementScreening } from "@/modules/placements/screening-service";
+import {
+  assignDriveDayCoordinator,
+  getDriveDayRoster,
+  hasStudentCoordinatorAssignmentToday,
+  listMyDriveDayRounds,
+  markDriveDayAttendance,
+  removeDriveDayCoordinator,
+} from "@/modules/placements/drive-day-coordinator-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
+
+const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
+if (!databaseUrl) throw new Error("Isolated TEST_DATABASE_URL required for W04 DB tests");
+const pool = new Pool({ connectionString: databaseUrl, max: 1 });
+
+const coordinatorUserId = "f8040000-0000-4000-8000-000000000001";
+const coordinatorMembershipId = "f8040000-0000-4000-8000-000000000002";
+const coordinatorRoleId = "f8040000-0000-4000-8000-000000000003";
+const dutyNow = new Date("2026-10-20T07:00:00.000Z");
+const nextDay = new Date("2026-10-21T07:00:00.000Z");
+
+const tpo: RequestContext = {
+  user: { id: SEED_IDS.facultyUser, identityUid: "seed-shared-faculty",
+    platformStatus: "ACTIVE", systemRoles: [] },
+  membership: { id: SEED_IDS.facultyCollegeAMembership,
+    collegeId: SEED_IDS.collegeA, organizationId: SEED_IDS.organization,
+    status: "ACTIVE", roles: ["FACULTY", "TPO"] },
+};
+const applicant: RequestContext = {
+  user: { id: SEED_IDS.learnerUser, identityUid: "seed-learner",
+    platformStatus: "ACTIVE", systemRoles: [] },
+  membership: { id: SEED_IDS.learnerCollegeAMembership,
+    collegeId: SEED_IDS.collegeA, organizationId: SEED_IDS.organization,
+    status: "ACTIVE", roles: ["LEARNER"] },
+};
+const coordinator: RequestContext = {
+  user: { id: coordinatorUserId, identityUid: "w04-coordinator",
+    platformStatus: "ACTIVE", systemRoles: [] },
+  membership: { id: coordinatorMembershipId,
+    collegeId: SEED_IDS.collegeA, organizationId: SEED_IDS.organization,
+    status: "ACTIVE", roles: ["LEARNER"] },
+};
+
+async function cleanup() {
+  await pool.query("delete from placement_round_attendance");
+  await pool.query("delete from placement_drive_day_coordinator_assignments");
+  await pool.query("delete from placement_round_results");
+  await pool.query("delete from placement_job_round_events");
+  await pool.query("delete from placement_job_rounds");
+  await pool.query("delete from placement_application_screening_history");
+  await pool.query("delete from placement_application_screenings");
+  await pool.query("delete from placement_application_status_history");
+  await pool.query("delete from placement_applications");
+  await pool.query("delete from placement_jobs");
+  await pool.query("delete from placement_company_relationships");
+  await pool.query("delete from placement_companies");
+  await pool.query("delete from membership_roles where id = $1", [coordinatorRoleId]);
+  await pool.query("delete from college_memberships where id = $1", [coordinatorMembershipId]);
+  await pool.query("delete from users where id = $1", [coordinatorUserId]);
+}
+
+async function setup() {
+  await pool.query(
+    `insert into users(id, identity_uid, phone_e164, email, display_name, platform_status)
+     values($1,'w04-coordinator','+919123450804','coordinator-w04@example.com',
+       'W04 Coordinator','ACTIVE')`,
+    [coordinatorUserId],
+  );
+  await pool.query(
+    "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+    [coordinatorMembershipId, coordinatorUserId, SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "insert into membership_roles(id,membership_id,role) values($1,$2,'LEARNER')",
+    [coordinatorRoleId, coordinatorMembershipId],
+  );
+
+  const company = await createPlacementCompany(tpo, {
+    collegeId: SEED_IDS.collegeA,
+    name: "W04 Coordinator Date QA",
+    primaryDomain: "w04-coordinator-scope.example",
+  });
+  const job = await createPlacementJob(tpo, {
+    collegeId: SEED_IDS.collegeA,
+    companyRelationshipId: company.relationship.id,
+    title: "Drive Day QA Engineer",
+    description: "Same-job different-day coordinator access check",
+    employmentType: "FULL_TIME", workMode: "HYBRID",
+    applicationMode: "INTERNAL",
+  });
+  const todayRound = await createPlacementRound(tpo, job.id, {
+    kind: "TEST", name: "Today Aptitude Test",
+  });
+  const tomorrowRound = await createPlacementRound(tpo, job.id, {
+    kind: "INTERVIEW", name: "Tomorrow Interview",
+  });
+  await publishPlacementJob(tpo, job.id);
+  const application = await applyToPlacementJob(applicant, job.id, {});
+  await decidePlacementScreening(tpo, application.id, {
+    decision: "SHORTLISTED", candidateMessage: "Selected",
+  });
+  await actOnPlacementRound(tpo, todayRound.id, {
+    action: "SCHEDULE",
+    scheduledAt: new Date("2026-10-20T04:30:00.000Z"),
+    timezone: "Asia/Kolkata", mode: "ON_CAMPUS", venue: "Hall A",
+  });
+  await actOnPlacementRound(tpo, tomorrowRound.id, {
+    action: "SCHEDULE",
+    scheduledAt: new Date("2026-10-21T04:30:00.000Z"),
+    timezone: "Asia/Kolkata", mode: "ON_CAMPUS", venue: "Hall B",
+  });
+  const assignment = await assignDriveDayCoordinator(tpo, job.id, {
+    learnerMembershipId: coordinatorMembershipId,
+    onDate: "2026-10-20",
+  });
+  return { job, todayRound, tomorrowRound, assignment, application };
+}
+
+beforeEach(async () => {
+  await cleanup();
+  await enableSeedLearnerPlacementAccess(pool);
+});
+afterAll(async () => {
+  await cleanup();
+  await pool.end();
+  await closeDatabaseConnection();
+});
+
+describe("W04 coordinator same-day / tenant authorization", () => {
+  it("limits listing and roster to the assigned day's actual rounds", async () => {
+    const { todayRound, tomorrowRound, application } = await setup();
+    expect(await hasStudentCoordinatorAssignmentToday(coordinator, dutyNow)).toBe(true);
+    expect(await hasStudentCoordinatorAssignmentToday(coordinator, nextDay)).toBe(false);
+    const rounds = await listMyDriveDayRounds(coordinator, dutyNow);
+    expect(rounds.map(row => row.roundId)).toEqual([todayRound.id]);
+
+    const roster = await getDriveDayRoster(coordinator, todayRound.id, dutyNow);
+    expect(roster.access).toMatchObject({ fullAccess: false, coordinator: true });
+    expect(roster.students).toEqual(expect.arrayContaining([
+      expect.objectContaining({ applicationId: application.id, email: null, phoneE164: null }),
+    ]));
+    await expect(getDriveDayRoster(coordinator, tomorrowRound.id, dutyNow))
+      .rejects.toMatchObject({ code: "PLACEMENT_DRIVE_DAY_ACCESS_DENIED" });
+    await expect(markDriveDayAttendance(coordinator, tomorrowRound.id, {
+      applicationId: application.id, status: "PRESENT",
+    }, dutyNow)).rejects.toMatchObject({ code: "PLACEMENT_DRIVE_DAY_ACCESS_DENIED" });
+
+    const marked = await markDriveDayAttendance(coordinator, todayRound.id, {
+      applicationId: application.id, status: "PRESENT",
+    }, dutyNow);
+    expect(marked.status).toBe("PRESENT");
+  });
+
+  it("revokes roster access immediately when assignment is removed", async () => {
+    const { job, todayRound, assignment } = await setup();
+    await removeDriveDayCoordinator(tpo, job.id, assignment.id);
+    await expect(getDriveDayRoster(coordinator, todayRound.id, dutyNow))
+      .rejects.toMatchObject({ code: "PLACEMENT_DRIVE_DAY_ACCESS_DENIED" });
+  });
+
+  it("does not treat a forged authenticated user as the assigned learner", async () => {
+    const { todayRound } = await setup();
+    const forged = {
+      ...coordinator,
+      user: { ...coordinator.user, id: SEED_IDS.learnerUser },
+    };
+    await expect(getDriveDayRoster(forged, todayRound.id, dutyNow))
+      .rejects.toMatchObject({ code: "PLACEMENT_DRIVE_DAY_ACCESS_DENIED" });
+  });
+});
