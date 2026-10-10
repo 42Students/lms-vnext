@@ -103,3 +103,16 @@ Legacy recruiter credentials and college grant lifecycle include `suspended_at`,
 **To DB04/DB02 reviewers:** learner/faculty profile and enrollment fields overlap their existing ledgers. These triage records are cross-domain pointers, **not** a competing implementation or a retirement.
 
 **Pending quality gates:** disposable PostgreSQL migration replay, active schema drift, tenant-isolation negative tests, role/revocation and concurrent edits, per-device session/proxy login behavior, provider sync and browser validation. No test runner output has been produced here. DB-004 cannot become DONE_VERIFIED.
+
+## Legacy general-user registration privilege boundary — security exception (2026-10-11)
+
+A current legacy source comparison found a **potential authorization vulnerability**, not a behavior to clone into vNext:
+
+- `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5` `UserController.java` declares `POST /api/v1/users/register` (and `/users/register`) and directly invokes `userService.save(user)`; the method and controller do not show an explicit admin-only authorization annotation.
+- The current `WebSecurityConfig.java` has `/api/v1/**` and `/users/**` fallback matchers set to `authenticated()`. Its earlier `PEOPLE_ADMIN_POST_PATHS` apply to learner/faculty endpoints and do not visibly include general user registration.
+- `UserServiceImpl.save(UserDto)` unconditionally loads both the `USER` and `ADMIN` role records and adds them to the new `User`. `loadUserByUsername` maps those persisted roles into Spring authorities.
+- This is **source-level evidence of an exposed privilege assignment path**, subject to a full filter-chain/reachability and production configuration check. We have not performed an exploit, runtime test or live authorization probe.
+
+**Required vNext decision:** The legacy `User` credential, password and `USER_ROLES` shape must be replaced by managed identity and centrally authorized `system_roles`/`membership_roles`. Creation of any global privileged role requires an explicit persisted SUPER_ADMIN actor, scope-bound authorization and audited transaction; a caller must never choose or inherit privileged roles through ordinary registration. Add negative tests proving LEARNER, FACULTY, MENTOR, TPO and recruiter cannot self-grant SUPER_ADMIN/COLLEGE_ADMIN and cannot create a privileged user indirectly.
+
+This is a permitted **security deviation** from legacy behavior, not optional feature retirement. DB01 `user`, `role`, `user_roles` entries remain source candidates, not vNext runtime verified. The legacy codebase should be separately assessed/remediated before production exposure; no legacy production files were modified in Chat 2.
