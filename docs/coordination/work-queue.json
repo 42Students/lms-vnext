@@ -175,7 +175,7 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "latestEvidenceSha": "cb33d09d4f169ca3e39aae71333fdb62dbe75ea0",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
