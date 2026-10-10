@@ -15,7 +15,7 @@ export default async function FacultyQuizReportPage({
   const { quizId } = await params;
   const { deliveryId } = await searchParams;
   const report = await getFacultyQuizReport(context, quizId, deliveryId ?? null);
-  const { quiz, attempts, metrics } = report;
+  const { quiz, attempts, notAttemptedLearners, metrics } = report;
 
   const formatDate = (value: Date) =>
     new Intl.DateTimeFormat("en-IN", {
@@ -32,10 +32,11 @@ export default async function FacultyQuizReportPage({
         title={quiz.title}
         description={`${quiz.courseName} · ${quiz.sectionName} · ${quiz.lessonName}`}
       />
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
           ["Attempts", metrics.attempted],
-          ["Unique learners", metrics.uniqueLearners],
+          ["Eligible learners", metrics.eligibleLearners],
+          ["Not attempted", metrics.notAttempted],
           ["Average score", metrics.averagePercent === null ? "Not yet graded" : `${metrics.averagePercent}%`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-border bg-surface p-4">
@@ -85,9 +86,37 @@ export default async function FacultyQuizReportPage({
           </table>
         )}
       </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">
+          Not attempted
+        </h2>
+        {notAttemptedLearners.length === 0 ? (
+          <p className="mt-3 text-sm text-body">
+            Every currently eligible learner has at least one attempt.
+          </p>
+        ) : (
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {notAttemptedLearners.map((learner) => (
+              <li
+                key={learner.membershipId}
+                className="rounded-lg bg-surface-subtle p-3"
+              >
+                <p className="m-0 text-sm font-semibold text-foreground">
+                  {learner.displayName || learner.email}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {learner.email}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <p className="text-sm text-muted-foreground">
-        This report is Section-scoped. Question-level analytics and browser/PDF
-        export parity remain under verification.
+        This report is Section-scoped. Question-level response distribution,
+        export parity and browser verification remain open.
       </p>
     </div>
   );
