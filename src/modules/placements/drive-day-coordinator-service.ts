@@ -96,7 +96,8 @@ export async function hasStudentCoordinatorAssignmentToday(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, "LEARNER") ||
+    context.user.platformStatus !== "ACTIVE"
   ) {
     return false;
   }
@@ -139,6 +140,7 @@ export async function hasStudentCoordinatorAssignmentToday(
           placementDriveDayCoordinatorAssignments.collegeId,
           context.membership.collegeId,
         ),
+        eq(placementJobs.collegeId, context.membership.collegeId),
         eq(
           placementDriveDayCoordinatorAssignments.onDate,
           dateInIndia(now),
@@ -396,7 +398,8 @@ export async function listMyDriveDayRounds(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, "LEARNER") ||
+    context.user.platformStatus !== "ACTIVE"
   ) {
     throw new PlacementsServiceError(
       "PLACEMENT_DRIVE_DAY_ACCESS_DENIED",
@@ -461,6 +464,7 @@ export async function listMyDriveDayRounds(
           placementDriveDayCoordinatorAssignments.collegeId,
           context.membership.collegeId,
         ),
+        eq(placementJobs.collegeId, context.membership.collegeId),
         eq(
           placementDriveDayCoordinatorAssignments.onDate,
           dateInIndia(now),
