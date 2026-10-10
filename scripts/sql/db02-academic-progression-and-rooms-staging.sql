@@ -364,7 +364,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
 -- trigger. Application accounts must not forge, mutate or delete the audit trail.
 -- This is a staging defense, not a substitute for restricting schema/DDL privileges.
 CREATE FUNCTION db02_guard_progression_event_immutability()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_OP = 'INSERT' AND pg_trigger_depth() >= 2 THEN
     RETURN NEW;
@@ -383,7 +383,7 @@ BEGIN
   RAISE EXCEPTION 'Cohort progression events are database-owned and immutable'
     USING ERRCODE = '23514';
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_cohort_progression_events_immutable
 BEFORE INSERT OR UPDATE OR DELETE ON cohort_progression_events
@@ -581,7 +581,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_hall_tenant();
 -- hall; an archive UPDATE takes the conflicting row lock. Whichever wins first determines the
 -- valid result without allowing an ACTIVE future booking to reference an archived hall.
 CREATE FUNCTION db02_guard_lecture_hall_archive()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status = 'ARCHIVED' AND EXISTS (
     SELECT 1
@@ -595,7 +595,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_lecture_hall_archive_guard
 BEFORE UPDATE OF status ON lecture_halls
