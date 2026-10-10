@@ -31,25 +31,49 @@ test("witnesses cannot be mistaken for an executed release gate", () => {
 
 
 test("DB15 race probes remain explicit and never masquerade as executed evidence", () => {
-  assert.equal(manifest.raceProbes.length, 10);
-  assert.equal(new Set(manifest.raceProbes.map(p => p.id)).size, 10);
+  assert.equal(manifest.raceProbes.length, 23);
+  assert.equal(new Set(manifest.raceProbes.map(p => p.id)).size, 23);
   const allowed = new Set([
     "SOURCE_CONFIRMED_GAP",
     "SOURCE_PROTECTED_NEEDS_EXECUTION",
+    "SOURCE_PROTECTED_DRAFT_UNMIGRATED",
+    "PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP",
     "DRAFT_UNIMPLEMENTED",
+    "SOURCE_POLICY_UNDECIDED",
   ]);
   for (const p of manifest.raceProbes) {
-    assert.match(p.id, /^P5-R\d{2}$/);
+    assert.match(p.id, /^P5-R\\d{2}$/);
     assert.ok(allowed.has(p.state), p.id + ": unexpected state " + p.state);
     assert.equal(p.executionEvidence, "NOT_RUN");
-    assert.ok(p.requiredWitness && p.requiredWitness.length > 40, p.id + ": witness is underspecified");
-    assert.ok(fs.existsSync(p.source), p.id + ": source path does not exist: " + p.source);
+    assert.ok(
+      p.requiredWitness && p.requiredWitness.length > 40,
+      p.id + ": witness is underspecified",
+    );
+    for (const source of p.source.split(";").map(s => s.trim()).filter(Boolean)) {
+      assert.ok(
+        fs.existsSync(source),
+        p.id + ": source path does not exist: " + source,
+      );
+    }
   }
-  assert.equal(manifest.raceProbes.filter(p => p.state === "SOURCE_CONFIRMED_GAP").length, 2);
-  assert.equal(manifest.raceProbes.filter(p => p.state === "SOURCE_PROTECTED_NEEDS_EXECUTION").length, 5);
-  assert.equal(manifest.raceProbes.filter(p => p.state === "DRAFT_UNIMPLEMENTED").length, 3);
+
+  const count = state =>
+    manifest.raceProbes.filter(p => p.state === state).length;
+  assert.equal(count("SOURCE_CONFIRMED_GAP"), 4);
+  assert.equal(count("SOURCE_PROTECTED_NEEDS_EXECUTION"), 13);
+  assert.equal(count("SOURCE_PROTECTED_DRAFT_UNMIGRATED"), 3);
+  assert.equal(count("PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP"), 1);
+  assert.equal(count("DRAFT_UNIMPLEMENTED"), 1);
+  assert.equal(count("SOURCE_POLICY_UNDECIDED"), 1);
   assert.deepEqual(
-    manifest.raceProbes.filter(p => p.state === "SOURCE_CONFIRMED_GAP").map(p => p.id),
-    ["P5-R01", "P5-R02"],
+    manifest.raceProbes
+      .filter(p => p.state === "SOURCE_CONFIRMED_GAP")
+      .map(p => p.id),
+    ["P5-R01", "P5-R02", "P5-R11", "P5-R21"],
+  );
+  assert.equal(manifest.raceAudit.runtimeVerified, 0);
+  assert.deepEqual(
+    manifest.raceAudit.blockingGaps,
+    ["P5-R01", "P5-R02", "P5-R09", "P5-R10", "P5-R11", "P5-R21", "P5-R22"],
   );
 });
