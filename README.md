@@ -2,6 +2,12 @@
 
 The next-generation 42Students LMS, rebuilt as a GCP-native TypeScript modular monolith.
 
+## Six-chat development system
+
+Start or resume a persistent lane with **"Continue chat 1 work"** through **"Continue chat 6 work"**. Ask **"chat 2 stats"** or **"all chat stats"** for source-backed progress. The durable instruction entry is [six-chat operating system](docs/coordination/six-chat-operating-system.md); the [copyable ChatGPT Project instructions](docs/coordination/chatgpt-project-instructions.md) make those short commands work naturally in new project chats. Six single-writer checkpoints live in `docs/coordination/lanes/chat-01.json` through `chat-06.json`, with GitHub issues #21–#26 as handoff logs.
+
+For an offline snapshot run `node scripts/six-chat-status.mjs`, `node scripts/six-chat-status.mjs --lane 4`, or `node scripts/six-chat-status.mjs --json`. Refresh GitHub issues/CI/commits for live claims. **Current execution priority: database schema/semantic parity, then API/domain workflows, then UI clone parity.** Preserved UI implementation is not proof of backend completion.
+
 ## Core stack
 
 - Next.js + TypeScript
@@ -23,9 +29,7 @@ Business logic lives in domain modules rather than React components. Infrastruct
 
 ## Current status
 
-The core platform backend is largely established: tenant/identity/people domains, membership lifecycle, profiles, SUPER_ADMIN bootstrap, verified tenant domains, canonical PostgreSQL migrations, deterministic seed data, and real PostgreSQL CI integration tests are green.
-
-The active phase is **GCP development environment readiness and provisioning**.
+The original core platform and major domain implementations are substantially authored, but **full database/API parity and current CI/runtime verification are still open**. The six-chat operating system coordinates source-backed backend-first closure. Historical checklist checkmarks and authored tests are not proof of current release readiness; consult the lane files, GitHub issues and current CI.
 
 ## Local database
 
