@@ -660,7 +660,25 @@ BEGIN
   SELECT cm.college_id
     INTO membership_college
     FROM college_memberships cm
-   WHERE cm.id = NEW.membership_id;
+   WHERE cm.id = NEW.membership_id
+     AND cm.status = 'ACTIVE'
+   FOR SHARE;
+
+  IF membership_college IS NULL THEN
+    RAISE EXCEPTION 'Unknown or inactive faculty membership'
+      USING ERRCODE = '23503';
+  END IF;
+
+  PERFORM 1
+    FROM membership_roles mr
+   WHERE mr.membership_id = NEW.membership_id
+     AND mr.role = 'FACULTY'
+   FOR SHARE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Faculty-course association requires FACULTY role'
+      USING ERRCODE = '23514';
+  END IF;
 
   SELECT d.college_id
     INTO course_college
@@ -668,8 +686,8 @@ BEGIN
     JOIN departments d ON d.id = c.department_id
    WHERE c.id = NEW.course_id;
 
-  IF membership_college IS NULL OR course_college IS NULL THEN
-    RAISE EXCEPTION 'Unknown faculty membership or course'
+  IF course_college IS NULL THEN
+    RAISE EXCEPTION 'Unknown course'
       USING ERRCODE = '23503';
   END IF;
 
@@ -703,8 +721,9 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 --    max 1..500, min <= max, and ordered dates.
 -- 6. Verify every offering has stable program-term identity; CORE course/term mismatches fail
 --    while term-bound ELECTIVE offerings remain supported.
--- 7. Verify a broad faculty-course association can exist before delivery, rejects cross-college
---    links, deactivates historically and cannot duplicate an active pair.
+-- 7. Verify a broad faculty-course association can exist before delivery, requires an ACTIVE
+--    FACULTY membership, rejects cross-college links, deactivates historically and cannot
+--    duplicate an active pair.
 -- 8. Run concurrent promotion with same expected version: exactly one commit must win.
 -- 9. Verify backward/jump promotions fail, immutable history matches the winner, direct
 --    INSERT/UPDATE/DELETE/TRUNCATE of progression events fails, and user deletion only nulls
