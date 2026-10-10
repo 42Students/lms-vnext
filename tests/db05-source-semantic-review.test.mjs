@@ -84,3 +84,23 @@ test("DB05 historical discussion extensions remain unverified", () => {
     assert.equal(item.runtimeDatabaseVerification, "NOT_RUN");
   }
 });
+
+const courseIdentityDraft = readFileSync(
+  join(root, "scripts/sql/db05-course-identity.draft.sql"), "utf8"
+);
+
+test("DB05 course identity keeps slug reserved and short title distinct from code", () => {
+  assert.match(courseIdentityDraft, /NOT a registered migration/i);
+  assert.match(courseIdentityDraft, /ADD COLUMN IF NOT EXISTS short_title varchar\(255\)/);
+  assert.match(courseIdentityDraft, /ADD COLUMN IF NOT EXISTS slug varchar\(64\)/);
+  assert.match(courseIdentityDraft, /CREATE UNIQUE INDEX db05_course_slug_reserved_uq/);
+  assert.match(courseIdentityDraft, /WHERE slug IS NOT NULL/);
+  assert.match(courseIdentityDraft, /lower\(btrim\(short_title\)\)/);
+  assert.match(courseIdentityDraft, /lower\(btrim\(name\)\)/);
+  for (const key of ["course.slug", "course.short_title", "course.short_title_key", "course.course_name_key"]) {
+    const field = review.fields.find((row) => row.source === key);
+    assert.ok(field, key);
+    assert.equal(field.classification, "UNREGISTERED_DRAFT", key);
+    assert.equal(field.semanticVerification, "NOT_VERIFIED", key);
+  }
+});
