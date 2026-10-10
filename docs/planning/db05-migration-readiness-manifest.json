@@ -91,7 +91,9 @@
         "PG_REWATCH_AND_RACE_TESTS",
         "PROGRESS_TOMBSTONE_PER_READER_POLICY",
         "PROGRESS_LATEST_ATTEMPT_BEFORE_DELETION_FILTER",
-        "PROGRESS_MEMBERSHIP_CONTENT_TENANT_NEGATIVE"
+        "PROGRESS_MEMBERSHIP_CONTENT_TENANT_NEGATIVE",
+        "PROGRESS_CONTENT_OFFERING_DELIVERY_TENANT_SAME_COLLEGE",
+        "PROGRESS_UPSTREAM_SCOPE_REPARENT_GUARD"
       ],
       "registered": false,
       "executedAgainstPostgres": false,
@@ -102,6 +104,13 @@
         "sourceOracle": "LearnerContentProgressRepository.countCompletedPerLearner selects MAX(attempt) before filtering is_deleted",
         "consumerVerified": false,
         "postgresVerified": false
+      },
+      "companionSameCollegeDraft": {
+        "path": "scripts/sql/db05-progress-same-college.draft.sql",
+        "purpose": "PROGRESS_MEMBERSHIP_CONTENT_OFFERING_DELIVERY_SAME_COLLEGE_GUARD",
+        "registered": false,
+        "postgresExecuted": false,
+        "note": "Merge into the canonical version-progress migration once. Child write guard does not cover upstream reparenting."
       }
     },
     {
@@ -179,6 +188,18 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "No clean PostgreSQL same-college, wrong-college, deleted-latest, repeat-attempt, and rewatch race evidence."
+    },
+    {
+      "id": "PROGRESS_CONTENT_MEMBERSHIP_SAME_COLLEGE_GUARD",
+      "status": "BLOCKED",
+      "owner": 1,
+      "evidence": "Unregistered companion SQL; validate cross-college parent/section/offering/membership mismatch on disposable PG."
+    },
+    {
+      "id": "PROGRESS_UPSTREAM_REPARENT_INTEGRITY",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Child row write guard alone does not protect existing progress on parent scope reassignment."
     }
   ],
   "sourceReview": {

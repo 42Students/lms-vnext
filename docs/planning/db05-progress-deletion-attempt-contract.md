@@ -31,3 +31,11 @@ This is a source-observed rule for **that counting query only**, not an authoriz
 7. Chat 1 must register numbered migration/schema barrel only after actual disposable PostgreSQL replay, negative tenant/race tests, and application consumer integration evidence.
 
 **Current disposition:** the legacy field remains MISSING_OR_UNPROVEN in the 92-field semantic review despite source evidence; this proposal **does not** mark it VERIFIED or DONE_VERIFIED. The review/decisions/manifest counters are managed independently on latest main to avoid a concurrent overwrite.
+
+## Same-college database integrity companion (staged, not registered)
+
+`scripts/sql/db05-progress-same-college.draft.sql` proposes a **companion-only** trigger for `learner_content_progress`: it resolves the content's offering period college, owning course/department college, actor membership college and optional class-delivery section-period college. It rejects a membership/content from different colleges, mismatched owning course and offering periods, a lesson content whose optional `delivery_id` points to the wrong offering, or a delivery whose section period belongs to a different college. This is a source-based SQL proposal, **not** executed PostgreSQL proof.
+
+The guard is intentionally separate from `db05-version-progress-attempts.draft.sql` during concurrent drafting, but **Chat 1 must fold it into that canonical seven-manifest-draft migration exactly once**, not introduce a competing independent migration. The existing child-row guard is only triggered on progress INSERT or change of `membership_id`/`lesson_content_id`; it does **not** protect upstream reparenting of membership, course, department, offering, section, academic period or lesson content. Constraints/guards on those edges or proven immutability plus transaction-lock/race coverage are required before acceptance.
+
+Negative cases include membership from another college, course department college mismatching offering period, optional content delivery from another offering, optional delivery section in another college, and retroactive scope-changing updates. Do not call this tenant-safe until those tests are executed against disposable PostgreSQL with the full migration journal.
