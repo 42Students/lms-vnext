@@ -1219,6 +1219,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+            ],
+            "observation": "INSERT drive_group + SELECT by recruiter/group; shared_form_json reused for addCollege and jobs link with drive_group_id; not an obsolete unused table.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1252,6 +1262,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+            ],
+            "observation": "INSERT drive_group + SELECT by recruiter/group; shared_form_json reused for addCollege and jobs link with drive_group_id; not an obsolete unused table.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1285,6 +1305,16 @@
               "preserve JSON shape, validation, privacy and producer/consumer semantics"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+            ],
+            "observation": "INSERT drive_group + SELECT by recruiter/group; shared_form_json reused for addCollege and jobs link with drive_group_id; not an obsolete unused table.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1318,6 +1348,16 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+            ],
+            "observation": "INSERT drive_group + SELECT by recruiter/group; shared_form_json reused for addCollege and jobs link with drive_group_id; not an obsolete unused table.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1357,6 +1397,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+            ],
+            "observation": "INSERT drive_group + SELECT by recruiter/group; shared_form_json reused for addCollege and jobs link with drive_group_id; not an obsolete unused table.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -5723,6 +5773,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -5756,6 +5816,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -5789,6 +5859,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -5820,6 +5900,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -5851,6 +5941,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -5882,6 +5982,16 @@
               "enforce status transitions, concurrency and audit history"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -5913,6 +6023,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -5944,6 +6064,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -5977,6 +6107,16 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Learner reschedule intake, TPO decision + reply, slot change and notification; live request state and read.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -6022,6 +6162,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Slot assignments upsert per round/application, reset confirmations on move, notify applicant, read student confirmation.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6055,6 +6205,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Slot assignments upsert per round/application, reset confirmations on move, notify applicant, read student confirmation.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6088,6 +6248,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Slot assignments upsert per round/application, reset confirmations on move, notify applicant, read student confirmation.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6121,6 +6291,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Slot assignments upsert per round/application, reset confirmations on move, notify applicant, read student confirmation.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6152,6 +6332,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Slot assignments upsert per round/application, reset confirmations on move, notify applicant, read student confirmation.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6185,6 +6375,16 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Slot assignments upsert per round/application, reset confirmations on move, notify applicant, read student confirmation.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6218,6 +6418,16 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+            ],
+            "observation": "Slot assignments upsert per round/application, reset confirmations on move, notify applicant, read student confirmation.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -6263,6 +6473,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6296,6 +6518,18 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6329,6 +6563,18 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6362,6 +6608,18 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6393,6 +6651,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6424,6 +6694,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6455,6 +6737,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -6492,6 +6786,25 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
+          },
+          "finalLegacyCodeAudit": {
+            "legacy": "TPO | RECRUITER",
+            "vnext": null,
+            "source": "V193__recruiter_naming.sql and RecruiterDriveWorkService.java",
+            "state": "UNMAPPED_FINAL_LEGACY_CODE",
+            "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
           }
         },
         {
@@ -6523,6 +6836,18 @@
               "enforce status transitions, concurrency and audit history"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+              "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java"
+            ],
+            "observation": "INSERT/SELECT/UPDATE/DELETE round_slot; recruiter proposes slots; TPO confirms; capacity/booked count drives scheduling.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -8593,6 +8918,18 @@
               "postgresExecuted": false,
               "workflowVerified": false
             }
+          },
+          "legacyUsageEvidence": {
+            "status": "DDL_CONFIRMED_CURRENT_READER_PENDING",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+              "src/main/resources/db/migration/V185__tpo_recruiter_settings.sql",
+              "src/main/resources/db/migration/V190__job_types_and_placement_outcomes.sql"
+            ],
+            "observation": "V190 adds college job types/outcome labels; current hub settings source needs JSON producer/consumer follow-up.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8644,6 +8981,18 @@
               "postgresExecuted": false,
               "workflowVerified": false
             }
+          },
+          "legacyUsageEvidence": {
+            "status": "DDL_CONFIRMED_CURRENT_READER_PENDING",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+              "src/main/resources/db/migration/V185__tpo_recruiter_settings.sql",
+              "src/main/resources/db/migration/V190__job_types_and_placement_outcomes.sql"
+            ],
+            "observation": "V190 adds college job types/outcome labels; current hub settings source needs JSON producer/consumer follow-up.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8743,6 +9092,18 @@
               "postgresExecuted": false,
               "workflowVerified": false
             }
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+              "src/main/resources/db/migration/V185__tpo_recruiter_settings.sql",
+              "src/main/resources/db/migration/V190__job_types_and_placement_outcomes.sql"
+            ],
+            "observation": "Current settings hub SELECT / UPSERT reads and writes recruiter approval and access-months settings.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8797,6 +9158,18 @@
               "postgresExecuted": false,
               "workflowVerified": false
             }
+          },
+          "legacyUsageEvidence": {
+            "status": "ACTIVE_PRODUCER_CONSUMER_CONFIRMED_AT_FROZEN_SHA",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+              "src/main/resources/db/migration/V185__tpo_recruiter_settings.sql",
+              "src/main/resources/db/migration/V190__job_types_and_placement_outcomes.sql"
+            ],
+            "observation": "Current settings hub SELECT / UPSERT reads and writes recruiter approval and access-months settings.",
+            "semanticVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -11471,7 +11844,16 @@
     "semanticallyVerified": 0,
     "postgresDbTested": 0,
     "approvedRetirements": 0,
-    "finalLegacyCodeCasesFlagged": 7,
-    "codeCasesSource": "V193__recruiter_naming.sql; no runtime PostgreSQL or consumer certification"
+    "finalLegacyCodeCasesFlagged": 8,
+    "codeCasesSource": "V193__recruiter_naming.sql; no runtime PostgreSQL or consumer certification",
+    "activeLegacyUsageEvidenceRows": 34,
+    "activeLegacyUsageEvidenceBreakdown": {
+      "drive_group": 5,
+      "reschedule_request": 9,
+      "round_assignment": 7,
+      "round_slot": 9,
+      "tpo_college_settings": 4
+    },
+    "legacyUsageEvidenceWarning": "Current source actions observed, not proof of target schema/API behavior, and no PG tests executed. 5 group + 9 slots + 7 assignments + 9 reschedule + 4 settings."
   }
 }
