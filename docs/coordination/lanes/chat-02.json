@@ -10,13 +10,13 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_AUTH_SOURCE_DISPOSITION_AND_INFRA_BLOCKER",
+    "checkpointKind": "DB004_FULL_SOURCE_DISPOSITION_NOT_RUNTIME_VERIFIED",
     "updatedOn": "2026-10-11",
     "observedMainSha": "c48f3dd64fb5591c3ea9d6e3834c66d7e982c689",
-    "lastWorkerMergedSha": "97a34afbd43034e1da9858adcb0d82b23305653f",
+    "lastWorkerMergedSha": "706f5b33fae79b8ca87438eb685c8673eb57cebb",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-004 remains IN_PROGRESS. All 312 DB01 candidates are source-triaged and 0 are runtime-semantic verified. 66/84 identity-provider/session fields now have direct active legacy workflow proof; all 84 have an explicit current-source disposition. vNext currently has Firebase user provisioning plus an idToken→session-cookie bridge, but no checked-in app phone/email sign-in flow proving the active legacy OTP jobs are provider-replaced. Tenant branding/DNS diagnostics, device-session, auth-attempt and cross-host handoff contracts remain staged/unregistered. Recent GitHub CI failures are repository-wide pre-step failures with empty job steps, so no test pass/fail semantics are inferred from them.\nAdditional Chat 2 DB-004: OTP/handoff unregistered candidate composite tenant FKs staged; in-process static 16/16 PASS; source mapping ledger active-workflow count moved to 142/312 with 0 vNext runtime-semantic verified. Authored source-only test, not executed. Legacy user registration ADMIN role risk documented as source-only security exception. W01 promotion approval/DB runner still open.",
+    "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
@@ -99,11 +99,13 @@
     "db01FieldCensus": {
       "candidateTables": 22,
       "fields": 312,
-      "activeSourceWorkflowFields": 142,
-      "reviewedActivenessFields": 162,
+      "activeSourceWorkflowFields": 282,
+      "activePersistenceLifecycleFields": 6,
+      "otherExplicitSourceDispositions": 24,
+      "reviewedActivenessFields": 312,
       "vnextRuntimeSemanticVerified": 0,
-      "interpretation": "Current legacy source table/workflow disposition, NOT VNext semantic parity or independent DB field testing",
-      "sourceLedgerBlob": "96e9f9f47f2d58408ff1bbb680660d1245f65efa"
+      "sourceLedgerBlob": "efedb62f8738798e757186c7143836345405d33a",
+      "interpretation": "312/312 is only current legacy source-disposition; zero fields verified with executed vNext PostgreSQL and workflow tests."
     },
     "tenantDomainTombstoneDraft": {
       "pullRequest": 73,
@@ -156,7 +158,7 @@
     "DB-004 → Chat 1/issue #21: promote only one auth-attempt/handoff schema including parent composite unique/FKs and 2-minute TTL after PG replay; do not mix closed unmerged PR#61/#64.",
     "DB-004 → legacy security review: UserController /register / UserServiceImpl assigns ADMIN role, current security matcher appears only authenticated; no exploitation claim."
   ],
-  "nextAction": "Continue DB-004 within DATABASE only: W01 migration reviewer resolves reset safety and tombstone/branding/DNS/session schema; recover CI; execute and attest 14 DB01 PostgreSQL witnesses plus 3 tombstone static tests; finish 312 candidate field semantic proof, don't count source review as runtime parity.",
+  "nextAction": "Review active-vs-retired source disposition contract with DB02/DB04/DB09 peers and submit narrow W01 migration integration proposal; guard 312 source rows with Node script (execute when CI works); get actual Postgres migration replay and scoped negative tests and Firebase provider acceptance. Do not mark DB004 complete until implemented, then independently verified.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -196,7 +198,9 @@
     "https://github.com/42Students/lms-vnext/blob/main/tests/db01-auth-staging-contract.test.mjs",
     "https://github.com/42Students/lms-vnext/pull/73",
     "https://github.com/42Students/lms-vnext/commit/19ef2488bbe71fdd36408b5ece202ec3c3f3c1fe",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102125261"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102125261",
+    "https://github.com/42Students/lms-vnext/commit/706f5b33fae79b8ca87438eb685c8673eb57cebb",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102174900"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
