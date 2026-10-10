@@ -137,6 +137,22 @@
         "postgresExecuted": false
       },
       "handoffToChat1": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102207455"
+    },
+    "db01SnapshotPresence": {
+      "state": "ONLY_COMMITTED_SNAPSHOT_PHYSICAL_COLUMN_WITNESS",
+      "sourceLedgerBlob": "efedb62f8738798e757186c7143836345405d33a",
+      "snapshotBlob": "31cabc702022145443987286a7d31eb1649f7137",
+      "file": "docs/planning/db01-chat02-snapshot-column-presence.json",
+      "test": "tests/db01-snapshot-column-presence.test.mjs",
+      "comparisonSource": "drizzle/meta/0040_snapshot.json",
+      "totalSourceCandidates": 312,
+      "exactSingleColumnDeclared": 76,
+      "stagedUnregistered": 22,
+      "normalizedExpressionNeedsProof": 18,
+      "noExplicitTarget": 196,
+      "activeSourceNoTarget": 173,
+      "dbRuntimeVerified": 0,
+      "postgresTestsExecuted": 0
     }
   },
   "qualityGates": {
@@ -156,7 +172,8 @@
     "tests/integration/db01-identity-fk-invariants.test.ts",
     "tests/db01-auth-staging-contract.test.mjs",
     "tests/unit/db01-domain-tombstone-contract.test.ts",
-    "tests/db01-integration-manifest.test.mjs"
+    "tests/db01-integration-manifest.test.mjs",
+    "tests/db01-snapshot-column-presence.test.mjs"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -172,9 +189,10 @@
     "DB-004 → Chat 1/issue #21: auth-attempt/device-session/cross-host-handoff artifacts are staged only; select one canonical token-safe shape and register only after CI/PostgreSQL replay is available.",
     "DB-004 → Chat 1/issue #21: promote only one auth-attempt/handoff schema including parent composite unique/FKs and 2-minute TTL after PG replay; do not mix closed unmerged PR#61/#64.",
     "DB-004 → legacy security review: UserController /register / UserServiceImpl assigns ADMIN role, current security matcher appears only authenticated; no exploitation claim.",
-    "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only)."
+    "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
+    "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "After 312/312 legacy source dispositions, unblock DB01 target by coordinating W01 canonical Drizzle migration and Postgres runner; execute repeatable Node manifest/triage scripts and actual DB/identity/tenant negative cases on latest main; only then complete and verify DB-004.",
+  "nextAction": "DB01 312 source dispositions DONE_SOURCE_ONLY; now reconcile 76 physical column candidates/22 staged/18 normalized/196 undecided target fields against actual target semantics, starting high-risk 173 active no explicit target; W01 must promote migration and unblock disposable PG/CI before DB004 can be COMPLETED/DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -219,7 +237,10 @@
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102174900",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-migration-integration-manifest.json",
     "https://github.com/42Students/lms-vnext/blob/main/tests/db01-integration-manifest.test.mjs",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102207455"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102207455",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-snapshot-column-presence.json",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-target-decision-handoff.md",
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-snapshot-column-presence.test.mjs"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
