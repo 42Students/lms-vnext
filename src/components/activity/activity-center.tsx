@@ -155,11 +155,17 @@ export function ActivityCenter({
                       : ""}
                   </p>
                 </div>
-                <span className="max-w-full break-all text-xs text-muted-foreground">
-                  {humanize(
-                    item.event.eventType,
-                  )}
-                </span>
+                <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
+                  <span className="max-w-full break-all text-xs text-muted-foreground">
+                    {humanize(item.event.eventType)}
+                  </span>
+                  <Link
+                    href={`/activity/${item.event.id}`}
+                    className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle"
+                  >
+                    View details
+                  </Link>
+                </div>
               </div>
             </article>
           );

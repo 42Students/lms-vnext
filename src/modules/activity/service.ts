@@ -26,6 +26,7 @@ import {
 } from "@/modules/permissions/policy";
 import { ActivityServiceError } from "./errors";
 import { parseActivityDateBoundary, type ActivityDateBoundary } from "./date-boundary";
+import { sanitizeActivityMetadata } from "./metadata-sanitizer";
 import {
   ACTIVITY_EVENT_TYPES,
   ACTIVITY_IMPORTANCE,
@@ -716,4 +717,68 @@ export function groupActivityEvents<
   }
 
   return groups;
+}
+
+
+/**
+ * Load one activity event through the same tenant boundary as the feed.
+ * Out-of-scope IDs are deliberately indistinguishable from nonexistent IDs.
+ */
+export async function getActivityEventDetail(
+  context: RequestContext,
+  eventIdInput: string,
+) {
+  const eventId = z.string().uuid().parse(eventIdInput);
+  const [row] = await getDb()
+    .select({
+      event: activityEvents,
+      actor: {
+        id: users.id,
+        displayName: users.displayName,
+        email: users.email,
+      },
+    })
+    .from(activityEvents)
+    .leftJoin(users, eq(users.id, activityEvents.actorUserId))
+    .where(eq(activityEvents.id, eventId))
+    .limit(1);
+
+  if (!row) {
+    throw new ActivityServiceError("ACTIVITY_EVENT_NOT_FOUND");
+  }
+
+  if (isSuperAdmin(context)) {
+    const selectedCollege = context.adminScope?.collegeId ?? null;
+    const selectedOrganization = context.adminScope?.organizationId ?? null;
+    if (
+      (selectedCollege && row.event.collegeId !== selectedCollege) ||
+      (!selectedCollege &&
+        selectedOrganization &&
+        row.event.organizationId !== selectedOrganization)
+    ) {
+      throw new ActivityServiceError("ACTIVITY_EVENT_NOT_FOUND");
+    }
+    requirePermission(context, "activity.read", {
+      collegeId: row.event.collegeId,
+      organizationId: row.event.organizationId,
+    });
+  } else if (hasActiveMembership(context)) {
+    requirePermission(context, "activity.read", {
+      collegeId: context.membership!.collegeId,
+      organizationId: context.membership!.organizationId,
+    });
+    if (row.event.collegeId !== context.membership!.collegeId) {
+      throw new ActivityServiceError("ACTIVITY_EVENT_NOT_FOUND");
+    }
+  } else {
+    requirePermission(context, "activity.read");
+  }
+
+  return {
+    event: {
+      ...row.event,
+      metadata: sanitizeActivityMetadata(row.event.metadata),
+    },
+    actor: row.actor?.id ? row.actor : null,
+  };
 }

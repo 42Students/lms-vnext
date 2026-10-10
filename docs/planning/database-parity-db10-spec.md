@@ -138,3 +138,8 @@ Legacy `announcements` (13 source fields including V127 schedule/expiry/pin) now
 ### W06 scheduled-job PostgreSQL authority stage (2026-10-10)
 
 The previously pure scheduled-job lease policy now has an isolated draft table and node-postgres/Drizzle raw-SQL adapter. PostgreSQL `clock_timestamp()` is the authority for claim/renew/current checks; takeover increments an additive fencing token. The draft remains absent from the shared schema barrel and `drizzle/**`; W01 owns migration promotion. No production scheduler is switched over until migration replay + concurrent PG tests + outbox/idempotency/fence evidence pass.
+
+
+### W06 admin audit 13-field reconciliation + detail consumer (2026-10-10)
+
+Legacy `admin_audit_log` is source-reviewed against registered `activity_events`: ID/action/entity/scope/payload/time have concrete targets, actor mobile is a deliberate read-time privacy redesign, and actor role snapshot/IP/User-Agent remain explicit gaps. `getActivityEventDetail` plus `/activity/[eventId]` enforce membership/admin safety scope and sanitize metadata. No schema change was made. Source-reviewed DB10 fields: 88/221; verified: 0/221.

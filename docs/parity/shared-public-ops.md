@@ -329,3 +329,8 @@ Legacy `announcements` is now represented as a distinct DB10 draft model rather 
 ## W06 scheduled-job distributed lease staging — 2026-10-10
 
 A PostgreSQL-backed, fail-closed lease adapter is now source-authored for DB10 scheduled work, using database time, atomic expired-row takeover and monotonically increasing fencing tokens. It is **not active**: `scheduled_job_leases` remains an unregistered draft table and no user-facing scheduler has been rewired. Real concurrency tests are authored but unexecuted. External delivery exactly-once semantics remain OPEN until durable outbox/idempotency is implemented and each irreversible send validates current fence.
+
+
+## W06 Admin audit detail/source reconciliation — 2026-10-10
+
+All 13 legacy `admin_audit_log` fields are now source-reviewed against existing `activity_events`. W06 added tenant-safe event detail and bounded/redacted metadata rendering. Three legacy semantics remain actual persistence gaps: historical actor role/type snapshot, request IP and User-Agent. Actor mobile is an intentional privacy redesign (canonical actor read-time identity, no duplicated/rendered mobile). See `docs/planning/database-parity-db10-admin-audit.md`. DB10 verified field count remains 0; unit/PG/browser evidence is not executed.

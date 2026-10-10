@@ -12,7 +12,7 @@
     "fields": 221,
     "verified": 0,
     "unmapped": 221,
-    "sourceReviewedFields": 75
+    "sourceReviewedFields": 88
   },
   "records": [
     {
@@ -30,14 +30,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Greenfield UUID event identity replacing legacy bigint.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.id",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-02",
@@ -54,14 +72,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Canonical actor user UUID; display identity joined at read time.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.actor_user_id",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-03",
@@ -76,14 +112,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Legacy actor type snapshot has no persisted equivalent today; current roles cannot safely reconstruct historical role state.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.metadata.actorRoleSnapshot (GAP: not currently written)",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-04",
@@ -100,14 +154,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Legacy copied mobile into every audit row. vNext resolves canonical actor identity at read time and intentionally does not expose mobile in Activity Center.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "users.phone_e164 via activity_events.actor_user_id (privacy redesign)",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-05",
@@ -122,14 +194,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Structured action/event key; vNext taxonomy uses namespaced event types.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.event_type",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-06",
@@ -144,14 +234,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Audited entity/resource type.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.subject_type",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-07",
@@ -166,14 +274,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Audited resource ID/key; vNext text supports UUIDs and human-readable keys without legacy 60-char truncation.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.subject_id",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-08",
@@ -190,14 +316,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Explicit organization tenant scope.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.organization_id",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-09",
@@ -214,14 +358,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Explicit college tenant scope.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.college_id",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-10",
@@ -238,14 +400,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Legacy captured request IP; vNext producer API does not currently receive/persist request network context.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.metadata.request.ipAddress (GAP: not currently written)",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-11",
@@ -262,14 +442,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Legacy captured User-Agent; vNext producer API does not currently persist request headers.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.metadata.request.userAgent (GAP: not currently written)",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-12",
@@ -286,14 +484,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Structured producer context; admin detail sanitizes secret/identity-key names before browser rendering.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.metadata",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-13",
@@ -310,14 +526,32 @@
         "activity_events"
       ],
       "mappingTarget": null,
-      "semantics": null,
-      "tenantScope": null,
-      "writers": [],
-      "readers": [],
-      "historyAndDeleteSemantics": null,
+      "semantics": "Event occurrence instant; vNext timestamptz.",
+      "tenantScope": "activity_events.organization_id/college_id; College Admin reads only membership college, Super Admin reads only selected admin scope unless globally unscoped.",
+      "writers": [
+        "src/modules/activity/service.ts:recordActivityEvent",
+        "src/modules/activity/service.ts:recordActivityEventInTransaction"
+      ],
+      "readers": [
+        "src/modules/activity/service.ts:listActivityEvents",
+        "src/modules/activity/service.ts:getActivityEventDetail",
+        "src/app/(authenticated)/activity/page.tsx",
+        "src/app/(authenticated)/activity/[eventId]/page.tsx"
+      ],
+      "historyAndDeleteSemantics": "Append-only meaningful event stream; no user-facing delete. Grouping is a read projection, not destructive compaction.",
       "status": "UNMAPPED",
       "validationEvidence": [],
-      "verifiedLegacySha": null
+      "verifiedLegacySha": null,
+      "proposedTarget": "activity_events.occurred_at",
+      "evidenceScope": "SOURCE_REVIEW_AND_EXISTING_VNEXT_ACTIVITY_CONSUMER_ONLY",
+      "sourceReview": [
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:V61__admin_audit_log.sql",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:model/AdminAuditLog.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:service/AdminAuditLogService.java",
+        "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:repository/AdminAuditLogRepository.java",
+        "42Students/lms-vnext:src/db/schema/activity.ts",
+        "42Students/lms-vnext:src/modules/activity/service.ts"
+      ]
     },
     {
       "id": "DB10-ANNOUNCEMENTS-01",
