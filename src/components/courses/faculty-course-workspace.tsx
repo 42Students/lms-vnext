@@ -7,6 +7,8 @@ import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
+import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
+import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 import {
   facultyOwnedItemActions,
   nextLessonItemSequence,
@@ -324,8 +326,12 @@ function QuizItem({
 
 export function FacultyCourseWorkspace({
   workspace,
+  homeSignals,
 }: {
   workspace: Workspace;
+  homeSignals: Awaited<
+    ReturnType<typeof getFacultyCourseHomeSignals>
+  >;
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -336,6 +342,11 @@ export function FacultyCourseWorkspace({
         eyebrow="Faculty · Course"
         title={course.courseName}
         description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
+      />
+
+      <FacultyCourseHomeSignals
+        signals={homeSignals}
+        deliveryId={course.deliveryId}
       />
 
       <section className="rounded-xl border border-border bg-surface p-5">
@@ -407,7 +418,7 @@ export function FacultyCourseWorkspace({
         />
       ) : (
         <>
-          <section className="rounded-xl border border-border bg-surface p-5">
+          <section id="learning-path" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
