@@ -720,3 +720,42 @@ Groups:
 - [ ] keyboard activation works.
 - [ ] mobile navigation uses this page where legacy does.
 - [ ] no secondary tool becomes unreachable on small screens.
+
+
+## W05 CRM implementation checkpoint — 2026-10-10 (not final parity)
+
+**Verified source heads:** `lms/prod-2026@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`,
+`lms2-fe/prod-2026@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`.
+Current source routes were renamed to `/tpo/recruiters` and
+`/tpo/recruiters/[recruiterLeadId]` (historical `/tpo/leads` path is a
+stale matrix alias). The new vNext routes use UUID `leadId` values.
+
+Implemented **code only**, behind `DB09_TPO_API_READY=DB09_VERIFIED`:
+- table (manual-stage only), basic searchable Board, college-scoped add form and
+  preflight duplicate lookup; server-side DB uniqueness remains the authority;
+- recruiter detail, safe contact editing without implicit contact deletion,
+  activity logging/timeline, follow-ups and done action, Not Now;
+- abort-on-navigation to prevent stale detail display, hard error / retry states,
+  phone/email actions, basic responsive layout, protected server account route;
+- W05 unit schema tests + **opt-in** PostgreSQL scenarios for contacts, concurrency
+  and cross-college denial, and route gate assertions.
+
+**Do not check off the above parity checkboxes yet**: database migrations are
+not registered by W01, API responds HTTP 503, no browser/device evidence and
+no executed typecheck/DB tests. This is a PARTIAL source implementation, not
+a working release. Remaining legacy `/tpo/recruiters` gaps include derived
+Invited/Joined/Drive Planned/Recruited stages, column/owner/source/follow-up
+and quiet filters, saved views, bulk actions, import preview/undo, invitation
+issuance and acceptance, Companies aggregate view, stage drag semantics,
+recruiter page company/drives panels, follow-up rescheduling UI, timeline
+pagination, unsubscribe semantics, mobile accessibility/focus-trap verification,
+outreach analytics, read receipts and report/setting workflows. Also confirm
+that dashboard "Needs You" and team settings consume the same persisted
+recruiter/follow-up data once live. Do not infer their closure from this route.
+
+**Dependencies:** W01 owns promotion of staged `tpo-crm.ts` /`tpo-policy.ts`
+schemas into generated registered Drizzle migrations and disposable PostgreSQL
+tests; W04 owns Drive linkage and applicant/offer-derived recruiter stages;
+W06 owns outbound invite email/SMS notification delivery contract. W05 owns
+the invite token lifecycle and CRM UI, but must coordinate W01 identity and
+W06 transport to activate invite acceptance safely.
