@@ -1,3 +1,5 @@
+import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects-unavailable";
+import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectList } from "@/components/projects/project-list";
@@ -10,6 +12,9 @@ export default async function MentorProjectsPage() {
   if (!hasMembershipRole(context, "MENTOR")) {
     redirect("/dashboard");
   }
+
+  const available = await resolveOptionalModuleAccess(context).catch(() => null);
+  if (available?.projects.enabled !== true) return <MentorProjectsUnavailable />;
 
   const rows = (
     await listMyProjectInstances(context)
