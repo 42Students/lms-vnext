@@ -87,7 +87,12 @@ export async function getFacultyClassSchedule(context: RequestContext) {
       inArray(sectionScheduleEvents.sectionId, sectionIds),
       or(
         isNull(sectionScheduleEventCourses.deliveryId),
-        inArray(sectionScheduleEventCourses.deliveryId, deliveryIds),
+        and(
+          inArray(sectionScheduleEventCourses.deliveryId, deliveryIds),
+          // Fail closed if a malformed raw-SQL event/course link points at
+          // a delivery in another Section, even one this Faculty also teaches.
+          eq(courseSectionDeliveries.sectionId, sectionScheduleEvents.sectionId),
+        ),
       ),
     ))
     .orderBy(asc(sectionScheduleEvents.startsAt));
