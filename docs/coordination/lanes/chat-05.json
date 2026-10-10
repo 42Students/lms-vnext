@@ -10,13 +10,13 @@
   "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB015_RACE_INVENTORY_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB015_RACE_INVENTORY_EXPANDED_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "b5c7ced00d34db13f4c189392f4e577f8234571c",
-    "lastWorkerMergedSha": "4bbb16b2cf2603764873e68cd061281de343bc85",
+    "observedMainSha": "a1cb921b86bf8ffe063ec42fb828da540edddaca",
+    "lastWorkerMergedSha": "7abfea349617109528e4f8e81026cd6508836064",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-015 source audit completed with 10 explicit NOT_RUN concurrency probes: 2 source-confirmed stale-check gaps (placements/academics), 5 source-protected flows needing execution, 3 shared-ops draft-unimplemented races. No PostgreSQL race test passed."
+    "summary": "DB-015 completed with 23 source-audited race/transition witnesses: 13 source-protected NOT_RUN, 3 source-protected only in unmigrated drafts, and 7 implementation/policy/dispatcher blockers. Zero runtime race probes executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,13 +30,17 @@
     "tests/integration/groups-db03.test.ts: legacy empty-config waitlist/self-leave defaults",
     "tests/integration/groups-db03.test.ts: locked REMOVED self-block + admin revival lock preservation",
     "tests/integration/groups-db03.test.ts: elective move lock preservation and default waitlist behavior",
-    "tests/db-parity-pass5.test.mjs: DB15 10 race probes stay NOT_RUN and preserve explicit gap/protected/draft states (authored, not executed)"
+    "tests/db-parity-pass5.test.mjs: DB15 23 race probes remain NOT_RUN, source paths exist, and blocker/state counts stay explicit (authored, not executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "DB015: P5-R01 placement application learner participation/eligibility can change after precheck and before insert; implementation fix belongs placement writer.",
-    "DB015: P5-R02 academic cohort can transition after enrollment precheck and before learner enrollment insert; implementation fix belongs DB02/academics writer.",
-    "DB015: all 10 race probes remain NOT_RUN until disposable PostgreSQL/CI execution is available."
+    "DB015 P5-R01: learner placement application can race paid-module/inherited-eligibility revocation after precheck.",
+    "DB015 P5-R02: learner enrollment can race cohort lifecycle transition after precheck.",
+    "DB015 P5-R09/R21: outbound queue has enqueue idempotency/suppression protection but no verified dispatcher claim/pre-send suppression state machine.",
+    "DB015 P5-R10: log-alert persistence is draft-only with no verified runtime producer.",
+    "DB015 P5-R11: academic schedule create/update can race ACTIVE->CLOSED period transition.",
+    "DB015 P5-R22: concurrent schedule edits have no explicit optimistic-version/lost-update policy.",
+    "All 23 DB015 race witnesses remain NOT_RUN until disposable PostgreSQL execution is available."
   ],
   "handoffs": [
     "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55.",
@@ -44,7 +48,7 @@
     "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
     "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified."
   ],
-  "nextAction": "Refresh shared DATABASE queue and CAS-pick the next eligible task. Do not revisit DB-015 implementation unless verifying its witnesses or coordinating the two domain-owner fixes.",
+  "nextAction": "Refresh the shared DATABASE queue and CAS-pick the next eligible task. Do not patch DB02 academic gaps while Chat 4 owns DB-005; preserve DB-015 as COMPLETED but not DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
