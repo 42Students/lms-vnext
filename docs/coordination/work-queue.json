@@ -175,10 +175,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "a8bd5e98e06ed19079aaec7befa9395184061f0e",
+      "latestEvidenceSha": "97a34afbd43034e1da9858adcb0d82b23305653f",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "IN PROGRESS; 312/312 candidates source-triaged; staged DB01 branding & DNS diagnostics not integrated, tenant domain recheck/soft-delete lifecycle mismatches and cross-domain recruiter grant expiry source gap documented; no executed CI/Postgres tests, 0 runtime-semantic fields verified.",
+      "completionNote": "STILL IN_PROGRESS: 312 candidates source triaged; latest shared source oracle records 23 workflow-confirmed source fields and 18 repository-only source fields (not vNext verified). Tenant branding/DNS and device-session drafts are unregistered. Legacy FACULTY arbitrary session revocation bug documented as security exception, W01 handoff. No CI/Postgres tests or migrations executed; 0 vNext runtime-semantic verified.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
