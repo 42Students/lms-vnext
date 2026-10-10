@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
+import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import { evaluatePlacementEligibility } from "@/modules/placements/eligibility-service";
 
 export const runtime = "nodejs";
@@ -15,6 +16,7 @@ export async function GET(
 ) {
   try {
     const context = await getCurrentRequestContext();
+    await requireLearnerPlacementAccess(context);
     const { jobId } = await params;
     const eligibility =
       await evaluatePlacementEligibility(
