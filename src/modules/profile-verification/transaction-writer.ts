@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents, collegeMemberships, colleges, inAppNotifications, learnerProfiles, membershipRoles, systemRoles, users } from "@/db/schema";
-import { learnerPrivateDocumentReceipts, profileVerificationEvents, profileVerifications, profileVerificationSettings, profileVerificationTpoGrants } from "@/db/schema/profile-verification";
+import { profilePrivateDocumentReceipts, profileVerificationEvents, profileVerifications, profileVerificationSettings, profileVerificationTpoGrants } from "@/db/schema/profile-verification";
 import {
   VerificationStateError,
   type Transition,
@@ -65,9 +65,9 @@ export const postgresLockedVerificationTransition: LockedTransition =
       await tx.select({membershipId:learnerProfiles.membershipId})
         .from(learnerProfiles).where(eq(learnerProfiles.membershipId,membershipId))
         .for("share");
-      await tx.select({id:learnerPrivateDocumentReceipts.id})
-        .from(learnerPrivateDocumentReceipts)
-        .where(eq(learnerPrivateDocumentReceipts.owningMembershipId,membershipId))
+      await tx.select({id:profilePrivateDocumentReceipts.id})
+        .from(profilePrivateDocumentReceipts)
+        .where(eq(profilePrivateDocumentReceipts.owningMembershipId,membershipId))
         .for("share");
       const [stored] = await tx.select().from(profileVerifications).where(and(
         eq(profileVerifications.learnerMembershipId, membershipId),
