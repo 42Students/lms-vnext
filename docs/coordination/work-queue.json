@@ -1144,6 +1144,42 @@
           "reason": "Bounded DB08 schema contract staged; runtime and integrator verification explicitly pending."
         }
       ]
+    },
+    {
+      "id": "DB-022",
+      "phase": "DATABASE",
+      "title": "Preserve DB10 skill alias and independent usage persistence",
+      "scope": "Reconcile legacy SkillRepository and SkillUsageTracker; preserve independent name-keyed usage table and multiple-skill synonym matching; stage non-journalled Drizzle/SQL with a static witness contract.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/db10-skills-catalog.draft.ts",
+        "scripts/sql/db10-skills-catalog-staging.sql",
+        "docs/planning/database-parity-db10-skills-contract.md",
+        "tests/db10-skills-staging.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Active DB10 draft has source parity regressions: global synonym uniqueness and collapse of independently persisted skill_usage counter."
+        }
+      ]
     }
   ],
   "eventModel": {
