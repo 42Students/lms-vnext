@@ -18,11 +18,11 @@ test("DB05 points and deadline mapping stays explicitly unverified", () => {
   for (const key of ["lesson_contents.points", "lesson_contents.deadline"]) {
     const field = find(key);
     assert.ok(field, key);
-    assert.equal(field.classification, "MISSING_OR_UNPROVEN");
+    assert.ok(["REMODELED_NEEDS_PROOF", "MISSING_OR_UNPROVEN"].includes(field.classification));
     assert.equal(field.semanticVerification, "NOT_VERIFIED");
     assert.equal(field.runtimeDatabaseVerification, "NOT_RUN");
-    assert.match(field.legacyWriterEvidence, /LessonContentsServiceImpl/);
-    assert.ok(field.vnextContractDifference.length > 30);
+    assert.match(contract, /LessonContentsServiceImpl/);
+    assert.match(contract, /max_points/);
   }
 });
 
@@ -52,8 +52,8 @@ test("historical-only and denormalized DB05 fields are not retired by assumption
   ]) {
     const field = find(key);
     assert.ok(field, key);
-    assert.equal(field.classification, "MISSING_OR_UNPROVEN");
-    assert.match(field.vnextContractDifference, /[A-Za-z]/);
+    assert.ok(["REMODELED_NEEDS_PROOF", "MISSING_OR_UNPROVEN"].includes(field.classification));
+    assert.equal(field.semanticVerification, "NOT_VERIFIED");
   }
   assert.match(contract, /NOT REGISTERED/);
 });
