@@ -113,16 +113,16 @@ Required witnesses include team-member A reading without clearing B, recruiter/T
 
 ## Remaining previously-reviewed blockers
 
-The earlier 188-field pass still carries three blockers:
-1. `tpo_message.sender_type`: final source/DB contract is `RECRUITER`, while current vNext producer still emits `HR`.
+The earlier pass had three blockers. All three have now been narrowed:
+1. `tpo_message.sender_type`: current vNext `tpo-messaging-service.ts` now produces `TPO|RECRUITER`, matching final V193 and the staged DB CHECK. It is MAPPED, still not runtime verified.
 2. `tpo_college_settings.job_types_json`
 3. `tpo_college_settings.outcome_labels_json`
 
-The two settings now have staged SQL in `db09-job-outcome-settings-candidate.sql`; they may move from BLOCKED to MAPPED-at-staged-design level. The message producer mismatch stays BLOCKED until the producer and database vocabulary move atomically.
+The two settings map to staged `db09-job-outcome-settings-candidate.sql` and are MAPPED at design level only.
 
 ## Gate
 
-After this pass the canonical DB09 ledger may reach **279/279 disposition-reviewed**, but:
+After this pass the canonical DB09 ledger reaches **279/279 disposition-reviewed**: **193 MAPPED, 65 REDESIGNED, 21 BLOCKED, 0 verified**. However:
 - **0/279 remain DB/runtime verified**;
 - no PostgreSQL replay was executed;
 - no numbered migration was registered by Chat 3;
