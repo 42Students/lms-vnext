@@ -41,6 +41,8 @@ Legacy batch `startDate` / `endDate` are nullable and independently editable. Th
 
 DB02 stages nullable `cohorts.start_date` and `cohorts.end_date` with `end_date >= start_date` when both are present. Period references continue to bound academic scheduling; the dates preserve the existing batch CRUD contract.
 
+Legacy batch status is also a persisted editable contract: `ACTIVE | INACTIVE | COMPLETED`. `INACTIVE` is reversible through ordinary admin update, so vNext `ARCHIVED` cannot stand in for it. DB02 stages `INACTIVE` as an additional cohort status while retaining vNext's `PLANNED` and `ARCHIVED` states for richer lifecycle workflows. Compatibility producers must preserve re-activation from `INACTIVE`.
+
 ### Class/section CRUD state
 
 Legacy class CRUD still persists:
@@ -194,7 +196,7 @@ These may ultimately be normalized into `course_teaching_assignments`, deliverie
 
 - program terms and ordered curriculum mappings;
 - stable program-term identity on every course offering, with CORE curriculum enforcement;
-- cohort lifecycle dates plus section description/minimum-capacity parity;
+- reversible legacy `INACTIVE` cohort state, cohort lifecycle dates, and section description/minimum-capacity parity;
 - cohort progression state + immutable history;
 - lecture halls and schedule hall linkage;
 - broad faculty-course association pool independent of deliveries;
