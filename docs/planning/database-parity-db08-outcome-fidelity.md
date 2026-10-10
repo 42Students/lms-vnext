@@ -23,14 +23,17 @@ Checks staged in PostgreSQL: nonblank optional labels/details, nonnegative packa
 
 ## PostgreSQL acceptance scenarios — ALL NOT_RUN
 
-- **DB21-01/02:** true and false placed-count policies are both retained; job-type defaults plus explicit drive override are persisted; held-offer/placed totals read the column.
-- **DB21-03/04/05:** outcome labels/details round trip and are recorded in before/after immutable event history, with optimistic-version and rollback enforcement.
-- **DB21-06:** direct SQL negative package/bond values are rejected.
-- **DB21-07:** imported-acceptance dispute window is rejected without EXTERNAL_IMPORT channel.
-- **DB21-08:** LOI/OFFER kind allowed, invalid offer kind rejected.
-- **DB21-09:** concurrent issue/accept/dispute cannot duplicate accepted or active offers or lose a cascade/undo event.
-- **DB21-10:** wrong-tenant registration or offer foreign parents are rejected by database protections.
-- **DB21-11:** numbered migration replay from zero and Drizzle schema/catalog drift pass against disposable PostgreSQL.
+- **DB21-01:** persisted `counts_as_placed=false` stays false through edit/report; true drives still count.
+- **DB21-02:** college job-type defaults and explicit per-drive overrides persist independently of `employment_type`, including internships.
+- **DB21-03:** non-placement outcome label/detail round-trip at full field lengths without truncation.
+- **DB21-04:** choosing HIGHER_STUDIES then COMPETITIVE_EXAMS records before/after choice, label and detail atomically.
+- **DB21-05:** version conflict or failed registration update rolls back both current row and immutable history event.
+- **DB21-06:** negative salary/bonus/bond amounts or negative bond months fail direct PostgreSQL constraints.
+- **DB21-07:** accepted-disputable-until without EXTERNAL_IMPORT acceptance channel fails.
+- **DB21-08:** LOI and OFFER kinds pass; invalid kind fails.
+- **DB21-09:** concurrent offer issue/accept/dispute does not produce duplicate active offers or lost cascade/undo evidence.
+- **DB21-10:** wrong-college registration and offer-parent mutation fails DB tenant/parent constraints.
+- **DB21-11:** full numbered migration replay, catalog drift and negative SQL witness pass against disposable PostgreSQL.
 
 ## Handoff and blockers
 
