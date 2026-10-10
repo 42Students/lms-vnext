@@ -97,6 +97,87 @@ BEFORE INSERT OR UPDATE OF program_term_id, course_id ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_tenant();
 
 -- ---------------------------------------------------------------------------
+-- 1b) Stable program-term identity on course offerings
+-- ---------------------------------------------------------------------------
+-- academic_period_id is calendar identity. program_term_id is the stable program-specific
+-- curriculum term identity required by promotion, teaching history and elective eligibility.
+ALTER TABLE course_offerings
+  ADD COLUMN program_term_id uuid NOT NULL
+  REFERENCES program_terms(id) ON DELETE RESTRICT;
+
+CREATE INDEX course_offerings_program_term_idx
+  ON course_offerings(program_term_id, status);
+
+CREATE FUNCTION db02_guard_course_offering_program_term_scope()
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  term_program uuid;
+  cohort_program uuid;
+  cohort_college uuid;
+  course_college uuid;
+  period_college uuid;
+BEGIN
+  SELECT pt.program_id
+    INTO term_program
+    FROM program_terms pt
+   WHERE pt.id = NEW.program_term_id;
+
+  SELECT c.program_id, d.college_id
+    INTO cohort_program, cohort_college
+    FROM cohorts c
+    JOIN programs p ON p.id = c.program_id
+    JOIN departments d ON d.id = p.department_id
+   WHERE c.id = NEW.cohort_id;
+
+  SELECT d.college_id
+    INTO course_college
+    FROM courses crs
+    JOIN departments d ON d.id = crs.department_id
+   WHERE crs.id = NEW.course_id;
+
+  SELECT ap.college_id
+    INTO period_college
+    FROM academic_periods ap
+   WHERE ap.id = NEW.academic_period_id;
+
+  IF term_program IS NULL OR cohort_program IS NULL OR cohort_college IS NULL
+     OR course_college IS NULL OR period_college IS NULL THEN
+    RAISE EXCEPTION 'Unknown course offering academic scope'
+      USING ERRCODE = '23503';
+  END IF;
+
+  IF term_program <> cohort_program THEN
+    RAISE EXCEPTION 'Course offering term must belong to the cohort program'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF course_college <> cohort_college OR period_college <> cohort_college THEN
+    RAISE EXCEPTION 'Course offering course, cohort and period must belong to one college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  -- CORE delivery must be backed by canonical curriculum. ELECTIVE delivery is still
+  -- term-bound, but legacy electives can select a course outside the fixed semester-course list.
+  IF NEW.type = 'CORE' AND NOT EXISTS (
+    SELECT 1
+      FROM program_term_courses ptc
+     WHERE ptc.program_term_id = NEW.program_term_id
+       AND ptc.course_id = NEW.course_id
+  ) THEN
+    RAISE EXCEPTION 'Core course offering must belong to the selected program-term curriculum'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_course_offering_program_term_guard
+BEFORE INSERT OR UPDATE OF course_id, cohort_id, academic_period_id, type, program_term_id
+ON course_offerings
+FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_program_term_scope();
+
+-- ---------------------------------------------------------------------------
 -- 2) Canonical cohort progression state + immutable history
 -- ---------------------------------------------------------------------------
 CREATE TABLE cohort_progression_state (
@@ -464,6 +545,67 @@ ALTER TABLE section_schedule_events
   ) WHERE (status = 'SCHEDULED' AND lecture_hall_id IS NOT NULL);
 
 -- ---------------------------------------------------------------------------
+-- 4) Broad faculty-course association pool
+-- ---------------------------------------------------------------------------
+-- Distinct from course_teaching_assignments: legacy admins can associate faculty with a
+-- course before a class/delivery assignment exists, and course-scoped flows query this pool.
+CREATE TABLE faculty_course_associations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  membership_id uuid NOT NULL REFERENCES college_memberships(id) ON DELETE RESTRICT,
+  course_id uuid NOT NULL REFERENCES courses(id) ON DELETE RESTRICT,
+  started_at timestamptz NOT NULL DEFAULT now(),
+  ended_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT faculty_course_associations_lifecycle_ck
+    CHECK (ended_at IS NULL OR ended_at >= started_at)
+);
+
+CREATE UNIQUE INDEX faculty_course_associations_active_uq
+  ON faculty_course_associations(membership_id, course_id)
+  WHERE ended_at IS NULL;
+
+CREATE INDEX faculty_course_associations_course_active_idx
+  ON faculty_course_associations(course_id, membership_id)
+  WHERE ended_at IS NULL;
+
+CREATE FUNCTION db02_guard_faculty_course_association_scope()
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  membership_college uuid;
+  course_college uuid;
+BEGIN
+  SELECT cm.college_id
+    INTO membership_college
+    FROM college_memberships cm
+   WHERE cm.id = NEW.membership_id;
+
+  SELECT d.college_id
+    INTO course_college
+    FROM courses c
+    JOIN departments d ON d.id = c.department_id
+   WHERE c.id = NEW.course_id;
+
+  IF membership_college IS NULL OR course_college IS NULL THEN
+    RAISE EXCEPTION 'Unknown faculty membership or course'
+      USING ERRCODE = '23503';
+  END IF;
+
+  IF membership_college <> course_college THEN
+    RAISE EXCEPTION 'Faculty-course association must stay within one college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_faculty_course_association_scope_guard
+BEFORE INSERT OR UPDATE OF membership_id, course_id
+ON faculty_course_associations
+FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
+
+-- ---------------------------------------------------------------------------
 -- Registration / acceptance notes
 -- ---------------------------------------------------------------------------
 -- Before registration:
@@ -471,9 +613,13 @@ ALTER TABLE section_schedule_events
 -- 2. Express these tables/columns in Drizzle schema under Chat 1 ownership.
 -- 3. Keep program_term_courses.display_order 1-based as the active legacy service does; do not add
 --    a uniqueness constraint until reorder concurrency has executed acceptance evidence.
--- 4. Verify direct SQL cannot create cross-college term/course/period/hall links.
--- 5. Run concurrent promotion with same expected version: exactly one commit must win.
--- 6. Verify backward/jump promotions fail and immutable history matches the winner.
--- 7. Verify same-resource overlap fails while back-to-back [start,end) sessions succeed.
--- 8. Verify CANCELLED events release the scheduling resource while attendance/history remains.
--- 9. No production data backfill is required: vNext is greenfield.
+-- 4. Verify direct SQL cannot create cross-college term/course/period/hall/faculty-association links.
+-- 5. Verify every offering has stable program-term identity; CORE course/term mismatches fail
+--    while term-bound ELECTIVE offerings remain supported.
+-- 6. Verify a broad faculty-course association can exist before delivery, rejects cross-college
+--    links, deactivates historically and cannot duplicate an active pair.
+-- 7. Run concurrent promotion with same expected version: exactly one commit must win.
+-- 8. Verify backward/jump promotions fail and immutable history matches the winner.
+-- 9. Verify same-resource overlap fails while back-to-back [start,end) sessions succeed.
+-- 10. Verify CANCELLED events release the scheduling resource while attendance/history remains.
+-- 11. No production data backfill is required: vNext is greenfield.
