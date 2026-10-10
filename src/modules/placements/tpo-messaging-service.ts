@@ -48,7 +48,7 @@ export class TpoMessagingError extends Error {
 }
 
 type MessagingActor = {
-  type: "TPO" | "HR";
+  type: "TPO" | "RECRUITER";
   userId: string;
   collegeId: string;
   recruiterUserId: string | null;
@@ -149,7 +149,7 @@ async function readActor(
     throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
   }
   return {
-    type: "HR",
+    type: "RECRUITER",
     userId: context.user.id,
     collegeId,
     recruiterUserId: context.user.id,
@@ -207,7 +207,7 @@ async function mutationActor(
     throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
   }
   return {
-    type: "HR",
+    type: "RECRUITER",
     userId: context.user.id,
     collegeId,
     recruiterUserId: context.user.id,
@@ -370,7 +370,7 @@ export async function openRecruiterMessageThread(
   input: { collegeId: string; jobId?: string | null },
 ) {
   const actor = await readActor(context, input.collegeId);
-  if (actor.type !== "HR" || !actor.recruiterUserId) {
+  if (actor.type !== "RECRUITER" || !actor.recruiterUserId) {
     throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
   }
   const job = await assertJobForThread(
@@ -381,7 +381,7 @@ export async function openRecruiterMessageThread(
   );
   return getDb().transaction(async (tx) => {
     const persisted = await mutationActor(tx, context, actor.collegeId);
-    if (persisted.type !== "HR" || !persisted.recruiterUserId) {
+    if (persisted.type !== "RECRUITER" || !persisted.recruiterUserId) {
       throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
     }
     const lockedJob = await assertJobForThread(
@@ -408,7 +408,7 @@ export async function listMessageThreads(
   const conditions = [
     eq(placementTpoMessageThreads.collegeId, actor.collegeId),
   ];
-  if (actor.type === "HR") {
+  if (actor.type === "RECRUITER") {
     conditions.push(
       eq(
         placementTpoMessageThreads.recruiterUserId,
@@ -443,12 +443,12 @@ export async function listThreadMessages(
     }
     const actor = await mutationActor(tx, context, thread.collegeId);
     if (
-      actor.type === "HR" &&
+      actor.type === "RECRUITER" &&
       actor.userId !== thread.recruiterUserId
     ) {
       throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
     }
-    if (actor.type === "HR" && thread.jobId) {
+    if (actor.type === "RECRUITER" && thread.jobId) {
       await assertJobForThread(
         tx,
         actor.collegeId,
@@ -510,12 +510,12 @@ export async function sendThreadMessage(
 
     const actor = await mutationActor(tx, context, thread.collegeId);
     if (
-      actor.type === "HR" &&
+      actor.type === "RECRUITER" &&
       actor.userId !== thread.recruiterUserId
     ) {
       throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
     }
-    if (actor.type === "HR" && thread.jobId) {
+    if (actor.type === "RECRUITER" && thread.jobId) {
       await assertJobForThread(
         tx,
         actor.collegeId,
