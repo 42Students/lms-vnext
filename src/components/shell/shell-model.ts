@@ -111,9 +111,26 @@ const learnerItems: ShellNavItem[] = [
 
 const facultyItems: ShellNavItem[] = [
   {
-    label: "Teaching Courses",
+    label: "Courses",
     href: "/teach/courses",
-    shortLabel: "T",
+    shortLabel: "C",
+    group: "learning",
+  },
+  {
+    label: "All Quizzes",
+    href: "/teacher/allQuizzes",
+    shortLabel: "Q",
+    icon: "/assets/images/common/quiz.svg",
+    activeIcon: "/assets/images/common/quiz-active.svg",
+    group: "learning",
+  },
+  {
+    label: "All Assignments",
+    href: "/teacher/allAssignments",
+    shortLabel: "A",
+    icon: "/assets/images/common/assignment.svg",
+    activeIcon: "/assets/images/common/assignment-active.svg",
+    group: "learning",
   },
 ];
 
