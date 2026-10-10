@@ -43,6 +43,18 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.assignment.published",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
+  // Lifecycle events are emitted only after W03's persisted mutation succeeds.
+  // W06 owns the shared names; W03 owns actor authorization and the mutation.
+  PROJECTS_PROJECT_ARCHIVED:
+    "projects.project.archived",
+  PROJECTS_PROJECT_RESTORED:
+    "projects.project.restored",
+  PROJECTS_PROJECT_DELETED:
+    "projects.project.deleted",
+  PROJECTS_MENTOR_REASSIGNED:
+    "projects.mentor.reassigned",
+  PROJECTS_READINESS_OVERRIDDEN:
+    "projects.readiness.overridden",
   PROJECTS_TASK_SUBMITTED:
     "projects.task.submitted",
   PROJECTS_EVALUATION_RECORDED:
@@ -83,6 +95,9 @@ export type ActivityEventType =
 const highImportance = new Set<ActivityEventType>([
   ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_SUSPENDED,
   ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_ENDED,
+  ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED,
+  ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_DELETED,
+  ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN,
   ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_ISSUED,
   ACTIVITY_EVENT_TYPES.PLACEMENTS_JOINING_RECORDED,
 ]);

@@ -1,0 +1,11 @@
+# W06 → W03 shared Project lifecycle audit contract
+
+**Created:** 2026-10-10 IST | **Owner:** W06, issue #26 | **Consumer:** W03, issue #23
+
+The shared taxonomy in `src/modules/activity/taxonomy.ts` now accepts the exact new event keys `PROJECTS_PROJECT_ARCHIVED`, `PROJECTS_PROJECT_RESTORED`, `PROJECTS_PROJECT_DELETED`, `PROJECTS_MENTOR_REASSIGNED`, and `PROJECTS_READINESS_OVERRIDDEN`. These identifiers have stable `projects.*` stored values, pass `recordActivityEvent*()` enum validation and group under the existing PROJECTS module. Archive/delete/readiness override default to HIGH importance; restore and reassign default to NORMAL.
+
+**W03's producer contract:** After W03's actual authorization, state transition and persisted mutation succeed, call `recordActivityEventInTransaction(tx, context, { eventType: ACTIVITY_EVENT_TYPES.PROJECTS_..., collegeId: persistedCollegeId, organizationId: persistedOrganizationId, subjectType: "project_instance", subjectId: persistedInstanceId, summary: plainTextSummary, groupKey: "projects:instance:" + persistedInstanceId, metadata: { ...nonSensitiveChangedFields } })` in the *same transaction*. The event type does not grant permission: W03 must authorize before calling the shared emitter. Never put student PII, raw invitation tokens, attachment URLs or secrets in summary/metadata. For mentor reassignment, prefer actor and changed-field summary without exposing private contact data. Scope comes from persisted project membership, **never from the caller's body**. Do not emit after an unsuccessful/stale/archive-conflicted mutation.
+
+**Notifications:** The taxonomy itself creates *no notification*. W03 chooses authorized recipients from persisted project membership/assignment and calls W06 `deliverInAppNotificationInTransaction` only with a matching tenant-scoped event, exactly once per recipient. Domain-specific recipient decisions remain W03-owned. Do not imply email or push sends are complete.
+
+**Tests authored:** `tests/unit/project-lifecycle-audit-taxonomy.test.ts` checks exact names, unique values and importance. **Not executed in this GitHub authoring environment**; do not mark producer→consumer tests or browser parity CLOSED. W03 still owns workflow integration and DB/security/browser verification. No `drizzle/**` or shared barrel migration was touched.
