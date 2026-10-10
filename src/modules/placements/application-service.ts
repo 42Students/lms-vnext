@@ -479,6 +479,7 @@ export async function listOwnPlacementApplications(
   const membership = requireLearnerMembership(
     context,
   );
+  await requireLearnerPlacementAccess(context);
 
   return getDb()
     .select({
@@ -592,6 +593,7 @@ export async function getPlacementApplication(
       row.application.membershipId &&
     hasMembershipRole(context, "LEARNER")
   ) {
+    await requireLearnerPlacementAccess(context);
     return row;
   }
 
@@ -624,6 +626,9 @@ export async function withdrawPlacementApplication(
     throw new AuthorizationError("placements.read");
   }
 
+  // Loss of placement access never deletes past applications, but self
+  // withdrawal is no longer exposed while placement participation is denied.
+  await requireLearnerPlacementAccess(context);
   if (row.application.status === "WITHDRAWN") {
     return row.application;
   }
