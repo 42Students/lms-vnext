@@ -204,6 +204,10 @@ const expectedOwnActors = {
     "superadmin",
     "collegeAdmin",
   ],
+  "profile.self.manage": [
+    "learner",
+    "faculty",
+  ],
   "system-role.manage": [
     "superadmin",
   ],
