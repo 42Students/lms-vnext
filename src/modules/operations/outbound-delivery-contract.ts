@@ -1,0 +1,94 @@
+import { z } from "zod";
+
+/**
+ * Shared W06 outbound intent. Producers own permission checks; this contract
+ * is not an authorization shortcut or a send API.
+ * Never log inputs: invitationUrl can contain a single-use bearer credential.
+ */
+export const OUTBOUND_CHANNELS = ["EMAIL", "SMS", "WHATSAPP"] as const;
+export const OUTBOUND_TEMPLATE_KEYS = [
+  "RECRUITER_INVITATION",
+  "RECRUITER_INVITATION_REMINDER",
+] as const;
+
+const privateInviteUrl = z.string().url().max(2048).refine((raw) => {
+  try {
+    const url = new URL(raw);
+    return url.protocol === "https:" &&
+      !url.username && !url.password && !url.hash;
+  } catch {
+    return false;
+  }
+}, "Secure HTTPS invitation link required");
+
+const mergeVariables = z.object({
+  companyName: z.string().trim().min(1).max(180),
+  collegeName: z.string().trim().min(1).max(180),
+  contactName: z.string().trim().min(1).max(180).optional(),
+  /** Legacy hr-invite template supports signature, note and expiresDays. */
+  signature: z.string().trim().max(200).optional(),
+  note: z.string().trim().max(1000).optional(),
+  expiresDays: z.number().int().min(1).max(90).optional(),
+  invitationUrl: privateInviteUrl,
+}).strict();
+
+const offsetInstant = z.iso.datetime({ offset: true });
+
+const intentSchema = z.object({
+  organizationId: z.string().uuid(),
+  collegeId: z.string().uuid(),
+  /** One stable producer-issued UUID per logical invitation/reminder event. */
+  sourceEventId: z.string().uuid(),
+  channel: z.enum(OUTBOUND_CHANNELS),
+  templateKey: z.enum(OUTBOUND_TEMPLATE_KEYS),
+  recipient: z.string().trim().min(3).max(320),
+  variables: mergeVariables,
+  notBefore: offsetInstant.optional(),
+  expiresAt: offsetInstant.optional(),
+}).strict().superRefine((intent, ctx) => {
+  if (intent.expiresAt && intent.notBefore &&
+      new Date(intent.expiresAt) <= new Date(intent.notBefore)) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["expiresAt"],
+      message: "Expiry must follow earliest send",
+    });
+  }
+  const allowed = intent.channel === "EMAIL"
+    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(intent.recipient)
+    : /^\+[1-9][0-9]{1,14}$/.test(intent.recipient);
+  if (!allowed) ctx.addIssue({
+    code: "custom", path: ["recipient"],
+    message: "Recipient must match outbound channel",
+  });
+});
+
+export type OutboundDeliveryIntent = z.infer<typeof intentSchema>;
+
+export class OutboundDeliveryError extends Error {
+  constructor(readonly code:
+    | "INVALID_OUTBOUND_INTENT"
+    | "OUTBOUND_KEY_UNAVAILABLE"
+    | "OUTBOUND_ENVELOPE_INVALID"
+    | "OUTBOUND_QUEUE_DISABLED"
+    | "OUTBOUND_IDEMPOTENCY_CONFLICT"
+    | "OUTBOUND_SCOPE_INVALID",
+  ) {
+    super(code);
+    this.name = "OutboundDeliveryError";
+  }
+}
+
+/** Parse and canonicalize without throwing Zod messages containing PII. */
+export function parseOutboundIntent(raw: unknown): OutboundDeliveryIntent {
+  const result = intentSchema.safeParse(raw);
+  if (!result.success) {
+    throw new OutboundDeliveryError("INVALID_OUTBOUND_INTENT");
+  }
+  return {
+    ...result.data,
+    recipient: result.data.channel === "EMAIL"
+      ? result.data.recipient.toLowerCase()
+      : result.data.recipient,
+  };
+}
