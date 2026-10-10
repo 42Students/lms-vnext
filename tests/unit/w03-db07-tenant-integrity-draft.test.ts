@@ -51,5 +51,8 @@ describe("W03 DB07 staged tenant/project integrity", () => {
     expect(sql).toContain("project_members_team_roster_mirror");
     expect(sql).toContain("lms_group_members_project_team_roster_mirror");
     expect(sql.match(/DEFERRABLE INITIALLY DEFERRED/g)).toHaveLength(2);
+    expect(sql).toContain("project member project/membership identity is immutable");
+    expect(sql).toContain("group member group/membership identity is immutable");
+    expect(sql).not.toContain("AS $\n");
   });
 });
