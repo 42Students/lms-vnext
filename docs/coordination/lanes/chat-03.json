@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "chatNumber": 3,
   "workerId": "CHAT_03",
   "issueNumber": 23,
@@ -8,8 +8,6 @@
   "currentPhase": "DATABASE",
   "executionState": "AVAILABLE",
   "activeTaskId": null,
-  "verifiedCompletedTaskIds": [],
-  "reviewTaskIds": [],
   "blockedTaskIds": [],
   "checkpoint": {
     "checkpointKind": "PHASE_SYSTEM_V2_MIGRATION_NO_TASK_CLAIMED",
@@ -18,7 +16,7 @@
     "lastWorkerMergedSha": null,
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "New global shared-phase scheduler installed; earlier domain scopes are historical only, not active assignments. Acquire a real task from shared work-queue.json."
+    "summary": "Worker state upgraded for picked / implemented-completed / independently verified counters. Historical domain attribution is archival only. No tasks have been picked."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -32,7 +30,7 @@
   "lastExecutedPassingTests": [],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "Read current global DATABASE queue, atomically claim next eligible unowned task and execute with source+test evidence.",
+  "nextAction": "Select highest-priority eligible READY task and record PICKED event; mark COMPLETED with commit SHA after finishing, DONE_VERIFIED only with executed acceptance evidence; claim another within DATABASE.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -46,5 +44,17 @@
   "evidenceLinks": [
     "https://github.com/42Students/lms-vnext/issues/23"
   ],
-  "overallPercentComplete": null
+  "overallPercentComplete": null,
+  "pickedTaskIds": [],
+  "completedTaskIds": [],
+  "lastPickedAt": null,
+  "lastCompletedAt": null,
+  "verifiedTaskIds": [],
+  "awaitingVerificationTaskIds": [],
+  "trackingDefinitions": {
+    "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
+    "completedTaskIds": "Unique task IDs for which this chat finished committed implementation (completedBy proof). Not automatically verified.",
+    "verifiedTaskIds": "Unique task IDs whose acceptance evidence supports DONE_VERIFIED. VerifiedBy tracked separately on queue.",
+    "activeTaskId": "One current PICKED or IN_PROGRESS task; null when none."
+  }
 }
