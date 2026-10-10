@@ -15,7 +15,13 @@ export default async function FacultyAssignmentReportPage({
   const { contentId } = await params;
   const { deliveryId } = await searchParams;
   const report = await getFacultyAssignmentReport(context, contentId, deliveryId ?? null);
-  const { assignment, submissions, missingLearners, metrics } = report;
+  const {
+    assignment,
+    submissions,
+    missingLearners,
+    distribution,
+    metrics,
+  } = report;
   const formatDate = (value: Date) =>
     new Intl.DateTimeFormat("en-IN", {
       dateStyle: "medium", timeStyle: "short",
@@ -31,13 +37,12 @@ export default async function FacultyAssignmentReportPage({
         title={assignment.title}
         description={`${assignment.courseName} · ${assignment.sectionName} · ${assignment.lessonName}`}
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Eligible learners", metrics.eligibleLearners],
-          ["Submitted", metrics.submitted],
-          ["Not submitted", metrics.missing],
-          ["Submitted late", metrics.late],
-          ["Graded", metrics.graded],
+          ["Submitted", `${metrics.submitted}/${metrics.eligibleLearners}`],
+          ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
+          ["Graded", `${metrics.graded}/${metrics.submitted}`],
+          ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(assignment.dueAt) : "—"],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
@@ -45,6 +50,64 @@ export default async function FacultyAssignmentReportPage({
           </div>
         ))}
       </div>
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">
+          Score distribution
+        </h2>
+        <div
+          className="mt-4 space-y-3"
+          role="img"
+          aria-label={`Score distribution across ${metrics.graded} graded submissions`}
+        >
+          {distribution.map((bucket) => {
+            const total = Math.max(metrics.graded, 1);
+            const width = Math.round((bucket.count / total) * 100);
+            return (
+              <div
+                key={bucket.label}
+                className="grid grid-cols-[6rem_1fr_2rem] items-center gap-3 text-sm"
+              >
+                <span className="text-body">{bucket.label}</span>
+                <span className="h-2 overflow-hidden rounded-full bg-muted">
+                  <span
+                    className="block h-full rounded-full bg-primary"
+                    style={{ width: `${width}%` }}
+                  />
+                </span>
+                <strong className="text-right text-foreground">
+                  {bucket.count}
+                </strong>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">
+          Submission timing
+        </h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {[
+            ["On time", metrics.onTime],
+            ["Late", metrics.late],
+            ["Not submitted", metrics.missing],
+          ].map(([label, value]) => (
+            <div
+              key={label}
+              className="rounded-lg bg-surface-subtle p-4"
+            >
+              <p className="text-xs font-semibold uppercase text-muted-foreground">
+                {label}
+              </p>
+              <p className="mt-1 text-2xl font-semibold text-foreground">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="overflow-x-auto rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">Learner submissions</h2>
         {submissions.length === 0 ? (
@@ -113,8 +176,7 @@ export default async function FacultyAssignmentReportPage({
       </section>
 
       <p className="text-sm text-muted-foreground">
-        Score distribution, CSV/PDF export and interactive grading drill-down
-        remain open parity items.
+        PDF/export and interactive grading drill-down remain open parity items.
       </p>
     </div>
   );
