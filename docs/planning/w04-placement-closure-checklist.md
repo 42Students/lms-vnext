@@ -135,3 +135,23 @@ Rows below are inherited from `account-surface-parity.md`, without elevating any
 **Executed and passing this batch:** None. GitHub Actions is repeatedly failing before runner steps; no repository checkout, credentials or disposable PostgreSQL runtime available here. W01 must supply runnable CI/PG proof before marking any unit or browser evidence PASS.
 
 **Next W04 code item:** close remaining application/offer/coordinator guards and API privacy negatives, then wire cohort-target drive publication and register/offer workflow as soon as W01 supplies journalled DB08 migration SHA. Continue per-row UI parity only after durable persistence and service contracts are in place.
+
+
+## W04 continuation checkpoint — 2026-10-10 (on main)
+
+**Committed source, not verified runtime:**
+
+- External-offer submission and manager verify/reject/revoke lifecycle: `src/modules/placements/external-offer-service.ts` + `src/modules/placements/external-offer-policy.ts`. The learner request shape deliberately excludes any browser-provided private letter path. Verified-only external placements count toward off-campus outcome policy; audit events share a DB transaction.
+- External outcome and saved job DB08-C draft: `scripts/sql/db08-external-offers-staging.sql` + `src/db/schema/placement-external.ts`; immutable/audited events and college guard are staging assumptions needing W01 review. `tests/integration/placements-db08-external-offers.test.ts` is authored but gated behind disposable Postgres and registered migration.
+- Saved-job service `src/modules/placements/saved-job-service.ts` now depends on the common existing-table learner access gate, rather than the unjournaled batch-lifecycle table. Still **not routed** while its saved-job table is unjournaled.
+- Read-only college scoped W04→W05 Drive facts: `src/modules/placements/company-drive-facts-service.ts` and `company-drive-facts-policy.ts` return distinct published/closed drive, accepted-offer and confirmed-joining job counts; these are NOT candidate counts and cannot be manually edited as CRM stages. Unit and disposable-PG tenant-negative specs authored. W05 handoff posted to issue #25; no W05 code changed.
+- Exact application deadline parity/safety: `application-deadline-policy.ts` shared by new application service and learner Apply card; at the exact deadline (exclusive time), Apply is disabled and writer rejects. Unit boundary tests authored.
+- Learner round correctness: `learner-round-visibility-policy.ts` uses DB round kind (`TEST/VENDOR_TEST` for assessments; `GD/INTERVIEW` for interviews; `TALK` for calendar). The request workspace now emits `roundKind` and `testUrl`; career-round cards show safe employer HTTP(S) links or a missing-link state. Employer-side submission warning added on learner Assessments page. Name-substring routing was incorrect. Unit tests authored.
+- Updated precise learner UI ledger `L15-011`, `L15-012`, `L15-018`, and `L16-020` to SOURCE FIXED, **not CLOSED**. Corrected seven learner placement route rows from inaccurate MISSING to PARTIAL in `account-surface-parity.md`; the underlying search/filters/modals/countdowns/reschedules/calendar and registration flows still remain incomplete.
+- `scripts/sql/db08-application-write-gate-staging.sql`: source-only DB-backed college-lock self-application eligibility/finished-batch/cohort-target guard; NOT a migration and NOT tested. W01 received security and SQL review handoff on issue #21. Role-spoofing and module-OFF races must be closed with DB grants and shared lock in the module writer.
+
+**Test evidence:** new unit and integration specs are **authored, not run or passed**. No repository typecheck, lint, Next build, browser verification, migration generation or PG replay succeeded in this continuation. Source-shape checks and GitHub file presence checks are not substitutes.
+
+**W04 release blockers:** (1) W01 DB08 migration + schema barrel + physical parent/tenant FK checks; (2) mandatory season retirement, publishing target batches and self application race-tested trigger; (3) consented registration and debarment worklist; (4) secure letter upload/reviewer decision, CRM facts consumer; (5) pending/completed learner assessments and interviews, full application filters and all listed UI modal states; (6) execution of typecheck/build/unit/integration/browser tests and a second legacy comparison.
+
+**Next unfinished independent slice:** strengthen W04 manager role-gates and Drive Day attendance/round semantics while awaiting W01 migration, then resume full TPO/HR/College/Super Admin Drive user-facing parity after integration. Never call W04 DONE based solely on authored schemas or rendered pages.
