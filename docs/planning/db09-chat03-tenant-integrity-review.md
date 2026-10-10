@@ -50,6 +50,15 @@ The existing field crosswalk now carries preliminary evidence for **279/279** so
 - **Cross-domain DB08 dependency:** V190 also added `job.counts_as_placed` with default true and explicitly set Internship false. Current `src/db/schema/placements.ts` `placement_jobs` lacks that property in source review. Placed counts, uplift, held-offer policy and reporting must consume an immutable per-drive choice, not a mutable global type label. DB08 owner/integrator must authorize the change.
 - Four canonical ledger rows received specific V185/V190 `sourceReview.deepDive` facts; their `reviewStatus` remains `UNVERIFIED_FIELD_SEMANTICS`.
 
+## Final V193 actor-code mismatch resolved in DB09 producer
+
+- `V193__recruiter_naming.sql` changed persisted message `sender_type` from `HR` to `RECRUITER`, and saved-view scope from `LEADS` to `RECRUITER_LEADS`. The staged `tpo-collaboration.ts` schema CHECKs already used final recruiter codes, while `tpo-messaging-service.ts` still produced and compared literal `HR`. This was an actual source contract mismatch: a recruiter's message insert would conflict with the staged CHECK once migrated.
+- Commit [`13a9772`](https://github.com/42Students/lms-vnext/commit/13a977276c71d78de1ff249ead5aa0dbf3c8a96e) normalized ten internal producer/actor comparisons to `RECRUITER` without changing external method signatures or persisted permission checks. Commit [`e62c1e1`](https://github.com/42Students/lms-vnext/commit/e62c1e1c0d2157da2ae793cc6ce5ba194f3e230f) expanded the CRM static source guard to check final producer and schema enum alignment. Direct source checks succeeded. Runtime negative tests, API clients and browser consumers still need evaluation; this does not certify messaging end to end.
+- Remaining source UI/API compatibility risk: callers that compare returned `senderType` to legacy `HR` must be adapted during the globally locked API/UI phases, once database certification is complete. No user-facing workflow/browser test was executed in this DB pass.
+
+## Scheduling follow-up
+
+- [V165 round-slot, assignment and reschedule adversarial audit](db09-chat03-round-scheduling-audit.md) documents 25 source fields and a staged three-table candidate. The candidate includes job/round/application composite references but does **not** by itself prevent concurrent overbooking. A transaction-level slot lock or atomic capacity reservation must be tested on disposable PostgreSQL.
 ## Handoff status
 
 `DB-012`: IN_PROGRESS; 279/279 *source candidate annotations*, zero database verified. `DB-007`: BLOCKED pending registration/PG/legacy-use disposition. Global phase remains DATABASE; API/UI/RELEASE still LOCKED.
