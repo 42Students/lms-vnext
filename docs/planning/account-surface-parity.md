@@ -60,14 +60,14 @@ Detailed page contract: `docs/parity/learner.md`.
 | Class Schedule | `/learn/calendar` | `/learn/calendar` | Source parity is closed for title/metrics, next-three preview, Month/Week/Day navigation, filters, event metadata/deep links, empty/error/loading states and mobile agenda fallback; final browser/CI verification remains. | PARTIAL |
 | Attendance summary | `/learn/attendance` | `/learn/attendance` | Source parity is closed for course/month controls, metrics/threshold, course overview, desktop records, explicit loading/error/retry/empty states and tenant-safe reads; mobile cards are implemented and await final browser verification. | PARTIAL |
 | Placements dashboard | `/learn/my-placements` | `/learn/my-placements` | Core journey exists; legacy subnavigation and sections incomplete. | PARTIAL |
-| Applications | `/learn/my-placements/applications` | same legacy route shell + journey data | Dedicated applications worklist missing. | MISSING |
-| Assessments | `/learn/my-placements/assessments` | same legacy route shell | Dedicated assessment queue/status missing. | MISSING |
-| Interviews | `/learn/my-placements/interviews` | same legacy route shell | Dedicated interview queue/status missing. | MISSING |
-| Career Calendar | `/learn/my-placements/calendar` | same legacy route shell | Placement events calendar missing. | MISSING |
+| Applications | `/learn/my-placements/applications` | route + learner placement journey | Dedicated list exists; search/stage/attention filters and modal/browser parity remain. | PARTIAL |
+| Assessments | `/learn/my-placements/assessments` | typed scheduled career rounds + employer test link | Search, pending/completed buckets, reminders and modal/browser parity remain. | PARTIAL |
+| Interviews | `/learn/my-placements/interviews` | typed scheduled interview/GD rounds | Confirm, reschedule, countdown, detail modal and browser parity remain. | PARTIAL |
+| Career Calendar | `/learn/my-placements/calendar` | scheduled placement event cards | Legacy month/week/day navigation, iCal and browser parity remain. | PARTIAL |
 | Jobs list | `/learn/my-placements/jobs` | same legacy route + placements feed | Exact browse/filter surface incomplete. | PARTIAL |
-| Job detail | `/learn/my-placements/jobs/[jobId]` | same legacy route shell | Dedicated opportunity/eligibility/detail surface missing. | MISSING |
-| Placement Cell | `/learn/my-placements/placement` | same legacy route shell | Placement-cell information/support surface missing. | MISSING |
-| Placement Rules | `/learn/my-placements/rules` | same legacy route shell | Learner-facing rules/policy surface missing. | MISSING |
+| Job detail | `/learn/my-placements/jobs/[jobId]` | role and eligibility cards for selected job | Exact legacy detail sections, actions and browser parity remain. | PARTIAL |
+| Placement Cell | `/learn/my-placements/placement` | offer/request workspace and rules link | Batch registration, consent, debarment and exact support behavior remain. | PARTIAL |
+| Placement Rules | `/learn/my-placements/rules` | evidence/preference guidance | College-authored policy and acknowledgement workflow remain. | PARTIAL |
 | Projects list | `/learn/projects` | same semantic route | Core list exists. | DONE |
 | Project Overview | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
 | Project Team | project detail | vNext project workspace | Explicit section parity needed. | PARTIAL |
