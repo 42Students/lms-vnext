@@ -1,0 +1,303 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useToast } from "@/components/ui/toast";
+import { projectMutation } from "./project-api";
+
+type Workspace = {
+  id: string;
+  title: string;
+  status: string;
+  mentorName: string | null;
+};
+
+type Mentor = {
+  membershipId: string;
+  displayName: string | null;
+  email: string;
+};
+
+export function ProjectMentorReassignment({
+  collegeId,
+  workspaces,
+  mentors,
+}: {
+  collegeId: string;
+  workspaces: Workspace[];
+  mentors: Mentor[];
+}) {
+  const router = useRouter();
+  const { showToast } = useToast();
+  const [selected, setSelected] = useState<
+    string[]
+  >([]);
+  const [mentorMembershipId, setMentor] =
+    useState("");
+  const [roleLabel, setRoleLabel] =
+    useState("Project Mentor");
+  const [search, setSearch] = useState("");
+  const [pending, setPending] =
+    useState(false);
+  const [result, setResult] = useState<{
+    reassignedCount: number;
+    skippedCount: number;
+    failures: {
+      projectId: string;
+      code: string;
+    }[];
+    taskAssignmentClearingSupported: boolean;
+  } | null>(null);
+
+  const visibleMentors = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return mentors;
+    return mentors.filter((mentor) =>
+      (
+        (mentor.displayName ?? "") +
+        " " +
+        mentor.email
+      )
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [mentors, search]);
+
+  function toggle(projectId: string) {
+    setSelected((current) =>
+      current.includes(projectId)
+        ? current.filter(
+            (id) => id !== projectId,
+          )
+        : [...current, projectId],
+    );
+  }
+
+  async function submit() {
+    if (
+      !selected.length ||
+      !mentorMembershipId
+    ) {
+      return;
+    }
+    setPending(true);
+    setResult(null);
+    try {
+      const response = (await projectMutation(
+        "/api/projects/reassign-mentor",
+        "POST",
+        {
+          collegeId,
+          projectIds: selected,
+          mentorMembershipId,
+          roleLabel,
+        },
+      )) as {
+        reassignedCount: number;
+        skippedCount: number;
+        failures: {
+          projectId: string;
+          code: string;
+        }[];
+        taskAssignmentClearingSupported: boolean;
+      };
+      setResult(response);
+      if (response.reassignedCount > 0) {
+        showToast({
+          tone: "success",
+          title: "Mentor reassignment complete",
+          description:
+            response.reassignedCount +
+            " workspace(s) reassigned.",
+        });
+      } else {
+        showToast({
+          tone: response.failures.length
+            ? "error"
+            : "info",
+          title: response.failures.length
+            ? "No workspaces were reassigned"
+            : "No changes were needed",
+          description: response.failures.length
+            ? "Review the per-workspace failures below."
+            : "The selected workspaces already use this mentor.",
+        });
+      }
+      setSelected([]);
+      router.refresh();
+    } catch (error) {
+      showToast({
+        tone: "error",
+        title: "Mentor reassignment failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "The request could not be completed.",
+      });
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="m-0 text-base font-semibold text-foreground">
+          Select workspaces
+        </h2>
+        {!workspaces.length ? (
+          <p className="mb-0 mt-3 text-sm text-muted-foreground">
+            No non-archived workspaces are available.
+          </p>
+        ) : (
+          <div className="mt-3 space-y-2">
+            {workspaces.map((workspace) => (
+              <label
+                key={workspace.id}
+                className="flex cursor-pointer items-center gap-3 rounded-lg border border-border p-3"
+              >
+                <input
+                  type="checkbox"
+                  checked={selected.includes(
+                    workspace.id,
+                  )}
+                  onChange={() =>
+                    toggle(workspace.id)
+                  }
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-foreground">
+                    {workspace.title}
+                  </span>
+                  <span className="block text-xs text-muted-foreground">
+                    Current mentor:{" "}
+                    {workspace.mentorName ??
+                      "Unassigned"}
+                  </span>
+                </span>
+                <StatusBadge tone="neutral">
+                  {workspace.status}
+                </StatusBadge>
+              </label>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="m-0 text-base font-semibold text-foreground">
+          Reassign to mentor
+        </h2>
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <label className="grid gap-1 text-sm font-semibold text-foreground">
+            Search mentors
+            <input
+              type="search"
+              value={search}
+              onChange={(event) =>
+                setSearch(event.target.value)
+              }
+              placeholder="Name or email"
+              className="rounded-lg border border-border bg-background px-3 py-2 font-normal"
+            />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-foreground">
+            New primary mentor
+            <select
+              value={mentorMembershipId}
+              onChange={(event) =>
+                setMentor(event.target.value)
+              }
+              className="rounded-lg border border-border bg-background px-3 py-2 font-normal"
+            >
+              <option value="">
+                Select a mentor
+              </option>
+              {visibleMentors.map((mentor) => (
+                <option
+                  key={mentor.membershipId}
+                  value={mentor.membershipId}
+                >
+                  {mentor.displayName ||
+                    mentor.email}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-foreground">
+            Role label
+            <input
+              value={roleLabel}
+              maxLength={120}
+              onChange={(event) =>
+                setRoleLabel(event.target.value)
+              }
+              className="rounded-lg border border-border bg-background px-3 py-2 font-normal"
+            />
+          </label>
+        </div>
+
+        <p className="mt-4 text-sm leading-6 text-body">
+          The previous primary mentor is removed from
+          each changed workspace. Existing co-mentors
+          remain. Scheduled meetings owned by the
+          outgoing mentor are cancelled.
+        </p>
+        <div className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm leading-6 text-body">
+          Legacy also clears tasks assigned to the
+          outgoing mentor. The current vNext
+          <code> project_tasks </code>
+          schema has no assignee field, so that side
+          effect remains a DB07 parity blocker.
+        </div>
+
+        <div className="mt-4">
+          <Button
+            disabled={
+              pending ||
+              !selected.length ||
+              !mentorMembershipId
+            }
+            onClick={() => void submit()}
+          >
+            {pending
+              ? "Reassigning…"
+              : "Reassign " +
+                selected.length +
+                " workspace(s)"}
+          </Button>
+        </div>
+      </section>
+
+      {result ? (
+        <section className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="m-0 text-base font-semibold text-foreground">
+            Last result
+          </h2>
+          <p className="mt-2 text-sm text-body">
+            {result.reassignedCount} reassigned ·{" "}
+            {result.skippedCount} skipped ·{" "}
+            {result.failures.length} failed
+          </p>
+          {result.failures.length ? (
+            <ul className="mb-0 mt-3 space-y-1 pl-5 text-sm text-body">
+              {result.failures.map((failure) => (
+                <li key={failure.projectId}>
+                  {workspaces.find(
+                    (workspace) =>
+                      workspace.id ===
+                      failure.projectId,
+                  )?.title ??
+                    failure.projectId}
+                  : {failure.code}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </section>
+      ) : null}
+    </div>
+  );
+}
