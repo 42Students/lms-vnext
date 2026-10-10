@@ -249,25 +249,35 @@
         "src/db/schema/**",
         "docs/planning/db-pass4-columns-db03_groups_and_electives.json"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-10T20:27:07.841Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-10T20:27:07.841Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-10T20:27:07.841Z",
+          "reason": "Chat 5 CAS-reserved next eligible DATABASE task after refreshing shared queue and active claim paths."
         }
       ]
     },
