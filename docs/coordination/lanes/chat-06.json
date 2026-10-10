@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_ALL92_SOURCE_ROWS_REVIEWED_STAGED_UNVERIFIED",
+    "checkpointKind": "DB008_LESSON_DISCUSSION_SEPARATION_STAGED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "1ac1c47c63b62688e97d0875768aee7153d257c2",
-    "lastWorkerMergedSha": "1ac1c47c63b62688e97d0875768aee7153d257c2",
+    "observedMainSha": "5d39ce3e8ef2f5b942324c990235d4a0b163a20f",
+    "lastWorkerMergedSha": "5d39ce3e8ef2f5b942324c990235d4a0b163a20f",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-008: all 92 columns in 7 snapshot tables source reviewed with proposed mappings (31 candidates, 18 remodeled, 13 draft, 30 missing/unproven); prepared unregistered course version+progress attempt/first-completion draft; authored 3 Node static contract tests. Exact-set 92/92 inspection performed; no node/Postgres/CI suite executed and semantic VERIFIED count remains zero."
+    "summary": "DB-008 in progress. Source-reviewed 92/92 columns of 7 snapshot DB05 tables; all 16 discussions mapped to separate UNREGISTERED source draft. Proposed classes: 31 candidate, 18 remodeled, 29 draft, 14 missing/unproven. In-memory remote static integrity check 9/9; 5 authored Node tests NOT executed. No actual PostgreSQL/CI/lint/typecheck/build/browser gates passed. Zero semantically DB-verified fields."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -29,7 +29,7 @@
     "browser": "NOT_VERIFIED"
   },
   "lastAuthoredTests": [
-    "tests/db05-source-semantic-review.test.mjs (3 authored assertions/tests; not executed)"
+    "tests/db05-source-semantic-review.test.mjs (5 Node static tests authored; not executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -45,9 +45,15 @@
       "kind": "MIGRATION_INTEGRATOR_ONLY",
       "message": "W01 review scripts/sql/db05-version-progress-attempts.draft.sql; DO NOT register before progress consumer reads/writes support attempts and course write services use optimistic version compare. Review all 92 field hypotheses in docs/planning/db05-chat06-source-semantic-review.json. Missing/non-equivalent fields and legacy V163 semantics remain open.",
       "commitSha": "1ac1c47c63b62688e97d0875768aee7153d257c2"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "LESSON_CONTENT_DISCUSSION_MIGRATION_DRAFT",
+      "message": "Legacy lesson-content GET/POST distinct from classroom chat. Staged scripts/sql/db05-lesson-content-discussions.draft.sql with author/lesson tenant guard and composite parent FK, plus docs/planning/db05-lesson-content-discussions-contract.md. 16 source columns scoped; 6 historical-only not proved active. W01 owns numbered migrations; no registration without consumer and PostgreSQL tests.",
+      "commitSha": "5d39ce3e8ef2f5b942324c990235d4a0b163a20f"
     }
   ],
-  "nextAction": "DB-008 remains IN_PROGRESS: source-confirm remaining mappings, prepare true per-content discussion/retake schema and consumer contracts; W01 to register draft only after services become attempt/version aware and DB tests can execute.",
+  "nextAction": "Continue DB008 producer/consumer field audit, slug/display/metadata/lesson sequence/attachment gaps and per-content comment API scope; W01 alone registers drafts after attempted scoped-consumer+optimistic updates and real DB suite pass.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -62,7 +68,11 @@
     "https://github.com/42Students/lms-vnext/issues/26",
     "https://github.com/42Students/lms-vnext/commit/29a929ca3c32ce4c4132d80e4159cbc081022e0f",
     "https://github.com/42Students/lms-vnext/commit/b5f1c0d9ed03f2612d5b483b811866b3c3846113",
-    "https://github.com/42Students/lms-vnext/commit/1ac1c47c63b62688e97d0875768aee7153d257c2"
+    "https://github.com/42Students/lms-vnext/commit/1ac1c47c63b62688e97d0875768aee7153d257c2",
+    "https://github.com/42Students/lms-vnext/commit/b797fcd0df2cdd6cbb277244814470285c293e26",
+    "https://github.com/42Students/lms-vnext/commit/bb4eb531a510d05305e2231621ca14674334e542",
+    "https://github.com/42Students/lms-vnext/commit/f562e05b542db46cb5353e616df121f1285d651f",
+    "https://github.com/42Students/lms-vnext/commit/5d39ce3e8ef2f5b942324c990235d4a0b163a20f"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
