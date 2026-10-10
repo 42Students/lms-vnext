@@ -1071,14 +1071,14 @@
         "docs/planning/database-parity-db08-outcome-fidelity.md",
         "tests/db08-outcome-fidelity-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-11",
-      "startedAt": null,
+      "startedAt": "2026-10-11",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -1100,6 +1100,11 @@
           "status": "PICKED",
           "at": "2026-10-11",
           "reason": "Chat 5 claimed isolated DB08 source fidelity stage; Chat 1 retains numbered migration/barrel ownership."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Implementation started for standalone DB08 staged SQL + source contract + static tests."
         }
       ]
     }
