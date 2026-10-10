@@ -623,7 +623,7 @@
         "src/modules/placements/tpo-messaging-service.ts"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "9be61c40b97199f89db3d92524167e2cccf05d12",
+      "latestEvidenceSha": "ac494434fb829ed4aa5bc604e49169bd1bf7d56d",
       "verificationEvidence": [],
       "blockers": [
         "No disposable PostgreSQL/CI runtime evidence; authored DB09 guards/tests are not executed.",
@@ -636,7 +636,12 @@
         "Legacy V193 recruiter actor/scope code values differ from current vNext messaging/saved-view checks; API/DB atomic transition and tests pending.",
         "Latest CI verify job 38085854862 failed with zero steps; runtime tests not executed.",
         "Active legacy 5-field drive group + 25-field scheduling and 4-setting evidence requires target persistence/producer/consumer end-to-end proof; migration proposals are not live.",
-        "Final V193 actor code migration conflicts with currently staged TPO message sender/lead-view scope codes; coordinate API service and database constraints."
+        "Final V193 actor code migration conflicts with currently staged TPO message sender/lead-view scope codes; coordinate API service and database constraints.",
+        "Chat 3 awaits independent TypeScript/CI + disposable PostgreSQL replay; GitHub commit status lookups did not show successful checks.",
+        "V193 messaging actor producer now uses RECRUITER but downstream API/UI clients still require compatibility acceptance.",
+        "DB09 round slots/assignments/reschedules need actual migration and transactional capacity-concurrency tests; source artifacts alone do not enforce availability.",
+        "V190 job.counts_as_placed depends on DB08 job/outcomes integration; custom college settings SQL remains unregistered.",
+        "DB09 tenant scoped FKs for leads/shares/notes/jobs/applications are staged, not in generated migrations."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -705,7 +710,7 @@
           "reason": "Narrow necessary DB09 producer compatibility fix in tpo-messaging-service.ts: legacy HR actor writes conflict with final RECRUITER CHECK per V193; no API signature or authorization change."
         }
       ],
-      "progressNote": "Chat 3 source inventory comparison: 279/279 DB09 fields reviewed as candidates, 0 semantic/DB-verified (14 direct V162 comparisons, 139 name matches, 45 explicit rename candidates, 81 no declared field match). Further FROZEN LEGACY SERVICE evidence confirms 34 still-active rows: 5 drive_group, 25 slot/assignment/reschedule, 4 recruiter settings (2 JSON consumer follow-ups open). DB09 malformed tpo-crm Drizzle repaired (62c5f1c); source-regression tests authored, Node/TS/PG unexecuted; connector read-only assertions passed. Candidate SQL for scoped CRM FKs, round scheduling, multi-college groups, four recruiter settings and V193 recruiter code changes NOT applied. CI run 38085854862 verify job failed before steps. No API/UI or phase promotion."
+      "progressNote": "DB09 source inventory: 279/279 source candidate notes (14 V162 comparison, 265 target declaration comparisons) but ALL 279 still UNVERIFIED. Chat 3 repaired tpo-crm.ts duplicate/unterminated SQL declarations (62c5f1c), normalized V193 messaging actor HR -> RECRUITER (13a9772), authored/extended static guard (621660d/e62c1e1), staged CRM/collaboration same-tenant FK SQL and V190 custom job/outcome settings, audited 25 round scheduling source fields (candidate already authored by parallel worker). Read-only source compatibility assertions PASS. No PostgreSQL, CI, Node guard or browser execution proven."
     },
     {
       "id": "DB-013",
