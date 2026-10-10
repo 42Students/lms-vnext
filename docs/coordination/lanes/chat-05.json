@@ -6,20 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-006",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB006_SOURCE_PARITY_CORRECTION_STAGED_IN_DRAFT_PR",
+    "checkpointKind": "DB006_SOURCE_RECONCILED_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "003395f98b588ff1dd2eff24cf0617ce09c01231",
-    "lastWorkerMergedSha": null,
+    "observedMainSha": "4570fc3bdc4e564321933a07ed875e23ee5e45d0",
+    "lastWorkerMergedSha": "46daf7d042129ae325e68f0660155c505c559e8f",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "stagedBranch": "chat5-db006-elective-program-oracle-20261011",
-    "stagedCommitSha": "f9c23a536f4da3a900fb0c17130225c6459391a5",
-    "draftPullRequest": 55,
-    "summary": "DB-006 source-oracle audit found vNext allowed cross-program elective joins contrary to legacy ElectiveService.classEligibilityError; staged code+negative PostgreSQL regression+audit doc in draft PR #55. No runtime tests executed; 79 field DB evidence and semester/year parity remain open."
+    "summary": "DB-006 source reconciliation complete: 79/79 DB03 legacy fields source-reviewed to proposed targets, 0 unmapped, 0 runtime-verified. Fixed legacy allowWaitlist/allowSelfLeave defaults and locked-REMOVED admin revival/move lock preservation; DB integration regressions authored but not executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,18 +27,16 @@
     "browser": "NOT_VERIFIED"
   },
   "lastAuthoredTests": [
-    "tests/integration/groups-db03-roster.test.ts (draft PR #55; cross-program denial and stale roster access; unexecuted)"
+    "tests/integration/groups-db03.test.ts: legacy empty-config waitlist/self-leave defaults",
+    "tests/integration/groups-db03.test.ts: locked REMOVED self-block + admin revival lock preservation",
+    "tests/integration/groups-db03.test.ts: elective move lock preservation and default waitlist behavior"
   ],
   "lastExecutedPassingTests": [],
-  "blockers": [
-    "DB006: clean disposable PostgreSQL migration replay and DB03 integration execution unavailable in this chat; draft PR #55 remains unverified.",
-    "DB006/DB02: semester/current-academic-year eligibility lacks a proven vNext persisted equivalent of legacy Batch.currentSemester/academicYear.",
-    "DB006: 79 field-level source-to-schema invariants not signed off; snapshot-only mappings are not PostgreSQL workflow verification."
-  ],
+  "blockers": [],
   "handoffs": [
     "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55."
   ],
-  "nextAction": "Review draft PR #55, obtain lint/typecheck/build and isolated Postgres execution; then continue remaining DB03 79-field active semantics, source constraint and multi-parent invariants. Keep task DB-006 IN_PROGRESS until evidence exists.",
+  "nextAction": "Refresh the shared DATABASE queue and CAS-pick the next eligible READY task; DB-006 remains awaiting runtime verification through shared DB witness/certification gates.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -60,11 +55,15 @@
   "pickedTaskIds": [
     "DB-006"
   ],
-  "completedTaskIds": [],
+  "completedTaskIds": [
+    "DB-006"
+  ],
   "lastPickedAt": "2026-10-10T20:27:07.841Z",
-  "lastCompletedAt": null,
+  "lastCompletedAt": "2026-10-10T20:31:00.000Z",
   "verifiedTaskIds": [],
-  "awaitingVerificationTaskIds": [],
+  "awaitingVerificationTaskIds": [
+    "DB-006"
+  ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
     "completedTaskIds": "Unique task IDs for which this chat finished committed implementation (completedBy proof). Not automatically verified.",
