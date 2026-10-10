@@ -19,9 +19,11 @@ import {
   getTpoLead,
   listDueTpoFollowups,
   listTpoLeadActivities,
+  listTpoLeadFollowups,
   listTpoLeads,
   logTpoLeadActivity,
   markTpoLeadNotNow,
+  markTpoLeadContacted,
   moveTpoFollowup,
   updateTpoLead,
 } from "@/modules/placements/tpo-crm-service";
@@ -347,6 +349,76 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     await expect(updateTpoLead(tpo, created.id, {
       collegeId: SEED_IDS.collegeB, name: "Cross college",
     })).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
+
+  it("records only one auditable manual Contacted transition and clears Not Now metadata", async () => {
+    const created = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA,
+      name: "Manual stage",
+      email: "manual@example.org",
+    });
+    const first = await markTpoLeadContacted(
+      tpo, SEED_IDS.collegeA, created.id,
+    );
+    const repeated = await markTpoLeadContacted(
+      tpo, SEED_IDS.collegeA, created.id,
+    );
+    expect(first.manualStage).toBe("CONTACTED");
+    expect(repeated.manualStage).toBe("CONTACTED");
+    const activities = await listTpoLeadActivities(tpo, SEED_IDS.collegeA, created.id);
+    expect(activities.filter(x => x.type === "SYSTEM")).toHaveLength(1);
+    expect(activities[0]?.isSystem).toBe(true);
+
+    await markTpoLeadNotNow(tpo, created.id, {
+      collegeId: SEED_IDS.collegeA,
+      reason: "Not hiring yet",
+      revisitDate: "2027-01-20",
+    });
+    const resumed = await markTpoLeadContacted(tpo, SEED_IDS.collegeA, created.id);
+    expect(resumed.manualStage).toBe("CONTACTED");
+    expect(resumed.notNowReason).toBeNull();
+    expect(resumed.notNowUntil).toBeNull();
+    expect((await listTpoLeadActivities(
+      tpo, SEED_IDS.collegeA, created.id,
+    )).filter(x => x.type === "SYSTEM")).toHaveLength(2);
+  });
+
+  it("limits recruiter activity to newest 200 and prioritizes unfinished follow-ups", async () => {
+    if (!pool) throw new Error("Isolated database missing");
+    const lead = await createTpoLead(tpo, {
+      collegeId: SEED_IDS.collegeA, name: "Activity history",
+      email: "activity-limit@example.org",
+    });
+    for (let i = 0; i < 205; i++) {
+      await logTpoLeadActivity(tpo, lead.id, {
+        collegeId: SEED_IDS.collegeA,
+        type: "NOTE", note: "Entry " + String(i),
+      });
+    }
+    const activities = await listTpoLeadActivities(
+      tpo, SEED_IDS.collegeA, lead.id,
+    );
+    expect(activities).toHaveLength(200);
+    expect(activities.map(x => x.note)).not.toContain("Entry 0");
+    expect(activities.some(x => x.note === "Entry 204")).toBe(true);
+
+    const completed = await addTpoFollowup(tpo, lead.id, {
+      collegeId: SEED_IDS.collegeA,
+      dueAt: "2026-10-20T10:00:00+05:30",
+    });
+    await finishTpoFollowup(tpo, SEED_IDS.collegeA, completed.id);
+    const active = await addTpoFollowup(tpo, lead.id, {
+      collegeId: SEED_IDS.collegeA,
+      dueAt: "2026-11-20T10:00:00+05:30",
+    });
+    const followups = await listTpoLeadFollowups(
+      tpo, SEED_IDS.collegeA, lead.id,
+    );
+    expect(followups.map(x => x.id)).toEqual([active.id, completed.id]);
+    await expect(listTpoLeadFollowups(
+      tpo, SEED_IDS.collegeB, lead.id,
+    )).rejects.toBeInstanceOf(AuthorizationError);
   });
 
 });
