@@ -1,42 +1,24 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "chatNumber": 1,
-  "lane": "W01",
+  "workerId": "CHAT_01",
   "issueNumber": 21,
-  "title": "Platform, identity, academics and shared migration integration",
-  "assignment": "FIXED",
-  "currentPhase": "DATABASE_AND_API_PARITY",
-  "executionState": "IN_PROGRESS",
+  "assignment": "SHARED_PHASE_WORKER",
+  "permanentDomainOwner": false,
+  "currentPhase": "DATABASE",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
+  "verifiedCompletedTaskIds": [],
+  "reviewTaskIds": [],
+  "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "INITIAL_AUDIT_BASELINE_NOT_NEW_EXECUTION",
-    "updatedOn": "2026-10-10",
-    "source": "Six-chat issues and committed DB source inventory; do not infer current CI from snapshot",
+    "checkpointKind": "PHASE_SYSTEM_V2_MIGRATION_NO_TASK_CLAIMED",
+    "updatedOn": "2026-10-11",
     "observedMainSha": "a5235d8b7e4164f626a163eef51ca1ee2df713ab",
-    "lastLaneMergedSha": null,
+    "lastWorkerMergedSha": null,
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Initial durable coordination record; inspect the lane issue's latest comments and current main for implementation detail."
-  },
-  "domain": {
-    "ids": [
-      "DB00",
-      "DB01",
-      "DB02",
-      "DB03",
-      "DB04"
-    ],
-    "historicalCandidateTables": 87,
-    "historicalCandidateFields": 1351,
-    "fieldDispositionsReviewed": null,
-    "fieldSemanticsVerified": 0,
-    "approvedRetirementFields": null,
-    "fullDisposableMigrationReplay": "NOT_VERIFIED"
-  },
-  "api": {
-    "requiredOperations": null,
-    "mappedOperations": null,
-    "verifiedOperations": null,
-    "executedPassingContractTests": null
+    "summary": "New global shared-phase scheduler installed; earlier domain scopes are historical only, not active assignments. Acquire a real task from shared work-queue.json."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -46,16 +28,27 @@
     "build": "NOT_VERIFIED",
     "browser": "NOT_VERIFIED"
   },
-  "blockers": [
-    "CI verify runner fails before steps; no current passing full suite",
-    "Unregistered DB04 and cross-lane schema drafts awaiting promotion/replay",
-    "DB00–04 active field/API semantic signoff and production cloud configuration outstanding"
-  ],
+  "lastAuthoredTests": [],
+  "lastExecutedPassingTests": [],
+  "blockers": [],
   "handoffs": [],
-  "nextAction": "Restore executable CI/disposable PostgreSQL and replay registered journal; then review/promote other lanes' staged schemas and close DB00–04 source field/API contracts.",
+  "nextAction": "Read current global DATABASE queue, atomically claim next eligible unowned task and execute with source+test evidence.",
+  "historicalPriorAssignment": {
+    "previousTitle": "Platform, identity, academics and shared migration integration",
+    "previousDomains": [
+      "DB00",
+      "DB01",
+      "DB02",
+      "DB03",
+      "DB04"
+    ],
+    "previousCandidateTables": 87,
+    "previousCandidateFields": 1351,
+    "previousNextAction": "Restore executable CI/disposable PostgreSQL and replay registered journal; then review/promote other lanes' staged schemas and close DB00–04 source field/API contracts.",
+    "note": "Historical ownership/coverage snapshot, NOT a current worker assignment. Do not sum per-chat old domain counts."
+  },
   "evidenceLinks": [
     "https://github.com/42Students/lms-vnext/issues/21"
   ],
-  "overallPercentComplete": null,
-  "note": "No overall percentage until required DB/API operations and evidence denominators are enumerated. Zero formally verified fields does not imply zero implemented code."
+  "overallPercentComplete": null
 }
