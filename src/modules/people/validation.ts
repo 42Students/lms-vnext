@@ -28,6 +28,20 @@ export const personDisplayNameSchema = z
 
 export const membershipRoleInputSchema = z.enum(MEMBERSHIP_ROLES);
 
+export const identityProvisionInputSchema = z
+  .object({
+    phoneE164: phoneE164Schema.optional(),
+    email: personEmailSchema.optional(),
+    displayName: personDisplayNameSchema,
+  })
+  .refine(
+    (value) => Boolean(value.phoneE164 || value.email),
+    {
+      message: "Email or phone is required",
+      path: ["email"],
+    },
+  );
+
 export const onboardPersonInputSchema = z.object({
   collegeId: personCollegeIdSchema,
   phoneE164: phoneE164Schema,
@@ -68,6 +82,9 @@ export const membershipLifecycleInputSchema = z.discriminatedUnion("action", [
   }),
 ]);
 
+export type IdentityProvisionInput = z.infer<
+  typeof identityProvisionInputSchema
+>;
 export type OnboardPersonInput = z.infer<typeof onboardPersonInputSchema>;
 export type ListCollegePeopleQuery = z.infer<
   typeof listCollegePeopleQuerySchema
