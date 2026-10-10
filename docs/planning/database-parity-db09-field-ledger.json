@@ -6124,8 +6124,14 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "6",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "recruiter_access_months",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
       "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
       "tenantKey": "placement_tpo_college_settings.college_id or owning parent tenant",
       "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
@@ -6137,8 +6143,8 @@
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "Actively read/written by TpoSettingsHubService and RecruiterInviteService validity semantics; missing from current vNext TPO settings table.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Schema contract now persists legacy recruiter access duration with default 6 and CHECK 0..60; producer/runtime proof remains pending.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -6152,8 +6158,14 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "1",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "recruiter_drive_needs_approval",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
       "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
       "tenantKey": "placement_tpo_college_settings.college_id or owning parent tenant",
       "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
@@ -6165,8 +6177,8 @@
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "Actively read/written by TpoSettingsHubService and drive-request behavior; missing from current vNext TPO settings table.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Schema contract now persists legacy recruiter drive approval policy with default true; producer/runtime proof remains pending.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -6919,7 +6931,7 @@
       "mappingTarget": {
         "table": "placement_tpo_saved_views",
         "column": "scope",
-        "status": "TARGET_EXISTS_BUT_CONTRACT_MISMATCH"
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
       },
       "semanticDefinition": "Live named per-user table filters. Final legacy producer accepts RECRUITER_LEADS and multiple expanded scopes; the initial V165 LEADS label was migrated.",
       "tenantKey": "placement_tpo_saved_views.college_id or owning parent tenant",
@@ -6931,8 +6943,8 @@
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "Final source migrated LEADS to RECRUITER_LEADS and current service accepts expanded scopes; vNext CHECK still permits only STUDENTS|LEADS|DRIVES.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Schema contract now uses final RECRUITER_LEADS plus the expanded live saved-view scope vocabulary; runtime/migration execution still pending.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -7125,7 +7137,7 @@
       "mappingTarget": {
         "table": "placement_tpo_share_events",
         "column": "action",
-        "status": "TARGET_EXISTS_BUT_CONTRACT_MISMATCH"
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
       },
       "semanticDefinition": "Append-style share access/delivery history. Current legacy producer emits CREATED/OPENED/DOWNLOADED_LIST/DOWNLOADED_ZIP/REVOKED plus LINK_EMAILED and CODE_EMAILED.",
       "tenantKey": "placement_tpo_share_events.college_id or owning parent tenant",
@@ -7137,8 +7149,8 @@
         "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "Live legacy share producer emits LINK_EMAILED and CODE_EMAILED in addition to the five values currently allowed by vNext CHECK.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Schema contract now accepts all live TpoShareService actions including LINK_EMAILED and CODE_EMAILED; runtime/migration execution still pending.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -8270,17 +8282,9 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "DB09 collaboration 86 fields: messages, share, settings/prefs/views, student/team notes, recruiter-private notes/read-through",
-    "result": "86 reviewed: 79 MAPPED, 7 BLOCKED; cumulative 138/279 reviewed, 0 runtime/workflow verified",
-    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
-    "blockerKeys": [
-      "tpo_message.sender_type",
-      "tpo_share_event.action",
-      "tpo_saved_view.scope",
-      "tpo_college_settings.job_types_json",
-      "tpo_college_settings.outcome_labels_json",
-      "tpo_college_settings.recruiter_access_months",
-      "tpo_college_settings.recruiter_drive_needs_approval"
-    ]
+    "scope": "DB09 collaboration schema alignment follow-up",
+    "result": "Resolved 4 source-mapping blockers at staged schema-contract level. Remaining reviewed blockers: tpo_message.sender_type producer mismatch, tpo_college_settings.job_types_json, tpo_college_settings.outcome_labels_json. Runtime verified remains 0.",
+    "schemaCommit": "01bd093d2ef7f624cb339bdba3d8907bb00e6734",
+    "guardTestCommit": "782da06cc52542408a1f21b79205a261de1f76fc"
   }
 }
