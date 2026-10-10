@@ -26,6 +26,16 @@ for (const expression of expectedChecks) {
 }
 assert.equal((src.match(/\bexport const\b/g) ?? []).length, 3,
   "Unexpected exported constants in CRM table definitions");
+const messaging = readFileSync("src/modules/placements/tpo-messaging-service.ts", "utf8");
+const collaboration = readFileSync("src/db/schema/tpo-collaboration.ts", "utf8");
+assert.ok(messaging.includes('type: "TPO" | "RECRUITER"'),
+  "Messaging actor must use the final V193 recruiter code");
+assert.equal((messaging.match(/"HR"/g) ?? []).length, 0,
+  "Legacy HR literals would violate V193 RECRUITER database sender code");
+assert.ok(messaging.includes("senderType: actor.type"),
+  "Message inserts must persist the authorized normalized actor code");
+assert.ok(collaboration.includes("sql`${table.senderType} in (\'TPO\', \'RECRUITER\')`"),
+  "Messaging check must accept TPO/RECRUITER, not legacy HR");
 console.log(JSON.stringify({
   sourceGuard: "PASS", uniqueTables: declarations, completeChecks: required,
   postgresTests: "NOT_EXECUTED",
