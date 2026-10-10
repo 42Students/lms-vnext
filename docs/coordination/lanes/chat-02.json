@@ -10,13 +10,13 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_AUTH_SESSION_SOURCE_AND_STAGING_CONTRACT",
+    "checkpointKind": "DB004_AUTH_SOURCE_DISPOSITION_AND_INFRA_BLOCKER",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "8bc974278c79095408b1128f1cbf2a3a762f2fb9",
+    "observedMainSha": "c48f3dd64fb5591c3ea9d6e3834c66d7e982c689",
     "lastWorkerMergedSha": "97a34afbd43034e1da9858adcb0d82b23305653f",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB004 picked and active. 312/312 legacy field candidates triaged with source-only classifications, 0 runtime semantic verified. Unregistered branding/tenant DNS diagnostics schema/SQL staged. Existing vNext tenant-domain service prematurely returns on verified recheck, repo hard-deletes host; these source-level lifecycle divergences and pending API gate documented. Recruiter expired-but-ACTIVE grant lacks expiry predicate/schema, escalated to DB09. Static remote consistency witness PASS, no actual CI/PG execution.\nAdditional source proof: legacy JTI device list, revoke-one and refresh blocklist; current vNext provider cookie/global revoke has no verified per-device equivalent. Unexported device session schema + unregistered SQL and explicit legacy FACULTY role privilege-bypass exception documented and handed to W01. A separate concurrent Chat 2 update added current auth source evidence to field ledger; do not overwrite peer source evidence. No runtime tests or migrations executed.",
+    "summary": "DB-004 remains IN_PROGRESS. All 312 DB01 candidates are source-triaged and 0 are runtime-semantic verified. 66/84 identity-provider/session fields now have direct active legacy workflow proof; all 84 have an explicit current-source disposition. vNext currently has Firebase user provisioning plus an idToken→session-cookie bridge, but no checked-in app phone/email sign-in flow proving the active legacy OTP jobs are provider-replaced. Tenant branding/DNS diagnostics, device-session, auth-attempt and cross-host handoff contracts remain staged/unregistered. Recent GitHub CI failures are repository-wide pre-step failures with empty job steps, so no test pass/fail semantics are inferred from them.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
@@ -24,55 +24,74 @@
       "runnerEvidence": false
     },
     "deviceSessionStaging": {
-      "pullRequest": 61,
-      "branch": "chat-02-db004-device-session-contract",
-      "headSha": "0298f6d1d3cdee64d8bd0f95e09efa96df405a69",
-      "status": "OPEN_CI_FAILED_UNMERGED",
-      "authoredTest": "tests/db01-device-session-contract.test.ts",
-      "ciRun": 1256,
-      "ciConclusion": "failure",
-      "note": "CI job logs are unavailable through the connected GitHub action. Concurrent PR #55 also had a failing CI run (#1230), so a shared-base issue is plausible but not proven."
+      "status": "STAGED_ON_MAIN_UNREGISTERED",
+      "schema": "src/db/schema/db01-device-sessions.staged.ts",
+      "sql": "docs/planning/sql/db01-device-session-staging.sql",
+      "contract": "docs/planning/db01-device-session-contract.md",
+      "note": "Concurrent Chat 2 work landed the staging artifacts on main. Historical PR #61 is closed/superseded. No numbered migration/runtime activation is claimed."
     },
     "tenantIdentityNegativeWitness": {
       "pullRequest": 65,
       "branch": "chat-02-db004-tenant-identity-negative-witness",
-      "headSha": "f8c57987de761b7f077f4bef163e23abc9d18aab",
-      "status": "OPEN_CI_FAILED_UNMERGED",
+      "headSha": "0ad2d23aa66dd7a575cb77e2fff7a8b4156f5619",
+      "status": "OPEN_CI_PRESTEP_INFRA_FAILURE_UNMERGED",
       "authoredTest": "tests/integration/db01-tenant-identity-invariants.test.ts",
       "authoredCases": 5,
-      "ciRun": 1344,
-      "ciRunId": 38085162837,
+      "ciRun": 1393,
+      "ciRunId": 38085377072,
       "ciConclusion": "failure",
       "executedPassingPostgresCases": 0,
-      "note": "Job steps/logs unavailable (BlobNotFound); no passing PostgreSQL acceptance evidence. No migration or active DB schema edited."
+      "note": "Constraint names/seed assumptions match registered schema. PR and unrelated main runs fail in ~2-3 seconds with empty job steps; workflow logs remain unavailable. Treat as repository-wide CI infrastructure/pre-step blocker, not code-test evidence."
+    },
+    "sourceActiveness": {
+      "identityProviderSessionCandidates": 84,
+      "activeWorkflowConfirmedFields": 66,
+      "explicitlyReviewedFields": 84,
+      "runtimeSemanticVerifiedFields": 0,
+      "ledgerCommit": "361ba32210f765a02ad1b28f20219951c3075c57"
+    },
+    "providerFlowEvidence": {
+      "status": "SERVER_SESSION_BRIDGE_PRESENT_APP_SIGNIN_FLOW_NOT_PROVEN",
+      "sessionRoute": "src/app/api/auth/session/route.ts",
+      "sessionService": "src/auth/session.ts",
+      "identityDirectory": "src/modules/people/firebase-identity-directory.ts",
+      "note": "Server accepts a recent Firebase idToken and creates lms_session; provider admin directory provisions identities. Current main auth tree contains no app phone/email sign-in implementation that obtains the idToken, so OTP parity remains unresolved for API phase."
+    },
+    "crossHostHandoffStaging": {
+      "status": "STAGED_ON_MAIN_UNREGISTERED",
+      "sql": "docs/planning/sql/db01-auth-handoffs-staging.sql",
+      "sourceCommit": "0834bc1a89099225a7e6c34ddd2d67f570f4d029",
+      "supersededPullRequest": 64,
+      "note": "Main staging uses keyed MAC, target membership, target domain and host with two-minute TTL/atomic-consume witness; this supersedes the weaker closed PR #64 shape. No runtime activation."
     }
   },
   "qualityGates": {
-    "lint": "NOT_VERIFIED_PR61_CI_FAILED",
-    "typecheck": "NOT_VERIFIED_PR61_CI_FAILED",
-    "unit": "NOT_VERIFIED_PR61_CI_FAILED",
-    "postgresIntegration": "NOT_VERIFIED_PR65_CI_FAILED",
-    "build": "NOT_VERIFIED_PR61_CI_FAILED",
-    "browser": "NOT_VERIFIED",
+    "lint": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
+    "typecheck": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
+    "unit": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
+    "postgresIntegration": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
+    "build": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
+    "browser": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
     "sourceTriageConsistency": "PASS_IN_PROCESS_SOURCE_CHECK_NOT_RUNTIME"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
     "tests/db01-device-session-contract.test.ts",
-    "tests/integration/db01-tenant-identity-invariants.test.ts"
+    "tests/integration/db01-tenant-identity-invariants.test.ts",
+    "tests/db01-auth-handoff-contract.test.ts"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "PR #61 CI run #1256 failed; logs are unavailable through the connector, so the device-session staging batch stays unmerged pending diagnosis or a clean rerun.",
-    "PR #65 CI run #1344 failed; provider job logs unavailable. The five PostgreSQL negative tests are authored, not accepted passing verification."
+    "GitHub CI is currently failing before workflow steps across unrelated main pushes and PR #65 (latest DB01 run #1393); no runner output is available, so authored database witnesses cannot be credited as executed."
   ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
     "DB-004 → DB09/issue #25: recruiter grant expiry, revocation reason, capability, version and tenant FK parity",
     "DB-004 → Chat 1/issue #21 after acceptance: promote identity_device_sessions only if targeted per-device revocation remains required; never persist raw Firebase tokens/cookies.",
-    "DB-004 → Chat 1/issue #21: select provider-only vs provider-cookie+device-session sidecar; block faculty-for-anyone revocation privilege escalation."
+    "DB-004 → Chat 1/issue #21: select provider-only vs provider-cookie+device-session sidecar; block faculty-for-anyone revocation privilege escalation.",
+    "DB-004 → Chat 1/issue #21: auth-attempt/device-session/cross-host-handoff artifacts are staged only; select one canonical token-safe shape and register only after CI/PostgreSQL replay is available."
   ],
-  "nextAction": "DB-004 IN_PROGRESS: diagnose failed PR #65/#61 CI (logs unavailable), obtain executed Postgres negative witnesses, then coordinate with Chat 1 for registered branding/tenant diagnostics/session migrations; keep all source-only triage unverified.",
+  "nextAction": "Continue source activeness/retirement reconstruction for the remaining non-auth DB01 tables and exact field semantics. Keep OTP/provider replacement unresolved until an app sign-in flow exists. When CI runners recover, execute PR #65 PostgreSQL negative witnesses, then coordinate accepted staged schemas with Chat 1.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
