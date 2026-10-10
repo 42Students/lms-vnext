@@ -650,14 +650,14 @@
       "paths": [
         "docs/planning/db-pass4-columns-db10_shared_operations.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:37:00.000Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:37:15.000Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -679,6 +679,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:37:00.000Z",
           "reason": "Chat 5 CAS-picked next highest-priority eligible DATABASE task after DB-011 completion; DB-012 is already held by Chat 3."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:37:15.000Z",
+          "reason": "Chat 5 started DB10 shared operational persistence source-to-vNext reconciliation."
         }
       ]
     },
