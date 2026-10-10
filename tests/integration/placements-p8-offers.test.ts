@@ -582,4 +582,34 @@ describe("Placement P8 offers and joining", () => {
         "PLACEMENT_OFFER_EXPIRED",
     });
   });
+  it("never issues an offer after screening is revoked or a previously applied round no longer passes", async () => {
+    const { application } = await preparePassedApplication();
+
+    await pool.query(
+      "update placement_application_screenings set status = 'REJECTED' where application_id = $1",
+      [application.id],
+    );
+    await expect(issuePlacementOffer(tpo, application.id, {
+      roleTitle: "Offer must not escape withdrawn screening",
+    })).rejects.toMatchObject({ code: "PLACEMENT_OFFER_NOT_READY" });
+
+    await pool.query(
+      "update placement_application_screenings set status = 'SHORTLISTED' where application_id = $1",
+      [application.id],
+    );
+    await pool.query(
+      "update placement_round_results set outcome = 'FAIL' where application_id = $1 and status = 'APPLIED'",
+      [application.id],
+    );
+    await expect(issuePlacementOffer(tpo, application.id, {
+      roleTitle: "Offer must not escape failed interview",
+    })).rejects.toMatchObject({ code: "PLACEMENT_OFFER_NOT_READY" });
+
+    const count = await pool.query<{ total: string }>(
+      "select count(*)::text as total from placement_offers where application_id = $1",
+      [application.id],
+    );
+    expect(count.rows[0]?.total).toBe("0");
+  });
+
 });
