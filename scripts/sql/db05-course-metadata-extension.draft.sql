@@ -15,7 +15,7 @@
 --   vNext introduction_text is plain bounded text and may NOT be equivalent.
 -- * image_url/image_url_lp/thumbnail must be safe http(s) URLs or blank;
 --   course_color must be vetted for safe CSS tokens by server-side validation.
--- * legacy date fields and updatedOn are strings, not canonical timestamps;
+-- * Course MetaData.courseCode is a String without a proven 255 cap,\n--   so use text, not varchar(255), pending source validation.\n-- * legacy date fields and updatedOn are strings, not canonical timestamps;
 --   don't silently cast/infer date policy without inspecting consumers.
 -- * legacy takeaways are a list; vNext staged array handles them.
 -- * these are PUBLIC-SAFE display fields. Never use metadata as ACL/permission.
@@ -28,7 +28,7 @@ ALTER TABLE course_display_contents
   ADD COLUMN IF NOT EXISTS amount integer,
   ADD COLUMN IF NOT EXISTS image_url text,
   ADD COLUMN IF NOT EXISTS image_url_lp text,
-  ADD COLUMN IF NOT EXISTS course_code varchar(255),
+  ADD COLUMN IF NOT EXISTS course_code text,
   ADD COLUMN IF NOT EXISTS course_type text,
   ADD COLUMN IF NOT EXISTS course_color text,
   ADD COLUMN IF NOT EXISTS course_category text,
