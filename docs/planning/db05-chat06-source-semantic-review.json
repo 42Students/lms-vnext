@@ -23,24 +23,33 @@
       "src/db/schema/discussions.ts",
       "src/db/schema/course-display-staged.ts",
       "src/db/schema/lesson-content-order-staged.ts",
-      "src/db/schema/lesson-content-materials-staged.ts"
+      "src/db/schema/lesson-content-materials-staged.ts",
+      "src/db/schema/lesson-content-discussions-staged.ts"
+    ],
+    "currentDiscussionRuntimeEvidence": [
+      "src/main/java/com/_42students/lms/model/Discussions.java",
+      "src/main/java/com/_42students/lms/dto/request/DiscussionDTO.java",
+      "src/main/java/com/_42students/lms/dto/response/DiscussionResponseDTO.java",
+      "src/main/java/com/_42students/lms/controller/DiscussionController.java",
+      "src/main/java/com/_42students/lms/service/impl/DiscussionServiceImpl.java",
+      "src/main/java/com/_42students/lms/repository/DiscussionRepository.java"
     ]
   },
-  "caution": "All 92 rows are PROPOSED source mappings, NOT approved parity. Same-name columns and equivalent-looking status fields are not verified semantic matches. Inventory derived from historical MySQL snapshot through V150; V163 and current source must also be incorporated. No runtime migration/test claim.",
+  "caution": "All 92 rows remain proposed mappings, NOT approved parity. This review now separates the active legacy lesson-content discussion stream from classroom chat. Six later snapshot discussion columns have no consumer in the inspected primary runtime path, but are NOT retired without whole-repo/live-schema proof. No runtime migration/test claim.",
   "counts": {
     "sourceTables": 7,
     "sourceFields": 92,
     "byClass": {
       "SOURCE_CANDIDATE": 31,
-      "MISSING_OR_UNPROVEN": 30,
+      "MISSING_OR_UNPROVEN": 20,
       "REMODELED_NEEDS_PROOF": 18,
-      "UNREGISTERED_DRAFT": 13
+      "UNREGISTERED_DRAFT": 23
     }
   },
   "criticalOpenRisks": [
     "Legacy course/lesson/content optimistic versions missing from registered vNext schema. SQL staged only; version-aware conditional UPDATE and 409 tests needed.",
     "Legacy progress first_completed_at and attempt history absent; vNext uniqueness allows only one membership+content row. SQL staged only; consumers currently need attempt awareness before registration.",
-    "Legacy lesson content discussions are per lesson_content_id, not interchangeable with delivery-scoped classroom_messages; current discussions.ts resembles classroom chat.",
+    "Legacy lesson-content discussions are now represented by an isolated UNREGISTERED staged table keyed to lesson content and membership; migration, tenant-consistency, consumer integration and runtime tests remain open. Do not merge them into delivery-scoped classroom chat.",
     "Legacy status flags is_deleted/active/enabled/allowed_for_display must not be collapsed into one status without producer, consumer and restore proof.",
     "Legacy content_data typed shape contains schedule, discussion visibility, assignment attachments, resource list, calendar and video metadata beyond current generic vNext scalar content fields.",
     "Legacy per-class content order requires verify section+delivery correspondence and safe concurrent reorder; current staging omits enforced unique sequence per delivery.",
@@ -412,11 +421,11 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_EQUIVALENT: current course_discussion_messages is delivery chat, legacy discussions attaches to lesson_content_id",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.id (STAGED; UUID greenfield identity)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.created_at",
@@ -425,22 +434,22 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "targetProposal": "NO_EQUIVALENT: lesson-content discussion entity not proven",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.created_at (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.is_deleted",
       "sourceType": "tinyint(1)",
       "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: thread/comment soft deletion",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.is_deleted (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.updated_at",
@@ -449,22 +458,22 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "targetProposal": "NO_EQUIVALENT: lesson-content discussion entity not proven",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.updated_at (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.content_text",
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: per-content discussion text",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.content_text (STAGED; 1..5000 trimmed contract)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.lesson_content_id",
@@ -473,33 +482,33 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_EQUIVALENT: threaded discussion content FK",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.lesson_content_id (STAGED FK)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.profile_name",
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: historic display profile snapshot",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.author_display_name_snapshot (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.sequence",
       "sourceType": "int",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: comment ordering",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.sequence (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.user_id",
@@ -508,22 +517,22 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_EQUIVALENT: author ID",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.author_membership_id (STAGED normalized tenant membership; producer proof required)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.user_name",
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: historic display name snapshot",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.author_handle_snapshot (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "SOURCE_REVIEWED_NOT_RUNTIME_PROVEN"
     },
     {
       "source": "discussions.parent_discussion_id",
@@ -532,33 +541,33 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_EQUIVALENT: reply thread",
+      "targetProposal": "NO_ACTIVE_RUNTIME_MAPPING_PROVEN: historical snapshot column exists, but current legacy JPA/DTO/controller/service/repository path does not expose it; retirement requires whole-repo/live-schema proof",
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "CURRENT_PRIMARY_DISCUSSION_PATH_HAS_NO_CONSUMER; RETIREMENT_NOT_APPROVED"
     },
     {
       "source": "discussions.discussion_status",
       "sourceType": "varchar(20)",
       "sourceNullable": "NOT_NULL",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: resolution workflow status",
+      "targetProposal": "NO_ACTIVE_RUNTIME_MAPPING_PROVEN: historical snapshot column exists, but current legacy JPA/DTO/controller/service/repository path does not expose it; retirement requires whole-repo/live-schema proof",
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "CURRENT_PRIMARY_DISCUSSION_PATH_HAS_NO_CONSUMER; RETIREMENT_NOT_APPROVED"
     },
     {
       "source": "discussions.is_faculty_answer",
       "sourceType": "bit(1)",
       "sourceNullable": "NOT_NULL",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: faculty answer marker",
+      "targetProposal": "NO_ACTIVE_RUNTIME_MAPPING_PROVEN: historical snapshot column exists, but current legacy JPA/DTO/controller/service/repository path does not expose it; retirement requires whole-repo/live-schema proof",
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "CURRENT_PRIMARY_DISCUSSION_PATH_HAS_NO_CONSUMER; RETIREMENT_NOT_APPROVED"
     },
     {
       "source": "discussions.resolved_at",
@@ -567,33 +576,33 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "targetProposal": "NO_EQUIVALENT: resolution timestamp",
+      "targetProposal": "NO_ACTIVE_RUNTIME_MAPPING_PROVEN: historical snapshot column exists, but current legacy JPA/DTO/controller/service/repository path does not expose it; retirement requires whole-repo/live-schema proof",
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "CURRENT_PRIMARY_DISCUSSION_PATH_HAS_NO_CONSUMER; RETIREMENT_NOT_APPROVED"
     },
     {
       "source": "discussions.resolved_by",
       "sourceType": "int",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: resolution actor",
+      "targetProposal": "NO_ACTIVE_RUNTIME_MAPPING_PROVEN: historical snapshot column exists, but current legacy JPA/DTO/controller/service/repository path does not expose it; retirement requires whole-repo/live-schema proof",
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "CURRENT_PRIMARY_DISCUSSION_PATH_HAS_NO_CONSUMER; RETIREMENT_NOT_APPROVED"
     },
     {
       "source": "discussions.attachment_url",
       "sourceType": "text",
       "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: private attachment access",
+      "targetProposal": "NO_ACTIVE_RUNTIME_MAPPING_PROVEN: historical snapshot column exists, but current legacy JPA/DTO/controller/service/repository path does not expose it; retirement requires whole-repo/live-schema proof",
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "CURRENT_PRIMARY_DISCUSSION_PATH_HAS_NO_CONSUMER; RETIREMENT_NOT_APPROVED"
     },
     {
       "source": "learner_content_progress.id",
@@ -1151,5 +1160,32 @@
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED"
     }
-  ]
+  ],
+  "latestSourceReview": {
+    "reviewedOn": "2026-10-11",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "finding": "Primary legacy discussion runtime is a separate lesson-content-scoped stream. Current vNext course_discussion_messages is classroom/delivery chat, so DB05 needs an independent staged persistence contract.",
+    "stagedSchema": "src/db/schema/lesson-content-discussions-staged.ts",
+    "activePrimaryPathFields": [
+      "discussions.id",
+      "discussions.created_at",
+      "discussions.is_deleted",
+      "discussions.updated_at",
+      "discussions.content_text",
+      "discussions.lesson_content_id",
+      "discussions.profile_name",
+      "discussions.sequence",
+      "discussions.user_id",
+      "discussions.user_name"
+    ],
+    "snapshotOnlyUnprovenFields": [
+      "discussions.parent_discussion_id",
+      "discussions.discussion_status",
+      "discussions.is_faculty_answer",
+      "discussions.resolved_at",
+      "discussions.resolved_by",
+      "discussions.attachment_url"
+    ],
+    "verification": "SOURCE_REVIEW_ONLY_NO_EXECUTED_TESTS"
+  }
 }
