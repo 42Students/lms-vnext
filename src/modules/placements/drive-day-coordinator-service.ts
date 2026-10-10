@@ -25,6 +25,7 @@ import {
   hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
+import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
 import {
@@ -97,6 +98,12 @@ export async function hasStudentCoordinatorAssignmentToday(
     !context.membership ||
     !hasMembershipRole(context, "LEARNER")
   ) {
+    return false;
+  }
+
+  // Coordinator access is a limited exception to learner eligibility, NOT an
+  // exception to the college-wide paid Placements module switch.
+  if (!(await resolveOptionalModuleAccess(context)).placements.enabled) {
     return false;
   }
 
@@ -396,6 +403,10 @@ export async function listMyDriveDayRounds(
     );
   }
 
+  if (!(await resolveOptionalModuleAccess(context)).placements.enabled) {
+    throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
+  }
+
   return getDb()
     .select({
       roundId: placementJobRounds.id,
@@ -520,6 +531,12 @@ async function loadRoundAndAccess(
       "COLLEGE_ADMIN",
     )
   ) {
+    if (
+      row.job.collegeId !== context.membership.collegeId ||
+      !(await resolveOptionalModuleAccess(context)).placements.enabled
+    ) {
+      throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
+    }
     const [assignment] = await getDb()
       .select({
         id:
