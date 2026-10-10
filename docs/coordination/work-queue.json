@@ -603,7 +603,10 @@
       "restriction": "ANY",
       "paths": [
         "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
-        "src/db/schema/tpo-crm.ts"
+        "src/db/schema/tpo-crm.ts",
+        "docs/planning/sql/db09-crm-scoped-fk-candidate.sql",
+        "scripts/verify-db09-crm-source.mjs",
+        "docs/planning/db09-chat03-tenant-integrity-review.md"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
@@ -644,6 +647,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Chat 3 narrowly extended DB-012 CAS claim to tpo-crm.ts after finding malformed duplicate declarations/unterminated SQL-check template; only this file, no journal/barrel."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Chat 3 reserved isolated DB09 scoped FK candidate, static schema-source guard and tenant-integrity findings; no shared migrations/barrel/CI."
         }
       ]
     },
