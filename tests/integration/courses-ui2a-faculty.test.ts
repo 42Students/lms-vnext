@@ -26,6 +26,8 @@ import {
   listFacultyCourseDeliveries,
 } from "@/modules/courses/faculty-course-service";
 import { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
+import { getFacultyClassSchedule } from "@/modules/courses/faculty-schedule-service";
+import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -92,6 +94,22 @@ const learner: RequestContext = {
 };
 
 async function cleanupUI2A() {
+  // Schedule link FKs must go before the Section and delivery fixtures.
+  await pool.query(`delete from section_schedule_event_courses
+   where schedule_event_id in (
+     select e.id from section_schedule_events e
+     join sections s on s.id=e.section_id
+     join cohorts c on c.id=s.cohort_id
+     join programs p on p.id=c.program_id
+     where p.code like 'FUI2A-%'
+   )`);
+  await pool.query(`delete from section_schedule_events
+   where section_id in (
+     select s.id from sections s
+     join cohorts c on c.id=s.cohort_id
+     join programs p on p.id=c.program_id
+     where p.code like 'FUI2A-%'
+   )`);
   await pool.query(
     `delete from quiz_options
      where question_id in (
@@ -397,6 +415,8 @@ async function createStructure() {
   );
 
   return {
+    sectionA,
+    sectionB,
     deliveryA,
     deliveryB,
     path,
@@ -528,6 +548,51 @@ describe("courses UI2A faculty read model", () => {
       (quiz) => quiz.deliveryId === structure.deliveryB.id,
     )).toBe(false);
     await expect(getFacultyAssessmentOverview(learner)).rejects.toMatchObject({
+      code: "FACULTY_TEACHING_SCOPE_REQUIRED",
+    });
+  });
+
+  it("keeps Faculty Class Schedule Section-scoped, includes general events and links exact deliveries", async () => {
+    const structure = await createStructure();
+    const [ownCourseEvent, ownSectionEvent, unrelatedEvent] = await Promise.all([
+      createSectionScheduleEvent(collegeAdmin, {
+        sectionId: structure.sectionA.id,
+        deliveryId: structure.deliveryA.id,
+        facultyMembershipId: SEED_IDS.facultyCollegeAMembership,
+        title: "FUI2A Course Lab",
+        startsAt: "2026-11-12T09:00:00.000Z",
+        endsAt: "2026-11-12T10:00:00.000Z",
+      }),
+      createSectionScheduleEvent(collegeAdmin, {
+        sectionId: structure.sectionA.id,
+        title: "FUI2A General Briefing",
+        startsAt: "2026-11-12T11:00:00.000Z",
+        endsAt: "2026-11-12T12:00:00.000Z",
+      }),
+      createSectionScheduleEvent(collegeAdmin, {
+        sectionId: structure.sectionB.id,
+        deliveryId: structure.deliveryB.id,
+        title: "FUI2A Other Section",
+        startsAt: "2026-11-12T13:00:00.000Z",
+        endsAt: "2026-11-12T14:00:00.000Z",
+      }),
+    ]);
+
+    const schedule = await getFacultyClassSchedule(faculty);
+    expect(schedule.courses.map((row) => row.deliveryId))
+      .toEqual([structure.deliveryA.id]);
+    expect(schedule.sections.map((row) => row.sectionId))
+      .toEqual([structure.sectionA.id]);
+    expect(schedule.events.map((event) => event.id))
+      .toEqual([ownCourseEvent.id, ownSectionEvent.id]);
+    expect(schedule.events[0]).toMatchObject({
+      courseCode: "FUI2A-DS",
+      deliveryId: structure.deliveryA.id,
+    });
+    expect(schedule.events[1]).toMatchObject({ deliveryId: null });
+    expect(schedule.events.some((event) => event.id === unrelatedEvent.id))
+      .toBe(false);
+    await expect(getFacultyClassSchedule(learner)).rejects.toMatchObject({
       code: "FACULTY_TEACHING_SCOPE_REQUIRED",
     });
   });
