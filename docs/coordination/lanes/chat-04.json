@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_SOURCE_DISPOSITION_COMPLETE_TARGET_ACCEPTANCE_OPEN",
+    "checkpointKind": "DB005_SOURCE_AND_TARGET_DISPOSITION_COMPLETE_STATIC_STAGING_HARDENED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "2d313acc18ccbd903fa23556a5e0be1652a077b0",
-    "lastWorkerMergedSha": "22e7530e7ed4ba86bffc51c086d0c58f16f771f0",
+    "observedMainSha": "c777122ccc6abf2fddae98b918d22ef38ebff77c",
+    "lastWorkerMergedSha": "8d348b9da606aab3e83d35af6b940939dae235b2",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 source-side disposition is 125/125 complete: 106 active/compatibility/operational and 19 historical/no-current-consumer candidates, 0 unclassified. One canonical staging SQL remains after duplicate cleanup; static staging defects were repaired. Runtime/PostgreSQL and registered-schema verification remain open."
+    "summary": "DB02 has 125/125 source dispositions and 125/125 target design dispositions. Canonical unregistered staging is statically reconciled on current main with no malformed exact PL/pgSQL delimiters; progression actor retention/TRUNCATE protection, hall archive-vs-booking serialization, stable offering term identity, cohort INACTIVE/dates, section compatibility fields and ACTIVE FACULTY course-pool guard are present. PostgreSQL/runtime verified fields remain 0."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -47,9 +47,23 @@
       "topic": "Review/register DB02 staged program terms, cohort progression/history, lecture halls and overlap invariants.",
       "status": "DELIVERED",
       "evidence": "issue comment 6101948064"
+    },
+    {
+      "to": "CHAT_01",
+      "issue": 21,
+      "scope": "DB-005 full DB02 registration package after 125/125 source+target disposition",
+      "request": "Register the accepted DB02 staging under Chat 1 migration/schema ownership, atomically update producers/fixtures (especially NOT NULL course_offerings.program_term_id), and execute the PostgreSQL acceptance matrix in docs/planning/db02-academic-progression-contract.md. Chat 4 has not executed PostgreSQL and DB-005 remains IN_PROGRESS.",
+      "evidence": [
+        "177757fa44e0279a23860900f72b8267df4f8b64",
+        "06e6d2071da4175d22d0be97dd142910d06b3ba5",
+        "4cf1081c1bad7b0857ca2f1adc29940ce6d5ab19",
+        "c408dd525d3e664f49719b4933df12226d60a460",
+        "8d348b9da606aab3e83d35af6b940939dae235b2"
+      ],
+      "issueCommentId": 6102143870
     }
   ],
-  "nextAction": "DB-005 remains IN_PROGRESS: independently review new SQL stage risks documented 2026-10-11, resolve hall archival/booking race, event TRUNCATE and actor retention, then have Chat 1 register and execute disposable PostgreSQL gate. Keep 125/125 source dispositions separate from 0/125 runtime verified.",
+  "nextAction": "Await/assist Chat 1 registered Drizzle integration from issue #21 handoff. After registration, independently inspect exact migration/schema/service changes and require disposable PostgreSQL zero-to-current replay plus DB02 tenant, lifecycle, offering-term, faculty-pool, promotion-CAS, immutable-journal, overlap/hall-race and cancellation/attendance acceptance before DB-005 can become COMPLETED/DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -80,7 +94,14 @@
     "https://github.com/42Students/lms-vnext/commit/fbd2e374336c456e4d1562a4fd9655f524246d8b",
     "https://github.com/42Students/lms-vnext/commit/c54b37a14b7f55bbb00997af4605e8af1ed1070c",
     "https://github.com/42Students/lms-vnext/commit/1a3f086a89edafcc9ee3d727be68caf3c4dd88b9",
-    "https://github.com/42Students/lms-vnext/commit/db26a96ebf25c5b317568d1a9c8e9e0109dbb820"
+    "https://github.com/42Students/lms-vnext/commit/db26a96ebf25c5b317568d1a9c8e9e0109dbb820",
+    "https://github.com/42Students/lms-vnext/commit/177757fa44e0279a23860900f72b8267df4f8b64",
+    "https://github.com/42Students/lms-vnext/commit/06e6d2071da4175d22d0be97dd142910d06b3ba5",
+    "https://github.com/42Students/lms-vnext/commit/4cf1081c1bad7b0857ca2f1adc29940ce6d5ab19",
+    "https://github.com/42Students/lms-vnext/commit/c408dd525d3e664f49719b4933df12226d60a460",
+    "https://github.com/42Students/lms-vnext/commit/8d348b9da606aab3e83d35af6b940939dae235b2",
+    "https://github.com/42Students/lms-vnext/issues/24#issuecomment-6102141592",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102143870"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
