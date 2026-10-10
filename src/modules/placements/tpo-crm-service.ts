@@ -5,6 +5,7 @@ import {
   eq,
   isNull,
   lte,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -154,7 +155,8 @@ export async function listTpoLeadActivities(
       eq(placementTpoLeadActivities.collegeId, collegeId),
       eq(placementTpoLeadActivities.leadId, leadId),
     ))
-    .orderBy(asc(placementTpoLeadActivities.createdAt));
+    .orderBy(desc(placementTpoLeadActivities.createdAt), desc(placementTpoLeadActivities.id))
+    .limit(200);
 }
 
 /**
@@ -488,5 +490,9 @@ export async function listTpoLeadFollowups(
       eq(placementTpoFollowups.collegeId, collegeId),
       eq(placementTpoFollowups.leadId, leadId),
     ))
-    .orderBy(asc(placementTpoFollowups.dueAt), asc(placementTpoFollowups.id));
+    .orderBy(
+      asc(sql`${placementTpoFollowups.doneAt} is not null`),
+      asc(placementTpoFollowups.dueAt),
+      asc(placementTpoFollowups.id),
+    );
 }
