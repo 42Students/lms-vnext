@@ -244,7 +244,7 @@ CREATE TABLE cohort_progression_events (
   to_academic_year_start integer,
   from_period_id uuid REFERENCES academic_periods(id) ON DELETE RESTRICT,
   to_period_id uuid REFERENCES academic_periods(id) ON DELETE RESTRICT,
-  actor_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
+  actor_user_id uuid REFERENCES users(id) ON DELETE SET NULL,
   reason text,
   state_version bigint NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -315,7 +315,8 @@ END;
 $$;
 
 CREATE TRIGGER db02_cohort_progression_state_guard
-BEFORE INSERT OR UPDATE ON cohort_progression_state
+BEFORE INSERT OR UPDATE OF current_term_number, current_academic_year_start, current_period_id, version
+ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
 
 -- Database-owned history: a direct SQL update cannot advance canonical state without
@@ -351,7 +352,8 @@ END;
 $$;
 
 CREATE TRIGGER db02_cohort_progression_history
-AFTER UPDATE ON cohort_progression_state
+AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version
+ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
 
 -- State updates still need a compare-and-set predicate (cohort_id + expected version)
@@ -362,19 +364,34 @@ FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
 -- trigger. Application accounts must not forge, mutate or delete the audit trail.
 -- This is a staging defense, not a substitute for restricting schema/DDL privileges.
 CREATE FUNCTION db02_guard_progression_event_immutability()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 BEGIN
   IF TG_OP = 'INSERT' AND pg_trigger_depth() >= 2 THEN
     RETURN NEW;
   END IF;
+
+  -- ON DELETE SET NULL from users is the only permitted mutation of an existing event.
+  -- It preserves the immutable academic fact while allowing identity lifecycle cleanup.
+  IF TG_OP = 'UPDATE'
+     AND pg_trigger_depth() >= 2
+     AND OLD.actor_user_id IS NOT NULL
+     AND NEW.actor_user_id IS NULL
+     AND (to_jsonb(NEW) - 'actor_user_id') = (to_jsonb(OLD) - 'actor_user_id') THEN
+    RETURN NEW;
+  END IF;
+
   RAISE EXCEPTION 'Cohort progression events are database-owned and immutable'
     USING ERRCODE = '23514';
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_cohort_progression_events_immutable
 BEFORE INSERT OR UPDATE OR DELETE ON cohort_progression_events
 FOR EACH ROW EXECUTE FUNCTION db02_guard_progression_event_immutability();
+
+CREATE TRIGGER db02_cohort_progression_events_no_truncate
+BEFORE TRUNCATE ON cohort_progression_events
+FOR EACH STATEMENT EXECUTE FUNCTION db02_guard_progression_event_immutability();
 
 -- Ensure every newly created cohort has exactly one canonical term/year row.
 -- The initial July-boundary year is only a default; an explicit user-supplied
@@ -541,7 +558,8 @@ BEGIN
     SELECT college_id INTO hall_college
       FROM lecture_halls
      WHERE id = NEW.lecture_hall_id
-       AND (status = 'ACTIVE' OR NEW.status = 'CANCELLED');
+       AND (status = 'ACTIVE' OR NEW.status = 'CANCELLED')
+     FOR SHARE;
     IF hall_college IS NULL THEN
       RAISE EXCEPTION 'Unknown or inactive lecture hall' USING ERRCODE = '23503';
     END IF;
@@ -558,6 +576,30 @@ CREATE TRIGGER db02_schedule_hall_tenant_guard
 BEFORE INSERT OR UPDATE OF section_id, faculty_membership_id, lecture_hall_id, status
 ON section_schedule_events
 FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_hall_tenant();
+
+-- Serialize hall archival with booking creation. The schedule trigger takes FOR SHARE on the
+-- hall; an archive UPDATE takes the conflicting row lock. Whichever wins first determines the
+-- valid result without allowing an ACTIVE future booking to reference an archived hall.
+CREATE FUNCTION db02_guard_lecture_hall_archive()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF OLD.status = 'ACTIVE' AND NEW.status = 'ARCHIVED' AND EXISTS (
+    SELECT 1
+      FROM section_schedule_events e
+     WHERE e.lecture_hall_id = OLD.id
+       AND e.status = 'SCHEDULED'
+       AND e.ends_at > now()
+  ) THEN
+    RAISE EXCEPTION 'Cannot archive lecture hall with active or future scheduled sessions'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_lecture_hall_archive_guard
+BEFORE UPDATE OF status ON lecture_halls
+FOR EACH ROW EXECUTE FUNCTION db02_guard_lecture_hall_archive();
 
 -- PostgreSQL overlap invariants. Chat 1 must confirm btree_gist is available in the
 -- target Cloud SQL/PostgreSQL environment before registering this section.
@@ -664,7 +706,10 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 -- 7. Verify a broad faculty-course association can exist before delivery, rejects cross-college
 --    links, deactivates historically and cannot duplicate an active pair.
 -- 8. Run concurrent promotion with same expected version: exactly one commit must win.
--- 9. Verify backward/jump promotions fail and immutable history matches the winner.
--- 10. Verify same-resource overlap fails while back-to-back [start,end) sessions succeed.
+-- 9. Verify backward/jump promotions fail, immutable history matches the winner, direct
+--    INSERT/UPDATE/DELETE/TRUNCATE of progression events fails, and user deletion only nulls
+--    the event actor reference without creating a fake promotion event.
+-- 10. Verify same-resource overlap fails while back-to-back [start,end) sessions succeed;
+--     concurrently archiving a hall vs creating a future booking must yield exactly one valid winner.
 -- 11. Verify CANCELLED events release the scheduling resource while attendance/history remains.
 -- 12. No production data backfill is required: vNext is greenfield.
