@@ -1,6 +1,6 @@
 {
   "domain": "DB08_PLACEMENT_POLICY_AND_OUTCOMES",
-  "status": "SOURCE_CENSUS_COMPLETE_MAPPING_UNVERIFIED",
+  "status": "SOURCE_CENSUS_AND_DOMAIN_CANDIDATES_RECONCILED_MAPPING_UNVERIFIED",
   "capturedFrom": {
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "vnextBranchBaselineSha": "c489b2569dd2d2742da2ee17ed313a26853dc4da",
@@ -10,7 +10,7 @@
       "src/db/schema/drive-day.ts"
     ]
   },
-  "interpretation": "A name match is merely a candidate; source-level inventory, not live MySQL or PostgreSQL introspection. Every field must be semantically reviewed, implemented, database-tested and workflow-verified (or explicitly signed off for redesign/retirement). Preexisting placement_eligibility_decisions from 0035 covers current global decision status but lacks parent-scoped FKs and event/undo fidelity; gap is not absence of the decision table.",
+  "interpretation": "All 18 legacy tables / 280 fields have source-reviewed canonical domain candidate sets on main. Individual field semantics remain UNVERIFIED until exact MAPPED/REDESIGNED/RETIRED/BLOCKED dispositions include evidence; table presence is not parity.",
   "gate": {
     "liveLegacySchema": "NOT_INSPECTED",
     "disposablePostgresReplay": "NOT_RUN",
@@ -29,6 +29,24 @@
     ],
     "cSchemasStaged": [
       "src/db/schema/placement-external.ts"
+    ],
+    "globalQueueReview": {
+      "taskId": "DB-011",
+      "chatNumber": 5,
+      "reviewedOn": "2026-10-11",
+      "sourceReviewedFields": 280,
+      "exactFieldMappingsVerified": 0,
+      "runtimeFieldsVerified": 0,
+      "evidenceSha": "99189dcccde93444cb5b54095c9406628939755f"
+    },
+    "blockingFindings": [
+      "Latest legacy V188 retires placement seasons, but current vNext placement_jobs.season_id remains NOT NULL and placement_seasons remains active.",
+      "DB08 batch/registration/debarment/external/cohort-target schema candidates are not exported/journalled as active numbered migrations.",
+      "job.counts_as_placed is not represented in current placement_jobs or role options.",
+      "placement_registration.outcome_label/outcome_detail are not represented in placement_batch_registrations.",
+      "Current placement_offers does not yet represent all legacy fixed/variable/bonus, bond and dispute/revocation fidelity.",
+      "Legacy eligibility actor type/name snapshots require an explicit preserve-or-redesign decision; current candidates primarily retain actor user IDs.",
+      "Disposable PostgreSQL replay and all runtime verification remain blocked."
     ]
   },
   "counts": {
