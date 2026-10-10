@@ -1,7 +1,7 @@
 import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  collegeMemberships, courseOfferings, courseSectionDeliveries, courses,
+  cohorts, collegeMemberships, courseOfferings, courseSectionDeliveries, courses,
   departments, electiveOfferings, electiveSlots, lmsGroupMembers,
   lmsGroups, membershipRoles, sections, users,
 } from "@/db/schema";
@@ -34,6 +34,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     eq(electiveOfferings.status, "ACTIVE"),
     isNull(electiveOfferings.deletedAt),
     eq(courseOfferings.courseId, electiveOfferings.courseId),
+    eq(cohorts.programId, electiveSlots.programId),
     eq(courseOfferings.status, "ACTIVE"),
     eq(courses.status, "ACTIVE"),
     eq(departments.collegeId, collegeId),
@@ -73,6 +74,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
     .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, electiveOfferings.backedDeliveryId))
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
     .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, eq(departments.id, courses.departmentId))
