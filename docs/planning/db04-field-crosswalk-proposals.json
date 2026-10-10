@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "workBranch": "db04-profile-verification-2026",
   "createdAt": "2026-10-10",
-  "evidence": "Source-derived proposals only. No field semantic verification or actual DB execution.",
+  "evidence": "Legacy V187 DDL and staged vNext schema source-reviewed for 25 fields on 2026-10-11; producer/consumer review, active/retired decisions, registered migration and executed PostgreSQL remain incomplete. No field is semantically or runtime verified.",
   "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "vNextBaselineSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
   "counts": {
@@ -10,7 +10,8 @@
     "sourceFields": 103,
     "mappedProposals": 67,
     "verified": 0,
-    "retirementApproved": 0
+    "retirementApproved": 0,
+    "ddlToStagedSourceReviewedUnverified": 25
   },
   "rows": [
     {
@@ -551,7 +552,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -570,7 +581,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Legacy integer learner identifier; vNext canonical membership UUID. Prove membership identity and tenant scope before source-mapped signoff."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -587,7 +608,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -604,7 +635,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -623,7 +664,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Require only masked identity and private receipt references; staged SQL lacks JSONB payload invariant."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -642,7 +693,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Retained during UPDATE_PENDING; prove direct SQL cannot forge VERIFIED state without review and event."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -661,7 +722,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -680,7 +751,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -697,7 +778,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Legacy ADMIN/SUPER_ADMIN/TPO vs vNext COLLEGE_ADMIN/SUPER_ADMIN/TPO; role translation and producer readers require verification."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -716,7 +807,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Legacy actor id semantics may differ by actor type; verify lookup to canonical user UUID."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -733,7 +834,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -750,7 +861,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -769,7 +890,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -786,7 +917,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Not a direct current-row vNext column; verify the last VERIFIED event retains correct reviewer name while UPDATE_PENDING/sent-back changes decidedByName."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification",
@@ -805,7 +946,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -824,7 +975,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -843,7 +1004,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Target event uses verification_id FK; membership/college is derived through immutable parent; prove tenant filtered readers."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -860,7 +1031,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Target section is derived from immutable verification parent; prevent mismatched event action/section semantics."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -877,7 +1058,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -894,7 +1085,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -913,7 +1114,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Legacy integer actor id must resolve to canonical user; cross-college role authorization cannot be inferred from users FK."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -930,7 +1141,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -947,7 +1168,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "PENDING"
+      "privacyReview": "PENDING",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Validate active JPA/service/UI readers, source type/null/default/unique and executable PostgreSQL DDL on final integrated migration."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -966,7 +1197,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "JSONB privacy must not rely exclusively on application validation; stage event immutability/DB permissions and redaction probes."
+        ]
+      }
     },
     {
       "legacyTable": "profile_verification_event",
@@ -985,7 +1226,17 @@
       "producerEvidence": "NOT_AUDITED",
       "consumerEvidence": "NOT_AUDITED",
       "sqlExecution": "NOT_EXECUTED",
-      "privacyReview": "REQUIRED"
+      "privacyReview": "REQUIRED",
+      "sourceReview": {
+        "status": "LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED",
+        "reviewedAt": "2026-10-11",
+        "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyEvidence": "src/main/resources/db/migration/V187__profile_verification.sql",
+        "vnextEvidence": "src/db/schema/profile-verification.ts",
+        "openProbes": [
+          "Order via committed revision number rather than assuming timestamp-only ordering."
+        ]
+      }
     },
     {
       "legacyTable": "qualification",
