@@ -53,6 +53,7 @@ export async function acceptRecruiterInvite(
   if (!isRecruiterInviteTokenShape(input.token) ||
       typeof input.recruiterUserId !== "string" ||
       !input.recruiterUserId.trim() ||
+      !(now instanceof Date) ||
       !Number.isFinite(now.getTime())) {
     throw new RecruiterInviteError("INVITE_INVALID");
   }
