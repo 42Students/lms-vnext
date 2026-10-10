@@ -14,6 +14,15 @@ describe("W02 Faculty Quiz Report score summary", () => {
       averagePercent: null,
     });
   });
+  it("ignores corrupted scores, negative grades and non-finite percentages", () => {
+    expect(scoreSummary([
+      { score: 9, maxScore: 10 },
+      { score: -1, maxScore: 10 },
+      { score: 11, maxScore: 10 },
+      { score: Number.POSITIVE_INFINITY, maxScore: 10 },
+      { score: 2, maxScore: Number.NaN },
+    ])).toEqual({ attempted: 5, graded: 1, averagePercent: 90 });
+  });
   it("uses each learner's own maximum score, excluding invalid zero maxima", () => {
     expect(scoreSummary([
       { score: 8, maxScore: 10 },
