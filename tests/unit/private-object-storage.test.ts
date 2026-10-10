@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildPrivateObjectKey,
   PrivateObjectStorageError,
+  validatePrivateReadRequest,
   validatePrivateUploadRequest,
 } from "@/modules/storage/private-object-storage";
 
@@ -44,6 +45,40 @@ describe("private object storage contract", () => {
       contentType: "application/pdf",
       expectedSizeBytes: 26 * 1024 * 1024,
     })).toThrowError("PRIVATE_STORAGE_INVALID_SIZE");
+  });
+
+  it("validates membership-scoped private read grants", () => {
+    const objectKey =
+      `private/${collegeId}/${membershipId}/profile-verification/${objectId}`;
+
+    expect(
+      validatePrivateReadRequest({
+        collegeId,
+        ownerMembershipId: membershipId,
+        objectKey,
+      }),
+    ).toMatchObject({
+      objectKey,
+      expiresInMs: 5 * 60 * 1000,
+    });
+
+    expect(() =>
+      validatePrivateReadRequest({
+        collegeId,
+        ownerMembershipId: membershipId,
+        objectKey:
+          `private/${collegeId}/40000000-0000-4000-8000-000000000099/profile-verification/${objectId}`,
+      }),
+    ).toThrowError("PRIVATE_STORAGE_INVALID_SCOPE");
+
+    expect(() =>
+      validatePrivateReadRequest({
+        collegeId,
+        ownerMembershipId: membershipId,
+        objectKey:
+          `private/${collegeId}/${membershipId}/../other`,
+      }),
+    ).toThrowError("PRIVATE_STORAGE_INVALID_SCOPE");
   });
 
   it("rejects malformed MIME and overlong grants", () => {
