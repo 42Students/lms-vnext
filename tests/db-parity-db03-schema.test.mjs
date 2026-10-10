@@ -101,3 +101,42 @@ test("DB03 0040 historical role/type snapshots are registered and map legacy fie
   assert.equal(crosswalk.verified,0);
   for (const field of crosswalk.fields) assert.equal(field.verification,"UNVERIFIED");
 });
+
+test("DB03 79 source path witness stays complete but runtime unverified", () => {
+  const ledger=load("docs/planning/db03-chat05-79-field-source-presence.json");
+  const crosswalk=load("docs/planning/database-parity-db03-79-field-crosswalk.json");
+  const snapshot=load("drizzle/meta/0040_snapshot.json");
+  assert.equal(ledger.counts.historicalColumns,79);
+  assert.equal(ledger.counts.sourceSnapshotTargetsPresent,79);
+  assert.equal(ledger.counts.sourceSnapshotTargetsMissing,0);
+  assert.equal(ledger.counts.runtimeVerified,0);
+  assert.equal(ledger.vnextSnapshotBlobSha.length,40);
+  assert.equal(crosswalk.fields.length,79);
+  assert.equal(ledger.columns.length,79);
+  assert.equal(new Set(ledger.columns.map(f=>f.legacyColumn)).size,79);
+
+  const byLegacy=new Map(ledger.columns.map(f=>[f.legacyColumn,f]));
+  for(const source of crosswalk.fields){
+    const row=byLegacy.get(source.legacyColumn);
+    assert.ok(row, source.legacyColumn+" missing from source witness");
+    assert.equal(row.completion,"UNVERIFIED");
+    assert.equal(row.runtimeSemanticsVerified,false);
+    assert.equal(row.actualMigrationReplayVerified,false);
+    assert.deepEqual(row.targetEvidence.map(e=>e.target),source.target);
+    for(const target of row.targetEvidence){
+      assert.equal(target.snapshotPresent,true, source.legacyColumn+" => "+target.target);
+      if(target.kind==="COLUMN"){
+        const [name,column]=target.target.split(".");
+        const defined=snapshot.tables["public."+name]?.columns?.[column];
+        assert.ok(defined, source.legacyColumn+" => "+target.target+" not declared");
+        assert.equal(target.snapshotType,defined.type);
+        assert.equal(target.snapshotNotNull,defined.notNull);
+        assert.equal(target.snapshotDefault,defined.default??null);
+      } else {
+        assert.equal(target.kind,"INDEX");
+        assert.ok(Object.values(snapshot.tables).some(t=>t.indexes?.[target.target]),
+          source.legacyColumn+" => "+target.target+" not declared");
+      }
+    }
+  }
+});
