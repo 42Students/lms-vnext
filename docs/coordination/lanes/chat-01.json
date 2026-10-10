@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "WORKING",
-  "activeTaskId": "DB-009",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [
     "DB-001"
   ],
   "checkpoint": {
-    "checkpointKind": "DB009_IN_PROGRESS",
+    "checkpointKind": "DB009_SOURCE_RECONCILIATION_COMPLETED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "e605a87ecb679337cd49ae1547fe8ffce89adbbd",
-    "lastWorkerMergedSha": null,
+    "observedMainSha": "2b95a9e23979d099013abec29b3655468df46afb",
+    "lastWorkerMergedSha": "a0b840d8730bf53ff08501b517c5c4369d929e68",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-009 active. Auditing current legacy assessments/attendance persisted contracts against vNext; avoiding src/db/schema/** until Chat 5 broad schema claim clears."
+    "summary": "DB-009 source mapping complete: 9 active tables/120 active fields explicitly dispositioned, 12 historical tables/128 fields retained as unapproved retirement candidates. Contract test authored and registered; runtime not executed due DB-001. Shared schema edits deferred to avoid Chat 5 collision."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -28,13 +28,15 @@
     "build": "NOT_VERIFIED",
     "browser": "NOT_VERIFIED"
   },
-  "lastAuthoredTests": [],
+  "lastAuthoredTests": [
+    "tests/db06-reconciliation-contract.test.mjs"
+  ],
   "lastExecutedPassingTests": [],
   "blockers": [
     "DB-001: GitHub Actions job cannot start; repo admin needs runner/billing/provisioning investigation and fresh CI execution."
   ],
   "handoffs": [],
-  "nextAction": "Complete DB06 source semantic classification and durable reconciliation evidence; stage non-overlapping docs/tests only while Chat 5 owns src/db/schema/**.",
+  "nextAction": "Claim next eligible DATABASE task after refreshing shared queue. DB-009 awaits runtime/schema acceptance and must not be marked VERIFIED until executed evidence exists.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -51,18 +53,26 @@
   },
   "evidenceLinks": [
     "https://github.com/42Students/lms-vnext/issues/21",
-    "https://github.com/42Students/lms-vnext/actions/runs/38045745507"
+    "https://github.com/42Students/lms-vnext/actions/runs/38045745507",
+    "https://github.com/42Students/lms-vnext/commit/6e6bd96d77e8cceb1afa2b8a433a293088e91dd5",
+    "https://github.com/42Students/lms-vnext/commit/91c18bdf25d86c754f00e6d21842ec0b15cdc52c",
+    "https://github.com/42Students/lms-vnext/commit/3d623975b8ceec3bce3c3e2a74c671c52068e2d0",
+    "https://github.com/42Students/lms-vnext/commit/a0b840d8730bf53ff08501b517c5c4369d929e68"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
     "DB-001",
     "DB-009"
   ],
-  "completedTaskIds": [],
+  "completedTaskIds": [
+    "DB-009"
+  ],
   "lastPickedAt": "2026-10-10T20:30:04.201Z",
-  "lastCompletedAt": null,
+  "lastCompletedAt": "2026-10-10T20:36:31.169Z",
   "verifiedTaskIds": [],
-  "awaitingVerificationTaskIds": [],
+  "awaitingVerificationTaskIds": [
+    "DB-009"
+  ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
     "completedTaskIds": "Unique task IDs for which this chat finished committed implementation (completedBy proof). Not automatically verified.",
