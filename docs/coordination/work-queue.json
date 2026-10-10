@@ -1197,6 +1197,42 @@
           "reason": "Corrected Drizzle draft and matching SQL; authored source/test acceptance; runtime/migration integration pending."
         }
       ]
+    },
+    {
+      "id": "DB-023",
+      "phase": "DATABASE",
+      "title": "Correct DB10 log-alert account identity and bigint retention semantics",
+      "scope": "Remove unproven users FK from logged account marker blast-radius persistence, use opaque typed-identity digest, preserve bigint counters safely, stage DB10 operational alert triage tables/constraints and static source/privacy negative witnesses.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/db10-log-alerts.draft.ts",
+        "scripts/sql/db10-log-alerts-staging.sql",
+        "docs/planning/database-parity-db10-log-alerts-contract.md",
+        "tests/db10-log-alerts-staging.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Source audit showed legacy account_id is an opaque account marker rather than proven users FK; vNext draft also used precision-losing JS number for bigint count."
+        }
+      ]
     }
   ],
   "eventModel": {
