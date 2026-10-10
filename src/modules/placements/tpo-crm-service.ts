@@ -15,6 +15,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
+import { inferLegacyRecruiterCompanyName } from "./tpo-recruiter-lead-policy";
 import {
   checkTpoLeadContactSchema,
   createTpoFollowupSchema,
@@ -120,7 +121,7 @@ export async function createTpoLead(
       emailNorm: input.email ?? null,
       phoneNorm: normalizePhone(input.phone),
       designation: input.designation ?? null,
-      companyName: input.companyName ?? null,
+      companyName: input.companyName ?? inferLegacyRecruiterCompanyName(input.email),
       source: input.source ?? "MANUAL",
       ownerMembershipId: ownerMembership(context, input.collegeId),
     })
