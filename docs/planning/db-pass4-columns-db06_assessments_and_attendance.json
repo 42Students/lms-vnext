@@ -5579,6 +5579,20 @@
       "same-tenant schedule/membership/actor integrity needs executed negative database evidence"
     ],
     "runtimeVerification": "BLOCKED_BY_DB-001",
-    "schemaMutationStatus": "DEFERRED_DUE_ACTIVE_SHARED_SCHEMA_CLAIM"
+    "schemaMutationStatus": "DEFERRED_DUE_ACTIVE_SHARED_SCHEMA_CLAIM",
+    "snapshotBoundary": {
+      "historicalInventoryThrough": "V150",
+      "postSnapshotDb06Evidence": [
+        {
+          "migration": "src/main/resources/db/migration/V156__class_schedule_attendance_marked.sql",
+          "legacyTable": "class_schedule",
+          "legacyColumn": "attendance_marked_at",
+          "sourceDisposition": "ACTIVE_CROSS_DOMAIN_SOURCE_CONTRACT",
+          "semantics": "Null means attendance has not been taken; non-null records that the session was explicitly marked even when no absence rows exist.",
+          "normalizedVnextMapping": "attendance_sessions.status + attendance_sessions.marked_at + attendance_sessions.marked_by_user_id",
+          "mappingStatus": "SOURCE_MAPPED_RUNTIME_UNVERIFIED"
+        }
+      ]
+    }
   }
 }
