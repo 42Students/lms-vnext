@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_SEVEN_DRAFTS_25_TOP_LEVEL_GAPS_31_NESTED_KEYS_SOURCE_REVIEWED",
+    "checkpointKind": "DB008_SIX_MERGES_PROGRESS_TOMBSTONE_AND_CLASSROOM_GATES_STAGED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "7015aa1ca21566ba3fe0879cc4d5605dee522e6c",
-    "lastWorkerMergedSha": "7015aa1ca21566ba3fe0879cc4d5605dee522e6c",
+    "observedMainSha": "f4efe30db3cc1943f5e15a7e8b7c2dc91830f99b",
+    "lastWorkerMergedSha": "1c18b6da4d139bcc9bd2efd8f9bb0bb3a902fa86",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-008 IN_PROGRESS: 92/92 historical top-level fields source inventoried; 30 candidates, 37 UNREGISTERED staged, 22 remodeled-needs-proof, 3 missing/unproven. Separate nested 14 MetaData + 17 ContentDataDTO fields source reviewed. Seven unregistered SQL drafts, 25 unresolved top-level semantic decisions. 16 Node test definitions authored, NOT executed; source-only remote static integrity checks passed, no Postgres/CI/lint/typecheck/build/browser accepted. 0 semantically verified DB fields."
+    "summary": "DB-008 remains IN_PROGRESS after six merged PRs #63/#67/#69/#70/#72/#74. 92 top-level DB05 fields inventoried, counts at latest source checkpoint 30 candidates/37 drafts/22 remodeled/3 missing, 0 verified. Seven manifest-listed SQL drafts unregistered; classroom same-college SQL is companion-only and no duplicate history columns. Legacy progress deletion now has unregistered deleted_at candidate with latest-attempt-before-deletion-filter caveat. Added Node static tests but suites not executed; no PostgreSQL, CI, lint, typecheck or build pass proof. 25 decisions remain open until formal consumer/PG reconciliation."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,7 +30,10 @@
   },
   "lastAuthoredTests": [
     "tests/db05-source-semantic-review.test.mjs (6 Node tests authored NOT RUN)",
-    "tests/db05-draft-contract-integrity.test.mjs (10 Node tests authored NOT RUN)"
+    "tests/db05-draft-contract-integrity.test.mjs (10 Node tests authored NOT RUN)",
+    "tests/db05-classroom-message-parity.test.mjs: authored, not executed",
+    "tests/db05-deadline-points-contract.test.mjs: authored, not executed",
+    "tests/db05-progress-deletion-attempt.test.mjs: authored, not executed"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -70,9 +73,15 @@
       "kind": "DB05_SEVEN_DRAFTS_TYPED_CONTENT_AND_META_HANDOFF",
       "message": "W01: seven isolated SQL drafts tracked in docs/planning/db05-migration-readiness-manifest.json; one new lesson_content_settings.draft.sql based on 17 ContentDataDTO nested fields. 14 MetaData fields in db05-course-metadata-subfields.json. 25 open top-level semantic decisions; content JSON includes 2 DB06 resource/submission policy gaps. No migration registered or tests executed; fail-closed node scripts/db05-migration-readiness.mjs authored but not run.",
       "commitSha": "7015aa1ca21566ba3fe0879cc4d5605dee522e6c"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "CLASSROOM_HISTORY_DEDUP_AND_PROGRESS_ATTEMPT_TOMBSTONE",
+      "message": "PR #70 deduped classroom sender snapshot+deleted_at under manifest-listed history draft, companion-only tenant trigger; PR #72 added blocked same-college and upstream-reparent gates; PR #74 added progress.deleted_at to unregistered version/attempt draft. Legacy admin progress count SELECT MAX(attempt) before is_deleted filter; do not resurrect earlier completion. Migrations require Chat1 PG tests and app cutover; no runtime evidence.",
+      "commitSha": "1c18b6da4d139bcc9bd2efd8f9bb0bb3a902fa86"
     }
   ],
-  "nextAction": "Continue DB008 remaining 25 semantic decisions, especially 3 historical-only fields, DB06 assignment linkage and safe content payload/tenant consistency; W01 must register seven drafts only after corresponding consumer code and real clean Postgres tests. No global phase promotion.",
+  "nextAction": "Continue DB008 at 25 unresolved DB05 semantics, especially progress deletion/attempt per-reader parity, course history/restore, DB06 assessment linkage, private asset authorization. Chat 1 to register 7 independent drafts plus classroom tenant companion only after consumer changes, upstream reparent safety, negative PostgreSQL and full tests; no global phase promotion.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -116,7 +125,14 @@
     "https://github.com/42Students/lms-vnext/commit/e2c5d1da306acac0f123165be92208ac260627ec",
     "https://github.com/42Students/lms-vnext/commit/33cb6b2b43a4d8f738cafc2db2222fb17f57620a",
     "https://github.com/42Students/lms-vnext/commit/67ec705877a9e8dfdb552c5746037e55f8f0fa00",
-    "https://github.com/42Students/lms-vnext/commit/7015aa1ca21566ba3fe0879cc4d5605dee522e6c"
+    "https://github.com/42Students/lms-vnext/commit/7015aa1ca21566ba3fe0879cc4d5605dee522e6c",
+    "https://github.com/42Students/lms-vnext/pull/63",
+    "https://github.com/42Students/lms-vnext/pull/67",
+    "https://github.com/42Students/lms-vnext/pull/69",
+    "https://github.com/42Students/lms-vnext/pull/70",
+    "https://github.com/42Students/lms-vnext/pull/72",
+    "https://github.com/42Students/lms-vnext/pull/74",
+    "https://github.com/42Students/lms-vnext/commit/1c18b6da4d139bcc9bd2efd8f9bb0bb3a902fa86"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
