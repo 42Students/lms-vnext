@@ -443,6 +443,110 @@
     "Zero violations on an empty or valid fixture does not mean the database prevents invalid writes.",
     "Negative inserts, concurrent races, migration replay, permission denial and real catalog comparison remain untested.",
     "Run only on a disposable PostgreSQL database seeded with synthetic non-sensitive records.",
-    "Join predicates and source columns verified against committed Drizzle 0036, NOT live schema."
+    "Join predicates and source columns verified against committed Drizzle 0036, NOT live schema.",
+    "raceProbes are source-audit requirements, not executed results. SOURCE_PROTECTED_NEEDS_EXECUTION does not mean PASS; SOURCE_CONFIRMED_GAP requires implementation before DB phase certification; DRAFT_UNIMPLEMENTED has no registered runtime contract."
+  ],
+  "raceAuditObservedMain": "58bc859e292b8f9ccaa1ff21670b3bc0f49b107d",
+  "raceProbes": [
+    {
+      "id": "P5-R01",
+      "domain": "PLACEMENTS",
+      "state": "SOURCE_CONFIRMED_GAP",
+      "purpose": "Application must not commit after paid-module or inherited placement eligibility is revoked between precheck and insert",
+      "source": "src/modules/placements/application-service.ts",
+      "currentProtection": "Job and role rows are re-locked in the write transaction, but requireLearnerPlacementAccess/evaluatePlacementEligibility run before it and their snapshot is inserted without an in-transaction recheck.",
+      "requiredWitness": "Coordinate two PostgreSQL transactions so T1 passes learner participation/eligibility, T2 disables the module or changes effective eligibility and commits, then T1 attempts insert. T1 must fail or re-evaluate under a lock/version that orders with the writer.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R02",
+      "domain": "ACADEMICS",
+      "state": "SOURCE_CONFIRMED_GAP",
+      "purpose": "Learner enrollment must not commit into a cohort that becomes non-mutable after the precheck",
+      "source": "src/modules/academics/enrollment-service.ts",
+      "currentProtection": "Cohort PLANNED/ACTIVE is checked before db.transaction; insert does not lock or re-read cohort status.",
+      "requiredWitness": "T1 loads an ACTIVE cohort and pauses; T2 completes/archives it; T1 resumes. Enrollment insert must not commit after the cohort is no longer mutable.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R03",
+      "domain": "GROUPS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Concurrent last-seat joins to one group serialize",
+      "source": "src/modules/groups/service.ts",
+      "currentProtection": "joinGroup locks the elective slot first when present, then SELECT ... FOR UPDATE on the group before active_count/capacity and waitlist decisions.",
+      "requiredWitness": "With one seat left, run two joins concurrently; prove active_count never exceeds capacity and exactly one contender receives the seat.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R04",
+      "domain": "GROUPS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Concurrent elective joins across different offering groups still respect slot max_pick",
+      "source": "src/modules/groups/service.ts",
+      "currentProtection": "All offering groups in one elective slot serialize on the shared elective_slots row before counting ACTIVE/WAITLISTED picks.",
+      "requiredWitness": "For max_pick=1, concurrently join two distinct offering groups from the same slot for one learner; at most one pick may commit.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R05",
+      "domain": "QUIZZES",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Concurrent final quiz attempts cannot exceed max_attempts",
+      "source": "src/modules/courses/quiz-attempt-service.ts",
+      "currentProtection": "Transaction takes a shared quiz lock, rechecks persisted membership/role and acquires pg_advisory_xact_lock keyed by quiz+membership before counting attempts and inserting.",
+      "requiredWitness": "With exactly one attempt remaining, submit two concurrent attempts for the same learner/quiz; one commits and the other returns max-attempts/state failure with no orphan answers.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R06",
+      "domain": "PROJECTS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Concurrent task submissions produce one accepted transition into IN_REVIEW",
+      "source": "src/modules/projects/task-submission-service.ts",
+      "currentProtection": "Version is read before the transaction, but the transaction conditionally updates the task only when it is neither DONE nor IN_REVIEW; the losing writer must roll back before its submission insert.",
+      "requiredWitness": "Submit the same task concurrently; exactly one transaction updates the task and inserts the next version; the loser produces no submission/activity row.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R07",
+      "domain": "ACADEMICS",
+      "state": "SOURCE_PROTECTED_NEEDS_EXECUTION",
+      "purpose": "Concurrent cohort lifecycle transitions have one winner for the same expected status",
+      "source": "src/modules/academics/cohort-service.ts",
+      "currentProtection": "UPDATE cohorts is compare-and-set with WHERE id=? AND status=expectedStatus; zero-row update becomes INVALID_COHORT_TRANSITION.",
+      "requiredWitness": "Run two ACTIVATE (or COMPLETE) transitions concurrently from the same starting state and prove exactly one row update succeeds.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R08",
+      "domain": "SHARED_OPS",
+      "state": "DRAFT_UNIMPLEMENTED",
+      "purpose": "Scheduled-job lease takeover fences a stale worker",
+      "source": "src/db/schema/db10-scheduled-job-leases.draft.ts",
+      "currentProtection": "Draft adds locked_until and a positive fence but no registered migration or acquire/renew/release producer exists.",
+      "requiredWitness": "Worker A acquires fence n and stalls past expiry; worker B acquires n+1; any later A heartbeat/finalization using fence n must fail and B must retain ownership.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R09",
+      "domain": "SHARED_OPS",
+      "state": "DRAFT_UNIMPLEMENTED",
+      "purpose": "Outbound dispatcher retry/claim races do not create duplicate logical sends or allow stale claim updates",
+      "source": "src/db/schema/db10-outbound-messages.draft.ts",
+      "currentProtection": "Draft has idempotency_key, claim expiry and claim_fence, but no registered schema or verified sender state machine.",
+      "requiredWitness": "Race two claimers on one due message and separately simulate provider acceptance followed by worker crash/retry; prove one current claim owner, monotonic fence and stable logical idempotency key.",
+      "executionEvidence": "NOT_RUN"
+    },
+    {
+      "id": "P5-R10",
+      "domain": "SHARED_OPS",
+      "state": "DRAFT_UNIMPLEMENTED",
+      "purpose": "Concurrent occurrences of one log signature increment durable triage memory atomically",
+      "source": "src/db/schema/db10-log-alerts.draft.ts",
+      "currentProtection": "Draft has unique (environment,signature_hash), occurrence_count and triage fields but no runtime upsert producer.",
+      "requiredWitness": "Insert the same new signature concurrently from multiple workers; prove one signature row, exact occurrence_count increment, monotonic first/last seen and no lost FIXED→regressed transition.",
+      "executionEvidence": "NOT_RUN"
+    }
   ]
 }
