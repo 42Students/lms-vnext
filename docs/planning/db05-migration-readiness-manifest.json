@@ -88,11 +88,21 @@
       "prereqs": [
         "COURSE_LESSON_CONTENT_CAS_WRITERS",
         "LEARNER_PROGRESS_ATTEMPT_AWARE_READ_WRITE",
-        "PG_REWATCH_AND_RACE_TESTS"
+        "PG_REWATCH_AND_RACE_TESTS",
+        "PROGRESS_TOMBSTONE_PER_READER_POLICY",
+        "PROGRESS_LATEST_ATTEMPT_BEFORE_DELETION_FILTER",
+        "PROGRESS_MEMBERSHIP_CONTENT_TENANT_NEGATIVE"
       ],
       "registered": false,
       "executedAgainstPostgres": false,
-      "readyForProduction": false
+      "readyForProduction": false,
+      "sourceDeletionContract": {
+        "path": "docs/planning/db05-progress-deletion-attempt-contract.md",
+        "candidateColumn": "learner_content_progress.deleted_at",
+        "sourceOracle": "LearnerContentProgressRepository.countCompletedPerLearner selects MAX(attempt) before filtering is_deleted",
+        "consumerVerified": false,
+        "postgresVerified": false
+      }
     },
     {
       "id": "db05-content-settings",
@@ -157,6 +167,18 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Child insert/update guard does not revalidate existing messages after course, section, offering, membership reassignment."
+    },
+    {
+      "id": "PROGRESS_LATEST_ATTEMPT_SOFT_DELETE_CONSUMERS",
+      "status": "BLOCKED",
+      "owner": "DATABASE_ENGINEERING_TO_API_PHASE_HANDOFF",
+      "evidence": "Do not activate draft until the last attempt is selected before deletion filters in admin counts, and per-reader semantics remain distinct."
+    },
+    {
+      "id": "PROGRESS_SOFT_DELETE_TENANT_RACE_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "No clean PostgreSQL same-college, wrong-college, deleted-latest, repeat-attempt, and rewatch race evidence."
     }
   ],
   "sourceReview": {
