@@ -208,6 +208,8 @@ async function currentDeliveryRoster(
       membershipId: collegeMemberships.id,
       displayName: users.displayName,
       email: users.email,
+      phoneE164: users.phoneE164,
+      rollNumber: learnerProfiles.rollNumber,
     })
     .from(sectionEnrollments)
     .innerJoin(
@@ -237,6 +239,13 @@ async function currentDeliveryRoster(
     .innerJoin(
       users,
       eq(users.id, collegeMemberships.userId),
+    )
+    .leftJoin(
+      learnerProfiles,
+      eq(
+        learnerProfiles.membershipId,
+        collegeMemberships.id,
+      ),
     )
     .where(
       and(
