@@ -4,7 +4,6 @@ import {
 } from "./identity";
 import {
   identityProvisionInputSchema,
-  type IdentityProvisionInput,
 } from "./validation";
 import type { UserPlatformStatus } from "@/modules/identity/constants";
 
@@ -41,7 +40,7 @@ export type IdentityProvisioningDependencies = {
  * DISABLED; provisioning never reactivates an account.
  */
 export async function provisionPlatformIdentity(
-  rawInput: IdentityProvisionInput,
+  rawInput: unknown,
   dependencies: IdentityProvisioningDependencies,
 ) {
   const input = identityProvisionInputSchema.parse(rawInput);
