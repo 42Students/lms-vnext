@@ -10,13 +10,13 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_312_FIELD_TRIAGE_BRANDING_AND_DEVICE_SESSION_STAGING",
+    "checkpointKind": "DB004_312_FIELD_LEDGER_AND_DOMAIN_STATE_CONTRACT",
     "updatedOn": "2026-10-11",
     "observedMainSha": "58344f786e56b967a997a985a6280c220cced608",
-    "lastWorkerMergedSha": "1f4094b3271e94dbf3bc5e5515d656741178f927",
+    "lastWorkerMergedSha": "a8bd5e98e06ed19079aaec7befa9395184061f0e",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Source triaged exactly 312 DB01 field candidates across 22 table candidates. Tenant branding and tenant-domain DNS diagnostics are staged on main. Token-safe per-device session persistence is staged separately in PR #61 because legacy targeted session revocation is not represented by vNext's current account-wide Firebase revokeRefreshTokens flow. DB-004 remains IN_PROGRESS; no runtime semantic or PostgreSQL verification is claimed.",
+    "summary": "DB004 picked and active. 312/312 legacy field candidates triaged with source-only classifications, 0 runtime semantic verified. Unregistered branding/tenant DNS diagnostics schema/SQL staged. Existing vNext tenant-domain service prematurely returns on verified recheck, repo hard-deletes host; these source-level lifecycle divergences and pending API gate documented. Recruiter expired-but-ACTIVE grant lacks expiry predicate/schema, escalated to DB09. Static remote consistency witness PASS, no actual CI/PG execution.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
@@ -56,7 +56,7 @@
     "DB-004 → DB09/issue #25: recruiter grant expiry, revocation reason, capability, version and tenant FK parity",
     "DB-004 → Chat 1/issue #21 after acceptance: promote identity_device_sessions only if targeted per-device revocation remains required; never persist raw Firebase tokens/cookies."
   ],
-  "nextAction": "Continue DB-004 active-vs-retired/source-writer reconciliation for identity-provider/token/OTP/session cases; diagnose or rerun PR #61 CI before merge; then coordinate accepted session/branding/domain schema promotion with Chat 1 and obtain disposable PostgreSQL negative-test evidence.",
+  "nextAction": "Continue DB004 source semantical audit: resolve post-V150 active fields and unverified provider sessions; collaborate with W01 on registered DB01 branding/domain diagnostics and with DB09 on time-bounded grants; execute npm/PG tests only when repository runner and migrations available; retain IN_PROGRESS until all acceptance proof.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -77,7 +77,9 @@
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql",
     "https://github.com/42Students/lms-vnext/blob/main/scripts/verify-db01-field-triage.mjs",
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6101942559",
-    "https://github.com/42Students/lms-vnext/issues/25#issuecomment-6101944195"
+    "https://github.com/42Students/lms-vnext/issues/25#issuecomment-6101944195",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-tenant-domain-state-contract.md",
+    "https://github.com/42Students/lms-vnext/issues/25#issuecomment-6101967249"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
