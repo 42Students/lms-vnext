@@ -16,7 +16,7 @@
     "lastWorkerMergedSha": "97a34afbd43034e1da9858adcb0d82b23305653f",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-004 remains IN_PROGRESS. All 312 DB01 candidates are source-triaged and 0 are runtime-semantic verified. 66/84 identity-provider/session fields now have direct active legacy workflow proof; all 84 have an explicit current-source disposition. vNext currently has Firebase user provisioning plus an idToken→session-cookie bridge, but no checked-in app phone/email sign-in flow proving the active legacy OTP jobs are provider-replaced. Tenant branding/DNS diagnostics, device-session, auth-attempt and cross-host handoff contracts remain staged/unregistered. Recent GitHub CI failures are repository-wide pre-step failures with empty job steps, so no test pass/fail semantics are inferred from them.",
+    "summary": "DB-004 remains IN_PROGRESS. All 312 DB01 candidates are source-triaged and 0 are runtime-semantic verified. 66/84 identity-provider/session fields now have direct active legacy workflow proof; all 84 have an explicit current-source disposition. vNext currently has Firebase user provisioning plus an idToken→session-cookie bridge, but no checked-in app phone/email sign-in flow proving the active legacy OTP jobs are provider-replaced. Tenant branding/DNS diagnostics, device-session, auth-attempt and cross-host handoff contracts remain staged/unregistered. Recent GitHub CI failures are repository-wide pre-step failures with empty job steps, so no test pass/fail semantics are inferred from them.\nAdditional Chat 2 DB-004: OTP/handoff unregistered candidate composite tenant FKs staged; in-process static 16/16 PASS; source mapping ledger active-workflow count moved to 142/312 with 0 vNext runtime-semantic verified. Authored source-only test, not executed. Legacy user registration ADMIN role risk documented as source-only security exception. W01 promotion approval/DB runner still open.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
@@ -71,6 +71,29 @@
       "sourceCommit": "0834bc1a89099225a7e6c34ddd2d67f570f4d029",
       "supersededPullRequest": 64,
       "note": "Main staging uses keyed MAC, target membership, target domain and host with two-minute TTL/atomic-consume witness; this supersedes the weaker closed PR #64 shape. No runtime activation."
+    },
+    "db01OtpHandoffBatch": {
+      "status": "STAGED_ON_MAIN_NOT_PROMOTED",
+      "otpSchema": "src/db/schema/db01-auth-attempts.staged.ts",
+      "otpSql": "docs/planning/sql/db01-auth-attempts-staging.sql",
+      "handoffSchema": "src/db/schema/db01-auth-handoffs.staged.ts",
+      "handoffSql": "docs/planning/sql/db01-auth-handoffs-staging.sql",
+      "tenantCompositeFks": "docs/planning/sql/db01-auth-tenant-composite-fks-staging.sql",
+      "securityAcceptance": "docs/planning/db01-auth-otp-handoff-contract.md",
+      "sourceTest": "tests/db01-auth-staging-contract.test.mjs",
+      "remoteSourceChecks": {
+        "passed": 16,
+        "total": 16,
+        "testRunner": "GITHUB_CONNECTOR_IN_PROCESS_ONLY",
+        "postgresExecuted": 0,
+        "nodeTestExecuted": false
+      },
+      "issues": "Needs W01 unique parent composite keys, registered Drizzle migration, clean PG replay, credential provider/OTP validation; closed unmerged PR#61/#64 are superseded."
+    },
+    "legacyUserRegistrationSecurityFinding": {
+      "status": "SOURCE_ONLY_REQUIRES_REVIEW",
+      "report": "docs/planning/db01-chat02-source-reconciliation.md",
+      "summary": "Legacy UserController /register calls UserServiceImpl.save; save assigns USER and ADMIN roles while WebSecurityConfig fallback appears authenticated-only. Risk is not reproduced in vNext, requires independent legacy access-chain validation."
     }
   },
   "qualityGates": {
@@ -87,7 +110,8 @@
     "tests/db01-device-session-contract.test.ts",
     "tests/integration/db01-tenant-identity-invariants.test.ts",
     "tests/db01-auth-handoff-contract.test.ts",
-    "tests/integration/db01-identity-fk-invariants.test.ts"
+    "tests/integration/db01-identity-fk-invariants.test.ts",
+    "tests/db01-auth-staging-contract.test.mjs"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -99,9 +123,11 @@
     "DB-004 → DB09/issue #25: recruiter grant expiry, revocation reason, capability, version and tenant FK parity",
     "DB-004 → Chat 1/issue #21 after acceptance: promote identity_device_sessions only if targeted per-device revocation remains required; never persist raw Firebase tokens/cookies.",
     "DB-004 → Chat 1/issue #21: select provider-only vs provider-cookie+device-session sidecar; block faculty-for-anyone revocation privilege escalation.",
-    "DB-004 → Chat 1/issue #21: auth-attempt/device-session/cross-host-handoff artifacts are staged only; select one canonical token-safe shape and register only after CI/PostgreSQL replay is available."
+    "DB-004 → Chat 1/issue #21: auth-attempt/device-session/cross-host-handoff artifacts are staged only; select one canonical token-safe shape and register only after CI/PostgreSQL replay is available.",
+    "DB-004 → Chat 1/issue #21: promote only one auth-attempt/handoff schema including parent composite unique/FKs and 2-minute TTL after PG replay; do not mix closed unmerged PR#61/#64.",
+    "DB-004 → legacy security review: UserController /register / UserServiceImpl assigns ADMIN role, current security matcher appears only authenticated; no exploitation claim."
   ],
-  "nextAction": "DB-004 IN_PROGRESS: Chat 1 fixes shared test DB URL fallback, then restore runner/CI; run all 14 DB01 PostgreSQL witnesses on disposable DB and attach exact SHA logs; register outstanding DB01 schema via sole migration integrator and continue 312-field semantic verification.",
+  "nextAction": "Continue source-backed DB01 field disposition and coordinate with W01 for composite FK and migration integration; run authored Node and PostgreSQL tests in actual repo/CI; no DONE_VERIFIED until DB runtime proof. Ensure current member/tenant, email/OTP provider workflows and legacy admin-role risk are independently reviewed.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -135,7 +161,10 @@
     "https://github.com/42Students/lms-vnext/commit/cf9de008ca1e18ce57bef62fe0980c8a9bdb336b",
     "https://github.com/42Students/lms-vnext/commit/da635154585a3453459539be29eba35bbf468c8f",
     "https://github.com/42Students/lms-vnext/blob/chat-02-db004-tenant-identity-negative-witness/docs/planning/db01-tenant-identity-pg-negative-acceptance.md",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102068335"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102068335",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-auth-otp-handoff-contract.md",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/sql/db01-auth-tenant-composite-fks-staging.sql",
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-auth-staging-contract.test.mjs"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
