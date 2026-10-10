@@ -192,4 +192,20 @@ describe("W04 coordinator same-day / tenant authorization", () => {
     await expect(getDriveDayRoster(forged, todayRound.id, dutyNow))
       .rejects.toMatchObject({ code: "PLACEMENT_DRIVE_DAY_ACCESS_DENIED" });
   });
+  it("keeps cross-college managers out while preserving an authorized TPO's historical round view", async () => {
+    const { tomorrowRound } = await setup();
+    const otherCollegeTpo: RequestContext = {
+      ...tpo,
+      membership: {
+        ...tpo.membership!,
+        id: SEED_IDS.facultyCollegeBMembership,
+        collegeId: SEED_IDS.collegeB,
+      },
+    };
+    await expect(getDriveDayRoster(otherCollegeTpo, tomorrowRound.id, dutyNow))
+      .rejects.toThrow("Missing permission: placements.manage");
+    const managerView = await getDriveDayRoster(tpo, tomorrowRound.id, dutyNow);
+    expect(managerView.access).toMatchObject({ fullAccess: true, coordinator: false });
+  });
+
 });
