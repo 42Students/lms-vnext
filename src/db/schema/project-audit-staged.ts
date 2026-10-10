@@ -7,7 +7,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
-  check, index, integer, jsonb, pgTable, text, timestamp, uuid, varchar,
+  check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uuid, varchar,
 } from "drizzle-orm/pg-core";
 import { projectInstances, projectMeetings, projectResources, projectSubmissions,
   projectTasks } from "./projects";
@@ -31,6 +31,9 @@ export const projectMeetingAuditHistoryStaged = pgTable("project_meeting_history
   notes:text("notes"),
   createdAt:time(),
 },t=>[
+  foreignKey({name:"project_meeting_history_project_fk",
+    columns:[t.projectId,t.meetingId],
+    foreignColumns:[projectMeetings.projectId,projectMeetings.id]}).onDelete("restrict"),
   index("project_meeting_history_project_time_idx").on(t.projectId,t.createdAt),
   index("project_meeting_history_meeting_idx").on(t.meetingId,t.createdAt),
   check("project_meeting_history_action_nonempty_ck",sql`length(trim(${t.actionType})) > 0`),
@@ -51,6 +54,9 @@ export const projectResourceAuditHistoryStaged=pgTable("project_resource_audit",
   changedFields:json("changed_fields"),
   createdAt:time(),
 },t=>[
+  foreignKey({name:"project_resource_audit_project_fk",
+    columns:[t.projectId,t.resourceId],
+    foreignColumns:[projectResources.projectId,projectResources.id]}).onDelete("restrict"),
   index("project_resource_audit_project_time_idx").on(t.projectId,t.createdAt),
   index("project_resource_audit_resource_idx").on(t.resourceId,t.createdAt),
   check("project_resource_audit_action_nonempty_ck",sql`length(trim(${t.actionType})) > 0`),
@@ -71,6 +77,9 @@ export const projectDeliveryEventsStaged=pgTable("project_delivery_events",{
   revisionCount:integer("revision_count"),
   createdAt:time(),
 },t=>[
+  foreignKey({name:"project_delivery_events_project_fk",
+    columns:[t.projectId,t.deliveryId],
+    foreignColumns:[projectSubmissions.projectId,projectSubmissions.id]}).onDelete("restrict"),
   index("project_delivery_events_project_time_idx").on(t.projectId,t.createdAt),
   index("project_delivery_events_delivery_idx").on(t.deliveryId,t.createdAt),
   check("project_delivery_events_revision_ck",sql`${t.revisionCount} is null or ${t.revisionCount} >= 0`),
@@ -91,6 +100,9 @@ export const projectTaskCommentsStaged=pgTable("project_task_comments",{
   updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
   deletedAt:timestamp("deleted_at",{withTimezone:true}),
 },t=>[
+  foreignKey({name:"project_task_comments_project_fk",
+    columns:[t.projectId,t.taskId],
+    foreignColumns:[projectTasks.projectId,projectTasks.id]}).onDelete("restrict"),
   index("project_task_comments_task_time_idx").on(t.taskId,t.createdAt),
   index("project_task_comments_project_idx").on(t.projectId,t.createdAt),
   check("project_task_comments_progress_ck",
