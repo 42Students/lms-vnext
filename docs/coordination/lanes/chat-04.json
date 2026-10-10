@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_SOURCE_AND_STAGING_CONTRACT_IN_PROGRESS",
+    "checkpointKind": "DB005_TABLES_CLASSIFIED_STAGING_AWAITING_REGISTRATION",
     "updatedOn": "2026-10-11",
     "observedMainSha": "9a9c2984e855905e50f6e22b233a4624a9bcb035",
-    "lastWorkerMergedSha": "7ca737e9d7aa67a86d55e1d7110374ba81375d0c",
+    "lastWorkerMergedSha": "7463858772c290eb4e3911ba6828ef9c1a05b2f2",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 now has source-backed canonical progression/term/timetable contract, unregistered staging SQL, 33 high-risk active semantic dispositions, and live vNext implementation re-diff. Missing canonical cohort current term/year, program term curriculum, lecture halls and schedule overlap constraints remain unregistered/unverified."
+    "summary": "DB02 all 13 legacy tables now source-classified: 8 active source-confirmed, 3 active read-path confirmed with producer/retirement still open, 2 historical DDL-only unresolved. Canonical cohort progression, program terms/curriculum, lecture halls and schedule overlap are documented and staged but unregistered/unverified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -45,7 +45,7 @@
       "evidence": "issue comment 6101948064"
     }
   ],
-  "nextAction": "Continue DB-005 source classification across remaining 125 fields; reconcile table-level active/retired status. Await Chat 1 registration/replay of staged DB02 structures; then run disposable PG concurrency/tenant/overlap acceptance before COMPLETED/DONE_VERIFIED.",
+  "nextAction": "Continue row-level disposition for remaining lower-risk fields and parallel legacy producer paths. Coordinate Chat 1 registration of DB02 staging, then execute disposable PostgreSQL tenant/concurrency/overlap acceptance. Do not mark COMPLETED/DONE_VERIFIED yet.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -67,7 +67,9 @@
     "https://github.com/42Students/lms-vnext/commit/33643e88a28fea611986833c679d3092797ca895",
     "https://github.com/42Students/lms-vnext/commit/1cfd5cc2e6aa9b5538b05af0105e96a2a6d577e7",
     "https://github.com/42Students/lms-vnext/commit/b0ec8707fe8655db0b439cc07adecda0210fd6f5",
-    "https://github.com/42Students/lms-vnext/commit/7ca737e9d7aa67a86d55e1d7110374ba81375d0c"
+    "https://github.com/42Students/lms-vnext/commit/7ca737e9d7aa67a86d55e1d7110374ba81375d0c",
+    "https://github.com/42Students/lms-vnext/commit/ba0ba344f61b3612adc0abc22207d32c9e039416",
+    "https://github.com/42Students/lms-vnext/commit/7463858772c290eb4e3911ba6828ef9c1a05b2f2"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
