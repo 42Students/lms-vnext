@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "PICKED",
+  "executionState": "IN_PROGRESS",
   "activeTaskId": "DB-008",
   "blockedTaskIds": [
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_PICKED_SOURCE_REVIEW",
+    "checkpointKind": "DB008_ALL92_SOURCE_ROWS_REVIEWED_STAGED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "7a50dcb92d28e741353dd68dc4a36132e519215f",
-    "lastWorkerMergedSha": "f56b84427036c60ae5c34dbf8ccc26f695efcda2",
+    "observedMainSha": "1ac1c47c63b62688e97d0875768aee7153d257c2",
+    "lastWorkerMergedSha": "1ac1c47c63b62688e97d0875768aee7153d257c2",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat 6 CAS picked DB-008 on the current DATABASE phase. Source review in progress; no accepted test results."
+    "summary": "DB-008: all 92 columns in 7 snapshot tables source reviewed with proposed mappings (31 candidates, 18 remodeled, 13 draft, 30 missing/unproven); prepared unregistered course version+progress attempt/first-completion draft; authored 3 Node static contract tests. Exact-set 92/92 inspection performed; no node/Postgres/CI suite executed and semantic VERIFIED count remains zero."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -28,7 +28,9 @@
     "build": "NOT_VERIFIED",
     "browser": "NOT_VERIFIED"
   },
-  "lastAuthoredTests": [],
+  "lastAuthoredTests": [
+    "tests/db05-source-semantic-review.test.mjs (3 authored assertions/tests; not executed)"
+  ],
   "lastExecutedPassingTests": [],
   "blockers": [],
   "handoffs": [
@@ -37,9 +39,15 @@
       "kind": "PRODUCT_SCOPE_AND_LIVE_SCHEMA",
       "message": "Seven Smrithi source-derived tables/91 fields need explicit product retention/retirement approval and runtime consumer evidence; reference docs/planning/db00-smrithi-source-evidence.json. CI runner unavailable; no executed test claim.",
       "commitSha": "f56b84427036c60ae5c34dbf8ccc26f695efcda2"
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "MIGRATION_INTEGRATOR_ONLY",
+      "message": "W01 review scripts/sql/db05-version-progress-attempts.draft.sql; DO NOT register before progress consumer reads/writes support attempts and course write services use optimistic version compare. Review all 92 field hypotheses in docs/planning/db05-chat06-source-semantic-review.json. Missing/non-equivalent fields and legacy V163 semantics remain open.",
+      "commitSha": "1ac1c47c63b62688e97d0875768aee7153d257c2"
     }
   ],
-  "nextAction": "Reconcile DB-008 DB05 course/content source semantics with current legacy and vNext evidence; update field-level contract; no false test passing.",
+  "nextAction": "DB-008 remains IN_PROGRESS: source-confirm remaining mappings, prepare true per-content discussion/retake schema and consumer contracts; W01 to register draft only after services become attempt/version aware and DB tests can execute.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -51,7 +59,10 @@
     "note": "Historical ownership/coverage snapshot, NOT a current worker assignment. Do not sum per-chat old domain counts."
   },
   "evidenceLinks": [
-    "https://github.com/42Students/lms-vnext/issues/26"
+    "https://github.com/42Students/lms-vnext/issues/26",
+    "https://github.com/42Students/lms-vnext/commit/29a929ca3c32ce4c4132d80e4159cbc081022e0f",
+    "https://github.com/42Students/lms-vnext/commit/b5f1c0d9ed03f2612d5b483b811866b3c3846113",
+    "https://github.com/42Students/lms-vnext/commit/1ac1c47c63b62688e97d0875768aee7153d257c2"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
