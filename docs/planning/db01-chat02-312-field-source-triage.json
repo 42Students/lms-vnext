@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 94,
+    "postV150ActivenessVerified": 116,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 112,
-    "postV150ActivenessReviewNote": "94 frozen DB01 source fields classified to confirmed active table/workflow from legacy controller/services; includes 28 new domain/branding candidates. This is active-source evidence, not per-field target parity; vNext runtime semantic verified remains 0."
+    "postV150ActivenessReviewedFields": 134,
+    "postV150ActivenessReviewNote": "116 legacy source candidates under active source table/workflow evidence (not per-field target equivalence); 0 vNext runtime-semantic verified."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -368,12 +368,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -386,12 +387,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.created_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -402,12 +404,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.status",
       "rationaleOrBlocker": "Legacy soft-delete vs ARCHIVED lifecycle unproven",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -420,12 +423,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.updated_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -438,12 +442,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.address_line1",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -456,12 +461,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.address_line2",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -472,12 +478,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.city",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -490,12 +497,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Chair assignment and nullability require decision",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -508,12 +516,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Vice-chair assignment and nullability require decision",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -524,12 +533,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.country",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -540,12 +550,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.landmark",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -556,12 +567,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.logo_object_path",
       "rationaleOrBlocker": "Legacy URL vs vNext GCS object path needs publishing conversion",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -572,12 +584,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.name",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -590,12 +603,13 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.organization_id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -606,12 +620,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.postal_code",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -622,12 +637,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.state",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college",
@@ -638,12 +654,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.code",
       "rationaleOrBlocker": "Legacy stable tenantKey emitted to public bootstrap; verify equivalence",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy CollegeController.fetch/update/delete and PublicTenantController.bootstrap use persisted college; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "college_branding",
@@ -4221,12 +4238,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "organizations.id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy OrganizationController.fetch/update/delete and CollegeController scoped lookup use persisted organization; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "organization",
@@ -4239,12 +4257,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "organizations.created_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy OrganizationController.fetch/update/delete and CollegeController scoped lookup use persisted organization; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "organization",
@@ -4255,12 +4274,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "organizations.status",
       "rationaleOrBlocker": "Legacy soft-delete vs ARCHIVED lifecycle unproven",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy OrganizationController.fetch/update/delete and CollegeController scoped lookup use persisted organization; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "organization",
@@ -4273,12 +4293,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "organizations.updated_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy OrganizationController.fetch/update/delete and CollegeController scoped lookup use persisted organization; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "organization",
@@ -4289,12 +4310,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "organizations.name",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy OrganizationController.fetch/update/delete and CollegeController scoped lookup use persisted organization; table active, field-specific usage still unproven"
     },
     {
       "legacyTable": "recruiter",
@@ -6024,6 +6046,23 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/CollegeBrandingRepository.java"
       ],
       "proof": "Tenant admin reads/upserts ten branding fields; onboarding-readiness reads logo/background/color; public tenant-bootstrap returns ten branding overrides. Active table-source proof, not vNext semantic verification."
+    },
+    "college": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/CollegeController.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/College.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/PublicTenantController.java"
+      ],
+      "proof": "College fetch/update/delete, org-scoped list, public tenant bootstrap and scope-switch; does NOT confirm all optional column reads."
+    },
+    "organization": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/OrganizationController.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Organization.java"
+      ],
+      "proof": "Organization fetch/update/delete and college org linkage; does NOT confirm all optional columns or retirement semantics."
     }
   }
 }
