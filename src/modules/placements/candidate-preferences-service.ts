@@ -6,6 +6,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   candidatePreferencesInputSchema,
   type CandidatePreferencesInput,
@@ -40,6 +41,7 @@ export async function getCandidatePreferences(
   context: RequestContext,
 ) {
   const membership = requireLearnerMembership(context);
+  await requireLearnerPlacementAccess(context);
   const [preferences] = await getDb()
     .select()
     .from(placementCandidatePreferences)
@@ -66,6 +68,7 @@ export async function upsertCandidatePreferences(
   rawInput: CandidatePreferencesInput,
 ) {
   const membership = requireLearnerMembership(context);
+  await requireLearnerPlacementAccess(context);
   const input =
     candidatePreferencesInputSchema.parse(rawInput);
   const now = new Date();
