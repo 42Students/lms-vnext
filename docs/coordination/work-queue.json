@@ -645,25 +645,35 @@
       "paths": [
         "docs/planning/db-pass4-columns-db10_shared_operations.json"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-10T20:37:00.000Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-10T20:37:00.000Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-10T20:37:00.000Z",
+          "reason": "Chat 5 CAS-picked next highest-priority eligible DATABASE task after DB-011 completion; DB-012 is already held by Chat 3."
         }
       ]
     },
