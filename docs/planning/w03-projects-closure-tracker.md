@@ -50,3 +50,14 @@ Authored in this batch:
 6. Resolve all 358 DB07 field mappings, approve or reject each disposition with source/consumer evidence and replayed constraints. Only then mark DB07 complete.
 
 **Important:** Existing `docs/parity/mentor.md` has 64 unchecked and 5 checked retired-stub rows as of this checkpoint. None of the newly authored pages is marked deeply CLOSED merely for rendering or for unexecuted test files.
+
+## W03 follow-up security and UI-state hardening
+
+- `src/modules/projects/access.ts` now verifies the authenticated platform user is ACTIVE and joins current, active persisted membership/role/user rows for project-read authorization, not just old `project_members` records and cached claims.
+- `listMyProjectInstances` in `member-service.ts` now refuses suspended platform users and requires the current database membership's matching active Learner/Mentor role, own user ID and college.
+- Project Mentor/Learner candidate and assignment flows reject suspended platform users.
+- Mentor Notifications route now includes its own loading skeleton and retryable error boundary.
+- Added the `tests/unit/w03-db07-source-contract.test.ts` source-ledger and composite-FK contract regression suite.
+- Verified latest `main` Git tree contains all 20 W03 newly introduced file paths. This is **presence verification only**, not a passing execution of UI/DB/tests.
+
+GitHub coordination: W01 issue #21 has the draft migration and shared navigation request; W06 issue #26 has the announcement producer/consumer request. **No shared Drizzle migration journal, schema barrel, CI, storage or non-W03 product routes were edited by this chat.**
