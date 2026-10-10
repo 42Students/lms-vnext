@@ -66,6 +66,19 @@ describe("W05 recruiter invitation acceptance contract (mock transactional adapt
     expect(results.filter(x => x.status === "rejected")).toHaveLength(1);
     expect(f.grants()).toBe(1);
   });
+  it("rejects an invalid clock without querying storage", async () => {
+    let queried = false;
+    const store: InviteAcceptanceStore = {
+      async findByTokenHash() { queried = true; return null; },
+      async consumeAndGrant() { throw Error("must not be called"); },
+    };
+    const f = fixture();
+    await expect(acceptRecruiterInvite(store, {
+      token: f.credential.token, recruiterUserId: "r1",
+    }, new Date(NaN))).rejects.toThrow("INVITE_INVALID");
+    expect(queried).toBe(false);
+  });
+
   it("rejects malformed input without querying storage", async () => {
     let queried = false;
     const store: InviteAcceptanceStore = {
