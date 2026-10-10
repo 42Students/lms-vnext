@@ -33,15 +33,23 @@
     "tenantIdentityNegativeWitness": {
       "pullRequest": 65,
       "branch": "chat-02-db004-tenant-identity-negative-witness",
-      "headSha": "0ad2d23aa66dd7a575cb77e2fff7a8b4156f5619",
-      "status": "OPEN_CI_PRESTEP_INFRA_FAILURE_UNMERGED",
+      "headSha": "da635154585a3453459539be29eba35bbf468c8f",
+      "status": "DRAFT_CI_PRESTEP_FAILURE_UNMERGED",
       "authoredTest": "tests/integration/db01-tenant-identity-invariants.test.ts",
-      "authoredCases": 5,
+      "authoredCases": 14,
       "ciRun": 1393,
       "ciRunId": 38085377072,
       "ciConclusion": "failure",
       "executedPassingPostgresCases": 0,
-      "note": "Constraint names/seed assumptions match registered schema. PR and unrelated main runs fail in ~2-3 seconds with empty job steps; workflow logs remain unavailable. Treat as repository-wide CI infrastructure/pre-step blocker, not code-test evidence."
+      "note": "14 source-authored rollback-only witnesses; explicit TEST_DATABASE_URL required. CI #1453 failed before retrievable steps. No database runtime acceptance.",
+      "authoredTests": [
+        "tests/integration/db01-tenant-identity-invariants.test.ts",
+        "tests/integration/db01-identity-fk-invariants.test.ts"
+      ],
+      "acceptanceMatrix": "docs/planning/db01-tenant-identity-pg-negative-acceptance.md",
+      "lastCiRunNumber": 1453,
+      "lastCiRunId": 38085692520,
+      "lastCiConclusion": "failure"
     },
     "sourceActiveness": {
       "identityProviderSessionCandidates": 84,
@@ -69,7 +77,7 @@
     "lint": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
     "typecheck": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
     "unit": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
-    "postgresIntegration": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
+    "postgresIntegration": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE_PR65_1453",
     "build": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
     "browser": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
     "sourceTriageConsistency": "PASS_IN_PROCESS_SOURCE_CHECK_NOT_RUNTIME"
@@ -78,11 +86,13 @@
     "scripts/verify-db01-field-triage.mjs",
     "tests/db01-device-session-contract.test.ts",
     "tests/integration/db01-tenant-identity-invariants.test.ts",
-    "tests/db01-auth-handoff-contract.test.ts"
+    "tests/db01-auth-handoff-contract.test.ts",
+    "tests/integration/db01-identity-fk-invariants.test.ts"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "GitHub CI is currently failing before workflow steps across unrelated main pushes and PR #65 (latest DB01 run #1393); no runner output is available, so authored database witnesses cannot be credited as executed."
+    "GitHub CI is currently failing before workflow steps across unrelated main pushes and PR #65 (latest DB01 run #1393); no runner output is available, so authored database witnesses cannot be credited as executed.",
+    "DB-004 PR #65 remains draft: 14 authored PostgreSQL witnesses, 0 accepted runtime passes; CI run #1453 failed before retrievable steps."
   ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
@@ -91,7 +101,7 @@
     "DB-004 → Chat 1/issue #21: select provider-only vs provider-cookie+device-session sidecar; block faculty-for-anyone revocation privilege escalation.",
     "DB-004 → Chat 1/issue #21: auth-attempt/device-session/cross-host-handoff artifacts are staged only; select one canonical token-safe shape and register only after CI/PostgreSQL replay is available."
   ],
-  "nextAction": "Continue source activeness/retirement reconstruction for the remaining non-auth DB01 tables and exact field semantics. Keep OTP/provider replacement unresolved until an app sign-in flow exists. When CI runners recover, execute PR #65 PostgreSQL negative witnesses, then coordinate accepted staged schemas with Chat 1.",
+  "nextAction": "DB-004 IN_PROGRESS: Chat 1 fixes shared test DB URL fallback, then restore runner/CI; run all 14 DB01 PostgreSQL witnesses on disposable DB and attach exact SHA logs; register outstanding DB01 schema via sole migration integrator and continue 312-field semantic verification.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -121,7 +131,11 @@
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102001531",
     "https://github.com/42Students/lms-vnext/pull/65",
     "https://github.com/42Students/lms-vnext/commit/f8c57987de761b7f077f4bef163e23abc9d18aab",
-    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6102032292"
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6102032292",
+    "https://github.com/42Students/lms-vnext/commit/cf9de008ca1e18ce57bef62fe0980c8a9bdb336b",
+    "https://github.com/42Students/lms-vnext/commit/da635154585a3453459539be29eba35bbf468c8f",
+    "https://github.com/42Students/lms-vnext/blob/chat-02-db004-tenant-identity-negative-witness/docs/planning/db01-tenant-identity-pg-negative-acceptance.md",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102068335"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
