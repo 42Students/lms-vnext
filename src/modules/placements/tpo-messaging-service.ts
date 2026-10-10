@@ -426,38 +426,6 @@ export async function listMessageThreads(
     );
 }
 
-async function requireThreadForRead(
-  context: RequestContext,
-  threadIdInput: string,
-) {
-  const threadId = threadIdSchema.parse(threadIdInput);
-  const [thread] = await getDb()
-    .select()
-    .from(placementTpoMessageThreads)
-    .where(eq(placementTpoMessageThreads.id, threadId))
-    .limit(1);
-  if (!thread) {
-    throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
-  }
-
-  const actor = await readActor(context, thread.collegeId);
-  if (
-    actor.type === "HR" &&
-    actor.userId !== thread.recruiterUserId
-  ) {
-    throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
-  }
-  if (actor.type === "HR" && thread.jobId) {
-    await assertJobForThread(
-      getDb(),
-      actor.collegeId,
-      thread.jobId,
-      actor.companyRelationshipId,
-    );
-  }
-  return { actor, thread };
-}
-
 export async function listThreadMessages(
   context: RequestContext,
   threadIdInput: string,
