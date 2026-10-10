@@ -93,6 +93,8 @@ export function RecruiterLeadDetailWorkspace({
   const [notNowOpen, setNotNowOpen] = useState(false);
   const [notNowReason, setNotNowReason] = useState("");
   const [revisitDate, setRevisitDate] = useState("");
+  const [inviteLink, setInviteLink] = useState("");
+  const [inviteNotice, setInviteNotice] = useState("");
 
   const base = "/api/placements/tpo/leads/" + encodeURIComponent(leadId);
   const params = "?collegeId=" + encodeURIComponent(collegeId);
@@ -212,6 +214,41 @@ export function RecruiterLeadDetailWorkspace({
     if (ok) setNotNowOpen(false);
   }
 
+  async function createInviteLink() {
+    setSaving(true);
+    setActionError("");
+    setInviteNotice("");
+    try {
+      const response = await fetch(base + "/invite", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ collegeId, sendEmail: false }),
+      });
+      const payload = await readResponse<{
+        invite: { token: string; expiresAt: string };
+      }>(response);
+      const link =
+        window.location.origin +
+        "/recruiter-invite/" +
+        encodeURIComponent(payload.invite.token);
+      setInviteLink(link);
+      try {
+        await navigator.clipboard.writeText(link);
+        setInviteNotice("A new invite link was created and copied. Any older link is now invalid.");
+      } catch {
+        setInviteNotice("A new invite link was created. Copy it below. Any older link is now invalid.");
+      }
+      await load();
+    } catch (cause) {
+      setActionError(
+        cause instanceof Error ? cause.message : "Could not create invite link.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <section className="space-y-6">
       <Link href="/tpo/recruiters" className="text-sm font-medium text-primary-text hover:underline">
@@ -265,9 +302,41 @@ export function RecruiterLeadDetailWorkspace({
                     : <button type="button" className="text-primary-text underline" onClick={openEdit}>Add phone</button>}</dd></div>
                 <div><dt className="text-muted-foreground">Source</dt><dd>{lead.source || "Added by hand"}</dd></div>
               </dl>
-              <p className="text-xs text-muted-foreground">
-                Invites and joined-recruiter access require the pending recruiter invite lifecycle integration.
-              </p>
+              {!lead.recruiterUserId && lead.manualStage !== "NOT_NOW" ? (
+                <div className="space-y-2 border-t border-border pt-3">
+                  <button
+                    type="button"
+                    className={button}
+                    disabled={saving}
+                    onClick={() => void createInviteLink()}
+                  >
+                    {lead.inviteSentAt ? "Create new invite link" : "Create invite link"}
+                  </button>
+                  <p className="text-xs text-muted-foreground">
+                    Creating a new link immediately invalidates the previous one. Email delivery is not claimed until the shared outbox is verified.
+                  </p>
+                  {inviteLink ? (
+                    <label className="block text-xs">
+                      Invite link
+                      <input
+                        className={input + " mt-1 font-mono text-xs"}
+                        value={inviteLink}
+                        readOnly
+                        onFocus={event => event.currentTarget.select()}
+                      />
+                    </label>
+                  ) : null}
+                  {inviteNotice ? (
+                    <p role="status" className="text-xs text-muted-foreground">{inviteNotice}</p>
+                  ) : null}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  {lead.recruiterUserId
+                    ? "This contact is already linked to a recruiter account."
+                    : "Invites are paused while this lead is marked Not now."}
+                </p>
+              )}
             </section>
 
             <section className="space-y-4 rounded-lg border border-border bg-surface p-5">
