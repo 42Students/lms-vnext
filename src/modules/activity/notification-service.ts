@@ -5,6 +5,8 @@ import {
   eq,
   inArray,
   isNull,
+  lt,
+  or,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -441,4 +443,73 @@ export async function markAllOwnNotificationsRead(context: RequestContext) {
     .returning({ id: inAppNotifications.id });
 
   return rows.length;
+}
+
+/**
+ * Stable keyset pagination for the shared inbox. Always scopes to the
+ * authenticated recipient; an optional cursor never changes ownership.
+ * Existing listOwnNotifications() remains unchanged for its other consumers.
+ */
+export async function listOwnNotificationPage(
+  context: RequestContext,
+  options: {
+    unreadOnly?: boolean;
+    limit?: number;
+    beforeCreatedAt?: Date;
+    beforeId?: string;
+  } = {},
+) {
+  const limit = z.number().int().min(1).max(100)
+    .parse(options.limit ?? 50);
+  if (Boolean(options.beforeCreatedAt) !== Boolean(options.beforeId)) {
+    throw new Error("NOTIFICATION_CURSOR_INVALID");
+  }
+  const conditions = [eq(inAppNotifications.userId, context.user.id)];
+  if (options.unreadOnly) {
+    conditions.push(isNull(inAppNotifications.readAt));
+  }
+  if (options.beforeCreatedAt && options.beforeId) {
+    const at = z.date().parse(options.beforeCreatedAt);
+    const id = z.string().uuid().parse(options.beforeId);
+    conditions.push(or(
+      lt(inAppNotifications.createdAt, at),
+      and(
+        eq(inAppNotifications.createdAt, at),
+        lt(inAppNotifications.id, id),
+      ),
+    )!);
+  }
+
+  const result = await getDb()
+    .select({
+      notification: inAppNotifications,
+      event: {
+        id: activityEvents.id,
+        module: activityEvents.module,
+        eventType: activityEvents.eventType,
+        importance: activityEvents.importance,
+        occurredAt: activityEvents.occurredAt,
+      },
+    })
+    .from(inAppNotifications)
+    .innerJoin(activityEvents, eq(activityEvents.id, inAppNotifications.eventId))
+    .where(and(...conditions))
+    .orderBy(desc(inAppNotifications.createdAt), desc(inAppNotifications.id))
+    .limit(limit + 1);
+
+  const hasMore = result.length > limit;
+  const rows = result.slice(0, limit);
+  const last = rows[rows.length - 1];
+  return {
+    items: rows.map((row) => ({
+      ...row,
+      notification: sanitizeNotificationRow(row.notification),
+    })),
+    nextCursor: hasMore && last
+      ? {
+          beforeCreatedAt: last.notification.createdAt,
+          beforeId: last.notification.id,
+        }
+      : null,
+  };
 }

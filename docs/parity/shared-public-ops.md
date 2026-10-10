@@ -281,7 +281,7 @@ Legacy `/e2e/superadmin-login` is a test helper.
 - [ ] Run DB10 PostgreSQL tests (105-row truncation, cross-user isolation, repeated/concurrent bulk acknowledgments) on disposable seeded PostgreSQL; confirm CI job executed.
 - [ ] Browser test All/Unread deep links, mark-all state, keyboard/focus/accessibility, responsive desktop/mobile and error retry.
 - [ ] Verify legacy TPO link-open automatically marks its row read; current shared list keeps an explicit Mark read action, so W05/this lane must agree on parity strategy.
-- [ ] Implement pagination or Load more; UI currently caps 100 and **explicitly says so** rather than claiming full-history presentation. Import and producer coverage of announcements and legacy role-specific notifications remain open.
+- [ ] Execute browser/DB verification of keyset Older notifications pagination (50 per page; equal-time UUID ties, user-scoping, back-navigation). It was authored in W06 but is not yet VERIFIED. Import and producer coverage of announcements and legacy role-specific notifications remain open.
 - [ ] Confirm all seven role-specific notification producer→consumer workflows; W02/W03/W04/W05 create domain event payloads, W06 owns shared inbox/outbox delivery, W01 owns identity/tenant primitives.
 
 **State: PARTIAL (authored, tests not executed); no page or family verification status advanced.**
@@ -297,3 +297,14 @@ Legacy `/e2e/superadmin-login` is a test helper.
 - [ ] Review organization-scoped and platform-global event disclosure policy with W01/W05 and document any sanctioned cross-tenant broadcasts.
 
 **This is a documented security tightening relative to the previously unaudited vNext fan-out. State remains PARTIAL / tests unrun.**
+
+
+## W06 notification history and open-to-read — third authored batch
+
+The shared `/notifications` feed now has recipient-only keyset pagination using `createdAt,id` rather than skipping records or losing older notifications at 100. Query params are validated; malformed half-cursors show an accessible reset state. Older links preserve All/Unread. The source-backed TPO behavior of opening a notification marking it read is implemented in shared `NotificationList` with a user-scoped write before navigation; failed acknowledgment is surfaced and still allows navigation.
+
+- [ ] Execute `tests/unit/notification-cursor.test.ts` and `tests/integration/db10-notification-pagination.test.ts`; check cursor boundary, UUID tie, >100 records and cross-user isolation.
+- [ ] Browser verify direct/back/forward refresh of older pages, unread count after read, mobile grouping and slow/failing mark-read navigation.
+- [ ] Verify correct behavior when a notification is read or deleted while browsing historical pages; capture actual browser evidence before marking page CLOSED.
+
+**Source authored only, runtime/browser proof pending.**
