@@ -6,6 +6,7 @@ import { FacultyItemActions } from "./faculty-item-actions";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
+import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import {
   facultyOwnedItemActions,
   nextLessonItemSequence,
@@ -297,6 +298,12 @@ function QuizItem({
               maxAttempts: item.maxAttempts,
             }}
           />
+          {item.status === "DRAFT" ? (
+            <FacultyQuizQuestionEditor
+              quizId={item.id}
+              deliveryId={deliveryId}
+            />
+          ) : null}
           <FacultyItemActions
             transitionUrl={`/api/courses/quizzes/${item.id}/transition`}
             actions={available}
