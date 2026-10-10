@@ -419,8 +419,6 @@ export async function archiveProjectInstance(
     // W06 owns that taxonomy; archive state is persisted here without inventing a
     // misleading event type. W03 issue #23 tracks the cross-lane audit handoff.
 
-;
-
     return archived;
   });
 }
