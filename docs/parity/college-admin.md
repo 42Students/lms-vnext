@@ -88,6 +88,8 @@ Legacy contract:
 - [ ] Department Chair/Vice Chair legacy-noise fields remain absent unless a real current user job exists.
 - [ ] Load/error/empty states match.
 
+**W06 shared-component handoff:** the Super Admin `/admin/departments` directory controls (search/export/paging/dependency counts) are source-authored for reuse, but the distinct legacy College Admin `/college-admin/departments` route has **not** been restored or browser-verified. This row remains OPEN until college-admin role routing, source parity and regression tests are done.
+
 ## Page: Programs
 **Legacy:** `/college-admin/programs`
 
