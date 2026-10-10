@@ -297,7 +297,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "legacyWriterEvidence": "No mapped field in inspected Course.java or CourseDTO.java; historical schema inventory only, pending SQL/consumer oracle.",
+      "vnextContractDifference": "Subscription duration policy has no proven canonical target; cannot retire solely because current Course entity lacks it."
     },
     {
       "source": "course.dept_id",
@@ -332,7 +334,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "legacyWriterEvidence": "No mapped field in inspected Course.java or CourseDTO.java; historical schema inventory only, pending SQL/consumer oracle.",
+      "vnextContractDifference": "Current courseName and shortTitle are separate; formal title cannot be assumed equal or retired without consumer proof."
     },
     {
       "source": "course.contents",
@@ -1103,8 +1107,10 @@
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column course_name String",
-      "sourceReviewFinding": "Legacy denormalized content-level course-name snapshot is persisted; deriving live course name changes historical display behavior.",
-      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_DENORMALIZED"
+      "sourceReviewFinding": "Creation persists course_name, but populateCourseAndLessonNames overwrites it on some responses with the current Course.courseName; both producer and endpoint-specific read behavior need parity proof.",
+      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_DENORMALIZED",
+      "legacyWriterEvidence": "LessonContentsServiceImpl.java create lines 449–452 stores course name; populateCourseAndLessonNames lines 739–748 recomputes course name on some reads.",
+      "vnextContractDifference": "A saved creation-time snapshot exists, but some reads reflect latest course name; API-specific read policy must be verified; cannot mandate immutable name in all responses."
     },
     {
       "source": "lesson_contents.enabled",
@@ -1155,7 +1161,9 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column points long",
       "sourceReviewFinding": "Legacy persisted primitive long points is content-scoped; cannot silently substitute assignment grade max points.",
-      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_PERSISTED"
+      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_PERSISTED",
+      "legacyWriterEvidence": "LessonContentsServiceImpl.java create lines 466–468 and update lines 838–841 set DTO long points; negative normalized to 0; zero accepted.",
+      "vnextContractDifference": "course_assignments.max_points is integer NOT NULL constrained 1..10000; separate assignment entity; no proven one-to-one lesson_content identity."
     },
     {
       "source": "lesson_contents.sequence",
@@ -1182,7 +1190,9 @@
       "producerConsumerVerification": "NOT_VERIFIED",
       "legacyEntityEvidence": "LessonContents.java @Column deadline LocalDateTime",
       "sourceReviewFinding": "Legacy content submission deadline is LocalDateTime; vNext starts_at/ends_at are availability windows, not proven equivalent; timezone conversion requires policy.",
-      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_PERSISTED"
+      "sourceContractStatus": "LEGACY_LESSON_CONTENT_MODEL_PERSISTED",
+      "legacyWriterEvidence": "LessonContentsDTO.java declares LocalDateTime deadline and Boolean clearDeadline; LessonContentsServiceImpl.java create lines 469–475 processes both; updateLessonContent lines 770–981 does NOT handle either field.",
+      "vnextContractDifference": "course_assignments.due_at is timestamptz, update uses explicit null to clear; lesson_contents.starts_at/ends_at are live class availability, not proof of due date equivalence."
     },
     {
       "source": "lesson_contents.version",
@@ -1262,5 +1272,31 @@
       "src/db/schema/assessments.ts"
     ],
     "warning": "Proposed not verified. VNext hard deletion and dynamic sender display differ from legacy; merely adding columns does not restore behavior. Parent tenant, cycles, status/visibility flags unresolved. DB06 max_points/due_at cannot be equated to lesson-content fields absent a cross-module link."
+  },
+  "lastContentDeadlinePointsInspection": {
+    "observedOn": "2026-10-11",
+    "legacyBackendRef": "prod-2026",
+    "primarySources": [
+      "LessonContentsDTO.java",
+      "LessonContentsServiceImpl.java",
+      "LessonContents.java",
+      "CourseDTO.java",
+      "Course.java"
+    ],
+    "vnextSources": [
+      "src/db/schema/assessments.ts",
+      "src/db/schema/courses.ts",
+      "src/modules/courses/assignment-validation.ts",
+      "src/modules/courses/assignment-service.ts"
+    ],
+    "inspectedFields": [
+      "lesson_contents.points",
+      "lesson_contents.deadline",
+      "lesson_contents.course_name",
+      "course.default_subscription_days",
+      "course.formal_title"
+    ],
+    "verification": "SOURCE_EVIDENCE_ONLY_NOT_DATABASE_VERIFIED",
+    "note": "Points, due date and course-name snapshot are not safely substituted by assignment maxPoints/dueAt or derived course label. Historical-only course fields remain unproven."
   }
 }
