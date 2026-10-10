@@ -7,7 +7,7 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
-import { ProjectList } from "@/components/projects/project-list";
+import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
@@ -86,7 +86,7 @@ export default async function CollegeProjectsPage({
 
       <ProjectAdminFilters query={query} />
 
-      <ProjectList
+      <ProjectAdminWorkspaceList
         items={result.items.map((project) => ({
           id: project.id,
           title: project.title,
