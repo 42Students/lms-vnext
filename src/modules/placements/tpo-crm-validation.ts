@@ -68,6 +68,30 @@ export const markTpoNotNowSchema = z.object({
   revisitDate: z.iso.date().nullable().optional(),
 }).strict();
 
+/** Update a recruiter's details without silently clearing omitted contacts. */
+export const updateTpoLeadSchema = z.object({
+  collegeId: id,
+  name: z.string().trim().min(1).max(150).optional(),
+  designation: z.string().trim().max(100).nullable().optional(),
+  email: email.nullable().optional(),
+  phone: phone.nullable().optional(),
+  companyName: z.string().trim().min(1).max(150).optional(),
+  source: tpoLeadSourceSchema.nullable().optional(),
+}).strict().refine(value => Object.keys(value).some(key => key !== "collegeId"), {
+  message: "Provide at least one editable field",
+});
+
+export const checkTpoLeadContactSchema = z.object({
+  collegeId: id,
+  contact: z.string().trim().min(1).max(150),
+}).strict().refine(value => {
+  if (value.contact.includes("@")) return email.safeParse(value.contact).success;
+  return phone.safeParse(value.contact).success;
+}, { message: "Provide a valid email address or phone number" });
+
+export type UpdateTpoLeadInput = z.input<typeof updateTpoLeadSchema>;
+export type CheckTpoLeadContactInput = z.input<typeof checkTpoLeadContactSchema>;
+
 export type CreateTpoLeadInput = z.input<typeof createTpoLeadSchema>;
 export type LogTpoLeadActivityInput = z.input<typeof logTpoLeadActivitySchema>;
 export type CreateTpoFollowupInput = z.input<typeof createTpoFollowupSchema>;
