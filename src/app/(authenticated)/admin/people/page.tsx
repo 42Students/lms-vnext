@@ -1,6 +1,9 @@
+import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
+import { PeoplePagination } from "@/components/admin/people-pagination";
+import { parsePeoplePage, peoplePageState, PEOPLE_PAGE_SIZE } from "@/modules/admin-ui/people-pagination";
 import {
   DataTable,
   type DataTableColumn,
@@ -69,7 +72,13 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
   },
 ];
 
-export default async function SuperAdminPeoplePage() {
+export default async function SuperAdminPeoplePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const requestedPage = parsePeoplePage(pageParam);
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
 
@@ -91,9 +100,15 @@ export default async function SuperAdminPeoplePage() {
 
   const people = await listCollegePeopleWithRuntime(context, {
     collegeId,
-    limit: 100,
-    offset: 0,
+    limit: PEOPLE_PAGE_SIZE,
+    offset: (requestedPage - 1) * PEOPLE_PAGE_SIZE,
   });
+
+  const pagination = peoplePageState(requestedPage, people.pagination.total);
+  if (requestedPage !== pagination.page) {
+    redirect("/admin/people" +
+      (pagination.page === 1 ? "" : `?page=${pagination.page}`));
+  }
 
   return (
     <div className="space-y-6">
@@ -107,6 +122,12 @@ export default async function SuperAdminPeoplePage() {
         columns={columns}
         rows={people.items}
         getRowKey={(person) => person.membership.id}
+      />
+      <PeoplePagination
+        basePath="/admin/people"
+        page={pagination.page}
+        pageSize={PEOPLE_PAGE_SIZE}
+        total={pagination.total}
       />
     </div>
   );

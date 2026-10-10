@@ -712,3 +712,17 @@ College Admin can act inside TPO in the legacy product.
 
 
 **W06 Programs bookmark alias:** `/college-admin/programs` and `/superadmin/programs` now enter their respective existing scoped Programs page via authenticated, role-fenced redirects. Existing vNext pages and service permissions remain authoritative. Negative role tests authored; run/browser evidence still OPEN.
+
+
+### W06 People Directory checkpoint — 2026-10-10
+
+**Legacy oracle:** `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`, `src/pages/superadmin/sections/PeopleDirectory.js` reused by College Admin; backed by `lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`. The legacy People Directory is a **read-only contacts page** with **All Contacts**, **Faculty Contacts**, **Student Contacts** tabs and separate navigation to manage students/faculty/faculty assignments. The current vNext `/college/people` is a membership management table and must **not** be marked as full clone parity.
+
+**Authored W06 UI improvement:** server-side, college-bound People pagination (50 rows/page) replaces a hard-coded first 100; `?page=` back/forward semantics, range/total display and out-of-range reset preserve selected college. Existing permission-checked repository and onboarding/role/lifecycle dialogs remain unchanged. This addresses an operational truncation but **does not implement the three contact tabs**, managed accounts links, search or export.
+
+- [ ] Run `tests/unit/admin-people-pagination.test.ts` and seeded PostgreSQL multi-page tests including cross-college negative checks.
+- [ ] Build and browser-verify College Admin page >100 people, scope switching, permission revocation, stale link and mobile pagination.
+- [ ] Implement a server-filtered read-only All/Faculty/Student contacts directory, not a misleading client-side filter of 50 rows; preserve management pages separately.
+- [ ] Compare legacy contact-card fields/private-field visibility and account-management navigation before closing page.
+
+**Status: PARTIAL / tests authored, not executed.**

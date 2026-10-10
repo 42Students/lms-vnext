@@ -494,3 +494,14 @@ These user jobs are functionally similar to College Admin; detailed field/action
 
 
 **W06 Programs bookmark alias:** `/college-admin/programs` and `/superadmin/programs` now enter their respective existing scoped Programs page via authenticated, role-fenced redirects. Existing vNext pages and service permissions remain authoritative. Negative role tests authored; run/browser evidence still OPEN.
+
+
+### W06 Super Admin People Directory checkpoint — 2026-10-10
+
+The existing `/admin/people` list previously fetched only `limit=100, offset=0`. W06 authored shared server-side 50-row pagination with a selected-college-only query, scoped previous/next links, row ranges and stale-page clamping; it does not grant extra access or modify shared identity persistence. The legacy Super Admin `/superadmin/people` is a read-only People Directory with All/Faculty/Student contacts tabs and separate management destinations (`src/pages/superadmin/sections/PeopleDirectory.js`), **not** a generic membership manager, so this is a technical pagination fix only, not final UI parity.
+
+- [ ] Run authored pure pager unit test and seeded Postgres/browser checks for 125+ records, multiple colleges, scoped link back/forward and role transitions.
+- [ ] Implement the legacy contacts tabs and safe personal-contact presentation without exposing secrets; verify global/organization/college scope switch behavior.
+- [ ] Confirm management navigation and distinct Students / Faculty / Faculty Assignment jobs; W01 owns identity/backend privilege policy.
+
+**Status: PARTIAL, not VERIFIED.**
