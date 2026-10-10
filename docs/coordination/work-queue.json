@@ -1092,17 +1092,21 @@
         "docs/planning/database-parity-db08-outcome-fidelity.md",
         "tests/db08-outcome-fidelity-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "d02f9cadb3defbcfad04072fbb7cdbe76179b003",
       "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "blockers": [
+        "UNREGISTERED_STAGING_SQL: scripts/sql/db08-outcome-fidelity-staging.sql is not a Drizzle migration or active schema barrel; Chat 1 must integrate after DB08-B.",
+        "SERVICE_AND_REPORT_GAP: placed count, registration history and offer dispute/revocation producers/consumers not wired; no fake parity acceptance.",
+        "EXECUTED_DB_GATES_UNAVAILABLE: DB-001 PostgreSQL/Actions runner still blocked; six authored Node static tests and SQL negative witnesses not run."
+      ],
+      "completionNote": "Chat 5 staged isolated DB08 PostgreSQL DDL + source contract + six authored static Node tests: 23 additive persisted columns for placed-count policy, non-placement outcome current/history snapshots, role/offer compensation-bond and acceptance/dispute/cascade metadata. 43 source-text consistency checks passed in connected-tool process, but the Node suite was not executed; PostgreSQL replay, active Drizzle registration, producer/consumer and negative/race acceptance remain 0. Requires Chat 1 numbered migration integration.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11",
       "startedAt": "2026-10-11",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11",
+      "completionCommitSha": "d02f9cadb3defbcfad04072fbb7cdbe76179b003",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1126,6 +1130,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Implementation started for standalone DB08 staged SQL + source contract + static tests."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11",
+          "reason": "Bounded DB08 schema contract staged; runtime and integrator verification explicitly pending."
         }
       ]
     }
