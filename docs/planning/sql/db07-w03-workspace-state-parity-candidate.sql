@@ -6,6 +6,7 @@
 -- separate from recoverable Delete/Restore.
 
 ALTER TABLE project_instances
+  ADD COLUMN section_id uuid,
   ADD COLUMN phase varchar(80),
   ADD COLUMN blocker text,
   ADD COLUMN next_action text,
@@ -24,6 +25,10 @@ ALTER TABLE project_instances
   ADD COLUMN recoverable_content boolean NOT NULL DEFAULT false;
 
 ALTER TABLE project_instances
+  ADD CONSTRAINT project_instances_section_fk
+  FOREIGN KEY (section_id)
+  REFERENCES sections(id)
+  ON DELETE RESTRICT,
   ADD CONSTRAINT project_instances_dates_ck
   CHECK (
     start_date IS NULL
@@ -78,6 +83,7 @@ CREATE INDEX IF NOT EXISTS
   WHERE blocker IS NOT NULL AND deleted_at IS NULL;
 
 -- High-confidence normalized mappings:
+-- project_workspace.class_id                -> section_id (vNext section)
 -- project_workspace.phase                   -> phase
 -- project_workspace.blocker                 -> blocker
 -- project_workspace.next_action             -> next_action
@@ -101,7 +107,9 @@ CREATE INDEX IF NOT EXISTS
 -- team_group_id   -> project_instances.team_group_id (already live)
 --
 -- OPEN cross-lane dispositions (do not invent columns here):
--- class_id: W03 needs W01/W06 canonical academic class/section reference.
+-- section_id tenant consistency: service must validate section.collegeId equals
+-- project college; W01 should decide whether to enforce the cross-table tenant
+-- invariant with a canonical academic composite key/trigger.
 -- course_label: verify whether still user-visible or historical snapshot only.
 -- bulk_learner_id: verify creation provenance/consumer before retaining.
 -- created_by: already normalized to created_by_user_id; updated_by is not yet
