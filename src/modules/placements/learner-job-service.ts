@@ -17,6 +17,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   evaluatePlacementEligibility,
   type PlacementEligibilityResult,
@@ -37,6 +38,7 @@ export async function listLearnerPlacementJobs(
   now: Date = new Date(),
 ) {
   const membership = requireLearner(context);
+  await requireLearnerPlacementAccess(context);
 
   const rows = await getDb()
     .select({
