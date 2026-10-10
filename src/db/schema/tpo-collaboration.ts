@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   index,
   integer,
@@ -89,7 +90,7 @@ export const placementTpoMessages = pgTable(
     ),
     check(
       "placement_tpo_messages_sender_ck",
-      sql`${table.senderType} in ('TPO', 'HR')`,
+      sql`${table.senderType} in ('TPO', 'RECRUITER')`,
     ),
     check(
       "placement_tpo_messages_body_ck",
@@ -183,7 +184,7 @@ export const placementTpoShareEvents = pgTable(
     ),
     check(
       "placement_tpo_share_events_action_ck",
-      sql`${table.action} in ('CREATED','OPENED','DOWNLOADED_LIST','DOWNLOADED_ZIP','REVOKED')`,
+      sql`${table.action} in ('CREATED','OPENED','DOWNLOADED_LIST','DOWNLOADED_ZIP','REVOKED','LINK_EMAILED','CODE_EMAILED')`,
     ),
   ],
 );
@@ -205,6 +206,12 @@ export const placementTpoCollegeSettings = pgTable(
     prepCourseIds: jsonb("prep_course_ids"),
     prepThresholdPct: integer("prep_threshold_pct").notNull().default(60),
     notifyToggles: jsonb("notify_toggles"),
+    recruiterAccessMonths: integer("recruiter_access_months")
+      .notNull()
+      .default(6),
+    recruiterDriveNeedsApproval: boolean("recruiter_drive_needs_approval")
+      .notNull()
+      .default(true),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -212,7 +219,9 @@ export const placementTpoCollegeSettings = pgTable(
   (table) => [
     check(
       "placement_tpo_college_settings_bounds_ck",
-      sql`${table.smsMonthlyCap} >= 0 and ${table.prepThresholdPct} between 0 and 100`,
+      sql`${table.smsMonthlyCap} >= 0
+        and ${table.prepThresholdPct} between 0 and 100
+        and ${table.recruiterAccessMonths} between 0 and 60`,
     ),
   ],
 );
@@ -264,7 +273,20 @@ export const placementTpoSavedViews = pgTable(
     ),
     check(
       "placement_tpo_saved_views_scope_ck",
-      sql`${table.scope} in ('STUDENTS','LEADS','DRIVES')`,
+      sql`${table.scope} in (
+        'STUDENTS',
+        'RECRUITER_LEADS',
+        'DRIVES',
+        'APPLICANTS',
+        'BATCH_STUDENTS',
+        'OFFERS',
+        'REQUESTS',
+        'AUDIT',
+        'REPORT',
+        'VERIFICATION',
+        'RESULTS',
+        'COMPANY_DRIVES'
+      )`,
     ),
     check(
       "placement_tpo_saved_views_name_ck",
