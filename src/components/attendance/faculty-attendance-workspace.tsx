@@ -14,6 +14,10 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {
+  facultyAttendanceDayCell,
+  groupFacultyAttendanceSessionsByIndiaDay,
+} from "@/modules/attendance/faculty-grid-model";
 
 type Course = {
   deliveryId: string;
@@ -105,42 +109,6 @@ function sessionTime(value: Session) {
     "en-IN",
     { hour: "numeric", minute: "2-digit" },
   ).format(new Date(value.endsAt))}`;
-}
-
-function statusCode(
-  session: Session,
-  record: RecordRow | undefined,
-) {
-  if (
-    new Date(session.startsAt).getTime() >
-    Date.now()
-  ) {
-    return { code: "S", label: "Scheduled", tone: "neutral" as const };
-  }
-  if (session.attendanceStatus !== "MARKED") {
-    return { code: "—", label: "Not marked", tone: "warning" as const };
-  }
-  if (!record) {
-    return { code: "P", label: "Present", tone: "success" as const };
-  }
-  const labels: Record<string, { code: string; label: string }> = {
-    ABSENT: { code: "A", label: "Absent" },
-    EXCUSED: { code: "E", label: "Excused" },
-    MEDICAL: { code: "M", label: "Medical" },
-    LATE: { code: "L", label: "Late" },
-    PRESENT: { code: "P", label: "Present" },
-  };
-  const value = labels[record.status] ?? {
-    code: "?",
-    label: record.status,
-  };
-  return {
-    ...value,
-    tone:
-      record.status === "PRESENT"
-        ? ("success" as const)
-        : ("error" as const),
-  };
 }
 
 async function errorMessage(
@@ -270,6 +238,13 @@ export function FacultyAttendanceWorkspace({
         sameMonth(session.startsAt, month),
       ),
     [workspace.sessions, month],
+  );
+  const monthDays = useMemo(
+    () =>
+      groupFacultyAttendanceSessionsByIndiaDay(
+        monthSessions,
+      ),
+    [monthSessions],
   );
 
   const markedCount = monthSessions.filter(
@@ -541,21 +516,29 @@ export function FacultyAttendanceWorkspace({
                     <th className="sticky left-0 z-10 bg-surface px-3 py-3">
                       Learner
                     </th>
-                    {monthSessions.map((session) => (
+                    {monthDays.map((day) => (
                       <th
-                        key={session.id}
+                        key={day.dayKey}
                         className="min-w-28 px-3 py-3 text-center"
-                        title={sessionTime(session)}
+                        title={day.sessions
+                          .map((session) => sessionTime(session))
+                          .join(" · ")}
                       >
                         {new Intl.DateTimeFormat(
                           "en-IN",
                           {
+                            timeZone: "Asia/Kolkata",
                             day: "2-digit",
                             month: "short",
                           },
                         ).format(
-                          new Date(session.startsAt),
+                          new Date(day.sessions[0]!.startsAt),
                         )}
+                        {day.sessions.length > 1 ? (
+                          <span className="ml-1 text-[10px] font-normal text-muted-foreground">
+                            ×{day.sessions.length}
+                          </span>
+                        ) : null}
                       </th>
                     ))}
                   </tr>
@@ -580,21 +563,45 @@ export function FacultyAttendanceWorkspace({
                             "Contact details unavailable"}
                         </p>
                       </td>
-                      {monthSessions.map((session) => {
-                        const state = statusCode(
-                          session,
-                          recordsByKey.get(
-                            `${session.id}:${learner.membershipId}`,
-                          ),
+                      {monthDays.map((day) => {
+                        const bySession = new Map(
+                          day.sessions.flatMap((session) => {
+                            const record = recordsByKey.get(
+                              `${session.id}:${learner.membershipId}`,
+                            );
+                            return record
+                              ? [[session.id, record] as const]
+                              : [];
+                          }),
                         );
+                        const state = facultyAttendanceDayCell(
+                          day.sessions,
+                          bySession,
+                        );
+                        const tone =
+                          state.code === "P"
+                            ? "success"
+                            : state.code === "A"
+                              ? "error"
+                              : state.code === "—"
+                                ? "warning"
+                                : state.code === "MIXED"
+                                  ? "info"
+                                  : "neutral";
                         return (
                           <td
-                            key={session.id}
+                            key={day.dayKey}
                             aria-label={state.label}
-                            className="px-3 py-3 text-center"
+                            className={`px-3 py-3 text-center ${state.code === "MIXED" ? "partial" : ""}`}
                           >
-                            <StatusBadge tone={state.tone}>
-                              {state.code}
+                            <StatusBadge tone={tone}>
+                              {state.ratio ? (
+                                <span className="attendance__ratio">
+                                  {state.ratio}
+                                </span>
+                              ) : (
+                                state.code
+                              )}
                             </StatusBadge>
                           </td>
                         );
@@ -604,7 +611,7 @@ export function FacultyAttendanceWorkspace({
                 </tbody>
               </table>
               <p className="mt-4 text-xs leading-5 text-muted-foreground">
-                P = Present · A = Absent · E = Excused · M = Medical · L = Late · — = attendance not marked · S = future class.
+                P = Present · A = Absent · — = attendance not marked · S = future class · x/y = present sessions / all sessions that day.
               </p>
             </section>
           )}
