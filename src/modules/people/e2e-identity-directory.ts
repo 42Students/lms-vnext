@@ -23,9 +23,9 @@ function toDirectoryUser(row: {
   };
 }
 
-function e2eUid(phoneNumber: string) {
+function e2eUid(contact: string) {
   const digest = createHash("sha256")
-    .update(phoneNumber)
+    .update(contact)
     .digest("hex")
     .slice(0, 32);
   return `e2e-person-${digest}`;
@@ -83,8 +83,12 @@ export const e2eIdentityDirectory: IdentityDirectory = {
 
   async createUser(input) {
     return {
-      uid: e2eUid(input.phoneNumber),
-      phoneNumber: input.phoneNumber,
+      uid: e2eUid(
+        input.phoneNumber ??
+          input.email ??
+          "missing-contact",
+      ),
+      phoneNumber: input.phoneNumber ?? null,
       email: input.email ?? null,
       displayName: input.displayName,
     };
