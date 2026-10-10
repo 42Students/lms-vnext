@@ -187,6 +187,26 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(events.rows[0].n).toBe(3);
   });
 
+  it("allows an admin elective move into a locked removed target and preserves the lock", async () => {
+    const { groups, candidate } = await createElectiveFixture();
+    await joinGroup(admin,groups[1],candidate.membershipId,"MANUAL");
+    await leaveGroup(admin,groups[1],candidate.membershipId,"MANUAL");
+    await pool.query(
+      "UPDATE lms_group_members SET is_locked=true WHERE group_id=$1 AND membership_id=$2",
+      [groups[1],candidate.membershipId],
+    );
+    await joinGroup(admin,groups[0],candidate.membershipId,"MANUAL");
+    const moved=await moveElectiveMember(
+      admin,fixture.offerings[0],fixture.offerings[1],candidate.membershipId,
+    );
+    expect(moved.state).toBe("ACTIVE");
+    const target=await pool.query(
+      "SELECT state,is_locked FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [groups[1],candidate.membershipId],
+    );
+    expect(target.rows[0]).toMatchObject({state:"ACTIVE",is_locked:true});
+  });
+
   it("rolls back a move into a full target without changing source membership", async () => {
     const { groups, candidate, programId, cohortId, sectionId, periodId } =
       await createElectiveFixture();
@@ -201,7 +221,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       "INSERT INTO section_enrollments (id,learner_enrollment_id,section_id,academic_period_id) VALUES ($1,$2,$3,$4)",
       [sectionEnrollmentId,programEnrollmentId,sectionId,periodId]);
     await pool.query(
-      "UPDATE lms_groups SET config_json='{}'::jsonb WHERE id=$1",
+      "UPDATE lms_groups SET config_json='{\"allowWaitlist\":false}'::jsonb WHERE id=$1",
       [groups[1]],
     );
     await joinGroup(other.ctx,groups[1],other.membershipId);
@@ -248,6 +268,28 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       .rejects.toMatchObject({code:"ELECTIVE_SEMESTER_OUTSIDE_PROGRAM"});
     await expect(createElectiveSlot(admin, { ...values, academicYear: "2026-29" }))
       .rejects.toMatchObject({code:"ELECTIVE_ACADEMIC_YEAR_INVALID"});
+  });
+
+  it("preserves legacy true defaults for waitlisting and self-leave when config flags are absent", async () => {
+    const group = await createGroup(admin, {
+      collegeId: SEED_IDS.collegeA, kind: "BUS", name: "DB03 default config " + randomUUID(),
+      capacity: 1, selfJoinOpenFrom: new Date(Date.now() - 60_000),
+    });
+    fixture.groups.push(group.id);
+    await transitionGroup(admin, group.id, "ACTIVATE");
+    const second = await createLearner();
+    const active = await joinGroup(learner, group.id, SEED_IDS.learnerCollegeAMembership);
+    const waiting = await joinGroup(second.ctx, group.id, second.membershipId);
+    expect(active.state).toBe("ACTIVE");
+    expect(waiting.state).toBe("WAITLISTED");
+    await leaveGroup(learner, group.id, SEED_IDS.learnerCollegeAMembership);
+    const promoted = await pool.query(
+      "SELECT state FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [group.id, second.membershipId],
+    );
+    expect(promoted.rows[0].state).toBe("ACTIVE");
+    const left = await leaveGroup(second.ctx, group.id, second.membershipId);
+    expect(left.state).toBe("REMOVED");
   });
 
   it("keeps seat-count, waitlist and immutable event trail consistent under leave and promotion", async () => {
@@ -306,13 +348,20 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(members.rows.find(r=>r.membership_id===disabled.membershipId)?.state).toBe("WAITLISTED");
     expect(members.rows.find(r=>r.membership_id===eligible.membershipId)?.state).toBe("ACTIVE");
   });
-  it("rejects an admin-locked removed member rejoining through self-service", async () => {
+  it("blocks self rejoin but allows explicit admin re-add while preserving the lock", async () => {
     const group=await createActiveGroup();
     await joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership);
     await leaveGroup(admin,group,SEED_IDS.learnerCollegeAMembership,"MANUAL");
     await pool.query("UPDATE lms_group_members SET is_locked=true WHERE group_id=$1",[group]);
     await expect(joinGroup(learner,group,SEED_IDS.learnerCollegeAMembership))
       .rejects.toMatchObject({code:"GROUP_MEMBERSHIP_LOCKED"});
+    const restored=await joinGroup(admin,group,SEED_IDS.learnerCollegeAMembership,"MANUAL");
+    expect(restored.state).toBe("ACTIVE");
+    const row=await pool.query(
+      "SELECT is_locked FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [group,SEED_IDS.learnerCollegeAMembership],
+    );
+    expect(row.rows[0].is_locked).toBe(true);
   });
   it("persists creator role and immutable member type snapshots in the database", async () => {
     const group=await createActiveGroup("BUS",1);
