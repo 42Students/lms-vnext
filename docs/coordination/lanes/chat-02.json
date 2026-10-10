@@ -88,12 +88,22 @@
         "postgresExecuted": 0,
         "nodeTestExecuted": false
       },
-      "issues": "Needs W01 unique parent composite keys, registered Drizzle migration, clean PG replay, credential provider/OTP validation; closed unmerged PR#61/#64 are superseded."
+      "issues": "Needs W01 unique parent composite keys, registered Drizzle migration, clean PG replay, credential provider/OTP validation; closed unmerged PR#61/#64 are superseded.",
+      "w01Handoff": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102120571"
     },
     "legacyUserRegistrationSecurityFinding": {
       "status": "SOURCE_ONLY_REQUIRES_REVIEW",
       "report": "docs/planning/db01-chat02-source-reconciliation.md",
       "summary": "Legacy UserController /register calls UserServiceImpl.save; save assigns USER and ADMIN roles while WebSecurityConfig fallback appears authenticated-only. Risk is not reproduced in vNext, requires independent legacy access-chain validation."
+    },
+    "db01FieldCensus": {
+      "candidateTables": 22,
+      "fields": 312,
+      "activeSourceWorkflowFields": 142,
+      "reviewedActivenessFields": 162,
+      "vnextRuntimeSemanticVerified": 0,
+      "interpretation": "Current legacy source table/workflow disposition, NOT VNext semantic parity or independent DB field testing",
+      "sourceLedgerBlob": "96e9f9f47f2d58408ff1bbb680660d1245f65efa"
     }
   },
   "qualityGates": {
@@ -127,7 +137,7 @@
     "DB-004 → Chat 1/issue #21: promote only one auth-attempt/handoff schema including parent composite unique/FKs and 2-minute TTL after PG replay; do not mix closed unmerged PR#61/#64.",
     "DB-004 → legacy security review: UserController /register / UserServiceImpl assigns ADMIN role, current security matcher appears only authenticated; no exploitation claim."
   ],
-  "nextAction": "Continue source-backed DB01 field disposition and coordinate with W01 for composite FK and migration integration; run authored Node and PostgreSQL tests in actual repo/CI; no DONE_VERIFIED until DB runtime proof. Ensure current member/tenant, email/OTP provider workflows and legacy admin-role risk are independently reviewed.",
+  "nextAction": "Continue DB-004 on DATABASE: coordinate W01 staged tenant/auth migration parent composite constraints and disposable PostgreSQL integration; source-review remaining 150 unresolved DB01 candidates without clobbering DB02/04/09 workers; independently review legacy admin registration privilege path. Never mark staged schemas/test authorship DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
