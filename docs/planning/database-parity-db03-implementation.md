@@ -276,3 +276,9 @@ Drizzle-generated snapshot consistency, TypeScript compilation, isolated
 integration tests, cross-program elective attendance/quiz/submission E2E,
 rule refresh scheduling and actual 79-field signoff. The count of written tests
 is not a proxy for passing tests.
+
+## W01 transactional actor freshness and migration preflight (2026-10-10)
+
+PR #27 adds a persisted actor status/membership/role check for group writes and rule refresh under transaction-scoped SHARE locks, closing stale `RequestContext` revocation windows. PR #31 extends this protection to elective slot/offering writes and fixes the missing `isNull` import used by elective listing. The new isolated DB03 test file authors five negative write cases, not yet executed. PR #29 adds a structural migration journal preflight and six Node regression cases, wired into CI; it cannot replace `drizzle-kit generate` or actual PostgreSQL replay. Merge commits and remaining blockers are itemized in `docs/planning/w01-platform-closure-status.md`.
+
+**DB03 remains RELEASE BLOCKED:** zero of 79 field mappings verified by runtime/producer-consumer evidence; runner-backed TypeScript, disposable PostgreSQL and browser suites not executed. Do not extrapolate implementation or semantic closure from test authorship.
