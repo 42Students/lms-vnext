@@ -334,3 +334,17 @@ A PostgreSQL-backed, fail-closed lease adapter is now source-authored for DB10 s
 ## W06 Admin audit detail/source reconciliation — 2026-10-10
 
 All 13 legacy `admin_audit_log` fields are now source-reviewed against existing `activity_events`. W06 added tenant-safe event detail and bounded/redacted metadata rendering. Three legacy semantics remain actual persistence gaps: historical actor role/type snapshot, request IP and User-Agent. Actor mobile is an intentional privacy redesign (canonical actor read-time identity, no duplicated/rendered mobile). See `docs/planning/database-parity-db10-admin-audit.md`. DB10 verified field count remains 0; unit/PG/browser evidence is not executed.
+
+
+## W06 external outbound delivery privacy contract — 2026-10-10
+
+W05 requested recruiter invitation/reminder outbox transport with idempotency, suppression, bounces and zero raw-token logging. W06 staged `src/modules/operations/outbound-delivery-{contract,envelope,policy,queue}.ts` and isolated `src/db/schema/db10-outbound-messages.draft.ts`. Only a queued encrypted intent is modeled: **no provider acceptance, email/SMS send or recipient delivery is implemented**. Runtime queue fails closed until `DB10_OUTBOUND_READY=DB10_VERIFIED`, and W01 alone owns schema registration/migration. Source-backed evidence and detailed W05/W01 handoffs: `docs/planning/database-parity-db10-outbound.md`.
+
+- [ ] W01 register schema + full replay on disposable PostgreSQL, verify queue idempotency/suppression/tenant checks and concurrency.
+- [ ] Integrate provider template renderer/config, worker leases, durable send claims, provider-side idempotency and callback signature verification.
+- [ ] Re-check active unsubscribe/Not Hiring/bounce/complaint suppression and invite validity immediately before dispatch; prove no race leaks.
+- [ ] Verify role-scoped audit/log masking (no email, raw URL, invite token, decrypted variables in logs), cryptographic key rotation and retention.
+- [ ] Run authored unit, static and integration tests, typecheck/lint/build, and live sandbox transport/browser tests.
+- [ ] Complete unrelated legacy APP notification, digest, bulk-undo and template surfaces; staging only W05 invite/reminder is not full DB10 parity.
+
+**Status: CODE_STAGED / PROVIDER_NOT_CONNECTED / MIGRATION_BLOCKED / TESTS_UNEXECUTED.**

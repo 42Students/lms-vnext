@@ -1,0 +1,106 @@
+/**
+ * DB10 transactional outbox + suppression tables: MIGRATION DRAFT ONLY.
+ *
+ * DO NOT export from src/db/schema/index.ts until W01 registers the migration,
+ * DB bootstrap is replayed and sender idempotency has end-to-end verification.
+ * There is NO production sender or externally callable API in this batch.
+ * Invitation URLs/merge variables/recipient addresses MUST stay encrypted.
+ */
+import { sql } from "drizzle-orm";
+import {
+  check, index, integer, pgTable, text, timestamp, uniqueIndex,
+  uuid, varchar,
+} from "drizzle-orm/pg-core";
+import { colleges } from "./colleges";
+import { organizations } from "./organizations";
+
+export const db10OutboundMessages = pgTable(
+  "outbound_messages",
+  {
+    id: uuid("id").primaryKey(),
+    organizationId: uuid("organization_id").notNull()
+      .references(() => organizations.id, { onDelete: "restrict" }),
+    collegeId: uuid("college_id").notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    sourceEventId: uuid("source_event_id").notNull(),
+    channel: varchar("channel", { length: 16 }).notNull(),
+    templateKey: varchar("template_key", { length: 64 }).notNull(),
+    /** Secret-derived, never raw contact information. */
+    recipientHash: varchar("recipient_hash", { length: 64 }).notNull(),
+    idempotencyKey: varchar("idempotency_key", { length: 64 }).notNull(),
+    requestDigest: varchar("request_digest", { length: 64 }).notNull(),
+    keyId: varchar("key_id", { length: 24 }).notNull(),
+    nonceBase64: varchar("nonce_base64", { length: 24 }).notNull(),
+    tagBase64: varchar("tag_base64", { length: 32 }).notNull(),
+    ciphertextBase64: text("ciphertext_base64").notNull(),
+    status: varchar("status", { length: 24 }).notNull().default("PENDING"),
+    notBefore: timestamp("not_before", { withTimezone: true }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }),
+    attempts: integer("attempts").notNull().default(0),
+    claimedBy: varchar("claimed_by", { length: 120 }),
+    claimExpiresAt: timestamp("claim_expires_at", { withTimezone: true }),
+    claimFence: integer("claim_fence").notNull().default(0),
+    providerMessageId: varchar("provider_message_id", { length: 200 }),
+    providerAcceptedAt: timestamp("provider_accepted_at", { withTimezone: true }),
+    deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+    lastSafeFailureCode: varchar("last_safe_failure_code", { length: 40 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("db10_outbound_idempotency_uq").on(t.idempotencyKey),
+    index("db10_outbound_due_idx").on(t.status, t.nextAttemptAt, t.notBefore),
+    index("db10_outbound_scope_idx").on(t.organizationId, t.collegeId, t.createdAt),
+    index("db10_outbound_claim_expiry_idx").on(t.claimExpiresAt, t.status),
+    check("db10_outbound_channel_ck",
+      sql`${t.channel} in ('EMAIL','SMS','WHATSAPP')`),
+    check("db10_outbound_template_ck",
+      sql`${t.templateKey} in ('RECRUITER_INVITATION','RECRUITER_INVITATION_REMINDER')`),
+    check("db10_outbound_status_ck",
+      sql`${t.status} in ('PENDING','CLAIMED','RETRY','PROVIDER_ACCEPTED','DELIVERED','SUPPRESSED','BOUNCED','FAILED','EXPIRED')`),
+    check("db10_outbound_request_digest_ck",
+      sql`${t.requestDigest} ~ '^[0-9a-f]{64}$'`),
+    check("db10_outbound_idempotency_hash_ck",
+      sql`${t.idempotencyKey} ~ '^[0-9a-f]{64}$'`),
+    check("db10_outbound_recipient_hash_ck",
+      sql`${t.recipientHash} ~ '^[0-9a-f]{64}$'`),
+    check("db10_outbound_attempts_ck",
+      sql`${t.attempts} >= 0 and ${t.attempts} <= 5`),
+    check("db10_outbound_fence_ck", sql`${t.claimFence} >= 0`),
+    check("db10_outbound_expiry_ck",
+      sql`${t.expiresAt} is null or ${t.notBefore} is null or ${t.expiresAt} > ${t.notBefore}`),
+    check("db10_outbound_claim_shape_ck",
+      sql`(${t.status} = 'CLAIMED' and ${t.claimedBy} is not null and ${t.claimExpiresAt} is not null)
+        or (${t.status} <> 'CLAIMED' and ${t.claimedBy} is null and ${t.claimExpiresAt} is null)`),
+  ],
+);
+
+export const db10OutboundSuppressions = pgTable(
+  "outbound_suppressions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id").notNull()
+      .references(() => organizations.id, { onDelete: "restrict" }),
+    channel: varchar("channel", { length: 16 }).notNull(),
+    recipientHash: varchar("recipient_hash", { length: 64 }).notNull(),
+    reason: varchar("reason", { length: 24 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    clearedAt: timestamp("cleared_at", { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("db10_outbound_suppressions_active_uq")
+      .on(t.organizationId, t.channel, t.recipientHash)
+      .where(sql`${t.clearedAt} is null`),
+    index("db10_outbound_suppressions_scope_idx")
+      .on(t.organizationId, t.createdAt),
+    check("db10_outbound_suppressions_channel_ck",
+      sql`${t.channel} in ('EMAIL','SMS','WHATSAPP')`),
+    check("db10_outbound_suppressions_reason_ck",
+      sql`${t.reason} in ('UNSUBSCRIBED','BOUNCE','COMPLAINT','ADMIN_BLOCK')`),
+    check("db10_outbound_suppressions_hash_ck",
+      sql`${t.recipientHash} ~ '^[0-9a-f]{64}$'`),
+    check("db10_outbound_suppressions_clear_order_ck",
+      sql`${t.clearedAt} is null or ${t.clearedAt} >= ${t.createdAt}`),
+  ],
+);
