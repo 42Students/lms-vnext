@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   ReleaseLifecycleActions,
@@ -211,11 +212,20 @@ export function ProjectWorkspace({
           "Project workspace for execution, review and final delivery."
         }
         actions={
-          <StatusBadge
-            tone={tone(workspace.project.status)}
-          >
-            {label(workspace.project.status)}
-          </StatusBadge>
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusBadge
+              tone={tone(workspace.project.status)}
+            >
+              {label(workspace.project.status)}
+            </StatusBadge>
+            {mode === "ADMIN" ? (
+              <ProjectArchiveControl
+                projectId={workspace.project.id}
+                projectTitle={workspace.project.title}
+                status={workspace.project.status}
+              />
+            ) : null}
+          </div>
         }
       />
 
