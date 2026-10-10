@@ -304,6 +304,15 @@ Legacy:
 ## Page: Recruiter Profile
 **Legacy:** `/hr/profile`
 
+> **2026-10-10 W05 partial implementation:** `/hr/profile` now reads the
+> authenticated recruiter identity/company context, lists exact active college
+> grants and provides a destructive-confirmation Leave Access action backed by a
+> same-origin endpoint that can revoke only the caller's own active grant.
+> Company & Team links to this profile. This is **not closed**: exact editable
+> First Name / Last Name parity is blocked because the current shared user schema
+> exposes only `displayName`; save/edit validation and executed browser/runtime
+> evidence remain open.
+
 Legacy:
 - Your Details card;
 - editable First Name, Last Name, Email, Designation;
