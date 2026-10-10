@@ -441,3 +441,24 @@ export async function updateTpoLead(
     throw error;
   }
 }
+
+/** Safe detail read, including hard tenant isolation and no invite secrets. */
+export async function getTpoLead(
+  context: RequestContext,
+  rawCollegeId: string,
+  rawLeadId: string,
+) {
+  const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
+  const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
+  await requirePlacementManageScope(context, collegeId);
+  const [lead] = await getDb()
+    .select()
+    .from(placementTpoLeads)
+    .where(and(
+      eq(placementTpoLeads.collegeId, collegeId),
+      eq(placementTpoLeads.id, leadId),
+    ))
+    .limit(1);
+  if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+  return tpoLeadView(lead);
+}
