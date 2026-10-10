@@ -127,3 +127,14 @@ test("DB05 unresolved decisions track exactly the remodeled and unproven source 
     assert.ok(unresolved.items.some(item => item.source === field && item.classification === "MISSING_OR_UNPROVEN"));
   }
 });
+
+const readinessScript = read("scripts/db05-migration-readiness.mjs");
+
+test("DB05 readiness checker fails closed on staged migrations and unrun PostgreSQL evidence", () => {
+  assert.match(readinessScript, /if \(!item\.registered \|\| !item\.executedAgainstPostgres \|\| !item\.readyForProduction\)/);
+  assert.match(readinessScript, /gate\.status !== "PASS"/);
+  assert.match(readinessScript, /semanticVerification !== "WORKFLOW_VERIFIED"/);
+  assert.match(readinessScript, /runtimeDatabaseVerification !== "PASS"/);
+  assert.match(readinessScript, /if \(!report\.ready\) process\.exitCode = 2/);
+  assert.ok(readiness.artifacts.every(item => !item.registered && !item.executedAgainstPostgres));
+});
