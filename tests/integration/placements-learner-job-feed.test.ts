@@ -238,4 +238,52 @@ describe("Learner placement job feed", () => {
       "Missing permission: placements.read",
     );
   });
+  it("denies feed and new applications when the college has not bought Placements", async () => {
+    const job = await createPublishedJob(
+      tpoA, SEED_IDS.collegeA,
+      "Paid Gate QA", "w04-paid-gate.example", "Developer",
+    );
+    await pool.query(
+      `UPDATE module_access_rules SET enabled=false,updated_at=now()
+       WHERE scope_type='COLLEGE' AND scope_id=$1 AND module='placements'`,
+      [SEED_IDS.collegeA],
+    );
+    await expect(listLearnerPlacementJobs(learner)).rejects.toThrow(
+      "Missing permission: placements.read",
+    );
+    await expect(applyToPlacementJob(learner,job.id,{})).rejects.toThrow(
+      "Missing permission: placements.read",
+    );
+  });
+
+  it("denies feed and new applications for an explicitly ineligible learner even when a job would otherwise admit them", async () => {
+    const job = await createPublishedJob(
+      tpoA, SEED_IDS.collegeA,
+      "Inheritance Gate QA", "w04-eligibility-gate.example", "Developer",
+    );
+    await pool.query(
+      `UPDATE placement_eligibility_decisions
+       SET status='INELIGIBLE',reason='College private decision',
+           updated_at=now()
+       WHERE scope_type='MEMBERSHIP' AND scope_id=$1`,
+      [SEED_IDS.learnerCollegeAMembership],
+    );
+    await expect(listLearnerPlacementJobs(learner)).rejects.toThrow(
+      "Missing permission: placements.read",
+    );
+    await expect(applyToPlacementJob(learner,job.id,{})).rejects.toThrow(
+      "Missing permission: placements.read",
+    );
+  });
+
+  it("denies forged learner membership context even if its role and placement choice look valid", async () => {
+    const forged: RequestContext = {
+      ...learner,
+      user: { ...learner.user, id: SEED_IDS.facultyUser },
+    };
+    await expect(listLearnerPlacementJobs(forged)).rejects.toThrow(
+      "Missing permission: placements.read",
+    );
+  });
+
 });
