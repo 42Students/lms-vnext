@@ -514,6 +514,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -564,6 +575,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -606,6 +628,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -648,6 +681,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -684,6 +728,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -720,6 +775,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -758,6 +824,17 @@
               "test ACL/redaction and sensitive content retention"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -796,6 +873,17 @@
               "test ACL/redaction and sensitive content retention"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -834,6 +922,17 @@
               "test ACL/redaction and sensitive content retention"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -870,6 +969,17 @@
               "test ACL/redaction and sensitive content retention"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -914,6 +1024,17 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -952,6 +1073,17 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1009,6 +1141,17 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1066,6 +1209,17 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1102,6 +1256,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1138,6 +1303,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1174,6 +1350,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+              "src/main/java/com/_42students/lms/model/Company.java"
+            ],
+            "observation": "Legacy CompanyServiceImpl performs college/org scoped CRUD, dedup and soft delete/restore; not all columns proven individually.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -1896,6 +2083,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1935,6 +2134,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -1974,6 +2185,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2007,6 +2230,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2046,6 +2281,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2087,6 +2334,18 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2120,6 +2379,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2161,6 +2432,18 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2202,6 +2485,18 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2235,6 +2530,18 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2268,6 +2575,18 @@
               "enforce status transitions, concurrency and audit history"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -2308,6 +2627,18 @@
               "preserve JSON shape, validation, privacy and producer/consumer semantics"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+              "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+              "src/main/java/com/_42students/lms/service/tpo/TpoWorkspaceService.java"
+            ],
+            "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -3241,6 +3572,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3274,6 +3616,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3316,6 +3669,17 @@
             "source": "V193__recruiter_naming.sql",
             "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3351,6 +3715,17 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3390,6 +3765,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3425,6 +3811,17 @@
               "preserve JSON shape, validation, privacy and producer/consumer semantics"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3466,6 +3863,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3505,6 +3913,17 @@
               "enforce status transitions, concurrency and audit history"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3538,6 +3957,17 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3573,6 +4003,17 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3608,6 +4049,17 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3641,6 +4093,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3682,6 +4145,17 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+              "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java"
+            ],
+            "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -3727,6 +4201,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+              "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java"
+            ],
+            "observation": "TPO student read service queries and inserts learner preparation tasks (course/assessment, due date, assigner).",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3760,6 +4245,17 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+              "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java"
+            ],
+            "observation": "TPO student read service queries and inserts learner preparation tasks (course/assessment, due date, assigner).",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3793,6 +4289,17 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+              "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java"
+            ],
+            "observation": "TPO student read service queries and inserts learner preparation tasks (course/assessment, due date, assigner).",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3826,6 +4333,17 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+              "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java"
+            ],
+            "observation": "TPO student read service queries and inserts learner preparation tasks (course/assessment, due date, assigner).",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3859,6 +4377,17 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+              "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java"
+            ],
+            "observation": "TPO student read service queries and inserts learner preparation tasks (course/assessment, due date, assigner).",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3890,6 +4419,17 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+              "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java"
+            ],
+            "observation": "TPO student read service queries and inserts learner preparation tasks (course/assessment, due date, assigner).",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -3923,6 +4463,17 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+              "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java"
+            ],
+            "observation": "TPO student read service queries and inserts learner preparation tasks (course/assessment, due date, assigner).",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -7486,6 +8037,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7527,6 +8088,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7575,6 +8146,16 @@
             "source": "V193__recruiter_naming.sql",
             "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7610,6 +8191,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7652,6 +8243,16 @@
             "source": "V193__recruiter_naming.sql",
             "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7694,6 +8295,16 @@
             "source": "V193__recruiter_naming.sql",
             "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7729,6 +8340,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7762,6 +8383,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7797,6 +8428,16 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "Current TPO audit service inserts and reads actor typed audit events and subject links.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -7850,6 +8491,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service inserts and lists college event bell items; reader-specific state is separate.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7885,6 +8536,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service inserts and lists college event bell items; reader-specific state is separate.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7918,6 +8579,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service inserts and lists college event bell items; reader-specific state is separate.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7957,6 +8628,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service inserts and lists college event bell items; reader-specific state is separate.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -7996,6 +8677,16 @@
               "test ACL/redaction and sensitive content retention"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service inserts and lists college event bell items; reader-specific state is separate.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8029,6 +8720,16 @@
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service inserts and lists college event bell items; reader-specific state is separate.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8070,6 +8771,16 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service inserts and lists college event bell items; reader-specific state is separate.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8111,6 +8822,16 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service inserts and lists college event bell items; reader-specific state is separate.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -8156,6 +8877,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service reads/writes per-person bell read rows, separately from historic shared read_at.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8196,6 +8927,16 @@
             "source": "V193__recruiter_naming.sql",
             "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "reviewState": "SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service reads/writes per-person bell read rows, separately from historic shared read_at.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8229,6 +8970,16 @@
               "resolve canonical foreign key, enforcing same-college ownership and actor permissions"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service reads/writes per-person bell read rows, separately from historic shared read_at.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         },
         {
@@ -8262,6 +9013,16 @@
               "reconcile timezone, null/default and temporal read order"
             ],
             "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+          },
+          "legacyUsageEvidence": {
+            "status": "LEGACY_TABLE_ACTIVE_IN_CURRENT_SOURCE_PER_FIELD_CONSUMPTION_NOT_COMPLETE",
+            "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "sourceFiles": [
+              "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+            ],
+            "observation": "TPO audit service reads/writes per-person bell read rows, separately from historic shared read_at.",
+            "fieldSemanticsVerified": false,
+            "postgresTested": false
           }
         }
       ]
@@ -11854,6 +12615,17 @@
       "round_slot": 9,
       "tpo_college_settings": 4
     },
-    "legacyUsageEvidenceWarning": "Current source actions observed, not proof of target schema/API behavior, and no PG tests executed. 5 group + 9 slots + 7 assignments + 9 reschedule + 4 settings."
+    "legacyUsageEvidenceWarning": "Current source actions observed, not proof of target schema/API behavior, and no PG tests executed. 5 group + 9 slots + 7 assignments + 9 reschedule + 4 settings.",
+    "additionalActiveLegacyTableFields": 70,
+    "additionalActiveLegacyTables": {
+      "company": 17,
+      "industry_company": 12,
+      "notification_outbox": 13,
+      "prep_assignment": 7,
+      "tpo_audit_log": 9,
+      "tpo_bell": 8,
+      "tpo_bell_read": 4
+    },
+    "usageAuditLimitation": "Legacy table active does not imply every field populated/required. No vNext migration/consumer or real PostgreSQL proof."
   }
 }
