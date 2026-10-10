@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-10T20:32:14.301Z",
+  "updatedOn": "2026-10-11T02:15:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -326,9 +326,16 @@
         "docs/planning/db-pass4-columns-db04_profiles_and_verification.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "latestEvidenceSha": "c860e92050bda7a9f489ecfae74927fdf2fb1ec9",
       "verificationEvidence": [],
-      "blockers": [],
+      "blockers": [
+        "DB04 staged schema/migration is not registered/replayed by Chat 1; disposable PostgreSQL/CI proof remains unavailable.",
+        "DB-006 currently overlaps src/db/schema/**; Chat 3 did not modify staged Drizzle schema in this pass.",
+        "ACTIVE GAP: vNext education contract omits legacy-screened GPA, explicit currently-pursuing state and enforced marksheet-to-education receipt linkage; isRecentEducation/examRank compatibility needs explicit disposition.",
+        "ACTIVE GAP: legacy student_image has current create/get/deactivate persistence semantics but vNext has no persisted learner image collection; PROFILE_IMAGE receipt alone is not equivalent.",
+        "DISPOSITION REQUIRED: student_registration is distinct from placement_registration and needs DB01/DB02 native-SQL/external-sync audit before retirement or redesign.",
+        "RETIREMENT PROOF REQUIRED: approver_id_card has no named current producer/consumer path but native-SQL/detached consumer absence is unproved."
+      ],
       "completionNote": null,
       "pickedBy": 3,
       "pickedAt": "2026-10-11T01:57:00+05:30",
@@ -360,7 +367,8 @@
           "at": "2026-10-11T01:58:00+05:30",
           "reason": "Chat 3 began source-backed DB04 semantic and privacy/tenant audit."
         }
-      ]
+      ],
+      "progressNote": "Chat 3 completed frozen-source disposition review for all 103/103 DB04 candidates. Remaining 60 reviewed: qualification 24 + student_image 3 have current named producers/consumers and concrete vNext semantic gaps; student_registration 22 + approver_id_card 11 are unresolved retirement candidates only, pending native-SQL/external-consumer proof or explicit disposition. Semantic/runtime verified fields remain 0; approved retirements remain 0; no PostgreSQL execution."
     },
     {
       "id": "DB-008",
