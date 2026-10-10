@@ -2,7 +2,7 @@
  * A CLEAN receipt is necessary, not sufficient to certify a GCS object exists:
  * the storage adapter must verify generation, scanner result and ownership.
  */
-export type PrivateDocumentPurpose = "AADHAAR" | "PAN" | "MARKSHEET" | "RESUME";
+export type PrivateDocumentPurpose = "AADHAAR" | "PAN" | "MARKSHEET" | "RESUME" | "PROFILE_IMAGE";
 export type Receipt = {
   id: string;
   owningMembershipId: string;
