@@ -500,7 +500,16 @@
             "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_SOURCE_CONFIRMED",
+        "evidence": [
+          "Batch.java",
+          "BatchServiceImpl.java",
+          "BatchRepository.java"
+        ],
+        "note": "Canonical cohort progression and derived usage counts are live."
+      }
     },
     {
       "table": "class",
@@ -1035,7 +1044,15 @@
             "sourceActivityConfirmed": true
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_SOURCE_CONFIRMED",
+        "evidence": [
+          "_Class.java",
+          "ElectiveService.java"
+        ],
+        "note": "Primary section program/batch/type semantics are live."
+      }
     },
     {
       "table": "class_schedule",
@@ -1595,7 +1612,16 @@
             "notes": "Attendance now in attendance_sessions; verify event/session cardinality, correction audit and marking lifecycle."
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_SOURCE_CONFIRMED",
+        "evidence": [
+          "ClassSchedule.java",
+          "ClassScheduleServiceImpl.java",
+          "ClassScheduleRepository.java"
+        ],
+        "note": "Scheduling, overlap checks, attendance linkage and soft-history semantics are live."
+      }
     },
     {
       "table": "faculty_course_associations",
@@ -1725,7 +1751,15 @@
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_READ_PATH_CONFIRMED_PRODUCER_OPEN",
+        "evidence": [
+          "FacultyCourseAssociation.java",
+          "FacultyCourseAssociationRepository.java@859dac8ad89ec0f732a17c01d356e0b7b4a5df61"
+        ],
+        "note": "Repository queries/deactivation remain active; map producer/API or approve retirement only after consumer sweep."
+      }
     },
     {
       "table": "faculty_course_mapping",
@@ -2029,7 +2063,15 @@
             "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_READ_PATH_CONFIRMED_PRODUCER_OPEN",
+        "evidence": [
+          "FacultyCourseMapping.java",
+          "FacultyCourseMappingRepository.java@c426aa30637cb77bcdb1621df56107c0fdca6c3f"
+        ],
+        "note": "Repository drives faculty/class/course lookups and metrics; cannot silently retire."
+      }
     },
     {
       "table": "faculty_teaching_assignment",
@@ -2554,7 +2596,15 @@
             "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_SOURCE_CONFIRMED",
+        "evidence": [
+          "FacultyTeachingAssignmentServiceImpl.java@51fd2ad2e8259fec243fe11bb3bcb29fa11cfcad",
+          "FacultyTeachingAssignmentRepository.java@d67c04c24c4478ef111d8e0fb3b3e3a80f3a3dd8"
+        ],
+        "note": "Independent batch/semester/course/class teaching lifecycle is live and promotion-coupled."
+      }
     },
     {
       "table": "lecture_hall",
@@ -3064,6 +3114,14 @@
         "runtimePostgresStatus": "NOT_EXECUTED",
         "identifiedGap": "vNext has no room/lecture-hall entity or room_id; section_schedule_events.location is free text and cannot preserve room identity, capacity, department scope, type or schedule FK semantics.",
         "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+      },
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_SOURCE_CONFIRMED",
+        "evidence": [
+          "LectureHallServiceImpl.java@ea76361b46cfa0d223f58b4250504655ce9e4a8e",
+          "LectureHallRepository.java"
+        ],
+        "note": "Tenant-owned schedulable resource with delete protection and overlap locking."
       }
     },
     {
@@ -3353,7 +3411,14 @@
             "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_SOURCE_CONFIRMED",
+        "evidence": [
+          "NewProgramServiceImpl.java@8149df6879e0cdfc6362d1c302b01537decac77c"
+        ],
+        "note": "Program name/department/duration years and delete guards are live."
+      }
     },
     {
       "table": "new_program_structure",
@@ -3662,7 +3727,16 @@
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_READ_PATH_CONFIRMED_PRODUCER_OPEN",
+        "evidence": [
+          "NewProgramStructure.java",
+          "NewProgramServiceImpl.java@8149df6879e0cdfc6362d1c302b01537decac77c",
+          "NewProgramStructureRepository.java@d818841277cdbb2e42d23e78f4e4a2c24cd1028b"
+        ],
+        "note": "fetchProgramDetails exposes structure dates/status/course IDs; relationship to newer Semester model is unresolved."
+      }
     },
     {
       "table": "program",
@@ -3962,7 +4036,14 @@
             }
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "HISTORICAL_DDL_ONLY_UNRESOLVED",
+        "evidence": [
+          "historical SQL inventory"
+        ],
+        "note": "No current Program.java model found; requires explicit retirement proof."
+      }
     },
     {
       "table": "program_structure",
@@ -4302,7 +4383,14 @@
             }
           }
         }
-      ]
+      ],
+      "db02TableSourceDisposition": {
+        "status": "HISTORICAL_DDL_ONLY_UNRESOLVED",
+        "evidence": [
+          "historical SQL inventory"
+        ],
+        "note": "No current ProgramStructure.java model found; requires explicit retirement proof."
+      }
     },
     {
       "table": "semester",
@@ -4775,6 +4863,14 @@
         "runtimePostgresStatus": "NOT_EXECUTED",
         "identifiedGap": "vNext academic_periods is college-scoped calendar time and cannot represent program-local term ordinal/name/credits/activity by itself.",
         "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+      },
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_SOURCE_CONFIRMED",
+        "evidence": [
+          "SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+          "SemesterRepository.java"
+        ],
+        "note": "Program-scoped semester identity/name/activity/credits are live and promotion-coupled."
       }
     },
     {
@@ -5249,6 +5345,14 @@
         "runtimePostgresStatus": "NOT_EXECUTED",
         "identifiedGap": "vNext course_offerings stores similar values only for a cohort + academic period; it does not preserve a reusable program-term curriculum mapping.",
         "stagedContractPath": "scripts/sql/db02-semester-room-contract-staging.sql"
+      },
+      "db02TableSourceDisposition": {
+        "status": "ACTIVE_SOURCE_CONFIRMED",
+        "evidence": [
+          "SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+          "SemesterCourseRepository.java"
+        ],
+        "note": "Ordered curriculum, mandatory/elective and credits are live."
       }
     }
   ],
@@ -5360,6 +5464,16 @@
         "DB02 migration registration and PostgreSQL acceptance are still absent."
       ],
       "stagedEvidenceCommit": "1cfd5cc2e6aa9b5538b05af0105e96a2a6d577e7"
+    },
+    "tableSourceDispositionPass": {
+      "at": "2026-10-11",
+      "counts": {
+        "ACTIVE_SOURCE_CONFIRMED": 8,
+        "ACTIVE_READ_PATH_CONFIRMED_PRODUCER_OPEN": 3,
+        "HISTORICAL_DDL_ONLY_UNRESOLVED": 2
+      },
+      "rule": "Read-path evidence prevents retirement. Historical DDL-only rows are not retired without explicit producer/consumer absence proof.",
+      "contract": "docs/planning/db02-academic-progression-contract.md"
     }
   }
 }
