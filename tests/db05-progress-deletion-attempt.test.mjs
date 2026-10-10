@@ -93,4 +93,11 @@ test("separate unregistered progress guard checks content, offering and membersh
   assert.doesNotMatch(guard, /ALTER TABLE learner_content_progress/);
   assert.match(contract, /child-row guard/);
   assert.match(contract, /upstream reparenting/);
+  const manifest = JSON.parse(read("../docs/planning/db05-migration-readiness-manifest.json"));
+  const progress = manifest.artifacts.find((artifact) => artifact.id === "db05-version-progress");
+  assert.equal(progress.companionSameCollegeDraft.path, "scripts/sql/db05-progress-same-college.draft.sql");
+  assert.equal(progress.companionSameCollegeDraft.registered, false);
+  assert.equal(progress.companionSameCollegeDraft.postgresExecuted, false);
+  assert.ok(manifest.gates.some((gate) => gate.id === "PROGRESS_CONTENT_MEMBERSHIP_SAME_COLLEGE_GUARD" && gate.status === "BLOCKED"));
+  assert.ok(manifest.gates.some((gate) => gate.id === "PROGRESS_UPSTREAM_REPARENT_INTEGRITY" && gate.status === "NOT_RUN"));
 });
