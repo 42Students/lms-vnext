@@ -37,6 +37,7 @@ Authored in this batch:
 - `tests/unit/w03-mentor-calendar.test.ts` — overdue meeting requests, active window, order, safe join URLs, derived MISSED.
 - `tests/unit/w03-mentor-attention.test.ts` — review/reopen/archived/stale and meeting windows.
 - Extended `tests/integration/projects-p7b-meetings.test.ts` — cross-college Mentor Calendar, disabled/suspended roles and post-cancel no-revive behavior.
+- `tests/e2e/w03-mentor-surfaces.spec.ts` — Mentor landing, Meetings/Notifications routes, and Learner deep-link fences (auth runner required).
 
 **Actually executed/passing:** No repository lint, typecheck, Vitest, Postgres integration, Playwright or build evidence collected in this chat. Latest observed main GitHub Actions 'verify' failed in seconds with empty steps and no runner name, so treat CI as INFRA_BLOCKED rather than a proof of passing or failing application tests. Separate source lookups and code inspections do **not** count as executed tests.
 
