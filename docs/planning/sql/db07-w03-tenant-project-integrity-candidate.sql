@@ -22,7 +22,7 @@ ALTER TABLE project_instances
 CREATE OR REPLACE FUNCTION w03_assert_project_team_group_shape()
 RETURNS trigger
 LANGUAGE plpgsql
-AS $
+AS $$
 BEGIN
   IF NEW.team_group_id IS NOT NULL
      AND NOT EXISTS (
@@ -41,7 +41,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER project_instances_team_group_shape
 BEFORE INSERT OR UPDATE OF college_id, team_group_id
@@ -60,7 +60,7 @@ CREATE OR REPLACE FUNCTION w03_assert_project_team_member_pair(
 )
 RETURNS void
 LANGUAGE plpgsql
-AS $
+AS $$
 DECLARE
   group_active boolean;
   project_active boolean;
@@ -95,19 +95,34 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 END;
-$;
+$$;
 
 CREATE OR REPLACE FUNCTION w03_check_project_member_team_mirror()
 RETURNS trigger
 LANGUAGE plpgsql
-AS $
+AS $$
 DECLARE
   project_id_value uuid;
   group_id_value uuid;
   membership_id_value uuid;
 BEGIN
-  project_id_value := COALESCE(NEW.project_id, OLD.project_id);
-  membership_id_value := COALESCE(NEW.membership_id, OLD.membership_id);
+  IF TG_OP = 'UPDATE'
+     AND (
+       NEW.project_id IS DISTINCT FROM OLD.project_id
+       OR NEW.membership_id IS DISTINCT FROM OLD.membership_id
+     ) THEN
+    RAISE EXCEPTION
+      'project member project/membership identity is immutable'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF TG_OP = 'DELETE' THEN
+    project_id_value := OLD.project_id;
+    membership_id_value := OLD.membership_id;
+  ELSE
+    project_id_value := NEW.project_id;
+    membership_id_value := NEW.membership_id;
+  END IF;
 
   SELECT team_group_id
     INTO group_id_value
@@ -120,9 +135,9 @@ BEGIN
     );
   END IF;
 
-  RETURN COALESCE(NEW, OLD);
+  RETURN NULL;
 END;
-$;
+$$;
 
 CREATE CONSTRAINT TRIGGER project_members_team_roster_mirror
 AFTER INSERT OR UPDATE OR DELETE
@@ -134,14 +149,29 @@ EXECUTE FUNCTION w03_check_project_member_team_mirror();
 CREATE OR REPLACE FUNCTION w03_check_group_member_project_mirror()
 RETURNS trigger
 LANGUAGE plpgsql
-AS $
+AS $$
 DECLARE
   group_id_value uuid;
   membership_id_value uuid;
   project_id_value uuid;
 BEGIN
-  group_id_value := COALESCE(NEW.group_id, OLD.group_id);
-  membership_id_value := COALESCE(NEW.membership_id, OLD.membership_id);
+  IF TG_OP = 'UPDATE'
+     AND (
+       NEW.group_id IS DISTINCT FROM OLD.group_id
+       OR NEW.membership_id IS DISTINCT FROM OLD.membership_id
+     ) THEN
+    RAISE EXCEPTION
+      'group member group/membership identity is immutable'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF TG_OP = 'DELETE' THEN
+    group_id_value := OLD.group_id;
+    membership_id_value := OLD.membership_id;
+  ELSE
+    group_id_value := NEW.group_id;
+    membership_id_value := NEW.membership_id;
+  END IF;
 
   SELECT p.id
     INTO project_id_value
@@ -154,9 +184,9 @@ BEGIN
     );
   END IF;
 
-  RETURN COALESCE(NEW, OLD);
+  RETURN NULL;
 END;
-$;
+$$;
 
 CREATE CONSTRAINT TRIGGER lms_group_members_project_team_roster_mirror
 AFTER INSERT OR UPDATE OR DELETE
