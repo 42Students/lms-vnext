@@ -33,7 +33,7 @@
 2. **Postgres:** These code changes do not require a new migration, but correctness still needs *executed* disposable PostgreSQL tests, including tenant negative cases, due moment and concurrent Faculty mutations.
 3. **Answer privacy:** Legacy expired/missed read-only answer review versus unpublished-results key withholding still needs current-oracle browser/API proof; view links must not bypass the result publication policy.
 4. **DB05/06 remaining:** all source-derived columns need semantic mapping and active/retired classification, W01-registered migration replay for new required fields, write/read producer→consumer tests, and lifecycle audits. Specific open scope: course overview rich authoring, lesson viewer, upload resources/video, assignment files, faculty reports, lecture/schedule attendance and grading audit.
-5. **UI:** Faculty global All Quizzes and All Assignments pages remain missing in the matrix; Learner mobile and historical course delivery need re-verification; source checks alone cannot make old `CLOSED` rows fresh.
+5. **UI:** Faculty global All Quizzes, All Assignments and Class Schedule now have source-authored PARTIAL matrix rows; Learner mobile and historical course delivery need re-verification; source checks alone cannot make old `CLOSED` rows fresh.
 6. **Coordination:** W01 owns registered migration/journal and shared storage/IAM; W06 owns notification outbox. Do not duplicate. W02 calls those platform services after their tested contracts exist.
 
 ## Next work item
@@ -41,3 +41,20 @@
 Implement the DB06 `assignment_upload_receipt` private file-submission lifecycle and learner/Faculty authoring/viewing UI **after** resolving the W01 storage/upload API contract. Meanwhile continue the W02-only existing-schema Faculty aggregate quizzes/assignments pages and assessment visibility boundary tests.
 
 The workstream will report every outcome as authored vs executed vs passed and will keep ledger rows `FIXED` until browser + database parity gates close.
+
+## Follow-on W02 source implementation — Faculty daily-use surfaces
+
+**Schema:** no W02 Drizzle journal edits. Existing delivery, quiz, assignment and schedule tables are reused. This remains source-authored, unverified functionality.
+
+- `src/modules/courses/faculty-assessment-service.ts` aggregates quiz/assignment items for **active, persisted teaching Sections** via existing scope services. `faculty-course-service.ts` now rejects suspended platform actors, stale/suspended membership, and revoked Faculty role on reads.
+- Exact legacy Faculty routes `/teacher/allQuizzes` and `/teacher/allAssignments` restored, with navigation entries, Section/status filters, 20-row pagination, metrics, source-specific review/grade actions and links to exact teaching workspace. `tests/integration/courses-ui2a-faculty.test.ts` source-authored for aggregate role/Section scope.
+- Faculty `/teacher/calendar` restored via `getFacultyClassSchedule`. Reuses existing day/week/month `LearnerClassSchedule` UI with role-correct Faculty course links. Only Section-wide events or linked deliveries in the actor's active teaching scope may appear. Added section-leakage negative integration case to `tests/integration/courses-ui2a-faculty.test.ts`.
+- Faculty Report pages `/teacher/report/assignment/[contentId]` and `/teacher/report/quiz/[quizId]` now have source-authorized aggregation, live grading/attempt counts, late submissions and score summary. Required `deliveryId` context prevents ambiguous shared-offering analytics across Sections. `tests/unit/faculty-assessment-report.test.ts` covers unknown and normalized averages.
+- Affected rows in `docs/planning/account-surface-parity.md` have been changed **MISSING → PARTIAL**, not DONE. `docs/parity/faculty.md` records specific report/calendar capabilities, plus open mobile, privacy and legacy interaction gaps.
+
+**Still missing beyond this source batch:** Faculty/learner storage-backed attachments (W01 shared storage contract dependency); Faculty create/edit/delete modals; missing-student roster; answer distribution/exports; quiz and assignment report drill-down; Faculty Contacts/Profile; complete roster and schedule writes; teacher-specific attendance; course introduction/rich HTML/takeaways; final legacy look-alike responsive/browser parity.
+
+**W01 dependencies:** schema migration for any new W02 data fields, integrated journal and DB replay, tests executing on disposable Postgres, upload/storage auth primitives and CI. No W02 post here can mark runtime tests PASSED or 340 DB source fields verified.
+
+**Next unfinished end-to-end user job:** DB06 secure `assignment_upload_receipt` from learner file upload → safe object reference → persisted submission → Faculty authorized access, then detailed Faculty assignment/quiz report editing/analytics and attendance lifecycle.
+
