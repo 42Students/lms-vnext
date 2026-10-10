@@ -7,7 +7,7 @@
   "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "initialVnextMainSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
   "sourceOnly": true,
-  "reviewedFieldCount": 138,
+  "reviewedFieldCount": 188,
   "verifiedFieldCount": 0,
   "totalFieldCount": 279,
   "records": [
@@ -1668,17 +1668,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "id",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-02",
@@ -1694,17 +1705,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "job_id",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-03",
@@ -1718,17 +1740,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "sequence",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-04",
@@ -1742,17 +1775,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "kind",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-05",
@@ -1766,17 +1810,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "name",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-06",
@@ -1790,17 +1845,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "mode",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-07",
@@ -1816,17 +1882,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "scheduled_at",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-08",
@@ -1840,17 +1917,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "venue",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-09",
@@ -1864,17 +1952,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "meeting_url",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-10",
@@ -1888,17 +1987,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "what_to_bring",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-11",
@@ -1912,17 +2022,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "platform",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-12",
@@ -1936,17 +2057,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "test_url",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-13",
@@ -1960,17 +2092,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "duration_minutes",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-14",
@@ -1986,17 +2129,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "results_due_at",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-15",
@@ -2010,17 +2164,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "status",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-16",
@@ -2036,17 +2201,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "created_at",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-17",
@@ -2062,17 +2238,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "updated_at",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-18",
@@ -2088,17 +2275,28 @@
       "candidateVnextTables": [
         "placement_job_rounds"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_job_rounds",
+        "column": "created_by_user_id",
+        "status": "PROPOSED_EXISTING_SCHEMA_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Active ordered drive round. vNext normalizes schedule timestamps and creator to canonical user; recruiter-created ownership must be preserved through created_by_user_id.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-01",
@@ -4146,18 +4344,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-02",
@@ -4170,18 +4379,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "round_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-03",
@@ -4194,18 +4414,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "application_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-04",
@@ -4216,18 +4447,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "reason",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-05",
@@ -4238,18 +4480,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "preferred_times",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-06",
@@ -4260,18 +4513,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "'PENDING'",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "status",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-07",
@@ -4282,18 +4546,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "reply",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-08",
@@ -4304,18 +4579,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "decided_by_user_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-09",
@@ -4328,18 +4614,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_reschedule_requests"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_reschedule_requests",
+        "column": "created_at",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active learner round-reschedule workflow with PENDING|MOVED|KEPT, reply and deciding actor. Staged target adds decision timestamp/job identity for enforceable parent consistency.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_ASSIGNMENT-01",
@@ -4352,18 +4649,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_assignments",
+        "column": "id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active one-row-per-round/application allocation with optional slot, room, notification and learner confirmation. Staged target additionally carries job_id to enforce same-job parents.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_ASSIGNMENT-02",
@@ -4376,18 +4684,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_assignments",
+        "column": "round_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active one-row-per-round/application allocation with optional slot, room, notification and learner confirmation. Staged target additionally carries job_id to enforce same-job parents.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_ASSIGNMENT-03",
@@ -4400,18 +4719,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_assignments",
+        "column": "application_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active one-row-per-round/application allocation with optional slot, room, notification and learner confirmation. Staged target additionally carries job_id to enforce same-job parents.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_ASSIGNMENT-04",
@@ -4424,18 +4754,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_assignments",
+        "column": "slot_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active one-row-per-round/application allocation with optional slot, room, notification and learner confirmation. Staged target additionally carries job_id to enforce same-job parents.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_ASSIGNMENT-05",
@@ -4446,18 +4787,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_assignments",
+        "column": "room",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active one-row-per-round/application allocation with optional slot, room, notification and learner confirmation. Staged target additionally carries job_id to enforce same-job parents.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_ASSIGNMENT-06",
@@ -4470,18 +4822,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_assignments",
+        "column": "student_confirmed_at",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active one-row-per-round/application allocation with optional slot, room, notification and learner confirmation. Staged target additionally carries job_id to enforce same-job parents.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_ASSIGNMENT-07",
@@ -4494,18 +4857,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_assignments",
+        "column": "notified_at",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active one-row-per-round/application allocation with optional slot, room, notification and learner confirmation. Staged target additionally carries job_id to enforce same-job parents.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-01",
@@ -4518,18 +4892,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-02",
@@ -4542,18 +4929,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "round_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-03",
@@ -4566,18 +4966,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "starts_at",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-04",
@@ -4590,18 +5003,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "ends_at",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-05",
@@ -4612,18 +5038,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "room",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-06",
@@ -4634,18 +5073,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "panel",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-07",
@@ -4656,18 +5108,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "1",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "capacity",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-08",
@@ -4678,18 +5143,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "'TPO'",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "proposed_by",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-ROUND_SLOT-09",
@@ -4700,18 +5178,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "'PROPOSED'",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_round_slots"
+      ],
+      "mappingTarget": {
+        "table": "placement_round_slots",
+        "column": "status",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active round slot with capacity, proposer and confirmation state. Staged DB09 target uses final TPO|RECRUITER actor vocabulary and time/capacity checks.",
+      "tenantKey": "job/round/application parent chain; staged scheduling SQL carries redundant parent identity where needed for DB enforcement",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-01",
@@ -6194,18 +6685,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_drive_coordinator_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_drive_coordinator_assignments",
+        "column": "id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active date-scoped student coordinator authority for a drive. vNext normalizes learner to college membership and requires same-college job/member FKs.",
+      "tenantKey": "placement_drive_coordinator_assignments.college_id + composite job/member college FKs",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COORDINATOR_ASSIGNMENT-02",
@@ -6218,18 +6721,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_drive_coordinator_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_drive_coordinator_assignments",
+        "column": "college_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active date-scoped student coordinator authority for a drive. vNext normalizes learner to college membership and requires same-college job/member FKs.",
+      "tenantKey": "placement_drive_coordinator_assignments.college_id + composite job/member college FKs",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COORDINATOR_ASSIGNMENT-03",
@@ -6242,18 +6757,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_drive_coordinator_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_drive_coordinator_assignments",
+        "column": "job_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active date-scoped student coordinator authority for a drive. vNext normalizes learner to college membership and requires same-college job/member FKs.",
+      "tenantKey": "placement_drive_coordinator_assignments.college_id + composite job/member college FKs",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COORDINATOR_ASSIGNMENT-04",
@@ -6266,18 +6793,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_drive_coordinator_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_drive_coordinator_assignments",
+        "column": "learner_membership_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active date-scoped student coordinator authority for a drive. vNext normalizes learner to college membership and requires same-college job/member FKs.",
+      "tenantKey": "placement_drive_coordinator_assignments.college_id + composite job/member college FKs",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COORDINATOR_ASSIGNMENT-05",
@@ -6288,18 +6827,30 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_drive_coordinator_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_drive_coordinator_assignments",
+        "column": "on_date",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active date-scoped student coordinator authority for a drive. vNext normalizes learner to college membership and requires same-college job/member FKs.",
+      "tenantKey": "placement_drive_coordinator_assignments.college_id + composite job/member college FKs",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COORDINATOR_ASSIGNMENT-06",
@@ -6310,18 +6861,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_drive_coordinator_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_drive_coordinator_assignments",
+        "column": "created_by_user_id",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active date-scoped student coordinator authority for a drive. vNext normalizes learner to college membership and requires same-college job/member FKs.",
+      "tenantKey": "placement_drive_coordinator_assignments.college_id + composite job/member college FKs",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COORDINATOR_ASSIGNMENT-07",
@@ -6334,18 +6897,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_drive_coordinator_assignments"
+      ],
+      "mappingTarget": {
+        "table": "placement_drive_coordinator_assignments",
+        "column": "created_at",
+        "status": "PROPOSED_STAGED_DB09_SCHEDULING"
+      },
+      "semanticDefinition": "Active date-scoped student coordinator authority for a drive. vNext normalizes learner to college membership and requires same-college job/member FKs.",
+      "tenantKey": "placement_drive_coordinator_assignments.college_id + composite job/member college FKs",
+      "actorPermission": "Scheduling writes require placement-management or specifically delegated student-coordinator/recruiter authority; source mapping is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java",
+        "docs/planning/sql/db09-scheduling-premerge.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Frozen legacy producer/consumer compared with existing placement_job_rounds or staged db09-scheduling-premerge.sql. SQL is unregistered/unexecuted; PostgreSQL negative/race witnesses remain required.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE-01",
@@ -8282,9 +8857,10 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "DB09 collaboration schema alignment follow-up",
-    "result": "Resolved 4 source-mapping blockers at staged schema-contract level. Remaining reviewed blockers: tpo_message.sender_type producer mismatch, tpo_college_settings.job_types_json, tpo_college_settings.outcome_labels_json. Runtime verified remains 0.",
-    "schemaCommit": "01bd093d2ef7f624cb339bdba3d8907bb00e6734",
-    "guardTestCommit": "782da06cc52542408a1f21b79205a261de1f76fc"
+    "scope": "DB09 scheduling/calendar 50 fields: job_round, round_slot, round_assignment, reschedule_request, tpo_coordinator_assignment",
+    "result": "50 MAPPED source-to-target proposals; cumulative 188/279 reviewed; runtime verified 0",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "stagedContract": "docs/planning/db09-scheduling-persistence-contract.md",
+    "stagedSql": "docs/planning/sql/db09-scheduling-premerge.sql"
   }
 }
