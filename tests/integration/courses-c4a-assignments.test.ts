@@ -858,4 +858,45 @@ describe("courses C4A assignments against PostgreSQL", () => {
       code: "23514",
     });
   });
+  it("rejects submission if a faculty archive commits during the write race", async () => {
+    const structure = await createStructure();
+    const assignment = await createCourseAssignment(collegeAdmin, {
+      lessonId: structure.lesson.id,
+      title: "C4A Archive Race Task",
+      dueAt: "2027-12-01T12:00:00.000Z",
+      maxPoints: 10,
+      sequence: 0,
+    });
+    await transitionCourseAssignment(collegeAdmin, assignment.id, { action: "PUBLISH" });
+    const holder = await pool.connect();
+    let began = false;
+    try {
+      await holder.query("begin");
+      began = true;
+      await holder.query(
+        "update course_assignments set status='ARCHIVED' where id=$1",
+        [assignment.id],
+      );
+      const submission = submitCourseAssignment(learner, assignment.id, {
+        deliveryId: structure.deliveryA.id,
+        submissionType: "TEXT",
+        textContent: "Should never be saved",
+      });
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      await holder.query("commit");
+      began = false;
+      await expect(submission).rejects.toMatchObject({
+        code: "ASSIGNMENT_NOT_PUBLISHED",
+      });
+      const result = await pool.query(
+        "select count(*)::int as n from assignment_submissions where assignment_id=$1",
+        [assignment.id],
+      );
+      expect(result.rows[0].n).toBe(0);
+    } finally {
+      if (began) await holder.query("rollback");
+      holder.release();
+    }
+  });
+
 });
