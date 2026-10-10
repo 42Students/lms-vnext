@@ -133,3 +133,8 @@ DB10 bug-tracker draft consumers now exist for Super Admin list/detail/workflow/
 ### W06 Announcements domain stage (2026-10-10)
 
 Legacy `announcements` (13 source fields including V127 schedule/expiry/pin) now has an isolated normalized Drizzle proposal in `db10-announcements.draft.ts` plus service/API/admin UI/recipient-read consumers. Explicit org/college scope is persisted; receiver_value becomes a typed UUID receiverId; is_deleted becomes actor-attributed soft-delete timestamps; optimistic version is additive. No schema barrel or Drizzle journal edit was made. See `database-parity-db10-announcements.md` for W01 activation and unexecuted tests.
+
+
+### W06 scheduled-job PostgreSQL authority stage (2026-10-10)
+
+The previously pure scheduled-job lease policy now has an isolated draft table and node-postgres/Drizzle raw-SQL adapter. PostgreSQL `clock_timestamp()` is the authority for claim/renew/current checks; takeover increments an additive fencing token. The draft remains absent from the shared schema barrel and `drizzle/**`; W01 owns migration promotion. No production scheduler is switched over until migration replay + concurrent PG tests + outbox/idempotency/fence evidence pass.
