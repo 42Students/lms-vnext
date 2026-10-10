@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { isCareerRoundVisible } from "@/modules/placements/learner-round-visibility-policy";
 
 export type LearnerCareerRound = {
   applicationId: string;
   roundId: string;
   roundName: string;
+  roundKind: string;
+  testUrl: string | null;
   sequence: number;
   scheduledAt: string | null;
   timezone: string | null;
@@ -53,11 +56,7 @@ export function LearnerCareerRounds({
   kind: "ASSESSMENT" | "INTERVIEW" | "CALENDAR";
 }) {
   const filtered = rounds.filter((round) =>
-    kind === "ASSESSMENT"
-      ? /test|assessment/i.test(round.roundName)
-      : kind === "INTERVIEW"
-        ? !/test|assessment/i.test(round.roundName)
-        : true,
+    isCareerRoundVisible(kind, round.roundKind),
   );
 
   if (filtered.length === 0) {
@@ -74,6 +73,7 @@ export function LearnerCareerRounds({
       {filtered.map((round) => {
         const schedule = round.exception ?? round;
         const meetingUrl = safeHref(schedule.meetingUrl);
+        const assessmentLink = kind === "ASSESSMENT" ? safeHref(round.testUrl) : null;
         return (
           <article key={round.applicationId + ":" + round.roundId} className="rounded-xl border border-border bg-surface p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -90,9 +90,17 @@ export function LearnerCareerRounds({
             </div>
             {round.exception ? <p className="mt-3 text-xs font-semibold text-warning">This schedule includes your approved reschedule request.</p> : null}
             <div className="mt-4 flex flex-wrap gap-3">
-              {meetingUrl ? <a href={meetingUrl} target="_blank" rel="noreferrer" className="text-sm font-semibold text-primary-text">Open meeting ↗</a> : null}
+              {meetingUrl ? <a href={meetingUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary-text">Open meeting ↗</a> : null}
+              {assessmentLink ? <a href={assessmentLink} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary-text">Open employer assessment ↗</a> : null}
               <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="text-sm font-semibold text-primary-text">View application</Link>
             </div>
+            {kind === "ASSESSMENT" ? (
+              <p className="mt-3 text-sm text-body" role="note">
+                {assessmentLink
+                  ? "Complete and submit the assessment on the employer’s platform. Opening this link does not submit your work."
+                  : "The employer assessment link is not available yet. Check your placement updates for instructions."}
+              </p>
+            ) : null}
           </article>
         );
       })}
