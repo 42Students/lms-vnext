@@ -305,6 +305,24 @@ async function assertPersistedFacultyScope(
   }
 }
 
+export async function getFacultyDeliveryRoster(
+  context: RequestContext,
+  deliveryIdInput: string,
+) {
+  const delivery = await requireFacultyDelivery(
+    context,
+    deliveryIdInput,
+  );
+  if (!context.membership) {
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  }
+  const roster = await currentDeliveryRoster(
+    delivery,
+    context.membership.collegeId,
+  );
+  return { delivery, roster };
+}
+
 export async function getFacultyAttendanceWorkspace(
   context: RequestContext,
   deliveryIdInput: string,
