@@ -608,7 +608,8 @@
         "scripts/verify-db09-crm-source.mjs",
         "docs/planning/db09-chat03-tenant-integrity-review.md",
         "tests/db-parity-db09-tracker.test.mjs",
-        "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql"
+        "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+        "docs/planning/sql/db09-job-outcome-settings-candidate.sql"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": "d87e292a4fcc1f25cd96a4be98f465e838b2991e",
@@ -669,6 +670,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Chat 3 stages isolated DB09 cross-tenant collaboration FK migration candidate; no shared Drizzle migration or barrel edits."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Stage missing V190 TPO custom job-type and outcome-label settings as isolated candidate SQL; migration integrator only."
         }
       ],
       "progressNote": "Chat 3 has source-reviewed 138/279 DB09 fields. Canonical ledger: 135 MAPPED proposals, 3 BLOCKED, 141 UNMAPPED, 0 WORKFLOW_VERIFIED. First 52 cover V162 policy/privacy + recruiter CRM; next 86 cover messages, secure sharing, settings/prefs/saved views, student/team notes, recruiter-private notes/read-through. Staged schema now uses final RECRUITER message code, expanded saved-view scopes/share-event actions, recruiter access months + drive-approval settings; current vNext message producer still emits HR so sender_type remains blocked. Tests/PG not executed."
