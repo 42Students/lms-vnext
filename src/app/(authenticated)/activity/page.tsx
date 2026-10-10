@@ -219,7 +219,7 @@ export default async function ActivityPage({
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
-            From
+            From (IST)
           </span>
           <input
             className={inputClass}
@@ -230,7 +230,7 @@ export default async function ActivityPage({
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
-            To
+            To (IST)
           </span>
           <input
             className={inputClass}

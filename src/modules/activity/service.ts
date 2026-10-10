@@ -25,6 +25,7 @@ import {
   requirePermission,
 } from "@/modules/permissions/policy";
 import { ActivityServiceError } from "./errors";
+import { parseActivityDateBoundary, type ActivityDateBoundary } from "./date-boundary";
 import {
   ACTIVITY_EVENT_TYPES,
   ACTIVITY_IMPORTANCE,
@@ -39,6 +40,20 @@ type ActivityWriter = Pick<
   ReturnType<typeof getDb>,
   "select" | "insert"
 >;
+
+function activityDateSchema(boundary: ActivityDateBoundary) {
+  return z.union([z.date(), z.string()]).transform((value, ctx) => {
+    try {
+      return parseActivityDateBoundary(value, boundary);
+    } catch {
+      ctx.addIssue({
+        code: "custom",
+        message: "Activity date must be YYYY-MM-DD or an offset-aware ISO datetime",
+      });
+      return z.NEVER;
+    }
+  });
+}
 
 const activityFilterSchema = z
   .object({
@@ -65,8 +80,8 @@ const activityFilterSchema = z
       .min(1)
       .max(80)
       .optional(),
-    from: z.coerce.date().optional(),
-    to: z.coerce.date().optional(),
+    from: activityDateSchema("from").optional(),
+    to: activityDateSchema("to").optional(),
     beforeOccurredAt:
       z.coerce.date().optional(),
     beforeId: z.string().uuid().optional(),

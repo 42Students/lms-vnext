@@ -118,3 +118,8 @@ Tests authored (not run): `tests/integration/db10-notification-delivery-scope.te
 ### W06 older notification history and Open-read parity (2026-10-10)
 
 Added standalone `notification-cursor.ts` (strict matched ISO/UUID query cursor), user-scoped keyset `listOwnNotificationPage`, and `/notifications` Older link with preserved All/Unread mode. The `NotificationList` now attempts to acknowledge an unread notification when its own Open action is clicked; navigation is allowed after a write error rather than trapping the user. This removes the first-page-only 100-item dead end without introducing a new table or global DB change. Unit/integration tests were authored but **have not been run**. No DB10 row/family was advanced to VERIFIED.
+
+
+### W06 Activity date-filter semantics (2026-10-10)
+
+No schema or migration change. `src/modules/activity/date-boundary.ts` defines deterministic date-only filter semantics: From = start of selected Asia/Kolkata day, To = final millisecond of selected Asia/Kolkata day. Offset-aware ISO timestamps are preserved; impossible dates and timezone-less datetimes are rejected to avoid server-timezone-dependent queries. `listActivityEvents` uses these parsed instants for both College Admin and Super Admin readers. Authored unit coverage exists; runtime/DB/browser execution evidence is still NONE.
