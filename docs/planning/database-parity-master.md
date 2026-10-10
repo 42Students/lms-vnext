@@ -242,3 +242,21 @@ passes complete, **database parity itself is not certified**.
 ## 2026-10-10 active-branch correction
 
 The database-parity source branch was merged through PR #7 into `main`, with a DB03 guard follow-up merged through PR #18. Continue domain work on **main**, checking and preserving concurrent DB08/DB10 commits. DB03 source implementation is not a passing test result: no runner-backed compile, Drizzle generation, PostgreSQL replay, or end-to-end validation has been obtained. All 79 proposed DB03 field mappings remain formally unverified.
+
+
+## DB-016 private document / identity / storage safety — 2026-10-11
+
+**Source reconciliation is in progress; runtime/database verification remains blocked.** Detailed evidence: `docs/planning/database-parity-db16-private-storage-safety.md`.
+
+Key source-backed conclusions:
+
+- raw learner Aadhaar/PAN persistence is intentionally fail-closed with `PRIVATE_IDENTITY_STORAGE_NOT_READY`; verification snapshots reject unmasked national-ID values and public/object URLs. Preserve this privacy redesign rather than copying unsafe legacy secret storage.
+- the shared GCS private-object adapter has a strong base contract (tenant/member key scope, short-lived grants, upload-token hash, immutable generation, actual MIME/size, SHA-256, privileged CLEAN scan attestation, UBLA and Public Access Prevention), but actual bucket/scanner/encryption/lifecycle configuration is unverified.
+- profile private receipts and assignment/course receipts are staged, not registered Drizzle state. Profile receipts already model generation/hash/scan/revocation/retention; assignment receipts still need richer revocation/retention/audit state before promotion.
+- project resource/submission URL fields are explicitly HTTP(S) external-link surfaces today. They must not store signed private-object URLs; any future project file upload needs a separate receipt-backed relation.
+- DB10 bug screenshots need a private issue/reporter-owner contract because reporter-access identities do not necessarily have a college membership; do not force fake membership ownership merely to reuse the current private key format.
+- `docs/planning/db04-proposed-migration.sql` was discovered source-corrupted (truncated private-receipt checks plus duplicated tail blocks) and repaired as candidate-only input. It remains unregistered and unexecuted.
+- minimum private receipt behavior now explicitly includes owner/purpose/target binding, generation, digest, scan attester/time, revocation actor/time/reason, retention/deletion state and signed-read authorization.
+- no “encryption controls verified” claim is allowed until the approved storage/database encryption policy and actual infrastructure configuration are witnessed.
+
+DB-016 cannot become `DONE_VERIFIED` until PostgreSQL replay/negative tests and real private-storage configuration checks execute. DB-001 remains a blocking dependency for those witnesses.
