@@ -92,18 +92,18 @@ Detailed page contract: `docs/parity/faculty.md`.
 | Courses list | `/teacher/courses` | `/teach/courses` | Teaching list exists. | DONE |
 | Course Overview | course `home` | faculty workspace | Exact overview parity pending. | PARTIAL |
 | Blueprint | course `blueprint` | learning-path authoring | Core authoring exists; exact controls/states pending. | PARTIAL |
-| Course Attendance | course `attendanceDetail` | none | Take/view/report attendance missing. | MISSING |
-| Course Discussions | course `discussions` | none | Missing. | MISSING |
-| Course Students | course `students` | no dedicated roster | Missing roster/action surface. | MISSING |
-| Contacts — All | `/teacher/contacts/allContacts` | none | Missing. | MISSING |
-| Contacts — Teachers | `/teacher/contacts/teachers` | none | Missing. | MISSING |
-| Contacts — Students | `/teacher/contacts/students` | none | Missing. | MISSING |
+| Course Attendance | course `attendanceDetail` | `/teacher/courses/[deliveryId]/attendanceDetail` | Source-authored exact-Section monthly report, Schedule Class drawer, current-roster search, bulk Present/Absent marking and correction with learner read-through; audit-history/admin-policy/browser evidence remain. | PARTIAL |
+| Course Discussions | course `discussions` | `/teacher/courses/[deliveryId]/discussions` | Delivery-scoped polling feed, Faculty post/pin/unpin/delete moderation, historical read-only state and recovery states are source-authored; DB/browser execution remains. | PARTIAL |
+| Course Students | course `students` | `/teacher/courses/[deliveryId]/students` | Exact delivery roster with elective-vs-primary roster semantics, name/roll/email/phone search, 25-row pagination and responsive contact cards is source-authored; profile-photo/drill-in and browser proof remain. | PARTIAL |
+| Contacts — All | `/teacher/contacts/allContacts` | same route | Read-only active same-college directory with roles, search, server pagination, responsive table/cards and contact links is source-authored; browser proof/profile image parity remain. | PARTIAL |
+| Contacts — Teachers | `/teacher/contacts/teachers` | same route | Persisted Faculty-role filter over same-college active directory is source-authored with search/pagination; runtime/browser proof remains. | PARTIAL |
+| Contacts — Students | `/teacher/contacts/students` | same route | Persisted Learner-role filter over same-college active directory is source-authored with search/pagination; runtime/browser proof remains. | PARTIAL |
 | Notifications | `/teacher/notifications` | `/notifications` | Shared route exists; exact role feed behavior unverified. | PARTIAL |
 | Class Schedule | `/teacher/calendar` | `/teacher/calendar` | Source-authored week/day/month calendar from persisted active Faculty teaching assignments, Section/course filters and correct Faculty Course links. Session edit/marking, responsive behavior and database/browser tests not executed. | PARTIAL |
-| All Quizzes | `/teacher/allQuizzes` | `/teacher/allQuizzes` | Aggregate Faculty teaching-section quiz page, course/status filters, 20-row pagination, review-attempts, result publication and Section-specific Quiz Report links are source-authored. Create/edit, detailed report analytics/modal parity and DB/browser verification remain. | PARTIAL |
-| All Assignments | `/teacher/allAssignments` | `/teacher/allAssignments` | Aggregate Faculty teaching-section assignment page, course/status filters, 20-row pagination, review-submissions, grade/publish control and Section-specific Assignment Report links are authored. Create/edit/delete, missing-student reporting and DB/browser verification remain. | PARTIAL |
-| Assignment report | `/teacher/report/assignment/[contentId]` | inline grading | Dedicated report/analytics/submission review parity missing. | MISSING |
-| Quiz report | `/teacher/report/quiz/[quizId]` | inline review | Dedicated report parity missing. | MISSING |
+| All Quizzes | `/teacher/allQuizzes` | `/teacher/allQuizzes` | Aggregate Faculty teaching-section quiz page, course/status filters, 20-row pagination, review-attempts, result publication and Section-specific Quiz Report links are source-authored. Create remains Course-contextual; direct metadata edit/delete are source-authored. Question-structure editing, detailed report analytics/modal parity and DB/browser verification remain. | PARTIAL |
+| All Assignments | `/teacher/allAssignments` | `/teacher/allAssignments` | Aggregate Faculty teaching-section assignment page, course/status filters, 20-row pagination, review-submissions, grade/publish control and Section-specific Assignment Report links are authored. Create remains Course-contextual; direct edit/delete and missing-student reporting are source-authored. Exact legacy drawer/modal and DB/browser verification remain. | PARTIAL |
+| Assignment report | `/teacher/report/assignment/[contentId]` | same route | Section-scoped submitted/missing/late/graded metrics and learner lists are source-authored; distributions/export/drill-down and browser proof remain. | PARTIAL |
+| Quiz report | `/teacher/report/quiz/[quizId]` | same route | Section-scoped eligible/attempted/not-attempted counts, learner attempts, normalized score average and result-publish state are source-authored; response analytics/export/browser proof remain. | PARTIAL |
 | Self Profile | `/teacher/profile` | admin profile tooling only | Missing self-service profile. | MISSING |
 | File Explorer | `/teacher/fileExplorer` | n/a | Legacy is only a redirect to Courses; not a real product surface. | RETIRED |
 | `/teacher` redirect | `/teacher` | n/a | Redirect-only legacy route. | RETIRED |
