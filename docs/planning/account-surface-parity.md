@@ -367,11 +367,11 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Surface | Legacy | vNext | Audit note | Status |
 | --- | --- | --- | --- | --- |
 | Home command center | `/tpo/home` | dashboard + placement operations | Needs-you queue, setup checklist, follow-ups, weekly agenda, season numbers, branch performance, season/company funnels and compensation intelligence not fully cloned. | PARTIAL |
-| Leads — Table | `/tpo/leads?view=table` | none | Missing. | MISSING |
-| Leads — Board | `?view=board` | none | Missing. | MISSING |
+| Leads — Table | `/tpo/recruiters?view=table` | `/tpo/recruiters` | W05 source-backed list/search/manual-stage filter and create modal implemented; missing legacy owner/source/follow-up/export/bulk filters; API migration-gated, browser unverified. | PARTIAL |
+| Leads — Board | `?view=board` | `/tpo/recruiters` Board view | W05 manual NEW/CONTACTED/NOT_NOW columns/cards; derived fact stages, drag/drop and overflow remain missing; DB gate blocks live data. | PARTIAL |
 | Leads — Companies view | `?view=companies` | none | Missing. | MISSING |
-| Leads add/import/invite/bulk ownership/stage | Leads actions | none | Missing CRM workflows. | MISSING |
-| Lead detail | `/tpo/leads/[leadId]` | none | Contact/company/timeline/follow-ups/log interaction/invite/not-now workflows missing. | MISSING |
+| Leads add/import/invite/bulk ownership/stage | Leads actions | create and duplicate-check on `/tpo/recruiters` | Add lead, contact collision lookup implemented (staged); import, invite, bulk owner/stage and prepared messages absent; 503 until W01 migration. | PARTIAL |
+| Lead detail | `/tpo/recruiters/[recruiterLeadId]` | `/tpo/recruiters/[leadId]` | W05 edit contacts, interaction timeline, follow-ups/add/done, Not Now; missing invite, company drill-in, reschedule UI, derived stages; DB-gated/browser unverified. | PARTIAL |
 | Company detail | `/tpo/companies?name=...` | none | People, drives, hiring history, documents, timeline + create-drive/add-contact actions. | MISSING |
 | Students intelligence summary | `/tpo/students` | none | Ready-not-applying/readiness/not-registered/applying/placed + branch intelligence. | MISSING |
 | Students roster + journey filters | Students tab | none | Missing. | MISSING |
