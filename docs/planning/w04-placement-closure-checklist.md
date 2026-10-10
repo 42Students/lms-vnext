@@ -185,3 +185,14 @@ Legacy FE rechecked against `lms2-fe@prod-2026:e6b09e6dd14ac7b6a0dae1697a7c08ddb
 **Tests authored (not executed):** `tests/unit/placement-drive-day-coordinator-policy.test.ts` exercises India UTC date rollover, cancelled/pending/unscheduled denial; `tests/integration/placements-w04-coordinator-days.test.ts` exercises same-day roster/attendance, next-day denial, assignment revocation, forged user and concurrent idempotent check-in; `tests/integration/placements-p8-offers.test.ts` adds rejected screening and invalidated applied result negative cases. Test runner/DB/browser PASS count remains **zero**.
 
 **New explicit gaps:** transactional recheck of the coordinator's non-applicant status, signed attendance audit/history for correction/undo, admin-only historical roster review, and serializable-retry/user-error mapping. Candidate list/attendance tests remain authored only and must not be used to mark Drive Day family CLOSED. Active DB08 migrations remain W01-only.
+
+
+## W04 follow-up — coordinator/applicant mutual exclusion (2026-10-10)
+
+**Committed source:** `src/modules/placements/application-service.ts` now rejects new application insertion if the learner is already assigned a Drive Day coordinator for that drive, regardless of the assignment date. `src/modules/placements/drive-day-coordinator-service.ts` now takes a `placement_jobs FOR UPDATE` lock, rechecks persisted ACTIVE learner role and same-job application *inside the assignment transaction*, and uses an idempotent conflict-safe insert. Both writers acquire the **same job row** first, serializing the otherwise unprotected missing-row check.
+
+**Authored DB regression evidence only:** `tests/integration/placements-w04-coordinator-days.test.ts` adds manager→already applicant rejection, assigned coordinator→Apply rejection, and concurrent apply-versus-assignment where exactly one operation should commit. Updated attendance test checks concurrent duplicate retries converge to one row. **Not executed or passed.**
+
+**DB-first integrity dependency:** `scripts/sql/db08-coordinator-applicant-exclusion-staging.sql` is a **staged draft**, not a migration. W01 #21 owns the integration and same-college/direct SQL/concurrency replay; untrusted raw SQL must not bypass this invariant in production. The application service still has the independent paid-module/eligibility TOCTOU risk awaiting the global DB08 gate and lock reviewed by W01. Coordinator assignment/attendance history and consistent event provenance are not closed.
+
+**Next unresolved W04 work:** reconcile TPO/HR exact Drive Day UI controls and applicant/offer semantics with browser evidence, resolve DB08 migrations, finish-batch/consent/debarment and external-offer private evidence; only then final producer→consumer verification and ledger closure.
