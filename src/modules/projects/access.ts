@@ -2,11 +2,15 @@ import {
   and,
   eq,
   isNull,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  collegeMemberships,
+  membershipRoles,
   projectInstances,
   projectMembers,
+  users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
@@ -102,17 +106,22 @@ export async function requireProjectReadAccess(
       isPrimary: projectMembers.isPrimary,
     })
     .from(projectMembers)
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id,projectMembers.membershipId))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      sql`CAST(${membershipRoles.role} AS text) = ${projectMembers.role}`,
+    ))
     .where(
       and(
-        eq(
-          projectMembers.projectId,
-          scope.project.id,
-        ),
-        eq(
-          projectMembers.membershipId,
-          membership.id,
-        ),
+        eq(projectMembers.projectId,scope.project.id),
+        eq(projectMembers.membershipId,membership.id),
         isNull(projectMembers.endedAt),
+        eq(collegeMemberships.collegeId,scope.collegeId),
+        eq(collegeMemberships.userId,context.user.id),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE"),
       ),
     )
     .limit(1);
