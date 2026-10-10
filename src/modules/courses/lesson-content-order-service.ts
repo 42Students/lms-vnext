@@ -43,7 +43,7 @@ export async function applyDeliveryContentOrderIfReady<
   T extends {
     id: string;
     sequence: number;
-    createdAt: Date;
+    createdAt?: Date;
   },
 >(
   rows: readonly T[],
@@ -95,8 +95,8 @@ export async function applyDeliveryContentOrderIfReady<
     (left, right) =>
       (byId.get(left.id) ?? left.sequence) -
         (byId.get(right.id) ?? right.sequence) ||
-      left.createdAt.getTime() -
-        right.createdAt.getTime() ||
+      (left.createdAt?.getTime() ?? 0) -
+        (right.createdAt?.getTime() ?? 0) ||
       left.id.localeCompare(right.id),
   );
 }
