@@ -1152,17 +1152,21 @@
         "docs/planning/database-parity-db10-skills-contract.md",
         "tests/db10-skills-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "a1095bba2b37eb914581eac9521e01b7d5ba2433",
       "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "blockers": [
+        "MIGRATION_UNREGISTERED: db10-skills-catalog.draft.ts and scripts/sql/db10-skills-catalog-staging.sql are not journalled/exported; Chat 1 owns Drizzle integration.",
+        "PRODUCT_CONSUMERS_OPEN: skill query/popularity/alias writers and search APIs await API wave and source acceptance.",
+        "DB_RUNTIME_NOT_VERIFIED: 0/15 historical fields runtime verified; PostgreSQL tests unavailable pending DB-001 runner."
+      ],
+      "completionNote": "Source-audited legacy DB10 skills 3 tables/15 fields, fixed two legacy-parity regressions in unregistered Drizzle draft: synonyms may map to multiple skills and SkillUsageTracker's skill_usage name-counter is independent from SkillRepository's skills.usage_count. Staged matching three-table SQL, exact contract with nine negative/race witnesses and five unexecuted Node static guard tests. 39 in-process source checks passed; no PostgreSQL/CI/typecheck/test suite claims.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11",
       "startedAt": "2026-10-11",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11",
+      "completionCommitSha": "a1095bba2b37eb914581eac9521e01b7d5ba2433",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1186,6 +1190,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Source contracts verified; staged skill DB draft/SQL implementation begins."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11",
+          "reason": "Corrected Drizzle draft and matching SQL; authored source/test acceptance; runtime/migration integration pending."
         }
       ]
     }
