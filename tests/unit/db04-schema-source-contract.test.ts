@@ -10,7 +10,7 @@ const transaction=readFileSync(path.join(root,"src/modules/profile-verification/
 describe("DB04 staged schema source contract (not SQL execution)",()=>{
   const required=[
     "profile_verifications","profile_verification_events",
-    "learner_private_document_receipts","profile_verification_settings",
+    "profile_private_document_receipts","profile_verification_settings",
     "profile_verification_tpo_grants","profile_verification_academic_marks",
   ];
   it("declares every proposed table in SQL and Drizzle",()=>{
