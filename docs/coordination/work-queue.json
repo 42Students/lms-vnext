@@ -175,10 +175,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "97a34afbd43034e1da9858adcb0d82b23305653f",
+      "latestEvidenceSha": "f004188bf078160092380f14aee606f75928f27e",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "STILL IN_PROGRESS: 312 candidates source triaged; latest shared source oracle records 23 workflow-confirmed source fields and 18 repository-only source fields (not vNext verified). Tenant branding/DNS and device-session drafts are unregistered. Legacy FACULTY arbitrary session revocation bug documented as security exception, W01 handoff. No CI/Postgres tests or migrations executed; 0 vNext runtime-semantic verified.",
+      "completionNote": "STILL IN_PROGRESS: 312/312 DB01 candidates source-triaged; 66/84 identity-provider/session fields have direct active legacy workflow proof and all 84 have explicit source dispositions. LoginUser is source-retired from live auth, AuthToken is model-only/no current workflow found, EmailVerificationToken remains repository-present/callsite-pending. vNext has Firebase provisioning + idToken→session-cookie bridge but no proven app phone/email sign-in flow, so OTP jobs are not yet provider-replaced. Branding/DNS/device-session/auth-attempt/handoff schemas remain staged/unregistered. PR #65 has 5 authored PostgreSQL negative witnesses, but GitHub CI is failing pre-step repo-wide; 0 vNext runtime-semantic fields verified.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
