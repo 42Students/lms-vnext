@@ -1,0 +1,1155 @@
+{
+  "artifact": "Chat 6 DB-008 source-field and relational candidate review",
+  "createdOn": "2026-10-11",
+  "phase": "DATABASE",
+  "worker": 6,
+  "taskId": "DB-008",
+  "source": {
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "inventoryFile": "docs/planning/db-pass4-columns-db05_courses_and_content.json",
+    "inventoryBlobSha": "f21860ff81d2fc5eda205ccaab715d213b20df5e",
+    "versioningFlyway": [
+      "V120",
+      "V121",
+      "V123",
+      "V124",
+      "V131",
+      "V132",
+      "V163"
+    ],
+    "vnextSchemaFiles": [
+      "src/db/schema/courses.ts",
+      "src/db/schema/discussions.ts",
+      "src/db/schema/course-display-staged.ts",
+      "src/db/schema/lesson-content-order-staged.ts",
+      "src/db/schema/lesson-content-materials-staged.ts"
+    ]
+  },
+  "caution": "All 92 rows are PROPOSED source mappings, NOT approved parity. Same-name columns and equivalent-looking status fields are not verified semantic matches. Inventory derived from historical MySQL snapshot through V150; V163 and current source must also be incorporated. No runtime migration/test claim.",
+  "counts": {
+    "sourceTables": 7,
+    "sourceFields": 92,
+    "byClass": {
+      "SOURCE_CANDIDATE": 31,
+      "MISSING_OR_UNPROVEN": 30,
+      "REMODELED_NEEDS_PROOF": 18,
+      "UNREGISTERED_DRAFT": 13
+    }
+  },
+  "criticalOpenRisks": [
+    "Legacy course/lesson/content optimistic versions missing from registered vNext schema. SQL staged only; version-aware conditional UPDATE and 409 tests needed.",
+    "Legacy progress first_completed_at and attempt history absent; vNext uniqueness allows only one membership+content row. SQL staged only; consumers currently need attempt awareness before registration.",
+    "Legacy lesson content discussions are per lesson_content_id, not interchangeable with delivery-scoped classroom_messages; current discussions.ts resembles classroom chat.",
+    "Legacy status flags is_deleted/active/enabled/allowed_for_display must not be collapsed into one status without producer, consumer and restore proof.",
+    "Legacy content_data typed shape contains schedule, discussion visibility, assignment attachments, resource list, calendar and video metadata beyond current generic vNext scalar content fields.",
+    "Legacy per-class content order requires verify section+delivery correspondence and safe concurrent reorder; current staging omits enforced unique sequence per delivery.",
+    "Legacy generated unique keys use LOWER(TRIM) and optional abbreviated title; vNext lower(name) index is not yet equivalent; slug/parent-course/title metadata absent.",
+    "V163 retired legacy content types before source oracle; do not re-add retired formats from older snapshots without product review.",
+    "Tenant consistency across membership, delivery, lesson and created-by actor is not guaranteed by independent FKs alone."
+  ],
+  "fields": [
+    {
+      "source": "classroom_messages.id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "course_discussion_messages.id (only if delivery-scoped chat is exact legacy stream)",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.created_at",
+      "sourceType": "datetime",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "course_discussion_messages.created_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.updated_at",
+      "sourceType": "datetime",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "course_discussion_messages.updated_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: deleted classroom message record",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.course_id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "course_discussion_messages.delivery_id -> offering.course_id",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.class_id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "course_discussion_messages.delivery_id -> section_id (partial joins)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.sender_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "course_discussion_messages.sender_membership_id (legacy sender id -> membership)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.sender_name",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: historic sender name snapshot",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.sender_role",
+      "sourceType": "varchar(64)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_discussion_messages.sender_role",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.message_text",
+      "sourceType": "text",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_discussion_messages.message_text",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "classroom_messages.is_pinned",
+      "sourceType": "tinyint(1)",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_discussion_messages.pinned (+ pinned_by_user_id provenance)",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "courses.id (integer legacy identity -> new UUID; greenfield, not a record migration)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.created_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "courses.created_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [],
+      "targetProposal": "courses.status (partial only; legacy soft deletion/recovery must be proven)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "courses.updated_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.active",
+      "sourceType": "bit(1)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "courses.status (not independently represented)",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.allowed_for_display",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: legacy visibility policy vs courses.status must be reconciled",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.course_name",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "courses.name (compare trim/case uniqueness and display semantics)",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.created_by_org_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "NO_DIRECT_FIELD: authored organization attribution",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.default_subscription_days",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: subscription validity policy",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.dept_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "courses.department_id (legacy department id -> canonical UUID)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.enabled",
+      "sourceType": "bit(1)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "courses.status (not independently represented)",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.formal_title",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: title distinction and producer must be inspected",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.contents",
+      "sourceType": "json",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetProposal": "course_display_contents staged (partial: MetaData JSON properties not all represented)",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.parent_course_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "NO_DIRECT_FIELD: parent/derivative course lineage",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.short_title",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: abbreviated course title",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.slug",
+      "sourceType": "varchar(64)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: URL identity; courses.code is not proven equivalent",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.version",
+      "sourceType": "bigint",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "scripts/sql/db05-version-progress-attempts.draft.sql: courses.version",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.course_name_key",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "courses_active_department_name_uq (lower only; legacy LOWER(TRIM) generated key)",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "course.short_title_key",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: legacy uniqueness for abbreviated course title",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "NO_EQUIVALENT: current course_discussion_messages is delivery chat, legacy discussions attaches to lesson_content_id",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.created_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "NO_EQUIVALENT: lesson-content discussion entity not proven",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: thread/comment soft deletion",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "NO_EQUIVALENT: lesson-content discussion entity not proven",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.content_text",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: per-content discussion text",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.lesson_content_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "NO_EQUIVALENT: threaded discussion content FK",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.profile_name",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: historic display profile snapshot",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.sequence",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: comment ordering",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.user_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "NO_EQUIVALENT: author ID",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.user_name",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: historic display name snapshot",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.parent_discussion_id",
+      "sourceType": "bigint",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "NO_EQUIVALENT: reply thread",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.discussion_status",
+      "sourceType": "varchar(20)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: resolution workflow status",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.is_faculty_answer",
+      "sourceType": "bit(1)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: faculty answer marker",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.resolved_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "NO_EQUIVALENT: resolution timestamp",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.resolved_by",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: resolution actor",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "discussions.attachment_url",
+      "sourceType": "text",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_EQUIVALENT: private attachment access",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "learner_content_progress.id",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.learner_id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "learner_content_progress.membership_id; legacy learner user -> college membership identity",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.lesson_content_id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "learner_content_progress.lesson_content_id",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.last_position_seconds",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "learner_content_progress.last_position_seconds",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.duration_seconds",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "scripts/sql/db05-version-progress-attempts.draft.sql: learner_content_progress.duration_seconds",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.completed_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "learner_content_progress.completed_at (mutable rewatch state)",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.created_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "learner_content_progress.created_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "learner_content_progress.updated_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: vNext progress has no soft-delete state",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.first_completed_at",
+      "sourceType": "timestamp",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "scripts/sql/db05-version-progress-attempts.draft.sql: immutable first_completed_at",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "learner_content_progress.attempt",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "scripts/sql/db05-version-progress-attempts.draft.sql: attempt and composite unique key",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "course_lessons.id",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.created_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "course_lessons.created_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_lessons.status (partial; restore/delete semantics unresolved)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "course_lessons.updated_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.active",
+      "sourceType": "bit(1)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_lessons.status (partial)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.course_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "course_lessons.learning_path_id -> course_learning_paths.offering_id -> course_offerings.course_id; verify ownership and repeated offerings",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.enabled",
+      "sourceType": "bit(1)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_lessons.status (partial)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.lesson_name",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_lessons.name",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.sequence",
+      "sourceType": "bigint",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_lessons.sequence",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.version",
+      "sourceType": "bigint",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "scripts/sql/db05-version-progress-attempts.draft.sql: course_lessons.version",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson.lesson_name_key",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "course_lessons_active_name_uq (lower only vs legacy LOWER(TRIM))",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_content_class_sequence.id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "REMODELED: staged lesson_content_delivery_sequences composite PK instead of surrogate id",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_content_class_sequence.lesson_content_id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "lesson_content_delivery_sequences.lesson_content_id (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_content_class_sequence.class_id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "lesson_content_delivery_sequences.delivery_id -> section_id (STAGED, verify one delivery per class)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_content_class_sequence.sequence",
+      "sourceType": "bigint",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "lesson_content_delivery_sequences.sequence (STAGED; lacks unique per delivery/sequence, needs reorder semantics)",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_content_class_sequence.created_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "lesson_content_delivery_sequences.created_at (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_content_class_sequence.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "lesson_content_delivery_sequences.updated_at (STAGED)",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.id",
+      "sourceType": "int",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "lesson_contents.id",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.created_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "lesson_contents.created_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceRiskFlags": [],
+      "targetProposal": "lesson_contents.status (partial; soft delete/restore unresolved)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "lesson_contents.updated_at",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.active",
+      "sourceType": "bit(1)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "lesson_contents.status (partial; publication distinct from enabled)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.class_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "lesson_contents.delivery_id (not exact classId; validate class-scoped producer)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.content_data",
+      "sourceType": "json",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetProposal": "lesson_contents scalar payload + lesson_content_materials staged; JSON subtype, schedule and video fields incomplete",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.content_title",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "lesson_contents.title",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.content_type",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "lesson_contents.content_type; legacy V163 has retired PDF/PPT/LECTURE/BYO/GOOGLE_MEET",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.course_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "course via course_lessons -> offering; partial historical snapshot",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.course_name",
+      "sourceType": "varchar(255)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: historical denormalized display snapshot",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.enabled",
+      "sourceType": "bit(1)",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "lesson_contents.status (partial)",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.faculty_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "lesson_contents.created_by_user_id is NOT equivalent to faculty owner",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.lesson_id",
+      "sourceType": "int",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetProposal": "lesson_contents.lesson_id",
+      "classification": "SOURCE_CANDIDATE",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.points",
+      "sourceType": "bigint",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "NO_DIRECT_FIELD: may map to DB06 assignment grading but not confirmed",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.sequence",
+      "sourceType": "bigint",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [],
+      "targetProposal": "lesson_contents.sequence + staged lesson_content_delivery_sequences for class overrides",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.deadline",
+      "sourceType": "datetime",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetProposal": "NO_DIRECT_FIELD: evaluate DB06 assignment deadline vs content-specific due date",
+      "classification": "MISSING_OR_UNPROVEN",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    },
+    {
+      "source": "lesson_contents.version",
+      "sourceType": "bigint",
+      "sourceNullable": "NOT_NULL",
+      "sourceRiskFlags": [],
+      "targetProposal": "scripts/sql/db05-version-progress-attempts.draft.sql: lesson_contents.version",
+      "classification": "UNREGISTERED_DRAFT",
+      "semanticVerification": "NOT_VERIFIED",
+      "runtimeDatabaseVerification": "NOT_RUN",
+      "producerConsumerVerification": "NOT_VERIFIED"
+    }
+  ]
+}
