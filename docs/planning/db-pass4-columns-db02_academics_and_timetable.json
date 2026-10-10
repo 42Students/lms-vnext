@@ -93,7 +93,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Legacy free text such as 2024-25; period code/name is not guaranteed a one-to-one semantic mapping."
+            "notes": "Legacy free text such as 2024-25; period code/name is not guaranteed a one-to-one semantic mapping.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_CANONICAL_STATE",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "normalized/persisted YYYY-YY; promotion may advance year and electives compare start-year."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -125,7 +131,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "createBatch persists trimmed name; uniqueness checked per program."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -197,7 +209,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Legacy stored mutable semester cursor. vNext academic periods are college scoped; must prove derivation, promotion history and role behavior before replacing cursor."
+            "notes": "Legacy stored mutable semester cursor. vNext academic periods are college scoped; must prove derivation, promotion history and role behavior before replacing cursor.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_CANONICAL_STATE",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "starts at 1; promotion compare-and-set advances exactly one term; direct correction disabled."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -229,7 +247,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Legacy mutable count; vNext enrollment count may be derived but requires same status/soft-delete filters and transactional consistency."
+            "notes": "Legacy mutable count; vNext enrollment count may be derived but requires same status/soft-delete filters and transactional consistency.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_CALCULATED_RESPONSE",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "server resets to 0 on create; response derives learner membership usage count."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -264,7 +288,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Expected end-period reference may not retain legacy batch end-date semantics."
+            "notes": "Expected end-period reference may not retain legacy batch end-date semantics.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "createBatch rejects end before start."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -306,7 +336,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "createBatch persists program; promotion resolves program duration/curriculum."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -341,7 +377,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Cohort period references are not equivalent to independently editable exact batch dates without product decision."
+            "notes": "Cohort period references are not equivalent to independently editable exact batch dates without product decision.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "createBatch validates date order; start date can derive academic year."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -381,7 +423,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "promotion refuses non-ACTIVE batch."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -627,7 +675,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab",
+              "proof": "elective eligibility resolves section batch and rejects missing batch."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -792,7 +846,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab",
+              "proof": "elective eligibility rejects primary section program mismatch."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -893,7 +953,13 @@
             "relatedButNonEquivalentSnapshotReferences": [
               "public.lms_groups.kind",
               "public.sections.id"
-            ]
+            ],
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab",
+              "proof": "GROUP_BACKED is rejected as learner primary section; SECTION semantics are observable."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -934,7 +1000,13 @@
             "relatedButNonEquivalentSnapshotReferences": [
               "public.lms_groups.id",
               "public.lms_group_members.group_id"
-            ]
+            ],
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab",
+              "proof": "group-backed class linkage is part of elective backed-delivery design; cannot be silently dropped."
+            },
+            "sourceActivityConfirmed": true
           }
         }
       ]
@@ -1138,7 +1210,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
+              "proof": "same-college validation and schedule conflict locking use class."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -1174,7 +1252,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
+              "proof": "course is validated against class college and persisted."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -1206,7 +1290,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Legacy persisted String, vNext timestamptz; date rollover and invalid ordering require explicit tests."
+            "notes": "Legacy persisted String, vNext timestamptz; date rollover and invalid ordering require explicit tests.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
+              "proof": "schedule overlap and time-range queries consume persisted end time."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -1240,7 +1330,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
+              "proof": "faculty tenant scope and overlap lock/check are enforced."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -1275,7 +1371,13 @@
             "notes": "Observed vNext location is free text; no room FK/capacity/conflict policy; loss of typed lecture hall relation. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.section_schedule_events.location"
-            ]
+            ],
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
+              "proof": "lecture hall tenant scope, row lock and overlap conflicts are enforced."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -1307,7 +1409,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Legacy persisted String, vNext timestamptz; timezone, recurrence and local-date conversion need service-oracle proof."
+            "notes": "Legacy persisted String, vNext timestamptz; timezone, recurrence and local-date conversion need service-oracle proof.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
+              "proof": "schedule overlap and time-range queries consume persisted start time."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -1347,7 +1455,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
+              "proof": "title is persisted and used in schedule notification."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -2056,7 +2170,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "promotion counts/deactivates assignments by batch+semester."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -2222,7 +2342,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "ended_at may represent activity, but future start/soft-delete/reactivation and duplicate assignments need tests."
+            "notes": "ended_at may represent activity, but future start/soft-delete/reactivation and duplicate assignments need tests.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "promotion deactivates prior-semester active assignments transactionally."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -2295,7 +2421,13 @@
             "notes": "A period ID does not itself preserve numeric semester order per program/cohort. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.course_offerings.academic_period_id"
-            ]
+            ],
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+              "proof": "promotion counts/deactivates outgoing and checks incoming assignment semester."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -3003,7 +3135,13 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
-            "notes": "Legacy duration in years; vNext duration_terms cannot be converted without explicit terms-per-year policy. PR #41 addresses related work but is not assumed merged."
+            "notes": "Legacy duration in years; vNext duration_terms cannot be converted without explicit terms-per-year policy. PR #41 addresses related work but is not assumed merged.",
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java@8149df6879e0cdfc6362d1c302b01537decac77c",
+              "proof": "program duration bounds batch promotion; duration reduction blocked when cohorts progressed beyond new max."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -3395,7 +3533,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3426,7 +3570,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3455,7 +3605,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3486,7 +3642,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3517,7 +3679,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3546,7 +3714,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3575,7 +3749,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3604,7 +3784,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         }
       ]
@@ -3647,7 +3833,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3678,7 +3870,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3707,7 +3905,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3738,7 +3942,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3772,7 +3982,13 @@
             "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.course_offerings.course_id"
-            ]
+            ],
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3801,7 +4017,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3830,7 +4052,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3861,7 +4089,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         },
         {
@@ -3890,7 +4124,13 @@
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
             "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW",
+              "source": "database-parity historical SQL inventory",
+              "proof": "No current JPA Program.java/ProgramStructure.java model found in pinned backend; this is not retirement approval."
+            }
           }
         }
       ]
@@ -4081,7 +4321,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "promotion refuses missing/deleted/inactive target semester."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -4127,7 +4373,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_REQUIRED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "create/update rejects blank name."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -4175,7 +4427,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "semester identity and list are scoped by program."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -4221,7 +4479,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "unique per program and used by promotion destination lookup."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -4264,7 +4528,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "create/update and responses persist total credits."
+            },
+            "sourceActivityConfirmed": true
           }
         }
       ],
@@ -4480,7 +4750,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "semester curriculum maps exact course; duplicate membership prevented at service/repository level."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -4525,7 +4801,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "curriculum listings explicitly order by course_order."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -4570,7 +4852,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "semester-course credits are persisted and exposed."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -4615,7 +4903,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "response exposes mandatory/elective curriculum property."
+            },
+            "sourceActivityConfirmed": true
           }
         },
         {
@@ -4663,7 +4957,13 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
-            }
+            },
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+              "proof": "ordered curriculum belongs to exact semester."
+            },
+            "sourceActivityConfirmed": true
           }
         }
       ],
@@ -4755,6 +5055,28 @@
         ],
         "warning": "Source producer/consumer confirmation proves legacy activity only. It does not certify the proposed vNext mapping or PostgreSQL behavior."
       }
-    ]
+    ],
+    "sourceBackedSemanticPass": {
+      "at": "2026-10-11",
+      "matchedActiveFields": 33,
+      "runtimeVerifiedFields": 0,
+      "canonicalContract": "docs/planning/db02-academic-progression-contract.md",
+      "stagedSql": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+      "sourceFiles": [
+        "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
+        "src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java@fa08ec494235a69fec2fbc0b15f1de3417997e92",
+        "src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java@2f694c276c66aa88b8ce47255dbcc94d77ebba01",
+        "src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java@8149df6879e0cdfc6362d1c302b01537decac77c",
+        "src/main/java/com/_42students/lms/service/electives/ElectiveService.java@b85135a50ddd98073e9aaad26db6b99ce4dc65ab"
+      ],
+      "keyDecisions": [
+        "Batch current semester/year are active persisted state and require a canonical cohort progression model; period equality is not equivalent.",
+        "Program semester identity and ordered semester-course curriculum are active persisted concepts; college-scoped academic_periods is not a replacement.",
+        "Lecture hall is an active tenant-owned schedulable resource with locking/conflict semantics; free-text location is insufficient.",
+        "Program duration is semantically term-bounded and constrains cohort promotion.",
+        "DB03 elective eligibility must consume DB02 current program/term/year state rather than derive a competing value."
+      ],
+      "note": "Source activity/semantics are confirmed for selected high-risk rows only. Mapping implementation and PostgreSQL acceptance remain unverified."
+    }
   }
 }
