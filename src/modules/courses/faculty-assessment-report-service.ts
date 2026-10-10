@@ -4,9 +4,149 @@ import { CoursesServiceError } from "./errors";
 import { getFacultyAssessmentOverview } from "./faculty-assessment-service";
 import { listAssignmentSubmissions } from "./assignment-submission-service";
 import { listQuizAttempts } from "./quiz-attempt-service";
+import { getCourseQuiz } from "./quiz-service";
 import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 
 const uuid = z.string().uuid();
+
+export type ScoreDistributionBucket = {
+  label: "90-100%" | "80-89%" | "70-79%" | "60-69%" | "Below 60%";
+  min: number;
+  max: number;
+  count: number;
+};
+
+export function buildScoreDistribution(
+  percentages: readonly number[],
+): ScoreDistributionBucket[] {
+  const buckets: ScoreDistributionBucket[] = [
+    { label: "90-100%", min: 90, max: 100, count: 0 },
+    { label: "80-89%", min: 80, max: 89, count: 0 },
+    { label: "70-79%", min: 70, max: 79, count: 0 },
+    { label: "60-69%", min: 60, max: 69, count: 0 },
+    { label: "Below 60%", min: 0, max: 59, count: 0 },
+  ];
+  for (const percent of percentages) {
+    if (!Number.isFinite(percent) || percent < 0 || percent > 100) continue;
+    const bucket = buckets.find(
+      (candidate) =>
+        percent >= candidate.min && percent <= candidate.max,
+    );
+    if (bucket) bucket.count += 1;
+  }
+  return buckets;
+}
+
+export function latestQuizAttemptsByLearner<
+  T extends {
+    membershipId: string;
+    submittedAt: Date;
+    attemptNumber: number;
+  },
+>(attempts: readonly T[]) {
+  const latest = new Map<string, T>();
+  for (const attempt of attempts) {
+    const existing = latest.get(attempt.membershipId);
+    if (
+      !existing ||
+      attempt.submittedAt.getTime() >
+        existing.submittedAt.getTime() ||
+      (attempt.submittedAt.getTime() ===
+        existing.submittedAt.getTime() &&
+        attempt.attemptNumber > existing.attemptNumber)
+    ) {
+      latest.set(attempt.membershipId, attempt);
+    }
+  }
+  return [...latest.values()];
+}
+
+export function questionAccuracy<
+  Q extends { id: string; prompt: string; points: number },
+  A extends {
+    answers: readonly {
+      questionId: string;
+      correct: boolean;
+    }[];
+  },
+>(questions: readonly Q[], attempts: readonly A[]) {
+  return questions
+    .map((question) => {
+      let answeredCount = 0;
+      let correctCount = 0;
+      for (const attempt of attempts) {
+        const answer = attempt.answers.find(
+          (candidate) =>
+            candidate.questionId === question.id,
+        );
+        if (!answer) continue;
+        answeredCount += 1;
+        if (answer.correct) correctCount += 1;
+      }
+      return {
+        id: question.id,
+        prompt: question.prompt,
+        points: question.points,
+        answeredCount,
+        correctCount,
+        accuracyPercent:
+          answeredCount > 0
+            ? Math.round(
+                (correctCount / answeredCount) * 100,
+              )
+            : null,
+      };
+    })
+    .sort(
+      (left, right) =>
+        (left.accuracyPercent ?? 101) -
+          (right.accuracyPercent ?? 101) ||
+        left.prompt.localeCompare(right.prompt),
+    );
+}
+
+export function assignmentScoreSummary(
+  rows: readonly {
+    pointsAwarded: number | null;
+    gradingStatus: string;
+  }[],
+  maxPoints: number,
+) {
+  const percentages = rows.flatMap((row) => {
+    if (
+      row.gradingStatus !== "GRADED" ||
+      row.pointsAwarded === null ||
+      !Number.isFinite(row.pointsAwarded) ||
+      !Number.isFinite(maxPoints) ||
+      maxPoints <= 0 ||
+      row.pointsAwarded < 0 ||
+      row.pointsAwarded > maxPoints
+    ) {
+      return [];
+    }
+    return [
+      Math.min(
+        100,
+        Math.round(
+          (row.pointsAwarded / maxPoints) * 100,
+        ),
+      ),
+    ];
+  });
+  return {
+    averagePercent:
+      percentages.length > 0
+        ? Math.round(
+            percentages.reduce(
+              (sum, percent) => sum + percent,
+              0,
+            ) / percentages.length,
+          )
+        : null,
+    distribution:
+      buildScoreDistribution(percentages),
+  };
+}
 
 function resolveReportScope<T extends { id: string; deliveryId: string }>(
   candidates: readonly T[],
@@ -63,29 +203,76 @@ export async function getFacultyQuizReport(
     "QUIZ_NOT_FOUND",
     "QUIZ_DELIVERY_MISMATCH",
   );
-  const [attempts, rosterScope] = await Promise.all([
-    listQuizAttempts(context, quizId, quiz.deliveryId),
-    getFacultyDeliveryRoster(context, quiz.deliveryId),
-  ]);
+  const [attempts, rosterScope, authoredQuiz] =
+    await Promise.all([
+      listQuizAttempts(
+        context,
+        quizId,
+        quiz.deliveryId,
+      ),
+      getFacultyDeliveryRoster(
+        context,
+        quiz.deliveryId,
+      ),
+      getCourseQuiz(
+        context,
+        quizId,
+        quiz.deliveryId,
+      ),
+    ]);
+  // Legacy report parity: retakes contribute only the learner's latest
+  // attempt to standing, distribution and question accuracy.
+  const latestAttempts =
+    latestQuizAttemptsByLearner(attempts);
   const learners = new Set(
-    attempts.map((attempt) => attempt.membershipId),
+    latestAttempts.map(
+      (attempt) => attempt.membershipId,
+    ),
   );
   const notAttemptedLearners =
     rosterScope.roster.filter(
       (learner) =>
         !learners.has(learner.membershipId),
     );
+  const scored = latestAttempts.flatMap(
+    (attempt) =>
+      attempt.maxScore > 0 &&
+      attempt.score >= 0 &&
+      attempt.score <= attempt.maxScore
+        ? [
+            Math.round(
+              (attempt.score /
+                attempt.maxScore) *
+                100,
+            ),
+          ]
+        : [],
+  );
+  const latestScoreSummary =
+    scoreSummary(latestAttempts);
   return {
     quiz,
     attempts,
+    latestAttempts,
+    distribution:
+      buildScoreDistribution(scored),
+    questions: questionAccuracy(
+      authoredQuiz.questions,
+      latestAttempts,
+    ),
     notAttemptedLearners,
     metrics: {
-      ...scoreSummary(attempts),
+      ...latestScoreSummary,
+      totalAttempts: attempts.length,
       eligibleLearners:
         rosterScope.roster.length,
       uniqueLearners: learners.size,
+      submittedLearners:
+        latestAttempts.length,
       notAttempted:
         notAttemptedLearners.length,
+      questionCount:
+        authoredQuiz.questions.length,
     },
   };
 }
@@ -136,20 +323,29 @@ export async function getFacultyAssignmentReport(
     assignment.dueAt !== null &&
     submission.submittedAt.getTime() > assignment.dueAt.getTime(),
   );
+  const scores = assignmentScoreSummary(
+    submissions,
+    assignment.maxPoints,
+  );
   return {
     assignment,
     submissions,
     missingLearners,
+    distribution: scores.distribution,
     metrics: {
       eligibleLearners:
         rosterScope.roster.length,
       submitted: submissions.length,
       missing: missingLearners.length,
+      onTime:
+        submissions.length - late.length,
       late: late.length,
       graded: graded.length,
       gradePublished: submissions.filter(
         (item) => item.gradePublished,
       ).length,
+      averagePercent:
+        scores.averagePercent,
     },
   };
 }
