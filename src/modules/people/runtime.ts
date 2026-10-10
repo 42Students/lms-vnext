@@ -2,6 +2,8 @@ import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
 import { firebaseIdentityDirectory } from "./firebase-identity-directory";
+import { provisionPlatformIdentity } from "./identity-provisioning";
+import { drizzleIdentityProvisioningRepository } from "./identity-provisioning-repository";
 import { e2eIdentityDirectory } from "./e2e-identity-directory";
 import {
   addMembershipRole,
@@ -34,6 +36,16 @@ function runtimeIdentityDirectory() {
   }
 
   return firebaseIdentityDirectory;
+}
+
+export function provisionPlatformIdentityWithRuntime(
+  rawInput: unknown,
+) {
+  return provisionPlatformIdentity(rawInput, {
+    identityDirectory: runtimeIdentityDirectory(),
+    repository:
+      drizzleIdentityProvisioningRepository,
+  });
 }
 
 export function onboardPersonWithRuntime(

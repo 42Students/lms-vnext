@@ -86,7 +86,7 @@ function createIdentityDirectory() {
       createCount += 1;
       user = {
         uid: identityUid,
-        phoneNumber: input.phoneNumber,
+        phoneNumber: input.phoneNumber ?? null,
         email: input.email ?? null,
         displayName: input.displayName,
       };
