@@ -15,6 +15,7 @@ const attempt = read("src/db/schema/db01-auth-attempts.staged.ts");
 const handoff = read("src/db/schema/db01-auth-handoffs.staged.ts");
 const attemptSql = read("docs/planning/sql/db01-auth-attempts-staging.sql");
 const handoffSql = read("docs/planning/sql/db01-auth-handoffs-staging.sql");
+const scopedFksSql = read("docs/planning/sql/db01-auth-tenant-composite-fks-staging.sql");
 const contract = read("docs/planning/db01-auth-otp-handoff-contract.md");
 
 test("DB01 OTP and handoff schemas are not activated before migration", () => {
@@ -84,4 +85,18 @@ test("source contract explicitly separates database and provider acceptance", ()
   assert.match(contract, /Never|No raw/i);
   assert.match(contract, /PostgreSQL replay/);
   assert.match(contract, /not.*run through typecheck/i);
+});
+
+test("cross-table user/college integrity must be database-enforced at promotion", () => {
+  assert.match(attempt, /identity_auth_attempts_membership_scope_fk/);
+  assert.match(attempt, /identity_auth_attempts_membership_college_shape_ck/);
+  assert.match(handoff, /identity_auth_handoffs_membership_scope_fk/);
+  assert.match(handoff, /identity_auth_handoffs_domain_scope_fk/);
+  assert.match(handoff, /"college_id"/);
+  assert.match(handoffSql, /college_id uuid NOT NULL/);
+  assert.match(scopedFksSql, /UNIQUE \(id, user_id, college_id\)/);
+  assert.match(scopedFksSql, /UNIQUE \(id, college_id\)/);
+  assert.match(scopedFksSql, /FOREIGN KEY \(membership_id, user_id, college_id\)/);
+  assert.match(scopedFksSql, /FOREIGN KEY \(target_membership_id, user_id, college_id\)/);
+  assert.match(scopedFksSql, /FOREIGN KEY \(target_domain_id, college_id\)/);
 });
