@@ -7,7 +7,7 @@
   "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "initialVnextMainSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
   "sourceOnly": true,
-  "reviewedFieldCount": 0,
+  "reviewedFieldCount": 52,
   "verifiedFieldCount": 0,
   "totalFieldCount": 279,
   "records": [
@@ -22,18 +22,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_college_rules"
+      ],
+      "mappingTarget": {
+        "table": "placement_college_rules",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "College-wide offer/cascade rule source. Target preserves defaults and optimistic version; final offer/cascade consumers and concurrency remain unverified.",
+      "tenantKey": "placement_college_rules.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegePlacementRulesRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_PLACEMENT_RULES-02",
@@ -44,18 +57,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "'OFFER_RELEASED'",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_college_rules"
+      ],
+      "mappingTarget": {
+        "table": "placement_college_rules",
+        "column": "counts_as_placed_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "College-wide offer/cascade rule source. Target preserves defaults and optimistic version; final offer/cascade consumers and concurrency remain unverified.",
+      "tenantKey": "placement_college_rules.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegePlacementRulesRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_PLACEMENT_RULES-03",
@@ -66,18 +92,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "1",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_college_rules"
+      ],
+      "mappingTarget": {
+        "table": "placement_college_rules",
+        "column": "max_held_offers",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "College-wide offer/cascade rule source. Target preserves defaults and optimistic version; final offer/cascade consumers and concurrency remain unverified.",
+      "tenantKey": "placement_college_rules.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegePlacementRulesRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_PLACEMENT_RULES-04",
@@ -88,18 +127,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "40",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_college_rules"
+      ],
+      "mappingTarget": {
+        "table": "placement_college_rules",
+        "column": "uplift_pct",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "College-wide offer/cascade rule source. Target preserves defaults and optimistic version; final offer/cascade consumers and concurrency remain unverified.",
+      "tenantKey": "placement_college_rules.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegePlacementRulesRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_PLACEMENT_RULES-05",
@@ -110,18 +162,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "48",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_college_rules"
+      ],
+      "mappingTarget": {
+        "table": "placement_college_rules",
+        "column": "min_response_hours",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "College-wide offer/cascade rule source. Target preserves defaults and optimistic version; final offer/cascade consumers and concurrency remain unverified.",
+      "tenantKey": "placement_college_rules.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegePlacementRulesRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_PLACEMENT_RULES-06",
@@ -134,18 +199,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_college_rules"
+      ],
+      "mappingTarget": {
+        "table": "placement_college_rules",
+        "column": "updated_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "College-wide offer/cascade rule source. Target preserves defaults and optimistic version; final offer/cascade consumers and concurrency remain unverified.",
+      "tenantKey": "placement_college_rules.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegePlacementRulesRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_PLACEMENT_RULES-07",
@@ -156,18 +234,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "0",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_college_rules"
+      ],
+      "mappingTarget": {
+        "table": "placement_college_rules",
+        "column": "version",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "College-wide offer/cascade rule source. Target preserves defaults and optimistic version; final offer/cascade consumers and concurrency remain unverified.",
+      "tenantKey": "placement_college_rules.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegePlacementRulesRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegePlacementRules.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_WHAT_COMPANIES_SEE-01",
@@ -180,18 +271,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_company_visibility_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_company_visibility_settings",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter disclosure defaults. Target adds version as hardening; actual recruiter share/export redaction remains unverified.",
+      "tenantKey": "placement_company_visibility_settings.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegeWhatCompaniesSeeRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_WHAT_COMPANIES_SEE-02",
@@ -202,18 +306,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "FALSE",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_company_visibility_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_company_visibility_settings",
+        "column": "show_cgpa_exact",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter disclosure defaults. Target adds version as hardening; actual recruiter share/export redaction remains unverified.",
+      "tenantKey": "placement_company_visibility_settings.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegeWhatCompaniesSeeRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_WHAT_COMPANIES_SEE-03",
@@ -224,18 +341,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "TRUE",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_company_visibility_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_company_visibility_settings",
+        "column": "show_tenth_twelfth",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter disclosure defaults. Target adds version as hardening; actual recruiter share/export redaction remains unverified.",
+      "tenantKey": "placement_company_visibility_settings.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegeWhatCompaniesSeeRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_WHAT_COMPANIES_SEE-04",
@@ -246,18 +376,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "TRUE",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_company_visibility_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_company_visibility_settings",
+        "column": "show_project_links",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter disclosure defaults. Target adds version as hardening; actual recruiter share/export redaction remains unverified.",
+      "tenantKey": "placement_company_visibility_settings.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegeWhatCompaniesSeeRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_WHAT_COMPANIES_SEE-05",
@@ -268,18 +411,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "FALSE",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_company_visibility_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_company_visibility_settings",
+        "column": "show_assessment_scores",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter disclosure defaults. Target adds version as hardening; actual recruiter share/export redaction remains unverified.",
+      "tenantKey": "placement_company_visibility_settings.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegeWhatCompaniesSeeRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_WHAT_COMPANIES_SEE-06",
@@ -290,18 +446,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "FALSE",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_company_visibility_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_company_visibility_settings",
+        "column": "show_attendance",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter disclosure defaults. Target adds version as hardening; actual recruiter share/export redaction remains unverified.",
+      "tenantKey": "placement_company_visibility_settings.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegeWhatCompaniesSeeRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COLLEGE_WHAT_COMPANIES_SEE-07",
@@ -314,18 +483,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_company_visibility_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_company_visibility_settings",
+        "column": "updated_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter disclosure defaults. Target adds version as hardening; actual recruiter share/export redaction remains unverified.",
+      "tenantKey": "placement_company_visibility_settings.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/main/java/com/_42students/lms/repository/tpo/CollegeWhatCompaniesSeeRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/CollegeWhatCompaniesSee.java",
+        "src/db/schema/tpo-policy.ts",
+        "src/modules/placements/tpo-policy-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-01",
@@ -952,18 +1134,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_followups"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_followups",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live due/move/done follow-up contract. Target adds college_id/composite lead scope; owner faculty→membership remap and concurrent lifecycle remain unverified.",
+      "tenantKey": "placement_tpo_followups.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/FollowUp.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-FOLLOW_UP-02",
@@ -976,18 +1171,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_followups"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_followups",
+        "column": "due_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live due/move/done follow-up contract. Target adds college_id/composite lead scope; owner faculty→membership remap and concurrent lifecycle remain unverified.",
+      "tenantKey": "placement_tpo_followups.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/FollowUp.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-FOLLOW_UP-03",
@@ -1000,18 +1208,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_followups"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_followups",
+        "column": "owner_membership_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live due/move/done follow-up contract. Target adds college_id/composite lead scope; owner faculty→membership remap and concurrent lifecycle remain unverified.",
+      "tenantKey": "placement_tpo_followups.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/FollowUp.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-FOLLOW_UP-04",
@@ -1022,18 +1243,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_followups"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_followups",
+        "column": "note",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live due/move/done follow-up contract. Target adds college_id/composite lead scope; owner faculty→membership remap and concurrent lifecycle remain unverified.",
+      "tenantKey": "placement_tpo_followups.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/FollowUp.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-FOLLOW_UP-05",
@@ -1046,18 +1280,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_followups"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_followups",
+        "column": "done_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live due/move/done follow-up contract. Target adds college_id/composite lead scope; owner faculty→membership remap and concurrent lifecycle remain unverified.",
+      "tenantKey": "placement_tpo_followups.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/FollowUp.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-FOLLOW_UP-06",
@@ -1070,18 +1317,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_followups"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_followups",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live due/move/done follow-up contract. Target adds college_id/composite lead scope; owner faculty→membership remap and concurrent lifecycle remain unverified.",
+      "tenantKey": "placement_tpo_followups.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/FollowUp.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-FOLLOW_UP-07",
@@ -1094,18 +1354,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_followups"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_followups",
+        "column": "lead_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live due/move/done follow-up contract. Target adds college_id/composite lead scope; owner faculty→membership remap and concurrent lifecycle remain unverified.",
+      "tenantKey": "placement_tpo_followups.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/FollowUp.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-01",
@@ -2516,18 +2789,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-02",
@@ -2540,18 +2827,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-03",
@@ -2564,18 +2865,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "company_relationship_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-04",
@@ -2586,18 +2901,32 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "name",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-05",
@@ -2608,18 +2937,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "designation",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-06",
@@ -2632,18 +2975,32 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "email_norm",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-07",
@@ -2656,18 +3013,32 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "phone_norm",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-08",
@@ -2678,18 +3049,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "company_name",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-09",
@@ -2700,18 +3085,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "company_logo_object_path",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-10",
@@ -2724,18 +3123,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "owner_membership_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-11",
@@ -2746,18 +3159,32 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "'NEW'",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "manual_stage",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-12",
@@ -2768,18 +3195,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "not_now_reason",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-13",
@@ -2790,18 +3231,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "not_now_until",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-14",
@@ -2812,18 +3267,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "source",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-15",
@@ -2836,18 +3305,32 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "invite_token_hash",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-16",
@@ -2860,18 +3343,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "invite_sent_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-17",
@@ -2884,18 +3381,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "invite_clicked_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-18",
@@ -2908,18 +3419,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "invite_reminder_sent_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-19",
@@ -2932,18 +3457,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "invite_bounced_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-20",
@@ -2956,18 +3495,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "unsubscribed_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-21",
@@ -2980,18 +3533,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-22",
@@ -3004,18 +3571,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "updated_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-23",
@@ -3028,18 +3609,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_leads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_leads",
+        "column": "recruiter_user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recruiter lead CRM contract. Manual stage stays NEW/CONTACTED/NOT_NOW; derived invite/join/drive states must not be persisted as arbitrary stage. Company/faculty/recruiter identity remaps are proposed but not semantically certified.",
+      "tenantKey": "placement_tpo_leads.college_id",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLead.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD_ACTIVITY-01",
@@ -3052,18 +3647,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_lead_activities"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_lead_activities",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live append-style CRM timeline. Target adds college_id/composite tenant FK and stages immutable-history SQL; actor ID remap remains unverified.",
+      "tenantKey": "placement_tpo_lead_activities.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD_ACTIVITY-02",
@@ -3074,18 +3682,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_lead_activities"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_lead_activities",
+        "column": "type",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live append-style CRM timeline. Target adds college_id/composite tenant FK and stages immutable-history SQL; actor ID remap remains unverified.",
+      "tenantKey": "placement_tpo_lead_activities.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD_ACTIVITY-03",
@@ -3096,18 +3717,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_lead_activities"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_lead_activities",
+        "column": "outcome",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live append-style CRM timeline. Target adds college_id/composite tenant FK and stages immutable-history SQL; actor ID remap remains unverified.",
+      "tenantKey": "placement_tpo_lead_activities.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD_ACTIVITY-04",
@@ -3118,18 +3752,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_lead_activities"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_lead_activities",
+        "column": "note",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live append-style CRM timeline. Target adds college_id/composite tenant FK and stages immutable-history SQL; actor ID remap remains unverified.",
+      "tenantKey": "placement_tpo_lead_activities.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD_ACTIVITY-05",
@@ -3140,18 +3787,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "FALSE",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_lead_activities"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_lead_activities",
+        "column": "is_system",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live append-style CRM timeline. Target adds college_id/composite tenant FK and stages immutable-history SQL; actor ID remap remains unverified.",
+      "tenantKey": "placement_tpo_lead_activities.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD_ACTIVITY-06",
@@ -3162,18 +3822,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_lead_activities"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_lead_activities",
+        "column": "created_by_user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live append-style CRM timeline. Target adds college_id/composite tenant FK and stages immutable-history SQL; actor ID remap remains unverified.",
+      "tenantKey": "placement_tpo_lead_activities.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD_ACTIVITY-07",
@@ -3186,18 +3859,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_lead_activities"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_lead_activities",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live append-style CRM timeline. Target adds college_id/composite tenant FK and stages immutable-history SQL; actor ID remap remains unverified.",
+      "tenantKey": "placement_tpo_lead_activities.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD_ACTIVITY-08",
@@ -3210,18 +3896,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_lead_activities"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_lead_activities",
+        "column": "lead_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live append-style CRM timeline. Target adds college_id/composite tenant FK and stages immutable-history SQL; actor ID remap remains unverified.",
+      "tenantKey": "placement_tpo_lead_activities.college_id added in vNext and composite-scoped to placement_tpo_leads",
+      "actorPermission": "College-scoped TPO/placement-management semantics require executed authorization and direct-SQL tenant witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/RecruiterLeadActivity.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "src/db/schema/tpo-crm.ts",
+        "src/modules/placements/tpo-crm-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
+      "status": "SOURCE_MAPPED_UNVERIFIED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_NOTIFICATION_READ-01",
@@ -6589,5 +7288,12 @@
   ],
   "archiveStatus": "SUPERSEDED_SOURCE_REVIEW_ONLY",
   "activeDB09Tracker": "docs/planning/database-parity-db09-parallel-tracker.json",
-  "archiveReason": "Original DB09 claim overlapped with issue #5; preserved source-only evidence on main, not an authoritative implementation plan"
+  "archiveReason": "Original DB09 claim overlapped with issue #5; preserved source-only evidence on main, not an authoritative implementation plan",
+  "lastReview": {
+    "worker": "CHAT_03",
+    "date": "2026-10-11",
+    "scope": "V162 college policy/privacy 14 + active recruiter CRM 38",
+    "result": "52 source-to-staged mappings reviewed; 0 runtime/semantic verified",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
+  }
 }
