@@ -26,6 +26,7 @@ import {
   createProjectTemplate,
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
+import { listMyMentorCalendarMeetings } from "@/modules/projects/mentor-calendar-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -511,4 +512,38 @@ describe("Projects P7B meetings", () => {
         "project_meetings_time_order_ck",
     });
   });
+  it("aggregates only active mentor assignments into the personal calendar", async () => {
+    const project = await createProject();
+    const pending = await requestProjectMeeting(learner,project.id,requestedWindow);
+    const rows = await listMyMentorCalendarMeetings(mentor);
+    expect(rows).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id:pending.id,projectId:project.id,projectTitle:project.title,
+        status:"REQUESTED",timeZone:"Asia/Kolkata",
+      }),
+    ]));
+    expect(rows.find(x=>x.id===pending.id)?.endsAt).toContain("T");
+    await expect(listMyMentorCalendarMeetings({
+      ...mentor,membership:{...mentor.membership!,roles:["FACULTY"]},
+    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    await expect(listMyMentorCalendarMeetings({
+      ...mentor,membership:{...mentor.membership!,status:"SUSPENDED"},
+    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    const otherCollege = await listMyMentorCalendarMeetings({
+      ...mentor,membership:{...mentor.membership!,collegeId:SEED_IDS.collegeB},
+    });
+    expect(otherCollege.some(x=>x.id===pending.id)).toBe(false);
+  });
+
+  it("cannot revive a cancelled or completed meeting through a stale schedule", async () => {
+    const project = await createProject();
+    const request = await requestProjectMeeting(learner,project.id,requestedWindow);
+    await transitionProjectMeeting(learner,project.id,request.id,{action:"CANCEL"});
+    await expect(scheduleProjectMeeting(mentor,project.id,request.id,{
+      ...requestedWindow,meetingUrl:"https://meet.example.com/revived",
+    })).rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
+    const [meeting] = await listProjectMeetings(mentor,project.id);
+    expect(meeting).toMatchObject({id:request.id,status:"CANCELLED"});
+  });
+
 });
