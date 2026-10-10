@@ -104,3 +104,83 @@ test("DB06 active contracts keep explicit target gaps instead of name-match clos
     }
   }
 });
+
+
+const fieldReconciliation = JSON.parse(
+  fs.readFileSync(
+    "docs/planning/database-parity-db06-field-reconciliation.json",
+    "utf8",
+  ),
+);
+
+test("DB06 dispositions cover every active source field exactly once", () => {
+  assert.equal(fieldReconciliation.counts.activeTables, 9);
+  assert.equal(fieldReconciliation.counts.activeSourceFields, 120);
+  assert.equal(fieldReconciliation.counts.fieldDispositions, 120);
+  assert.equal(fieldReconciliation.counts.runtimeVerifiedFields, 0);
+
+  const sourceActive = ledger.tables.filter(
+    (row) => row.sourceDisposition === "ACTIVE_SOURCE_CONTRACT",
+  );
+  const expected = new Set(
+    sourceActive.flatMap((table) =>
+      table.rows.map((field) => `${table.table}.${field.legacyColumn}`),
+    ),
+  );
+  const actual = new Set(
+    fieldReconciliation.tables.flatMap((table) =>
+      table.fields.map((field) => `${table.legacyTable}.${field.legacyField}`),
+    ),
+  );
+
+  assert.equal(expected.size, 120);
+  assert.equal(actual.size, 120);
+  assert.deepEqual([...actual].sort(), [...expected].sort());
+
+  for (const table of fieldReconciliation.tables) {
+    assert.equal(table.fields.length, table.sourceFieldCount);
+    for (const field of table.fields) {
+      assert.equal(field.runtimeVerified, false);
+      assert.equal(field.validationEvidence, null);
+      assert.ok(field.decision);
+      assert.ok(Object.hasOwn(field, "targetRef"));
+      assert.ok(field.reason);
+    }
+  }
+});
+
+test("DB06 source-backed target gaps cannot disappear without an explicit decision", () => {
+  const byKey = new Map(
+    fieldReconciliation.tables.flatMap((table) =>
+      table.fields.map((field) => [
+        `${table.legacyTable}.${field.legacyField}`,
+        field,
+      ]),
+    ),
+  );
+
+  assert.equal(
+    byKey.get("quizzes.shuffle_questions").decision,
+    "TARGET_GAP_REQUIRED",
+  );
+  assert.equal(
+    byKey.get("quizzes.shuffle_options").decision,
+    "TARGET_GAP_REQUIRED",
+  );
+  assert.equal(
+    byKey.get("grade_audit_log.action").decision,
+    "TARGET_GAP_REQUIRED",
+  );
+  assert.equal(
+    byKey.get("student_assignment.attempt_number").decision,
+    "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
+  );
+  assert.equal(
+    byKey.get("assignment_upload_receipt.public_url").decision,
+    "RETIRE_SECURITY_ANTI_PATTERN",
+  );
+  assert.equal(
+    byKey.get("attend.is_deleted").decision,
+    "NORMALIZED_TO_HISTORY_AND_STATUS",
+  );
+});
