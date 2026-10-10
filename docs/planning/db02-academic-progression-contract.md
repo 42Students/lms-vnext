@@ -59,6 +59,19 @@ A normalized design should provide:
 
 Delivery tables may continue to materialize offerings for a particular cohort/period, but DB03 and promotion logic must read the canonical program-term identity rather than infer term number from a period code.
 
+### Stable term identity on course offerings
+
+Every `course_offerings` row must retain a stable `program_term_id` in addition to `academic_period_id`:
+
+- `academic_period_id` answers **when** the delivery happens on the college calendar;
+- `program_term_id` answers **which program curriculum term** the delivery belongs to;
+- the term's program must equal the cohort's program;
+- course, cohort and period must remain in one college;
+- a `CORE` offering must have a matching `program_term_courses` row;
+- an `ELECTIVE` offering remains term-bound but is not forced to have a fixed curriculum row, matching the legacy elective path where the selected course can be outside the fixed semester-course list.
+
+This link is also the historical semester anchor for delivery-bound teaching assignments. A cohort's mutable current progression state cannot reconstruct an old assignment's semester after promotion.
+
 ## 3. DB03 elective dependency
 
 Legacy `ElectiveService.classEligibilityError` requires all of the following for a learner's primary section:
@@ -96,15 +109,47 @@ Persist `lecture_halls` as a tenant-owned resource and optionally attach `sectio
 
 ## 5. Faculty teaching lifecycle
 
-Legacy distinguishes:
+The pinned legacy source exposes **three different observable contracts**. They must not be collapsed merely because all three contain faculty/course IDs.
 
-- class/section faculty assignment;
-- course-specific teaching assignment;
-- batch/semester academic context;
-- primary/secondary role;
-- active/inactive lifecycle with start/end dates.
+### 5.1 Broad faculty-course association
 
-Promotion deactivates assignments for the outgoing semester. Therefore mapping all legacy faculty assignment fields only to `course_teaching_assignments.membership_id/role/started_at/ended_at` is incomplete unless the delivery → offering → cohort/program-term chain proves the same semester/batch identity and history.
+`faculty_course_associations` is an admin-managed **course pool** independent of any class or delivery:
+
+- an association can be created before the faculty member is assigned to a class;
+- callers list active courses for a faculty member;
+- callers list active faculty candidates for a course;
+- deactivation keeps the association identity but removes it from active lookup.
+
+`course_teaching_assignments` cannot represent this contract because it requires an existing delivery. DB02 therefore stages a normalized `faculty_course_associations(membership_id, course_id, started_at, ended_at, ...)` relation with one active pair and a same-college guard. The application producer must require an active FACULTY membership; the database guard owns tenant consistency.
+
+### 5.2 Class-specific faculty-course mapping
+
+Legacy `faculty_course_mapping` binds `faculty + course + class` and uses `active` for create/reactivate/deactivate plus faculty metrics. This is a compatibility shape, not a reason to add a second vNext teaching table.
+
+Its canonical vNext projection is:
+
+`course_teaching_assignments.membership_id -> course_section_deliveries -> { section_id, course_offerings.course_id }`
+
+with `ended_at IS NULL` representing active. Compatibility APIs may project this shape while API parity is maintained. No legacy numeric mapping ID needs preservation because vNext is greenfield.
+
+### 5.3 Rich teaching assignment
+
+Legacy `faculty_teaching_assignment` adds batch/cohort, semester number, academic year, role, start/end and active lifecycle. The canonical vNext mapping is:
+
+- faculty → `course_teaching_assignments.membership_id`;
+- class → delivery `section_id`;
+- course → delivery's offering `course_id`;
+- batch → offering `cohort_id`;
+- semester → offering `program_term_id -> program_terms.term_number`;
+- calendar/year context → offering `academic_period_id` plus immutable cohort progression history;
+- role → `course_teaching_assignments.role`;
+- active/start/end → `ended_at IS NULL`, `started_at`, `ended_at`.
+
+Promotion must end outgoing-term assignments through this delivery/offering chain. The delivery's immutable term link is essential: reading the cohort's **current** term after promotion is not historical equivalence.
+
+### 5.4 Section-only faculty assignment
+
+`section_faculty_assignments` remains useful for section-level responsibilities that are not course-specific. It does not replace either the broad faculty-course pool or a course teaching assignment.
 
 ## 6. Derived values vs persisted values
 
@@ -132,8 +177,10 @@ These may ultimately be normalized into `course_teaching_assignments`, deliverie
 `scripts/sql/db02-academic-progression-and-rooms-staging.sql` contains an **unregistered** PostgreSQL proposal for:
 
 - program terms and ordered curriculum mappings;
+- stable program-term identity on every course offering, with CORE curriculum enforcement;
 - cohort progression state + immutable history;
 - lecture halls and schedule hall linkage;
+- broad faculty-course association pool independent of deliveries;
 - tenant consistency guards;
 - progression monotonic/version checks;
 - schedule overlap constraints.
@@ -147,12 +194,14 @@ DB-005 remains open until all of these are executed and attached to exact SHAs:
 1. classify all 125 source candidates as mapped, calculated, redesigned or retired using producer/consumer evidence;
 2. register reviewed schema through Chat 1;
 3. zero-to-current migration replay on disposable PostgreSQL;
-4. negative tests for cross-college program/period/hall links;
-5. concurrent cohort promotion test proving one winner for the same expected version;
-6. term jump/backward update rejection;
-7. program-term uniqueness and ordered curriculum tests;
-8. same faculty/section/hall overlap rejection and adjacent non-overlap acceptance;
-9. schedule cancellation/soft-history behavior with attendance retained;
-10. re-check current legacy BE/FE heads before final certification.
+4. negative tests for cross-college program/period/hall/faculty-course links;
+5. offering-term tests proving program mismatch rejection, CORE curriculum membership enforcement and term-bound ELECTIVE support;
+6. broad faculty-course association tests proving pre-delivery association, active-pair uniqueness and historical deactivation;
+7. concurrent cohort promotion test proving one winner for the same expected version;
+8. term jump/backward update rejection;
+9. program-term uniqueness and ordered curriculum tests;
+10. same faculty/section/hall overlap rejection and adjacent non-overlap acceptance;
+11. schedule cancellation/soft-history behavior with attendance retained;
+12. re-check current legacy BE/FE heads before final certification.
 
 No source review, staging SQL or authored test alone counts as PASS.
