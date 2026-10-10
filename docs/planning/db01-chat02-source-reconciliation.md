@@ -70,3 +70,36 @@ Legacy recruiter credentials and college grant lifecycle include `suspended_at`,
 5. Re-read fresh legacy BE/FE and vNext SHAs, attach executed outputs before `DONE_VERIFIED`.
 
 **Current evidence status:** source file comparison and candidate mapping only. Tests authored here: **0**. Tests executed here: **0**. Runtime semantic fields verified here: **0**. DB-004 remains **IN_PROGRESS**.
+
+## Iteration 2 — all-field source triage and staged SQL (2026-10-11)
+
+**Committed additive work while DB-004 remains IN_PROGRESS:**
+
+- `docs/planning/db01-chat02-312-field-source-triage.json` is a keyed candidate ledger covering **all 22 table candidates and 312 source-column candidates** from the frozen DB01 pass-4 inventory. Its row fields include type/null/default/risk/JPA presence, proposed target (when defensible), blocker, and explicitly `SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED` as the evidence status.
+- `src/db/schema/db01-tenant-branding.staged.ts` models the currently missing one-to-one college-scoped public branding configuration. It is **not** in `src/db/schema/index.ts` and is not a runtime schema.
+- `docs/planning/sql/db01-tenant-branding-domain-diagnostics-staging.sql` proposes the equivalent branding table plus the DNS diagnostics column in `tenant_domains`. **This SQL is unregistered and must not be applied directly.** Only Chat 1 may generate/register Drizzle migrations, coordinate replay and CI.
+- `scripts/verify-db01-field-triage.mjs` is a repeatable consistency checker for complete source-row coverage, source snapshot drift, duplicate keys and unearned status upgrades; its execution is **not** recorded as passing in this worker iteration.
+
+| Source-only classification | Candidate fields |
+| --- | ---: |
+| Structural target candidate, semantics still unverified | 44 |
+| Normalized target candidate, semantics still unverified | 51 |
+| Staged proposal, unregistered/unverified | 21 |
+| Identity-provider, token, OTP, device-session decision | 84 |
+| Missing/retirement/design decision | 38 |
+| Learner/faculty cross-domain DB04/DB02 | 67 |
+| Recruiter/grant cross-domain DB09/DB01 | 5 |
+| Additional source semantics unresolved | 2 |
+| **Total source candidates catalogued** | **312** |
+
+**Important interpretation:** 312/312 means *candidate field triage coverage*, not 312 fields implemented, active, database tested or product verified. The legacy active-vs-retired reconstruction, exact producer/consumer behavior, and constraints remain open.
+
+### Explicit cross-worker handoff
+
+**To Chat 1 migration integrator (issue #21):** review `college_branding` one-row/college staging and `tenant_domains.last_found_values` with verified-primary guard; make an intentional decision about URL vs object storage/public bootstrap, DNS TXT privacy, soft delete/archive, and stage→numbered migration/schema-barrel once schemas stabilize. Do not hand-wave successful migration replay or register duplicate entries.
+
+**To DB09 reviewer:** legacy `recruiter_college_access.valid_until`, `revoke_reason`, capability table and optimistic `version` lack directly equivalent fields in inspected `placement_recruiter_college_grants`; validate against active service, current repo and tenant-scope invariants before designing target persistence. No independent edits to DB09 feature files in this batch.
+
+**To DB04/DB02 reviewers:** learner/faculty profile and enrollment fields overlap their existing ledgers. These triage records are cross-domain pointers, **not** a competing implementation or a retirement.
+
+**Pending quality gates:** disposable PostgreSQL migration replay, active schema drift, tenant-isolation negative tests, role/revocation and concurrent edits, per-device session/proxy login behavior, provider sync and browser validation. No test runner output has been produced here. DB-004 cannot become DONE_VERIFIED.
