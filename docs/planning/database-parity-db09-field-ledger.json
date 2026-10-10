@@ -7,7 +7,7 @@
   "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "initialVnextMainSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
   "sourceOnly": true,
-  "reviewedFieldCount": 52,
+  "reviewedFieldCount": 138,
   "verifiedFieldCount": 0,
   "totalFieldCount": 279,
   "records": [
@@ -2577,18 +2577,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-02",
@@ -2601,18 +2613,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-03",
@@ -2625,18 +2649,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "job_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-04",
@@ -2649,18 +2685,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "application_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-05",
@@ -2671,18 +2719,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "rating",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-06",
@@ -2693,18 +2753,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "note",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-07",
@@ -2717,18 +2789,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-08",
@@ -2741,18 +2825,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "updated_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-09",
@@ -2765,18 +2861,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_applicant_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_applicant_notes",
+        "column": "recruiter_user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter-private per-applicant rating/note. Source explicitly forbids TPO, learner and colleague visibility; unique per recruiter/application.",
+      "tenantKey": "placement_recruiter_applicant_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterWorkspaceService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/recruiter-workspace-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_LEAD-01",
@@ -3933,18 +4041,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_notification_reads"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_notification_reads",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter+college read-through marker for a derived notification feed; not equivalent to a generic per-notification read row.",
+      "tenantKey": "placement_recruiter_notification_reads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_NOTIFICATION_READ-02",
@@ -3957,18 +4076,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_notification_reads"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_notification_reads",
+        "column": "read_through",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter+college read-through marker for a derived notification feed; not equivalent to a generic per-notification read row.",
+      "tenantKey": "placement_recruiter_notification_reads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_NOTIFICATION_READ-03",
@@ -3981,18 +4111,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_notification_reads"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_notification_reads",
+        "column": "recruiter_user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Recruiter+college read-through marker for a derived notification feed; not equivalent to a generic per-notification read row.",
+      "tenantKey": "placement_recruiter_notification_reads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RESCHEDULE_REQUEST-01",
@@ -5397,18 +5538,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-02",
@@ -5421,18 +5574,30 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "invite_email_template",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-03",
@@ -5445,18 +5610,30 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "reminder_email_template",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-04",
@@ -5467,18 +5644,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "whatsapp_template",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-05",
@@ -5491,18 +5680,30 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "student_email_wording",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-06",
@@ -5513,18 +5714,30 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "500",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "sms_monthly_cap",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-07",
@@ -5537,18 +5750,30 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "email_signature",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-08",
@@ -5559,18 +5784,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "logo_object_path",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-09",
@@ -5583,18 +5820,30 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "trusted_domains",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-10",
@@ -5607,18 +5856,30 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "prep_course_ids",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-11",
@@ -5629,18 +5890,30 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "60",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "prep_threshold_pct",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-12",
@@ -5653,18 +5926,30 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "notify_toggles",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-13",
@@ -5677,18 +5962,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "updated_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-14",
@@ -5699,18 +5996,30 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "1",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "profile_verification_settings"
+      ],
+      "mappingTarget": {
+        "table": "profile_verification_settings",
+        "column": "tpo_can_verify_profiles",
+        "status": "PROPOSED_CROSS_DOMAIN_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "profile_verification_settings.college_id",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Source V187 setting is already normalized into DB04 profile_verification_settings. Staged schema exists; migration/runtime proof remains pending.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-15",
@@ -5725,16 +6034,22 @@
       ],
       "candidateVnextTables": [],
       "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent tenant",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Active legacy setting added by V190; no current vNext persisted target located. DB08/DB09 ownership decision required.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-16",
@@ -5749,16 +6064,22 @@
       ],
       "candidateVnextTables": [],
       "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent tenant",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Active legacy setting added by V190; no current vNext persisted target located. DB08/DB09 ownership decision required.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-17",
@@ -5769,18 +6090,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "profile_verification_settings"
+      ],
+      "mappingTarget": {
+        "table": "profile_verification_settings",
+        "column": "cgpa_to_pct",
+        "status": "PROPOSED_CROSS_DOMAIN_SOURCE_REVIEWED"
+      },
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "profile_verification_settings.college_id",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Source V192 setting is already normalized into DB04 profile_verification_settings. Staged schema exists; migration/runtime proof remains pending.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-18",
@@ -5793,16 +6126,22 @@
       "sourceRiskFlags": [],
       "candidateVnextTables": [],
       "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent tenant",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Actively read/written by TpoSettingsHubService and RecruiterInviteService validity semantics; missing from current vNext TPO settings table.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-19",
@@ -5815,16 +6154,22 @@
       "sourceRiskFlags": [],
       "candidateVnextTables": [],
       "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
+      "tenantKey": "placement_tpo_college_settings.college_id or owning parent tenant",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Actively read/written by TpoSettingsHubService and drive-request behavior; missing from current vNext TPO settings table.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COORDINATOR_ASSIGNMENT-01",
@@ -6001,18 +6346,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_messages"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_messages",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
+      "tenantKey": "Inherited via placement_tpo_message_threads; composite/direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE-02",
@@ -6025,18 +6382,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_messages"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_messages",
+        "column": "thread_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
+      "tenantKey": "Inherited via placement_tpo_message_threads; composite/direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE-03",
@@ -6047,18 +6416,30 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_messages"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_messages",
+        "column": "sender_type",
+        "status": "TARGET_EXISTS_BUT_CONTRACT_MISMATCH"
+      },
+      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
+      "tenantKey": "placement_tpo_messages.college_id or owning parent tenant",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Final V193 source and live legacy service use TPO|RECRUITER, but current vNext schema/service still constrain/emit HR. Align DB and producer before registration.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE-04",
@@ -6071,18 +6452,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_messages"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_messages",
+        "column": "sender_user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
+      "tenantKey": "Inherited via placement_tpo_message_threads; composite/direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE-05",
@@ -6093,18 +6486,30 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_messages"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_messages",
+        "column": "body",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
+      "tenantKey": "Inherited via placement_tpo_message_threads; composite/direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE-06",
@@ -6117,18 +6522,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_messages"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_messages",
+        "column": "read_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
+      "tenantKey": "Inherited via placement_tpo_message_threads; composite/direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE-07",
@@ -6141,18 +6558,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_messages"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_messages",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
+      "tenantKey": "Inherited via placement_tpo_message_threads; composite/direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE_THREAD-01",
@@ -6165,18 +6594,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_message_threads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_message_threads",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college/recruiter conversation thread; null job means General. Recruiter identity is normalized from legacy recruiter PK to canonical user ID.",
+      "tenantKey": "placement_tpo_message_threads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE_THREAD-02",
@@ -6189,18 +6630,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_message_threads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_message_threads",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college/recruiter conversation thread; null job means General. Recruiter identity is normalized from legacy recruiter PK to canonical user ID.",
+      "tenantKey": "placement_tpo_message_threads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE_THREAD-03",
@@ -6213,18 +6666,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_message_threads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_message_threads",
+        "column": "job_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college/recruiter conversation thread; null job means General. Recruiter identity is normalized from legacy recruiter PK to canonical user ID.",
+      "tenantKey": "placement_tpo_message_threads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE_THREAD-04",
@@ -6237,18 +6702,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_message_threads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_message_threads",
+        "column": "last_message_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college/recruiter conversation thread; null job means General. Recruiter identity is normalized from legacy recruiter PK to canonical user ID.",
+      "tenantKey": "placement_tpo_message_threads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE_THREAD-05",
@@ -6261,18 +6738,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_message_threads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_message_threads",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college/recruiter conversation thread; null job means General. Recruiter identity is normalized from legacy recruiter PK to canonical user ID.",
+      "tenantKey": "placement_tpo_message_threads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_MESSAGE_THREAD-06",
@@ -6285,18 +6774,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_message_threads"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_message_threads",
+        "column": "recruiter_user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live college/recruiter conversation thread; null job means General. Recruiter identity is normalized from legacy recruiter PK to canonical user ID.",
+      "tenantKey": "placement_tpo_message_threads.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-messaging-service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SAVED_VIEW-01",
@@ -6309,18 +6810,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_saved_views"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_saved_views",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live named per-user table filters. Final legacy producer accepts RECRUITER_LEADS and multiple expanded scopes; the initial V165 LEADS label was migrated.",
+      "tenantKey": "placement_tpo_saved_views.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SAVED_VIEW-02",
@@ -6333,18 +6845,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_saved_views"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_saved_views",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live named per-user table filters. Final legacy producer accepts RECRUITER_LEADS and multiple expanded scopes; the initial V165 LEADS label was migrated.",
+      "tenantKey": "placement_tpo_saved_views.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SAVED_VIEW-03",
@@ -6357,18 +6880,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_saved_views"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_saved_views",
+        "column": "user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live named per-user table filters. Final legacy producer accepts RECRUITER_LEADS and multiple expanded scopes; the initial V165 LEADS label was migrated.",
+      "tenantKey": "placement_tpo_saved_views.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SAVED_VIEW-04",
@@ -6379,18 +6913,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_saved_views"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_saved_views",
+        "column": "scope",
+        "status": "TARGET_EXISTS_BUT_CONTRACT_MISMATCH"
+      },
+      "semanticDefinition": "Live named per-user table filters. Final legacy producer accepts RECRUITER_LEADS and multiple expanded scopes; the initial V165 LEADS label was migrated.",
+      "tenantKey": "placement_tpo_saved_views.college_id or owning parent tenant",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Final source migrated LEADS to RECRUITER_LEADS and current service accepts expanded scopes; vNext CHECK still permits only STUDENTS|LEADS|DRIVES.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SAVED_VIEW-05",
@@ -6401,18 +6946,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_saved_views"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_saved_views",
+        "column": "name",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live named per-user table filters. Final legacy producer accepts RECRUITER_LEADS and multiple expanded scopes; the initial V165 LEADS label was migrated.",
+      "tenantKey": "placement_tpo_saved_views.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SAVED_VIEW-06",
@@ -6425,18 +6981,29 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_saved_views"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_saved_views",
+        "column": "filters",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live named per-user table filters. Final legacy producer accepts RECRUITER_LEADS and multiple expanded scopes; the initial V165 LEADS label was migrated.",
+      "tenantKey": "placement_tpo_saved_views.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SAVED_VIEW-07",
@@ -6449,18 +7016,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_saved_views"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_saved_views",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live named per-user table filters. Final legacy producer accepts RECRUITER_LEADS and multiple expanded scopes; the initial V165 LEADS label was migrated.",
+      "tenantKey": "placement_tpo_saved_views.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_EVENT-01",
@@ -6473,18 +7051,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_events"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_events",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Append-style share access/delivery history. Current legacy producer emits CREATED/OPENED/DOWNLOADED_LIST/DOWNLOADED_ZIP/REVOKED plus LINK_EMAILED and CODE_EMAILED.",
+      "tenantKey": "Inherited via placement_tpo_share_links; direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_EVENT-02",
@@ -6497,18 +7086,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_events"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_events",
+        "column": "share_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Append-style share access/delivery history. Current legacy producer emits CREATED/OPENED/DOWNLOADED_LIST/DOWNLOADED_ZIP/REVOKED plus LINK_EMAILED and CODE_EMAILED.",
+      "tenantKey": "Inherited via placement_tpo_share_links; direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_EVENT-03",
@@ -6519,18 +7119,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_events"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_events",
+        "column": "action",
+        "status": "TARGET_EXISTS_BUT_CONTRACT_MISMATCH"
+      },
+      "semanticDefinition": "Append-style share access/delivery history. Current legacy producer emits CREATED/OPENED/DOWNLOADED_LIST/DOWNLOADED_ZIP/REVOKED plus LINK_EMAILED and CODE_EMAILED.",
+      "tenantKey": "placement_tpo_share_events.college_id or owning parent tenant",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Live legacy share producer emits LINK_EMAILED and CODE_EMAILED in addition to the five values currently allowed by vNext CHECK.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_EVENT-04",
@@ -6541,18 +7152,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_events"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_events",
+        "column": "detail",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Append-style share access/delivery history. Current legacy producer emits CREATED/OPENED/DOWNLOADED_LIST/DOWNLOADED_ZIP/REVOKED plus LINK_EMAILED and CODE_EMAILED.",
+      "tenantKey": "Inherited via placement_tpo_share_links; direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_EVENT-05",
@@ -6565,18 +7187,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_events"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_events",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Append-style share access/delivery history. Current legacy producer emits CREATED/OPENED/DOWNLOADED_LIST/DOWNLOADED_ZIP/REVOKED plus LINK_EMAILED and CODE_EMAILED.",
+      "tenantKey": "Inherited via placement_tpo_share_links; direct tenant proof still required",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-01",
@@ -6589,18 +7222,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-02",
@@ -6613,18 +7258,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-03",
@@ -6637,18 +7294,30 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "job_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-04",
@@ -6661,18 +7330,30 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "token_hash",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-05",
@@ -6685,18 +7366,30 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "recipient_email",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-06",
@@ -6707,18 +7400,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "code_hash",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-07",
@@ -6731,18 +7436,30 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "email_code_hash",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-08",
@@ -6756,18 +7473,30 @@
         "POTENTIAL_PERSONAL_OR_SECRET_DATA",
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "email_code_expires_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-09",
@@ -6780,18 +7509,30 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "columns",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-10",
@@ -6802,18 +7543,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "max_stage",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-11",
@@ -6826,18 +7579,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "shortlist_by",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-12",
@@ -6850,18 +7615,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "expires_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-13",
@@ -6874,18 +7651,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "revoked_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-14",
@@ -6896,18 +7685,30 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "created_by_user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_SHARE_LINK-15",
@@ -6920,18 +7721,30 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_share_links"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_share_links",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live recipient-limited applicant sharing capability. Raw link/code are returned once; only hashes persist. Expiry, revocation, column allowlist, stage ceiling and shortlist deadline constrain disclosure.",
+      "tenantKey": "placement_tpo_share_links.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoShareService.java",
+        "src/db/schema/tpo-collaboration.ts",
+        "src/modules/placements/tpo-share-projection.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_STUDENT_NOTE-01",
@@ -6944,18 +7757,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_student_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_student_notes",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-cell student note, college scoped. Learner/faculty integer identities are normalized to membership/user identities.",
+      "tenantKey": "placement_tpo_student_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_STUDENT_NOTE-02",
@@ -6968,18 +7792,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_student_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_student_notes",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-cell student note, college scoped. Learner/faculty integer identities are normalized to membership/user identities.",
+      "tenantKey": "placement_tpo_student_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_STUDENT_NOTE-03",
@@ -6992,18 +7827,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_student_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_student_notes",
+        "column": "learner_membership_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-cell student note, college scoped. Learner/faculty integer identities are normalized to membership/user identities.",
+      "tenantKey": "placement_tpo_student_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_STUDENT_NOTE-04",
@@ -7014,18 +7860,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_student_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_student_notes",
+        "column": "note",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-cell student note, college scoped. Learner/faculty integer identities are normalized to membership/user identities.",
+      "tenantKey": "placement_tpo_student_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_STUDENT_NOTE-05",
@@ -7036,18 +7893,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_student_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_student_notes",
+        "column": "created_by_user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-cell student note, college scoped. Learner/faculty integer identities are normalized to membership/user identities.",
+      "tenantKey": "placement_tpo_student_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_STUDENT_NOTE-06",
@@ -7060,18 +7928,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_student_notes"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_student_notes",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-cell student note, college scoped. Learner/faculty integer identities are normalized to membership/user identities.",
+      "tenantKey": "placement_tpo_student_notes.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_TEAM_MEMBER-01",
@@ -7084,18 +7963,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_team_members"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_team_members",
+        "column": "id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-team role and department restriction. Faculty identity becomes college membership; free-text department becomes department FK.",
+      "tenantKey": "placement_tpo_team_members.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_TEAM_MEMBER-02",
@@ -7108,18 +7998,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_team_members"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_team_members",
+        "column": "college_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-team role and department restriction. Faculty identity becomes college membership; free-text department becomes department FK.",
+      "tenantKey": "placement_tpo_team_members.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_TEAM_MEMBER-03",
@@ -7132,18 +8033,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_team_members"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_team_members",
+        "column": "membership_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-team role and department restriction. Faculty identity becomes college membership; free-text department becomes department FK.",
+      "tenantKey": "placement_tpo_team_members.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_TEAM_MEMBER-04",
@@ -7154,18 +8066,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_team_members"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_team_members",
+        "column": "role",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-team role and department restriction. Faculty identity becomes college membership; free-text department becomes department FK.",
+      "tenantKey": "placement_tpo_team_members.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_TEAM_MEMBER-05",
@@ -7176,18 +8099,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_team_members"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_team_members",
+        "column": "department_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-team role and department restriction. Faculty identity becomes college membership; free-text department becomes department FK.",
+      "tenantKey": "placement_tpo_team_members.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_TEAM_MEMBER-06",
@@ -7200,18 +8134,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_team_members"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_team_members",
+        "column": "created_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live placement-team role and department restriction. Faculty identity becomes college membership; free-text department becomes department FK.",
+      "tenantKey": "placement_tpo_team_members.college_id or owning parent",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoTeamService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_USER_PREFS-01",
@@ -7224,18 +8169,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_user_preferences"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_user_preferences",
+        "column": "user_id",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live per-placement-user notification preferences. vNext adds explicit college scope and normalizes faculty identity to canonical user.",
+      "tenantKey": "placement_tpo_user_preferences.college_id added explicitly in vNext",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_USER_PREFS-02",
@@ -7248,18 +8204,29 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_user_preferences"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_user_preferences",
+        "column": "preferences",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live per-placement-user notification preferences. vNext adds explicit college scope and normalizes faculty identity to canonical user.",
+      "tenantKey": "placement_tpo_user_preferences.college_id added explicitly in vNext",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_USER_PREFS-03",
@@ -7272,18 +8239,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_tpo_user_preferences"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_user_preferences",
+        "column": "updated_at",
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+      },
+      "semanticDefinition": "Live per-placement-user notification preferences. vNext adds explicit college scope and normalizes faculty identity to canonical user.",
+      "tenantKey": "placement_tpo_user_preferences.college_id added explicitly in vNext",
+      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/db/schema/tpo-collaboration.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     }
   ],
   "archiveStatus": "SUPERSEDED_SOURCE_REVIEW_ONLY",
@@ -7292,9 +8270,17 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "V162 college policy/privacy 14 + active recruiter CRM 38",
-    "result": "52 source-to-staged mappings reviewed; 0 runtime/semantic verified",
+    "scope": "DB09 collaboration 86 fields: messages, share, settings/prefs/views, student/team notes, recruiter-private notes/read-through",
+    "result": "86 reviewed: 79 MAPPED, 7 BLOCKED; cumulative 138/279 reviewed, 0 runtime/workflow verified",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
-    "statusVocabularyNote": "MAPPED means source-to-target proposal reviewed; it does not mean implemented, DB-tested, or workflow-verified."
+    "blockerKeys": [
+      "tpo_message.sender_type",
+      "tpo_share_event.action",
+      "tpo_saved_view.scope",
+      "tpo_college_settings.job_types_json",
+      "tpo_college_settings.outcome_labels_json",
+      "tpo_college_settings.recruiter_access_months",
+      "tpo_college_settings.recruiter_drive_needs_approval"
+    ]
   }
 }
