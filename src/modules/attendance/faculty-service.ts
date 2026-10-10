@@ -6,20 +6,15 @@ import {
   eq,
   inArray,
   isNull,
-  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  academicPeriods,
   attendancePolicies,
   attendanceRecords,
   attendanceSessions,
   collegeMemberships,
-  courseOfferings,
-  courseSectionDeliveries,
   courseTeachingAssignments,
-  courses,
   electiveOfferings,
   electiveSlots,
   learnerProgramEnrollments,
@@ -30,7 +25,6 @@ import {
   sectionEnrollments,
   sectionScheduleEventCourses,
   sectionScheduleEvents,
-  sections,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
