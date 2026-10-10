@@ -12,13 +12,13 @@
     "DB-007"
   ],
   "checkpoint": {
-    "checkpointKind": "DB09_279_FIELDS_REVIEWED_34_ACTIVE_UNMAPPED_LEGACY_0_DB_VERIFIED",
+    "checkpointKind": "DB09_279_SOURCE_REVIEWED_CRM_REPAIR_V193_PRODUCER_FIXED_SCHEDULING_STAGED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "c196248ebf5af11bbb0fba07ee1eb5cc3705397a",
-    "lastWorkerMergedSha": "9be61c40b97199f89db3d92524167e2cccf05d12",
+    "observedMainSha": "df8a18631ad930d82bb85f2848aea0ec43db0eea",
+    "lastWorkerMergedSha": "ac494434fb829ed4aa5bc604e49169bd1bf7d56d",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-012 source review evidence for 279 of 279 historical candidates, but ZERO semantic/DB-verified fields. Active legacy source readers/writers confirmed for 5 drive_group + 25 round_slot/round_assignment/reschedule + 4 recruiter policy fields. 81 lack demonstrated target columns. Fixed corrupted tpo-crm.ts (62c5f1c). Drafted five separate SQL integration candidates; all unregistered/unexecuted. Static tests authored; GitHub CI job verify fails before steps, 0 test executions."
+    "summary": "DB-012 IN_PROGRESS; 279/279 candidate field source annotations, 0 semantic/runtime verified. Fixed corrupted tpo-crm schema, final V193 RECRUITER messaging actor mismatch; source checks passed. Staged two cross-college FK draft migrations and V190 outcome settings. Round scheduling source audit and candidate SQL staged; concurrent slot capacity still unimplemented. PostgreSQL/CI runtime and global phase gates remain blocked."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -48,7 +48,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Keep DATABASE phase. Resume DB-012 with zero DB parity claims; test registered migration once Chat 1/runner available, reconcile DB08/10 dependencies and final V193 actor values. Examine remaining 81 source-equivalence gaps and execute tenant/scheduling concurrency tests before COMPLETE.",
+  "nextAction": "Continue DB-012: resolve remaining 81 no-target source field candidates and verified producer/consumer paths; coordinate Chat1 DB migrations, DB08 job counts-as-placed, DB10 notifications, and run actual TypeScript/PG/tenant/overbooking witnesses before DONE_VERIFIED.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -87,7 +87,12 @@
     "https://github.com/42Students/lms-vnext/actions/runs/38085854862",
     "https://github.com/42Students/lms-vnext/commit/65b9e07ca67d4ff92dbd8f27c16af281205f9de5",
     "https://github.com/42Students/lms-vnext/commit/4d39eea7152103513f88930dd18758fb6a181ee8",
-    "https://github.com/42Students/lms-vnext/commit/9be61c40b97199f89db3d92524167e2cccf05d12"
+    "https://github.com/42Students/lms-vnext/commit/9be61c40b97199f89db3d92524167e2cccf05d12",
+    "https://github.com/42Students/lms-vnext/commit/13a977276c71d78de1ff249ead5aa0dbf3c8a96e",
+    "https://github.com/42Students/lms-vnext/commit/e62c1e1c0d2157da2ae793cc6ce5ba194f3e230f",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db09-chat03-tenant-integrity-review.md",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db09-chat03-round-scheduling-audit.md",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/sql/db09-job-outcome-settings-candidate.sql"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
