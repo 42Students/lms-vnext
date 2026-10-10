@@ -3,6 +3,7 @@ import {
   countVerifiedExternalPlacements,
   externalOfferAnnualCtcInr,
   isVerifiedExternalPlacement,
+  nextExternalOfferStatus,
   type ExternalOfferReview,
 } from "@/modules/placements/external-offer-policy";
 
@@ -44,6 +45,29 @@ describe("DB08-C independent verified off-campus placement", () => {
     expect(externalOfferAnnualCtcInr({ ...verified, ctcLpa: null })).toBeNull();
     for (const malformed of ["NaN", "-1", "1.234", "1e6", "Infinity", " 1.00", "abc"]) {
       expect(externalOfferAnnualCtcInr({ ...verified, ctcLpa: malformed })).toBeNull();
+    }
+  });
+});
+
+describe("DB08-C placement-cell external offer review transitions", () => {
+  it("allows only submission to a final review or verified offer revocation", () => {
+    expect(nextExternalOfferStatus("SUBMITTED", "VERIFY")).toBe("VERIFIED");
+    expect(nextExternalOfferStatus("SUBMITTED", "REJECT")).toBe("REJECTED");
+    expect(nextExternalOfferStatus("VERIFIED", "REVOKE")).toBe("REVOKED");
+  });
+
+  it("denies reversing rejection, renewing revoked salary and skipping review", () => {
+    for (const [status, action] of [
+      ["SUBMITTED", "REVOKE"],
+      ["VERIFIED", "VERIFY"],
+      ["VERIFIED", "REJECT"],
+      ["REJECTED", "VERIFY"],
+      ["REJECTED", "REVOKE"],
+      ["REVOKED", "VERIFY"],
+      ["REVOKED", "REJECT"],
+    ] as const) {
+      expect(() => nextExternalOfferStatus(status, action))
+        .toThrow("DB08_EXTERNAL_OFFER_INVALID_TRANSITION");
     }
   });
 });
