@@ -180,6 +180,11 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_program_term_scope();
 -- ---------------------------------------------------------------------------
 -- 1c) Cohort/class CRUD state that is not equivalent to college-wide periods
 -- ---------------------------------------------------------------------------
+-- Legacy batch status is ACTIVE | INACTIVE | COMPLETED and INACTIVE is editable/reversible.
+-- ARCHIVED is a separate vNext terminal/storage concern and cannot substitute for INACTIVE.
+ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE';
+
+
 -- Legacy batch dates are optional, independently editable lifecycle metadata. Period FKs
 -- remain the scheduling/calendar anchors, but cannot reproduce arbitrary batch-specific dates.
 ALTER TABLE cohorts
@@ -645,7 +650,9 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 -- 3. Keep program_term_courses.display_order 1-based as the active legacy service does; do not add
 --    a uniqueness constraint until reorder concurrency has executed acceptance evidence.
 -- 4. Verify direct SQL cannot create cross-college term/course/period/hall/faculty-association links.
--- 5. Verify cohort start/end dates remain independently editable and ordered; verify legacy
+-- 5. Verify ACTIVE/INACTIVE/COMPLETED compatibility transitions (including re-activation from
+--    INACTIVE) while preserving vNext PLANNED/ARCHIVED semantics; verify cohort start/end dates
+--    remain independently editable and ordered; verify legacy
 --    class min/max/description round-trip with min >= 0, max 1..500 and min <= max.
 -- 6. Verify every offering has stable program-term identity; CORE course/term mismatches fail
 --    while term-bound ELECTIVE offerings remain supported.
