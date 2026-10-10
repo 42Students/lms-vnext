@@ -13,6 +13,7 @@ import {
   courseOfferings,
   courseSectionDeliveries,
   courseTeachingAssignments,
+  departments,
   courses,
   sections,
 } from "@/db/schema";
@@ -126,6 +127,13 @@ export async function listFacultyCourseDeliveries(
       eq(
         courses.id,
         courseOfferings.courseId,
+      ),
+    )
+    .innerJoin(
+      departments,
+      and(
+        eq(departments.id, courses.departmentId),
+        eq(departments.collegeId, membership.collegeId),
       ),
     )
     .innerJoin(
