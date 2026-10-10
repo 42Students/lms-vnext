@@ -148,7 +148,8 @@ BEGIN
     JOIN programs p ON p.id = c.program_id
     JOIN departments d ON d.id = p.department_id
    WHERE c.id = NEW.cohort_id
-   FOR UPDATE OF c;
+   FOR UPDATE OF c
+   FOR SHARE OF p;
 
   IF max_terms IS NULL OR cohort_college IS NULL THEN
     RAISE EXCEPTION 'Unknown cohort/program scope' USING ERRCODE='23503';
@@ -285,6 +286,34 @@ CREATE TRIGGER db02_cohort_progression_initialize
 AFTER INSERT ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_initialize_cohort_progression_state();
 
+-- A program cannot shrink below an existing term or promoted cohort.
+-- Program term inserts and cohort promotion also lock the program row FOR SHARE,
+-- serializing concurrent duration reduction with active academic writes.
+CREATE FUNCTION db02_guard_program_duration_reduction()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NEW.duration_terms < OLD.duration_terms THEN
+    IF EXISTS (
+      SELECT 1 FROM program_terms pt
+       WHERE pt.program_id = NEW.id AND pt.term_number > NEW.duration_terms
+    ) OR EXISTS (
+      SELECT 1 FROM cohort_progression_state cps
+      JOIN cohorts c ON c.id = cps.cohort_id
+       WHERE c.program_id = NEW.id
+         AND cps.current_term_number > NEW.duration_terms
+    ) THEN
+      RAISE EXCEPTION 'Program duration cannot exclude configured terms or promoted cohorts'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER db02_program_duration_reduction_guard
+BEFORE UPDATE OF duration_terms ON programs
+FOR EACH ROW EXECUTE FUNCTION db02_guard_program_duration_reduction();
+
 -- ---------------------------------------------------------------------------
 -- 3) Lecture halls as tenant-owned resources
 -- ---------------------------------------------------------------------------
@@ -367,9 +396,17 @@ BEGIN
   IF NEW.faculty_membership_id IS NOT NULL THEN
     SELECT college_id INTO faculty_college
       FROM college_memberships
-     WHERE id = NEW.faculty_membership_id;
+     WHERE id = NEW.faculty_membership_id AND status = 'ACTIVE';
     IF faculty_college IS NULL THEN
-      RAISE EXCEPTION 'Unknown faculty membership' USING ERRCODE = '23503';
+      RAISE EXCEPTION 'Unknown or inactive faculty membership' USING ERRCODE = '23503';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM membership_roles mr
+       WHERE mr.membership_id = NEW.faculty_membership_id
+         AND mr.role = 'FACULTY'
+    ) THEN
+      RAISE EXCEPTION 'Scheduled instructor must have the FACULTY role'
+        USING ERRCODE = '23514';
     END IF;
     IF faculty_college <> section_college THEN
       RAISE EXCEPTION 'Schedule faculty must belong to the section college'
