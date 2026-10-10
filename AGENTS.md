@@ -1,5 +1,10 @@
 # LMS vNext engineering rules
 
+## Six-chat shared-phase coordination (2026-10-11)
+
+When using six parallel ChatGPT chats, follow `docs/coordination/six-chat-operating-system.md`, `docs/coordination/phase-state.json` and `docs/coordination/work-queue.json`. The **entire LMS shares one current phase**: DATABASE → API → UI → RELEASE. All chats may claim non-overlapping temporary work packages across all domains within that same phase; no permanent per-domain chat owner exists. Chats 1–6 are worker IDs, and issue #21–#26 are worker journals. Previous domain-scoped assignment documents are historical, not current work authority. Chat 1 remains the sole shared Drizzle numbered migration/schema-barrel/CI integrator as a collision-prevention exception, not a permanent domain owner. A worker with no tasks claims the next eligible current-phase task; global phase transition needs complete executed gate evidence, never personal completion.
+
+
 This repository is optimized for a solo developer working heavily with AI coding agents.
 
 ## Non-negotiable architecture rules
