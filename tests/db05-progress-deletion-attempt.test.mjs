@@ -66,3 +66,38 @@ test("readiness manifest blocks progress tombstone until consumer and PostgreSQL
   assert.ok(manifest.gates.some((gate) =>
     gate.id === "PROGRESS_SOFT_DELETE_TENANT_RACE_NEGATIVE" && gate.status === "NOT_RUN"));
 });
+
+test("separate unregistered progress guard checks content, offering and membership college", () => {
+  const guard = read("../scripts/sql/db05-progress-same-college.draft.sql");
+  assert.match(guard, /UNREGISTERED/);
+  for (const fragment of [
+    "lesson_contents",
+    "course_lessons",
+    "course_learning_paths",
+    "course_offerings",
+    "academic_periods",
+    "courses",
+    "departments",
+    "college_memberships",
+    "course_section_deliveries",
+    "sections",
+    "content_period_college_id IS DISTINCT FROM course_department_college_id",
+    "content_period_college_id IS DISTINCT FROM author_membership_college_id",
+    "delivery_offering_id IS DISTINCT FROM content_offering_id",
+    "delivery_section_period_college_id IS DISTINCT FROM content_period_college_id",
+    "BEFORE INSERT OR UPDATE OF membership_id, lesson_content_id",
+    "23514",
+  ]) {
+    assert.ok(guard.includes(fragment), fragment);
+  }
+  assert.doesNotMatch(guard, /ALTER TABLE learner_content_progress/);
+  assert.match(contract, /child-row guard/);
+  assert.match(contract, /upstream reparenting/);
+  const manifest = JSON.parse(read("../docs/planning/db05-migration-readiness-manifest.json"));
+  const progress = manifest.artifacts.find((artifact) => artifact.id === "db05-version-progress");
+  assert.equal(progress.companionSameCollegeDraft.path, "scripts/sql/db05-progress-same-college.draft.sql");
+  assert.equal(progress.companionSameCollegeDraft.registered, false);
+  assert.equal(progress.companionSameCollegeDraft.postgresExecuted, false);
+  assert.ok(manifest.gates.some((gate) => gate.id === "PROGRESS_CONTENT_MEMBERSHIP_SAME_COLLEGE_GUARD" && gate.status === "BLOCKED"));
+  assert.ok(manifest.gates.some((gate) => gate.id === "PROGRESS_UPSTREAM_REPARENT_INTEGRITY" && gate.status === "NOT_RUN"));
+});
