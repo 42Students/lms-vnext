@@ -8,7 +8,9 @@ export type ProjectParticipantListQuery = {
     | "ACTIVE"
     | "COMPLETED"
     | "ARCHIVED";
-  attention?: "MENTOR_REVIEW";
+  attention?:
+    | "MENTOR_REVIEW"
+    | "LEARNER_ACTION";
   page?: number;
   pageSize?: number;
 };
@@ -25,10 +27,12 @@ export function ProjectParticipantListControls({
   basePath,
   query,
   mentor,
+  learner,
 }: {
   basePath: string;
   query: ProjectParticipantListQuery;
   mentor?: boolean;
+  learner?: boolean;
 }) {
   return (
     <form
@@ -68,7 +72,7 @@ export function ProjectParticipantListControls({
         </select>
       </label>
 
-      {mentor ? (
+      {mentor || learner ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Attention
           <select
@@ -81,9 +85,16 @@ export function ProjectParticipantListControls({
             <option value="">
               All projects
             </option>
-            <option value="MENTOR_REVIEW">
-              Needs my review
-            </option>
+            {mentor ? (
+              <option value="MENTOR_REVIEW">
+                Needs my review
+              </option>
+            ) : null}
+            {learner ? (
+              <option value="LEARNER_ACTION">
+                Needs my action
+              </option>
+            ) : null}
           </select>
         </label>
       ) : null}
