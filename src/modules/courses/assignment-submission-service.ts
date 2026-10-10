@@ -7,7 +7,9 @@ import {
 import { getDb } from "@/db/client";
 import {
   assignmentSubmissions,
+  courseAssignments,
   collegeMemberships,
+  membershipRoles,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -183,26 +185,72 @@ export async function submitCourseAssignment(
   // submission gate. A published assignment remains submittable until its
   // lifecycle is explicitly changed.
   try {
-    const [created] = await getDb()
-      .insert(assignmentSubmissions)
-      .values({
-        assignmentId,
-        deliveryId: input.deliveryId,
-        membershipId: membership.id,
-        submissionType:
-          input.submissionType,
-        textContent:
-          input.submissionType === "TEXT"
+    return await getDb().transaction(async (tx) => {
+      // Hold a shared lock until the submission commits: a faculty ARCHIVE
+      // update waits, while different learners can submit concurrently.
+      const [currentAssignment] = await tx
+        .select({
+          status: courseAssignments.status,
+          deliveryId: courseAssignments.deliveryId,
+        })
+        .from(courseAssignments)
+        .where(eq(courseAssignments.id, assignmentId))
+        .for("share")
+        .limit(1);
+      if (!currentAssignment || currentAssignment.status !== "PUBLISHED") {
+        throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
+      }
+      if (currentAssignment.deliveryId &&
+          currentAssignment.deliveryId !== input.deliveryId) {
+        throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
+      }
+
+      const [persistedMembership] = await tx
+        .select({
+          userId: collegeMemberships.userId,
+          collegeId: collegeMemberships.collegeId,
+          status: collegeMemberships.status,
+        })
+        .from(collegeMemberships)
+        .where(eq(collegeMemberships.id, membership.id))
+        .for("share")
+        .limit(1);
+      const [learnerRole] = await tx
+        .select({ id: membershipRoles.id })
+        .from(membershipRoles)
+        .where(and(
+          eq(membershipRoles.membershipId, membership.id),
+          eq(membershipRoles.role, "LEARNER"),
+        ))
+        .for("share")
+        .limit(1);
+      if (!persistedMembership ||
+          !learnerRole ||
+          persistedMembership.userId !== context.user.id ||
+          persistedMembership.collegeId !== membership.collegeId ||
+          persistedMembership.status !== "ACTIVE" ||
+          context.user.platformStatus !== "ACTIVE") {
+        throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+      }
+
+      const [created] = await tx
+        .insert(assignmentSubmissions)
+        .values({
+          assignmentId,
+          deliveryId: input.deliveryId,
+          membershipId: membership.id,
+          submissionType: input.submissionType,
+          textContent: input.submissionType === "TEXT"
             ? input.textContent
             : null,
-        submissionUrl:
-          input.submissionType === "LINK"
+          submissionUrl: input.submissionType === "LINK"
             ? input.submissionUrl
             : null,
-      })
-      .returning();
+        })
+        .returning();
 
-    return toLearnerSubmission(created);
+      return toLearnerSubmission(created);
+    });
   } catch (error) {
     if (
       postgresConstraintName(error) ===
