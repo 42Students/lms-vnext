@@ -18,7 +18,6 @@ import {
   integer,
   pgTable,
   timestamp,
-  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -64,7 +63,6 @@ export const identityAuthAttemptsStaged = pgTable(
       table.createdAt,
     ),
     index("identity_auth_attempts_expiry_idx").on(table.expiresAt),
-    uniqueIndex("identity_auth_attempts_id_uq").on(table.id),
     check(
       "identity_auth_attempts_expiry_ck",
       sql`${table.expiresAt} > ${table.createdAt}`,
