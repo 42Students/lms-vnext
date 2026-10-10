@@ -59,3 +59,37 @@ test("DB09 fields cannot claim implemented/verified without a target and evidenc
       assert.ok(r.semanticDefinition && r.constraintAndLifecycleEvidence, key(r) + " lacks signed-off exception");
   }
 });
+
+
+test("DB09 canonical disposition review closes every source field without claiming runtime verification", () => {
+  const counts = audit.records.reduce((acc, row) => {
+    acc[row.status] = (acc[row.status] ?? 0) + 1;
+    return acc;
+  }, {});
+  assert.equal(audit.reviewedFieldCount, 279);
+  assert.equal(audit.verifiedFieldCount, 0);
+  assert.equal(counts.UNMAPPED ?? 0, 0);
+  assert.equal(counts.MAPPED, 192);
+  assert.equal(counts.REDESIGNED, 65);
+  assert.equal(counts.BLOCKED, 22);
+  assert.equal(counts.WORKFLOW_VERIFIED ?? 0, 0);
+  assert.equal(counts.DB_TESTED ?? 0, 0);
+  assert.ok(audit.records.every(row =>
+    row.status === "BLOCKED" ||
+    (row.semanticDefinition && row.constraintAndLifecycleEvidence)
+  ));
+});
+
+test("DB09 unresolved blockers stay explicit rather than masquerading as mappings", () => {
+  const blocked = new Set(
+    audit.records.filter(row => row.status === "BLOCKED").map(key),
+  );
+  assert.ok(blocked.has("tpo_message.sender_type"));
+  assert.ok(blocked.has("industry_company.export_columns_json"));
+  for (const row of audit.records.filter(r => r.legacyTable === "notification_outbox")) {
+    assert.equal(row.status, "BLOCKED");
+  }
+  for (const row of audit.records.filter(r => r.legacyTable === "prep_assignment")) {
+    assert.equal(row.status, "BLOCKED");
+  }
+});
