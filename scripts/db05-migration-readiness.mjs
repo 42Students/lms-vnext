@@ -28,7 +28,7 @@ if (!task) block("DB-008 missing from shared queue.");
 else if (!["IN_PROGRESS", "COMPLETED", "DONE_VERIFIED"].includes(task.status)) {
   block("DB-008 unexpected status: " + task.status);
 }
-if (manifest.artifacts.length !== 6) block("Expected six staged DB05 drafts.");
+if (manifest.artifacts.length !== 7) block("Expected seven staged DB05 drafts.");
 const seen = new Set();
 for (const item of manifest.artifacts) {
   if (seen.has(item.path)) block("Repeated draft path: " + item.path);
