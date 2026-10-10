@@ -7,7 +7,7 @@
   "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "initialVnextMainSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
   "sourceOnly": true,
-  "reviewedFieldCount": 188,
+  "reviewedFieldCount": 279,
   "verifiedFieldCount": 0,
   "totalFieldCount": 279,
   "records": [
@@ -523,17 +523,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "id",
+        "status": "NORMALIZED_GLOBAL_COMPANY"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-02",
@@ -547,17 +558,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "name",
+        "status": "NORMALIZED_GLOBAL_COMPANY"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-03",
@@ -571,17 +593,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "logo_object_path",
+        "status": "URL_TO_OBJECT_PATH_REDESIGN"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-04",
@@ -595,17 +628,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "website_url",
+        "status": "NORMALIZED_GLOBAL_COMPANY"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-05",
@@ -619,17 +663,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "industry (staged enrichment)",
+        "status": "REQUIRED_COMPANY_MASTER_ENRICHMENT"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-06",
@@ -643,17 +698,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "description (staged enrichment)",
+        "status": "REQUIRED_COMPANY_MASTER_ENRICHMENT"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-07",
@@ -667,19 +733,31 @@
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
       "candidateVnextTables": [
-        "placement_companies"
+        "placement_companies",
+        "placement_company_relationships"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_company_relationships",
+        "column": "contact_person_name (staged relationship memory)",
+        "status": "COLLEGE_LOCAL_MEMORY_REDESIGN"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-08",
@@ -693,19 +771,31 @@
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
       "candidateVnextTables": [
-        "placement_companies"
+        "placement_companies",
+        "placement_company_relationships"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_company_relationships",
+        "column": "contact_email_norm (staged relationship memory)",
+        "status": "COLLEGE_LOCAL_MEMORY_REDESIGN"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-09",
@@ -719,19 +809,31 @@
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
       "candidateVnextTables": [
-        "placement_companies"
+        "placement_companies",
+        "placement_company_relationships"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_company_relationships",
+        "column": "contact_phone_norm (staged relationship memory)",
+        "status": "COLLEGE_LOCAL_MEMORY_REDESIGN"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-10",
@@ -743,19 +845,31 @@
       "sourceDefault": null,
       "sourceRiskFlags": [],
       "candidateVnextTables": [
-        "placement_companies"
+        "placement_companies",
+        "placement_company_relationships"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_company_relationships",
+        "column": "internal_notes (staged relationship memory)",
+        "status": "COLLEGE_PRIVATE_MEMORY_REDESIGN"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-11",
@@ -769,19 +883,31 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "candidateVnextTables": [
-        "placement_companies"
+        "placement_companies",
+        "placement_company_relationships"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_company_relationships",
+        "column": "college_id",
+        "status": "GLOBAL_MASTER_PLUS_COLLEGE_RELATIONSHIP"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-12",
@@ -795,19 +921,31 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "candidateVnextTables": [
-        "placement_companies"
+        "placement_companies",
+        "placement_company_relationships"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_company_relationships",
+        "column": "college_id -> colleges.organization_id",
+        "status": "DERIVED_ORG_SCOPE"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-13",
@@ -823,17 +961,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "created_at",
+        "status": "NORMALIZED_LIFECYCLE"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-14",
@@ -849,17 +998,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "updated_at",
+        "status": "NORMALIZED_LIFECYCLE"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-15",
@@ -873,17 +1033,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "archived_at/status",
+        "status": "SOFT_DELETE_REDESIGN"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-16",
@@ -897,17 +1068,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "unique normalized-name index",
+        "status": "DERIVED_INDEX_NOT_DATA_COLUMN"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-COMPANY-17",
@@ -921,17 +1103,28 @@
       "candidateVnextTables": [
         "placement_companies"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "partial active normalized-name index",
+        "status": "DERIVED_INDEX_NOT_DATA_COLUMN"
+      },
+      "semanticDefinition": "Active college-facing company memory is normalized into a global company master plus college relationship/private relationship memory; no legacy company table is retired.",
+      "tenantKey": "placement_company_relationships.college_id; global company master has no tenant ownership by itself",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/Company.java",
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/main/java/com/_42students/lms/repository/CompanyRepository.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Exact prod CompanyService proves active CRUD, shared-org legacy reads, restricted shared-row mutations, linked-job rename propagation and active-name dedupe. vNext split is intentional but rich relationship memory/index semantics still need integration tests.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-DRIVE_GROUP-01",
@@ -944,18 +1137,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_drive_groups"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_drive_groups",
+        "column": "id",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
+      },
+      "semanticDefinition": "Active multi-college recruiter drive group: one recruiter/company/shared-form snapshot links independent per-college jobs without granting cross-college visibility.",
+      "tenantKey": "Global recruiter-owned group; every child placement_job remains college-scoped and grant-checked",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "docs/planning/sql/db09-multicollege-drive-group-candidate.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Staged SQL exists and source behavior is explicit. It is not registered/executed; child-job uniqueness, grant checks, group-form privacy and concurrency still require witnesses.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-DRIVE_GROUP-02",
@@ -968,18 +1174,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_drive_groups"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_drive_groups",
+        "column": "company_id",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
+      },
+      "semanticDefinition": "Active multi-college recruiter drive group: one recruiter/company/shared-form snapshot links independent per-college jobs without granting cross-college visibility.",
+      "tenantKey": "Global recruiter-owned group; every child placement_job remains college-scoped and grant-checked",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "docs/planning/sql/db09-multicollege-drive-group-candidate.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Staged SQL exists and source behavior is explicit. It is not registered/executed; child-job uniqueness, grant checks, group-form privacy and concurrency still require witnesses.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-DRIVE_GROUP-03",
@@ -992,18 +1211,31 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_drive_groups"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_drive_groups",
+        "column": "shared_form",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
+      },
+      "semanticDefinition": "Active multi-college recruiter drive group: one recruiter/company/shared-form snapshot links independent per-college jobs without granting cross-college visibility.",
+      "tenantKey": "Global recruiter-owned group; every child placement_job remains college-scoped and grant-checked",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "docs/planning/sql/db09-multicollege-drive-group-candidate.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Staged SQL exists and source behavior is explicit. It is not registered/executed; child-job uniqueness, grant checks, group-form privacy and concurrency still require witnesses.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-DRIVE_GROUP-04",
@@ -1016,18 +1248,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_drive_groups"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_drive_groups",
+        "column": "created_at",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
+      },
+      "semanticDefinition": "Active multi-college recruiter drive group: one recruiter/company/shared-form snapshot links independent per-college jobs without granting cross-college visibility.",
+      "tenantKey": "Global recruiter-owned group; every child placement_job remains college-scoped and grant-checked",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "docs/planning/sql/db09-multicollege-drive-group-candidate.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Staged SQL exists and source behavior is explicit. It is not registered/executed; child-job uniqueness, grant checks, group-form privacy and concurrency still require witnesses.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-DRIVE_GROUP-05",
@@ -1040,18 +1285,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_recruiter_drive_groups"
+      ],
+      "mappingTarget": {
+        "table": "placement_recruiter_drive_groups",
+        "column": "recruiter_user_id",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
+      },
+      "semanticDefinition": "Active multi-college recruiter drive group: one recruiter/company/shared-form snapshot links independent per-college jobs without granting cross-college visibility.",
+      "tenantKey": "Global recruiter-owned group; every child placement_job remains college-scoped and grant-checked",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "docs/planning/sql/db09-multicollege-drive-group-candidate.sql"
+      ],
+      "constraintAndLifecycleEvidence": "Staged SQL exists and source behavior is explicit. It is not registered/executed; child-job uniqueness, grant checks, group-form privacy and concurrency still require witnesses.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-EMAIL_SUPPRESSION-01",
@@ -1064,18 +1322,31 @@
       "sourceRiskFlags": [
         "POTENTIAL_PERSONAL_OR_SECRET_DATA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_suppressions"
+      ],
+      "mappingTarget": {
+        "table": "outbound_suppressions",
+        "column": "recipient_hash",
+        "status": "DB10_PRIVACY_REDESIGN"
+      },
+      "semanticDefinition": "Legacy global plaintext normalized-email suppression is intentionally redesigned to secret-derived recipient hashes; unsubscribe scope must remain at least as protective as the source.",
+      "tenantKey": "DB10 suppression scope is organization/channel keyed; global-vs-tenant unsubscribe semantics require explicit reconciliation",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/EmailSuppressionEntity.java",
+        "src/main/java/com/_42students/lms/repository/tpo/EmailSuppressionRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Privacy redesign avoids plaintext email. Current DB10 draft is unregistered and its tenant/channel scope is not yet proven equivalent to legacy global suppression.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-EMAIL_SUPPRESSION-02",
@@ -1086,18 +1357,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_suppressions"
+      ],
+      "mappingTarget": {
+        "table": "outbound_suppressions",
+        "column": "reason",
+        "status": "DB10_PRIVACY_REDESIGN"
+      },
+      "semanticDefinition": "Legacy global plaintext normalized-email suppression is intentionally redesigned to secret-derived recipient hashes; unsubscribe scope must remain at least as protective as the source.",
+      "tenantKey": "DB10 suppression scope is organization/channel keyed; global-vs-tenant unsubscribe semantics require explicit reconciliation",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/EmailSuppressionEntity.java",
+        "src/main/java/com/_42students/lms/repository/tpo/EmailSuppressionRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Privacy redesign avoids plaintext email. Current DB10 draft is unregistered and its tenant/channel scope is not yet proven equivalent to legacy global suppression.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-EMAIL_SUPPRESSION-03",
@@ -1110,18 +1394,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_suppressions"
+      ],
+      "mappingTarget": {
+        "table": "outbound_suppressions",
+        "column": "created_at",
+        "status": "DB10_PRIVACY_REDESIGN"
+      },
+      "semanticDefinition": "Legacy global plaintext normalized-email suppression is intentionally redesigned to secret-derived recipient hashes; unsubscribe scope must remain at least as protective as the source.",
+      "tenantKey": "DB10 suppression scope is organization/channel keyed; global-vs-tenant unsubscribe semantics require explicit reconciliation",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/EmailSuppressionEntity.java",
+        "src/main/java/com/_42students/lms/repository/tpo/EmailSuppressionRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Privacy redesign avoids plaintext email. Current DB10 draft is unregistered and its tenant/channel scope is not yet proven equivalent to legacy global suppression.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-FOLLOW_UP-01",
@@ -1391,18 +1688,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "id",
+        "status": "UNIFIED_GLOBAL_COMPANY"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-02",
@@ -1413,18 +1723,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "name",
+        "status": "UNIFIED_GLOBAL_COMPANY"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-03",
@@ -1435,18 +1758,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "website_url",
+        "status": "UNIFIED_GLOBAL_COMPANY"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-04",
@@ -1457,18 +1793,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "industry (staged enrichment)",
+        "status": "REQUIRED_COMPANY_MASTER_ENRICHMENT"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-05",
@@ -1479,18 +1828,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "logo_object_path",
+        "status": "URL_TO_OBJECT_PATH_REDESIGN"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-06",
@@ -1503,18 +1865,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "created_by_user_id",
+        "status": "CANONICAL_USER_PROVENANCE"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-07",
@@ -1525,18 +1900,31 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "actor membership/role provenance",
+        "status": "POLYMORPHIC_ACTOR_TYPE_REMOVED"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-08",
@@ -1549,18 +1937,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "created_at",
+        "status": "UNIFIED_GLOBAL_COMPANY"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-09",
@@ -1573,18 +1974,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "updated_at",
+        "status": "UNIFIED_GLOBAL_COMPANY"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-10",
@@ -1595,18 +2009,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "FALSE",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "archived_at/status",
+        "status": "SOFT_DELETE_REDESIGN"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-11",
@@ -1617,18 +2044,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "0",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_companies"
+      ],
+      "mappingTarget": {
+        "table": "placement_companies",
+        "column": "optimistic concurrency policy (staged)",
+        "status": "CONCURRENCY_SEMANTIC_REQUIRED"
+      },
+      "semanticDefinition": "Active recruiter-company identity is unified with placement_companies; recruiter accounts point to the global master rather than a second industry_company table.",
+      "tenantKey": "Global company master; college access is mediated by recruiter grants/relationships",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java",
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "The duplicate company type is normalized, but creator provenance, soft-delete and optimistic-concurrency behavior require exact service/database witnesses.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-INDUSTRY_COMPANY-12",
@@ -1641,18 +2081,30 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_company_relationships / placement user preferences"
+      ],
+      "mappingTarget": {
+        "table": "placement_company_relationships / placement user preferences",
+        "column": "export_columns (owner undecided)",
+        "status": "NO_CANONICAL_OWNER_YET"
+      },
+      "semanticDefinition": "V162 per-company export-column preference is active source state, but vNext has no agreed owner: global company, college relationship or per-user TPO preference.",
+      "tenantKey": "Must be tenant-safe if moved off the global company master",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/IndustryCompany.java",
+        "src/main/resources/db/migration/V162__tpo_v1_settings.sql"
+      ],
+      "consumerPaths": [
+        "src/main/java/com/_42students/lms/service/recruiter/RecruiterPlanDriveService.java",
+        "src/db/schema/placements.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Do not place a college/user-specific export preference on a global company row without audience proof. Requires explicit owner decision and projection tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-JOB_ROUND-01",
@@ -2309,18 +2761,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "outbound_messages.id / in_app_notifications.id",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-02",
@@ -2331,18 +2797,32 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "source event + template key/fanout policy",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-03",
@@ -2353,18 +2833,32 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "canonical target user/channel fanout",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-04",
@@ -2377,18 +2871,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "recipient hash or in_app user_id",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-05",
@@ -2399,18 +2907,32 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "outbound_messages.channel OR in_app notification",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-06",
@@ -2423,18 +2945,32 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "encrypted request material / event metadata",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-07",
@@ -2447,18 +2983,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "outbound_messages.not_before",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-08",
@@ -2469,18 +3019,32 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": "'PENDING'",
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "outbound delivery state + in-app existence/read state",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-09",
@@ -2491,18 +3055,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "MISSING cancellation group",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-10",
@@ -2515,18 +3093,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "claim lease fields",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-11",
@@ -2539,18 +3131,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "provider_accepted_at/delivered_at",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-12",
@@ -2561,18 +3167,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "last_safe_failure_code",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-NOTIFICATION_OUTBOX-13",
@@ -2585,18 +3205,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "outbound_messages + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "outbound_messages + in_app_notifications",
+        "column": "created_at",
+        "status": "DB10_EQUIVALENCE_BLOCKED"
+      },
+      "semanticDefinition": "Active placement notification outbox spans APP/EMAIL/SMS, arbitrary events, undo hold/cancel groups, digest scheduling and SKIP LOCKED dispatch; current DB10 external-delivery draft plus in-app notifications is not yet equivalent.",
+      "tenantKey": "DB10 org/college scope + per-user notification target; exact fanout tenant must derive from source event",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/NotificationOutboxEntry.java",
+        "src/main/java/com/_42students/lms/service/tpo/NotificationOutboxService.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/db10-outbound-messages.draft.ts",
+        "src/db/schema/activity.ts",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "Blocked until DB10 supports general placement event vocabulary, APP fanout, undo-group cancellation/idempotency, digest timing, final RECRUITER recipient code and executed sender/claim concurrency tests.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-PREP_ASSIGNMENT-01",
@@ -2609,18 +3243,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_prep_assignments (required staged design)"
+      ],
+      "mappingTarget": {
+        "table": "placement_prep_assignments (required staged design)",
+        "column": "id",
+        "status": "RESOURCE_IDENTITY_BLOCKED"
+      },
+      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
+      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
+        "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/courses.ts",
+        "src/db/schema/quizzes.ts",
+        "src/db/schema/assessments.ts"
+      ],
+      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-PREP_ASSIGNMENT-02",
@@ -2633,18 +3281,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_prep_assignments (required staged design)"
+      ],
+      "mappingTarget": {
+        "table": "placement_prep_assignments (required staged design)",
+        "column": "learner_id",
+        "status": "RESOURCE_IDENTITY_BLOCKED"
+      },
+      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
+      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
+        "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/courses.ts",
+        "src/db/schema/quizzes.ts",
+        "src/db/schema/assessments.ts"
+      ],
+      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-PREP_ASSIGNMENT-03",
@@ -2657,18 +3319,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_prep_assignments (required staged design)"
+      ],
+      "mappingTarget": {
+        "table": "placement_prep_assignments (required staged design)",
+        "column": "course_id",
+        "status": "RESOURCE_IDENTITY_BLOCKED"
+      },
+      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
+      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
+        "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/courses.ts",
+        "src/db/schema/quizzes.ts",
+        "src/db/schema/assessments.ts"
+      ],
+      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-PREP_ASSIGNMENT-04",
@@ -2681,18 +3357,32 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_prep_assignments (required staged design)"
+      ],
+      "mappingTarget": {
+        "table": "placement_prep_assignments (required staged design)",
+        "column": "assessment_id",
+        "status": "RESOURCE_IDENTITY_BLOCKED"
+      },
+      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
+      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
+        "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/courses.ts",
+        "src/db/schema/quizzes.ts",
+        "src/db/schema/assessments.ts"
+      ],
+      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-PREP_ASSIGNMENT-05",
@@ -2705,18 +3395,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_prep_assignments (required staged design)"
+      ],
+      "mappingTarget": {
+        "table": "placement_prep_assignments (required staged design)",
+        "column": "due_at",
+        "status": "RESOURCE_IDENTITY_BLOCKED"
+      },
+      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
+      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
+        "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/courses.ts",
+        "src/db/schema/quizzes.ts",
+        "src/db/schema/assessments.ts"
+      ],
+      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-PREP_ASSIGNMENT-06",
@@ -2727,18 +3431,32 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_prep_assignments (required staged design)"
+      ],
+      "mappingTarget": {
+        "table": "placement_prep_assignments (required staged design)",
+        "column": "assigned_by",
+        "status": "RESOURCE_IDENTITY_BLOCKED"
+      },
+      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
+      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
+        "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/courses.ts",
+        "src/db/schema/quizzes.ts",
+        "src/db/schema/assessments.ts"
+      ],
+      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-PREP_ASSIGNMENT-07",
@@ -2751,18 +3469,32 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "placement_prep_assignments (required staged design)"
+      ],
+      "mappingTarget": {
+        "table": "placement_prep_assignments (required staged design)",
+        "column": "created_at",
+        "status": "RESOURCE_IDENTITY_BLOCKED"
+      },
+      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
+      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
+        "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
+        "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/courses.ts",
+        "src/db/schema/quizzes.ts",
+        "src/db/schema/assessments.ts"
+      ],
+      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
+      "status": "BLOCKED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-RECRUITER_APPLICANT_NOTE-01",
@@ -5218,17 +5950,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "id",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-02",
@@ -5244,17 +5986,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "requested_by_user_id / learner membership derived from request owner",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-03",
@@ -5268,17 +6020,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "request_type",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-04",
@@ -5294,17 +6056,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "scope_key/job relation (redesign)",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-05",
@@ -5320,17 +6092,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "application_id",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-06",
@@ -5346,17 +6128,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "effect_payload",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-07",
@@ -5370,17 +6162,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "status",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-08",
@@ -5394,17 +6196,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "reason",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-09",
@@ -5418,17 +6230,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "decided_by_user_id",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-10",
@@ -5444,17 +6266,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "decided_at",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-11",
@@ -5468,17 +6300,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "decision_note",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-12",
@@ -5494,17 +6336,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "escalation policy/event (missing explicit stored target)",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-STUDENT_REQUEST-13",
@@ -5520,17 +6372,27 @@
       "candidateVnextTables": [
         "placement_learner_requests"
       ],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "mappingTarget": {
+        "table": "placement_learner_requests",
+        "column": "requested_at",
+        "status": "DB08_OWNED_REDESIGN"
+      },
+      "semanticDefinition": "Active unified learner-to-TPO request queue is owned by DB08 and normalized into typed learner requests with richer scope/effect metadata.",
+      "tenantKey": "placement_learner_requests application/job/college parent chain",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoRequestService.java",
+        "src/main/java/com/_42students/lms/model/tpo/StudentRequest.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/placements.ts",
+        "docs/planning/database-parity-db08-field-ledger.json"
+      ],
+      "constraintAndLifecycleEvidence": "DB08-owned redesign. Current application_id requirement may reject legacy request types not tied to an application, and legacy escalate_at has no direct stored target; these must be resolved before workflow verification.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-01",
@@ -5543,18 +6405,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "id",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-02",
@@ -5567,18 +6440,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "college_id",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-03",
@@ -5589,18 +6473,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "actor membership/role provenance",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-04",
@@ -5613,18 +6508,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "actor_user_id",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-05",
@@ -5635,18 +6541,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "event_type",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-06",
@@ -5657,18 +6574,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "subject_type",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-07",
@@ -5681,18 +6609,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "subject_id",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-08",
@@ -5703,18 +6642,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "summary/metadata",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_AUDIT_LOG-09",
@@ -5727,18 +6677,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events"
+      ],
+      "mappingTarget": {
+        "table": "activity_events",
+        "column": "occurred_at",
+        "status": "DB10_ACTIVITY_REDESIGN"
+      },
+      "semanticDefinition": "Active TPO audit trail is normalized to the shared immutable activity event stream with canonical user/membership actor provenance.",
+      "tenantKey": "activity_events.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Field meanings have a clear event-model redesign, but actor role/type reconstruction, append-only guarantees, query parity and DB10/activity runtime tests remain required.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL-01",
@@ -5751,18 +6712,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "activity_events + in_app_notifications",
+        "column": "source activity event id + per-user notification id",
+        "status": "SHARED_EVENT_PLUS_USER_FANOUT"
+      },
+      "semanticDefinition": "Active college placement bell is redesigned as one shared source event fanned out to independent per-user in-app notifications.",
+      "tenantKey": "shared activity college_id + recipient user authorization at fanout",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Redesign is valid only if each authorized team member receives independent read state, college/recruiter audiences are isolated, and the legacy shared read_at fallback/30-day unread policy has an explicit product decision.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL-02",
@@ -5775,18 +6747,29 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "activity_events + in_app_notifications",
+        "column": "activity_events.college_id",
+        "status": "SHARED_EVENT_PLUS_USER_FANOUT"
+      },
+      "semanticDefinition": "Active college placement bell is redesigned as one shared source event fanned out to independent per-user in-app notifications.",
+      "tenantKey": "shared activity college_id + recipient user authorization at fanout",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Redesign is valid only if each authorized team member receives independent read state, college/recruiter audiences are isolated, and the legacy shared read_at fallback/30-day unread policy has an explicit product decision.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL-03",
@@ -5797,18 +6780,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "activity_events + in_app_notifications",
+        "column": "activity_events.event_type",
+        "status": "SHARED_EVENT_PLUS_USER_FANOUT"
+      },
+      "semanticDefinition": "Active college placement bell is redesigned as one shared source event fanned out to independent per-user in-app notifications.",
+      "tenantKey": "shared activity college_id + recipient user authorization at fanout",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Redesign is valid only if each authorized team member receives independent read state, college/recruiter audiences are isolated, and the legacy shared read_at fallback/30-day unread policy has an explicit product decision.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL-04",
@@ -5819,18 +6813,29 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "activity_events + in_app_notifications",
+        "column": "in_app_notifications.title",
+        "status": "SHARED_EVENT_PLUS_USER_FANOUT"
+      },
+      "semanticDefinition": "Active college placement bell is redesigned as one shared source event fanned out to independent per-user in-app notifications.",
+      "tenantKey": "shared activity college_id + recipient user authorization at fanout",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Redesign is valid only if each authorized team member receives independent read state, college/recruiter audiences are isolated, and the legacy shared read_at fallback/30-day unread policy has an explicit product decision.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL-05",
@@ -5841,18 +6846,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "activity_events + in_app_notifications",
+        "column": "in_app_notifications.body",
+        "status": "SHARED_EVENT_PLUS_USER_FANOUT"
+      },
+      "semanticDefinition": "Active college placement bell is redesigned as one shared source event fanned out to independent per-user in-app notifications.",
+      "tenantKey": "shared activity college_id + recipient user authorization at fanout",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Redesign is valid only if each authorized team member receives independent read state, college/recruiter audiences are isolated, and the legacy shared read_at fallback/30-day unread policy has an explicit product decision.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL-06",
@@ -5863,18 +6879,29 @@
       "sourceNullable": "NULL_ALLOWED",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "activity_events + in_app_notifications",
+        "column": "in_app_notifications.action_href",
+        "status": "SHARED_EVENT_PLUS_USER_FANOUT"
+      },
+      "semanticDefinition": "Active college placement bell is redesigned as one shared source event fanned out to independent per-user in-app notifications.",
+      "tenantKey": "shared activity college_id + recipient user authorization at fanout",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Redesign is valid only if each authorized team member receives independent read state, college/recruiter audiences are isolated, and the legacy shared read_at fallback/30-day unread policy has an explicit product decision.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL-07",
@@ -5887,18 +6914,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "activity_events + in_app_notifications",
+        "column": "per-user in_app_notifications.read_at; legacy shared fallback intentionally not copied",
+        "status": "SHARED_EVENT_PLUS_USER_FANOUT"
+      },
+      "semanticDefinition": "Active college placement bell is redesigned as one shared source event fanned out to independent per-user in-app notifications.",
+      "tenantKey": "shared activity college_id + recipient user authorization at fanout",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Redesign is valid only if each authorized team member receives independent read state, college/recruiter audiences are isolated, and the legacy shared read_at fallback/30-day unread policy has an explicit product decision.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL-08",
@@ -5911,18 +6949,29 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "activity_events + in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "activity_events + in_app_notifications",
+        "column": "activity_events.occurred_at / in_app_notifications.created_at",
+        "status": "SHARED_EVENT_PLUS_USER_FANOUT"
+      },
+      "semanticDefinition": "Active college placement bell is redesigned as one shared source event fanned out to independent per-user in-app notifications.",
+      "tenantKey": "shared activity college_id + recipient user authorization at fanout",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Redesign is valid only if each authorized team member receives independent read state, college/recruiter audiences are isolated, and the legacy shared read_at fallback/30-day unread policy has an explicit product decision.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL_READ-01",
@@ -5935,18 +6984,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "in_app_notifications",
+        "column": "source event/fanout notification relation",
+        "status": "PER_USER_FANOUT_READ_RECEIPT"
+      },
+      "semanticDefinition": "Legacy per-reader bell acknowledgement is normalized to a distinct per-user notification/read receipt derived from a shared source event.",
+      "tenantKey": "in_app_notifications.user_id plus source activity college scope",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java",
+        "src/main/resources/db/migration/V184__tpo_bell_read.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Must prove user A reading never clears user B, TPO/recruiter roles map to canonical users, and feed fanout is updated correctly as team membership changes. No executed proof yet.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL_READ-02",
@@ -5957,18 +7019,31 @@
       "sourceNullable": "NOT_NULL",
       "sourceDefault": null,
       "sourceRiskFlags": [],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "in_app_notifications",
+        "column": "canonical recipient user role at fanout time",
+        "status": "PER_USER_FANOUT_READ_RECEIPT"
+      },
+      "semanticDefinition": "Legacy per-reader bell acknowledgement is normalized to a distinct per-user notification/read receipt derived from a shared source event.",
+      "tenantKey": "in_app_notifications.user_id plus source activity college scope",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java",
+        "src/main/resources/db/migration/V184__tpo_bell_read.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Must prove user A reading never clears user B, TPO/recruiter roles map to canonical users, and feed fanout is updated correctly as team membership changes. No executed proof yet.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL_READ-03",
@@ -5981,18 +7056,31 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "in_app_notifications",
+        "column": "in_app_notifications.user_id",
+        "status": "PER_USER_FANOUT_READ_RECEIPT"
+      },
+      "semanticDefinition": "Legacy per-reader bell acknowledgement is normalized to a distinct per-user notification/read receipt derived from a shared source event.",
+      "tenantKey": "in_app_notifications.user_id plus source activity college scope",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java",
+        "src/main/resources/db/migration/V184__tpo_bell_read.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Must prove user A reading never clears user B, TPO/recruiter roles map to canonical users, and feed fanout is updated correctly as team membership changes. No executed proof yet.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_BELL_READ-04",
@@ -6005,18 +7093,31 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": null,
-      "tenantKey": null,
-      "actorPermission": null,
-      "producerPaths": [],
-      "consumerPaths": [],
-      "constraintAndLifecycleEvidence": null,
-      "status": "UNMAPPED",
+      "candidateVnextTables": [
+        "in_app_notifications"
+      ],
+      "mappingTarget": {
+        "table": "in_app_notifications",
+        "column": "in_app_notifications.read_at",
+        "status": "PER_USER_FANOUT_READ_RECEIPT"
+      },
+      "semanticDefinition": "Legacy per-reader bell acknowledgement is normalized to a distinct per-user notification/read receipt derived from a shared source event.",
+      "tenantKey": "in_app_notifications.user_id plus source activity college scope",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "producerPaths": [
+        "src/main/java/com/_42students/lms/service/tpo/TpoAuditService.java",
+        "src/main/resources/db/migration/V184__tpo_bell_read.sql",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql"
+      ],
+      "consumerPaths": [
+        "src/db/schema/activity.ts",
+        "src/modules/activity/service.ts"
+      ],
+      "constraintAndLifecycleEvidence": "Must prove user A reading never clears user B, TPO/recruiter roles map to canonical users, and feed fanout is updated correctly as team membership changes. No executed proof yet.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": null
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-01",
@@ -6523,21 +7624,27 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
-      "tenantKey": "placement_tpo_college_settings.college_id or owning parent tenant",
-      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "job_types",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
+      },
+      "semanticDefinition": "Active V190 college job-type configuration. NULL means locked built-in defaults; custom/hidden entries affect placement job semantics.",
+      "tenantKey": "placement_tpo_college_settings.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+        "src/main/resources/db/migration/V190__job_types_and_placement_outcomes.sql"
       ],
       "consumerPaths": [
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
-        "src/db/schema/tpo-collaboration.ts"
+        "docs/planning/sql/db09-job-outcome-settings-candidate.sql"
       ],
-      "constraintAndLifecycleEvidence": "Active legacy setting added by V190; no current vNext persisted target located. DB08/DB09 ownership decision required.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Mapped to staged db09-job-outcome-settings-candidate.sql only. JSON domain validation, DB08 job snapshot semantics, migration replay and runtime tests are not executed.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -6553,21 +7660,27 @@
       "sourceRiskFlags": [
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
-      "candidateVnextTables": [],
-      "mappingTarget": null,
-      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
-      "tenantKey": "placement_tpo_college_settings.college_id or owning parent tenant",
-      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "candidateVnextTables": [
+        "placement_tpo_college_settings"
+      ],
+      "mappingTarget": {
+        "table": "placement_tpo_college_settings",
+        "column": "outcome_labels",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
+      },
+      "semanticDefinition": "Active V190 college placement-outcome labels. Custom labels map to a fixed controlled outcome vocabulary rather than arbitrary terminal states.",
+      "tenantKey": "placement_tpo_college_settings.college_id",
+      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+        "src/main/resources/db/migration/V190__job_types_and_placement_outcomes.sql"
       ],
       "consumerPaths": [
         "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
-        "src/db/schema/tpo-collaboration.ts"
+        "docs/planning/sql/db09-job-outcome-settings-candidate.sql"
       ],
-      "constraintAndLifecycleEvidence": "Active legacy setting added by V190; no current vNext persisted target located. DB08/DB09 ownership decision required.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Mapped to staged db09-job-outcome-settings-candidate.sql only. Allowed outcome IDs/labels, tenant isolation, migration replay and reporting consumers remain unverified.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -7009,21 +8122,22 @@
       "mappingTarget": {
         "table": "placement_tpo_messages",
         "column": "sender_type",
-        "status": "TARGET_EXISTS_BUT_CONTRACT_MISMATCH"
+        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
       },
-      "semanticDefinition": "Live two-way TPO/recruiter message with per-message read state. Final V193 stored actor code is RECRUITER, not HR.",
-      "tenantKey": "placement_tpo_messages.college_id or owning parent tenant",
-      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "semanticDefinition": "Final recruiter-era message actor vocabulary is TPO|RECRUITER. Current vNext messaging producer now resolves/persists actor.type using exactly those values.",
+      "tenantKey": "placement_tpo_message_threads.college_id and recruiter_user_id ownership",
+      "actorPermission": "Producer/schema vocabulary aligned; role and cross-college messaging authorization still requires executed integration witnesses.",
       "producerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java"
+        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
+        "src/main/resources/db/migration/V193__recruiter_naming.sql",
+        "src/modules/placements/tpo-messaging-service.ts"
       ],
       "consumerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoMessagesService.java",
         "src/db/schema/tpo-collaboration.ts",
         "src/modules/placements/tpo-messaging-service.ts"
       ],
-      "constraintAndLifecycleEvidence": "Final V193 source and live legacy service use TPO|RECRUITER, but current vNext schema/service still constrain/emit HR. Align DB and producer before registration.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Current main tpo-messaging-service.ts emits TPO|RECRUITER and staged schema CHECK accepts the same final V193 vocabulary. No PostgreSQL/runtime message test is claimed.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -8857,10 +9971,10 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "DB09 scheduling/calendar 50 fields: job_round, round_slot, round_assignment, reschedule_request, tpo_coordinator_assignment",
-    "result": "50 MAPPED source-to-target proposals; cumulative 188/279 reviewed; runtime verified 0",
+    "scope": "Final DB09 canonical disposition plus V193 messaging producer reconciliation",
+    "result": "279/279 disposition-reviewed; 193 MAPPED, 65 REDESIGNED, 21 BLOCKED, 0 DB/runtime verified",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
-    "stagedContract": "docs/planning/db09-scheduling-persistence-contract.md",
-    "stagedSql": "docs/planning/sql/db09-scheduling-premerge.sql"
+    "currentProducerEvidence": "src/modules/placements/tpo-messaging-service.ts on main uses TPO|RECRUITER",
+    "evidenceDoc": "docs/planning/db09-final-91-disposition-2026-10-11.md"
   }
 }
