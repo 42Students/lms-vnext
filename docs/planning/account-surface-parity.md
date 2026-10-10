@@ -99,7 +99,7 @@ Detailed page contract: `docs/parity/faculty.md`.
 | Contacts — Teachers | `/teacher/contacts/teachers` | none | Missing. | MISSING |
 | Contacts — Students | `/teacher/contacts/students` | none | Missing. | MISSING |
 | Notifications | `/teacher/notifications` | `/notifications` | Shared route exists; exact role feed behavior unverified. | PARTIAL |
-| Class Schedule | `/teacher/calendar` | none | Faculty schedule + course filters missing. | MISSING |
+| Class Schedule | `/teacher/calendar` | `/teacher/calendar` | Source-authored week/day/month calendar from persisted active Faculty teaching assignments, Section/course filters and correct Faculty Course links. Session edit/marking, responsive behavior and database/browser tests not executed. | PARTIAL |
 | All Quizzes | `/teacher/allQuizzes` | `/teacher/allQuizzes` | Aggregate Faculty teaching-section quiz page, course/status filters, 20-row pagination, review-attempts and result-publish control are authored using existing scoped service. Create/edit/report/modal parity and runtime/browser verification remain. | PARTIAL |
 | All Assignments | `/teacher/allAssignments` | `/teacher/allAssignments` | Aggregate Faculty teaching-section assignment page, course/status filters, 20-row pagination, review-submissions and grade/publish control are authored. Create/edit/delete/report and runtime/browser verification remain. | PARTIAL |
 | Assignment report | `/teacher/report/assignment/[contentId]` | inline grading | Dedicated report/analytics/submission review parity missing. | MISSING |
