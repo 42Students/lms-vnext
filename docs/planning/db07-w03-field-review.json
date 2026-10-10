@@ -1,0 +1,6771 @@
+{
+  "schemaVersion": 1,
+  "lane": "W03",
+  "issue": 23,
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceSummary": "historical SQL source proposals; zero executed semantic proof",
+  "counts": {
+    "tables": 16,
+    "fields": 358,
+    "verified": 0,
+    "approvedRetired": 0,
+    "missingTargetTables": [
+      "project_delivery_event",
+      "project_meeting_history",
+      "project_resource_audit",
+      "project_task_comment"
+    ]
+  },
+  "rows": [
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "id",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [
+        "activity_events.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "project_slug",
+      "sourceType": "varchar(120)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "event_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "event_code",
+      "sourceType": "varchar(60)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "event_type",
+      "sourceType": "varchar(60)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [
+        "activity_events.event_type"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "title",
+      "sourceType": "varchar(200)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "summary",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [
+        "activity_events.summary"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "source_tab",
+      "sourceType": "varchar(40)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "entity_type",
+      "sourceType": "varchar(60)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "entity_id",
+      "sourceType": "varchar(120)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "actor_user_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [
+        "activity_events.actor_user_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "actor_user_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "actor_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "metadata_json",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "created_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NOT_NULL",
+      "defaultValue": "CURRENT_TIMESTAMP",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "updated_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NOT_NULL",
+      "defaultValue": "CURRENT_TIMESTAMP",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "deleted_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_activity_event",
+      "legacyColumn": "deleted_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "activity_events"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.project_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "status",
+      "sourceType": "varchar(60)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'Draft'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.status"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "snapshot",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "notes",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.notes"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "feedback",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "attachment_url",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "revision_count",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "draft_saved_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "draft_saved_by_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "draft_saved_by_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "submitted_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.submitted_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "submitted_by_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "submitted_by_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "submitted_by_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "review_status",
+      "sourceType": "varchar(60)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "reviewed_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "reviewed_by_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "reviewed_by_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "reviewed_by_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "last_updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "last_updated_by_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "last_updated_by_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "last_updated_by_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "locked_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "locked_by_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "locked_by_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "file_name",
+      "sourceType": "varchar(255)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "file_size",
+      "sourceType": "bigint",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "file_mime_type",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "storage_key",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "source_url",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.source_url"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "attachments",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_submissions"
+      ],
+      "exactNameHints": [
+        "project_submissions.version"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "delivery_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "action",
+      "sourceType": "varchar(60)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "status",
+      "sourceType": "varchar(60)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "actor_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "actor_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "actor_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "notes",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "attachment_url",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "feedback",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_delivery_event",
+      "legacyColumn": "revision_count",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [
+        "project_meetings.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [
+        "project_meetings.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [
+        "project_meetings.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [
+        "project_meetings.project_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "meeting_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "sort_order",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "title",
+      "sourceType": "varchar(200)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [
+        "project_meetings.title"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "agenda",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [
+        "project_meetings.agenda"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "notes",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "outcome",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [
+        "project_meetings.outcome"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "meeting_status",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'SCHEDULED'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "meeting_date",
+      "sourceType": "date",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "start_time",
+      "sourceType": "time",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "end_time",
+      "sourceType": "time",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "timezone",
+      "sourceType": "varchar(80)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "organizer_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "organizer_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "attendees",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "action_items",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "linked_sprint_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "linked_sprint_label",
+      "sourceType": "varchar(200)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "linked_task_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "linked_task_label",
+      "sourceType": "varchar(200)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "reminder_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "reminder_channel",
+      "sourceType": "varchar(40)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "follow_up_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "follow_up_status",
+      "sourceType": "varchar(40)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "follow_up_notes",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "calendar_event_id",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "meet_link",
+      "sourceType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "calendar_provider",
+      "sourceType": "varchar(60)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "created_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "updated_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "calendar_sync_status",
+      "sourceType": "varchar(20)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'PENDING'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "calendar_sync_error",
+      "sourceType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "meeting_type",
+      "sourceType": "varchar(20)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'GENERAL'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [
+        "project_meetings.meeting_type"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "retro_went_well",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "retro_didnt_go_well",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "retro_actions",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting",
+      "legacyColumn": "deleted_by_workspace",
+      "sourceType": "tinyint(1)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_meetings"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "project_meeting_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "meeting_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "action_type",
+      "sourceType": "varchar(40)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "actor_user_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "actor_user_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "actor_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "before_json",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "after_json",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "changed_fields",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_meeting_history",
+      "legacyColumn": "notes",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [
+        "project_members.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [
+        "project_members.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [
+        "project_members.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [
+        "project_members.project_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "user_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "user_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "display_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "role_label",
+      "sourceType": "varchar(80)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [
+        "project_members.role_label"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "member_status",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'ACTIVE'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_member",
+      "legacyColumn": "deleted_by_workspace",
+      "sourceType": "tinyint(1)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_members"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [
+        "project_releases.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [
+        "project_releases.project_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "release_key",
+      "sourceType": "varchar(64)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "title",
+      "sourceType": "varchar(220)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [
+        "project_releases.title"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "target_date",
+      "sourceType": "date",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "status",
+      "sourceType": "varchar(20)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'PLANNED'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [
+        "project_releases.status"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "sort_order",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "notes",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "created_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "updated_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [
+        "project_releases.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [
+        "project_releases.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_release",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_releases"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [
+        "project_resources.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [
+        "project_resources.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [
+        "project_resources.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [
+        "project_resources.project_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "resource_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "resource_order",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "title",
+      "sourceType": "varchar(200)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [
+        "project_resources.title"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "resource_type",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'File'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "resource_kind",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'File'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "description",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [
+        "project_resources.description"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "access_notes",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "visibility",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'Shared'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "status",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'Active'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [
+        "project_resources.status"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "is_pinned",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "is_required",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "sprint_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "sprint_label",
+      "sourceType": "varchar(200)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "task_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "task_label",
+      "sourceType": "varchar(200)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "resource_url",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "file_url",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "attachment_url",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "file_name",
+      "sourceType": "varchar(255)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "uploaded_by_user_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "uploaded_by_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "created_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "updated_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "download_url",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource",
+      "legacyColumn": "deleted_by_workspace",
+      "sourceType": "tinyint(1)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_resources"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "project_resource_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "resource_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "action_type",
+      "sourceType": "varchar(40)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "actor_user_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "actor_user_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "actor_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "resource_order",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "before_json",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "after_json",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_resource_audit",
+      "legacyColumn": "changed_fields",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [
+        "project_sprints.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [
+        "project_sprints.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [
+        "project_sprints.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [
+        "project_sprints.project_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "sprint_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "sort_order",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "title",
+      "sourceType": "varchar(220)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [
+        "project_sprints.title"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "description",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [
+        "project_sprints.description"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "sprint_status",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'UPCOMING'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "due_date",
+      "sourceType": "date",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "due_label",
+      "sourceType": "varchar(80)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "created_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "updated_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "start_date",
+      "sourceType": "date",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "end_date",
+      "sourceType": "date",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "sprint_state",
+      "sourceType": "varchar(20)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'PLANNED'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "sprint_number",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "goal",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "release_label",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "release_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [
+        "project_sprints.release_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "deleted_by_workspace",
+      "sourceType": "tinyint(1)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "started_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "started_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": null,
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "completed_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_sprint",
+      "legacyColumn": "completed_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": null,
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_sprints"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [
+        "project_tasks.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [
+        "project_tasks.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [
+        "project_tasks.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [
+        "project_tasks.project_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "task_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "title",
+      "sourceType": "varchar(200)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [
+        "project_tasks.title"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "description",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [
+        "project_tasks.description"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "task_status",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'TO_DO'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "priority",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'MEDIUM'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [
+        "project_tasks.priority"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "due_date",
+      "sourceType": "date",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "due_label",
+      "sourceType": "varchar(80)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "assignee_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "assignee_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "assignee_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "sort_order",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "created_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "updated_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "blocker_reason",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "sprint_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "sprint_label",
+      "sourceType": "varchar(220)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "estimate_points",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "task_type",
+      "sourceType": "varchar(20)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'STORY'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "acceptance_criteria",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [
+        "project_tasks.acceptance_criteria"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "carried_over_from_sprint_key",
+      "sourceType": "varchar(120)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "approach",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "created_by_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "deleted_by_workspace",
+      "sourceType": "tinyint(1)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "submission_url",
+      "sourceType": "varchar(2048)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "submitted_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task",
+      "legacyColumn": "submitted_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": null,
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_tasks"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "project_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "project_task_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "commenter_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "commenter_type",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "commenter_name",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "message",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "progress_value",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "comment_type",
+      "sourceType": "varchar(30)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'NOTE'",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_task_comment",
+      "legacyColumn": "task_status_snapshot",
+      "sourceType": "varchar(30)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [
+        "project_templates.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [
+        "project_templates.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [
+        "project_templates.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "slug",
+      "sourceType": "varchar(80)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [
+        "project_templates.slug"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "title",
+      "sourceType": "varchar(160)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [
+        "project_templates.title"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "summary",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [
+        "project_templates.summary"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "course_label",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "status",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'IN_PROGRESS'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [
+        "project_templates.status"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "phase",
+      "sourceType": "varchar(80)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "organization_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "college_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "created_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "overview",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "sprints",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "tasks",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "resources",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "delivery",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "meetings",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "activity",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "template_version",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'1'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "lifecycle_status",
+      "sourceType": "varchar(20)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'DRAFT'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "published_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "archived_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [
+        "project_templates.archived_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_templates"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_college",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_template_college_assignments"
+      ],
+      "exactNameHints": [
+        "project_template_college_assignments.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_college",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_template_college_assignments"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_college",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_template_college_assignments"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_college",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_template_college_assignments"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_college",
+      "legacyColumn": "template_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_template_college_assignments"
+      ],
+      "exactNameHints": [
+        "project_template_college_assignments.template_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_college",
+      "legacyColumn": "college_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_template_college_assignments"
+      ],
+      "exactNameHints": [
+        "project_template_college_assignments.college_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_college",
+      "legacyColumn": "assigned_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_template_college_assignments"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [
+        "project_template_versions.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [
+        "project_template_versions.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "template_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [
+        "project_template_versions.template_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "template_version",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "action_type",
+      "sourceType": "varchar(40)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "lifecycle_status",
+      "sourceType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "changed_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "changed_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "notes",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_template_version",
+      "legacyColumn": "snapshot_json",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_template_versions"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.created_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.updated_at"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "slug",
+      "sourceType": "varchar(80)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.slug"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "title",
+      "sourceType": "varchar(160)",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.title"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "summary",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.summary"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "course_label",
+      "sourceType": "varchar(160)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "status",
+      "sourceType": "varchar(40)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'IN_PROGRESS'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.status"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "phase",
+      "sourceType": "varchar(80)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "progress",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "blocker",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "next_action",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "due_label",
+      "sourceType": "varchar(80)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "organization_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "college_id",
+      "sourceType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.college_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "class_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "created_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "overview",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "sprints",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "tasks",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "resources",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "delivery",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "meetings",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "activity",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "template_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [
+        "project_instances.template_id"
+      ],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "template_snapshot",
+      "sourceType": "json",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "bulk_learner_id",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "version",
+      "sourceType": "bigint",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "readiness_override",
+      "sourceType": "tinyint(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "readiness_override_note",
+      "sourceType": "text",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": null,
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "readiness_override_by",
+      "sourceType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "readiness_override_at",
+      "sourceType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "start_date",
+      "sourceType": "date",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "end_date",
+      "sourceType": "date",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "sprint_length_weeks",
+      "sourceType": "int",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'4'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "estimation_unit",
+      "sourceType": "varchar(20)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'POINTS'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "recoverable_content",
+      "sourceType": "tinyint(1)",
+      "nullable": "NOT_NULL",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    },
+    {
+      "legacyTable": "project_workspace",
+      "legacyColumn": "team_group_id",
+      "sourceType": "bigint",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "candidateTargets": [
+        "project_instances"
+      ],
+      "exactNameHints": [],
+      "targetField": null,
+      "producerEvidence": null,
+      "consumerEvidence": null,
+      "semanticStatus": "UNVERIFIED",
+      "sqlExecution": "NOT_EXECUTED",
+      "approvedRetirement": false
+    }
+  ]
+}
