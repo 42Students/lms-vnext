@@ -1062,25 +1062,35 @@
         "docs/planning/database-parity-db08-outcome-fidelity.md",
         "tests/db08-outcome-fidelity-staging.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Added after source audit found active V161/V190 persisted outcome/offer terms missing from canonical vNext tables; bounded independent staging batch, no active cross-worker file overlap."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11",
+          "reason": "Chat 5 claimed isolated DB08 source fidelity stage; Chat 1 retains numbered migration/barrel ownership."
         }
       ]
     }
