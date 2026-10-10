@@ -37,7 +37,7 @@ function MeetingRow({
         </div>
         <StatusBadge tone={
           status === "COMPLETED" ? "success" :
-          status === "CANCELLED" || status === "MISSED" ? "neutral" :
+          status === "MISSED" ? "error" : status === "CANCELLED" ? "neutral" :
           status === "REQUESTED" ? "warning" : "info"
         }>{status}</StatusBadge>
       </div>
