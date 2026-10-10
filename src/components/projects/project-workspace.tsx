@@ -37,6 +37,38 @@ type Workspace = Awaited<
   ReturnType<typeof getProjectWorkspaceView>
 >;
 
+export const PROJECT_WORKSPACE_SECTIONS = [
+  "summary",
+  "overview",
+  "team",
+  "sprints",
+  "tasks",
+  "resources",
+  "meetings",
+  "readiness",
+  "delivery",
+  "audit",
+] as const;
+
+export type ProjectWorkspaceSection =
+  (typeof PROJECT_WORKSPACE_SECTIONS)[number];
+
+const PROJECT_WORKSPACE_SECTION_LABELS: Record<
+  ProjectWorkspaceSection,
+  string
+> = {
+  summary: "Summary",
+  overview: "Overview",
+  team: "Team",
+  sprints: "Sprints",
+  tasks: "Tasks",
+  resources: "Resources",
+  meetings: "Meetings",
+  readiness: "Readiness",
+  delivery: "Delivery",
+  audit: "Audit",
+};
+
 function tone(status: string) {
   switch (status) {
     case "ACTIVE":
@@ -128,6 +160,7 @@ export function ProjectWorkspace({
   mode,
   currentMembershipId,
   activeSection,
+  sectionBaseHref,
 }: {
   workspace: Workspace;
   backHref: string;
@@ -135,32 +168,12 @@ export function ProjectWorkspace({
   eyebrow: string;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
   currentMembershipId: string | null;
-  activeSection?:
-    | "summary"
-    | "overview"
-    | "team"
-    | "sprints"
-    | "tasks"
-    | "resources"
-    | "meetings"
-    | "readiness"
-    | "delivery"
-    | "audit";
+  activeSection?: ProjectWorkspaceSection;
+  sectionBaseHref?: string;
 }) {
   const { readiness } = workspace;
-  const show = (
-    section:
-      | "summary"
-      | "overview"
-      | "team"
-      | "sprints"
-      | "tasks"
-      | "resources"
-      | "meetings"
-      | "readiness"
-      | "delivery"
-      | "audit",
-  ) => !activeSection || activeSection === section;
+  const show = (section: ProjectWorkspaceSection) =>
+    !activeSection || activeSection === section;
   const tasksBySprint = new Map<
     string,
     Workspace["tasks"]
@@ -222,6 +235,31 @@ export function ProjectWorkspace({
       >
         ← {backLabel}
       </Link>
+
+      {sectionBaseHref ? (
+        <nav
+          aria-label="Project workspace sections"
+          className="flex gap-2 overflow-x-auto border-b border-border pb-3"
+        >
+          {PROJECT_WORKSPACE_SECTIONS.map((section) => (
+            <Link
+              key={section}
+              href={sectionBaseHref + "/" + section}
+              aria-current={
+                activeSection === section ? "page" : undefined
+              }
+              className={
+                "whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition " +
+                (activeSection === section
+                  ? "bg-primary text-primary-foreground"
+                  : "text-body hover:bg-muted hover:text-foreground")
+              }
+            >
+              {PROJECT_WORKSPACE_SECTION_LABELS[section]}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
 
       <PageHeader
         eyebrow={eyebrow}
