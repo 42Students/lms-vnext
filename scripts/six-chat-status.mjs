@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 /**
- * Offline shared-phase six-chat dashboard. No GitHub/network/CI calls are made.
- * Usage: node scripts/six-chat-status.mjs [--lane 1..6] [--json]
+ * Shared-phase six-chat queue dashboard; local committed data only, no live CI.
+ * Usage:
+ *   node scripts/six-chat-status.mjs
+ *   node scripts/six-chat-status.mjs --lane 4
+ *   node scripts/six-chat-status.mjs --json
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,148 +13,156 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const laneIndex = args.indexOf('--lane');
-const requestedLane = laneIndex < 0 ? null : Number(args[laneIndex + 1]);
+const lane = laneIndex < 0 ? null : Number(args[laneIndex + 1]);
 const asJson = args.includes('--json');
 if (args.includes('--help') || args.includes('-h')) {
   console.log('Usage: node scripts/six-chat-status.mjs [--lane 1..6] [--json]');
   process.exit(0);
 }
 if (args.some((arg) => arg.startsWith('--') && !['--lane', '--json'].includes(arg)) ||
-    (laneIndex >= 0 && (!Number.isInteger(requestedLane) || requestedLane < 1 || requestedLane > 6)) ||
-    (laneIndex >= 0 && args[laneIndex + 1]?.startsWith('--'))) {
+    (laneIndex >= 0 && (!Number.isInteger(lane) || lane < 1 || lane > 6))) {
   console.error('Invalid args; use --lane 1..6 and/or --json');
   process.exit(2);
 }
-
-const load = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
+const load = (relative) => JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8'));
 const phase = load('docs/coordination/phase-state.json');
 const queue = load('docs/coordination/work-queue.json');
-const chat = [];
-const taskIds = new Set();
-const counts = {};
-const totals = { tasks: 0, verified: 0, retired: 0, ready: 0, claimed: 0, blocked: 0, review: 0 };
-const states = new Set(['READY','CLAIMED','BLOCKED','IN_REVIEW','DONE_VERIFIED','RETIRED_APPROVED']);
-
-if (phase.schemaVersion !== 2 || queue.schemaVersion !== 2 ||
-    !phase.phaseOrder.includes(phase.currentPhase) ||
+const states = new Set(['READY','PICKED','IN_PROGRESS','COMPLETED','BLOCKED','DONE_VERIFIED','RETIRED_APPROVED']);
+const blockers = [];
+if (queue.schemaVersion !== 3 || phase.schemaVersion !== 2 ||
     phase.phases[phase.currentPhase]?.state !== 'ACTIVE' ||
-    phase.phaseOrder.filter((x) => phase.phases[x]?.state === 'ACTIVE').length !== 1) {
-  throw Error('Invalid shared global phase state');
+    phase.phaseOrder.filter((p) => phase.phases[p]?.state === 'ACTIVE').length !== 1) {
+  throw Error('Invalid queue schema or global phase');
 }
-for (let i = 1; i <= 6; i += 1) {
-  const record = load('docs/coordination/lanes/chat-0' + i + '.json');
-  if (record.schemaVersion !== 2 || record.chatNumber !== i || record.issueNumber !== i + 20 ||
-      record.workerId !== 'CHAT_0' + i || record.assignment !== 'SHARED_PHASE_WORKER' ||
-      record.permanentDomainOwner !== false || record.currentPhase !== phase.currentPhase) {
-    throw Error('Invalid or stale Chat ' + i + ' checkpoint');
+const byTask = new Map();
+for (const t of queue.tasks) {
+  if (byTask.has(t.id)) throw Error('Duplicate task ID: ' + t.id);
+  byTask.set(t.id, t);
+  if (!states.has(t.status)) throw Error('Invalid status on ' + t.id + ': ' + t.status);
+  if (['PICKED','IN_PROGRESS'].includes(t.status) &&
+      (!Number.isInteger(t.pickedBy) || t.pickedBy < 1 || t.pickedBy > 6 || !t.pickedAt)) {
+    throw Error('Active task has no picked owner/time: ' + t.id);
   }
-  chat.push(record);
-}
-const byTaskId = new Map();
-for (const task of queue.tasks) {
-  if (taskIds.has(task.id)) throw Error('Duplicate task ID ' + task.id);
-  taskIds.add(task.id);
-  byTaskId.set(task.id, task);
-  if (!states.has(task.status) || !phase.phaseOrder.includes(task.phase)) {
-    throw Error('Invalid task state or phase on ' + task.id);
+  if (['COMPLETED','DONE_VERIFIED'].includes(t.status) &&
+      (!t.completedAt || !t.completedBy || !t.completionCommitSha)) {
+    throw Error('Completed task is missing completedBy/At/commit: ' + t.id);
   }
-  if (task.status === 'CLAIMED' &&
-      (!Number.isInteger(task.claimedBy) || task.claimedBy < 1 || task.claimedBy > 6)) {
-    throw Error('Claimed task lacks valid worker: ' + task.id);
+  if (t.status === 'DONE_VERIFIED' &&
+      (!t.verifiedAt || !t.verifiedBy || t.verificationEvidence?.length === 0)) {
+    throw Error('Verified task missing executed test/evidence proof: ' + t.id);
   }
-  if (task.status !== 'CLAIMED' && task.claimedBy !== null &&
-      !['BLOCKED', 'IN_REVIEW', 'DONE_VERIFIED', 'RETIRED_APPROVED'].includes(task.status)) {
-    throw Error('Non-claimed task unexpectedly has an owner: ' + task.id);
-  }
-  counts[task.status] = (counts[task.status] || 0) + 1;
-  totals.tasks += 1;
 }
 for (const task of queue.tasks) {
-  for (const d of task.dependsOn || []) {
-    if (!byTaskId.has(d)) throw Error('Missing prerequisite ' + d + ' for ' + task.id);
-  }
-  if (task.status === 'CLAIMED' &&
-      chat[task.claimedBy - 1].activeTaskId !== task.id) {
-    throw Error('Claim/checkpoint mismatch on ' + task.id);
-  }
+  for (const d of task.dependsOn || []) if (!byTask.has(d)) throw Error('Missing dependency: ' + d);
 }
-for (const worker of chat) {
-  if (worker.activeTaskId &&
-      !(byTaskId.get(worker.activeTaskId)?.status === 'CLAIMED' &&
-        byTaskId.get(worker.activeTaskId)?.claimedBy === worker.chatNumber)) {
-    throw Error('Worker task claim is inconsistent: Chat ' + worker.chatNumber);
+const workers = [];
+for (let i = 1; i <= 6; i++) {
+  const w = load('docs/coordination/lanes/chat-0' + i + '.json');
+  if (w.schemaVersion !== 3 || w.chatNumber !== i || w.workerId !== 'CHAT_0' + i ||
+      w.issueNumber !== 20 + i || w.currentPhase !== phase.currentPhase ||
+      !Array.isArray(w.pickedTaskIds) || !Array.isArray(w.completedTaskIds) ||
+      !Array.isArray(w.verifiedTaskIds)) {
+    throw Error('Invalid/stale worker checkpoint: ' + i);
   }
-}
-for (const [state, key] of [['READY','ready'],['CLAIMED','claimed'],['BLOCKED','blocked'],
-  ['IN_REVIEW','review'],['DONE_VERIFIED','verified'],['RETIRED_APPROVED','retired']]) {
-  totals[key] = counts[state] || 0;
-}
-const readyFor = (worker) => queue.tasks.filter((task) =>
-  task.phase === phase.currentPhase &&
-  task.status === 'READY' &&
-  (task.restriction === 'ANY' || (task.restriction && worker === 1)) &&
-  (task.dependsOn || []).every((id) => ['DONE_VERIFIED','RETIRED_APPROVED'].includes(byTaskId.get(id)?.status))
-).sort((a, b) => (a.priority - b.priority) || a.id.localeCompare(b.id)).map((x) => x.id);
-const specs = ['learner.md','faculty.md','mentor.md','college-admin.md','super-admin.md','tpo.md','hr.md','shared-public-ops.md'];
-const details = { checked: 0, open: 0, partial: 0, total: 0 };
-for (const spec of specs) {
-  const source = fs.readFileSync(path.join(root, 'docs/parity', spec), 'utf8');
-  for (const match of source.matchAll(/^\s*[-*]\s+\[([ xX~])\]\s/gm)) {
-    details.total++;
-    if (match[1].toLowerCase() === 'x') details.checked++;
-    else if (match[1] === '~') details.partial++;
-    else details.open++;
+  const active = queue.tasks.filter((t) => ['PICKED','IN_PROGRESS'].includes(t.status) && t.pickedBy === i);
+  if (active.length > 1) throw Error('Worker '+i+' has multiple active tasks');
+  if ((w.activeTaskId ?? null) !== (active[0]?.id ?? null)) {
+    blockers.push('Worker '+i+' checkpoint/queue mismatch (transient or stale): reconcile before picking');
   }
+  const historicallyPicked = queue.tasks.filter((t) => (t.pickHistory || []).some((event) => event.chatNumber === i)).map((t) => t.id);
+  const completedByWorker = queue.tasks.filter((t) => t.completedBy === i).map((t) => t.id);
+  const verifiedByWorker = queue.tasks.filter((t) => t.verifiedBy === i).map((t) => t.id);
+  for (const [label, list, computed] of [
+    ['pickedTaskIds',w.pickedTaskIds,historicallyPicked],
+    ['completedTaskIds',w.completedTaskIds,completedByWorker],
+    ['verifiedTaskIds',w.verifiedTaskIds,verifiedByWorker],
+  ]) {
+    if ([...new Set([...list,...computed])].length !== list.length || list.length !== computed.length)
+      blockers.push('Worker '+i+' '+label+' differs from canonical queue events; reconcile checkpoint');
+  }
+  const candidates = queue.tasks.filter((t) =>
+    t.phase === phase.currentPhase &&
+    t.status === 'READY' &&
+    (t.restriction === 'ANY' || i === 1) &&
+    (t.dependsOn || []).every((d) => ['DONE_VERIFIED','RETIRED_APPROVED'].includes(byTask.get(d)?.status))
+  ).sort((a,b)=> a.priority-b.priority || a.id.localeCompare(b.id));
+  workers.push({
+    chatNumber:i,
+    issueNumber:w.issueNumber,
+    executionState:w.executionState,
+    activeTaskId:w.activeTaskId,
+    pickedCount:historicallyPicked.length,
+    completedCount:completedByWorker.length,
+    verifiedCount:verifiedByWorker.length,
+    pickedTaskIds:historicallyPicked,
+    completedTaskIds:completedByWorker,
+    verifiedTaskIds:verifiedByWorker,
+    nextEligibleTaskIds:candidates.map((t)=>t.id),
+    checkpoint:w.checkpoint
+  });
 }
-const activePhaseTasks = queue.tasks.filter((t) => t.phase === phase.currentPhase);
-const result = {
-  source: 'Local committed files only, no live GitHub/CI checks',
-  currentPhase: phase.currentPhase,
-  phaseOrder: phase.phaseOrder,
-  phaseGate: phase.phases[phase.currentPhase],
-  workerCount: chat.length,
-  workers: (requestedLane === null ? chat : chat.filter((x) => x.chatNumber === requestedLane)).map((worker) => ({
-    chatNumber: worker.chatNumber,
-    issueNumber: worker.issueNumber,
-    executionState: worker.executionState,
-    activeTaskId: worker.activeTaskId,
-    verifiedCompletedTaskIds: worker.verifiedCompletedTaskIds,
-    reviewTaskIds: worker.reviewTaskIds,
-    blockedTaskIds: worker.blockedTaskIds,
-    nextEligibleTaskIds: readyFor(worker.chatNumber),
-    checkpoint: worker.checkpoint
-  })),
-  tasks: {
-    ...totals,
-    currentPhaseTotal: activePhaseTasks.length,
-    currentPhaseVerified: activePhaseTasks.filter((x) => x.status === 'DONE_VERIFIED').length,
-    currentPhaseApprovedRetirements: activePhaseTasks.filter((x) => x.status === 'RETIRED_APPROVED').length
-  },
-  historicalDatabaseInventory: phase.globalHistoricalInventorySnapshot,
-  detailedPageChecks: details,
-  note: 'Queue coverage is not yet certified exhaustive; task percentages are not overall LMS completion.'
+const phaseTasks = queue.tasks.filter((t) => t.phase === phase.currentPhase);
+const stateCounts = Object.fromEntries([...states].map((state) => [state, phaseTasks.filter((t)=>t.status===state).length]));
+const counts = {
+  ...stateCounts,
+  currentPhaseTasks:phaseTasks.length,
+  everPicked:phaseTasks.filter((t)=>(t.pickHistory?.length ?? 0)>0).length,
+  currentlyPickedOrInProgress:stateCounts.PICKED+stateCounts.IN_PROGRESS,
+  everCompleted:phaseTasks.filter((t)=>Boolean(t.completedAt)).length,
+  completedAwaitingVerification:stateCounts.COMPLETED,
+  verified:stateCounts.DONE_VERIFIED,
+  ready:stateCounts.READY
 };
-if (asJson) {
-  process.stdout.write(JSON.stringify(result, null, 2) + '\n');
-} else {
-  process.stdout.write('LMS vNext | GLOBAL PHASE: ' + phase.currentPhase +
-    ' | ' + activePhaseTasks.length + ' queued packages, ' +
-    result.tasks.currentPhaseVerified + ' verified, ' +
-    totals.ready + ' ready, ' + totals.claimed + ' claimed, ' +
-    totals.blocked + ' blocked, ' + totals.review + ' in review\n\n');
-  for (const worker of result.workers) {
-    process.stdout.write('Chat ' + worker.chatNumber + ' / issue #' + worker.issueNumber +
-      ' | ' + worker.executionState +
-      ' | active: ' + (worker.activeTaskId ?? 'none') +
-      ' | verified tasks: ' + worker.verifiedCompletedTaskIds.length +
-      ' | next eligible: ' + (worker.nextEligibleTaskIds[0] ?? 'none') +
-      '\n');
+const specs = ['learner.md','faculty.md','mentor.md','college-admin.md','super-admin.md','tpo.md','hr.md','shared-public-ops.md'];
+const detailedPageChecks = {checked:0,open:0,partial:0,total:0};
+for (const spec of specs) {
+  const text = fs.readFileSync(path.join(root,'docs/parity',spec),'utf8');
+  for (const m of text.matchAll(/^\s*[-*]\s+\[([ xX~])\]\s/gm)) {
+    detailedPageChecks.total++;
+    if (m[1].toLowerCase()==='x') detailedPageChecks.checked++;
+    else if(m[1]==='~') detailedPageChecks.partial++;
+    else detailedPageChecks.open++;
   }
-  process.stdout.write('\nDB source inventory (not active schema): ' +
-    phase.globalHistoricalInventorySnapshot.tableCandidates + ' table candidates, ' +
-    phase.globalHistoricalInventorySnapshot.fieldCandidates + ' field candidates, formal runtime verified: ' +
-    phase.globalHistoricalInventorySnapshot.formalRuntimeSemanticVerifiedFields + '\n' +
-    'UI detailed historical checklist: ' + details.checked + ' checked, ' +
-    details.open + ' open, ' + details.total + ' total.\n' +
-    'Refresh GitHub and run real tests before claiming live CI/parity status.\n');
 }
+const output = {
+  source:'Offline committed repository; live GitHub/CI not queried',
+  currentPhase:phase.currentPhase,
+  phaseGate:phase.phases[phase.currentPhase],
+  taskCounts:counts,
+  workers:lane===null?workers:workers.filter((w)=>w.chatNumber===lane),
+  historicalDatabaseInventory:phase.globalHistoricalInventorySnapshot,
+  detailedPageChecks,
+  reconciliationWarnings:blockers,
+  metricDefinitions:{
+    picked:'A unique task was reserved by this chat at least once, including work not yet finished.',
+    completed:'Committed implementation finished by this chat; may be untested/unverified.',
+    verified:'Acceptance passed and exact evidence recorded; eligible to close the phase.',
+    ready:'Unpicked backlog; dependencies or file claims may prevent immediate assignment.',
+    note:'Never add worker picked counts to compute distinct global tasks if tasks can be reassigned.'
+  }
+};
+if(asJson) console.log(JSON.stringify(output,null,2));
+else {
+  console.log('LMS vNext | Active global phase: '+phase.currentPhase);
+  console.log('Tasks: '+counts.currentPhaseTasks+' total | '+counts.ready+' READY | '+counts.PICKED+
+    ' PICKED | '+counts.IN_PROGRESS+' IN_PROGRESS | '+counts.completedAwaitingVerification+
+    ' COMPLETED (unverified) | '+counts.verified+' VERIFIED | '+counts.BLOCKED+' BLOCKED');
+  console.log('Lifetime distinct tasks: '+counts.everPicked+' ever picked; '+counts.everCompleted+
+    ' implementation completed; '+counts.verified+' verified.');
+  console.log('');
+  console.log('Worker      Picked   Completed   Verified   Active task    Next eligible');
+  for (const w of output.workers) {
+    console.log(('Chat '+w.chatNumber).padEnd(12)+String(w.pickedCount).padEnd(9)+
+      String(w.completedCount).padEnd(12)+String(w.verifiedCount).padEnd(11)+
+      String(w.activeTaskId??'-').padEnd(15)+(w.nextEligibleTaskIds[0]??'-'));
+  }
+  console.log('');
+  console.log('Historical DB candidates: '+phase.globalHistoricalInventorySnapshot.tableCandidates+
+    ' tables, '+phase.globalHistoricalInventorySnapshot.fieldCandidates+
+    ' fields; formally runtime-verified fields: '+phase.globalHistoricalInventorySnapshot.formalRuntimeSemanticVerifiedFields);
+  console.log('Detailed UI checks: '+detailedPageChecks.checked+' checked / '+detailedPageChecks.total+
+    ' (not necessarily browser-verified).');
+  for(const issue of blockers) console.warn('COORDINATION WARNING: '+issue);
+  console.log('NOTE: This is an offline snapshot; inspect live GitHub and CI to report current progress.');
+}
+
