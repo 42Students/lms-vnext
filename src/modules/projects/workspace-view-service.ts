@@ -20,6 +20,9 @@ import {
 import {
   listProjectEvaluations,
 } from "./evaluation-service";
+import {
+  listProjectActivity,
+} from "./activity-service";
 
 export async function getProjectWorkspaceView(
   context: RequestContext,
@@ -33,6 +36,7 @@ export async function getProjectWorkspaceView(
     finalDelivery,
     taskSubmissions,
     evaluation,
+    activity,
   ] = await Promise.all([
     getProjectInstanceWorkspace(
       context,
@@ -50,6 +54,10 @@ export async function getProjectWorkspaceView(
       context,
       projectId,
     ),
+    listProjectActivity(
+      context,
+      projectId,
+    ),
   ]);
 
   return {
@@ -60,5 +68,6 @@ export async function getProjectWorkspaceView(
     finalDelivery,
     taskSubmissions,
     evaluation,
+    activity,
   };
 }
