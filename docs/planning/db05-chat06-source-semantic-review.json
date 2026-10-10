@@ -32,9 +32,9 @@
     "sourceFields": 92,
     "byClass": {
       "SOURCE_CANDIDATE": 31,
-      "MISSING_OR_UNPROVEN": 30,
+      "MISSING_OR_UNPROVEN": 14,
       "REMODELED_NEEDS_PROOF": 18,
-      "UNREGISTERED_DRAFT": 13
+      "UNREGISTERED_DRAFT": 29
     }
   },
   "criticalOpenRisks": [
@@ -412,11 +412,12 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_EQUIVALENT: current course_discussion_messages is delivery chat, legacy discussions attaches to lesson_content_id",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.id (UNREGISTERED DB05 SQL draft; UUID replacing integer)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.created_at",
@@ -425,22 +426,24 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "targetProposal": "NO_EQUIVALENT: lesson-content discussion entity not proven",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.created_at (UNREGISTERED)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.is_deleted",
       "sourceType": "tinyint(1)",
       "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: thread/comment soft deletion",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.deleted_at (UNREGISTERED; historical deleted flag requires producer proof)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
     },
     {
       "source": "discussions.updated_at",
@@ -449,22 +452,24 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "targetProposal": "NO_EQUIVALENT: lesson-content discussion entity not proven",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.updated_at (UNREGISTERED)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.content_text",
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: per-content discussion text",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.content_text (UNREGISTERED; DTO 5000 chars vs snapshot varchar255 unresolved)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.lesson_content_id",
@@ -473,33 +478,36 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_EQUIVALENT: threaded discussion content FK",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.lesson_content_id (UNREGISTERED; distinct from delivery chat)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.profile_name",
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: historic display profile snapshot",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.author_profile_name_snapshot (UNREGISTERED; server-resolved from authenticated identity)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.sequence",
       "sourceType": "int",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: comment ordering",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.sequence (UNREGISTERED; legacy accepts caller sequence)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.user_id",
@@ -508,22 +516,24 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_EQUIVALENT: author ID",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.author_membership_id (UNREGISTERED; trusted principal to college membership)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.user_name",
       "sourceType": "varchar(255)",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: historic display name snapshot",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.author_unique_name_snapshot (UNREGISTERED; ignore client-supplied identity)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_CONTROLLER_SERVICE_CONFIRMED"
     },
     {
       "source": "discussions.parent_discussion_id",
@@ -532,33 +542,36 @@
       "sourceRiskFlags": [
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
-      "targetProposal": "NO_EQUIVALENT: reply thread",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.parent_discussion_id (UNREGISTERED; historical-only source, API use NOT_PROVEN)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
     },
     {
       "source": "discussions.discussion_status",
       "sourceType": "varchar(20)",
       "sourceNullable": "NOT_NULL",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: resolution workflow status",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.discussion_status (UNREGISTERED; historical-only, values NOT_PROVEN)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
     },
     {
       "source": "discussions.is_faculty_answer",
       "sourceType": "bit(1)",
       "sourceNullable": "NOT_NULL",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: faculty answer marker",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.is_faculty_answer (UNREGISTERED; historical-only, producer NOT_PROVEN)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
     },
     {
       "source": "discussions.resolved_at",
@@ -567,33 +580,36 @@
       "sourceRiskFlags": [
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
-      "targetProposal": "NO_EQUIVALENT: resolution timestamp",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.resolved_at (UNREGISTERED; historical-only, producer NOT_PROVEN)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
     },
     {
       "source": "discussions.resolved_by",
       "sourceType": "int",
       "sourceNullable": "NULL_ALLOWED",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: resolution actor",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.resolved_by_membership_id (UNREGISTERED; historical-only, actor semantics NOT_PROVEN)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
     },
     {
       "source": "discussions.attachment_url",
       "sourceType": "text",
       "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_EQUIVALENT: private attachment access",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "lesson_content_discussions.attachment_object_key (UNREGISTERED; privacy redesign proposal, source semantics NOT_PROVEN)",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_COLUMN_ONLY_API_USAGE_NOT_PROVEN"
     },
     {
       "source": "learner_content_progress.id",
@@ -1151,5 +1167,17 @@
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED"
     }
-  ]
+  ],
+  "followUp": {
+    "discussionDraft": "scripts/sql/db05-lesson-content-discussions.draft.sql",
+    "legacyBackendController": "src/main/java/com/_42students/lms/controller/DiscussionController.java",
+    "legacyBackendService": "src/main/java/com/_42students/lms/service/impl/DiscussionServiceImpl.java",
+    "legacyBackendRepository": "src/main/java/com/_42students/lms/repository/DiscussionRepository.java",
+    "legacyBackendDTO": "src/main/java/com/_42students/lms/dto/request/DiscussionDTO.java",
+    "separateClassroomController": "src/main/java/com/_42students/lms/controller/ClassroomController.java",
+    "vnextExistingClassroomOnly": "src/db/schema/discussions.ts",
+    "currentSourceProvenance": "BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5; FE SHA e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+    "sourceContractNote": "Actual legacy /api/v1/discussion POST/GET is tied to lessonContentId and trusted principal. Historical reply/resolution/attachment columns found in snapshot are not used by inspected active DiscussionController/Service/DTO. They remain unverified, nullable draft ideas; require source/consumer evidence before enabling.",
+    "tests": "Static source inspection only; no runtime PostgreSQL, Node, FE or CI acceptance executed."
+  }
 }
