@@ -17,8 +17,10 @@ import {
 } from "@/modules/projects/instance-service";
 import {
   completeProjectSprint,
+  reopenProjectSprint,
   shipProjectRelease,
   startProjectSprint,
+  unshipProjectRelease,
   updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {
@@ -464,6 +466,97 @@ describe("Projects P5 lifecycle", () => {
       )
     ).rows;
     expect(row?.status).toBe("COMPLETED");
+  });
+
+  it("requires un-shipping before reopening a completed sprint", async () => {
+    const project = await createProject();
+    let workspace =
+      await getProjectInstanceWorkspace(
+        mentor,
+        project.id,
+      );
+    const release = workspace.releases[0]!;
+
+    for (const sprint of workspace.sprints) {
+      await startProjectSprint(
+        mentor,
+        project.id,
+        sprint.id,
+      );
+      workspace =
+        await getProjectInstanceWorkspace(
+          mentor,
+          project.id,
+        );
+      for (const task of workspace.tasks.filter(
+        (candidate) =>
+          candidate.sprintId === sprint.id,
+      )) {
+        await updateProjectTaskStatus(
+          mentor,
+          project.id,
+          task.id,
+          { status: "DONE" },
+        );
+      }
+      await completeProjectSprint(
+        mentor,
+        project.id,
+        sprint.id,
+      );
+    }
+
+    await shipProjectRelease(
+      mentor,
+      project.id,
+      release.id,
+    );
+
+    await expect(
+      reopenProjectSprint(
+        mentor,
+        project.id,
+        workspace.sprints[0]!.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_SPRINT_INVALID_STATE",
+    });
+
+    await expect(
+      unshipProjectRelease(
+        mentor,
+        project.id,
+        release.id,
+      ),
+    ).resolves.toMatchObject({
+      status: "IN_PROGRESS",
+    });
+
+    const projectStatus = await pool.query(
+      "select status from project_instances where id = $1",
+      [project.id],
+    );
+    expect(projectStatus.rows[0]?.status).toBe("ACTIVE");
+
+    await expect(
+      reopenProjectSprint(
+        mentor,
+        project.id,
+        workspace.sprints[0]!.id,
+      ),
+    ).resolves.toMatchObject({
+      status: "ACTIVE",
+    });
+
+    await expect(
+      shipProjectRelease(
+        mentor,
+        project.id,
+        release.id,
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_RELEASE_HAS_OPEN_SPRINTS",
+    });
   });
 
   it("enforces the active-sprint invariant in PostgreSQL too", async () => {
