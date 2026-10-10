@@ -49,7 +49,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.cohorts.id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "batch",
@@ -69,7 +81,20 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.academic_periods.code",
+              "public.academic_periods.name"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Legacy free text such as 2024-25; period code/name is not guaranteed a one-to-one semantic mapping."
+          }
         },
         {
           "legacyTable": "batch",
@@ -89,7 +114,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.cohorts.name"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "batch",
@@ -119,7 +156,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.cohorts.created_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "batch",
@@ -139,7 +188,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Legacy stored mutable semester cursor. vNext academic periods are college scoped; must prove derivation, promotion history and role behavior before replacing cursor."
+          }
         },
         {
           "legacyTable": "batch",
@@ -159,7 +218,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.learner_program_enrollments.cohort_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Legacy mutable count; vNext enrollment count may be derived but requires same status/soft-delete filters and transactional consistency."
+          }
         },
         {
           "legacyTable": "batch",
@@ -181,7 +252,20 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.academic_periods.end_date",
+              "public.cohorts.expected_end_period_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Expected end-period reference may not retain legacy batch end-date semantics."
+          }
         },
         {
           "legacyTable": "batch",
@@ -211,7 +295,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.cohorts.program_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "batch",
@@ -233,7 +329,20 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.academic_periods.start_date",
+              "public.cohorts.start_period_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Cohort period references are not equivalent to independently editable exact batch dates without product decision."
+          }
         },
         {
           "legacyTable": "batch",
@@ -261,7 +370,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.cohorts.status"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "batch",
@@ -291,7 +412,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.cohorts.updated_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         }
       ]
     },
@@ -335,7 +468,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.sections.id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "class",
@@ -365,7 +510,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.sections.created_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "class",
@@ -385,7 +542,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Legacy soft-delete flag must be reconciled to section archive/status and historical referential behavior; status is not automatically equivalent."
+          }
         },
         {
           "legacyTable": "class",
@@ -415,7 +582,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.sections.updated_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "class",
@@ -437,7 +616,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.sections.cohort_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "class",
@@ -457,7 +648,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "class",
@@ -477,7 +678,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "class",
@@ -497,7 +708,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "No lower-bound enrollment field in observed vNext sections snapshot."
+          }
         },
         {
           "legacyTable": "class",
@@ -525,7 +746,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.sections.name"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "class",
@@ -547,7 +780,20 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.sections.cohort_id",
+              "public.cohorts.program_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "class",
@@ -567,7 +813,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "class",
@@ -587,7 +843,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.sections.capacity"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Could map to section capacity, but legacy lower_limit and eligibility constraints need separate policy."
+          }
         },
         {
           "legacyTable": "class",
@@ -612,7 +880,20 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.lms_groups.kind",
+              "public.sections.id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Legacy SECTION vs GROUP_BACKED distinction; vNext sections have no explicit discriminator or linked group roster in observed snapshot."
+          }
         },
         {
           "legacyTable": "class",
@@ -639,7 +920,20 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.lms_groups.id",
+              "public.lms_group_members.group_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
+            "notes": "Group-backed class active membership requires persistent linkage and cross-tenant FK/invariant, not just similarly named groups."
+          }
         }
       ]
     },
@@ -683,7 +977,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -713,7 +1019,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.created_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -733,7 +1051,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -763,7 +1091,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.updated_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -785,7 +1125,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.section_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -807,7 +1159,21 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_event_courses.delivery_id",
+              "public.course_section_deliveries.offering_id",
+              "public.course_offerings.course_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -827,7 +1193,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.ends_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Legacy persisted String, vNext timestamptz; date rollover and invalid ordering require explicit tests."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -849,7 +1227,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.faculty_membership_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -871,7 +1261,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.location"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Observed vNext location is free text; no room FK/capacity/conflict policy; loss of typed lecture hall relation."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -891,7 +1293,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.starts_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Legacy persisted String, vNext timestamptz; timezone, recurrence and local-date conversion need service-oracle proof."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -919,7 +1333,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.section_schedule_events.title"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "class_schedule",
@@ -946,7 +1372,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.attendance_sessions.marked_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+            "notes": "Attendance now in attendance_sessions; verify event/session cardinality, correction audit and marking lifecycle."
+          }
         }
       ]
     },
@@ -978,7 +1416,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "faculty_course_associations",
@@ -996,7 +1444,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "faculty_course_associations",
@@ -1016,7 +1474,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "faculty_course_associations",
@@ -1036,7 +1504,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         }
       ]
     },
@@ -1080,7 +1558,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "faculty_course_mapping",
@@ -1110,7 +1600,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.created_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "faculty_course_mapping",
@@ -1130,7 +1632,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "faculty_course_mapping",
@@ -1160,7 +1672,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.updated_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "faculty_course_mapping",
@@ -1180,7 +1704,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.ended_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+            "notes": "Legacy integer active flag vs vNext ended_at is not direct equivalence; test reactivation and audit."
+          }
         },
         {
           "legacyTable": "faculty_course_mapping",
@@ -1202,7 +1738,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_section_deliveries.section_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "faculty_course_mapping",
@@ -1224,7 +1772,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.course_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "faculty_course_mapping",
@@ -1246,7 +1806,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.membership_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         }
       ]
     },
@@ -1290,7 +1862,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1320,7 +1904,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.created_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1340,7 +1936,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1370,7 +1976,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.updated_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1390,7 +2008,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.academic_periods.code"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "A period code is a candidate only; source can encode year range and semester separately."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1412,7 +2042,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.cohort_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1434,7 +2076,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_section_deliveries.section_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1456,7 +2110,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.course_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1476,7 +2142,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.ended_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1498,7 +2176,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.membership_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1518,7 +2208,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.ended_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "ended_at may represent activity, but future start/soft-delete/reactivation and duplicate assignments need tests."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1546,7 +2248,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.role"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1566,7 +2280,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.academic_period_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "A period ID does not itself preserve numeric semester order per program/cohort."
+          }
         },
         {
           "legacyTable": "faculty_teaching_assignment",
@@ -1586,7 +2312,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_teaching_assignments.started_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         }
       ]
     },
@@ -1618,7 +2356,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1638,7 +2386,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1656,7 +2414,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1676,7 +2444,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1694,7 +2472,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1714,7 +2502,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1734,7 +2532,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1752,7 +2560,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1770,7 +2588,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "lecture_hall",
@@ -1788,7 +2616,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         }
       ]
     },
@@ -1832,7 +2670,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.programs.id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "new_program",
@@ -1862,7 +2712,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.programs.created_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "new_program",
@@ -1882,7 +2744,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "new_program",
@@ -1912,7 +2784,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.programs.updated_at"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "new_program",
@@ -1934,7 +2818,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.programs.department_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "new_program",
@@ -1954,7 +2850,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.programs.duration_terms"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
+            "notes": "Legacy duration in years; vNext duration_terms cannot be converted without explicit terms-per-year policy. PR #41 addresses related work but is not assumed merged."
+          }
         },
         {
           "legacyTable": "new_program",
@@ -1982,7 +2890,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "SAME_NAME_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.programs.name"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         }
       ]
     },
@@ -2014,7 +2934,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2034,7 +2964,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2052,7 +2992,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2072,7 +3022,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2092,7 +3052,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.course_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "Legacy JSON ordered set and structure version must be checked against course offerings; grouping and history may be lost."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2110,7 +3082,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2128,7 +3110,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2148,7 +3140,20 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.cohort_id",
+              "public.cohorts.program_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2166,7 +3171,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "new_program_structure",
@@ -2184,7 +3199,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         }
       ]
     },
@@ -2216,7 +3241,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "program",
@@ -2236,7 +3271,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "program",
@@ -2254,7 +3299,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "program",
@@ -2274,7 +3329,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "program",
@@ -2294,7 +3359,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "program",
@@ -2312,7 +3387,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "program",
@@ -2330,7 +3415,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "program",
@@ -2348,7 +3443,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Program.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         }
       ]
     },
@@ -2380,7 +3485,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "program_structure",
@@ -2400,7 +3515,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "program_structure",
@@ -2418,7 +3543,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "program_structure",
@@ -2438,7 +3573,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "program_structure",
@@ -2458,7 +3603,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.course_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "Historical program structure separate from newer one; active-vs-retired decision must be source-proven."
+          }
         },
         {
           "legacyTable": "program_structure",
@@ -2476,7 +3633,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "program_structure",
@@ -2494,7 +3661,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "program_structure",
@@ -2514,7 +3691,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         },
         {
           "legacyTable": "program_structure",
@@ -2532,7 +3719,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ProgramStructure.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         }
       ]
     },
@@ -2564,7 +3761,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "semester",
@@ -2584,7 +3791,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "semester",
@@ -2602,7 +3819,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "semester",
@@ -2622,7 +3849,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "semester",
@@ -2640,7 +3877,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.academic_periods.status"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "semester",
@@ -2658,7 +3907,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.academic_periods.name"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "Semester has program_id and semester_number, while academic_periods is college-scoped. Matching names does not prove program-specific semester identity."
+          }
         },
         {
           "legacyTable": "semester",
@@ -2678,7 +3939,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.programs.id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "semester",
@@ -2696,7 +3969,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.academic_periods.code"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "No program-scoped term ordinal in observed academic_periods."
+          }
         },
         {
           "legacyTable": "semester",
@@ -2714,7 +3999,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+          }
         }
       ]
     },
@@ -2746,7 +4041,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+          }
         },
         {
           "legacyTable": "semester_course",
@@ -2766,7 +4071,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "semester_course",
@@ -2784,7 +4099,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+          }
         },
         {
           "legacyTable": "semester_course",
@@ -2804,7 +4129,17 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+          }
         },
         {
           "legacyTable": "semester_course",
@@ -2824,7 +4159,19 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.course_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "semester_course",
@@ -2842,7 +4189,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.display_order"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Course order is a persisted learner/college-admin behavior; verify uniqueness and reorder races."
+          }
         },
         {
           "legacyTable": "semester_course",
@@ -2860,7 +4219,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.credits"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         },
         {
           "legacyTable": "semester_course",
@@ -2878,7 +4249,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.type"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Core/elective flag may align with course_offerings.type but check enum choices, exceptions, and grouping."
+          }
         },
         {
           "legacyTable": "semester_course",
@@ -2898,9 +4281,59 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "db02SourceReview": {
+            "pass": "CHAT04_DB005_2026_10_11",
+            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
+            "proposedSnapshotTargets": [
+              "public.course_offerings.academic_period_id"
+            ],
+            "semanticProof": "NOT_PROVEN",
+            "dbConstraintProof": "NOT_EXECUTED",
+            "producerConsumerProof": "NOT_EXECUTED",
+            "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+          }
         }
       ]
     }
-  ]
+  ],
+  "db02AuditPass": {
+    "id": "CHAT04_DB005_2026_10_11",
+    "phase": "DATABASE",
+    "taskId": "DB-005",
+    "status": "SOURCE_AND_SNAPSHOT_CANDIDATE_REVIEW_IN_PROGRESS",
+    "legacyBranch": "42Students/lms@prod-2026",
+    "legacyPinnedReferenceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "vnextSnapshotPath": "drizzle/meta/0040_snapshot.json",
+    "snapshotBlobSha": "2d5064fb2e2b687e694340c2c62ddafe1c9c03cd",
+    "evidenceNature": "Source JPA field annotations plus precomputed historical DDL inventory and latest available committed Drizzle snapshot. No live DB introspection, API/runtime proof, migration replay or executed tests.",
+    "coverage": {
+      "legacyTables": 13,
+      "legacyFields": 125,
+      "direct": 24,
+      "normalized": 44,
+      "unresolved": 57,
+      "semanticallyVerified": 0,
+      "postgresVerified": 0
+    },
+    "priorityGaps": [
+      "Semester and semester_course have no verified program-specific persisted equivalent; academic_periods is college-scoped. Preserve semester name/ordinal and course order/credits/mandatory flag.",
+      "Lecture_hall has no observed room entity; section_schedule_events.location cannot enforce hall FK, capacity, room type or collision.",
+      "Class GROUP_BACKED/roster_group_id and lower_limit are absent from sections; group roster linkage and tenant consistency require explicit relation.",
+      "Class_schedule time strings, faculty/course/room references and attendance_marked_at are not one-to-one with section_schedule_events and attendance_sessions.",
+      "Faculty course association versus class-scoped assignment, semester-specific teaching, enable/disable and audit history require producer/consumer comparison.",
+      "Legacy new_program.duration_years versus programs.duration_terms needs explicit conversion decision and proof; older program and structure tables need active/retired review.",
+      "Batch academic_year/current_semester/current_students/start/end cannot be presumed derivable from cohort references and enrollment counts without parity proof.",
+      "Temporal state transitions, soft deletion, actor-scoped ACL/tenancy and multi-tenant FK relationships lack disposable PostgreSQL verification."
+    ],
+    "followUpEvidenceRequired": [
+      "Read academic setup and timetable service/endpoint writes against pinned and newest backend/FE source SHAs; classify each unconfirmed field as active, retired or calculated",
+      "Review 13 legacy tables and all 125 fields with explicit row-level semantic decision, source producer/consumer and constraint/FK/deletion evidence",
+      "Draft additions to domain-owned schemas or isolated SQL staging only; Chat 1 exclusively registers shared migrations and barrel",
+      "Execute zero-to-current migration replay and academic negative integration tests with disposable PostgreSQL; record exact SHAs and run IDs",
+      "Independently re-audit source revisions before marking DB-005 DONE_VERIFIED"
+    ],
+    "policy": "Never upgrade CANDIDATE to MAPPED/IMPLEMENTED/DB_TESTED or claim runtime success without source and execution evidence."
+  }
 }
