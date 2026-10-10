@@ -4,9 +4,11 @@ The next-generation 42Students LMS, rebuilt as a GCP-native TypeScript modular m
 
 ## Six-chat development system
 
-Start or resume a persistent lane with **"Continue chat 1 work"** through **"Continue chat 6 work"**. Ask **"chat 2 stats"** or **"all chat stats"** for source-backed progress. The durable instruction entry is [six-chat operating system](docs/coordination/six-chat-operating-system.md); the [copyable ChatGPT Project instructions](docs/coordination/chatgpt-project-instructions.md) make those short commands work naturally in new project chats. Six single-writer checkpoints live in `docs/coordination/lanes/chat-01.json` through `chat-06.json`, with GitHub issues #21–#26 as handoff logs.
+Use **"Continue chat 1 work"** through **"Continue chat 6 work"** to resume six interchangeable workers in the **same active project-wide phase**. Ask **"Chat 2 stats"** or **"All chat stats"** for live sourced progress. The [shared-phase operating system](docs/coordination/six-chat-operating-system.md) is authoritative; [Project instructions](docs/coordination/chatgpt-project-instructions.md) make short prompts work in new conversations.
 
-For an offline snapshot run `node scripts/six-chat-status.mjs`, `node scripts/six-chat-status.mjs --lane 4`, or `node scripts/six-chat-status.mjs --json`. Refresh GitHub issues/CI/commits for live claims. **Current execution priority: database schema/semantic parity, then API/domain workflows, then UI clone parity.** Preserved UI implementation is not proof of backend completion.
+All six work on **DATABASE across DB00–DB10**, then move together to **API parity**, then **UI parity**, then **RELEASE** only after global proof. Workers take temporary tasks from the [shared queue](docs/coordination/work-queue.json); a worker finishing a task claims the next unowned task in that same phase. [Global phase state](docs/coordination/phase-state.json) holds certification gates. [Chat checkpoints](docs/coordination/lanes) and GitHub issues #21–#26 persist handoffs.
+
+`node scripts/six-chat-status.mjs`, `--lane 4`, and `--json` report **offline committed snapshots**, not live CI. For live stats refresh GitHub issues, checks, oracle SHAs, and repo HEAD.
 
 ## Core stack
 
