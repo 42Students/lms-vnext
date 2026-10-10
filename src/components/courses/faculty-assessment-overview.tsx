@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
+import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
 import type { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
 
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
@@ -148,6 +149,21 @@ export function FacultyAssessmentOverview({
                   ) : null}
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  {item.facultyOwned ? (
+                    <FacultyAssessmentEditor
+                      assessment={{
+                        id: item.id,
+                        kind: item.kind,
+                        title: item.title,
+                        description: item.description,
+                        dueAt: item.dueAt,
+                        status: item.status,
+                        ...(item.kind === "QUIZ"
+                          ? { maxAttempts: item.maxAttempts }
+                          : { maxPoints: item.maxPoints }),
+                      }}
+                    />
+                  ) : null}
                   <Link
                     href={`/teacher/report/${item.kind === "QUIZ" ? "quiz" : "assignment"}/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}`}
                     className="rounded-md border border-primary px-3 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
