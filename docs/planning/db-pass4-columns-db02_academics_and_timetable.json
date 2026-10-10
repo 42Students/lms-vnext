@@ -1899,6 +1899,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyCourseAssociationServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_STAGED_REKEY",
+              "target": "faculty_course_associations.id",
+              "rationale": "UUID identity; legacy numeric IDs are not migrated.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1938,6 +1947,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyCourseAssociationServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_LIFECYCLE",
+              "target": "faculty_course_associations.ended_at",
+              "rationale": "Active iff ended_at IS NULL; deactivation closes lifecycle while retaining history.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -1979,6 +1997,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyCourseAssociationServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_STAGED_FK",
+              "target": "faculty_course_associations.course_id",
+              "rationale": "Broad association remains course-scoped and independent of delivery.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2020,6 +2047,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyCourseAssociationServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_MEMBERSHIP_FK",
+              "target": "faculty_course_associations.membership_id",
+              "rationale": "Legacy faculty identity normalizes to tenant-scoped college membership; producer must require FACULTY role.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -2031,6 +2067,13 @@
           "FacultyCourseAssociationRepository.java@859dac8ad89ec0f732a17c01d356e0b7b4a5df61"
         ],
         "note": "Repository queries/deactivation remain active; map producer/API or approve retirement only after consumer sweep."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+        "status": "DISTINCT_NORMALIZED_RELATION_STAGED_UNREGISTERED",
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -2096,6 +2139,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "COMPATIBILITY_PROJECTION_REKEY",
+              "target": "course_teaching_assignments.id",
+              "rationale": "Compatibility mapping ID can project canonical teaching-assignment UUID; no legacy numeric migration.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2150,6 +2202,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "course_teaching_assignments.created_at",
+              "rationale": "Canonical assignment creation timestamp.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2192,6 +2253,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "EXPLICIT_RETIREMENT_CANDIDATE",
+              "target": "none",
+              "rationale": "No current producer/filter was found for this inherited BaseModel field; canonical lifecycle uses ended_at. Final retirement still requires API compatibility acceptance.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2246,6 +2316,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "course_teaching_assignments.updated_at",
+              "rationale": "Canonical assignment update timestamp.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2290,6 +2369,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_LIFECYCLE",
+              "target": "course_teaching_assignments.ended_at",
+              "rationale": "Active iff ended_at IS NULL; deactivation sets ended_at.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2336,6 +2424,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_RELATION",
+              "target": "course_teaching_assignments.delivery_id -> course_section_deliveries.section_id",
+              "rationale": "Class identity is the delivery section.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2382,6 +2479,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_RELATION",
+              "target": "course_teaching_assignments.delivery_id -> course_section_deliveries.offering_id -> course_offerings.course_id",
+              "rationale": "Course identity is inherited from the delivery offering.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2428,6 +2534,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_MEMBERSHIP_FK",
+              "target": "course_teaching_assignments.membership_id",
+              "rationale": "Faculty identity becomes tenant-scoped college membership.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -2439,6 +2554,13 @@
           "FacultyCourseMappingRepository.java@c426aa30637cb77bcdb1621df56107c0fdca6c3f"
         ],
         "note": "Repository drives faculty/class/course lookups and metrics; cannot silently retire."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+        "status": "NORMALIZED_COMPATIBILITY_PROJECTION_NOT_RUNTIME_VERIFIED",
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -2503,6 +2625,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_REKEY",
+              "target": "course_teaching_assignments.id",
+              "rationale": "Canonical teaching-assignment UUID replaces legacy numeric identity.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2556,6 +2687,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "course_teaching_assignments.created_at",
+              "rationale": "Canonical creation timestamp.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2597,6 +2737,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "COMPATIBILITY_FILTER_RETIRED_TO_LIFECYCLE",
+              "target": "course_teaching_assignments.ended_at",
+              "rationale": "Legacy inherited deletion filter has no independent producer; canonical end lifecycle replaces it, subject to API compatibility acceptance.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2650,6 +2799,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_OPERATIONAL_METADATA",
+              "target": "course_teaching_assignments.updated_at",
+              "rationale": "Canonical update timestamp.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2693,6 +2851,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_ACADEMIC_CONTEXT",
+              "target": "course_offerings.academic_period_id + academic_periods",
+              "rationale": "Academic year/calendar context is normalized to stable period identity rather than free-form string.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2733,7 +2900,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "promotion counts/deactivates assignments by batch+semester."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_RELATION",
+              "target": "course_teaching_assignments.delivery_id -> course_section_deliveries.offering_id -> course_offerings.cohort_id",
+              "rationale": "Legacy batch identity maps to cohort.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -2778,6 +2954,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_RELATION",
+              "target": "course_teaching_assignments.delivery_id -> course_section_deliveries.section_id",
+              "rationale": "Legacy class maps to section.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2823,6 +3008,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_RELATION",
+              "target": "course_teaching_assignments.delivery_id -> course_section_deliveries.offering_id -> course_offerings.course_id",
+              "rationale": "Course comes from the delivery offering.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2866,6 +3060,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_LIFECYCLE",
+              "target": "course_teaching_assignments.ended_at",
+              "rationale": "Assignment end timestamp.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2911,6 +3114,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_MEMBERSHIP_FK",
+              "target": "course_teaching_assignments.membership_id",
+              "rationale": "Faculty identity becomes tenant-scoped college membership.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -2949,7 +3161,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "promotion deactivates prior-semester active assignments transactionally."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_LIFECYCLE",
+              "target": "course_teaching_assignments.ended_at",
+              "rationale": "Active iff ended_at IS NULL.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -3000,6 +3221,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_ENUM",
+              "target": "course_teaching_assignments.role",
+              "rationale": "PRIMARY/CO_TEACHER/TA already matches the canonical vNext role enum.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         },
@@ -3039,7 +3269,16 @@
               "source": "src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java@9727013167f5c4ffd4eafa8064d45786b14c3dde",
               "proof": "promotion counts/deactivates outgoing and checks incoming assignment semester."
             },
-            "sourceActivityConfirmed": true
+            "sourceActivityConfirmed": true,
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "NORMALIZED_STABLE_TERM",
+              "target": "course_teaching_assignments.delivery_id -> course_offerings.program_term_id -> program_terms.term_number",
+              "rationale": "New staged offering term link preserves historical semester identity after cohort promotion.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
+            }
           }
         },
         {
@@ -3082,6 +3321,15 @@
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
                 "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
               ]
+            },
+            "vnextTargetDisposition": {
+              "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+              "kind": "DIRECT_LIFECYCLE",
+              "target": "course_teaching_assignments.started_at",
+              "rationale": "Assignment start timestamp.",
+              "registrationStatus": "UNREGISTERED_OR_EXISTING_TARGET_NOT_RUNTIME_VERIFIED",
+              "semanticEquivalenceStatus": "NOT_EXECUTED",
+              "postgresStatus": "NOT_EXECUTED"
             }
           }
         }
@@ -3093,6 +3341,13 @@
           "FacultyTeachingAssignmentRepository.java@d67c04c24c4478ef111d8e0fb3b3e3a80f3a3dd8"
         ],
         "note": "Independent batch/semester/course/class teaching lifecycle is live and promotion-coupled."
+      },
+      "db02TargetDisposition": {
+        "decisionId": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+        "status": "NORMALIZED_COMPATIBILITY_PROJECTION_NOT_RUNTIME_VERIFIED",
+        "contract": "docs/planning/db02-academic-progression-contract.md",
+        "staging": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
+        "runtimePostgresStatus": "NOT_EXECUTED"
       }
     },
     {
@@ -6439,6 +6694,30 @@
       "runtimePostgresVerifiedFields": 0,
       "semanticEquivalenceVerifiedFields": 0,
       "note": "This closes source-side activity/disposition classification only. It does NOT certify vNext field equivalence, PostgreSQL behavior, migration replay, or final retirement approval for false/inactive candidates."
-    }
+    },
+    "targetDispositionPasses": [
+      {
+        "id": "CHAT04_DB005_FACULTY_TARGET_MAPPING_2026_10_11",
+        "observedDesignDecision": "Three legacy faculty/course tables normalize to two canonical concepts: broad faculty-course association plus delivery-bound course teaching assignment.",
+        "fieldsWithTargetDisposition": 26,
+        "offeringTermRequirement": "course_offerings.program_term_id is required so delivery-bound teaching history retains stable program semester identity after cohort promotion; CORE offerings must match program_term_courses, ELECTIVE offerings remain term-bound without mandatory fixed curriculum membership.",
+        "stagingCommit": "06e6d2071da4175d22d0be97dd142910d06b3ba5",
+        "contractCommit": "67e8bcf061ba9d60b7b22eee104ed4b8ed21a6b3",
+        "semanticEquivalenceVerified": 0,
+        "postgresTestsExecuted": 0,
+        "warning": "These are target design dispositions, not executed equivalence. faculty_course_mapping compatibility producer order and legacy API projections remain API-phase acceptance work."
+      }
+    ],
+    "canonicalTargetDecisions": [
+      {
+        "id": "COURSE_OFFERING_STABLE_PROGRAM_TERM",
+        "status": "STAGED_UNREGISTERED",
+        "target": "course_offerings.program_term_id -> program_terms.id",
+        "rationale": "Academic period is calendar identity, not program curriculum-term identity. Stable term FK preserves semester history for deliveries, teaching assignments and DB03 eligibility.",
+        "coreRule": "CORE offering must have matching program_term_courses(program_term_id, course_id).",
+        "electiveRule": "ELECTIVE offering remains program-term bound but is not required to be in the fixed curriculum mapping.",
+        "runtimePostgresStatus": "NOT_EXECUTED"
+      }
+    ]
   }
 }
