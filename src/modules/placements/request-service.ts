@@ -1171,6 +1171,8 @@ export async function getLearnerPlacementRequestWorkspace(
             placementApplications.id,
           roundId: placementJobRounds.id,
           roundName: placementJobRounds.name,
+          roundKind: placementJobRounds.kind,
+          testUrl: placementJobRounds.testUrl,
           sequence:
             placementJobRounds.sequence,
           scheduledAt:
