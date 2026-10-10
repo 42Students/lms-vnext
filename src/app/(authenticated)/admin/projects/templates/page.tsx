@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
+import { CreateProjectTemplateControl } from "@/components/projects/project-template-controls";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { listProjectTemplates } from "@/modules/projects/template-service";
 
@@ -28,6 +29,7 @@ export default async function SuperAdminProjectTemplatesPage() {
         eyebrow="Projects"
         title="Template catalogue"
         description="Global project templates and their current publication state."
+        actions={<CreateProjectTemplateControl />}
       />
       {!templates.length ? (
         <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
