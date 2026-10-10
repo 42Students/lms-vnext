@@ -703,7 +703,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.id",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -733,7 +740,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.created_at",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -753,7 +767,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.deleted_at (normalized soft-delete state)",
+          "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -783,7 +804,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.updated_at",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -803,7 +831,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.content_text",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -825,7 +860,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.lesson_content_id",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -845,7 +887,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.author_profile_name_snapshot",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -865,7 +914,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.sequence",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -887,7 +943,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.author_membership_id (normalized tenant identity)",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -907,7 +970,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.author_unique_name_snapshot",
+          "db008SourceDisposition": "CURRENT_PRIMARY_RUNTIME_SOURCE_CONFIRMED_STAGED_UNREGISTERED",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "Discussions.java + DiscussionDTO.java + DiscussionController.java + DiscussionServiceImpl.java + DiscussionRepository.java",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -929,7 +999,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.parent_discussion_id",
+          "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -949,7 +1026,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.discussion_status",
+          "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -969,7 +1053,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.is_faculty_answer",
+          "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -991,7 +1082,14 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.resolved_at",
+          "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -1011,7 +1109,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.resolved_by_membership_id",
+          "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         },
         {
           "legacyTable": "discussions",
@@ -1031,7 +1136,14 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-discussions.draft.sql -> lesson_content_discussions.attachment_object_key (private-storage redesign)",
+          "db008SourceDisposition": "HISTORICAL_PERSISTED_COLUMN_STAGED_PRESERVATION_ONLY_RUNTIME_USAGE_UNPROVEN",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "historical snapshot field; inspected primary discussion runtime path does not expose producer/consumer behavior",
+            "scripts/sql/db05-lesson-content-discussions.draft.sql"
+          ]
         }
       ]
     },
@@ -2175,5 +2287,19 @@
         }
       ]
     }
-  ]
+  ],
+  "db008DiscussionEvidence": {
+    "reviewedOn": "2026-10-11",
+    "taskId": "DB-008",
+    "worker": 6,
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "stagedContractSha": "b797fcd0df2cdd6cbb277244814470285c293e26",
+    "stagedContract": "scripts/sql/db05-lesson-content-discussions.draft.sql",
+    "semanticReview": "docs/planning/db05-chat06-source-semantic-review.json",
+    "discussionFields": 16,
+    "primaryRuntimeSourceConfirmed": 9,
+    "preservationOnlyRuntimeUsageUnproven": 7,
+    "verifiedMappings": 0,
+    "note": "The legacy lesson-content discussion stream is distinct from classroom_messages. All 16 persisted columns have an unregistered staging target, but no mapping is VERIFIED and the seven preservation-only/runtime-unproven fields must not be exposed as active behavior without further source/live-schema evidence."
+  }
 }
