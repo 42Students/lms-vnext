@@ -1159,14 +1159,14 @@
         "docs/planning/database-parity-db10-skills-contract.md",
         "tests/db10-skills-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-11",
-      "startedAt": null,
+      "startedAt": "2026-10-11",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -1188,6 +1188,11 @@
           "status": "PICKED",
           "at": "2026-10-11",
           "reason": "Chat 5 CAS-picked isolated DB10 skill schema semantics; shared migration registration remains Chat 1's."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Source contracts verified; staged skill DB draft/SQL implementation begins."
         }
       ]
     }
