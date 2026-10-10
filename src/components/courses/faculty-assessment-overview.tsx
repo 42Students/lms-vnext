@@ -147,12 +147,20 @@ export function FacultyAssessmentOverview({
                     <p className="mt-2 line-clamp-2 text-sm text-body">{item.description}</p>
                   ) : null}
                 </div>
-                <Link
-                  href={`/teach/courses/${item.deliveryId}`}
-                  className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text hover:border-primary"
-                >
-                  Open Course
-                </Link>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`/teacher/report/${item.kind === "QUIZ" ? "quiz" : "assignment"}/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}`}
+                    className="rounded-md border border-primary px-3 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+                  >
+                    View Report
+                  </Link>
+                  <Link
+                    href={`/teach/courses/${item.deliveryId}`}
+                    className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text hover:border-primary"
+                  >
+                    Open Course
+                  </Link>
+                </div>
               </div>
               {item.kind === "QUIZ" ? (
                 <>
