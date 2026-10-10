@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "domain": "DB07_PROJECTS",
+  "entity": "project_task",
+  "owner": "W03",
+  "issue": 23,
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "evidence": [
+    "src/main/java/com/_42students/lms/model/ProjectTask.java",
+    "src/main/java/com/_42students/lms/dto/projects/ProjectTaskDTO.java",
+    "src/main/resources/db/migration/V75__project_tasks.sql",
+    "src/main/resources/db/migration/V78__project_task_blocker_reason.sql",
+    "src/main/resources/db/migration/V91__project_entities_optimistic_locking.sql",
+    "src/main/resources/db/migration/V118__project_sprints.sql",
+    "src/main/resources/db/migration/V139__project_task_approach.sql",
+    "src/main/resources/db/migration/V146__project_restore_and_task_ownership.sql",
+    "src/main/resources/db/migration/V174__project_task_submission.sql"
+  ],
+  "sourceFieldCount": 32,
+  "note": "Source-backed semantic proposal. Runtime SQL not executed; no row is runtime-verified until W01 registers/replays the migration and W03 exercises services/browser flows.",
+  "rows": [
+    {
+      "legacyColumn": "id",
+      "target": "project_tasks.id",
+      "semanticStatus": "NORMALIZED_UUID",
+      "rationale": "Existing UUID identity; legacy int→UUID.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "created_at",
+      "target": "project_tasks.created_at",
+      "semanticStatus": "MAPPED_EXISTING",
+      "rationale": "Existing timestamptz; legacy nullable historical rows are irrelevant in greenfield vNext.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "updated_at",
+      "target": "project_tasks.updated_at",
+      "semanticStatus": "MAPPED_EXISTING",
+      "rationale": "Existing timestamptz and current CAS token; explicit numeric version still proposed below because legacy clients expose version conflicts.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "is_deleted",
+      "target": "project_tasks.deleted_at",
+      "semanticStatus": "NEEDS_FIELD",
+      "rationale": "Task-level soft-delete is an active legacy behavior distinct from workspace deletion.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "project_id",
+      "target": "project_tasks.project_id",
+      "semanticStatus": "MAPPED_EXISTING",
+      "rationale": "Existing tenant/project FK.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "task_key",
+      "target": "project_tasks.template_key",
+      "semanticStatus": "MAPPED_RENAMED",
+      "rationale": "Stable per-project key; existing unique project/template_key constraint.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "title",
+      "target": "project_tasks.title",
+      "semanticStatus": "MAPPED_EXISTING",
+      "rationale": "Existing.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "description",
+      "target": "project_tasks.description",
+      "semanticStatus": "MAPPED_EXISTING",
+      "rationale": "Existing.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "task_status",
+      "target": "project_tasks.status",
+      "semanticStatus": "MAPPED_ENUM_RENAMED",
+      "rationale": "Legacy TO_DO→vNext TODO; IN_PROGRESS/BLOCKED/IN_REVIEW/DONE retain semantics.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "priority",
+      "target": "project_tasks.priority",
+      "semanticStatus": "MAPPED_EXISTING_SUPERSET",
+      "rationale": "LOW/MEDIUM/HIGH map directly; vNext CRITICAL is additive.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "due_date",
+      "target": "project_tasks.due_date",
+      "semanticStatus": "NEEDS_FIELD",
+      "rationale": "Date-only deadline displayed/edited by project board.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "due_label",
+      "target": "project_tasks.due_label",
+      "semanticStatus": "NEEDS_FIELD",
+      "rationale": "Legacy preserves display label separately from parsed date.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "assignee_id",
+      "target": "project_tasks.assignee_project_member_id",
+      "semanticStatus": "NORMALIZE_TO_PROJECT_MEMBER",
+      "rationale": "Use project_members UUID, not ambiguous learner/faculty integer ID.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "assignee_type",
+      "target": "project_members.role",
+      "semanticStatus": "NORMALIZED_AWAY",
+      "rationale": "Role is already typed on project_members; no ambiguous ID space.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "assignee_name",
+      "target": "users.display_name via project_members.membership_id",
+      "semanticStatus": "DERIVED",
+      "rationale": "Display name is joined, not duplicated on task.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "sort_order",
+      "target": "project_tasks.sequence",
+      "semanticStatus": "MAPPED_RENAMED",
+      "rationale": "Existing per-sprint order; backlog migration must define project-level ordering when sprint_id is null.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "created_by",
+      "target": "project_tasks.created_by_user_id",
+      "semanticStatus": "NEEDS_FIELD_NORMALIZED",
+      "rationale": "Canonical users UUID replaces legacy actor integer.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "updated_by",
+      "target": "project_tasks.updated_by_user_id",
+      "semanticStatus": "NEEDS_FIELD_NORMALIZED",
+      "rationale": "Canonical users UUID replaces legacy actor integer.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "blocker_reason",
+      "target": "project_tasks.blocker_reason",
+      "semanticStatus": "NEEDS_FIELD",
+      "rationale": "Required for BLOCKED context and legacy At Risk/task board.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "sprint_key",
+      "target": "project_tasks.sprint_id→project_sprints.template_key",
+      "semanticStatus": "NORMALIZED_RELATION",
+      "rationale": "Existing sprint FK; backlog migration makes it nullable.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "sprint_label",
+      "target": "project_sprints.title",
+      "semanticStatus": "DERIVED",
+      "rationale": "Join current sprint title instead of duplicating label.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "version",
+      "target": "project_tasks.version",
+      "semanticStatus": "NEEDS_FIELD",
+      "rationale": "Legacy optimistic locking is user-visible via conflict response. updatedAt CAS remains useful but is not yet approved as semantic retirement.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "estimate_points",
+      "target": "project_tasks.estimate_points",
+      "semanticStatus": "NEEDS_FIELD",
+      "rationale": "Nullable relative estimate.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "task_type",
+      "target": "project_tasks.task_type",
+      "semanticStatus": "NEEDS_FIELD",
+      "rationale": "STORY|BUG|CHORE|SPIKE.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "acceptance_criteria",
+      "target": "project_tasks.acceptance_criteria",
+      "semanticStatus": "MAPPED_EXISTING",
+      "rationale": "Existing.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "carried_over_from_sprint_key",
+      "target": "project_tasks.carried_over_from_sprint_id",
+      "semanticStatus": "NEEDS_FIELD_NORMALIZED",
+      "rationale": "Already staged in backlog migration candidate as same-project sprint FK.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "approach",
+      "target": "project_tasks.approach",
+      "semanticStatus": "NEEDS_FIELD",
+      "rationale": "Worked how-to guidance, distinct from acceptance criteria.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "created_by_type",
+      "target": "users.id canonical identity",
+      "semanticStatus": "NORMALIZED_AWAY",
+      "rationale": "vNext canonical user identity removes learner/faculty numeric collision.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "deleted_by_workspace",
+      "target": "workspace tombstone + project task visibility rules",
+      "semanticStatus": "NORMALIZED_WORKSPACE_TOMBSTONE",
+      "rationale": "Do not duplicate if W01 adopts workspace-level recoverable deletion; requires runtime proof before approved retirement.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "submission_url",
+      "target": "project_task_submissions.submission_url",
+      "semanticStatus": "NORMALIZED_CHILD_TABLE",
+      "rationale": "Existing versioned task-submission model.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "submitted_by",
+      "target": "project_task_submissions.submitted_by_membership_id",
+      "semanticStatus": "NORMALIZED_CHILD_TABLE",
+      "rationale": "Canonical membership attribution.",
+      "runtimeVerified": false
+    },
+    {
+      "legacyColumn": "submitted_at",
+      "target": "project_task_submissions.submitted_at",
+      "semanticStatus": "NORMALIZED_CHILD_TABLE",
+      "rationale": "Existing timestamptz attribution.",
+      "runtimeVerified": false
+    }
+  ]
+}
