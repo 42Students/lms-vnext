@@ -163,7 +163,7 @@ rejection, and rollback on a conflicting privileged-SQL project member.
 Added `moveElectiveMember` in the group kernel (also re-exported as
 `moveElectiveSelection` from the electives module). Moves require same active
 slot, two distinct active backed offerings, authenticated college administrator,
-active same-program learner, active source membership, and non-locked target.
+active same-program learner, active source membership, and target membership state. A locked REMOVED target may be revived only by an explicit admin move, with the lock preserved.
 Within ONE PostgreSQL transaction we lock the shared slot, then both groups
 in deterministic ID order; validate target capacity BEFORE removing source;
 update group seats/history; and promote an eligible source waitlisted learner.
@@ -282,3 +282,48 @@ is not a proxy for passing tests.
 PR #27 adds a persisted actor status/membership/role check for group writes and rule refresh under transaction-scoped SHARE locks, closing stale `RequestContext` revocation windows. PR #31 extends this protection to elective slot/offering writes and fixes the missing `isNull` import used by elective listing. The new isolated DB03 test file authors five negative write cases, not yet executed. PR #29 adds a structural migration journal preflight and six Node regression cases, wired into CI; it cannot replace `drizzle-kit generate` or actual PostgreSQL replay. Merge commits and remaining blockers are itemized in `docs/planning/w01-platform-closure-status.md`.
 
 **DB03 remains RELEASE BLOCKED:** zero of 79 field mappings verified by runtime/producer-consumer evidence; runner-backed TypeScript, disposable PostgreSQL and browser suites not executed. Do not extrapolate implementation or semantic closure from test authorship.
+
+
+## Chat 5 DB-006 source reconciliation (2026-10-11)
+
+**Queue disposition: implementation/source review complete, runtime verification pending.**
+
+Chat 5 re-read the pinned legacy DB03 migrations and product contracts against the
+current vNext schema/services. The pass accounts for **79/79 source fields with
+proposed targets, 0 unmapped after source review, and 0 formally runtime-verified**.
+The updated source ledger is
+`docs/planning/db-pass4-columns-db03_groups_and_electives.json`. This source-review
+state MUST NOT be reported as database verification.
+
+The pass found three concrete legacy-behavior mismatches in the already-authored
+group service and corrected them on main:
+
+- Missing/non-boolean `config_json.allowWaitlist` now preserves the legacy default
+  of `true`; only explicit boolean `false` disables waitlisting. This applies to
+  both ordinary joins and same-slot elective transfers.
+- Missing/non-boolean `config_json.allowSelfLeave` now preserves the legacy default
+  of `true`; only explicit boolean `false` disables learner self-leave.
+- A locked `REMOVED` membership still blocks learner self-rejoin, but an explicit
+  admin re-add or elective move may revive it and preserves `is_locked=true`, as
+  the legacy kernel did.
+
+Regression specifications were added/updated in
+`tests/integration/groups-db03.test.ts`, including empty-config defaults,
+admin revival of a locked removed membership, preservation of that lock across
+an elective move, and explicit `allowWaitlist=false` for the rollback-on-full
+case.
+
+Evidence commits:
+`fa78a96fd4448c0828c30b77cd98105e8c433666`,
+`f4b498f5da75e104b04a4b04fd4aef31b82b83c8`,
+`078a707cbf0b0788068fd1a9a4acd845396f6402`,
+`ba35e3ae9e65738c0d41a81bd1f8adba9319f92d`, and
+`7ae2a5de9035c2df349eaf176905e6e4b1db825e`.
+
+**Still not DONE_VERIFIED:** DB-001 runner/disposable PostgreSQL is blocked, so
+the authored TypeScript/PostgreSQL tests were not executed here. The global
+negative DB witness, active-field disposition and fresh-schema certification
+tasks remain responsible for executed migration/runtime evidence. The
+`backed_class_id -> backed_delivery_id + group-roster consumers` semantic
+redesign also still requires end-to-end course/attendance/assessment proof
+before release certification.
