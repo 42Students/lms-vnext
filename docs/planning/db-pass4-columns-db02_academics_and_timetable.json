@@ -60,7 +60,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_IDENTITY_REKEY",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Batch.java",
+              "proof": "CRUD identity remains active; vNext may UUID re-key because no data migration is required.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Batch.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Batches.js"
+              ]
+            }
           }
         },
         {
@@ -189,7 +200,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Batch.java",
+              "proof": "Persisted creation metadata; exact MySQL timestamp representation need not be copied when vNext uses timestamptz.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Batch.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Batches.js"
+              ]
+            }
           }
         },
         {
@@ -497,7 +519,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Batch.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Batch.java",
+              "proof": "Persisted update metadata; exact MySQL timestamp representation need not be copied when vNext uses timestamptz.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Batch.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Batches.js"
+              ]
+            }
           }
         }
       ],
@@ -562,7 +595,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_IDENTITY_REKEY",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "Class/section identity is consumed by enrollment, scheduling, attendance and elective-backed surfaces.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -604,7 +651,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "Inherited persisted creation metadata, not an independent product relationship.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -634,7 +695,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Legacy soft-delete flag must be reconciled to section archive/status and historical referential behavior; status is not automatically equivalent."
+            "notes": "Legacy soft-delete flag must be reconciled to section archive/status and historical referential behavior; status is not automatically equivalent.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_COMPATIBILITY_FILTER_NO_PRIMARY_DELETE_PRODUCER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "Current scope/roster queries filter soft-deleted classes and recycle-bin can restore them, while ClassService.deleteClass currently hard-deletes; preserve filter/history semantics without claiming the primary delete path is soft.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -676,7 +751,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "Inherited persisted update metadata, not an independent product relationship.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -746,7 +835,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "Current admin class CRUD reads/writes description.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -776,7 +879,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "LEGACY_COMPATIBILITY_METADATA",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "ClassService deliberately preserves and accepts legacy lifecycle dates for older callers; current admin UI derives academic structure elsewhere and does not author them.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -806,7 +923,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "No lower-bound enrollment field in observed vNext sections snapshot."
+            "notes": "No lower-bound enrollment field in observed vNext sections snapshot.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "Current admin CRUD authors minimum students and enforces lower_limit <= upper_limit.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -846,7 +977,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "Required class/section name; uniqueness is checked within batch or program.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -917,7 +1062,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "LEGACY_COMPATIBILITY_METADATA",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "ClassService deliberately preserves and accepts legacy lifecycle dates for older callers; current admin UI derives academic structure elsewhere and does not author them.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -949,7 +1108,21 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Could map to section capacity, but legacy lower_limit and eligibility constraints need separate policy."
+            "notes": "Could map to section capacity, but legacy lower_limit and eligibility constraints need separate policy.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+              "proof": "Current admin CRUD authors maximum students; elective-backed capacity also mirrors into this field.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/_Class.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/_ClassRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/RosterSql.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Classes.js"
+              ]
+            }
           }
         },
         {
@@ -1105,7 +1278,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_IDENTITY_REKEY",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+              "proof": "Session identity is consumed by calendars, attendance, updates and soft deletion.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
+              ]
+            }
           }
         },
         {
@@ -1147,7 +1331,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+              "proof": "Inherited persisted creation metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
+              ]
+            }
           }
         },
         {
@@ -1187,6 +1382,17 @@
                 "src/modules/academics/schedule-service.ts@3790551cd4fe1be830eb00c10df778ed16c9bd48"
               ],
               "runtimeAcceptance": "NOT_EXECUTED_IN_DB005"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_HISTORY_PRESERVING_LIFECYCLE",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+              "proof": "Delete marks the session deleted rather than removing it so attendance history survives; all schedule/attendance denominator queries filter deleted sessions.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
+              ]
             }
           }
         },
@@ -1229,7 +1435,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+              "proof": "Inherited persisted update metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
+              ]
+            }
           }
         },
         {
@@ -1609,7 +1826,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Attendance now in attendance_sessions; verify event/session cardinality, correction audit and marking lifecycle."
+            "notes": "Attendance now in attendance_sessions; verify event/session cardinality, correction audit and marking lifecycle.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_NORMALIZED_ATTENDANCE_LIFECYCLE",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+              "proof": "First attendance mark distinguishes UNMARKED from MARKED with zero absences; vNext attendance_sessions.status/marked_at is the normalized target and should not be duplicated on schedule events.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/ClassScheduleRepository.java"
+              ]
+            }
           }
         }
       ],
@@ -1660,7 +1888,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_IDENTITY_REKEY",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+              "proof": "Mapping id is returned to callers and used to deactivate the association.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyCourseAssociationServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java"
+              ]
+            }
           }
         },
         {
@@ -1688,7 +1927,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_LIFECYCLE",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+              "proof": "Creation sets active=1; deactivate flips to 0; active faculty/course queries filter on it.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyCourseAssociationServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java"
+              ]
+            }
           }
         },
         {
@@ -1718,7 +1968,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+              "proof": "Defines broad faculty-to-course association used by active course/faculty lookup APIs.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyCourseAssociationServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java"
+              ]
+            }
           }
         },
         {
@@ -1748,7 +2009,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+              "proof": "Defines broad faculty-to-course association used by active course/faculty lookup APIs.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyCourseAssociationServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java"
+              ]
+            }
           }
         }
       ],
@@ -1812,7 +2084,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_IDENTITY_REKEY",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+              "proof": "Current FacultyService/controller returns and deactivates mapping by id.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyCourseMappingRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
+              ]
+            }
           }
         },
         {
@@ -1854,7 +2138,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+              "proof": "Inherited persisted creation metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyCourseMappingRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
+              ]
+            }
           }
         },
         {
@@ -1884,7 +2180,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "BASE_FIELD_NO_CURRENT_CONSUMER_RETIREMENT_CANDIDATE",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+              "proof": "Entity inherits BaseModel.is_deleted, but current FacultyCourseMapping repository/service uses active=1/0 and no current is_deleted producer/filter was found in the pinned source.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyCourseMappingRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
+              ]
+            }
           }
         },
         {
@@ -1926,7 +2234,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+              "proof": "Inherited persisted update metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyCourseMappingRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
+              ]
+            }
           }
         },
         {
@@ -1958,7 +2278,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
-            "notes": "Legacy integer active flag vs vNext ended_at is not direct equivalence; test reactivation and audit."
+            "notes": "Legacy integer active flag vs vNext ended_at is not direct equivalence; test reactivation and audit.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_LIFECYCLE",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+              "proof": "Create/reactivate/deactivate and metrics use active=1/0.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyCourseMappingRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
+              ]
+            }
           }
         },
         {
@@ -1992,7 +2324,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+              "proof": "Current faculty course mapping APIs and metrics bind mapping to a class.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyCourseMappingRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
+              ]
+            }
           }
         },
         {
@@ -2026,7 +2370,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+              "proof": "Current faculty course mapping APIs and metrics bind mapping to a course.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyCourseMappingRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
+              ]
+            }
           }
         },
         {
@@ -2060,7 +2416,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+              "proof": "Current faculty course mapping APIs and metrics bind mapping to a faculty member.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyCourseMapping.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyCourseMappingRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/FacultyController.java"
+              ]
+            }
           }
         }
       ],
@@ -2124,7 +2492,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_IDENTITY_REKEY",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Assignment identity is returned, updated, deactivated and deleted by API.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2166,7 +2545,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Inherited persisted creation metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2196,7 +2586,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_COMPATIBILITY_FILTER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Repository eligibility/list queries explicitly exclude is_deleted=true and preserve NULL legacy flags.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2238,7 +2639,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Inherited persisted update metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2270,7 +2682,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "A period code is a candidate only; source can encode year range and semester separately."
+            "notes": "A period code is a candidate only; source can encode year range and semester separately.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_ACADEMIC_CONTEXT",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Create/update and exact assignment lookup persist academic-year context.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2344,7 +2767,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Required teaching assignment class relation; used by active lists and eligibility.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2378,7 +2812,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Required teaching assignment course relation; used by active lists and eligibility.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2410,7 +2855,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_LIFECYCLE_METADATA",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Create/update persists end date as teaching lifecycle metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2444,7 +2900,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Required teaching assignment faculty relation.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2522,7 +2989,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_ROLE",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "PRIMARY/CO_TEACHER/TA role is persisted and returned.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         },
         {
@@ -2593,7 +3071,18 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_LIFECYCLE_METADATA",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+              "proof": "Create/update persists start date as teaching lifecycle metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/FacultyTeachingAssignmentServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/FacultyTeachingAssignmentRepository.java"
+              ]
+            }
           }
         }
       ],
@@ -2669,6 +3158,19 @@
                 "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "CRUD identity and class_schedule.lecture_hall_id target; deletion is blocked while scheduled classes reference the room.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ]
             }
           }
         },
@@ -2699,7 +3201,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Inherited persisted creation metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/LectureHallRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java"
+              ]
+            }
           }
         },
         {
@@ -2727,7 +3241,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_RESTORE_CONSUMER_NO_PRIMARY_DELETE_PRODUCER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Admin recycle-bin can list/restore deleted lecture halls, but the primary LectureHallService delete path currently hard-deletes after dependency checks; do not model this as a proven soft-delete producer lifecycle.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/LectureHallRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java"
+              ]
+            }
           }
         },
         {
@@ -2757,7 +3283,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/LectureHall.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Inherited persisted update metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/LectureHallRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java"
+              ]
+            }
           }
         },
         {
@@ -2811,6 +3349,19 @@
                 "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Create/update field with backend range validation and admin display/export.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ]
             }
           }
         },
@@ -2867,6 +3418,19 @@
                 "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Required tenant scope for CRUD/list operations.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ]
             }
           }
         },
@@ -2923,6 +3487,19 @@
                 "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Optional department scope; backend verifies department belongs to the same college.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ]
             }
           }
         },
@@ -2977,6 +3554,19 @@
                 "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Editable/displayed room metadata.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ]
             }
           }
         },
@@ -3031,6 +3621,19 @@
                 "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Required room name; app enforces case-insensitive uniqueness within college.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ]
             }
           }
         },
@@ -3085,6 +3688,19 @@
                 "scripts/sql/db02-academic-progression-and-rooms-staging.sql"
               ],
               "runtimeAcceptance": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+              "proof": "Persisted enum: CLASSROOM, LECTURE_HALL, LAB, SEMINAR_HALL, AUDITORIUM, CONFERENCE_ROOM.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/LectureHall.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/LectureHallServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/LectureHallController.java",
+                "42Students/lms/src/main/java/com/_42students/lms/model/ClassSchedule.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/LectureHalls.js"
+              ]
             }
           }
         }
@@ -3175,7 +3791,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_IDENTITY_REKEY",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+              "proof": "Program identity is used throughout academic scope, CRUD, batches, classes and semesters.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/NewProgramRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
+              ]
+            }
           }
         },
         {
@@ -3217,7 +3846,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+              "proof": "Inherited persisted creation metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/NewProgramRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
+              ]
+            }
           }
         },
         {
@@ -3247,7 +3889,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_COMPATIBILITY_FILTER_NO_PRIMARY_DELETE_PRODUCER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+              "proof": "Scope/current-course queries and recycle-bin consume is_deleted, while NewProgramService primary delete currently hard-deletes after dependency checks.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/NewProgramRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
+              ]
+            }
           }
         },
         {
@@ -3289,7 +3944,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+              "proof": "Inherited persisted update metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/NewProgramRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
+              ]
+            }
           }
         },
         {
@@ -3323,7 +3991,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+              "proof": "Program is department-owned; create/update, tenant scope and list-by-college derive through department.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/NewProgramRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
+              ]
+            }
           }
         },
         {
@@ -3408,7 +4089,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgram.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+              "proof": "Current program CRUD persists name and enforces uniqueness within department.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgram.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/NewProgramRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/Programs.js"
+              ]
+            }
           }
         }
       ],
@@ -3457,7 +4151,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required."
+            "notes": "Candidate UUID re-key, not preserved legacy numeric ID; no active record migration required.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "COMPATIBILITY_BACKEND_IDENTITY",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "ProgramStructureController still exposes CRUD/list compatibility endpoints keyed by this id, although the current production frontend uses the newer semester surfaces.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3487,7 +4193,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Inherited persisted creation metadata for the compatibility table.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3515,7 +4233,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceActivityConfirmed": false,
+            "sourceSemanticDisposition": {
+              "kind": "BASE_FIELD_NO_CURRENT_CONSUMER_RETIREMENT_CANDIDATE",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Entity inherits BaseModel.is_deleted, but ProgramStructureService/repository uses hard delete and no current is_deleted filter/restore handler was found.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3545,7 +4275,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Inherited persisted update metadata for the compatibility table.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3578,7 +4320,19 @@
             "notes": "Legacy JSON ordered set and structure version must be checked against course offerings; grouping and history may be lost. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
             "relatedButNonEquivalentSnapshotReferences": [
               "public.course_offerings.course_id"
-            ]
+            ],
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "COMPATIBILITY_BACKEND_CONTRACT_NO_CURRENT_FE_CONSUMER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Compatibility CRUD/details persist an ordered JSON course-id list; current production frontend has moved to semester + semester-course APIs, so vNext should normalize rather than reproduce JSON storage.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3606,7 +4360,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "COMPATIBILITY_BACKEND_CONTRACT_NO_CURRENT_FE_CONSUMER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Compatibility ProgramStructure API persists end-date text; no current production frontend program-structure surface was found.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3634,7 +4400,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "COMPATIBILITY_BACKEND_CONTRACT_NO_CURRENT_FE_CONSUMER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Compatibility ProgramStructure API persists structure name; no current production frontend program-structure surface was found.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3668,7 +4446,19 @@
             "relatedButNonEquivalentSnapshotReferences": [
               "public.course_offerings.cohort_id",
               "public.cohorts.program_id"
-            ]
+            ],
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "COMPATIBILITY_BACKEND_CONTRACT_NO_CURRENT_FE_CONSUMER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Compatibility structure remains program-scoped and programId is immutable on update; current production frontend uses new semester APIs.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3696,7 +4486,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "COMPATIBILITY_BACKEND_CONTRACT_NO_CURRENT_FE_CONSUMER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Compatibility ProgramStructure API persists start-date text; no current production frontend program-structure surface was found.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         },
         {
@@ -3724,7 +4526,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval."
+            "notes": "No verified equivalent persisted column in Drizzle 0040 snapshot; classify active use vs explicit retirement before approval.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "COMPATIBILITY_BACKEND_CONTRACT_NO_CURRENT_FE_CONSUMER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+              "proof": "Compatibility API persists ACTIVE/INACTIVE/COMPLETED-style status and enforces sibling activation behavior; current production frontend uses new semester APIs.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/ProgramStructureServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java"
+              ]
+            }
           }
         }
       ],
@@ -4444,6 +5258,18 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+              "proof": "CRUD identity; semester-course responses expose mapping against a concrete semester.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterManagement.js"
+              ]
             }
           }
         },
@@ -4474,7 +5300,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Semester.java",
+              "proof": "Inherited persisted creation metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterManagement.js"
+              ]
+            }
           }
         },
         {
@@ -4502,7 +5341,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_COMPATIBILITY_FILTER_NO_PRIMARY_DELETE_PRODUCER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Semester.java",
+              "proof": "Semester list/curriculum queries filter is_deleted and recycle-bin can restore, while primary SemesterService delete currently hard-deletes after dependency checks.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterManagement.js"
+              ]
+            }
           }
         },
         {
@@ -4532,7 +5384,20 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Semester.java",
+              "proof": "Inherited persisted update metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/Semester.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/SemesterServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterRepository.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterManagement.js"
+              ]
+            }
           }
         },
         {
@@ -4925,6 +5790,18 @@
               "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
               "vnextEquivalenceStatus": "NOT_PROVEN",
               "runtimePostgresStatus": "NOT_EXECUTED"
+            },
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE",
+              "source": "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+              "proof": "Mapping identity is returned as mappingId and used by edit/delete flows.",
+              "evidenceRefs": [
+                "42Students/lms/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms/src/main/java/com/_42students/lms/controller/SemesterController.java",
+                "42Students/lms2-fe/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ]
             }
           }
         },
@@ -4955,7 +5832,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+              "proof": "Inherited persisted creation metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterCourseRepository.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ]
+            }
           }
         },
         {
@@ -4983,7 +5872,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete."
+            "notes": "Legacy soft delete cannot be presumed equal to archived status or hard delete.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "ACTIVE_COMPATIBILITY_FILTER",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+              "proof": "Curriculum listing/access queries explicitly exclude soft-deleted mappings, preserving legacy NULL flags; current removal APIs may hard-delete.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterCourseRepository.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ]
+            }
           }
         },
         {
@@ -5013,7 +5914,19 @@
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics."
+            "notes": "Compare legacy MySQL datetime precision/clock origin and vNext timestamptz semantics.",
+            "sourceActivityConfirmed": true,
+            "sourceSemanticDisposition": {
+              "kind": "OPERATIONAL_TIMESTAMP",
+              "source": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+              "proof": "Inherited persisted update metadata.",
+              "evidenceRefs": [
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/model/SemesterCourse.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/service/impl/SemesterCourseServiceImpl.java",
+                "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5/src/main/java/com/_42students/lms/repository/SemesterCourseRepository.java",
+                "42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2/src/pages/superadmin/sections/SemesterCourseMapping.js"
+              ]
+            }
           }
         },
         {
@@ -5374,7 +6287,7 @@
       "unresolved": 69,
       "semanticallyVerified": 0,
       "postgresVerified": 0,
-      "legacyActiveFieldsSourceConfirmed": 19
+      "legacyActiveFieldsSourceConfirmed": 106
     },
     "priorityGaps": [
       "Semester and semester_course have no verified program-specific persisted equivalent; academic_periods is college-scoped. Preserve semester name/ordinal and course order/credits/mandatory flag.",
@@ -5384,7 +6297,10 @@
       "Faculty course association versus class-scoped assignment, semester-specific teaching, enable/disable and audit history require producer/consumer comparison.",
       "Legacy new_program.duration_years versus programs.duration_terms needs explicit conversion decision and proof; older program and structure tables need active/retired review.",
       "Batch academic_year/current_semester/current_students/start/end cannot be presumed derivable from cohort references and enrollment counts without parity proof.",
-      "Temporal state transitions, soft deletion, actor-scoped ACL/tenancy and multi-tenant FK relationships lack disposable PostgreSQL verification."
+      "Temporal state transitions, soft deletion, actor-scoped ACL/tenancy and multi-tenant FK relationships lack disposable PostgreSQL verification.",
+      "Three overlapping legacy faculty/course assignment contracts remain source-active: broad faculty_course_associations, class-specific faculty_course_mapping, and richer faculty_teaching_assignment. vNext must preserve their observable APIs/permissions through one normalized model or documented projections rather than blindly recreating all three tables.",
+      "new_program_structure is still exposed by compatibility backend APIs but has no current production frontend surface; its courseIds JSON/date/status contract should be explicitly normalized or retired during API parity, not duplicated beside canonical program_terms.",
+      "Several BaseModel is_deleted fields are compatibility/filter consumers while primary delete services still hard-delete. Preserve observable filtering/history where required, but do not claim universal soft-delete parity until producer paths are reconciled."
     ],
     "followUpEvidenceRequired": [
       "Read academic setup and timetable service/endpoint writes against pinned and newest backend/FE source SHAs; classify each unconfirmed field as active, retired or calculated",
@@ -5417,6 +6333,18 @@
           "Lecture hall is an active first-class room resource referenced by schedules; free-text event location alone is not equivalent."
         ],
         "warning": "Source producer/consumer confirmation proves legacy activity only. It does not certify the proposed vNext mapping or PostgreSQL behavior."
+      },
+      {
+        "id": "CHAT04_DB005_SOURCE_DISPOSITION_2026_10_11",
+        "observedVnextMainSha": "d3c88f2cf3b5f3727b93b9666b6080c1bd4babc7",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+        "classifiedSourceCandidates": 125,
+        "activeOrCompatibilitySourceCandidates": 106,
+        "noCurrentActiveConsumerOrHistoricalCandidates": 19,
+        "postgresTestsExecuted": 0,
+        "semanticEquivalenceVerified": 0,
+        "note": "Complete source-side disposition across all 125 DB02 candidates. Runtime/database equivalence remains open."
       }
     ],
     "sourceBackedSemanticPass": {
@@ -5474,6 +6402,43 @@
       },
       "rule": "Read-path evidence prevents retirement. Historical DDL-only rows are not retired without explicit producer/consumer absence proof.",
       "contract": "docs/planning/db02-academic-progression-contract.md"
+    },
+    "sourceDispositionCoverage": {
+      "passId": "CHAT04_DB005_SOURCE_DISPOSITION_2026_10_11",
+      "observedVnextMainSha": "d3c88f2cf3b5f3727b93b9666b6080c1bd4babc7",
+      "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+      "totalSourceCandidates": 125,
+      "classifiedSourceCandidates": 125,
+      "activeOrCompatibilitySourceCandidates": 106,
+      "noCurrentActiveConsumerOrHistoricalCandidates": 19,
+      "unclassifiedSourceCandidates": 0,
+      "byDispositionKind": {
+        "ACTIVE_IDENTITY_REKEY": 7,
+        "ACTIVE_CANONICAL_STATE": 2,
+        "ACTIVE_PERSISTED": 43,
+        "OPERATIONAL_TIMESTAMP": 20,
+        "ACTIVE_CALCULATED_RESPONSE": 1,
+        "ACTIVE_COMPATIBILITY_FILTER_NO_PRIMARY_DELETE_PRODUCER": 3,
+        "LEGACY_COMPATIBILITY_METADATA": 2,
+        "ACTIVE_HISTORY_PRESERVING_LIFECYCLE": 1,
+        "ACTIVE_NORMALIZED_ATTENDANCE_LIFECYCLE": 1,
+        "ACTIVE_PERSISTED_LIFECYCLE": 2,
+        "BASE_FIELD_NO_CURRENT_CONSUMER_RETIREMENT_CANDIDATE": 2,
+        "ACTIVE_COMPATIBILITY_FILTER": 2,
+        "ACTIVE_PERSISTED_ACADEMIC_CONTEXT": 1,
+        "ACTIVE_PERSISTED_LIFECYCLE_METADATA": 2,
+        "ACTIVE_PERSISTED_ROLE": 1,
+        "ACTIVE_PERSISTED_CONTRACT_CONFIRMED_FROM_SOURCE": 9,
+        "ACTIVE_RESTORE_CONSUMER_NO_PRIMARY_DELETE_PRODUCER": 1,
+        "COMPATIBILITY_BACKEND_IDENTITY": 1,
+        "COMPATIBILITY_BACKEND_CONTRACT_NO_CURRENT_FE_CONSUMER": 6,
+        "HISTORICAL_DDL_ONLY_REQUIRES_RETIREMENT_REVIEW": 17,
+        "ACTIVE_PERSISTED_REQUIRED": 1
+      },
+      "runtimePostgresVerifiedFields": 0,
+      "semanticEquivalenceVerifiedFields": 0,
+      "note": "This closes source-side activity/disposition classification only. It does NOT certify vNext field equivalence, PostgreSQL behavior, migration replay, or final retirement approval for false/inactive candidates."
     }
   }
 }
