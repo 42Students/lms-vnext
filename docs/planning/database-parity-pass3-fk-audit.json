@@ -4151,5 +4151,1050 @@
       ],
       "reviewStatus": "NOT_VERIFIED"
     }
-  ]
+  ],
+  "currentHeadReconciliation": {
+    "observedOn": "2026-10-11",
+    "queueTask": "DB-014",
+    "observedMainSha": "ee643fdfd3ddebe35ae3baaa4d60f8c2df604484",
+    "runtimeVerification": "BLOCKED_BY_DB-001",
+    "baseline": {
+      "pass3Snapshot": "0036",
+      "pass3SourceSha": "5ca60b0f39a25c7b8dc1d0e26f4bbdfe8e5ec15a",
+      "tables": 84,
+      "foreignKeys": 195,
+      "checks": 172,
+      "selectedCandidateQueue": 41,
+      "structuralMultiParentTables": 60
+    },
+    "registeredHead": {
+      "journalIndex": 40,
+      "journalTag": "0040_db03_history_actor_types",
+      "snapshot": "drizzle/meta/0040_snapshot.json",
+      "snapshotId": "a8d36003-4e62-4ee2-a846-d34700000040",
+      "tables": 90,
+      "foreignKeys": 211,
+      "checks": 201,
+      "compositeForeignKeys": 0,
+      "structuralMultiParentTables": 65,
+      "note": "Drizzle snapshots do not model PostgreSQL triggers; registered migration 0039 adds DB03 cross-parent scope guards outside snapshot FK counts."
+    },
+    "coverageFinding": {
+      "baselineStructuralMultiParentTables": 60,
+      "baselineSelectedQueue": 41,
+      "baselineStructurallyOmitted": 19,
+      "currentStructuralMultiParentTables": 65,
+      "currentNotInOriginalSelectedQueue": [
+        "college_memberships",
+        "project_template_versions",
+        "placement_recruiter_profiles",
+        "placement_seasons",
+        "placement_candidate_academic_evidence",
+        "placement_job_eligibility_policies",
+        "placement_application_status_history",
+        "placement_application_screenings",
+        "placement_application_screening_history",
+        "placement_job_rounds",
+        "placement_job_round_events",
+        "placement_offers",
+        "placement_offer_status_history",
+        "placement_joining_outcomes",
+        "placement_joining_history",
+        "in_app_notifications",
+        "attendance_policies",
+        "attendance_sessions",
+        "placement_eligibility_decisions",
+        "lms_groups",
+        "lms_group_members",
+        "lms_group_member_events",
+        "elective_slots",
+        "elective_offerings"
+      ],
+      "newlyRegisteredStructuralTablesFromDb03": [
+        "lms_groups",
+        "lms_group_members",
+        "lms_group_member_events",
+        "elective_slots",
+        "elective_offerings"
+      ],
+      "disposition": "ORIGINAL_41_ROW_QUEUE_WAS_RISK_SELECTED_NOT_EXHAUSTIVE_STRUCTURAL_INVENTORY"
+    },
+    "liveRegisteredTriggerEvidence": [
+      "drizzle/0039_db03_scope_triggers.sql::db03_member_tenant_guard",
+      "drizzle/0039_db03_scope_triggers.sql::db03_elective_slot_scope_guard",
+      "drizzle/0039_db03_scope_triggers.sql::db03_elective_offering_scope_guard",
+      "drizzle/0039_db03_scope_triggers.sql::db03_project_team_scope_guard",
+      "drizzle/0039_db03_scope_triggers.sql::db03_group_owner_immutable_guard"
+    ],
+    "stagedEvidence": [
+      "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+      "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+    ],
+    "structuralMultiParentInventory": [
+      {
+        "table": "college_memberships",
+        "parentTargets": [
+          "users",
+          "colleges"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "CANONICAL_TENANT_MEMBERSHIP_ANCHOR",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "This row is the canonical user-to-college binding; user is global identity and college is the tenant anchor, so the two FKs are the intended relation rather than competing tenant parents."
+      },
+      {
+        "table": "faculty_profiles",
+        "parentTargets": [
+          "college_memberships",
+          "departments"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "cohorts",
+        "parentTargets": [
+          "programs",
+          "academic_periods"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "learner_program_enrollments",
+        "parentTargets": [
+          "college_memberships",
+          "programs",
+          "cohorts"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "section_enrollments",
+        "parentTargets": [
+          "learner_program_enrollments",
+          "sections",
+          "academic_periods"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "section_faculty_assignments",
+        "parentTargets": [
+          "sections",
+          "college_memberships"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "section_schedule_events",
+        "parentTargets": [
+          "sections",
+          "college_memberships"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "sections",
+        "parentTargets": [
+          "cohorts",
+          "academic_periods"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "course_offerings",
+        "parentTargets": [
+          "courses",
+          "cohorts",
+          "academic_periods"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "course_section_deliveries",
+        "parentTargets": [
+          "course_offerings",
+          "sections"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "course_teaching_assignments",
+        "parentTargets": [
+          "course_section_deliveries",
+          "college_memberships"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "lesson_contents",
+        "parentTargets": [
+          "course_lessons",
+          "course_section_deliveries",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "learner_content_progress",
+        "parentTargets": [
+          "college_memberships",
+          "lesson_contents"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "course_assignments",
+        "parentTargets": [
+          "course_lessons",
+          "course_section_deliveries",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "assignment_submissions",
+        "parentTargets": [
+          "course_assignments",
+          "course_section_deliveries",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "course_quizzes",
+        "parentTargets": [
+          "course_lessons",
+          "course_section_deliveries",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "quiz_attempts",
+        "parentTargets": [
+          "course_quizzes",
+          "course_section_deliveries",
+          "college_memberships"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "quiz_attempt_answers",
+        "parentTargets": [
+          "quiz_attempts",
+          "quiz_questions"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "project_template_versions",
+        "parentTargets": [
+          "project_templates",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "project_template_college_assignments",
+        "parentTargets": [
+          "project_templates",
+          "project_template_versions",
+          "colleges",
+          "users"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "project_instances",
+        "parentTargets": [
+          "colleges",
+          "project_templates",
+          "project_template_versions",
+          "users",
+          "lms_groups"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "PARTIAL_LIVE_DB03_PLUS_STAGED_DB07",
+        "evidence": [
+          "drizzle/0039_db03_scope_triggers.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "Registered DB03 trigger already couples team_group_id to college/kind/owner. Template/version/actor and broader project tenant invariants remain staged/unverified."
+      },
+      {
+        "table": "project_sprints",
+        "parentTargets": [
+          "project_instances",
+          "project_releases"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "STAGED_DB07_GUARD_RUNTIME_UNVERIFIED",
+        "evidence": [
+          "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "DB07 source work stages same-project/same-college guards but no numbered migration/runtime witness is claimed."
+      },
+      {
+        "table": "project_tasks",
+        "parentTargets": [
+          "project_instances",
+          "project_sprints"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "STAGED_DB07_GUARD_RUNTIME_UNVERIFIED",
+        "evidence": [
+          "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "DB07 source work stages same-project/same-college guards but no numbered migration/runtime witness is claimed."
+      },
+      {
+        "table": "project_members",
+        "parentTargets": [
+          "project_instances",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "STAGED_DB07_GUARD_RUNTIME_UNVERIFIED",
+        "evidence": [
+          "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "DB07 source work stages same-project/same-college guards but no numbered migration/runtime witness is claimed."
+      },
+      {
+        "table": "project_task_submissions",
+        "parentTargets": [
+          "project_instances",
+          "project_tasks",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "STAGED_DB07_GUARD_RUNTIME_UNVERIFIED",
+        "evidence": [
+          "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "DB07 source work stages same-project/same-college guards but no numbered migration/runtime witness is claimed."
+      },
+      {
+        "table": "project_submissions",
+        "parentTargets": [
+          "project_instances",
+          "college_memberships"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "STAGED_DB07_GUARD_RUNTIME_UNVERIFIED",
+        "evidence": [
+          "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "DB07 source work stages same-project/same-college guards but no numbered migration/runtime witness is claimed."
+      },
+      {
+        "table": "project_submission_reviews",
+        "parentTargets": [
+          "project_instances",
+          "project_submissions",
+          "users",
+          "college_memberships"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "STAGED_DB07_GUARD_RUNTIME_UNVERIFIED",
+        "evidence": [
+          "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "DB07 source work stages same-project/same-college guards but no numbered migration/runtime witness is claimed."
+      },
+      {
+        "table": "project_evaluations",
+        "parentTargets": [
+          "project_instances",
+          "project_submissions",
+          "users",
+          "college_memberships"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "STAGED_DB07_GUARD_RUNTIME_UNVERIFIED",
+        "evidence": [
+          "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "DB07 source work stages same-project/same-college guards but no numbered migration/runtime witness is claimed."
+      },
+      {
+        "table": "project_meetings",
+        "parentTargets": [
+          "project_instances",
+          "college_memberships",
+          "users",
+          "project_sprints",
+          "project_tasks"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "STAGED_DB07_GUARD_RUNTIME_UNVERIFIED",
+        "evidence": [
+          "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+          "docs/planning/sql/db07-w03-tenant-project-integrity-candidate.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "DB07 source work stages same-project/same-college guards but no numbered migration/runtime witness is claimed."
+      },
+      {
+        "table": "placement_company_relationships",
+        "parentTargets": [
+          "colleges",
+          "placement_companies",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_recruiter_profiles",
+        "parentTargets": [
+          "users",
+          "placement_companies"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_recruiter_college_grants",
+        "parentTargets": [
+          "placement_recruiter_profiles",
+          "placement_company_relationships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_seasons",
+        "parentTargets": [
+          "colleges",
+          "users"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_jobs",
+        "parentTargets": [
+          "colleges",
+          "placement_company_relationships",
+          "users",
+          "placement_seasons"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_candidate_academic_evidence",
+        "parentTargets": [
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_job_eligibility_policies",
+        "parentTargets": [
+          "placement_jobs",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_eligibility_overrides",
+        "parentTargets": [
+          "placement_jobs",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_applications",
+        "parentTargets": [
+          "placement_jobs",
+          "college_memberships",
+          "users",
+          "placement_job_role_options"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_application_status_history",
+        "parentTargets": [
+          "placement_applications",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_application_screenings",
+        "parentTargets": [
+          "placement_applications",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_application_screening_history",
+        "parentTargets": [
+          "placement_applications",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_job_rounds",
+        "parentTargets": [
+          "placement_jobs",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_job_round_events",
+        "parentTargets": [
+          "placement_job_rounds",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_round_results",
+        "parentTargets": [
+          "placement_job_rounds",
+          "placement_applications",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_offers",
+        "parentTargets": [
+          "placement_applications",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_offer_status_history",
+        "parentTargets": [
+          "placement_offers",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_joining_outcomes",
+        "parentTargets": [
+          "placement_offers",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_joining_history",
+        "parentTargets": [
+          "placement_offers",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "activity_events",
+        "parentTargets": [
+          "organizations",
+          "colleges",
+          "users",
+          "college_memberships"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "SERVICE_SCOPE_GUARD_DB_COUPLING_OPEN",
+        "evidence": [
+          "src/modules/activity/service.ts"
+        ],
+        "runtimeVerified": false,
+        "rationale": "Writer resolves college→organization and actor membership in service, but DB checks do not prove college.organization_id matches organization_id or actor_membership_id matches college_id."
+      },
+      {
+        "table": "in_app_notifications",
+        "parentTargets": [
+          "users",
+          "activity_events"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "SERVICE_RECIPIENT_SCOPE_GUARD_DB_COUPLING_OPEN",
+        "evidence": [
+          "src/modules/activity/notification-service.ts"
+        ],
+        "runtimeVerified": false,
+        "rationale": "Service revalidates persisted recipient grants before delivery, but direct SQL can still pair a user with an event outside that user's eligible scope; inbox reads trust the stored user_id/event_id pair."
+      },
+      {
+        "table": "placement_learner_requests",
+        "parentTargets": [
+          "placement_applications",
+          "placement_job_rounds",
+          "placement_offers",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_application_round_exceptions",
+        "parentTargets": [
+          "placement_applications",
+          "placement_job_rounds",
+          "placement_learner_requests"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "section_schedule_event_courses",
+        "parentTargets": [
+          "section_schedule_events",
+          "course_section_deliveries"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "attendance_policies",
+        "parentTargets": [
+          "colleges",
+          "users"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "attendance_sessions",
+        "parentTargets": [
+          "section_schedule_events",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "attendance_records",
+        "parentTargets": [
+          "section_schedule_events",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "course_discussion_messages",
+        "parentTargets": [
+          "course_section_deliveries",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_eligibility_decisions",
+        "parentTargets": [
+          "colleges",
+          "users"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "placement_drive_day_coordinator_assignments",
+        "parentTargets": [
+          "colleges",
+          "placement_jobs",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "placement_round_attendance",
+        "parentTargets": [
+          "placement_job_rounds",
+          "placement_applications",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_DB_PARENT_CONSISTENCY",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "Multiple independently valid parent IDs can encode an inconsistent scope unless application or database invariants couple them."
+      },
+      {
+        "table": "lms_groups",
+        "parentTargets": [
+          "colleges",
+          "users"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "ACTOR_PROVENANCE_SCOPE_REVIEW",
+        "evidence": [],
+        "runtimeVerified": false,
+        "rationale": "One parent is the business/scope object and another is a global actor user; actor authorization must be proven by service or trigger rather than a naive same-college composite FK."
+      },
+      {
+        "table": "lms_group_members",
+        "parentTargets": [
+          "lms_groups",
+          "college_memberships"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "REGISTERED_DB03_TRIGGER_GUARD_RUNTIME_NOT_REEXECUTED",
+        "evidence": [
+          "drizzle/0039_db03_scope_triggers.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "Registered migration contains cross-parent scope trigger(s); current Chat 1 run has not executed PostgreSQL witness because DB-001 is blocked."
+      },
+      {
+        "table": "lms_group_member_events",
+        "parentTargets": [
+          "lms_groups",
+          "college_memberships",
+          "users"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "OPEN_HISTORY_EVENT_SCOPE_GUARD",
+        "evidence": [
+          "drizzle/0040_db03_history_actor_types.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "History row references group, membership and actor but registered DB03 scope trigger protects lms_group_members, not the history row itself."
+      },
+      {
+        "table": "elective_slots",
+        "parentTargets": [
+          "colleges",
+          "programs",
+          "academic_periods"
+        ],
+        "directCollegeColumn": true,
+        "disposition": "REGISTERED_DB03_TRIGGER_GUARD_RUNTIME_NOT_REEXECUTED",
+        "evidence": [
+          "drizzle/0039_db03_scope_triggers.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "Registered migration contains cross-parent scope trigger(s); current Chat 1 run has not executed PostgreSQL witness because DB-001 is blocked."
+      },
+      {
+        "table": "elective_offerings",
+        "parentTargets": [
+          "elective_slots",
+          "courses",
+          "lms_groups",
+          "course_section_deliveries"
+        ],
+        "directCollegeColumn": false,
+        "disposition": "REGISTERED_DB03_TRIGGER_GUARD_RUNTIME_NOT_REEXECUTED",
+        "evidence": [
+          "drizzle/0039_db03_scope_triggers.sql"
+        ],
+        "runtimeVerified": false,
+        "rationale": "Registered migration contains cross-parent scope trigger(s); current Chat 1 run has not executed PostgreSQL witness because DB-001 is blocked."
+      }
+    ],
+    "cascadeReview": [
+      {
+        "childTable": "placement_job_role_options",
+        "constraint": "placement_job_role_options_job_id_placement_jobs_id_fk",
+        "parentTable": "placement_jobs",
+        "retentionDisposition": "LOW_STRUCTURAL_JOIN_RISK",
+        "note": "Cascade is structural; verify parent hard-delete policy before certification."
+      },
+      {
+        "childTable": "section_schedule_event_courses",
+        "constraint": "section_schedule_event_courses_schedule_event_id_section_schedule_events_id_fk",
+        "parentTable": "section_schedule_events",
+        "retentionDisposition": "LOW_STRUCTURAL_JOIN_RISK",
+        "note": "Cascade is structural; verify parent hard-delete policy before certification."
+      },
+      {
+        "childTable": "attendance_sessions",
+        "constraint": "attendance_sessions_schedule_event_id_section_schedule_events_id_fk",
+        "parentTable": "section_schedule_events",
+        "retentionDisposition": "HIGH_HISTORY_RETENTION_REVIEW",
+        "note": "Hard-deleting a schedule event would erase attendance session/learner records; cancellation/retention policy must make this intentional."
+      },
+      {
+        "childTable": "attendance_records",
+        "constraint": "attendance_records_schedule_event_id_section_schedule_events_id_fk",
+        "parentTable": "section_schedule_events",
+        "retentionDisposition": "HIGH_HISTORY_RETENTION_REVIEW",
+        "note": "Hard-deleting a schedule event would erase attendance session/learner records; cancellation/retention policy must make this intentional."
+      },
+      {
+        "childTable": "course_discussion_messages",
+        "constraint": "course_discussion_messages_delivery_id_course_section_deliveries_id_fk",
+        "parentTable": "course_section_deliveries",
+        "retentionDisposition": "MEDIUM_DISCUSSION_RETENTION_REVIEW",
+        "note": "Hard delete of a delivery erases discussion history; ensure delivery lifecycle is archival/retained."
+      },
+      {
+        "childTable": "placement_drive_day_coordinator_assignments",
+        "constraint": "placement_drive_day_coordinator_assignments_job_id_placement_jobs_id_fk",
+        "parentTable": "placement_jobs",
+        "retentionDisposition": "MEDIUM_ASSIGNMENT_HISTORY_REVIEW",
+        "note": "Hard delete of a job or learner membership erases historical coordinator assignment."
+      },
+      {
+        "childTable": "placement_drive_day_coordinator_assignments",
+        "constraint": "placement_drive_day_coordinator_assignments_learner_membership_id_college_memberships_id_fk",
+        "parentTable": "college_memberships",
+        "retentionDisposition": "MEDIUM_ASSIGNMENT_HISTORY_REVIEW",
+        "note": "Hard delete of a job or learner membership erases historical coordinator assignment."
+      },
+      {
+        "childTable": "placement_round_attendance",
+        "constraint": "placement_round_attendance_round_id_placement_job_rounds_id_fk",
+        "parentTable": "placement_job_rounds",
+        "retentionDisposition": "HIGH_HISTORY_RETENTION_REVIEW",
+        "note": "Hard-deleting a round or application would erase attendance history; placement audit/retention policy needs explicit approval."
+      },
+      {
+        "childTable": "placement_round_attendance",
+        "constraint": "placement_round_attendance_application_id_placement_applications_id_fk",
+        "parentTable": "placement_applications",
+        "retentionDisposition": "HIGH_HISTORY_RETENTION_REVIEW",
+        "note": "Hard-deleting a round or application would erase attendance history; placement audit/retention policy needs explicit approval."
+      }
+    ],
+    "highPriorityOpenFindings": [
+      {
+        "id": "DB014-F01",
+        "table": "activity_events",
+        "severity": "HIGH",
+        "finding": "DB constraint does not couple college_id to organization_id or actor_membership_id to the event college; service writer does, direct SQL does not."
+      },
+      {
+        "id": "DB014-F02",
+        "table": "in_app_notifications",
+        "severity": "HIGH",
+        "finding": "DB constraint does not couple notification recipient to event scope; service writer validates recipient grants but inbox reads trust persisted user_id/event_id."
+      },
+      {
+        "id": "DB014-F03",
+        "table": "lms_group_member_events",
+        "severity": "HIGH",
+        "finding": "Registered member tenant trigger protects current lms_group_members rows, not immutable member-event history parent/actor scope."
+      },
+      {
+        "id": "DB014-F04",
+        "table": "attendance_records",
+        "severity": "HIGH",
+        "finding": "Cascade from schedule event can erase attendance history on hard delete; retention policy/negative test required."
+      },
+      {
+        "id": "DB014-F05",
+        "table": "placement_round_attendance",
+        "severity": "HIGH",
+        "finding": "Cascades from round/application can erase placement attendance history on hard delete; retention policy/negative test required."
+      }
+    ],
+    "sourceAuditStatus": "IN_PROGRESS_RUNTIME_UNVERIFIED",
+    "note": "This reconciliation does not mutate numbered migrations and does not claim PostgreSQL execution. It broadens the old 41-row risk queue to the full current structural graph and records which relationships are live-trigger guarded, staged, service-guarded, or still open."
+  }
 }
