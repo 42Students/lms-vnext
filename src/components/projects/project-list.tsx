@@ -9,6 +9,9 @@ export type ProjectListItem = {
   status: string;
   updatedAt: Date;
   participation?: string | null;
+  mentorName?: string | null;
+  memberCount?: number;
+  progressPercent?: number;
 };
 
 function statusTone(status: string) {
@@ -91,6 +94,29 @@ export function ProjectList({
             {item.summary ??
               "Project execution workspace with team, sprints, tasks, delivery and review history."}
           </p>
+
+          {(item.mentorName || item.memberCount !== undefined || item.progressPercent !== undefined) ? (
+            <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg bg-muted p-3 text-xs">
+              <div>
+                <p className="m-0 font-semibold text-muted-foreground">Mentor</p>
+                <p className="mt-1 truncate font-semibold text-foreground">
+                  {item.mentorName ?? "Unassigned"}
+                </p>
+              </div>
+              <div>
+                <p className="m-0 font-semibold text-muted-foreground">Members</p>
+                <p className="mt-1 font-semibold text-foreground">
+                  {item.memberCount ?? 0}
+                </p>
+              </div>
+              <div>
+                <p className="m-0 font-semibold text-muted-foreground">Progress</p>
+                <p className="mt-1 font-semibold text-foreground">
+                  {item.progressPercent ?? 0}%
+                </p>
+              </div>
+            </div>
+          ) : null}
 
           <div className="mt-auto flex items-end justify-between gap-3 pt-5">
             <p className="m-0 text-xs text-muted-foreground">
