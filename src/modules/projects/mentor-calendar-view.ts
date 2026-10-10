@@ -53,8 +53,22 @@ export function mentorMeetingDisplayStatus(
   // do not persist a synthetic MISSED state in PostgreSQL.
   const start = Date.parse(item.startsAt);
   if (!Number.isFinite(start)) return item.status;
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return start < today.getTime() ? "MISSED" : item.status;
+  // Compare calendar dates in the meeting's declared IANA timezone, not
+  // the server process timezone (which is often UTC in production).
+  try {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: item.timeZone, year: "numeric", month: "2-digit", day: "2-digit",
+    });
+    const dateKey = (date: Date) => {
+      const parts = formatter.formatToParts(date);
+      const get = (type: string) => parts.find(part => part.type === type)?.value ?? "";
+      return get("year") + get("month") + get("day");
+    };
+    return dateKey(new Date(start)) < dateKey(now) ? "MISSED" : item.status;
+  } catch {
+    // Invalid stored timezone must not turn a scheduled meeting into MISSED.
+    return item.status;
+  }
 }
 
 export function safeMentorMeetingJoinUrl(item: MentorMeetingCalendarItem): string | null {
