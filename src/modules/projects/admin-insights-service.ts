@@ -7,7 +7,9 @@ import {
   ilike,
   inArray,
   isNull,
+  ne,
   or,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -448,6 +450,198 @@ export async function listProjectAdminSnapshots(
       1,
       Math.ceil(total / query.pageSize),
     ),
+  };
+}
+
+export async function listProjectAdminRiskQueue(
+  context: RequestContext,
+  collegeIdInput: string,
+  rawQuery: ProjectAdminQuery = {},
+) {
+  const query =
+    projectAdminQuerySchema.parse(rawQuery);
+  const college =
+    await loadProjectCollegeScope(
+      collegeIdInput,
+    );
+  requirePermission(context, "projects.manage", {
+    organizationId: college.organizationId,
+    collegeId: college.id,
+  });
+
+  const search = query.q
+    ? or(
+        ilike(
+          projectInstances.title,
+          `%${query.q}%`,
+        ),
+        ilike(
+          projectInstances.slug,
+          `%${query.q}%`,
+        ),
+      )
+    : undefined;
+  const lastActivityAt = sql<Date>`greatest(
+    ${projectInstances.updatedAt},
+    coalesce((select max(pt.updated_at) from project_tasks pt where pt.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
+    coalesce((select max(ps.updated_at) from project_sprints ps where ps.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
+    coalesce((select max(pr.updated_at) from project_releases pr where pr.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
+    coalesce((select max(pfs.updated_at) from project_submissions pfs where pfs.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
+    coalesce((select max(pts.updated_at) from project_task_submissions pts where pts.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
+    coalesce((select max(pm.updated_at) from project_meetings pm where pm.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
+    coalesce((select max(pres.updated_at) from project_resources pres where pres.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
+    coalesce((select max(pmem.updated_at) from project_members pmem where pmem.project_id = ${projectInstances.id}), 'epoch'::timestamptz)
+  )`;
+  const pendingReview = sql<boolean>`exists (
+    select 1
+    from project_submissions pending
+    where pending.project_id = ${projectInstances.id}
+      and pending.status = 'SUBMITTED'
+  )`;
+  const staleCutoff =
+    new Date(
+      Date.now() - 7 * 24 * 60 * 60 * 1000,
+    );
+  const where = and(
+    eq(projectInstances.collegeId, college.id),
+    ne(projectInstances.status, "ARCHIVED"),
+    ne(projectInstances.status, "COMPLETED"),
+    query.status
+      ? eq(projectInstances.status, query.status)
+      : undefined,
+    search,
+    or(
+      sql`${lastActivityAt} <= ${staleCutoff}`,
+      pendingReview,
+    ),
+  );
+  const db = getDb();
+
+  const [totalRow, projects] =
+    await Promise.all([
+      db
+        .select({ value: count() })
+        .from(projectInstances)
+        .where(where),
+      db
+        .select({
+          id: projectInstances.id,
+          slug: projectInstances.slug,
+          title: projectInstances.title,
+          summary: projectInstances.summary,
+          status: projectInstances.status,
+          updatedAt: projectInstances.updatedAt,
+          lastActivityAt,
+          pendingReview,
+        })
+        .from(projectInstances)
+        .where(where)
+        .orderBy(
+          asc(lastActivityAt),
+          asc(projectInstances.title),
+        )
+        .limit(query.pageSize)
+        .offset(
+          (query.page - 1) *
+            query.pageSize,
+        ),
+    ]);
+  const total = Number(totalRow[0]?.value ?? 0);
+
+  if (!projects.length) {
+    return {
+      items: [],
+      total,
+      page: query.page,
+      pageSize: query.pageSize,
+      totalPages: Math.max(
+        1,
+        Math.ceil(total / query.pageSize),
+      ),
+      blockerSignalSupported: false,
+    };
+  }
+
+  const ids = projects.map((row) => row.id);
+  const mentors = await db
+    .select({
+      projectId: projectMembers.projectId,
+      displayName: users.displayName,
+      isPrimary: projectMembers.isPrimary,
+    })
+    .from(projectMembers)
+    .innerJoin(
+      collegeMemberships,
+      eq(
+        collegeMemberships.id,
+        projectMembers.membershipId,
+      ),
+    )
+    .innerJoin(
+      users,
+      eq(users.id, collegeMemberships.userId),
+    )
+    .where(
+      and(
+        inArray(projectMembers.projectId, ids),
+        eq(projectMembers.role, "MENTOR"),
+        isNull(projectMembers.endedAt),
+      ),
+    );
+
+  return {
+    items: projects.map((project) => {
+      const inactivityDays = Math.max(
+        0,
+        Math.floor(
+          (Date.now() -
+            project.lastActivityAt.getTime()) /
+            (24 * 60 * 60 * 1000),
+        ),
+      );
+      const reasons: string[] = [];
+      if (inactivityDays >= 7) {
+        reasons.push(
+          `No activity in ${inactivityDays} day${
+            inactivityDays === 1 ? "" : "s"
+          }`,
+        );
+      }
+      if (project.pendingReview) {
+        reasons.push("Pending review");
+      }
+      const projectMentors =
+        mentors.filter(
+          (mentor) =>
+            mentor.projectId === project.id,
+        );
+      const mentor =
+        projectMentors.find(
+          (candidate) =>
+            candidate.isPrimary,
+        ) ??
+        projectMentors[0] ??
+        null;
+
+      return {
+        ...project,
+        inactiveDays: inactivityDays,
+        riskReasons: reasons,
+        mentorName:
+          mentor?.displayName ?? null,
+      };
+    }),
+    total,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalPages: Math.max(
+      1,
+      Math.ceil(total / query.pageSize),
+    ),
+    // Legacy also has a free-text workspace blocker signal.
+    // DB07 vNext has no persisted blocker column yet; never
+    // claim that dimension is covered until W01 promotes it.
+    blockerSignalSupported: false,
   };
 }
 
