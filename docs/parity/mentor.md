@@ -130,3 +130,17 @@ Legacy Courses, Contacts, All Quizzes, File Explorer and Profile routes are serv
 - [x] All Quizzes stub classified RETIRED.
 - [x] File Explorer stub classified RETIRED.
 - [x] Profile stub classified RETIRED.
+
+## W03 implementation checkpoint (2026-10-10) — partial, not parity-verified
+
+Legacy oracles for this batch: FE `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`, BE `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`. Current implementation is on `main`; see `docs/planning/w03-projects-closure-tracker.md` and issue #23.
+
+- `/mentor` now checks Projects optional-module access and redirects to `/mentor/projects` when enabled; disabled state links to Notifications.
+- `/mentor/projects` and `/mentor/projects/[projectId]` now fail closed for disabled Projects; project list/detail enforce current platform-account and membership-role reads.
+- `/mentor/calendar` now lists meeting rows for the authenticated same-college active Mentor only, with Upcoming/Past & Cancelled, overdue REQUESTED handling, 20-row past preview, show-all toggle, timezone-aware display, join URL sanitization, skeleton and retry boundary. Meetings use the persisted `timestamptz` instants rather than parsing legacy date/time strings.
+- `/mentor/notifications` now reuses W06's personal inbox and derives project review/stalled/meeting attention from authorized project records, excluding archived projects. Shared announcement producer and final source parity remain open.
+- Scheduling/cancellation uses conditional SQL writes to prevent stale statuses from overwriting competing meeting transitions.
+- Pure Vitest and PostgreSQL integration regression cases have been **authored** but cannot yet be considered passed; GitHub CI fails with no runner steps and no disposable PostgreSQL/browser result.
+
+**Do not tick the page contract above as fully CLOSED:** navigation shell, feature-policy failures, all tab/detail workflows, latest production UI fidelity, activity completeness, mobile/browser, privacy/storage-backed resource uploads and source semantic mappings remain unverified. W01 owns shared sidebar navigation and the migration journal. W06 owns shared inbox/announcement infrastructure.
+
