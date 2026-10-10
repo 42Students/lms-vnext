@@ -2,12 +2,21 @@
  * A CLEAN receipt is necessary, not sufficient to certify a GCS object exists:
  * the storage adapter must verify generation, scanner result and ownership.
  */
-export type PrivateDocumentPurpose = "AADHAAR" | "PAN" | "MARKSHEET" | "RESUME" | "PROFILE_IMAGE";
+export type PrivateDocumentPurpose =
+  | "AADHAAR"
+  | "PAN"
+  | "MARKSHEET"
+  | "RESUME"
+  | "PROFILE_IMAGE"
+  | "EDUCATION_CERTIFICATE"
+  | "CERTIFICATION"
+  | "EXPERIENCE_CERTIFICATE"
+  | "OFFER_LETTER";
 export type Receipt = {
   id: string;
   owningMembershipId: string;
   purpose: PrivateDocumentPurpose;
-  educationEntryId: string | null;
+  relatedEntryId: string | null;
   scanStatus: "PENDING" | "CLEAN" | "REJECTED";
   privateObjectKey: string;
   objectGeneration: string;
@@ -41,10 +50,10 @@ export function educationLevel(input: string): "10TH" | "12TH" | "DIPLOMA" | "UG
   return null;
 }
 export function usablePrivateReceipt(r: Receipt, memberId: string, purpose: PrivateDocumentPurpose, at: Date,
-                educationEntryId: string | null = null): boolean {
+                relatedEntryId: string | null = null): boolean {
   const key = r.privateObjectKey;
   return r.owningMembershipId === memberId && r.purpose === purpose &&
-    r.educationEntryId === educationEntryId && r.scanStatus === "CLEAN" &&
+    r.relatedEntryId === relatedEntryId && r.scanStatus === "CLEAN" &&
     r.revokedAt === null && (r.retentionUntil === null || r.retentionUntil > at) &&
     Boolean(key && !key.includes("://") && !key.includes("..") && !key.startsWith("/")) &&
     Boolean(r.objectGeneration) && /^[0-9a-f]{64}$/i.test(r.sha256Hex) &&
@@ -53,8 +62,8 @@ export function usablePrivateReceipt(r: Receipt, memberId: string, purpose: Priv
 }
 export function evaluateVerificationEvidence(input: ProfileEvidenceInput): EvidenceResult {
   const missing: string[] = [];
-  const eligible = (purpose: PrivateDocumentPurpose, educationEntryId: string | null = null) =>
-    input.receipts.some(r => usablePrivateReceipt(r, input.owningMembershipId, purpose, input.now, educationEntryId));
+  const eligible = (purpose: PrivateDocumentPurpose, relatedEntryId: string | null = null) =>
+    input.receipts.some(r => usablePrivateReceipt(r, input.owningMembershipId, purpose, input.now, relatedEntryId));
   if (input.section === "IDENTITY") {
     if (!input.hasAadhaarNumber && !input.hasPanNumber) missing.push("Provide Aadhaar or PAN details");
     if (input.hasAadhaarNumber && !eligible("AADHAAR")) missing.push("Upload verified Aadhaar document");
