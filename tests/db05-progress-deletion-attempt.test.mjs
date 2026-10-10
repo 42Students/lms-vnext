@@ -19,7 +19,7 @@ test("DB05 progress draft retains attempts plus source-backed tombstone without 
 
 test("latest attempt selected before soft-delete filtering avoids historical resurrection", () => {
   assert.match(contract, /MAX attempt/);
-  assert.match(contract, /after.*deletion/);
+  assert.match(contract, /after.*restricting/);
   assert.match(contract, /attempt 1/);
   assert.match(contract, /attempt 2/);
   assert.match(contract, /incorrectly resurrect/);
