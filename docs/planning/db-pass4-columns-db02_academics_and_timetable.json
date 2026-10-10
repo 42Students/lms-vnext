@@ -883,16 +883,17 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.lms_groups.kind",
-              "public.sections.id"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Legacy SECTION vs GROUP_BACKED distinction; vNext sections have no explicit discriminator or linked group roster in observed snapshot."
+            "notes": "Legacy SECTION vs GROUP_BACKED distinction; vNext sections have no explicit discriminator or linked group roster in observed snapshot. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.lms_groups.kind",
+              "public.sections.id"
+            ]
           }
         },
         {
@@ -923,16 +924,17 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.lms_groups.id",
-              "public.lms_group_members.group_id"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/_Class.java",
-            "notes": "Group-backed class active membership requires persistent linkage and cross-tenant FK/invariant, not just similarly named groups."
+            "notes": "Group-backed class active membership requires persistent linkage and cross-tenant FK/invariant, not just similarly named groups. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.lms_groups.id",
+              "public.lms_group_members.group_id"
+            ]
           }
         }
       ]
@@ -1264,15 +1266,16 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.section_schedule_events.location"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/ClassSchedule.java",
-            "notes": "Observed vNext location is free text; no room FK/capacity/conflict policy; loss of typed lecture hall relation."
+            "notes": "Observed vNext location is free text; no room FK/capacity/conflict policy; loss of typed lecture hall relation. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.section_schedule_events.location"
+            ]
           }
         },
         {
@@ -2283,15 +2286,16 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.course_offerings.academic_period_id"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java",
-            "notes": "A period ID does not itself preserve numeric semester order per program/cohort."
+            "notes": "A period ID does not itself preserve numeric semester order per program/cohort. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.course_offerings.academic_period_id"
+            ]
           }
         },
         {
@@ -3055,15 +3059,16 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.course_offerings.course_id"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "Legacy JSON ordered set and structure version must be checked against course offerings; grouping and history may be lost."
+            "notes": "Legacy JSON ordered set and structure version must be checked against course offerings; grouping and history may be lost. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.course_offerings.course_id"
+            ]
           }
         },
         {
@@ -3143,16 +3148,17 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.course_offerings.cohort_id",
-              "public.cohorts.program_id"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/NewProgramStructure.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.course_offerings.cohort_id",
+              "public.cohorts.program_id"
+            ]
           }
         },
         {
@@ -3618,16 +3624,17 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.course_offerings.course_id"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": null,
-            "notes": "Historical program structure separate from newer one; active-vs-retired decision must be source-proven.",
-            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification."
+            "notes": "Historical program structure separate from newer one; active-vs-retired decision must be source-proven. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "sourceEvidenceGap": "Historical SQL DDL only: no corresponding Program.java or ProgramStructure.java exists under src/main/java/com/_42students/lms/model/ at current prod-2026; check historical use/retirement before classification.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.course_offerings.course_id"
+            ]
           }
         },
         {
@@ -3897,15 +3904,16 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.academic_periods.status"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.academic_periods.status"
+            ]
           }
         },
         {
@@ -3927,15 +3935,16 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.academic_periods.name"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "Semester has program_id and semester_number, while academic_periods is college-scoped. Matching names does not prove program-specific semester identity."
+            "notes": "Semester has program_id and semester_number, while academic_periods is college-scoped. Matching names does not prove program-specific semester identity. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.academic_periods.name"
+            ]
           }
         },
         {
@@ -3959,15 +3968,16 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.programs.id"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.programs.id"
+            ]
           }
         },
         {
@@ -3989,15 +3999,16 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.academic_periods.code"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/Semester.java",
-            "notes": "No program-scoped term ordinal in observed academic_periods."
+            "notes": "No program-scoped term ordinal in observed academic_periods. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.academic_periods.code"
+            ]
           }
         },
         {
@@ -4301,15 +4312,16 @@
           "validationEvidence": null,
           "db02SourceReview": {
             "pass": "CHAT04_DB005_2026_10_11",
-            "classification": "NORMALIZED_OR_DERIVED_CANDIDATE_UNVERIFIED",
-            "proposedSnapshotTargets": [
-              "public.course_offerings.academic_period_id"
-            ],
+            "classification": "NO_CONFIRMED_TARGET",
+            "proposedSnapshotTargets": [],
             "semanticProof": "NOT_PROVEN",
             "dbConstraintProof": "NOT_EXECUTED",
             "producerConsumerProof": "NOT_EXECUTED",
             "sourceJavaReference": "42Students/lms@prod-2026/src/main/java/com/_42students/lms/model/SemesterCourse.java",
-            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state."
+            "notes": "Candidate only; confirm FK, tenancy, null/default, read/write flows and historical state. Existing referenced column(s) do NOT persist the legacy entity/relationship identity; not counted as candidate mapping.",
+            "relatedButNonEquivalentSnapshotReferences": [
+              "public.course_offerings.academic_period_id"
+            ]
           }
         }
       ]
@@ -4329,8 +4341,8 @@
       "legacyTables": 13,
       "legacyFields": 125,
       "direct": 24,
-      "normalized": 44,
-      "unresolved": 57,
+      "normalized": 32,
+      "unresolved": 69,
       "semanticallyVerified": 0,
       "postgresVerified": 0
     },
@@ -4352,6 +4364,7 @@
       "Independently re-audit source revisions before marking DB-005 DONE_VERIFIED"
     ],
     "policy": "Never upgrade CANDIDATE to MAPPED/IMPLEMENTED/DB_TESTED or claim runtime success without source and execution evidence.",
-    "sourceReferenceCorrection": "The legacy program and program_structure source rows originate from historical SQL inventory, not current JPA model files. Do not silently retire."
+    "sourceReferenceCorrection": "The legacy program and program_structure source rows originate from historical SQL inventory, not current JPA model files. Do not silently retire.",
+    "strictnessReview": "Columns that merely reference related concepts but lose class-group, lecture-hall, versioned-structure, program-scoped semester or per-program term identity were removed from candidate mapping counts and retained as related-but-NOT-equivalent evidence."
   }
 }
