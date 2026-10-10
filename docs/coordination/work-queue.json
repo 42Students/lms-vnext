@@ -751,14 +751,14 @@
       "paths": [
         "docs/planning/database-parity-pass5-probe-manifest.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:44:00.000Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:44:15.000Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -780,6 +780,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:44:00.000Z",
           "reason": "Chat 5 CAS-picked next eligible DATABASE integrity task; DB-014 is already held by Chat 1 and DB-018 is dependency-blocked."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:44:15.000Z",
+          "reason": "Chat 5 started cross-domain state-transition/concurrency source audit."
         }
       ]
     },
