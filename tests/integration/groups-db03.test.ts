@@ -5,7 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createGroup, joinGroup, leaveGroup, moveElectiveMember, transitionGroup } from "@/modules/groups/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import { createElectiveSlot, listElectiveOfferings } from "@/modules/electives/service";
+import { createElectiveOffering, createElectiveSlot, listElectiveOfferings } from "@/modules/electives/service";
 import { upsertGroupRule, refreshGroupRule } from "@/modules/groups/rules-service";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -231,6 +231,50 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     const visible=await listElectiveOfferings(admin,slotId);
     expect(visible).toHaveLength(1);
     expect(visible[0].offeringId).toBe(fixture.offerings[1]);
+  });
+
+  it("rejects an elective backing delivery from another program in the same college", async () => {
+    const { slotId, periodId } = await createElectiveFixture();
+    const otherProgramId=randomUUID(), otherCohortId=randomUUID();
+    const otherSectionId=randomUUID(), courseId=randomUUID();
+    const otherOfferingId=randomUUID(), otherDeliveryId=randomUUID();
+    fixture.programs.push(otherProgramId); fixture.cohorts.push(otherCohortId);
+    fixture.sections.push(otherSectionId); fixture.courses.push(courseId);
+    fixture.offerings.push(otherOfferingId); fixture.deliveries.push(otherDeliveryId);
+
+    await pool.query(
+      "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
+      [otherProgramId,SEED_IDS.departmentA,"DB03 other program "+otherProgramId,"DB03-"+otherProgramId],
+    );
+    await pool.query(
+      "INSERT INTO cohorts (id,program_id,name,code,start_period_id,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
+      [otherCohortId,otherProgramId,"DB03 other cohort "+otherCohortId,"DB03-"+otherCohortId,periodId],
+    );
+    await pool.query(
+      "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
+      [otherSectionId,otherCohortId,periodId,"DB03 other section "+otherSectionId,"DB03-"+otherSectionId],
+    );
+    await pool.query(
+      "INSERT INTO courses (id,department_id,name,code) VALUES ($1,$2,$3,$4)",
+      [courseId,SEED_IDS.departmentA,"DB03 other course "+courseId,"DB03-"+courseId],
+    );
+    await pool.query(
+      "INSERT INTO course_offerings (id,course_id,cohort_id,academic_period_id,type,credits,display_order) VALUES ($1,$2,$3,$4,'ELECTIVE',3,0)",
+      [otherOfferingId,courseId,otherCohortId,periodId],
+    );
+    await pool.query(
+      "INSERT INTO course_section_deliveries (id,offering_id,section_id) VALUES ($1,$2,$3)",
+      [otherDeliveryId,otherOfferingId,otherSectionId],
+    );
+    const emptyGroup=await createActiveGroup("ELECTIVE",10);
+    await expect(createElectiveOffering(admin,{
+      slotId,courseId,groupId:emptyGroup,backedDeliveryId:otherDeliveryId,
+    })).rejects.toMatchObject({code:"ELECTIVE_DELIVERY_MISMATCH"});
+    const existing=await pool.query(
+      "SELECT count(*)::integer AS n FROM elective_offerings WHERE group_id=$1",
+      [emptyGroup],
+    );
+    expect(existing.rows[0].n).toBe(0);
   });
 
   it("normalizes the elective academic year and enforces source slot bounds", async () => {
