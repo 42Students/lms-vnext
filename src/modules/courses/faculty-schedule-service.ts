@@ -1,0 +1,96 @@
+import "server-only";
+
+import { and, asc, eq, inArray, isNull, or } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import {
+  collegeMemberships,
+  courseOfferings,
+  courseSectionDeliveries,
+  courses,
+  sectionScheduleEventCourses,
+  sectionScheduleEvents,
+  sections,
+  users,
+} from "@/db/schema";
+import type { RequestContext } from "@/modules/identity/context";
+import { listFacultyCourseDeliveries } from "./faculty-course-service";
+
+/**
+ * Faculty read-only schedule is grounded in active teaching assignments.
+ * Null course links mean Section-wide events; course-linked events must belong
+ * to one of the Faculty member's authorized delivery IDs.
+ */
+export async function getFacultyClassSchedule(context: RequestContext) {
+  const assigned = await listFacultyCourseDeliveries(context);
+  const sectionsList = [...new Map(assigned.map((course) => [
+    course.sectionId,
+    {
+      sectionId: course.sectionId,
+      sectionName: course.sectionName,
+      sectionCode: course.sectionCode,
+      academicPeriodName: course.academicPeriodName,
+    },
+  ])).values()];
+  const coursesList = assigned.map((course) => ({
+    deliveryId: course.deliveryId,
+    sectionId: course.sectionId,
+    courseId: course.courseId,
+    courseName: course.courseName,
+    courseCode: course.courseCode,
+  }));
+
+  if (assigned.length === 0) {
+    return { sections: [], courses: [], events: [] };
+  }
+
+  const sectionIds = sectionsList.map((section) => section.sectionId);
+  const deliveryIds = coursesList.map((course) => course.deliveryId);
+
+  const events = await getDb()
+    .select({
+      id: sectionScheduleEvents.id,
+      sectionId: sectionScheduleEvents.sectionId,
+      sectionName: sections.name,
+      title: sectionScheduleEvents.title,
+      description: sectionScheduleEvents.description,
+      startsAt: sectionScheduleEvents.startsAt,
+      endsAt: sectionScheduleEvents.endsAt,
+      location: sectionScheduleEvents.location,
+      facultyName: users.displayName,
+      deliveryId: sectionScheduleEventCourses.deliveryId,
+      courseId: courses.id,
+      courseName: courses.name,
+      courseCode: courses.code,
+    })
+    .from(sectionScheduleEvents)
+    .innerJoin(sections, eq(sections.id, sectionScheduleEvents.sectionId))
+    .leftJoin(
+      sectionScheduleEventCourses,
+      eq(sectionScheduleEventCourses.scheduleEventId, sectionScheduleEvents.id),
+    )
+    .leftJoin(
+      courseSectionDeliveries,
+      eq(courseSectionDeliveries.id, sectionScheduleEventCourses.deliveryId),
+    )
+    .leftJoin(
+      courseOfferings,
+      eq(courseOfferings.id, courseSectionDeliveries.offeringId),
+    )
+    .leftJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .leftJoin(
+      collegeMemberships,
+      eq(collegeMemberships.id, sectionScheduleEvents.facultyMembershipId),
+    )
+    .leftJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(
+      eq(sectionScheduleEvents.status, "SCHEDULED"),
+      inArray(sectionScheduleEvents.sectionId, sectionIds),
+      or(
+        isNull(sectionScheduleEventCourses.deliveryId),
+        inArray(sectionScheduleEventCourses.deliveryId, deliveryIds),
+      ),
+    ))
+    .orderBy(asc(sectionScheduleEvents.startsAt));
+
+  return { sections: sectionsList, courses: coursesList, events };
+}
