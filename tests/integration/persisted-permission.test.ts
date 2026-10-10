@@ -50,6 +50,22 @@ const collegeAdmin: RequestContext = {
   },
 };
 
+const faculty: RequestContext = {
+  user: {
+    id: SEED_IDS.facultyUser,
+    identityUid: "seed-faculty",
+    platformStatus: "ACTIVE",
+    systemRoles: [],
+  },
+  membership: {
+    id: SEED_IDS.facultyCollegeAMembership,
+    collegeId: SEED_IDS.collegeA,
+    organizationId: SEED_IDS.organization,
+    status: "ACTIVE",
+    roles: ["FACULTY"],
+  },
+};
+
 const superAdmin: RequestContext = {
   user: {
     id: SEED_IDS.superAdminUser,
@@ -68,6 +84,7 @@ async function restoreActors() {
     [
       SEED_IDS.collegeAdminUser,
       SEED_IDS.superAdminUser,
+      SEED_IDS.facultyUser,
     ],
   );
   await pool.query(
@@ -84,6 +101,21 @@ async function restoreActors() {
      values ($1, 'COLLEGE_ADMIN')
      on conflict (membership_id, role) do nothing`,
     [SEED_IDS.collegeAdminMembership],
+  );
+  await pool.query(
+    `update college_memberships
+       set status = 'ACTIVE',
+           suspended_at = null,
+           suspension_reason = null
+     where id = $1`,
+    [SEED_IDS.facultyCollegeAMembership],
+  );
+  await pool.query(
+    `insert into membership_roles
+       (membership_id, role)
+     values ($1, 'FACULTY')
+     on conflict (membership_id, role) do nothing`,
+    [SEED_IDS.facultyCollegeAMembership],
   );
   await pool.query(
     `insert into system_roles
@@ -184,6 +216,73 @@ describe(
       ).rejects.toBeInstanceOf(
         AuthorizationError,
       );
+    });
+
+    it("accepts persisted Faculty self-profile permission and denies stale role revocation", async () => {
+      await expect(
+        getDb().transaction((tx) =>
+          assertPersistedPlatformPermission(
+            tx,
+            faculty,
+            "profile.self.manage",
+            {
+              organizationId: SEED_IDS.organization,
+              collegeId: SEED_IDS.collegeA,
+            },
+          ),
+        ),
+      ).resolves.toMatchObject({
+        membership: {
+          id: SEED_IDS.facultyCollegeAMembership,
+          roles: expect.arrayContaining(["FACULTY"]),
+        },
+      });
+
+      await pool.query(
+        `delete from membership_roles
+         where membership_id = $1
+           and role = 'FACULTY'`,
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+
+      await expect(
+        getDb().transaction((tx) =>
+          assertPersistedPlatformPermission(
+            tx,
+            faculty,
+            "profile.self.manage",
+            {
+              organizationId: SEED_IDS.organization,
+              collegeId: SEED_IDS.collegeA,
+            },
+          ),
+        ),
+      ).rejects.toBeInstanceOf(AuthorizationError);
+    });
+
+    it("denies stale Faculty self-profile permission after suspension", async () => {
+      await pool.query(
+        `update college_memberships
+           set status = 'SUSPENDED',
+               suspended_at = now(),
+               suspension_reason = 'test'
+         where id = $1`,
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+
+      await expect(
+        getDb().transaction((tx) =>
+          assertPersistedPlatformPermission(
+            tx,
+            faculty,
+            "profile.self.manage",
+            {
+              organizationId: SEED_IDS.organization,
+              collegeId: SEED_IDS.collegeA,
+            },
+          ),
+        ),
+      ).rejects.toBeInstanceOf(AuthorizationError);
     });
 
     it("rechecks the persisted SUPER_ADMIN role", async () => {
