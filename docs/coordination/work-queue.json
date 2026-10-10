@@ -223,7 +223,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "7463858772c290eb4e3911ba6828ef9c1a05b2f2",
+      "latestEvidenceSha": "22e7530e7ed4ba86bffc51c086d0c58f16f771f0",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -258,7 +258,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 source sweep now classifies all 13 legacy tables: 8 ACTIVE_SOURCE_CONFIRMED, 3 ACTIVE_READ_PATH_CONFIRMED_PRODUCER_OPEN, 2 HISTORICAL_DDL_ONLY_UNRESOLVED. 33 high-risk fields have source semantic dispositions; live vNext gaps and unregistered staging contract remain. No runtime/PG verification."
+      "progressNote": "DB02 source-side disposition is complete for 125/125 legacy candidates: 106 active/compatibility/operational and 19 historical or no-current-consumer candidates, 0 unclassified. Table-level source pass is also complete. Canonical unregistered staging is scripts/sql/db02-academic-progression-and-rooms-staging.sql; PL/pgSQL quoting and source-aligned curriculum/order/room constraints were repaired in 932b0e1. Runtime/PostgreSQL equivalence, registered Drizzle migration, replay and concurrency acceptance remain unverified; DB-005 stays IN_PROGRESS."
     },
     {
       "id": "DB-006",
