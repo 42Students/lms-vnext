@@ -1212,25 +1212,35 @@
         "docs/planning/database-parity-db10-log-alerts-contract.md",
         "tests/db10-log-alerts-staging.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Source audit showed legacy account_id is an opaque account marker rather than proven users FK; vNext draft also used precision-losing JS number for bigint count."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11",
+          "reason": "Chat 5 reserved isolated DB10 log-alert schema privacy/counter hardening."
         }
       ]
     }
