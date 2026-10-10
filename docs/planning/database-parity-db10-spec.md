@@ -143,3 +143,8 @@ The previously pure scheduled-job lease policy now has an isolated draft table a
 ### W06 admin audit 13-field reconciliation + detail consumer (2026-10-10)
 
 Legacy `admin_audit_log` is source-reviewed against registered `activity_events`: ID/action/entity/scope/payload/time have concrete targets, actor mobile is a deliberate read-time privacy redesign, and actor role snapshot/IP/User-Agent remain explicit gaps. `getActivityEventDetail` plus `/activity/[eventId]` enforce membership/admin safety scope and sanitize metadata. No schema change was made. Source-reviewed DB10 fields: 88/221; verified: 0/221.
+
+
+### W06 shared secure outbound invitation transport — 2026-10-10
+
+Legacy source `lms/prod-2026@21bad59d4dfaf2fa11fdeaf9353327ce105697d5` TPO outbox/EmailSuppression and ZeptoMail template docs confirms hold/digest/channel differences and the explicit no-false-send requirement. W06 staged an isolated encrypted, idempotent recruiter invitation/reminder outbox intent, recipient suppression draft, durable enqueue contract behind `DB10_OUTBOUND_READY=DB10_VERIFIED`, and pure retry/bounce/delivery status policy. The DB10 migration journal and schema barrel remain W01-owned/unmodified; **no provider transport exists or is enabled**. Detailed integration/activation checklist: `docs/planning/database-parity-db10-outbound.md`. Tests authored only, no execution evidence, DB10 global verified remains 0/221.
