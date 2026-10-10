@@ -26,6 +26,7 @@ import {
   requirePermission,
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   candidateAcademicEvidenceInputSchema,
   placementEligibilityOverrideInputSchema,
@@ -186,6 +187,7 @@ export async function getOwnAcademicEvidence(
   context: RequestContext,
 ) {
   const membership = requireSelfLearner(context);
+  await requireLearnerPlacementAccess(context);
   const [row] = await getDb()
     .select()
     .from(placementCandidateAcademicEvidence)
@@ -252,6 +254,7 @@ export async function upsertOwnAcademicEvidence(
   rawInput: CandidateAcademicEvidenceInput,
 ) {
   const membership = requireSelfLearner(context);
+  await requireLearnerPlacementAccess(context);
   const input =
     candidateAcademicEvidenceInputSchema.parse(rawInput);
   const [current] = await getDb()
@@ -690,6 +693,7 @@ export async function evaluatePlacementEligibility(
     membershipId = membershipIdInput;
   } else {
     const membership = requireSelfLearner(context);
+    await requireLearnerPlacementAccess(context);
     if (membership.collegeId !== job.collegeId) {
       throw new AuthorizationError("placements.read");
     }
