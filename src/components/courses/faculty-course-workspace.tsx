@@ -8,6 +8,8 @@ import { FacultyQuizReview } from "./faculty-quiz-review";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
+import { CourseDisplayReadOnly } from "./course-display-read-only";
+import type { CourseDisplayContentView } from "@/modules/courses/course-display-service";
 import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 import {
   facultyOwnedItemActions,
@@ -327,11 +329,13 @@ function QuizItem({
 export function FacultyCourseWorkspace({
   workspace,
   homeSignals,
+  display,
 }: {
   workspace: Workspace;
   homeSignals: Awaited<
     ReturnType<typeof getFacultyCourseHomeSignals>
   >;
+  display: CourseDisplayContentView | null;
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -347,6 +351,17 @@ export function FacultyCourseWorkspace({
       <FacultyCourseHomeSignals
         signals={homeSignals}
         deliveryId={course.deliveryId}
+      />
+
+      <CourseDisplayReadOnly
+        introductionText={
+          display?.introductionText ?? null
+        }
+        bodyHtml={display?.bodyHtml ?? null}
+        takeaways={display?.takeaways ?? []}
+        fallbackDescription={
+          course.courseDescription
+        }
       />
 
       <section className="rounded-xl border border-border bg-surface p-5">
