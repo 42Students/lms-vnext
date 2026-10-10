@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-10T21:00:52.827Z",
+  "updatedOn": "2026-10-11T02:45:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -624,27 +624,14 @@
         "docs/planning/db09-chat03-round-scheduling-audit.md",
         "src/modules/placements/tpo-messaging-service.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "361ac5456c066a3311cc131fb190c8550a4433c3",
+      "status": "BLOCKED",
+      "latestEvidenceSha": "64774c0702ef2c582d54f3377f4d8d38b97ca136",
       "verificationEvidence": [],
       "blockers": [
-        "No disposable PostgreSQL/CI runtime evidence; authored DB09 guards/tests are not executed.",
-        "Current vNext TPO messaging producer still emits legacy HR while final database source/schema contract is RECRUITER.",
-        "tpo_college_settings.job_types_json and outcome_labels_json have no confirmed canonical vNext persistence target yet.",
-        "Remaining 141 source fields include active scheduling/slot/assignment and cross-domain operations requiring explicit mapping/redesign.",
-        "31-table/279-field semantic producer-to-consumer proof and 81 no-declared-target concepts remain unresolved; name matches are NOT mappings.",
-        "Chat 1 exclusively must integrate/check Drizzle migrations and disposable PostgreSQL replay; DB09 candidate SQL is not registered or executed.",
-        "DB08 round/job/request and DB10 notifications/suppression domain owners must reconcile dependencies before verified database parity.",
-        "Legacy V193 recruiter actor/scope code values differ from current vNext messaging/saved-view checks; API/DB atomic transition and tests pending.",
-        "Latest CI verify job 38085854862 failed with zero steps; runtime tests not executed.",
-        "Active legacy 5-field drive group + 25-field scheduling and 4-setting evidence requires target persistence/producer/consumer end-to-end proof; migration proposals are not live.",
-        "Final V193 actor code migration conflicts with currently staged TPO message sender/lead-view scope codes; coordinate API service and database constraints.",
-        "Chat 3 awaits independent TypeScript/CI + disposable PostgreSQL replay; GitHub commit status lookups did not show successful checks.",
-        "V193 messaging actor producer now uses RECRUITER but downstream API/UI clients still require compatibility acceptance.",
-        "DB09 round slots/assignments/reschedules need actual migration and transactional capacity-concurrency tests; source artifacts alone do not enforce availability.",
-        "V190 job.counts_as_placed depends on DB08 job/outcomes integration; custom college settings SQL remains unregistered.",
-        "DB09 tenant scoped FKs for leads/shares/notes/jobs/applications are staged, not in generated migrations.",
-        "Active legacy prep assignment and per-reader TPO bell state have no demonstrated registered vNext schema; candidate SQL waits for Chat 1/DB06/DB10 reconciliation."
+        "MIGRATION/RUNTIME: Chat 1 must register approved DB09 staged schemas/SQL, replay from zero, and execute tenant/privacy/concurrency witnesses; current CI/PostgreSQL evidence is unavailable.",
+        "DB10 HANDOFF: all 13 legacy notification_outbox fields remain BLOCKED because current outbound_messages draft covers only external invitation delivery and does not yet preserve general APP events, undo_group cancellation, digest scheduling and broad event vocabulary.",
+        "DB06 HANDOFF: prep_assignment.assessment_id remains BLOCKED until legacy assessment identity is mapped to the canonical vNext assessment resource with an enforceable FK.",
+        "PRODUCT/DB09 OWNER DECISION: industry_company.export_columns_json remains BLOCKED until its canonical owner/audience is chosen (global company vs college relationship vs per-user preference)."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -711,9 +698,14 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Narrow necessary DB09 producer compatibility fix in tpo-messaging-service.ts: legacy HR actor writes conflict with final RECRUITER CHECK per V193; no API signature or authorization change."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11T02:45:00+05:30",
+          "reason": "Chat 3 closed canonical source dispositions 279/279 but 15 fields require DB10/DB06/product ownership plus Chat 1 migration/PostgreSQL acceptance. Zero DB/runtime verified; task cannot honestly complete."
         }
       ],
-      "progressNote": "Chat 3 DATABASE source review: 279/279 DB09 historic field candidates have conservative evidence, ALL UNVERIFIED (14 direct V162, 139 name matching, 45 renamed candidates, 81 no declared column). 104 field records now have named current legacy table/producer evidence: 34 group/scheduling/recruiter-settings +70 prep, TPO bell/read, TPO audit, notification outbox, companies. Source vs target are NOT semantically mapped or DB-tested. Fixed malformed tpo-crm.ts on main (62c5f1c), authored static tests (unexecuted), staged SQL for CRM scoped FK, round slots, multi-college drive groups, recruiter settings/V193 codes, prep/bell. All proposals unregistered. CI verify run 38085854862 failed with no job steps. Evidence doc 361ac54."
+      "progressNote": "Canonical DB09 disposition is now 279/279 reviewed on main: 199 MAPPED, 65 REDESIGNED, 15 BLOCKED, 0 DB/runtime verified. Final source families include normalized company memory, active multi-college drive groups, scheduling, collaboration, suppression/outbox, prep, requests, audit/bell. Six prep fields map to staged placement_prep_assignments; assessment_id remains blocked. No registered migration or PostgreSQL replay was performed by Chat 3."
     },
     {
       "id": "DB-013",
