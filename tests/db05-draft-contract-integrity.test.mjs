@@ -88,3 +88,25 @@ test("DB05 proposed mappings are not incorrectly promoted to verified", () => {
     MISSING_OR_UNPROVEN: 3,
   });
 });
+
+const readiness = json("docs/planning/db05-migration-readiness-manifest.json");
+
+test("DB05 migration manifest blocks unregistered drafts until real gates pass", () => {
+  assert.equal(readiness.taskId, "DB-008");
+  assert.equal(readiness.phase, "DATABASE");
+  assert.equal(readiness.status, "SOURCE_STAGED_BLOCKED");
+  assert.equal(readiness.migrationIntegratorChat, 1);
+  assert.equal(readiness.artifacts.length, 6);
+  assert.equal(new Set(readiness.artifacts.map(a => a.path)).size, 6);
+  for (const item of readiness.artifacts) {
+    assert.equal(item.registered, false, item.id);
+    assert.equal(item.executedAgainstPostgres, false, item.id);
+    assert.equal(item.readyForProduction, false, item.id);
+    assert.ok(item.prereqs.length >= 3, item.id);
+    assert.match(read(item.path), /UNREGISTERED|NOT REGISTERED|NOT A REGISTERED/i, item.path);
+  }
+  assert.equal(readiness.sourceReview.formalSemanticVerifiedFields, 0);
+  assert.equal(readiness.sourceReview.nestedCourseMetadataFields, 14);
+  assert.ok(readiness.gates.some(g => g.id === "CLEAN_POSTGRES_REPLAY" && g.status === "NOT_RUN"));
+  assert.ok(readiness.gates.some(g => g.id === "REGISTERED_DRIZZLE_MIGRATION" && g.status === "BLOCKED"));
+});
