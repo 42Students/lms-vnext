@@ -8582,7 +8582,17 @@
             "requiredProbes": [
               "preserve JSON shape, validation, privacy and producer/consumer semantics"
             ],
-            "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+            "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements.",
+            "deepDive": {
+              "reviewedOn": "2026-10-11",
+              "oracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "sourceMigration": "src/main/resources/db/migration/V190__job_types_and_placement_outcomes.sql",
+              "vnextCandidate": "docs/planning/sql/db09-job-outcome-settings-candidate.sql::placement_tpo_college_settings.job_types",
+              "status": "MISSING_FROM_STAGED_DRIZZLE_SCHEMA",
+              "acceptanceProbe": "Immutable drive counts-as-placed snapshot must come from chosen job type; custom/hidden type arrays, defaults, cross-college separation. Legacy V190 source explicitly active.",
+              "postgresExecuted": false,
+              "workflowVerified": false
+            }
           }
         },
         {
@@ -8623,7 +8633,17 @@
             "requiredProbes": [
               "preserve JSON shape, validation, privacy and producer/consumer semantics"
             ],
-            "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+            "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements.",
+            "deepDive": {
+              "reviewedOn": "2026-10-11",
+              "oracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "sourceMigration": "src/main/resources/db/migration/V190__job_types_and_placement_outcomes.sql",
+              "vnextCandidate": "docs/planning/sql/db09-job-outcome-settings-candidate.sql::placement_tpo_college_settings.outcome_labels",
+              "status": "MISSING_FROM_STAGED_DRIZZLE_SCHEMA",
+              "acceptanceProbe": "Custom college labels must map only to fixed permitted placement outcome enums; snapshot label for future reporting.",
+              "postgresExecuted": false,
+              "workflowVerified": false
+            }
           }
         },
         {
@@ -8712,7 +8732,17 @@
             "requiredProbes": [
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
-            "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+            "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements.",
+            "deepDive": {
+              "reviewedOn": "2026-10-11",
+              "oracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "sourceMigration": "src/main/resources/db/migration/V185__tpo_recruiter_settings.sql",
+              "vnextCandidate": "src/db/schema/tpo-collaboration.ts::placement_tpo_college_settings.recruiter_access_months",
+              "status": "SCHEMA_PRESENT_CONSUMER_NOT_VERIFIED",
+              "acceptanceProbe": "0 means no end date; currently declared grant table has no explicit expiry column. Prove access timeout on invitations/grants.",
+              "postgresExecuted": false,
+              "workflowVerified": false
+            }
           }
         },
         {
@@ -8756,7 +8786,17 @@
             "requiredProbes": [
               "review source type, null/default/unique and actual reader/writer before promotion"
             ],
-            "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements."
+            "limitations": "Names/DDL compared, no producer/consumer end-to-end proof, no PostgreSQL execution, no approved retirements.",
+            "deepDive": {
+              "reviewedOn": "2026-10-11",
+              "oracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "sourceMigration": "src/main/resources/db/migration/V185__tpo_recruiter_settings.sql",
+              "vnextCandidate": "src/db/schema/tpo-collaboration.ts::placement_tpo_college_settings.recruiter_drive_needs_approval",
+              "status": "SCHEMA_PRESENT_CONSUMER_NOT_VERIFIED",
+              "acceptanceProbe": "Default true; test pending recruiter drive approval vs auto-approved mode with final publication restricted to TPO.",
+              "postgresExecuted": false,
+              "workflowVerified": false
+            }
           }
         }
       ]
