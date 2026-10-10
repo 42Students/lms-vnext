@@ -25,6 +25,7 @@ import {
   getFacultyCourseWorkspace,
   listFacultyCourseDeliveries,
 } from "@/modules/courses/faculty-course-service";
+import { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -499,4 +500,36 @@ describe("courses UI2A faculty read model", () => {
         "FACULTY_TEACHING_SCOPE_REQUIRED",
     });
   });
+  it("builds standalone Faculty All Quizzes and All Assignments from teaching scopes", async () => {
+    const structure = await createStructure();
+    const overview = await getFacultyAssessmentOverview(faculty);
+    expect(overview.courses.map((course) => course.deliveryId))
+      .toEqual([structure.deliveryA.id]);
+    expect(overview.assignments).toEqual([
+      expect.objectContaining({
+        kind: "ASSIGNMENT",
+        id: structure.assignment.id,
+        deliveryId: structure.deliveryA.id,
+        authoredDeliveryId: structure.deliveryA.id,
+        facultyOwned: true,
+        lessonName: "FUI2A Arrays",
+      }),
+    ]);
+    expect(overview.quizzes).toEqual([
+      expect.objectContaining({
+        kind: "QUIZ",
+        id: structure.quiz.id,
+        deliveryId: structure.deliveryA.id,
+        authoredDeliveryId: structure.deliveryA.id,
+        facultyOwned: true,
+      }),
+    ]);
+    expect(overview.quizzes.some(
+      (quiz) => quiz.deliveryId === structure.deliveryB.id,
+    )).toBe(false);
+    await expect(getFacultyAssessmentOverview(learner)).rejects.toMatchObject({
+      code: "FACULTY_TEACHING_SCOPE_REQUIRED",
+    });
+  });
+
 });
