@@ -28,6 +28,7 @@ import {
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
+import { coordinatorRoundOnDutyDate } from "./drive-day-coordinator-policy";
 import {
   placementDriveDayAttendanceInputSchema,
   placementDriveDayCoordinatorInputSchema,
@@ -135,10 +136,10 @@ export async function hasStudentCoordinatorAssignmentToday(
     return false;
   }
 
-  const [row] = await getDb()
+  const rounds = await getDb()
     .select({
-      id:
-        placementDriveDayCoordinatorAssignments.id,
+      scheduledAt: placementJobRounds.scheduledAt,
+      roundStatus: placementJobRounds.status,
     })
     .from(
       placementDriveDayCoordinatorAssignments,
@@ -179,9 +180,13 @@ export async function hasStudentCoordinatorAssignmentToday(
         ),
       ),
     )
-    .limit(1);
+;
 
-  return Boolean(row);
+  return rounds.some(round => coordinatorRoundOnDutyDate({
+    scheduledAt: round.scheduledAt,
+    roundStatus: round.roundStatus,
+    dutyDate: dateInIndia(now),
+  }));
 }
 
 export async function listDriveDayCoordinators(
@@ -441,7 +446,7 @@ export async function listMyDriveDayRounds(
     throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
   }
 
-  return getDb()
+  const rows = await getDb()
     .select({
       roundId: placementJobRounds.id,
       roundName: placementJobRounds.name,
@@ -511,6 +516,13 @@ export async function listMyDriveDayRounds(
       asc(placementJobRounds.sequence),
       asc(placementJobRounds.scheduledAt),
     );
+  // A coordinator assigned today must not see tomorrow's interviews or a
+  // previous day's applicant roster from the same drive.
+  return rows.filter(row => coordinatorRoundOnDutyDate({
+    scheduledAt: row.startsAt,
+    roundStatus: row.roundStatus,
+    dutyDate: dateInIndia(now),
+  }));
 }
 
 async function loadRoundAndAccess(
@@ -566,6 +578,13 @@ async function loadRoundAndAccess(
       "COLLEGE_ADMIN",
     )
   ) {
+    if (!coordinatorRoundOnDutyDate({
+      scheduledAt: row.round.scheduledAt,
+      roundStatus: row.round.status,
+      dutyDate: dateInIndia(now),
+    })) {
+      throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
+    }
     if (!(await hasActiveCoordinatorIdentity(context))) {
       throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
     }
@@ -741,6 +760,8 @@ export async function getDriveDayRoster(
               placementApplications.jobId,
               access.job.id,
             ),
+            eq(collegeMemberships.collegeId, access.job.collegeId),
+            eq(placementJobRoleOptions.jobId, access.job.id),
             eq(
               placementApplications.status,
               "SUBMITTED",
