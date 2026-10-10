@@ -8,6 +8,8 @@ import {
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+type PlacementDb = ReturnType<typeof getDb>;
+type PlacementTx = Parameters<Parameters<PlacementDb["transaction"]>[0]>[0];
 import { deliverInAppNotificationInTransaction } from "@/modules/activity/notification-service";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -138,10 +140,11 @@ function requireLearnerOfferOwner(
 }
 
 async function assertApplicationOfferReady(
+  tx: PlacementTx,
   applicationId: string,
   jobId: string,
 ) {
-  const rounds = await getDb()
+  const rounds = await tx
     .select({
       id: placementJobRounds.id,
       status: placementJobRounds.status,
@@ -172,7 +175,7 @@ async function assertApplicationOfferReady(
     );
   }
 
-  const results = await getDb()
+  const results = await tx
     .select({
       roundId: placementRoundResults.roundId,
       outcome: placementRoundResults.outcome,
@@ -275,11 +278,6 @@ export async function issuePlacementOffer(
     );
   }
 
-  await assertApplicationOfferReady(
-    current.application.id,
-    current.job.id,
-  );
-
   const db = getDb();
   return db.transaction(async (tx) => {
     const [lockedApplication] =
@@ -307,6 +305,20 @@ export async function issuePlacementOffer(
         "PLACEMENT_OFFER_NOT_READY",
       );
     }
+
+    // Candidate screening and applied round results can change while a manager
+    // is issuing an offer. Re-evaluate under this transaction, not from a
+    // pre-transaction snapshot, and abort a conflicting serializable write.
+    const [lockedScreening] = await tx
+      .select({ status: placementApplicationScreenings.status })
+      .from(placementApplicationScreenings)
+      .where(eq(placementApplicationScreenings.applicationId, current.application.id))
+      .for("update")
+      .limit(1);
+    if (!lockedScreening || lockedScreening.status !== "SHORTLISTED") {
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+    }
+    await assertApplicationOfferReady(tx, current.application.id, current.job.id);
 
     const [active] = await tx
       .select()
@@ -451,7 +463,7 @@ export async function issuePlacementOffer(
     );
 
     return offer;
-  });
+  }, { isolationLevel: "serializable" });
 }
 
 export async function actOnPlacementOffer(
