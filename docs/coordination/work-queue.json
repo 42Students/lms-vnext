@@ -1043,6 +1043,41 @@
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
         }
       ]
+    },
+    {
+      "id": "DB-021",
+      "phase": "DATABASE",
+      "title": "Stage DB08 placed-policy, non-placement outcomes and offer terms",
+      "scope": "Close confirmed DB08 source schema gaps for job counts-as-placed, batch-registration outcome label/detail and legacy offer salary/bond/acceptance provenance using isolated additive SQL contract and static schema witnesses; migration registration belongs only to Chat 1.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "scripts/sql/db08-outcome-fidelity-staging.sql",
+        "docs/planning/database-parity-db08-outcome-fidelity.md",
+        "tests/db08-outcome-fidelity-staging.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Added after source audit found active V161/V190 persisted outcome/offer terms missing from canonical vNext tables; bounded independent staging batch, no active cross-worker file overlap."
+        }
+      ]
     }
   ],
   "eventModel": {
