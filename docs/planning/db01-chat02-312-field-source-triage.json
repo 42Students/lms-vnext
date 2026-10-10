@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 142,
+    "postV150ActivenessVerified": 180,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 162,
-    "postV150ActivenessReviewNote": "142 legacy source fields are under direct active workflow evidence; 162 fields have explicit current-source activeness/retirement dispositions. Department chair/vice-chair are backend compatibility fields but current product UI-retired. This is source evidence only; runtimeSemanticVerifiedFields remains 0."
+    "postV150ActivenessReviewedFields": 204,
+    "postV150ActivenessReviewNote": "180 legacy source fields have direct active-workflow proof; 204/312 fields have explicit current-source dispositions. The remaining 108 fields are faculty, learner cross-domain learner/faculty rows. Runtime semantic verification remains 0."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -4381,12 +4381,18 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.id / placement_recruiter_profiles.user_id",
       "rationaleOrBlocker": "Canonical one-human identity requires verification",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4397,12 +4403,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.given_name (STAGED W01)",
       "rationaleOrBlocker": "Staged names only",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4413,12 +4425,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STAGED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.family_name (STAGED W01)",
       "rationaleOrBlocker": "Staged names only",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4431,12 +4449,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.phone_e164",
       "rationaleOrBlocker": "Provider verified phone flow required",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4449,12 +4473,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.email",
       "rationaleOrBlocker": "Identity provider verified email change",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4465,12 +4495,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB09_OR_DB01",
       "candidateTarget": null,
       "rationaleOrBlocker": "Recruiter person/grant metadata: coordinate DB09 field-level lifecycle, tenant grants and provider identity contracts.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4483,12 +4519,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB09_OR_DB01",
       "candidateTarget": null,
       "rationaleOrBlocker": "Recruiter person/grant metadata: coordinate DB09 field-level lifecycle, tenant grants and provider identity contracts.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4501,12 +4543,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.platform_status / placement_recruiter_profiles.status",
       "rationaleOrBlocker": "Actor vs recruiter-only suspension needs proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4517,12 +4565,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Reason/audit persistence candidate absent",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4535,12 +4589,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Provider revocation epoch/replay protection requires proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4553,12 +4613,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "No existing canonical last login timestamp located in reviewed schemas",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4571,12 +4637,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB09_OR_DB01",
       "candidateTarget": null,
       "rationaleOrBlocker": "Recruiter person/grant metadata: coordinate DB09 field-level lifecycle, tenant grants and provider identity contracts.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4587,12 +4659,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Legacy grantor user type should derive from persisted actor, not be trusted",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4605,12 +4683,18 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB09_OR_DB01",
       "candidateTarget": null,
       "rationaleOrBlocker": "Recruiter person/grant metadata: coordinate DB09 field-level lifecycle, tenant grants and provider identity contracts.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4623,12 +4707,18 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "CROSS_DOMAIN_DB09_OR_DB01",
       "candidateTarget": null,
       "rationaleOrBlocker": "Recruiter person/grant metadata: coordinate DB09 field-level lifecycle, tenant grants and provider identity contracts.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4639,12 +4729,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_profiles.archived_at",
       "rationaleOrBlocker": "Archive vs account disable needs proof",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter",
@@ -4655,12 +4751,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Legacy optimistic concurrency check not present in recruiter profile",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java@8c561a54a1ca0ae020974619165b63ec837af72b"
+      ],
+      "postV150EvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4673,12 +4775,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4691,12 +4800,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_company_relationships.college_id via company_relationship_id",
       "rationaleOrBlocker": "Must prohibit foreign college/relationship mismatch",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4709,12 +4825,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "colleges.organization_id via relationship.college_id",
       "rationaleOrBlocker": "Scoped derivation only",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4725,12 +4848,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.status",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4743,12 +4873,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "No equivalent grant expiry field in target",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4761,12 +4898,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.granted_by_user_id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4777,12 +4921,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Persisted grantor role/scope audit decision",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4795,12 +4946,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "No distinct grantedAt in target; createdAt may not preserve regrant history",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4813,12 +4971,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.revoked_by_user_id",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4829,12 +4994,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Persisted revoker role/scope audit decision",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4847,12 +5019,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.revoked_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4863,12 +5042,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "No revoke reason field in current target grant",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4881,12 +5067,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.created_at",
       "rationaleOrBlocker": "Only initial grant creation; regrant may differ",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4899,12 +5092,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "STRUCTURAL_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.updated_at",
       "rationaleOrBlocker": "Target exists in inspected canonical Drizzle schema; semantic equivalence, data type/ranges, tenant scoping and runtime writes still unproven.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4915,12 +5115,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.status",
       "rationaleOrBlocker": "Grant revocation vs deletion semantics",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4931,12 +5138,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "No grant version in current target",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4947,12 +5161,16 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V161__tpo_v1_drives.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "LEGACY_DDL_PRESENT_NO_CURRENT_RECRUITER_SOURCE_CONSUMER",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Review rename history against active service",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/resources/db/migration/V161__tpo_v1_drives.sql@e21295c8653adf173611d030cb6ce85c3dede335"
+      ],
+      "postV150EvidenceSummary": "Column was added by V161. Exhaustive scan of current prod-2026 Java paths whose names contain Recruiter/recruiter found no reference to this snake/camel field. Keep as explicit retirement/redesign candidate; do not silently map it."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4963,12 +5181,20 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V161__tpo_v1_drives.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Pending verification policy needs full source mapping",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadsHubService.java@d7a004e3bfb3960b2a5b4ed15417e7472f73ba85"
+      ],
+      "postV150EvidenceSummary": "Current TPO recruiter-leads hub reads recruiter_college_access.verification by SQL; grant services also enforce current college access."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4981,12 +5207,16 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V161__tpo_v1_drives.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "LEGACY_DDL_PRESENT_NO_CURRENT_RECRUITER_SOURCE_CONSUMER",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_company_relationships.company_id",
       "rationaleOrBlocker": "Must compare direct company grant vs scoped company relationship",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/resources/db/migration/V161__tpo_v1_drives.sql@e21295c8653adf173611d030cb6ce85c3dede335"
+      ],
+      "postV150EvidenceSummary": "Column was added by V161. Exhaustive scan of current prod-2026 Java paths whose names contain Recruiter/recruiter found no reference to this snake/camel field. Keep as explicit retirement/redesign candidate; do not silently map it."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -4997,12 +5227,16 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V161__tpo_v1_drives.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "LEGACY_DDL_PRESENT_NO_CURRENT_RECRUITER_SOURCE_CONSUMER",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Agency attribution not in reviewed target",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/resources/db/migration/V161__tpo_v1_drives.sql@e21295c8653adf173611d030cb6ce85c3dede335"
+      ],
+      "postV150EvidenceSummary": "Column was added by V161. Exhaustive scan of current prod-2026 Java paths whose names contain Recruiter/recruiter found no reference to this snake/camel field. Keep as explicit retirement/redesign candidate; do not silently map it."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -5015,12 +5249,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.recruiter_user_id",
       "rationaleOrBlocker": "Legacy recruiter int to canonical user UUID",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access",
@@ -5033,12 +5274,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V165__tpo_v1_complete.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "DB09 pending recruiter lead association",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java@2daba0f6e4bf596b4e65b332825f05f4fcbbc7e6",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java@ee4090b25a713c01333b3b0b46352f923b0d3f50"
+      ],
+      "postV150EvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow."
     },
     {
       "legacyTable": "recruiter_college_access_capability",
@@ -5051,12 +5299,18 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "placement_recruiter_college_grants.id",
       "rationaleOrBlocker": "Capability many-to-one grant relation candidate",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/resources/db/migration/V178__hr_drive_work_backfill.sql@960061b5c69a3aee85794e06319d0ab375237480"
+      ],
+      "postV150EvidenceSummary": "Current RecruiterCollegeAccess maps the capability collection eagerly; RecruiterAccessService enforces requested capability on each request and V178 backfills DRIVE_WORK."
     },
     {
       "legacyTable": "recruiter_college_access_capability",
@@ -5067,12 +5321,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "No capability collection/table in reviewed grant schema",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/resources/db/migration/V178__hr_drive_work_backfill.sql@960061b5c69a3aee85794e06319d0ab375237480"
+      ],
+      "postV150EvidenceSummary": "Current RecruiterCollegeAccess maps the capability collection eagerly; RecruiterAccessService enforces requested capability on each request and V178 backfills DRIVE_WORK."
     },
     {
       "legacyTable": "recruiter_college_access_capability",
@@ -5085,12 +5345,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "V159__hr_industry_accounts.sql",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_DB_DEFAULT_METADATA_NO_CURRENT_JPA_CONSUMER",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Per-capability grant time absent",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/resources/db/migration/V159__hr_industry_accounts.sql@f09b610244e8587137c2b78afa9e1335935bdb77",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5"
+      ],
+      "postV150EvidenceSummary": "Capability inserts remain active and DB defaults granted_at, but the current JPA ElementCollection maps only access_id + capability and does not expose/read per-capability granted_at. Preserve only if DB09 chooses capability-history semantics."
     },
     {
       "legacyTable": "refresh_token_blocklist",
@@ -6176,6 +6441,19 @@
         "dept_vice_chair_id"
       ],
       "proof": "Department CRUD is active and college-scoped. Current shared admin frontend intentionally omits chair/vice-chair and documents them as unread product fields."
+    },
+    "recruiterIdentityAndGrants": {
+      "status": "SOURCE_ACTIVENESS_RECONCILED_DB09_TARGET_MAPPING_STILL_OPEN",
+      "activeWorkflowFields": 38,
+      "ddlOnlyNoCurrentRecruiterConsumerFields": [
+        "recruiter_college_access.granted_by_type",
+        "recruiter_college_access.hiring_for_company_id",
+        "recruiter_college_access.agency_for_company_name"
+      ],
+      "dbDefaultMetadataNoJpaConsumerFields": [
+        "recruiter_college_access_capability.granted_at"
+      ],
+      "note": "Source activeness only. DB09 still owns target mapping/lifecycle acceptance, including valid_until enforcement, grant audit/history, company relationship integrity and capability representation."
     }
   }
 }
