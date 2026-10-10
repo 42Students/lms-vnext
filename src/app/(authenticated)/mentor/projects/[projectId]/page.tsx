@@ -1,3 +1,5 @@
+import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects-unavailable";
+import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
@@ -10,6 +12,8 @@ export default async function MentorProjectPage({
   params: Promise<{ projectId: string }>;
 }) {
   const context = await getCurrentRequestContext();
+  const available = await resolveOptionalModuleAccess(context).catch(() => null);
+  if (available?.projects.enabled !== true) return <MentorProjectsUnavailable />;
   const { projectId } = await params;
   const access = await requireProjectReadAccess(
     context,
