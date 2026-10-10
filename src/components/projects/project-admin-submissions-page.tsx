@@ -61,10 +61,10 @@ export async function ProjectAdminSubmissionsPage({
   const context = await getCurrentRequestContext();
   const query: ProjectAdminCollectionQuery = {
     q: one(searchParams.q),
-    status: one(searchParams.status),
+    status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
     submissionStatus: one(
       searchParams.submissionStatus,
-    ),
+    ) as ProjectAdminCollectionQuery["submissionStatus"],
     page: Number(one(searchParams.page) ?? 1),
     pageSize: Number(
       one(searchParams.pageSize) ?? 25,
