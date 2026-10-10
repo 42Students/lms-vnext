@@ -12,7 +12,7 @@
   "checkpoint": {
     "checkpointKind": "DB004_AUTH_SESSION_SOURCE_AND_STAGING_CONTRACT",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "58344f786e56b967a997a985a6280c220cced608",
+    "observedMainSha": "8bc974278c79095408b1128f1cbf2a3a762f2fb9",
     "lastWorkerMergedSha": "97a34afbd43034e1da9858adcb0d82b23305653f",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
@@ -32,24 +32,39 @@
       "ciRun": 1256,
       "ciConclusion": "failure",
       "note": "CI job logs are unavailable through the connected GitHub action. Concurrent PR #55 also had a failing CI run (#1230), so a shared-base issue is plausible but not proven."
+    },
+    "tenantIdentityNegativeWitness": {
+      "pullRequest": 65,
+      "branch": "chat-02-db004-tenant-identity-negative-witness",
+      "headSha": "f8c57987de761b7f077f4bef163e23abc9d18aab",
+      "status": "OPEN_CI_FAILED_UNMERGED",
+      "authoredTest": "tests/integration/db01-tenant-identity-invariants.test.ts",
+      "authoredCases": 5,
+      "ciRun": 1344,
+      "ciRunId": 38085162837,
+      "ciConclusion": "failure",
+      "executedPassingPostgresCases": 0,
+      "note": "Job steps/logs unavailable (BlobNotFound); no passing PostgreSQL acceptance evidence. No migration or active DB schema edited."
     }
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED_PR61_CI_FAILED",
     "typecheck": "NOT_VERIFIED_PR61_CI_FAILED",
     "unit": "NOT_VERIFIED_PR61_CI_FAILED",
-    "postgresIntegration": "NOT_VERIFIED",
+    "postgresIntegration": "NOT_VERIFIED_PR65_CI_FAILED",
     "build": "NOT_VERIFIED_PR61_CI_FAILED",
     "browser": "NOT_VERIFIED",
     "sourceTriageConsistency": "PASS_IN_PROCESS_SOURCE_CHECK_NOT_RUNTIME"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
-    "tests/db01-device-session-contract.test.ts"
+    "tests/db01-device-session-contract.test.ts",
+    "tests/integration/db01-tenant-identity-invariants.test.ts"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "PR #61 CI run #1256 failed; logs are unavailable through the connector, so the device-session staging batch stays unmerged pending diagnosis or a clean rerun."
+    "PR #61 CI run #1256 failed; logs are unavailable through the connector, so the device-session staging batch stays unmerged pending diagnosis or a clean rerun.",
+    "PR #65 CI run #1344 failed; provider job logs unavailable. The five PostgreSQL negative tests are authored, not accepted passing verification."
   ],
   "handoffs": [
     "DB-004 → Chat 1/issue #21: staged tenant-branding migration and domain TXT diagnostic; W01 single writer",
@@ -57,7 +72,7 @@
     "DB-004 → Chat 1/issue #21 after acceptance: promote identity_device_sessions only if targeted per-device revocation remains required; never persist raw Firebase tokens/cookies.",
     "DB-004 → Chat 1/issue #21: select provider-only vs provider-cookie+device-session sidecar; block faculty-for-anyone revocation privilege escalation."
   ],
-  "nextAction": "DB-004 remains IN_PROGRESS. Preserve concurrent new 23 active workflow source confirmations, reconcile remaining post-V150 active statuses and auth/account fields, coordinate W01 migration/security decisions, obtain actual DB/CI tests.",
+  "nextAction": "DB-004 IN_PROGRESS: diagnose failed PR #65/#61 CI (logs unavailable), obtain executed Postgres negative witnesses, then coordinate with Chat 1 for registered branding/tenant diagnostics/session migrations; keep all source-only triage unverified.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -84,7 +99,10 @@
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-device-session-contract.md",
     "https://github.com/42Students/lms-vnext/blob/main/src/db/schema/db01-device-sessions.staged.ts",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/sql/db01-device-session-staging.sql",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102001531"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6102001531",
+    "https://github.com/42Students/lms-vnext/pull/65",
+    "https://github.com/42Students/lms-vnext/commit/f8c57987de761b7f077f4bef163e23abc9d18aab",
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6102032292"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
