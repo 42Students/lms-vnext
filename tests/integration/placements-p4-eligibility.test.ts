@@ -21,6 +21,7 @@ import {
   upsertVerifiedAcademicEvidence,
 } from "@/modules/placements/eligibility-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -124,6 +125,7 @@ async function createJob() {
 
 beforeEach(async () => {
   await cleanup();
+  await enableSeedLearnerPlacementAccess(pool);
   await pool.query(
     `insert into college_memberships
       (id, user_id, college_id, status)
