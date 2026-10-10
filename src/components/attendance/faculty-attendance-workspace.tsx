@@ -17,6 +17,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   facultyAttendanceDayCell,
   groupFacultyAttendanceSessionsByIndiaDay,
+  indiaAttendanceDayKey,
 } from "@/modules/attendance/faculty-grid-model";
 
 type Course = {
@@ -85,8 +86,7 @@ function shiftMonth(value: string, amount: number) {
 }
 
 function sameMonth(value: string, selected: string) {
-  const date = new Date(value);
-  return monthKey(date) === selected;
+  return indiaAttendanceDayKey(value).slice(0, 7) === selected;
 }
 
 function learnerName(learner: Learner) {
