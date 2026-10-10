@@ -7,6 +7,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  courseQuizzes,
   quizAttemptAnswers,
   quizAttempts,
   quizOptions,
@@ -294,29 +295,9 @@ export async function submitCourseQuiz(
       input.deliveryId,
     );
 
-  if (
-    quiz.dueAt &&
-    quiz.dueAt.getTime() < Date.now()
-  ) {
-    throw new CoursesServiceError(
-      "QUIZ_DEADLINE_PASSED",
-    );
-  }
-
-  const attemptsUsed =
-    await currentAttemptCount(
-      quizId,
-      membership.id,
-    );
-
-  if (attemptsUsed >= quiz.maxAttempts) {
-    throw new CoursesServiceError(
-      "QUIZ_MAX_ATTEMPTS_REACHED",
-    );
-  }
-
-  const questions =
-    await loadQuizQuestions(quizId);
+  // Quiz content is immutable after publish. Validate answers against the
+  // authored question/option set before opening a write transaction.
+  const questions = await loadQuizQuestions(quizId);
 
   if (questions.length === 0) {
     throw new CoursesServiceError(
@@ -326,20 +307,79 @@ export async function submitCourseQuiz(
 
   const { score, answerRows } =
     scoreSubmission(questions, input);
-  const nextAttempt = attemptsUsed + 1;
 
   try {
     return await getDb().transaction(
       async (tx) => {
+        // Serialize attempts per quiz across workers. A concurrent faculty
+        // CLOSE/update or a second learner submission updates/locks this same
+        // row, so neither a deadline change nor a max-attempt change can race
+        // with the counted insert.
+        const [lockedQuiz] = await tx
+          .select({
+            status: courseQuizzes.status,
+            dueAt: courseQuizzes.dueAt,
+            maxAttempts: courseQuizzes.maxAttempts,
+            totalPoints: courseQuizzes.totalPoints,
+            deliveryId: courseQuizzes.deliveryId,
+          })
+          .from(courseQuizzes)
+          .where(eq(courseQuizzes.id, quizId))
+          .for("update")
+          .limit(1);
+
+        if (!lockedQuiz || lockedQuiz.status !== "PUBLISHED") {
+          throw new CoursesServiceError("QUIZ_NOT_PUBLISHED");
+        }
+        if (lockedQuiz.deliveryId &&
+            lockedQuiz.deliveryId !== input.deliveryId) {
+          throw new CoursesServiceError("QUIZ_DELIVERY_MISMATCH");
+        }
+        if (lockedQuiz.dueAt &&
+            lockedQuiz.dueAt.getTime() < Date.now()) {
+          throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
+        }
+
+        // Recheck actor against persisted membership, not just request JWT
+        // claims. A role revocation or transfer must fail closed.
+        const [persistedMember] = await tx
+          .select({
+            userId: collegeMemberships.userId,
+            collegeId: collegeMemberships.collegeId,
+            status: collegeMemberships.status,
+          })
+          .from(collegeMemberships)
+          .where(eq(collegeMemberships.id, membership.id))
+          .for("share")
+          .limit(1);
+        if (!persistedMember ||
+            persistedMember.status !== "ACTIVE" ||
+            persistedMember.userId !== context.user.id ||
+            persistedMember.collegeId !== membership.collegeId ||
+            context.user.platformStatus !== "ACTIVE") {
+          throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+        }
+
+        const [countRow] = await tx
+          .select({ count: sql<number>`count(*)::int` })
+          .from(quizAttempts)
+          .where(and(
+            eq(quizAttempts.quizId, quizId),
+            eq(quizAttempts.membershipId, membership.id),
+          ));
+        const attemptsUsed = countRow?.count ?? 0;
+        if (attemptsUsed >= lockedQuiz.maxAttempts) {
+          throw new CoursesServiceError("QUIZ_MAX_ATTEMPTS_REACHED");
+        }
         const [attempt] = await tx
           .insert(quizAttempts)
           .values({
             quizId,
             deliveryId: input.deliveryId,
             membershipId: membership.id,
-            attemptNumber: nextAttempt,
+            attemptNumber: attemptsUsed + 1,
             score,
-            maxScore: quiz.totalPoints,
+            maxScore: lockedQuiz.totalPoints,
           })
           .returning();
 
