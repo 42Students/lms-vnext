@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "WORKING",
-  "activeTaskId": "DB-016",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [
     "DB-001"
   ],
   "checkpoint": {
-    "checkpointKind": "DB016_IN_PROGRESS_RECONCILED_QUEUE_CLAIM",
+    "checkpointKind": "DB016_SOURCE_COMPLETE_RUNTIME_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "current-main",
-    "lastWorkerMergedSha": "768d69c8132a5fce8b7a0886fdb6c3a688c03ff4",
+    "observedMainSha": "8c3f5c700d1b4033ea5f0ca235a680d2bcad8811",
+    "lastWorkerMergedSha": "050b256723e2a37865ecb23ea2fcf1a7ca3e259b",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Reconciled existing DB-016 queue claim into Chat 1 checkpoint. Cross-domain private object/receipt/identity/storage safety audit active; no separate DB016 branch/PR was found at reconciliation."
+    "summary": "DB-016 source reconciliation completed: repaired DB04 receipt SQL candidate, documented private storage/identity dispositions, staged DB04/DB06 receipt lifecycle hardening, and preserved runtime/storage verification blockers."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -32,14 +32,16 @@
     "tests/db06-reconciliation-contract.test.mjs",
     "tests/db07-reconciliation-contract.test.mjs",
     "tests/unit/w03-db07-integration-reconciliation.test.ts",
-    "tests/db014-tenant-fk-sweep.test.mjs"
+    "tests/db014-tenant-fk-sweep.test.mjs",
+    "tests/db04-candidate-sql-integrity.test.mjs",
+    "tests/db16-private-storage-safety.test.mjs"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
     "DB-001: GitHub Actions job cannot start; repo admin needs runner/billing/provisioning investigation and fresh CI execution."
   ],
   "handoffs": [],
-  "nextAction": "Reconcile DB04/DB06/DB07/DB09/DB10 private object receipts, sensitive identity/placement fields, revocation/retention/encryption controls into one non-duplicative storage safety contract.",
+  "nextAction": "Remain in DATABASE. Take the next eligible unclaimed queue task only after dependency/claim refresh; DB-001 continues to block migration replay and negative PostgreSQL verification.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -73,15 +75,17 @@
   "completedTaskIds": [
     "DB-009",
     "DB-010",
-    "DB-014"
+    "DB-014",
+    "DB-016"
   ],
   "lastPickedAt": "2026-10-10T20:52:00.000Z",
-  "lastCompletedAt": "2026-10-10T20:51:05.367Z",
+  "lastCompletedAt": "2026-10-10T21:01:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
     "DB-010",
-    "DB-014"
+    "DB-014",
+    "DB-016"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
