@@ -49,26 +49,40 @@ export function SprintLifecycleActions({
   projectId,
   sprintId,
   status,
+  releaseStatus,
 }: {
   projectId: string;
   sprintId: string;
   status: string;
+  releaseStatus: string;
 }) {
   const { pending, run } = useProjectAction();
 
-  if (
-    status !== "PLANNED" &&
-    status !== "ACTIVE"
-  ) {
+  const transition =
+    status === "PLANNED"
+      ? {
+          action: "start",
+          label: "Start sprint",
+          success: "Sprint started",
+        }
+      : status === "ACTIVE"
+        ? {
+            action: "complete",
+            label: "Complete sprint",
+            success: "Sprint completed",
+          }
+        : status === "COMPLETED" &&
+            releaseStatus !== "SHIPPED"
+          ? {
+              action: "reopen",
+              label: "Reopen sprint",
+              success: "Sprint reopened",
+            }
+          : null;
+
+  if (!transition) {
     return null;
   }
-
-  const action =
-    status === "PLANNED" ? "start" : "complete";
-  const label =
-    status === "PLANNED"
-      ? "Start sprint"
-      : "Complete sprint";
 
   return (
     <Button
@@ -79,16 +93,14 @@ export function SprintLifecycleActions({
         run(
           () =>
             projectMutation(
-              `/api/projects/${projectId}/sprints/${sprintId}/${action}`,
+              `/api/projects/${projectId}/sprints/${sprintId}/${transition.action}`,
               "POST",
             ),
-          status === "PLANNED"
-            ? "Sprint started"
-            : "Sprint completed",
+          transition.success,
         )
       }
     >
-      {pending ? "Working…" : label}
+      {pending ? "Working…" : transition.label}
     </Button>
   );
 }
@@ -178,10 +190,8 @@ export function ReleaseLifecycleActions({
   status: string;
 }) {
   const { pending, run } = useProjectAction();
-
-  if (status === "SHIPPED") {
-    return null;
-  }
+  const shipped = status === "SHIPPED";
+  const action = shipped ? "unship" : "ship";
 
   return (
     <Button
@@ -192,14 +202,20 @@ export function ReleaseLifecycleActions({
         run(
           () =>
             projectMutation(
-              `/api/projects/${projectId}/releases/${releaseId}/ship`,
+              `/api/projects/${projectId}/releases/${releaseId}/${action}`,
               "POST",
             ),
-          "Release shipped",
+          shipped
+            ? "Release un-shipped"
+            : "Release shipped",
         )
       }
     >
-      {pending ? "Checking…" : "Ship release"}
+      {pending
+        ? "Checking…"
+        : shipped
+          ? "Un-ship release"
+          : "Ship release"}
     </Button>
   );
 }
