@@ -393,15 +393,15 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "7015aa1ca21566ba3fe0879cc4d5605dee522e6c",
+      "latestEvidenceSha": "1c18b6da4d139bcc9bd2efd8f9bb0bb3a902fa86",
       "verificationEvidence": [],
       "blockers": [
-        "UNREGISTERED_MIGRATIONS: Seven isolated SQL drafts under scripts/sql/; Chat 1 exclusively owns registered Drizzle journal/schema barrel and replay. Metadata table dependency and 17 content-settings fields require explicit ordering.",
+        "UNREGISTERED_MIGRATIONS: Seven isolated SQL drafts under scripts/sql/; Chat 1 exclusively owns registered Drizzle journal/schema barrel and replay. Metadata table dependency and 17 content-settings fields require explicit ordering. Classroom same-college guard is companion-only, NOT separately registered; canonical history draft owns columns/index.",
         "ACTIVE_SOURCE_BEHAVIOR_UNVERIFIED: Of 92 top-level DB05 source columns, 30 are name/schema candidates, 37 point to unregistered drafts, 22 need remodeled semantic proof and 3 remain missing/unproven. All 92 verifiedMapping are null.",
         "NESTED_JSON_NOT_CLOSED: Course MetaData has 14 fields, Lesson ContentDataDTO has 17. DB06 assignment resources/allowedSubmissionTypes, private material receipts, HTML, timezone and schedule gating still require producer/consumer and negative DB tests.",
         "SERVICE_CUTOVER_BLOCKED: vNext progress lacks attempt-aware consumers and first completion behavior; course/lesson/content writers lack optimistic version CAS; classroom messages hard-delete rather than preserve historic records.",
         "EXECUTED_TESTS_UNVERIFIED: Sixteen Node test definitions authored only. Connected read-only source consistency assertions succeeded, but node:test, PostgreSQL migration replay/negative tests, lint, typecheck, build and CI have not been executed/observed passing.",
-        "OPEN_DB05_GAPS: Twenty-five unresolved top-level semantic decisions, including three historical-only/unproven source columns default_subscription_days, formal_title and learner_content_progress.is_deleted; parent-course tenant/cycle invariants untested."
+        "OPEN_DB05_GAPS: Twenty-five unresolved top-level semantic decisions, including three historical-only/unproven source columns default_subscription_days, formal_title and learner_content_progress.is_deleted; parent-course tenant/cycle invariants untested. Current progress is_deleted now has a source-backed draft candidate, but remains classified MISSING_OR_UNPROVEN pending reconciled ledger/consumer proof."
       ],
       "completionNote": null,
       "pickedBy": 6,
@@ -438,7 +438,8 @@
       "evidenceNotes": [
         "SOURCE_EVIDENCE_CHECKPOINT: PR #59 mapped all 16 historical discussion columns in the canonical DB05 inventory to the isolated unregistered draft; 9 primary-runtime fields vs 7 preservation-only/runtime-unproven, verifiedMappings remains 0. Source assertions passed; Node/PG/CI not executed.",
         "SOURCE_EVIDENCE_CHECKPOINT: Six distinct unregistered DB05 drafts and 14 MetaData subfield inventory source-documented; formal verified mappings 0/92; 24 semantic decisions open. 14 authored Node test definitions, not executed. Exact evidence commit 746c9b9d012a8065e980bcf466f68732f805f945. Standalone DB05 gate is fail closed.",
-        "SOURCE_ONLY_CHECKPOINT: seven SQL drafts and 17 nested lesson-content fields inventoried; 14 course metadata fields; 25 top-level semantic decisions open. 16 Node test definitions authored, not executed. In-memory static checks passed; no runtime DB/tests. Evidence commit 7015aa1ca21566ba3fe0879cc4d5605dee522e6c. Still IN_PROGRESS."
+        "SOURCE_ONLY_CHECKPOINT: seven SQL drafts and 17 nested lesson-content fields inventoried; 14 course metadata fields; 25 top-level semantic decisions open. 16 Node test definitions authored, not executed. In-memory static checks passed; no runtime DB/tests. Evidence commit 7015aa1ca21566ba3fe0879cc4d5605dee522e6c. Still IN_PROGRESS.",
+        "CHAT06_2026_10_11_SIX_MERGED_PR_BATCH: #63 2e6a819, #67 5d32c5d, #69 71bae0b, #70 228d6ec, #72 812704c, #74 1c18b6d. Documented source semantics, staged companion classroom same-college guard, deduplicated classroom history columns and indexes, gated migration manifest, and staged progress tombstone with latest-attempt-before-filter rule. Source-only assertions passed; Node tests authored only, PostgreSQL/CI acceptance NOT PASS. DB008 stays IN_PROGRESS, 0 verified of 92; never register migrations until Chat1 signed gates."
       ]
     },
     {
