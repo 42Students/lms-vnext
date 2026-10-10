@@ -272,17 +272,17 @@
         "src/db/schema/**",
         "docs/planning/db-pass4-columns-db03_groups_and_electives.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "46daf7d042129ae325e68f0660155c505c559e8f",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Chat 5 source-reconciled all 79 DB03 legacy fields to proposed vNext targets (79 reviewed, 0 unmapped, 0 runtime-verified), fixed legacy config defaults and locked-REMOVED admin revival/move semantics, and authored PostgreSQL regressions. Runtime/PostgreSQL verification remains pending under DB-001/DB-018/DB-020.",
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:27:07.841Z",
       "startedAt": "2026-10-10T20:27:53.876Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-10T20:31:00.000Z",
+      "completionCommitSha": "46daf7d042129ae325e68f0660155c505c559e8f",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -306,6 +306,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:27:53.876Z",
           "reason": "Chat 5 started source-to-vNext group/elective DB03 invariant audit, restricting edits to claimed scope."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-10T20:31:00.000Z",
+          "reason": "DB03 source reconciliation and bounded parity fixes committed; completion is source/implementation only, not DONE_VERIFIED."
         }
       ]
     },
