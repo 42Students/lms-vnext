@@ -200,7 +200,9 @@ ALTER TABLE cohorts
 -- producers must provide it and obey the legacy 1..500 bound.
 ALTER TABLE sections
   ADD COLUMN description text,
-  ADD COLUMN minimum_capacity integer NOT NULL DEFAULT 0;
+  ADD COLUMN minimum_capacity integer NOT NULL DEFAULT 0,
+  ADD COLUMN start_date date,
+  ADD COLUMN end_date date;
 
 ALTER TABLE sections
   DROP CONSTRAINT IF EXISTS sections_capacity_ck;
@@ -211,7 +213,9 @@ ALTER TABLE sections
   ADD CONSTRAINT sections_minimum_capacity_ck
     CHECK (minimum_capacity >= 0),
   ADD CONSTRAINT sections_capacity_range_ck
-    CHECK (capacity IS NULL OR minimum_capacity <= capacity);
+    CHECK (capacity IS NULL OR minimum_capacity <= capacity),
+  ADD CONSTRAINT sections_lifecycle_date_order_ck
+    CHECK (start_date IS NULL OR end_date IS NULL OR end_date >= start_date);
 
 -- ---------------------------------------------------------------------------
 -- 2) Canonical cohort progression state + immutable history
@@ -653,7 +657,8 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 -- 5. Verify ACTIVE/INACTIVE/COMPLETED compatibility transitions (including re-activation from
 --    INACTIVE) while preserving vNext PLANNED/ARCHIVED semantics; verify cohort start/end dates
 --    remain independently editable and ordered; verify legacy
---    class min/max/description round-trip with min >= 0, max 1..500 and min <= max.
+--    class min/max/description plus compatibility start/end round-trip with min >= 0,
+--    max 1..500, min <= max, and ordered dates.
 -- 6. Verify every offering has stable program-term identity; CORE course/term mismatches fail
 --    while term-bound ELECTIVE offerings remain supported.
 -- 7. Verify a broad faculty-course association can exist before delivery, rejects cross-college
