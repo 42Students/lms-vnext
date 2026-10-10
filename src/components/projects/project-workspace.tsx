@@ -173,7 +173,11 @@ export function ProjectWorkspace({
 }) {
   const { readiness } = workspace;
   const show = (section: ProjectWorkspaceSection) =>
-    !activeSection || activeSection === section;
+    !activeSection ||
+    activeSection === section ||
+    (mode === "LEARNER" &&
+      activeSection === "team" &&
+      section === "meetings");
   const tasksBySprint = new Map<
     string,
     Workspace["tasks"]
