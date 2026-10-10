@@ -3244,28 +3244,28 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "candidateVnextTables": [
-        "placement_prep_assignments (required staged design)"
+        "placement_prep_assignments (required staged design)",
+        "placement_prep_assignments"
       ],
       "mappingTarget": {
-        "table": "placement_prep_assignments (required staged design)",
+        "table": "placement_prep_assignments",
         "column": "id",
-        "status": "RESOURCE_IDENTITY_BLOCKED"
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
       },
-      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
-      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Active placement-readiness prep assignment. The staged relation preserves learner ownership, optional course resource, due time, assigning canonical user and creation time; completion remains derived.",
+      "tenantKey": "placement_prep_assignments.college_id + composite learner membership scope",
+      "actorPermission": "Staged persistence only; placement-management assignment authorization and eligible-content checks require executed service/database witnesses.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
         "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/courses.ts",
-        "src/db/schema/quizzes.ts",
-        "src/db/schema/assessments.ts"
+        "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+        "src/db/schema/courses.ts"
       ],
-      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Source-backed staged SQL now exists for this field. It is unregistered/unexecuted; legacy assessment_id intentionally remains blocked because canonical assessment resource identity is unresolved.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3282,28 +3282,28 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "candidateVnextTables": [
-        "placement_prep_assignments (required staged design)"
+        "placement_prep_assignments (required staged design)",
+        "placement_prep_assignments"
       ],
       "mappingTarget": {
-        "table": "placement_prep_assignments (required staged design)",
-        "column": "learner_id",
-        "status": "RESOURCE_IDENTITY_BLOCKED"
+        "table": "placement_prep_assignments",
+        "column": "learner_membership_id",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
       },
-      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
-      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Active placement-readiness prep assignment. The staged relation preserves learner ownership, optional course resource, due time, assigning canonical user and creation time; completion remains derived.",
+      "tenantKey": "placement_prep_assignments.college_id + composite learner membership scope",
+      "actorPermission": "Staged persistence only; placement-management assignment authorization and eligible-content checks require executed service/database witnesses.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
         "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/courses.ts",
-        "src/db/schema/quizzes.ts",
-        "src/db/schema/assessments.ts"
+        "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+        "src/db/schema/courses.ts"
       ],
-      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Source-backed staged SQL now exists for this field. It is unregistered/unexecuted; legacy assessment_id intentionally remains blocked because canonical assessment resource identity is unresolved.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3320,28 +3320,28 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "candidateVnextTables": [
-        "placement_prep_assignments (required staged design)"
+        "placement_prep_assignments (required staged design)",
+        "placement_prep_assignments"
       ],
       "mappingTarget": {
-        "table": "placement_prep_assignments (required staged design)",
+        "table": "placement_prep_assignments",
         "column": "course_id",
-        "status": "RESOURCE_IDENTITY_BLOCKED"
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
       },
-      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
-      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Active placement-readiness prep assignment. The staged relation preserves learner ownership, optional course resource, due time, assigning canonical user and creation time; completion remains derived.",
+      "tenantKey": "placement_prep_assignments.college_id + composite learner membership scope",
+      "actorPermission": "Staged persistence only; placement-management assignment authorization and eligible-content checks require executed service/database witnesses.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
         "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/courses.ts",
-        "src/db/schema/quizzes.ts",
-        "src/db/schema/assessments.ts"
+        "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+        "src/db/schema/courses.ts"
       ],
-      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Source-backed staged SQL now exists for this field. It is unregistered/unexecuted; legacy assessment_id intentionally remains blocked because canonical assessment resource identity is unresolved.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3396,28 +3396,28 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "candidateVnextTables": [
-        "placement_prep_assignments (required staged design)"
+        "placement_prep_assignments (required staged design)",
+        "placement_prep_assignments"
       ],
       "mappingTarget": {
-        "table": "placement_prep_assignments (required staged design)",
+        "table": "placement_prep_assignments",
         "column": "due_at",
-        "status": "RESOURCE_IDENTITY_BLOCKED"
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
       },
-      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
-      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Active placement-readiness prep assignment. The staged relation preserves learner ownership, optional course resource, due time, assigning canonical user and creation time; completion remains derived.",
+      "tenantKey": "placement_prep_assignments.college_id + composite learner membership scope",
+      "actorPermission": "Staged persistence only; placement-management assignment authorization and eligible-content checks require executed service/database witnesses.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
         "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/courses.ts",
-        "src/db/schema/quizzes.ts",
-        "src/db/schema/assessments.ts"
+        "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+        "src/db/schema/courses.ts"
       ],
-      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Source-backed staged SQL now exists for this field. It is unregistered/unexecuted; legacy assessment_id intentionally remains blocked because canonical assessment resource identity is unresolved.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3432,28 +3432,28 @@
       "sourceDefault": null,
       "sourceRiskFlags": [],
       "candidateVnextTables": [
-        "placement_prep_assignments (required staged design)"
+        "placement_prep_assignments (required staged design)",
+        "placement_prep_assignments"
       ],
       "mappingTarget": {
-        "table": "placement_prep_assignments (required staged design)",
-        "column": "assigned_by",
-        "status": "RESOURCE_IDENTITY_BLOCKED"
+        "table": "placement_prep_assignments",
+        "column": "assigned_by_user_id",
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
       },
-      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
-      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Active placement-readiness prep assignment. The staged relation preserves learner ownership, optional course resource, due time, assigning canonical user and creation time; completion remains derived.",
+      "tenantKey": "placement_prep_assignments.college_id + composite learner membership scope",
+      "actorPermission": "Staged persistence only; placement-management assignment authorization and eligible-content checks require executed service/database witnesses.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
         "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/courses.ts",
-        "src/db/schema/quizzes.ts",
-        "src/db/schema/assessments.ts"
+        "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+        "src/db/schema/courses.ts"
       ],
-      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Source-backed staged SQL now exists for this field. It is unregistered/unexecuted; legacy assessment_id intentionally remains blocked because canonical assessment resource identity is unresolved.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3470,28 +3470,28 @@
         "TIMEZONE_AND_DEADLINE_SEMANTICS"
       ],
       "candidateVnextTables": [
-        "placement_prep_assignments (required staged design)"
+        "placement_prep_assignments (required staged design)",
+        "placement_prep_assignments"
       ],
       "mappingTarget": {
-        "table": "placement_prep_assignments (required staged design)",
+        "table": "placement_prep_assignments",
         "column": "created_at",
-        "status": "RESOURCE_IDENTITY_BLOCKED"
+        "status": "STAGED_SQL_ONLY_UNREGISTERED"
       },
-      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
-      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Active placement-readiness prep assignment. The staged relation preserves learner ownership, optional course resource, due time, assigning canonical user and creation time; completion remains derived.",
+      "tenantKey": "placement_prep_assignments.college_id + composite learner membership scope",
+      "actorPermission": "Staged persistence only; placement-management assignment authorization and eligible-content checks require executed service/database witnesses.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
         "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/courses.ts",
-        "src/db/schema/quizzes.ts",
-        "src/db/schema/assessments.ts"
+        "docs/planning/sql/db09-prep-bell-read-state-candidate.sql",
+        "src/db/schema/courses.ts"
       ],
-      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Source-backed staged SQL now exists for this field. It is unregistered/unexecuted; legacy assessment_id intentionally remains blocked because canonical assessment resource identity is unresolved.",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -9971,10 +9971,8 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "Final DB09 canonical disposition plus V193 messaging producer reconciliation",
-    "result": "279/279 disposition-reviewed; 193 MAPPED, 65 REDESIGNED, 21 BLOCKED, 0 DB/runtime verified",
-    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
-    "currentProducerEvidence": "src/modules/placements/tpo-messaging-service.ts on main uses TPO|RECRUITER",
-    "evidenceDoc": "docs/planning/db09-final-91-disposition-2026-10-11.md"
+    "scope": "Prep-assignment staged target refinement",
+    "result": "279/279 reviewed; 199 MAPPED, 65 REDESIGNED, 15 BLOCKED, 0 verified. Six prep fields now map to staged placement_prep_assignments; assessment_id remains blocked pending DB06 canonical resource identity.",
+    "stagedEvidence": "docs/planning/sql/db09-prep-bell-read-state-candidate.sql"
   }
 }
