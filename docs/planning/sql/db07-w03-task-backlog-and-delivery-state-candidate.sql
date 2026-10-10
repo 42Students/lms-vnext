@@ -25,21 +25,11 @@ ALTER TABLE project_tasks
 ALTER TABLE project_tasks
   ADD COLUMN carried_over_from_sprint_id uuid NULL;
 
--- A plain sprint_id FK does not guarantee that task.project_id and sprint.project_id
--- match. Establish a referenced composite key and use it for both active sprint and
--- carry-over sprint references.
-ALTER TABLE project_sprints
-  ADD CONSTRAINT project_sprints_project_id_id_uq
-  UNIQUE (project_id, id);
-
-ALTER TABLE project_tasks
-  DROP CONSTRAINT IF EXISTS project_tasks_sprint_id_project_sprints_id_fk;
-
-ALTER TABLE project_tasks
-  ADD CONSTRAINT project_tasks_project_sprint_fk
-  FOREIGN KEY (project_id, sprint_id)
-  REFERENCES project_sprints(project_id, id)
-  ON DELETE RESTRICT;
+-- Same-project ownership for the active sprint link is owned by
+-- db07-w03-core-project-relationship-integrity-candidate.sql, which creates
+-- project_sprints_project_id_id_uq and project_tasks_project_sprint_fk.
+-- This backlog draft owns only the nullable backlog transition and the
+-- additional carry-over provenance FK; do not redeclare the core FK/index here.
 
 ALTER TABLE project_tasks
   ADD CONSTRAINT project_tasks_project_carryover_sprint_fk
