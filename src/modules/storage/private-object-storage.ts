@@ -118,11 +118,11 @@ export async function createPrivateUploadGrant(raw: PrivateUploadRequest) {
   const expiresAt = new Date(Date.now() + input.expiresInMs);
   const requiredHeaders = {
     "content-type": input.contentType,
-    "x-goog-meta-upload-token": uploadToken,
-    "x-goog-meta-owner-membership-id": input.ownerMembershipId,
-    "x-goog-meta-college-id": input.collegeId,
-    "x-goog-meta-expected-size": String(input.expectedSizeBytes),
-    "x-goog-meta-malware-scan-status": "PENDING",
+    "x-goog-meta-upload_token": uploadToken,
+    "x-goog-meta-owner_membership_id": input.ownerMembershipId,
+    "x-goog-meta-college_id": input.collegeId,
+    "x-goog-meta-expected_size": String(input.expectedSizeBytes),
+    "x-goog-meta-malware_scan_status": "PENDING",
   } as const;
   const [uploadUrl] = await bucket.file(objectKey).getSignedUrl({
     version: "v4",
