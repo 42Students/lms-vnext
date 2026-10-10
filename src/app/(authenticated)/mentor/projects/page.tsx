@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects-unavailable";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { redirect } from "next/navigation";
@@ -28,6 +29,16 @@ export default async function MentorProjectsPage() {
         eyebrow="Mentor"
         title="Mentoring Projects"
         description="Projects where you are responsible for execution guidance, review and final evaluation."
+        actions={<div className="flex flex-wrap gap-2">
+          <Link href="/mentor/calendar"
+            className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+            Meetings
+          </Link>
+          <Link href="/mentor/notifications"
+            className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+            Notifications
+          </Link>
+        </div>}
       />
       <ProjectList
         items={rows.map((row) => ({
