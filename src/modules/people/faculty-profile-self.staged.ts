@@ -1,0 +1,213 @@
+import "server-only";
+
+import { sql } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
+import { PeopleServiceError } from "./errors";
+import {
+  emptyFacultyProfileDocument,
+  facultyProfileDocumentSchema,
+  type FacultyProfileDocument,
+} from "./faculty-profile-document";
+
+type FacultyProfileDocumentRow = {
+  membership_id: string;
+  profile_document: unknown;
+  profile_document_version: number;
+};
+
+function resourceScope(context: RequestContext) {
+  if (!context.membership) {
+    throw new PeopleServiceError("FACULTY_ROLE_REQUIRED");
+  }
+  return {
+    organizationId: context.membership.organizationId,
+    collegeId: context.membership.collegeId,
+  };
+}
+
+function assertPersistedFaculty(
+  context: RequestContext,
+) {
+  if (
+    !context.membership ||
+    !context.membership.roles.includes("FACULTY")
+  ) {
+    throw new PeopleServiceError("FACULTY_ROLE_REQUIRED");
+  }
+  return context.membership;
+}
+
+function toView(row: FacultyProfileDocumentRow | undefined) {
+  if (!row) {
+    return {
+      document: emptyFacultyProfileDocument,
+      version: 0,
+    };
+  }
+  return {
+    document: facultyProfileDocumentSchema.parse(
+      row.profile_document ?? {},
+    ),
+    version: row.profile_document_version,
+  };
+}
+
+/**
+ * STAGED DB04 adapter.
+ *
+ * This module intentionally uses raw SQL and is NOT wired to runtime routes
+ * until W01 promotes the matching faculty_profiles columns into the canonical
+ * Drizzle schema/journal and proves an empty/latest PostgreSQL replay.
+ *
+ * The write authorization recheck and the mutation happen in one transaction,
+ * so platform disable, membership suspension and FACULTY-role revocation
+ * cannot race a stale authenticated RequestContext.
+ */
+export async function loadOwnFacultyProfileDocumentStaged(
+  context: RequestContext,
+) {
+  return getDb().transaction(async (tx) => {
+    const persisted =
+      await assertPersistedPlatformPermission(
+        tx,
+        context,
+        "profile.self.manage",
+        resourceScope(context),
+      );
+    const membership = assertPersistedFaculty(persisted);
+
+    const result =
+      await tx.execute<FacultyProfileDocumentRow>(sql`
+        select
+          membership_id,
+          profile_document,
+          profile_document_version
+        from faculty_profiles
+        where membership_id = ${membership.id}
+        for share
+      `);
+
+    return toView(result.rows[0]);
+  });
+}
+
+export async function saveOwnFacultyProfileDocumentStaged(
+  context: RequestContext,
+  rawDocument: unknown,
+  expectedVersion: number,
+): Promise<{
+  document: FacultyProfileDocument;
+  version: number;
+}> {
+  if (
+    !Number.isSafeInteger(expectedVersion) ||
+    expectedVersion < 0
+  ) {
+    throw new PeopleServiceError(
+      "FACULTY_PROFILE_VERSION_CONFLICT",
+    );
+  }
+
+  const document =
+    facultyProfileDocumentSchema.parse(rawDocument);
+
+  return getDb().transaction(async (tx) => {
+    const persisted =
+      await assertPersistedPlatformPermission(
+        tx,
+        context,
+        "profile.self.manage",
+        resourceScope(context),
+      );
+    const membership = assertPersistedFaculty(persisted);
+
+    const locked =
+      await tx.execute<FacultyProfileDocumentRow>(sql`
+        select
+          membership_id,
+          profile_document,
+          profile_document_version
+        from faculty_profiles
+        where membership_id = ${membership.id}
+        for update
+      `);
+
+    const current = locked.rows[0];
+
+    if (!current) {
+      if (expectedVersion !== 0) {
+        throw new PeopleServiceError(
+          "FACULTY_PROFILE_VERSION_CONFLICT",
+        );
+      }
+
+      const inserted =
+        await tx.execute<FacultyProfileDocumentRow>(sql`
+          insert into faculty_profiles (
+            membership_id,
+            profile_document,
+            profile_document_version,
+            created_at,
+            updated_at
+          )
+          values (
+            ${membership.id},
+            ${JSON.stringify(document)}::jsonb,
+            1,
+            clock_timestamp(),
+            clock_timestamp()
+          )
+          returning
+            membership_id,
+            profile_document,
+            profile_document_version
+        `);
+
+      const row = inserted.rows[0];
+      if (!row) {
+        throw new Error(
+          "Faculty profile document insert returned no row",
+        );
+      }
+      return toView(row);
+    }
+
+    if (
+      current.profile_document_version !==
+      expectedVersion
+    ) {
+      throw new PeopleServiceError(
+        "FACULTY_PROFILE_VERSION_CONFLICT",
+      );
+    }
+
+    const updated =
+      await tx.execute<FacultyProfileDocumentRow>(sql`
+        update faculty_profiles
+        set
+          profile_document =
+            ${JSON.stringify(document)}::jsonb,
+          profile_document_version =
+            profile_document_version + 1,
+          updated_at = clock_timestamp()
+        where membership_id = ${membership.id}
+          and profile_document_version =
+            ${expectedVersion}
+        returning
+          membership_id,
+          profile_document,
+          profile_document_version
+      `);
+
+    const row = updated.rows[0];
+    if (!row) {
+      throw new PeopleServiceError(
+        "FACULTY_PROFILE_VERSION_CONFLICT",
+      );
+    }
+
+    return toView(row);
+  });
+}
