@@ -9,11 +9,15 @@
  * - Skill / SkillRepository: active searchable catalog, category filters,
  *   popularity ranking, search_priority boost and atomic usage increments.
  * - SkillSynonym / SkillSynonymRepository: persisted alternate terms.
- * - SkillUsageTracker: a second v2-only skill_usage counter keyed by name.
+ * - SkillUsageTracker: a SECOND, INDEPENDENT skill_usage counter keyed by
+ *   lowercased free-text skill name, without a mandatory skills row.
  *
- * Greenfield redesign: collapse the duplicate legacy usage counters into the
- * canonical skill row. last_used_at preserves the active v2 recency concept.
- * This is a documented semantic redesign, not a historical-data migration.
+ * Preserve both counters until product semantics can be formally reconciled:
+ * skills.usage_count powers SkillRepository weighted/popular rankings, while
+ * skill_usage.usage_count + last_used power v2 SkillUsageTracker rankings.
+ * Merging them silently changes active legacy ranking behavior.
+ * Likewise, a synonym is not globally unique in legacy; one search term may
+ * legitimately match multiple skills.
  */
 import { sql } from "drizzle-orm";
 import {
@@ -37,11 +41,9 @@ export const db10Skills = pgTable(
     displayName: varchar("display_name", { length: 200 }).notNull(),
     category: varchar("category", { length: 50 }),
     isActive: boolean("is_active").notNull().default(true),
-    /** Canonical counter for both legacy SkillRepository and v2 SkillUsageTracker writes. */
+    /** Legacy SkillRepository's popularity counter (distinct from skill_usage). */
     usageCount: integer("usage_count").notNull().default(0),
     searchPriority: integer("search_priority").notNull().default(0),
-    /** Replaces skill_usage.last_used after collapsing that duplicate counter table. */
-    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -69,9 +71,29 @@ export const db10SkillSynonyms = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
-    // Legacy loader/repository treats one synonym as a global alias, not one alias per skill.
-    uniqueIndex("db10_skill_synonyms_value_uq").on(sql`lower(${t.synonym})`),
+    // Legacy SkillRepository.findBySynonym uses DISTINCT and can return multiple
+    // skills per term. This MUST NOT be globally unique.
+    index("db10_skill_synonyms_search_idx").on(sql`lower(${t.synonym})`),
     index("db10_skill_synonyms_skill_idx").on(t.skillId),
     check("db10_skill_synonyms_value_ck", sql`length(trim(${t.synonym})) > 0`),
+  ],
+);
+
+/**
+ * Active legacy v2 SkillUsageTracker writes a name-keyed counter independently
+ * of skills.usage_count. Do not add a skill_id FK: free-text names can be
+ * recorded before catalog match and search only projects matched names.
+ * Registration and integration remain Chat 1-owned.
+ */
+export const db10SkillUsage = pgTable(
+  "skill_usage",
+  {
+    skillName: varchar("skill_name", { length: 200 }).primaryKey(),
+    usageCount: integer("usage_count").notNull().default(0),
+    lastUsed: timestamp("last_used", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    check("db10_skill_usage_name_ck", sql`length(trim(${t.skillName})) > 0`),
+    check("db10_skill_usage_count_ck", sql`${t.usageCount} >= 0`),
   ],
 );
