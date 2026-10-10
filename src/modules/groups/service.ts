@@ -9,6 +9,7 @@ import {
 import { hasActiveMembership, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { hasElectiveAcademicEligibility } from "./elective-eligibility";
+import { assertPersistedGroupActor } from "./actor-access";
 
 const uuid = z.string().uuid();
 const groupCreate = z.object({
@@ -131,7 +132,7 @@ async function emitEvent(tx: Tx, args: {
     toState: args.toState,
     source: args.source,
     memberType: "LEARNER",
-    actorType: args.systemActor ? "SYSTEM" : actorType(args.context),
+    actorType: args.systemActor ? "SYSTEM" : args.source === "SELF" ? "LEARNER" : actorType(args.context),
     actorUserId: args.systemActor ? null : args.context.user.id,
     reason: args.reason ?? null,
   });
@@ -186,7 +187,9 @@ export async function createGroup(context: RequestContext, raw: unknown) {
   if (input.selfJoinOpenUntil && input.selfJoinOpenFrom &&
       input.selfJoinOpenUntil < input.selfJoinOpenFrom)
     throw new GroupServiceError("GROUP_JOIN_WINDOW_INVALID");
-  const [created] = await getDb().insert(lmsGroups).values({
+  return getDb().transaction(async tx => {
+    await assertPersistedGroupActor(tx, context, {collegeId: input.collegeId, mode: "MANUAL"});
+    const [created] = await tx.insert(lmsGroups).values({
     ownerScope: input.collegeId ? "COLLEGE" : "PLATFORM",
     collegeId: input.collegeId,
     kind: input.kind, name: input.name, description: input.description ?? null,
@@ -199,7 +202,8 @@ export async function createGroup(context: RequestContext, raw: unknown) {
     createdByUserId: context.user.id,
     createdByType: actorType(context),
   }).returning();
-  return created!;
+    return created!;
+  });
 }
 
 export async function joinGroup(
@@ -215,6 +219,7 @@ export async function joinGroup(
     const slot = await lockElectiveSlot(tx, groupId);
     const group = await lockGroup(tx, groupId);
     assertScope(context, group, mode, memberId);
+    await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode, memberId });
     await assertTargetMembership(tx, group, memberId);
     // An ELECTIVE group without a currently active offering must not be
     // joined directly to bypass the shared slot's max_pick guard.
@@ -334,6 +339,7 @@ export async function leaveGroup(
     const slot = await lockElectiveSlot(tx, groupId);
     const group = await lockGroup(tx, groupId);
     assertScope(context, group, mode, memberId);
+    await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode, memberId });
     if (mode === "SELF" && group.configJson.allowSelfLeave !== true)
       throw new GroupServiceError("GROUP_SELF_LEAVE_DISABLED");
     const [member] = await tx.select().from(lmsGroupMembers)
@@ -375,6 +381,7 @@ export async function transitionGroup(context: RequestContext, groupIdInput: str
   return getDb().transaction(async tx => {
     const group = await lockGroup(tx, groupId);
     assertScope(context, group, "MANUAL", group.createdByUserId);
+    await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode: "MANUAL" });
     const next =
       action === "ACTIVATE" && ["DRAFT", "CLOSED"].includes(group.status) ? "ACTIVE" :
       action === "CLOSE" && group.status === "ACTIVE" ? "CLOSED" :
@@ -396,6 +403,7 @@ export async function attachProjectTeamGroup(context: RequestContext, projectIdI
       !group.collegeId || group.status !== "DRAFT" || group.activeCount !== 0)
       throw new GroupServiceError("PROJECT_TEAM_GROUP_NOT_ATTACHABLE");
     requirePermission(context, "projects.manage", { collegeId: group.collegeId });
+    await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode: "MANUAL" });
     const [project] = await tx.select().from(projectInstances)
       .where(eq(projectInstances.id, projectId)).for("update");
     if (!project || project.collegeId !== group.collegeId ||
@@ -462,6 +470,7 @@ export async function moveElectiveMember(
       throw new GroupServiceError("ELECTIVE_MOVE_GROUPS_INVALID");
 
     assertScope(context, fromGroup, "MANUAL", memberId);
+    await assertPersistedGroupActor(tx, context, { collegeId: fromGroup.collegeId, mode: "MANUAL" });
     await assertTargetMembership(tx, fromGroup, memberId);
     if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
       throw new GroupServiceError("ELECTIVE_PRIMARY_SECTION_REQUIRED");
