@@ -95,3 +95,110 @@ test("DB07 staged SQL remains outside the migration journal and preserves core i
     assert.ok(workspace.includes(token));
   }
 });
+
+
+const fieldReconciliation = JSON.parse(
+  fs.readFileSync(
+    "docs/planning/database-parity-db07-field-reconciliation.json",
+    "utf8",
+  ),
+);
+
+test("DB07 field reconciliation accounts for all 358 active source fields exactly once", () => {
+  assert.equal(fieldReconciliation.counts.tables, 16);
+  assert.equal(fieldReconciliation.counts.sourceFields, 358);
+  assert.equal(fieldReconciliation.counts.fieldDispositions, 358);
+  assert.equal(fieldReconciliation.counts.semanticVerifiedFields, 0);
+  assert.equal(fieldReconciliation.counts.runtimeVerifiedFields, 0);
+  assert.equal(fieldReconciliation.counts.approvedRetirements, 0);
+
+  const expected = new Set(
+    review.rows.map((row) => `${row.legacyTable}.${row.legacyColumn}`),
+  );
+  const actualRows = fieldReconciliation.tables.flatMap((table) =>
+    table.fields.map((field) => ({
+      key: `${table.legacyTable}.${field.legacyField}`,
+      field,
+    })),
+  );
+  const actual = new Set(actualRows.map((row) => row.key));
+
+  assert.equal(expected.size, 358);
+  assert.equal(actual.size, 358);
+  assert.deepEqual([...actual].sort(), [...expected].sort());
+
+  for (const { field } of actualRows) {
+    assert.ok(field.decision);
+    assert.ok(field.reason);
+    assert.equal(field.semanticVerified, false);
+    assert.equal(field.runtimeVerified, false);
+    assert.equal(field.validationEvidence, null);
+  }
+});
+
+test("DB07 keeps active missing histories/comments and high-risk state gaps explicit", () => {
+  const byKey = new Map(
+    fieldReconciliation.tables.flatMap((table) =>
+      table.fields.map((field) => [
+        `${table.legacyTable}.${field.legacyField}`,
+        field,
+      ]),
+    ),
+  );
+
+  for (const key of [
+    "project_delivery_event.delivery_id",
+    "project_meeting_history.project_meeting_id",
+    "project_resource_audit.project_resource_id",
+    "project_task_comment.project_task_id",
+  ]) {
+    assert.equal(byKey.get(key)?.decision, "TARGET_GAP_ACTIVE_CONCEPT");
+  }
+
+  assert.equal(
+    byKey.get("project_task.assignee_id")?.decision,
+    "TARGET_GAP_STAGED",
+  );
+  assert.equal(
+    byKey.get("project_task.carried_over_from_sprint_key")?.decision,
+    "TARGET_GAP_STAGED",
+  );
+  assert.equal(
+    byKey.get("project_workspace.readiness_override")?.decision,
+    "TARGET_GAP_STAGED",
+  );
+  assert.equal(
+    byKey.get("project_delivery.locked_at")?.decision,
+    "REVISION_HISTORY_CONTRACT_REQUIRED",
+  );
+  assert.equal(
+    byKey.get("project_resource.file_url")?.decision,
+    "SECURITY_REDESIGN_REQUIRED",
+  );
+});
+
+test("DB07 cross-domain invariants remain blockers until atomic/runtime evidence exists", () => {
+  const byId = new Map(
+    fieldReconciliation.openCrossDomainInvariants.map((row) => [
+      row.id,
+      row,
+    ]),
+  );
+
+  assert.equal(
+    byId.get("DB07_PROJECT_TEAM_ATOMIC_MATERIALIZATION")?.status,
+    "TARGET_GAP_REQUIRED",
+  );
+  assert.match(
+    byId.get("DB07_PROJECT_TEAM_ATOMIC_MATERIALIZATION")?.requiredContract ?? "",
+    /rolls back the whole team/i,
+  );
+  assert.equal(
+    byId.get("DB07_TENANT_SCOPED_PROJECT_EVENTS")?.status,
+    "TARGET_INTEGRITY_GAP",
+  );
+  assert.match(
+    byId.get("DB07_TENANT_SCOPED_PROJECT_EVENTS")?.requiredContract ?? "",
+    /cross-college/i,
+  );
+});
