@@ -17,6 +17,18 @@ type Lead = {
   recruiterUserId: string | null;
 };
 
+type CompanySummary = {
+  key: string;
+  name: string;
+  aliases: string[];
+  contacts: number;
+  activeContacts: number;
+  drivesRan: number;
+  acceptedOfferDrives: number;
+  confirmedJoinedDrives: number;
+  studentsPlaced: number | null;
+  studentsPlacedEvidence: string;
+};
 type Phase = "loading" | "ready" | "error" | "migration-pending";
 type NewLead = {
   name: string;
@@ -54,13 +66,22 @@ const inputStyle = "min-h-10 w-full rounded-md border border-border bg-surface p
 const buttonStyle = "inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
 const primaryStyle = "inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
 
-export function RecruiterLeadsWorkspace({ collegeId }: { collegeId: string }) {
+export function RecruiterLeadsWorkspace({
+  collegeId,
+  initialView = "table",
+}: {
+  collegeId: string;
+  initialView?: "table" | "board" | "companies";
+}) {
   const [rows, setRows] = useState<Lead[]>([]);
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [stage, setStage] = useState<(typeof STAGES)[number]>("ALL");
-  const [view, setView] = useState<"table" | "board">("table");
+  const [view, setView] = useState<"table" | "board" | "companies">(initialView);
+  const [companies, setCompanies] = useState<CompanySummary[]>([]);
+  const [companiesPhase, setCompaniesPhase] = useState<Phase>("loading");
+  const [companiesError, setCompaniesError] = useState("");
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState<NewLead>(EMPTY);
   const [saveError, setSaveError] = useState("");
@@ -99,6 +120,46 @@ export function RecruiterLeadsWorkspace({ collegeId }: { collegeId: string }) {
     void load(controller.signal);
     return () => controller.abort();
   }, [load]);
+
+  const loadCompanies = useCallback(async (signal?: AbortSignal) => {
+    setCompaniesPhase("loading");
+    setCompaniesError("");
+    try {
+      const response = await fetch(
+        "/api/placements/tpo/companies?collegeId=" +
+          encodeURIComponent(collegeId),
+        { credentials: "same-origin", cache: "no-store", signal },
+      );
+      const data = await response.json() as {
+        companies?: CompanySummary[];
+        error?: string;
+      };
+      if (!response.ok) {
+        if (signal?.aborted) return;
+        setCompaniesPhase(
+          response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
+            ? "migration-pending"
+            : "error",
+        );
+        setCompaniesError(friendlyError(response.status, data));
+        return;
+      }
+      if (signal?.aborted) return;
+      setCompanies(Array.isArray(data.companies) ? data.companies : []);
+      setCompaniesPhase("ready");
+    } catch {
+      if (signal?.aborted) return;
+      setCompaniesPhase("error");
+      setCompaniesError("Companies could not be loaded. Try again.");
+    }
+  }, [collegeId]);
+
+  useEffect(() => {
+    if (view !== "companies") return;
+    const controller = new AbortController();
+    void loadCompanies(controller.signal);
+    return () => controller.abort();
+  }, [view, loadCompanies]);
 
   const visible = useMemo(() => rows.filter(lead => {
     if (stage !== "ALL" && lead.manualStage !== stage) return false;
@@ -215,7 +276,7 @@ export function RecruiterLeadsWorkspace({ collegeId }: { collegeId: string }) {
               View
               <select className={inputStyle + " mt-1"} value={view}
                 onChange={e => setView(e.target.value as typeof view)}>
-                <option value="table">Table</option><option value="board">Board</option>
+                <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies</option>
               </select>
             </label>
           </div>
@@ -226,6 +287,66 @@ export function RecruiterLeadsWorkspace({ collegeId }: { collegeId: string }) {
             <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
               {rows.length ? "No leads match your filters." : "No recruiter leads yet. Add your first contact."}
             </div>
+          ) : view === "companies" ? (
+            companiesPhase !== "ready" ? (
+              <div
+                role={companiesPhase === "loading" ? "status" : "alert"}
+                className="rounded-lg border border-border bg-surface p-5"
+              >
+                {companiesPhase === "loading"
+                  ? "Loading companies…"
+                  : companiesError}
+                {companiesPhase === "error" ? (
+                  <button
+                    className={buttonStyle + " ml-3"}
+                    onClick={() => void loadCompanies()}
+                  >
+                    Retry
+                  </button>
+                ) : null}
+              </div>
+            ) : companies.length === 0 ? (
+              <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
+                No companies yet. Add a recruiter contact to start Company Memory.
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-border bg-surface">
+                <table className="w-full text-left text-sm">
+                  <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
+                    <tr>
+                      {["Company", "Contacts", "Drives run", "Accepted-offer drives", "Students placed"].map(label => (
+                        <th key={label} scope="col" className="px-4 py-3 font-semibold">{label}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {companies.map(company => (
+                      <tr key={company.key} className="border-b border-border last:border-0">
+                        <td className="px-4 py-3 font-medium">
+                          <Link
+                            className="text-primary-text underline-offset-2 hover:underline"
+                            href={"/tpo/companies?name=" + encodeURIComponent(company.name)}
+                          >
+                            {company.name}
+                          </Link>
+                          {company.aliases.length ? (
+                            <span className="mt-1 block text-xs text-muted-foreground">
+                              Also typed as {company.aliases.join(", ")}
+                            </span>
+                          ) : null}
+                        </td>
+                        <td className="px-4 py-3">{company.contacts} · {company.activeContacts} active</td>
+                        <td className="px-4 py-3">{company.drivesRan}</td>
+                        <td className="px-4 py-3">{company.acceptedOfferDrives}</td>
+                        <td className="px-4 py-3">
+                          {company.studentsPlaced ?? "Pending placement-policy verification"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
           ) : view === "table" ? (
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm">
