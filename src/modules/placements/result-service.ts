@@ -27,6 +27,7 @@ import {
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   placementResultIdSchema,
   placementRoundIdSchema,
@@ -662,6 +663,7 @@ export async function listOwnAppliedPlacementResults(
   ) {
     throw new AuthorizationError("placements.read");
   }
+  await requireLearnerPlacementAccess(context);
 
   return getDb()
     .select({
