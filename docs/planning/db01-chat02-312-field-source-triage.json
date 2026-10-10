@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 204,
+    "postV150ActivenessVerified": 214,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 228,
-    "postV150ActivenessReviewNote": "204 active legacy source fields/table workflow candidates; 31 identity fields now have explicit individual code callsite evidence. Not a vNext DB/API parity result; runtime-semantic verified 0."
+    "postV150ActivenessReviewedFields": 238,
+    "postV150ActivenessReviewNote": "214 legacy source fields/table active; includes 10 JPA base lifecycle/optimistic lock semantics. Do not count as vNext runtime verification, still 0."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -1291,12 +1291,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.id + college_memberships.id + faculty_profiles.membership_id",
       "rationaleOrBlocker": "Legacy actor int to canonical identity/membership UUID requires reconciliation",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines id (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1309,12 +1310,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.created_at / faculty_profiles.created_at",
       "rationaleOrBlocker": "Legacy person vs membership timestamps need ownership choice.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines created_at (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1325,12 +1327,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.status / users.platform_status",
       "rationaleOrBlocker": "Soft delete vs disabled/ended decision",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines is_deleted (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -1379,12 +1382,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.updated_at / faculty_profiles.updated_at",
       "rationaleOrBlocker": "Legacy person vs membership timestamps need ownership choice.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines updated_at (JPA id/timestamp/soft-delete) inherited by faculty; current facultyServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
     },
     {
       "legacyTable": "faculty",
@@ -2044,12 +2048,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Optimistic-lock race semantics require persisted version or tested alternative",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy faculty model @Version persisted optimistic lock and facultyServiceImpl save/update; source active, target version/concurrency test missing."
     },
     {
       "legacyTable": "faculty",
@@ -2444,12 +2449,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "users.id + college_memberships.id + learner_profiles.membership_id",
       "rationaleOrBlocker": "Legacy int actor vs canonical user and role membership",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines id (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2462,12 +2468,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.created_at / learner_profiles.created_at",
       "rationaleOrBlocker": "Legacy person vs membership timestamps need ownership choice.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines created_at (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2478,12 +2485,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.status / users.platform_status",
       "rationaleOrBlocker": "State semantics ambiguous",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines is_deleted (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -2532,12 +2540,13 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "NORMALIZED_CANDIDATE_UNVERIFIED",
       "candidateTarget": "college_memberships.updated_at / learner_profiles.updated_at",
       "rationaleOrBlocker": "Legacy person vs membership timestamps need ownership choice.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy BaseModel.java @MappedSuperclass defines updated_at (JPA id/timestamp/soft-delete) inherited by learner; current learnerServiceImpl save/update persists entity. Field target lifecycle parity remains unverified."
     },
     {
       "legacyTable": "learner",
@@ -3301,12 +3310,13 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "MISSING_OR_DESIGN_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Optimistic-lock race semantics require witness",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "sourceWorkflowEvidence": "Legacy learner model @Version persisted optimistic lock and learnerServiceImpl save/update; source active, target version/concurrency test missing."
     },
     {
       "legacyTable": "learner",
@@ -6497,6 +6507,17 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAuthService.java"
       ],
       "proof": "31 specific learner/faculty/recruiter identity fields have direct source reads/writes for contacts, name, tenant, suspension, token revocation and role; no vNext semantic acceptance."
+    },
+    "learner_faculty_base_version": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Learner.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/FacultyServiceImpl.java"
+      ],
+      "proof": "Inherited ID, timestamps, is_deleted and explicit JPA @Version are active persisted concepts for learner/faculty. vNext source current status, FK and concurrency still open."
     }
   }
 }
