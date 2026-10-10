@@ -61,7 +61,7 @@ async function loadActiveRecruiterGrant(
   collegeId: string,
   lock = false,
 ) {
-  let query = db
+  const query = db
     .select({
       recruiterUserId: placementRecruiterProfiles.userId,
       companyRelationshipId:
@@ -115,10 +115,10 @@ async function loadActiveRecruiterGrant(
         eq(placementCompanyRelationships.status, "ACTIVE"),
         eq(colleges.status, "ACTIVE"),
       ),
-    )
-    .limit(1);
-  if (lock) query = query.for("share") as typeof query;
-  const [grant] = await query;
+    );
+  const [grant] = lock
+    ? await query.for("share").limit(1)
+    : await query.limit(1);
   return grant ?? null;
 }
 
@@ -243,7 +243,7 @@ async function assertJobForThread(
 ) {
   if (!jobIdInput) return null;
   const jobId = jobIdSchema.parse(jobIdInput);
-  let query = db
+  const query = db
     .select({
       id: placementJobs.id,
       companyRelationshipId: placementJobs.companyRelationshipId,
@@ -254,10 +254,10 @@ async function assertJobForThread(
         eq(placementJobs.id, jobId),
         eq(placementJobs.collegeId, collegeId),
       ),
-    )
-    .limit(1);
-  if (lock) query = query.for("share") as typeof query;
-  const [job] = await query;
+    );
+  const [job] = lock
+    ? await query.for("share").limit(1)
+    : await query.limit(1);
   if (
     !job ||
     (companyRelationshipId &&
@@ -269,11 +269,11 @@ async function assertJobForThread(
 }
 
 async function getOrCreateThread(
+  db: Db | Tx,
   collegeId: string,
   recruiterUserId: string,
   jobId: string | null,
 ) {
-  const db = getDb();
   const where = jobId
     ? and(
         eq(placementTpoMessageThreads.collegeId, collegeId),
@@ -338,11 +338,31 @@ export async function openTpoMessageThread(
     input.jobId,
     recruiter.companyRelationshipId,
   );
-  return getOrCreateThread(
-    actor.collegeId,
-    recruiter.recruiterUserId,
-    job?.id ?? null,
-  );
+  return getDb().transaction(async (tx) => {
+    const persisted = await mutationActor(tx, context, actor.collegeId);
+    if (persisted.type !== "TPO") {
+      throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+    }
+    const lockedRecruiter = await assertRecruiterForCollege(
+      tx,
+      persisted.collegeId,
+      recruiter.recruiterUserId,
+      true,
+    );
+    const lockedJob = await assertJobForThread(
+      tx,
+      persisted.collegeId,
+      job?.id ?? null,
+      lockedRecruiter.companyRelationshipId,
+      true,
+    );
+    return getOrCreateThread(
+      tx,
+      persisted.collegeId,
+      lockedRecruiter.recruiterUserId,
+      lockedJob?.id ?? null,
+    );
+  });
 }
 
 export async function openRecruiterMessageThread(
@@ -359,11 +379,25 @@ export async function openRecruiterMessageThread(
     input.jobId,
     actor.companyRelationshipId,
   );
-  return getOrCreateThread(
-    actor.collegeId,
-    actor.recruiterUserId,
-    job?.id ?? null,
-  );
+  return getDb().transaction(async (tx) => {
+    const persisted = await mutationActor(tx, context, actor.collegeId);
+    if (persisted.type !== "HR" || !persisted.recruiterUserId) {
+      throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+    }
+    const lockedJob = await assertJobForThread(
+      tx,
+      persisted.collegeId,
+      job?.id ?? null,
+      persisted.companyRelationshipId,
+      true,
+    );
+    return getOrCreateThread(
+      tx,
+      persisted.collegeId,
+      persisted.recruiterUserId,
+      lockedJob?.id ?? null,
+    );
+  });
 }
 
 export async function listMessageThreads(
@@ -428,31 +462,62 @@ export async function listThreadMessages(
   context: RequestContext,
   threadIdInput: string,
 ) {
-  const { actor, thread } = await requireThreadForRead(
-    context,
-    threadIdInput,
-  );
-  const db = getDb();
+  const threadId = threadIdSchema.parse(threadIdInput);
+  return getDb().transaction(async (tx) => {
+    const [thread] = await tx
+      .select()
+      .from(placementTpoMessageThreads)
+      .where(eq(placementTpoMessageThreads.id, threadId))
+      .for("share")
+      .limit(1);
+    if (!thread) {
+      throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+    }
+    const actor = await mutationActor(tx, context, thread.collegeId);
+    if (
+      actor.type === "HR" &&
+      actor.userId !== thread.recruiterUserId
+    ) {
+      throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+    }
+    if (actor.type === "HR" && thread.jobId) {
+      await assertJobForThread(
+        tx,
+        actor.collegeId,
+        thread.jobId,
+        actor.companyRelationshipId,
+        true,
+      );
+    }
+    if (actor.type === "TPO") {
+      await assertRecruiterForCollege(
+        tx,
+        thread.collegeId,
+        thread.recruiterUserId,
+        true,
+      );
+    }
 
-  await db
-    .update(placementTpoMessages)
-    .set({ readAt: new Date() })
-    .where(
-      and(
-        eq(placementTpoMessages.threadId, thread.id),
-        ne(placementTpoMessages.senderType, actor.type),
-        isNull(placementTpoMessages.readAt),
-      ),
-    );
+    await tx
+      .update(placementTpoMessages)
+      .set({ readAt: new Date() })
+      .where(
+        and(
+          eq(placementTpoMessages.threadId, thread.id),
+          ne(placementTpoMessages.senderType, actor.type),
+          isNull(placementTpoMessages.readAt),
+        ),
+      );
 
-  return db
-    .select()
-    .from(placementTpoMessages)
-    .where(eq(placementTpoMessages.threadId, thread.id))
-    .orderBy(
-      placementTpoMessages.createdAt,
-      placementTpoMessages.id,
-    );
+    return tx
+      .select()
+      .from(placementTpoMessages)
+      .where(eq(placementTpoMessages.threadId, thread.id))
+      .orderBy(
+        placementTpoMessages.createdAt,
+        placementTpoMessages.id,
+      );
+  });
 }
 
 export async function sendThreadMessage(
