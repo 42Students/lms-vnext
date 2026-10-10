@@ -123,3 +123,8 @@ Added standalone `notification-cursor.ts` (strict matched ISO/UUID query cursor)
 ### W06 Activity date-filter semantics (2026-10-10)
 
 No schema or migration change. `src/modules/activity/date-boundary.ts` defines deterministic date-only filter semantics: From = start of selected Asia/Kolkata day, To = final millisecond of selected Asia/Kolkata day. Offset-aware ISO timestamps are preserved; impossible dates and timezone-less datetimes are rejected to avoid server-timezone-dependent queries. `listActivityEvents` uses these parsed instants for both College Admin and Super Admin readers. Authored unit coverage exists; runtime/DB/browser execution evidence is still NONE.
+
+
+### W06 Tracker admin triage code stage (2026-10-10)
+
+DB10 bug-tracker draft consumers now exist for Super Admin list/detail/workflow/retest, but are guarded by `DB10_TRACKER_READY=DB10_VERIFIED`. Selected Super Admin college/org scope is applied server-side; non-Super Admin access is rejected. Workflow and retest updates use the pure legacy-compatible state machine, conditional `id + version` update and same-transaction immutable activity append. Detail attachment projection intentionally excludes storage keys. No DB schema barrel, migration or journal was modified; W01 remains migration owner. PostgreSQL tests are opt-in and were not run here.

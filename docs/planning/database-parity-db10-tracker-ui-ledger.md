@@ -55,3 +55,21 @@ LogAlertingService + Cloud Logging query → signature tables + durable poll sta
 ## Closing rule
 
 A row can move OPEN → SOURCE_COMPARED → IMPLEMENTED → BROWSER_VERIFIED only with exact FE/BE SHAs, linked vNext code, executed tests and real cross-role browser evidence. Source analysis and authored tests do not close it.
+
+
+## W06 admin-triage staging checkpoint — 2026-10-10
+
+The following rows now have source code staged behind a hard migration gate, but **remain below IMPLEMENTED** until W01 registers/replays DB10 tables and tests actually pass:
+
+- **BT-08** issues list: server filters for status/environment/severity/search plus authorized scoped query.
+- **BT-09** sort and stable keyset continuation: newest/oldest + cursor pairs and query-string preservation; saved filters still OPEN.
+- **BT-12** issue detail: private header/context/status/severity, source context, sanitized attachment metadata and history.
+- **BT-13** manager status/workflow control: Super Admin only, same-origin HTTP mutation and version conflict response.
+- **BT-16** engineering details: layer, cause, fix notes, FE/BE commit SHA, regression status and production verification.
+- **BT-17** retest: READY_FOR_RETEST-only PASS/FAIL semantics through existing pure workflow state machine.
+- **BT-18** immutable history consumer: activity rows rendered oldest-to-newest; service appends workflow/retest events in same DB transaction as CAS update.
+- **BT-01 partial**: lightweight Tracker admin nav exists, but legacy standalone shell/theme/report/log tabs are not cloned.
+
+Still wholly OPEN: BT-02–07 reporter intake/upload, BT-10 saved views, BT-11 bulk operations, BT-14 Markdown export/copy, BT-15 authorized screenshot gallery/downloads, BT-19 similar/log correlations, BT-20–24 logs/known errors/digest/access gate, BT-25 quick report launcher.
+
+Activation contract: `DB10_TRACKER_READY=DB10_VERIFIED` must **not** be set until W01 promotes the schema, disposable PostgreSQL replay passes, authored integration/security tests pass, and browser role/scope verification is captured.
