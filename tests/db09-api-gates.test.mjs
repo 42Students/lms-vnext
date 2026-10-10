@@ -10,6 +10,7 @@ const routes=[
   "src/app/api/placements/tpo/follow-ups/due/route.ts",
   "src/app/api/placements/tpo/leads/[leadId]/route.ts",
   "src/app/api/placements/tpo/leads/check/route.ts",
+  "src/app/api/placements/tpo/leads/[leadId]/contacted/route.ts",
   "src/app/api/placements/tpo/leads/[leadId]/activity/route.ts",
   "src/app/api/placements/tpo/leads/[leadId]/follow-ups/route.ts",
   "src/app/api/placements/tpo/leads/[leadId]/not-now/route.ts",
