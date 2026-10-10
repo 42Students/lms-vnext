@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 41,
+    "postV150ActivenessVerified": 66,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -35,8 +35,8 @@
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
-    "postV150ActivenessReviewedFields": 41,
-    "postV150ActivenessReviewNote": "41 legacy source fields now tied to active controller/service workflows: user_session (9), refresh_token_blocklist (5), auth_handoff_token (9), mobile_login_attempt (18). Source active-workflow evidence only; 0 vNext runtime-semantic verified."
+    "postV150ActivenessReviewedFields": 84,
+    "postV150ActivenessReviewNote": "66 legacy source fields have direct current workflow proof. 84 identity-provider/session fields have an explicit current-source disposition. LoginUser is source-retired from live auth; AuthToken is model-only/no workflow found; EmailVerificationToken has a repository but still lacks a proven current callsite. Source evidence only; runtimeSemanticVerifiedFields remains 0."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -260,12 +260,16 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthToken.java@199bd22b69e24bf1c91ed8b34e4d16fe472ea287"
+      ],
+      "postV150EvidenceSummary": "Full non-truncated prod-2026 source tree contains AuthToken.java but no AuthToken repository/service/controller. Treat as no-current-workflow evidence, not runtime retirement proof."
     },
     {
       "legacyTable": "auth_token",
@@ -278,12 +282,16 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthToken.java@199bd22b69e24bf1c91ed8b34e4d16fe472ea287"
+      ],
+      "postV150EvidenceSummary": "Full non-truncated prod-2026 source tree contains AuthToken.java but no AuthToken repository/service/controller. Treat as no-current-workflow evidence, not runtime retirement proof."
     },
     {
       "legacyTable": "auth_token",
@@ -294,12 +302,16 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthToken.java@199bd22b69e24bf1c91ed8b34e4d16fe472ea287"
+      ],
+      "postV150EvidenceSummary": "Full non-truncated prod-2026 source tree contains AuthToken.java but no AuthToken repository/service/controller. Treat as no-current-workflow evidence, not runtime retirement proof."
     },
     {
       "legacyTable": "auth_token",
@@ -312,12 +324,16 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthToken.java@199bd22b69e24bf1c91ed8b34e4d16fe472ea287"
+      ],
+      "postV150EvidenceSummary": "Full non-truncated prod-2026 source tree contains AuthToken.java but no AuthToken repository/service/controller. Treat as no-current-workflow evidence, not runtime retirement proof."
     },
     {
       "legacyTable": "auth_token",
@@ -330,12 +346,16 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthToken.java@199bd22b69e24bf1c91ed8b34e4d16fe472ea287"
+      ],
+      "postV150EvidenceSummary": "Full non-truncated prod-2026 source tree contains AuthToken.java but no AuthToken repository/service/controller. Treat as no-current-workflow evidence, not runtime retirement proof."
     },
     {
       "legacyTable": "college",
@@ -1030,12 +1050,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "REPOSITORY_PRESENT_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/EmailVerificationToken.java@59c781ad8d25b836659caef589fde11de1f860a9",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
+      ],
+      "postV150EvidenceSummary": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
     },
     {
       "legacyTable": "email_verification_token",
@@ -1046,12 +1071,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "REPOSITORY_PRESENT_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/EmailVerificationToken.java@59c781ad8d25b836659caef589fde11de1f860a9",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
+      ],
+      "postV150EvidenceSummary": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
     },
     {
       "legacyTable": "email_verification_token",
@@ -1064,12 +1094,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "REPOSITORY_PRESENT_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/EmailVerificationToken.java@59c781ad8d25b836659caef589fde11de1f860a9",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
+      ],
+      "postV150EvidenceSummary": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
     },
     {
       "legacyTable": "email_verification_token",
@@ -1082,12 +1117,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "REPOSITORY_PRESENT_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/EmailVerificationToken.java@59c781ad8d25b836659caef589fde11de1f860a9",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
+      ],
+      "postV150EvidenceSummary": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
     },
     {
       "legacyTable": "email_verification_token",
@@ -1100,12 +1140,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "REPOSITORY_PRESENT_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/EmailVerificationToken.java@59c781ad8d25b836659caef589fde11de1f860a9",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
+      ],
+      "postV150EvidenceSummary": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
     },
     {
       "legacyTable": "email_verification_token",
@@ -1116,12 +1161,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "REPOSITORY_PRESENT_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/EmailVerificationToken.java@59c781ad8d25b836659caef589fde11de1f860a9",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
+      ],
+      "postV150EvidenceSummary": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
     },
     {
       "legacyTable": "email_verification_token",
@@ -1134,12 +1184,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "REPOSITORY_PRESENT_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/EmailVerificationToken.java@59c781ad8d25b836659caef589fde11de1f860a9",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
+      ],
+      "postV150EvidenceSummary": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
     },
     {
       "legacyTable": "faculty",
@@ -2007,12 +2062,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2025,12 +2087,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2041,12 +2110,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2059,12 +2135,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2075,12 +2158,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2093,12 +2183,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2109,12 +2206,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2125,12 +2229,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2141,12 +2252,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2157,12 +2275,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2175,12 +2300,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "faculty_acct_verification",
@@ -2191,12 +2323,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "postV150EvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
     },
     {
       "legacyTable": "learner",
@@ -3202,12 +3341,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3220,12 +3366,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3236,12 +3389,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3254,12 +3414,19 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3270,12 +3437,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3286,12 +3460,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3302,12 +3483,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3320,12 +3508,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3336,12 +3531,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3352,12 +3554,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3370,12 +3579,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3386,12 +3602,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "learner_acct_verification",
@@ -3402,12 +3625,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
     },
     {
       "legacyTable": "login_user",
@@ -3420,12 +3650,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LoginUser.java@7ea6891557706209027e900e927e24f6a1ce9a80",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "LoginUser model remains, but the username/password JWT authenticate endpoint is explicitly commented out as removed; current live learner/faculty auth paths use OTP/JWT instead. Full prod-2026 tree has no LoginUser repository/service."
     },
     {
       "legacyTable": "login_user",
@@ -3438,12 +3673,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LoginUser.java@7ea6891557706209027e900e927e24f6a1ce9a80",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "LoginUser model remains, but the username/password JWT authenticate endpoint is explicitly commented out as removed; current live learner/faculty auth paths use OTP/JWT instead. Full prod-2026 tree has no LoginUser repository/service."
     },
     {
       "legacyTable": "login_user",
@@ -3454,12 +3694,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LoginUser.java@7ea6891557706209027e900e927e24f6a1ce9a80",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "LoginUser model remains, but the username/password JWT authenticate endpoint is explicitly commented out as removed; current live learner/faculty auth paths use OTP/JWT instead. Full prod-2026 tree has no LoginUser repository/service."
     },
     {
       "legacyTable": "login_user",
@@ -3472,12 +3717,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LoginUser.java@7ea6891557706209027e900e927e24f6a1ce9a80",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "LoginUser model remains, but the username/password JWT authenticate endpoint is explicitly commented out as removed; current live learner/faculty auth paths use OTP/JWT instead. Full prod-2026 tree has no LoginUser repository/service."
     },
     {
       "legacyTable": "login_user",
@@ -3490,12 +3740,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LoginUser.java@7ea6891557706209027e900e927e24f6a1ce9a80",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "LoginUser model remains, but the username/password JWT authenticate endpoint is explicitly commented out as removed; current live learner/faculty auth paths use OTP/JWT instead. Full prod-2026 tree has no LoginUser repository/service."
     },
     {
       "legacyTable": "login_user",
@@ -3506,12 +3761,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LoginUser.java@7ea6891557706209027e900e927e24f6a1ce9a80",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "postV150EvidenceSummary": "LoginUser model remains, but the username/password JWT authenticate endpoint is explicitly commented out as removed; current live learner/faculty auth paths use OTP/JWT instead. Full prod-2026 tree has no LoginUser repository/service."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -5675,6 +5935,49 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/PublicMobileAuthController.java (start, email-fallback, verify, completeAttemptVerification, createAttempt)"
       ],
       "proof": "Active controller creates and saves persisted MobileLoginAttempt for SMS login, recruiter email-first and email fallback. It checks college scope/expiry/used, uses the repository's atomic verification_attempts < 5 UPDATE for both channels, and records verified/consumed lifecycle. All 18 candidate columns are live-table candidates; specific optional fields may still be nullable and require independent type/default/producer proof."
+    },
+    "learner_acct_verification": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "proof": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session."
+    },
+    "faculty_acct_verification": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/VerificationServiceImpl.java@923a834e9d9333aac2b462ec08ba492bc4db60f8",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/FacultyController.java@d25f9315a7f61c631ec5683935745e10320ae849"
+      ],
+      "proof": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result."
+    },
+    "login_user": {
+      "status": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LoginUser.java@7ea6891557706209027e900e927e24f6a1ce9a80",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/UserController.java@8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3"
+      ],
+      "proof": "LoginUser model remains, but the username/password JWT authenticate endpoint is explicitly commented out as removed; current live learner/faculty auth paths use OTP/JWT instead. Full prod-2026 tree has no LoginUser repository/service."
+    },
+    "auth_token": {
+      "status": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthToken.java@199bd22b69e24bf1c91ed8b34e4d16fe472ea287"
+      ],
+      "proof": "Full non-truncated prod-2026 source tree contains AuthToken.java but no AuthToken repository/service/controller. Treat as no-current-workflow evidence, not runtime retirement proof."
+    },
+    "email_verification_token": {
+      "status": "REPOSITORY_PRESENT_CALLSITE_PENDING",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/EmailVerificationToken.java@59c781ad8d25b836659caef589fde11de1f860a9",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java@f8c09e0d802cf9136e7e451f2f2771ee586244d0"
+      ],
+      "proof": "Current model and repository expose create/read/verified/expiry semantics, but a current controller/service callsite has not yet been source-proven. Do not retire or promote until resolved."
     }
   }
 }
