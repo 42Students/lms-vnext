@@ -28,6 +28,10 @@ import {
   listFacultyCourseDeliveries,
 } from "@/modules/courses/faculty-course-service";
 import { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
+import {
+  getFacultyAssignmentReport,
+  getFacultyQuizReport,
+} from "@/modules/courses/faculty-assessment-report-service";
 import { getFacultyClassSchedule } from "@/modules/courses/faculty-schedule-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import {
@@ -796,6 +800,51 @@ describe("courses UI2A faculty read model", () => {
       code:
         "FACULTY_TEACHING_SCOPE_REQUIRED",
     });
+  });
+
+  it("reports current eligible learners who have not submitted or attempted", async () => {
+    const structure = await createStructure();
+
+    const assignmentReport =
+      await getFacultyAssignmentReport(
+        faculty,
+        structure.assignment.id,
+        structure.deliveryA.id,
+      );
+    expect(
+      assignmentReport.metrics,
+    ).toMatchObject({
+      eligibleLearners: 1,
+      submitted: 0,
+      missing: 1,
+    });
+    expect(
+      assignmentReport.missingLearners.map(
+        (row) => row.membershipId,
+      ),
+    ).toEqual([
+      SEED_IDS.learnerCollegeAMembership,
+    ]);
+
+    const quizReport =
+      await getFacultyQuizReport(
+        faculty,
+        structure.quiz.id,
+        structure.deliveryA.id,
+      );
+    expect(quizReport.metrics).toMatchObject({
+      eligibleLearners: 1,
+      uniqueLearners: 0,
+      notAttempted: 1,
+      averagePercent: null,
+    });
+    expect(
+      quizReport.notAttemptedLearners.map(
+        (row) => row.membershipId,
+      ),
+    ).toEqual([
+      SEED_IDS.learnerCollegeAMembership,
+    ]);
   });
 
 });
