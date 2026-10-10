@@ -70,16 +70,58 @@ If a generic immutable event model is chosen, it must preserve project scope, ty
 
 Uploaded project resources and delivery files must coordinate with DB-016/private-object safety; a public URL must not be the trust anchor for tenant-private files.
 
+## Project-team materialization atomicity
+
+The current DB03 group kernel is safer than the earlier snapshot: PROJECT_TEAM membership joins now mirror active learners into `project_members` inside the same `joinGroup` transaction, and the group/project link validates empty same-college rosters.
+
+However, the complete team-creation workflow is still split across separate public transactions:
+
+- `createGroup`
+- `attachProjectTeamGroup`
+- `transitionGroup`
+- one or more `joinGroup` calls
+
+Legacy team creation has per-team atomicity: workspace + PROJECT_TEAM group + every learner join either commit together or the whole team fails. DB07 must therefore consume a DB03-owned **transaction-aware materialization primitive** (or tx-aware internal variants) that performs create/link/activate/all-member validation and membership mirroring in one transaction. DB07 must not duplicate group membership rules. A failed later learner join must never leave a half-created team/workspace.
+
+## Tenant-scoped Project events
+
+The shared `activity_events` model can carry Project lifecycle events, but its generic string `subject_id` is not a relational Project FK. Correctness therefore requires event creation to derive the Project's college and actor scope **inside the same mutation transaction**.
+
+Required negative evidence includes forged combinations of:
+
+- Project A + college B;
+- Project A + membership/actor from college B;
+- Project subject id that does not resolve in the persisted Project tenant;
+- lifecycle event written after the Project mutation rolled back.
+
+A generic activity row is useful audit output, not a substitute for typed Project history tables when before/after/revision/comment semantics are required.
+
+## Field-level source closure
+
+`docs/planning/database-parity-db07-field-reconciliation.json` now gives every one of the **358/358 current DB07 source fields** an explicit source disposition. This is deliberately stronger than exact-name matching but weaker than certification:
+
+- **0** fields are marked semantically verified;
+- **0** fields are marked runtime verified;
+- **0** source fields/tables are approved retired;
+- missing histories/comments remain target gaps;
+- staged task/workspace fields remain staged gaps;
+- delivery revision/lock/review provenance remains a history contract;
+- private Project files remain security redesign items.
+
+The machine contract test asserts exact 358-field set equality so later edits cannot silently drop a source field.
+
 ## Promotion boundary
 
-Chat 5 currently holds a broad `src/db/schema/**` claim for DB03. DB-010 therefore does **not** modify Project schema or numbered Drizzle migrations in this batch.
+DB03's broad shared-schema task is now **COMPLETED**, so there is no longer an active Chat 5 schema collision. DB07 still must not bypass the global queue dependencies: DB-001 blocks executable PostgreSQL, DB-002 migration replay depends on DB-001, and DB-017 is the migration-integration task that depends on DB-002.
 
-After that claim clears, the migration-integrator review should combine—not blindly copy—the staged:
+When those dependencies clear, the Chat 1 migration-integrator review should combine—not blindly copy—the staged:
 - `db07-w03-core-project-relationship-integrity-candidate.sql`
 - `db07-w03-task-allocation-parity-candidate.sql`
+- `db07-w03-task-backlog-and-delivery-state-candidate.sql`
 - `db07-w03-workspace-state-parity-candidate.sql`
+- `db07-w03-unrepresented-project-history-candidate.sql` / `project-audit-staged.ts`
 
-Promotion requires canonical Drizzle declarations, numbered migration/snapshot, zero-to-head replay, direct-SQL negative tests and service regression evidence.
+Promotion requires canonical Drizzle declarations, a non-duplicative numbered migration/snapshot, zero-to-head replay, direct-SQL same-project/same-tenant negative tests, concurrency tests and service regression evidence.
 
 ## Staged-candidate integration reconciliation
 
