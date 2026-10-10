@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_SOURCE_AUDIT_IN_PROGRESS",
+    "checkpointKind": "DB005_ACTIVE_CONTRACT_RECONCILIATION_IN_PROGRESS",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a5235d8b7e4164f626a163eef51ca1ee2df713ab",
-    "lastWorkerMergedSha": "e3dee78622848463c4d3400b01f1618b25278640",
+    "observedMainSha": "9a9c2984e855905e50f6e22b233a4624a9bcb035",
+    "lastWorkerMergedSha": "c71a639c1bf8a95dee3c72ac7727d505720376af",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Source+Drizzle snapshot candidate audit committed for DB02: 13 legacy tables / 125 fields; 24 same-name, 32 normalized/derived unproven, 69 no confirmed target; 0 semantically/runtime verified. Strict review excludes lossy references from candidate count."
+    "summary": "DB-005 active-contract batch: 19 persisted legacy fields source-confirmed across semester, semester_course and lecture_hall. Program-scoped curriculum terms/course mappings and first-class rooms are not equivalent to current college academic_periods/cohort-period offerings/free-text schedule location. Unregistered staging SQL committed; 0 semantic equivalence certifications and 0 PostgreSQL tests executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,7 +30,7 @@
   "lastExecutedPassingTests": [],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "DB-005 remains IN_PROGRESS. Compare DB02 academic services and UI producer/consumer flows against latest exact FE/BE SHAs, classify all active source fields, stage missing model contracts, request Chat 1 migration registration and run disposable PG tests before COMPLETED/DONE_VERIFIED.",
+  "nextAction": "Continue DB-005 with the remaining 10 DB02 tables: prove active/retired producer-consumer semantics for batch, class, class_schedule, faculty associations/mappings/teaching assignments, new_program/new_program_structure and historical program/program_structure; then hand approved schema deltas to Chat 1 and execute disposable PostgreSQL acceptance before completion.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -45,7 +45,9 @@
     "https://github.com/42Students/lms-vnext/issues/24",
     "https://github.com/42Students/lms-vnext/commit/b7aae6a945e1f70a7feab140a1fa640e2fad2a31",
     "https://github.com/42Students/lms-vnext/commit/245d6a4e5ac27a8989ae437a103872a77abd773a",
-    "https://github.com/42Students/lms-vnext/commit/e3dee78622848463c4d3400b01f1618b25278640"
+    "https://github.com/42Students/lms-vnext/commit/e3dee78622848463c4d3400b01f1618b25278640",
+    "https://github.com/42Students/lms-vnext/commit/b6fc8204549d29c88dc0e3123bdccd481ddd70d3",
+    "https://github.com/42Students/lms-vnext/commit/c71a639c1bf8a95dee3c72ac7727d505720376af"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
