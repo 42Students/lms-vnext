@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "phase": "DATABASE",
+  "taskId": "DB-008",
+  "worker": 6,
+  "generatedOn": "2026-10-11",
+  "status": "SOURCE_STAGED_BLOCKED",
+  "sourceSha": {
+    "legacyBackend": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "legacyFrontend": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2"
+  },
+  "migrationIntegratorChat": 1,
+  "strictSequenceNote": "All entries are unregistered DRAFTS. Dependency order is proposed only. Do NOT activate schema before application writes can preserve legacy semantics and tests pass.",
+  "artifacts": [
+    {
+      "id": "db05-course-identity",
+      "path": "scripts/sql/db05-course-identity.draft.sql",
+      "prereqs": [
+        "CORE_COURSES_TABLE",
+        "COURSE_SLUG_SEED_AND_API",
+        "UNIQUE_TRIM_CASE_PG_NEGATIVE"
+      ],
+      "registered": false,
+      "executedAgainstPostgres": false,
+      "readyForProduction": false
+    },
+    {
+      "id": "db05-parent-facets",
+      "path": "scripts/sql/db05-course-parent-facets.draft.sql",
+      "prereqs": [
+        "CORE_COURSES_TABLE",
+        "COURSE_PARENT_CYCLE_TENANT_ENFORCEMENT",
+        "COURSE_VISIBILITY_SEMANTIC_DECISION"
+      ],
+      "registered": false,
+      "executedAgainstPostgres": false,
+      "readyForProduction": false
+    },
+    {
+      "id": "db05-metadata",
+      "path": "scripts/sql/db05-course-metadata-extension.draft.sql",
+      "prereqs": [
+        "W02_COURSE_DISPLAY_TABLE_REGISTERED",
+        "META_14_FIELDS_SERVICE_READ_WRITE",
+        "PARTIAL_UPDATE_HTML_URL_TESTS"
+      ],
+      "registered": false,
+      "executedAgainstPostgres": false,
+      "readyForProduction": false
+    },
+    {
+      "id": "db05-discussions",
+      "path": "scripts/sql/db05-lesson-content-discussions.draft.sql",
+      "prereqs": [
+        "CORE_COURSE_LESSON_TABLES",
+        "LESSON_DISCUSSIONS_TENANT_PARENT_NEGATIVE",
+        "DISCUSSION_RUNTIME_EXTENSION_DECISIONS"
+      ],
+      "registered": false,
+      "executedAgainstPostgres": false,
+      "readyForProduction": false
+    },
+    {
+      "id": "db05-classroom-history",
+      "path": "scripts/sql/db05-classroom-message-history.draft.sql",
+      "prereqs": [
+        "CLASSROOM_SOFT_DELETE_APP_CHANGE",
+        "CLASSROOM_SENDER_SNAPSHOT_APP_CHANGE",
+        "CLASSROOM_CASCADE_RETENTION_POLICY"
+      ],
+      "registered": false,
+      "executedAgainstPostgres": false,
+      "readyForProduction": false
+    },
+    {
+      "id": "db05-version-progress",
+      "path": "scripts/sql/db05-version-progress-attempts.draft.sql",
+      "prereqs": [
+        "COURSE_LESSON_CONTENT_CAS_WRITERS",
+        "LEARNER_PROGRESS_ATTEMPT_AWARE_READ_WRITE",
+        "PG_REWATCH_AND_RACE_TESTS"
+      ],
+      "registered": false,
+      "executedAgainstPostgres": false,
+      "readyForProduction": false
+    }
+  ],
+  "gates": [
+    {
+      "id": "LEGACY_SOURCE_CURRENT",
+      "status": "SOURCE_ONLY",
+      "evidence": "BE prod-2026 21bad59d; FE prod-2026 e6b09e; source inventories 92 columns (NOT runtime verification)"
+    },
+    {
+      "id": "REGISTERED_DRIZZLE_MIGRATION",
+      "status": "BLOCKED",
+      "owner": 1
+    },
+    {
+      "id": "SCHEMA_BARREL_MATCH",
+      "status": "BLOCKED",
+      "owner": 1
+    },
+    {
+      "id": "APP_CONSUMER_CUTOVER",
+      "status": "BLOCKED",
+      "owner": "DATABASE_ENGINEERING_TO_API_PHASE_HANDOFF"
+    },
+    {
+      "id": "CLEAN_POSTGRES_REPLAY",
+      "status": "NOT_RUN",
+      "owner": 1
+    },
+    {
+      "id": "WRONG_TENANT_FK_CONCURRENCY_NEGATIVE",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "NODE_STATIC_CONTRACT_TESTS",
+      "status": "AUTHORED_NOT_EXECUTED"
+    },
+    {
+      "id": "LINT_TYPECHECK_UNIT_BUILD",
+      "status": "NOT_VERIFIED"
+    }
+  ],
+  "sourceReview": {
+    "legacySnapshotTables": 7,
+    "legacySnapshotFields": 92,
+    "formalSemanticVerifiedFields": 0,
+    "nestedCourseMetadataFields": 14,
+    "unprovenActiveHistoricals": [
+      "course.default_subscription_days",
+      "course.formal_title",
+      "learner_content_progress.is_deleted"
+    ],
+    "classifications": {
+      "candidate": 30,
+      "draft": 38,
+      "redesignedNeedsProof": 21,
+      "missingOrUnproven": 3
+    }
+  },
+  "testFiles": [
+    "tests/db05-source-semantic-review.test.mjs",
+    "tests/db05-draft-contract-integrity.test.mjs"
+  ],
+  "currentBlockers": [
+    "Unknown active consumers for three historical source columns",
+    "Three draft categories require running service revisions",
+    "Migration replay and test runner acceptance unavailable",
+    "Course-parent upstream reparent and discussions tenant integrity must be proven",
+    "Course_display_contents itself remains staged/unregistered"
+  ],
+  "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance."
+}
