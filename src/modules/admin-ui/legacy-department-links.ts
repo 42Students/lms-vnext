@@ -18,3 +18,14 @@ export function legacyDepartmentDestination(
     ? "/college/departments"
     : "/dashboard";
 }
+
+/** Preserve legacy Programs URLs using the same role checks as Departments. */
+export function legacyProgramDestination(
+  context: RequestContext,
+  account: "COLLEGE_ADMIN" | "SUPER_ADMIN",
+) {
+  const departmentTarget = legacyDepartmentDestination(context, account);
+  if (departmentTarget === "/college/departments") return "/college/programs";
+  if (departmentTarget === "/admin/departments") return "/admin/programs";
+  return "/dashboard";
+}
