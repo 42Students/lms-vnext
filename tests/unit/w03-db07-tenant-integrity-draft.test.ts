@@ -44,8 +44,12 @@ describe("W03 DB07 staged tenant/project integrity", () => {
     expect(sql).toContain("CAST(sr.role AS text) = 'SUPER_ADMIN'");
   });
 
-  it("does not invent a DB mirror trigger for group-managed learners yet", () => {
+  it("defers project-team roster equality until transaction end", () => {
     expect(sql).toContain("PROJECT_TEAM_GROUP_MANAGED");
-    expect(sql).toContain("Project-team learner mirroring remains a service transaction invariant");
+    expect(sql).toContain("mirrorProjectTeamMember");
+    expect(sql).toContain("project_instances_team_group_shape");
+    expect(sql).toContain("project_members_team_roster_mirror");
+    expect(sql).toContain("lms_group_members_project_team_roster_mirror");
+    expect(sql.match(/DEFERRABLE INITIALLY DEFERRED/g)).toHaveLength(2);
   });
 });
