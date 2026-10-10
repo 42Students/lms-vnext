@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
+import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import type { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
 
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
@@ -150,19 +151,28 @@ export function FacultyAssessmentOverview({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {item.facultyOwned ? (
-                    <FacultyAssessmentEditor
-                      assessment={{
-                        id: item.id,
-                        kind: item.kind,
-                        title: item.title,
-                        description: item.description,
-                        dueAt: item.dueAt,
-                        status: item.status,
-                        ...(item.kind === "QUIZ"
-                          ? { maxAttempts: item.maxAttempts }
-                          : { maxPoints: item.maxPoints }),
-                      }}
-                    />
+                    <>
+                      <FacultyAssessmentEditor
+                        assessment={{
+                          id: item.id,
+                          kind: item.kind,
+                          title: item.title,
+                          description: item.description,
+                          dueAt: item.dueAt,
+                          status: item.status,
+                          ...(item.kind === "QUIZ"
+                            ? { maxAttempts: item.maxAttempts }
+                            : { maxPoints: item.maxPoints }),
+                        }}
+                      />
+                      {item.kind === "QUIZ" &&
+                      item.status === "DRAFT" ? (
+                        <FacultyQuizQuestionEditor
+                          quizId={item.id}
+                          deliveryId={item.deliveryId}
+                        />
+                      ) : null}
+                    </>
                   ) : null}
                   <Link
                     href={`/teacher/report/${item.kind === "QUIZ" ? "quiz" : "assignment"}/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}`}
