@@ -505,3 +505,8 @@ The existing `/admin/people` list previously fetched only `limit=100, offset=0`.
 - [ ] Confirm management navigation and distinct Students / Faculty / Faculty Assignment jobs; W01 owns identity/backend privilege policy.
 
 **Status: PARTIAL, not VERIFIED.**
+
+
+### W06 Activity Center calendar-boundary correction — 2026-10-10
+
+The shared Super Admin/College Admin Activity Center now treats date-only From/To query values as full **Asia/Kolkata** days rather than UTC-midnight instants; explicit offset-aware datetimes remain exact and ambiguous timezone-less datetimes fail validation. This prevents a selected `To` date from hiding events later that day in India. Unit regression authored at `tests/unit/activity-date-boundary.test.ts`; **not executed**. This does not close the broader Super Admin activity/audit parity rows.
