@@ -10,13 +10,13 @@
   "activeTaskId": "DB-007",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB07_43_OF_103_FIELDS_SOURCE_REVIEWED",
+    "checkpointKind": "DB04_103_OF_103_SOURCE_DISPOSITION_REVIEWED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "003395f98b588ff1dd2eff24cf0617ce09c01231",
-    "lastWorkerMergedSha": "bbe3947c879674117b02008634e9a40a1cbc0737",
+    "observedMainSha": "cc3868e86040c950a9f547771ebe9e161d1155af",
+    "lastWorkerMergedSha": "fa42a4c49e4331028cd75b826c98df26c688e4a8",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-007 active, 43/103 source proposals compared to exact legacy DDL and staged vNext target (15 current verification, 10 events, 18 academic record); 60 source candidates remain. Zero DB04 fields semantically/runtime certified; no PostgreSQL tests executed. Report lists 7 substantive integrity/provenance risks and witness queue."
+    "summary": "DB-007 remains active. Frozen DB04 source/disposition review is now 103/103 candidates: prior 43 DDL-to-staged mappings plus remaining 60. qualification (24) and student_image (3) have current named producers/consumers and concrete vNext contract gaps; student_registration (22) and approver_id_card (11) are unresolved retirement candidates, not approved retirements. Zero DB04 fields are semantic/runtime certified; no PostgreSQL acceptance executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,11 +30,25 @@
   "lastExecutedPassingTests": [],
   "blockers": [
     "DB04 staged schema/migration not registered or replayed by Chat 1; disposable PostgreSQL/CI evidence unavailable.",
-    "DB-006 has an overlapping src/db/schema/** claim; do not edit DB04 staged Drizzle schema without explicit coordination.",
-    "Qualification, registration, student image and approver card (60 candidate fields) still lack active producer/consumer disposition."
+    "DB-006 overlaps src/db/schema/**; no staged Drizzle schema edits were made in this pass.",
+    "Qualification semantic gaps: vNext grading enum omits production-screened GPA; explicit currently-pursuing state and marksheet-to-education receipt linkage are absent; isRecentEducation/examRank need explicit disposition.",
+    "Student image semantic gap: active legacy imageId/imageUrl/active collection has no persisted vNext equivalent; PROFILE_IMAGE receipt alone is not equivalent.",
+    "student_registration needs DB01/DB02 native-SQL/external-sync disposition and must not be confused with placement_registration.",
+    "approver_id_card retirement requires native-SQL/detached-consumer proof or explicit approval."
   ],
-  "handoffs": [],
-  "nextAction": "Resume DB-007: source-audit remaining 60 fields, coordinate source/schema ownership and Chat 1 migration replay; execute negative PostgreSQL privacy/tenant/event-history witnesses when available. Do not mark COMPLETED or DONE_VERIFIED yet.",
+  "handoffs": [
+    {
+      "to": "CHAT_02/CHAT_04",
+      "scope": "student_registration 22-field historical external roster/CRM-shaped candidate",
+      "request": "During DB01/DB02 reconciliation, prove whether any native SQL/external integration still consumes student_registration. If inactive, record explicit retirement disposition; if active, design external roster/import semantics separately from placement_registration."
+    },
+    {
+      "to": "CHAT_01",
+      "scope": "DB04 staged schema/migration acceptance",
+      "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
+    }
+  ],
+  "nextAction": "Continue DB-007 by resolving active qualification/image DB contract gaps in a non-conflicting staging surface, obtaining DB01/DB02 disposition for student_registration and retirement proof for approver_id_card, then execute PostgreSQL privacy/tenant/history witnesses when infrastructure/Chat 1 integration permits. Do not mark COMPLETED or DONE_VERIFIED yet.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -51,7 +65,11 @@
     "https://github.com/42Students/lms-vnext/commit/a4a206d54cbccdcb59009cae68ecaa5e31020dc9",
     "https://github.com/42Students/lms-vnext/commit/6ee0f98fc33d3915fedcdfcf60be0edb61d4856d",
     "https://github.com/42Students/lms-vnext/commit/bbe3947c879674117b02008634e9a40a1cbc0737",
-    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db04-chat03-ddl-review-2026-10-11.md"
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db04-chat03-ddl-review-2026-10-11.md",
+    "https://github.com/42Students/lms-vnext/commit/3d88d0278f200923cb7dbc0e1e4452cc353e4e71",
+    "https://github.com/42Students/lms-vnext/commit/c860e92050bda7a9f489ecfae74927fdf2fb1ec9",
+    "https://github.com/42Students/lms-vnext/commit/fa42a4c49e4331028cd75b826c98df26c688e4a8",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db04-field-crosswalk-proposals.json"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
