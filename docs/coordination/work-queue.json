@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-10T20:52:20.000Z",
+  "updatedOn": "2026-10-11T02:35:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -611,9 +611,14 @@
         "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "latestEvidenceSha": "d87e292a4fcc1f25cd96a4be98f465e838b2991e",
       "verificationEvidence": [],
-      "blockers": [],
+      "blockers": [
+        "No disposable PostgreSQL/CI runtime evidence; authored DB09 guards/tests are not executed.",
+        "Current vNext TPO messaging producer still emits legacy HR while final database source/schema contract is RECRUITER.",
+        "tpo_college_settings.job_types_json and outcome_labels_json have no confirmed canonical vNext persistence target yet.",
+        "Remaining 141 source fields include active scheduling/slot/assignment and cross-domain operations requiring explicit mapping/redesign."
+      ],
       "completionNote": null,
       "pickedBy": 3,
       "pickedAt": "2026-10-11T02:14:00+05:30",
@@ -665,7 +670,8 @@
           "at": "2026-10-11",
           "reason": "Chat 3 stages isolated DB09 cross-tenant collaboration FK migration candidate; no shared Drizzle migration or barrel edits."
         }
-      ]
+      ],
+      "progressNote": "Chat 3 has source-reviewed 138/279 DB09 fields. Canonical ledger: 135 MAPPED proposals, 3 BLOCKED, 141 UNMAPPED, 0 WORKFLOW_VERIFIED. First 52 cover V162 policy/privacy + recruiter CRM; next 86 cover messages, secure sharing, settings/prefs/saved views, student/team notes, recruiter-private notes/read-through. Staged schema now uses final RECRUITER message code, expanded saved-view scopes/share-event actions, recruiter access months + drive-approval settings; current vNext message producer still emits HR so sender_type remains blocked. Tests/PG not executed."
     },
     {
       "id": "DB-013",
