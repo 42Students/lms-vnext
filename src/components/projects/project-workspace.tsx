@@ -569,7 +569,7 @@ export function ProjectWorkspace({
             </article>
           ))}
         </div>
-      </section>
+      </section> : null}
 
       {show("delivery") ? <section className="space-y-3">
         <div>
