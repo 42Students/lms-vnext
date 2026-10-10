@@ -237,6 +237,11 @@ export function RecruiterLeadDetailWorkspace({
             </div>
             <div className="flex flex-wrap gap-2">
               <button type="button" className={button} onClick={openEdit}>Edit details</button>
+              {lead.manualStage !== "CONTACTED" ? (
+                <button type="button" className={button} disabled={saving} onClick={() => void mutate(
+                  base + "/contacted", "POST", { collegeId },
+                )}>Mark contacted</button>
+              ) : null}
               <button type="button" className={button} onClick={() => setNotNowOpen(true)}>Not now…</button>
             </div>
           </header>
