@@ -5,6 +5,7 @@ import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
+import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
 import {
   facultyOwnedItemActions,
   nextLessonItemSequence,
@@ -189,10 +190,23 @@ function AssignmentItem({
           : "No deadline"}
       </p>
       {item.deliveryId ? (
-        <FacultyItemActions
-          transitionUrl={`/api/courses/assignments/${item.id}/transition`}
-          actions={available}
-        />
+        <div className="mt-3 flex flex-wrap items-start gap-2">
+          <FacultyAssessmentEditor
+            assessment={{
+              id: item.id,
+              kind: "ASSIGNMENT",
+              title: item.title,
+              description: item.description,
+              dueAt: item.dueAt,
+              status: item.status,
+              maxPoints: item.maxPoints,
+            }}
+          />
+          <FacultyItemActions
+            transitionUrl={`/api/courses/assignments/${item.id}/transition`}
+            actions={available}
+          />
+        </div>
       ) : null}
 
       <FacultyAssignmentReview
@@ -271,10 +285,23 @@ function QuizItem({
         </span>
       </div>
       {item.deliveryId ? (
-        <FacultyItemActions
-          transitionUrl={`/api/courses/quizzes/${item.id}/transition`}
-          actions={available}
-        />
+        <div className="mt-3 flex flex-wrap items-start gap-2">
+          <FacultyAssessmentEditor
+            assessment={{
+              id: item.id,
+              kind: "QUIZ",
+              title: item.title,
+              description: item.description,
+              dueAt: item.dueAt,
+              status: item.status,
+              maxAttempts: item.maxAttempts,
+            }}
+          />
+          <FacultyItemActions
+            transitionUrl={`/api/courses/quizzes/${item.id}/transition`}
+            actions={available}
+          />
+        </div>
       ) : null}
 
       <FacultyQuizReview
