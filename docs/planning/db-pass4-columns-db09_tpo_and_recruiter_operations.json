@@ -37,7 +37,18 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy integer college PK -> canonical college UUID FK; ensure the policy is the correct college and that service always rechecks tenant authority."
+          }
         },
         {
           "legacyTable": "college_placement_rules",
@@ -55,7 +66,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Enum status placement report semantics SELECTED/OFFER_RELEASED/OFFER_ACCEPTED; verify read-side reporting actually consumes this choice."
+          }
         },
         {
           "legacyTable": "college_placement_rules",
@@ -73,7 +95,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy default 1 and >=1 in vNext; prove open/accepted/held offer lifecycle checks use the policy rather than displaying a setting only."
+          }
         },
         {
           "legacyTable": "college_placement_rules",
@@ -91,7 +124,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy default 40; vNext >=0. Verify dream-drive bypass and calculation precision against actual eligibility producer."
+          }
         },
         {
           "legacyTable": "college_placement_rules",
@@ -109,7 +153,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy default 48; prove offer decision deadline scheduled behavior and cross-college authorization."
+          }
         },
         {
           "legacyTable": "college_placement_rules",
@@ -129,7 +184,18 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy ON UPDATE timestamp; vNext service explicitly stamps now on save, but no direct SQL trigger ensures every writer updates it."
+          }
         },
         {
           "legacyTable": "college_placement_rules",
@@ -147,7 +213,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy bigint @Version candidate; vNext bigint(mode:number) with Number.MAX_SAFE_INTEGER guard. Prove CAS concurrency and no out-of-range API revisions."
+          }
         }
       ]
     },
@@ -179,7 +256,18 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy integer college PK -> canonical college UUID FK; ensure the policy is the correct college and that service always rechecks tenant authority."
+          }
         },
         {
           "legacyTable": "college_what_companies_see",
@@ -197,7 +285,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy default FALSE; enforce band-only recruiter projections while disabled, not merely saved checkbox."
+          }
         },
         {
           "legacyTable": "college_what_companies_see",
@@ -215,7 +314,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy default TRUE; verify private academic redaction and consent for recruiter share/export."
+          }
         },
         {
           "legacyTable": "college_what_companies_see",
@@ -233,7 +343,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy default TRUE; verify producer+consumer and revocation on shared links."
+          }
         },
         {
           "legacyTable": "college_what_companies_see",
@@ -251,7 +372,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy default FALSE; negative recruiter read/export tests required to prevent unapproved disclosure."
+          }
         },
         {
           "legacyTable": "college_what_companies_see",
@@ -269,7 +401,18 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy default FALSE; negative recruiter read/export tests required to prevent unapproved disclosure."
+          }
         },
         {
           "legacyTable": "college_what_companies_see",
@@ -289,7 +432,18 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "sourceReview": {
+            "status": "SOURCE_DDL_REVIEWED_UNVERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "reviewedOn": "2026-10-11",
+            "sourceMigration": "src/main/resources/db/migration/V162__tpo_v1_settings.sql",
+            "vnextSchema": "src/db/schema/tpo-policy.ts",
+            "vnextService": "src/modules/placements/tpo-policy-service.ts",
+            "vnextValidation": "src/modules/placements/tpo-policy-validation.ts",
+            "scope": "LEGACY_SOURCE_VS_STAGED_VNEXT_DECLARATION_ONLY",
+            "openProbe": "Legacy ON UPDATE timestamp; vNext service explicitly stamps now on save, but no direct SQL trigger ensures every writer updates it."
+          }
         }
       ]
     },
@@ -6137,5 +6291,14 @@
         }
       ]
     }
-  ]
+  ],
+  "sourceReviewSummary": {
+    "reviewedOn": "2026-10-11",
+    "frozenLegacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "sourceDdlReviewedNotRuntimeVerified": 14,
+    "sourceCandidateFields": 279,
+    "verifiedSemanticFields": 0,
+    "verifiedPgFieldMappings": 0,
+    "warning": "V162 comparison only. All 279 source candidate fields remain semantically/runtime UNVERIFIED. Privacy flags require recruiter consumer tests."
+  }
 }
