@@ -522,14 +522,14 @@
       "paths": [
         "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:32:00.000Z",
-      "startedAt": null,
+      "startedAt": "2026-10-10T20:32:15.000Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -551,6 +551,11 @@
           "status": "PICKED",
           "at": "2026-10-10T20:32:00.000Z",
           "reason": "Chat 5 CAS-picked the next highest-priority eligible DATABASE task after completing DB-006."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-10T20:32:15.000Z",
+          "reason": "Chat 5 started DB08 placement policy/outcomes source-to-vNext persistence reconciliation."
         }
       ]
     },
