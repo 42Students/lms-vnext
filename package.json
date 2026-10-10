@@ -36,7 +36,8 @@
     "test:db:parity": "node --test tests/db-parity-tools.test.mjs tests/db-parity-contracts.test.mjs tests/db-parity-expanded-registry.test.mjs tests/db-parity-jpa-and-renames.test.mjs tests/db-parity-pass3.test.mjs tests/db-parity-pass4.test.mjs tests/db-parity-pass5.test.mjs tests/db-parity-db03-schema.test.mjs tests/db-parity-db09-tracker.test.mjs",
     "test:db09:static": "node --test tests/db-parity-db09-tracker.test.mjs tests/db09-api-gates.test.mjs",
     "test:db09:pg": "vitest run --config vitest.db.config.ts tests/integration/db09-tpo-policy.test.ts tests/integration/db09-tpo-crm.test.ts",
-    "db:journal:verify": "node scripts/verify-drizzle-journal.mjs"
+    "db:journal:verify": "node scripts/verify-drizzle-journal.mjs",
+    "db04:promotion:verify": "node scripts/verify-db04-promotion.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",
