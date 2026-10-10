@@ -207,6 +207,10 @@ export const assignmentSubmissions = pgTable(
         (${table.submissionType} = 'LINK'
           and ${table.submissionUrl} is not null
           and ${table.textContent} is null)
+        or
+        (${table.submissionType} = 'FILE'
+          and ${table.submissionUrl} is null
+          and ${table.textContent} is null)
       )`,
     ),
     check(
