@@ -30,12 +30,26 @@ export default async function FacultyCoursePage({
         >
           ← My Teaching Courses
         </Link>
-        <Link
-          href={`/teacher/courses/${deliveryId}/attendanceDetail`}
-          className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
-        >
-          Attendance
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={`/teacher/courses/${deliveryId}/students`}
+            className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+          >
+            Students
+          </Link>
+          <Link
+            href={`/teacher/courses/${deliveryId}/attendanceDetail`}
+            className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+          >
+            Attendance
+          </Link>
+          <Link
+            href={`/teacher/courses/${deliveryId}/discussions`}
+            className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+          >
+            Discussions
+          </Link>
+        </div>
       </div>
       <FacultyCourseWorkspace
         workspace={workspace}
