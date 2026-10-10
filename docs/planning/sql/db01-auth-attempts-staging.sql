@@ -27,6 +27,8 @@ CREATE TABLE identity_auth_attempts (
   expires_at timestamptz NOT NULL,
   verified_at timestamptz,
   used_at timestamptz,
+  CONSTRAINT identity_auth_attempts_membership_college_shape_ck
+    CHECK (membership_id IS NULL OR college_id IS NOT NULL),
   CONSTRAINT identity_auth_attempts_expiry_ck CHECK (expires_at > created_at),
   CONSTRAINT identity_auth_attempts_attempt_bounds_ck
     CHECK (verification_attempts BETWEEN 0 AND 5 AND resend_attempts >= 0),
