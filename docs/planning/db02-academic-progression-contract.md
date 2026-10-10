@@ -51,7 +51,7 @@ Legacy class CRUD still persists:
 - `lower_limit` with minimum 0;
 - `upper_limit` with range 1..500 and `lower_limit <= upper_limit`.
 
-DB02 maps `upper_limit -> sections.capacity` and stages `sections.minimum_capacity` plus `sections.description`. The old class `start_date/end_date` fields are compatibility metadata for older callers and are not a second source of academic scheduling truth; compatibility APIs may project the section's academic-period window instead of adding another authoritative date pair.
+DB02 maps `upper_limit -> sections.capacity` and stages `sections.minimum_capacity` plus `sections.description`. The old class `start_date/end_date` fields are compatibility metadata for older callers and are not a second source of academic scheduling truth. Because the current backend still accepts and preserves explicit values, DB02 stages nullable `sections.start_date/end_date` solely for compatibility round-trip; academic periods and schedule events remain authoritative for teaching-calendar behavior.
 
 ## 2. Program-specific semester / curriculum identity
 
