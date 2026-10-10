@@ -123,26 +123,26 @@ Legacy `QuizzesContent` runs in Faculty mode.
 ## Page: Assignment Report
 **Legacy:** `/teacher/report/assignment/[contentId]`
 
-- [ ] Assignment title/course/class summary matches.
-- [ ] Submission counts match.
-- [ ] Learner submission table/list matches.
-- [ ] On-time vs late breakdown matches.
+- [x] Assignment title, Course, Section, lesson and due date appear in source-authored Faculty Report page.
+- [x] Report derives submission and grading counts from the authorized live submission reader; not DB-executed yet.
+- [x] Report table renders learner identity, submitted timestamp, late/on-time and published/private grade.
+- [x] Source-authored report distinguishes submissions after the assignment due instant; timezone/browser verification OPEN.
 - [ ] Score distribution matches.
 - [ ] Not-submitted learners are visible.
 - [ ] Submission detail/grading drill-in matches.
 - [ ] Empty/loading/error states.
-- [ ] Wrong-course/wrong-faculty access is fenced.
+- [x] Report resolves exact assigned Section through authoritative Faculty aggregate and reused authorized submission reader; wrong-tenant DB tests OPEN.
 
 ## Page: Quiz Report
 **Legacy:** `/teacher/report/quiz/[quizId]`
 
-- [ ] Quiz summary and attempt counts match.
-- [ ] Learner attempt/result table matches.
+- [x] Report displays quiz summary, attempted, distinct learners and average normalized score from the authorized attempt reader.
+- [x] Report table renders per-learner attempt, score and submit date; detailed response analytics remain OPEN.
 - [ ] Score/response analytics present in legacy are accounted for.
-- [ ] Result publication state is visible.
+- [x] Quiz report shows explicit results-published vs private state.
 - [ ] Attempt detail drill-in matches.
 - [ ] Empty/loading/error states.
-- [ ] Access is class/faculty scoped.
+- [x] A shared-offering quiz must resolve exactly one authorized delivery or fail closed; source-level only, DB/browser tests OPEN.
 
 ## Page: Notifications
 - [ ] Faculty announcements/personal notifications match legacy feed.
@@ -196,7 +196,7 @@ Legacy `/teacher/fileExplorer` only redirects to Courses.
 
 - [x] Exact legacy `/teacher/allQuizzes` and `/teacher/allAssignments` routes exist on `main`, with Faculty sidebar links, published/draft filtering, class context, progress/pagination and existing view-attempt/grade-publish modules.
 - [x] A source-authored PostgreSQL integration test checks aggregate producer scope, only assigned Section visibility, and learner-role rejection.
-- [ ] Faculty create/edit/delete and separate assignment/quiz Report routes are not yet cloned from the legacy full-screen/modal workflows.
+- [ ] Faculty create/edit/delete are not yet cloned from the legacy full-screen/modal workflows. Separate Assignment and Quiz Report routes now exist, but their detailed analytics/export/roster/parity are still incomplete.
 - [ ] Loading/failure/retry/mobile, accurate per-learner counts, and exact legacy source/browser verification remain OPEN. Existing reports and review panels are not interchangeable without the full page contract.
 - [ ] The test is authored but has **not been executed**, and W01's CI/PostgreSQL environment is not yet evidenced as passing.
 
@@ -207,3 +207,9 @@ Reference: `docs/planning/w02-learning-assessment-closure-ledger.md` and issue #
 - [x] Source-authored legacy `/teacher/calendar` route and Faculty sidebar link. A new `getFacultyClassSchedule` read service scopes Section events and course links to authoritative persisted active teaching assignments; campus and user role checks fail closed.
 - [x] Reused day/week/month calendar with `/teach/courses/:deliveryId` Faculty links (instead of learner links). An additional disposable-Postgres integration case asserts Section A and general events are visible but Section B events are excluded.
 - [ ] PostgreSQL integration, role-revocation, timezone, mobile and browser tests are **authored/not executed**, never passing evidence.
+
+### W02 Faculty assessment reports — 2026-10-10
+
+- [x] Standalone routes `/teacher/report/quiz/[quizId]` and `/teacher/report/assignment/[contentId]` restored, linked from exact Faculty aggregate assessment cards with `deliveryId` query parameter. Existing tenant-scoped faculty aggregate/attempt/submission API functions supply rows. Shared offering in more than one Section without `deliveryId` fails closed instead of aggregating unrelated classes.
+- [x] Reports expose source-authored counts, learner attempt/grade tables, assignment late-submission breakdown, results-published badge, and unknown rather than fabricated score averages.
+- [ ] Legacy Quiz Report response distribution, Assignment Report not-submitted roster, score analytics, interactive grading drill-in, exports, browser/keyboard/mobile states and execution tests remain OPEN. Tests are source-authored, not run.
