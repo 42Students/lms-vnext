@@ -464,6 +464,19 @@ describe("Projects adversarial isolation", () => {
       first.archivedAt?.getTime(),
     );
 
+    const archiveEvents = await pool.query<{
+      event_type: string;
+    }>(
+      `select event_type
+         from activity_events
+        where subject_id = $1
+          and event_type = 'projects.project.archived'`,
+      [project.id],
+    );
+    expect(archiveEvents.rows).toEqual([
+      { event_type: "projects.project.archived" },
+    ]);
+
     const workspace =
       await getProjectInstanceWorkspace(
         mentor,
@@ -568,6 +581,19 @@ describe("Projects adversarial isolation", () => {
         outsiderIds.membership,
       );
     expect(noOp.skipped).toBe(true);
+
+    const reassignEvents = await pool.query<{
+      event_type: string;
+    }>(
+      `select event_type
+         from activity_events
+        where subject_id = $1
+          and event_type = 'projects.mentor.reassigned'`,
+      [project.id],
+    );
+    expect(reassignEvents.rows).toEqual([
+      { event_type: "projects.mentor.reassigned" },
+    ]);
 
     await pool.query(
       `delete from membership_roles
