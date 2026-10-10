@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "PHASE_SYSTEM_V2_MIGRATION_NO_TASK_CLAIMED",
+    "checkpointKind": "DB004_DB01_FIELD_SEMANTIC_RECONCILIATION",
     "updatedOn": "2026-10-11",
     "observedMainSha": "a5235d8b7e4164f626a163eef51ca1ee2df713ab",
     "lastWorkerMergedSha": null,
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Worker state upgraded for picked / implemented-completed / independently verified counters. Historical domain attribution is archival only. No tasks have been picked."
+    "summary": "DB-004 reserved by Chat 2. Beginning source-first reconciliation of DB01 identity/tenant semantics. No field is runtime-verified yet."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,7 +30,7 @@
   "lastExecutedPassingTests": [],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "Select highest-priority eligible READY task and record PICKED event; mark COMPLETED with commit SHA after finishing, DONE_VERIFIED only with executed acceptance evidence; claim another within DATABASE.",
+  "nextAction": "Compare all DB01 legacy table/field candidates against current legacy JPA/services and vNext Drizzle schemas; write source-grounded mapping, keep unverified rows open; stage migration changes for Chat 1 if required.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -46,9 +46,11 @@
     "https://github.com/42Students/lms-vnext/issues/22"
   ],
   "overallPercentComplete": null,
-  "pickedTaskIds": [],
+  "pickedTaskIds": [
+    "DB-004"
+  ],
   "completedTaskIds": [],
-  "lastPickedAt": null,
+  "lastPickedAt": "2026-10-10T20:26:41.998Z",
   "lastCompletedAt": null,
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
