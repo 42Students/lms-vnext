@@ -6,37 +6,26 @@ import {
   eq,
   inArray,
   isNull,
-  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  academicPeriods,
   attendancePolicies,
   attendanceRecords,
   attendanceSessions,
   collegeMemberships,
-  courseOfferings,
-  courseSectionDeliveries,
   courseTeachingAssignments,
-  courses,
-  electiveOfferings,
-  electiveSlots,
-  learnerProgramEnrollments,
   learnerProfiles,
-  lmsGroupMembers,
-  lmsGroups,
   membershipRoles,
-  sectionEnrollments,
   sectionScheduleEventCourses,
   sectionScheduleEvents,
-  sections,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { AcademicsServiceError } from "@/modules/academics/errors";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
+import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
 
 const uuid = z.string().uuid();
 const sessionInputSchema = z
@@ -119,149 +108,13 @@ async function currentDeliveryRoster(
   delivery: FacultyDelivery,
   collegeId: string,
 ) {
-  const db = getDb();
-  const [elective] = await db
-    .select({
-      groupId: electiveOfferings.groupId,
-    })
-    .from(electiveOfferings)
-    .innerJoin(
-      electiveSlots,
-      eq(electiveSlots.id, electiveOfferings.slotId),
-    )
-    .innerJoin(
-      lmsGroups,
-      eq(lmsGroups.id, electiveOfferings.groupId),
-    )
-    .where(
-      and(
-        eq(
-          electiveOfferings.backedDeliveryId,
-          delivery.deliveryId,
-        ),
-        eq(electiveOfferings.status, "ACTIVE"),
-        isNull(electiveOfferings.deletedAt),
-        eq(electiveSlots.collegeId, collegeId),
-        eq(electiveSlots.status, "ACTIVE"),
-        isNull(electiveSlots.deletedAt),
-        eq(lmsGroups.collegeId, collegeId),
-        eq(lmsGroups.kind, "ELECTIVE"),
-        eq(lmsGroups.status, "ACTIVE"),
-        isNull(lmsGroups.deletedAt),
-      ),
-    )
-    .limit(1);
-
-  if (elective) {
-    return db
-      .select({
-        membershipId: collegeMemberships.id,
-        displayName: users.displayName,
-        email: users.email,
-        phoneE164: users.phoneE164,
-        rollNumber: learnerProfiles.rollNumber,
-      })
-      .from(lmsGroupMembers)
-      .innerJoin(
-        collegeMemberships,
-        eq(
-          collegeMemberships.id,
-          lmsGroupMembers.membershipId,
-        ),
-      )
-      .innerJoin(
-        membershipRoles,
-        and(
-          eq(
-            membershipRoles.membershipId,
-            collegeMemberships.id,
-          ),
-          eq(membershipRoles.role, "LEARNER"),
-        ),
-      )
-      .innerJoin(
-        users,
-        eq(users.id, collegeMemberships.userId),
-      )
-      .leftJoin(
-        learnerProfiles,
-        eq(
-          learnerProfiles.membershipId,
-          collegeMemberships.id,
-        ),
-      )
-      .where(
-        and(
-          eq(lmsGroupMembers.groupId, elective.groupId),
-          eq(lmsGroupMembers.memberType, "LEARNER"),
-          eq(lmsGroupMembers.state, "ACTIVE"),
-          eq(collegeMemberships.collegeId, collegeId),
-          eq(collegeMemberships.status, "ACTIVE"),
-          eq(users.platformStatus, "ACTIVE"),
-        ),
-      )
-      .orderBy(asc(users.displayName), asc(users.email));
-  }
-
-  return db
-    .select({
-      membershipId: collegeMemberships.id,
-      displayName: users.displayName,
-      email: users.email,
-      phoneE164: users.phoneE164,
-      rollNumber: learnerProfiles.rollNumber,
-    })
-    .from(sectionEnrollments)
-    .innerJoin(
-      learnerProgramEnrollments,
-      eq(
-        learnerProgramEnrollments.id,
-        sectionEnrollments.learnerEnrollmentId,
-      ),
-    )
-    .innerJoin(
-      collegeMemberships,
-      eq(
-        collegeMemberships.id,
-        learnerProgramEnrollments.membershipId,
-      ),
-    )
-    .innerJoin(
-      membershipRoles,
-      and(
-        eq(
-          membershipRoles.membershipId,
-          collegeMemberships.id,
-        ),
-        eq(membershipRoles.role, "LEARNER"),
-      ),
-    )
-    .innerJoin(
-      users,
-      eq(users.id, collegeMemberships.userId),
-    )
-    .leftJoin(
-      learnerProfiles,
-      eq(
-        learnerProfiles.membershipId,
-        collegeMemberships.id,
-      ),
-    )
-    .where(
-      and(
-        eq(sectionEnrollments.sectionId, delivery.sectionId),
-        eq(
-          sectionEnrollments.academicPeriodId,
-          delivery.academicPeriodId,
-        ),
-        eq(sectionEnrollments.status, "ACTIVE"),
-        eq(learnerProgramEnrollments.status, "ACTIVE"),
-        eq(collegeMemberships.collegeId, collegeId),
-        eq(collegeMemberships.status, "ACTIVE"),
-        eq(users.platformStatus, "ACTIVE"),
-      ),
-    )
-    .orderBy(asc(users.displayName), asc(users.email));
+  return listActiveDeliveryLearners({
+    deliveryId: delivery.deliveryId,
+    sectionId: delivery.sectionId,
+    academicPeriodId:
+      delivery.academicPeriodId,
+    collegeId,
+  });
 }
 
 async function assertPersistedFacultyScope(

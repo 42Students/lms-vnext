@@ -3,6 +3,7 @@ import { ProjectList } from "@/components/projects/project-list";
 import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { listProjectInstances } from "@/modules/projects/instance-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 
@@ -34,6 +35,10 @@ export default async function SuperAdminProjectsPage() {
 
   return (
     <div className="space-y-6">
+      <ProjectAdminNav
+        basePath="/admin/projects"
+        active="workspaces"
+      />
       <PageHeader
         eyebrow="Super Admin"
         title="Projects"
