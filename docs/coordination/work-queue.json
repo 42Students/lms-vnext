@@ -544,17 +544,17 @@
       "paths": [
         "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "a02ff9fdcdfd507e768e2bdd4ed66d8a0b2a2ed7",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Chat 5 source-reconciled DB08: all 18 legacy tables / 280 fields are source-reviewed to canonical domain candidate sets, while exact field semantics remain 280 UNVERIFIED and 0 runtime-verified. Confirmed blockers include mandatory season retirement, unjournalled DB08 candidate schemas, missing job.counts_as_placed, missing registration outcome_label/outcome_detail, incomplete offer breakup/bond/dispute fidelity, and actor snapshot preserve/redesign decisions. PostgreSQL/runtime verification remains downstream under DB-001/DB-019/DB-020.",
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:32:00.000Z",
       "startedAt": "2026-10-10T20:32:15.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-10T20:36:00.000Z",
+      "completionCommitSha": "a02ff9fdcdfd507e768e2bdd4ed66d8a0b2a2ed7",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -578,6 +578,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:32:15.000Z",
           "reason": "Chat 5 started DB08 placement policy/outcomes source-to-vNext persistence reconciliation."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-10T20:36:00.000Z",
+          "reason": "DB08 source/domain-candidate reconciliation committed; exact field and runtime verification deliberately remain open."
         }
       ]
     },
