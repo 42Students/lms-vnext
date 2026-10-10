@@ -618,7 +618,8 @@
         "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
         "docs/planning/sql/db09-job-outcome-settings-candidate.sql",
         "docs/planning/sql/db09-round-scheduling-candidate.sql",
-        "docs/planning/db09-chat03-round-scheduling-audit.md"
+        "docs/planning/db09-chat03-round-scheduling-audit.md",
+        "src/modules/placements/tpo-messaging-service.ts"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": "9be61c40b97199f89db3d92524167e2cccf05d12",
@@ -696,6 +697,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Reserve isolated DB09 round-slot/assignment/reschedule source and staging artifacts after finding active V165 tables without direct vNext equivalents."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Narrow necessary DB09 producer compatibility fix in tpo-messaging-service.ts: legacy HR actor writes conflict with final RECRUITER CHECK per V193; no API signature or authorization change."
         }
       ],
       "progressNote": "Chat 3 source inventory comparison: 279/279 DB09 fields reviewed as candidates, 0 semantic/DB-verified (14 direct V162 comparisons, 139 name matches, 45 explicit rename candidates, 81 no declared field match). Further FROZEN LEGACY SERVICE evidence confirms 34 still-active rows: 5 drive_group, 25 slot/assignment/reschedule, 4 recruiter settings (2 JSON consumer follow-ups open). DB09 malformed tpo-crm Drizzle repaired (62c5f1c); source-regression tests authored, Node/TS/PG unexecuted; connector read-only assertions passed. Candidate SQL for scoped CRM FKs, round scheduling, multi-college groups, four recruiter settings and V193 recruiter code changes NOT applied. CI run 38085854862 verify job failed before steps. No API/UI or phase promotion."
