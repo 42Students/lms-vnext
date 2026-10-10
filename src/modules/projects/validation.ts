@@ -363,6 +363,44 @@ export const updateProjectMemberInputSchema = z
 export type AddProjectMemberInput = z.input<
   typeof addProjectMemberInputSchema
 >;
+export const projectMentorCandidateQuerySchema = z
+  .object({
+    q: z.string().trim().max(120).default(""),
+    limit: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(100)
+      .default(50),
+  })
+  .strict();
+
+export const bulkProjectMentorReassignmentInputSchema =
+  z
+    .object({
+      collegeId: z.string().uuid(),
+      projectIds: z
+        .array(projectInstanceIdSchema)
+        .min(1)
+        .max(100)
+        .transform((ids) => [
+          ...new Set(ids),
+        ]),
+      mentorMembershipId: z.string().uuid(),
+      roleLabel: z
+        .string()
+        .trim()
+        .min(1)
+        .max(120)
+        .default("Project Mentor"),
+    })
+    .strict();
+
+export type BulkProjectMentorReassignmentInput =
+  z.input<
+    typeof bulkProjectMentorReassignmentInputSchema
+  >;
+
 export type UpdateProjectMemberInput = z.infer<
   typeof updateProjectMemberInputSchema
 >;
