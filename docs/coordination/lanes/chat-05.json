@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-015",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB015_PICKED_RACE_INVENTORY",
+    "checkpointKind": "DB015_RACE_INVENTORY_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "bad359d5ab72d86acfe8b9470e880dfa3e8f8cc5",
-    "lastWorkerMergedSha": "52ae7d891469380e191bd14e11fa21148df670fd",
+    "observedMainSha": "b5c7ced00d34db13f4c189392f4e577f8234571c",
+    "lastWorkerMergedSha": "4bbb16b2cf2603764873e68cd061281de343bc85",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat 5 completed DB-006/DB-011/DB-013 source reconciliation and started DB-015 cross-domain database state transition/race inventory."
+    "summary": "DB-015 source audit completed with 10 explicit NOT_RUN concurrency probes: 2 source-confirmed stale-check gaps (placements/academics), 5 source-protected flows needing execution, 3 shared-ops draft-unimplemented races. No PostgreSQL race test passed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -29,14 +29,22 @@
   "lastAuthoredTests": [
     "tests/integration/groups-db03.test.ts: legacy empty-config waitlist/self-leave defaults",
     "tests/integration/groups-db03.test.ts: locked REMOVED self-block + admin revival lock preservation",
-    "tests/integration/groups-db03.test.ts: elective move lock preservation and default waitlist behavior"
+    "tests/integration/groups-db03.test.ts: elective move lock preservation and default waitlist behavior",
+    "tests/db-parity-pass5.test.mjs: DB15 10 race probes stay NOT_RUN and preserve explicit gap/protected/draft states (authored, not executed)"
   ],
   "lastExecutedPassingTests": [],
-  "blockers": [],
-  "handoffs": [
-    "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55."
+  "blockers": [
+    "DB015: P5-R01 placement application learner participation/eligibility can change after precheck and before insert; implementation fix belongs placement writer.",
+    "DB015: P5-R02 academic cohort can transition after enrollment precheck and before learner enrollment insert; implementation fix belongs DB02/academics writer.",
+    "DB015: all 10 race probes remain NOT_RUN until disposable PostgreSQL/CI execution is available."
   ],
-  "nextAction": "Audit lock/version/transaction/idempotency semantics across groups, academics, quizzes, projects, placements and shared communications; update pass5 probe manifest without claiming runtime execution.",
+  "handoffs": [
+    "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55.",
+    "Placement writer: move/repeat learner paid-module + inherited eligibility decision inside an ordering transaction/lock compatible with eligibility/module writers; see P5-R01.",
+    "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
+    "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified."
+  ],
+  "nextAction": "Refresh shared DATABASE queue and CAS-pick the next eligible task. Do not revisit DB-015 implementation unless verifying its witnesses or coordinating the two domain-owner fixes.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -49,7 +57,10 @@
   },
   "evidenceLinks": [
     "https://github.com/42Students/lms-vnext/issues/25",
-    "https://github.com/42Students/lms-vnext/pull/55"
+    "https://github.com/42Students/lms-vnext/pull/55",
+    "https://github.com/42Students/lms-vnext/commit/2aee7b66f5b949a3bedda7ba5e962a684bddcd00",
+    "https://github.com/42Students/lms-vnext/commit/4bbb16b2cf2603764873e68cd061281de343bc85",
+    "https://github.com/42Students/lms-vnext/actions/runs/38085390907"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -61,15 +72,17 @@
   "completedTaskIds": [
     "DB-006",
     "DB-011",
-    "DB-013"
+    "DB-013",
+    "DB-015"
   ],
   "lastPickedAt": "2026-10-10T20:44:00.000Z",
-  "lastCompletedAt": "2026-10-10T20:42:00.000Z",
+  "lastCompletedAt": "2026-10-10T20:52:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-006",
     "DB-011",
-    "DB-013"
+    "DB-013",
+    "DB-015"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
