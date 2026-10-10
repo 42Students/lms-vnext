@@ -12,6 +12,10 @@ import {
   membershipRoles,
   users,
 } from "@/db/schema";
+import {
+  assignmentSubmissionFiles,
+  courseUploadReceipts,
+} from "@/db/schema/course-upload-receipts-staged";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import {
@@ -41,6 +45,9 @@ import {
 import {
   courseSectionDeliveryIdSchema,
 } from "./validation";
+import {
+  prepareAssignmentFileReceipt,
+} from "./assignment-file-service";
 
 function assignmentAudienceMatches(
   assignment: Awaited<
@@ -181,6 +188,16 @@ export async function submitCourseAssignment(
       input.deliveryId,
     );
 
+  const preparedFile =
+    input.submissionType === "FILE"
+      ? await prepareAssignmentFileReceipt(
+          context,
+          assignmentId,
+          input.deliveryId,
+          input.uploadReceiptId,
+        )
+      : null;
+
   // Legacy LMS parity: the due date is an urgency/late marker, not a hard
   // submission gate. A published assignment remains submittable until its
   // lifecycle is explicitly changed.
@@ -233,6 +250,66 @@ export async function submitCourseAssignment(
         throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
       }
 
+      let lockedReceipt:
+        | typeof courseUploadReceipts.$inferSelect
+        | null = null;
+
+      if (
+        input.submissionType === "FILE"
+      ) {
+        if (!preparedFile) {
+          throw new CoursesServiceError(
+            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
+          );
+        }
+        const [receipt] = await tx
+          .select()
+          .from(courseUploadReceipts)
+          .where(
+            and(
+              eq(
+                courseUploadReceipts.id,
+                input.uploadReceiptId,
+              ),
+              eq(
+                courseUploadReceipts.assignmentId,
+                assignmentId,
+              ),
+              eq(
+                courseUploadReceipts.ownerMembershipId,
+                membership.id,
+              ),
+              eq(
+                courseUploadReceipts.collegeId,
+                membership.collegeId,
+              ),
+              eq(
+                courseUploadReceipts.purpose,
+                "ASSIGNMENT_SUBMISSION",
+              ),
+            ),
+          )
+          .for("update")
+          .limit(1);
+
+        if (
+          !receipt ||
+          receipt.revoked ||
+          receipt.consumedAt ||
+          receipt.expiresAt.getTime() <=
+            Date.now() ||
+          receipt.objectKey !==
+            preparedFile.receipt.objectKey ||
+          receipt.uploadTokenHash !==
+            preparedFile.receipt.uploadTokenHash
+        ) {
+          throw new CoursesServiceError(
+            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
+          );
+        }
+        lockedReceipt = receipt;
+      }
+
       const [created] = await tx
         .insert(assignmentSubmissions)
         .values({
@@ -249,7 +326,96 @@ export async function submitCourseAssignment(
         })
         .returning();
 
-      return toLearnerSubmission(created);
+      if (
+        input.submissionType === "FILE"
+      ) {
+        if (
+          !preparedFile ||
+          !lockedReceipt
+        ) {
+          throw new CoursesServiceError(
+            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
+          );
+        }
+
+        const attestation =
+          preparedFile.attestation;
+        await tx
+          .insert(
+            assignmentSubmissionFiles,
+          )
+          .values({
+            assignmentSubmissionId:
+              created!.id,
+            uploadReceiptId:
+              lockedReceipt.id,
+            objectKey:
+              lockedReceipt.objectKey,
+            objectGeneration:
+              attestation.generation,
+            originalName:
+              lockedReceipt.originalName,
+            mimeType:
+              attestation.contentType,
+            sizeBytes:
+              attestation.sizeBytes,
+            sha256Hex:
+              attestation.sha256Hex,
+          });
+
+        const [claimed] = await tx
+          .update(courseUploadReceipts)
+          .set({
+            attestedGeneration:
+              attestation.generation,
+            actualContentType:
+              attestation.contentType,
+            actualSizeBytes:
+              attestation.sizeBytes,
+            sha256Hex:
+              attestation.sha256Hex,
+            consumedAt: new Date(),
+            consumedBySubmissionId:
+              created!.id,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(
+                courseUploadReceipts.id,
+                lockedReceipt.id,
+              ),
+              sql`${courseUploadReceipts.consumedAt} is null`,
+              eq(
+                courseUploadReceipts.revoked,
+                false,
+              ),
+            ),
+          )
+          .returning({
+            id: courseUploadReceipts.id,
+          });
+
+        if (!claimed) {
+          throw new CoursesServiceError(
+            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
+          );
+        }
+
+        return toLearnerSubmission({
+          ...created!,
+          file: {
+            originalName:
+              lockedReceipt.originalName,
+            mimeType:
+              attestation.contentType,
+            sizeBytes:
+              attestation.sizeBytes,
+          },
+        });
+      }
+
+      return toLearnerSubmission(created!);
     });
   } catch (error) {
     if (
