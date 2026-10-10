@@ -135,13 +135,32 @@ export function ProjectWorkspace({
   eyebrow: string;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
   currentMembershipId: string | null;
-  activeSection?: "overview" | "team" | "sprints" | "board" | "resources" | "activity";
+  activeSection?:
+    | "summary"
+    | "overview"
+    | "team"
+    | "sprints"
+    | "tasks"
+    | "resources"
+    | "meetings"
+    | "readiness"
+    | "delivery"
+    | "audit";
 }) {
   const { readiness } = workspace;
-  const show = (section: "team" | "sprints" | "board" | "resources" | "activity") =>
-    !activeSection ||
-    activeSection === "overview" ||
-    activeSection === section;
+  const show = (
+    section:
+      | "summary"
+      | "overview"
+      | "team"
+      | "sprints"
+      | "tasks"
+      | "resources"
+      | "meetings"
+      | "readiness"
+      | "delivery"
+      | "audit",
+  ) => !activeSection || activeSection === section;
   const tasksBySprint = new Map<
     string,
     Workspace["tasks"]
@@ -229,55 +248,57 @@ export function ProjectWorkspace({
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric
-          label="Tasks"
-          value={
-            readiness.execution.tasks.done +
-            "/" +
-            readiness.execution.tasks.total
-          }
-          detail="Tasks completed across the project."
-        />
-        <Metric
-          label="Sprints"
-          value={
-            readiness.execution.sprints.completed +
-            "/" +
-            readiness.execution.sprints.total
-          }
-          detail="Sprints completed."
-        />
-        <Metric
-          label="Releases"
-          value={
-            readiness.execution.releases.shipped +
-            "/" +
-            readiness.execution.releases.total
-          }
-          detail="Releases shipped."
-        />
-        <Metric
-          label="Final delivery"
-          value={
-            readiness.finalSubmission.latest
-              ? label(
-                  readiness.finalSubmission.latest
-                    .status,
-                )
-              : "Not started"
-          }
-          detail={
-            readiness.evaluation.exists
-              ? "Evaluation recorded."
-              : readiness.finalSubmission.approved
-                ? "Approved and ready for evaluation."
-                : "Tracks the latest final submission."
-          }
-        />
-      </div>
+      {show("summary") || show("readiness") ? (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <Metric
+            label="Tasks"
+            value={
+              readiness.execution.tasks.done +
+              "/" +
+              readiness.execution.tasks.total
+            }
+            detail="Tasks completed across the project."
+          />
+          <Metric
+            label="Sprints"
+            value={
+              readiness.execution.sprints.completed +
+              "/" +
+              readiness.execution.sprints.total
+            }
+            detail="Sprints completed."
+          />
+          <Metric
+            label="Releases"
+            value={
+              readiness.execution.releases.shipped +
+              "/" +
+              readiness.execution.releases.total
+            }
+            detail="Releases shipped."
+          />
+          <Metric
+            label="Final delivery"
+            value={
+              readiness.finalSubmission.latest
+                ? label(
+                    readiness.finalSubmission.latest
+                      .status,
+                  )
+                : "Not started"
+            }
+            detail={
+              readiness.evaluation.exists
+                ? "Evaluation recorded."
+                : readiness.finalSubmission.approved
+                  ? "Approved and ready for evaluation."
+                  : "Tracks the latest final submission."
+            }
+          />
+        </div>
+      ) : null}
 
-      {mode === "LEARNER" ? (
+      {mode === "LEARNER" && show("delivery") ? (
         <section className="rounded-xl border border-border bg-surface p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -302,6 +323,18 @@ export function ProjectWorkspace({
               }
             />
           </div>
+        </section>
+      ) : null}
+
+      {show("overview") ? (
+        <section className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="m-0 text-lg font-semibold text-foreground">
+            Overview
+          </h2>
+          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
+            {workspace.project.summary ??
+              "No project overview has been recorded yet."}
+          </p>
         </section>
       ) : null}
 
@@ -368,7 +401,7 @@ export function ProjectWorkspace({
         </div>
       </section> : null}
 
-      {show("sprints") || show("board") ? <section className="space-y-3">
+      {show("sprints") || show("tasks") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Execution
@@ -538,7 +571,7 @@ export function ProjectWorkspace({
         </div>
       </section>
 
-      <section className="space-y-3">
+      {show("delivery") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Final delivery
@@ -672,10 +705,10 @@ export function ProjectWorkspace({
             )}
           </div>
         )}
-      </section>
+      </section> : null}
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <section className="space-y-3">
+        {show("resources") ? <section className="space-y-3">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -755,7 +788,7 @@ export function ProjectWorkspace({
           </div>
         </section> : null}
 
-        {show("team") ? <section className="space-y-3">
+        {show("meetings") ? <section className="space-y-3">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -880,6 +913,19 @@ export function ProjectWorkspace({
           </div>
         </section> : null}
       </div>
+
+      {show("audit") ? (
+        <section className="rounded-xl border border-warning-border bg-warning-subtle p-5">
+          <h2 className="m-0 text-lg font-semibold text-foreground">
+            Project audit
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-body">
+            Project audit history is not available yet. DB07 immutable audit tables
+            are staged, but W01 must register and replay the shared migration before
+            this route can truthfully expose the legacy audit timeline.
+          </p>
+        </section>
+      ) : null}
     </div>
   );
 }
