@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -35,6 +35,12 @@ export function CreateProjectControl({
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [summary, setSummary] = useState("");
+  const [mentors, setMentors] = useState<
+    { membershipId: string; displayName: string; email: string }[]
+  >([]);
+  const [mentorMembershipId, setMentorMembershipId] = useState("");
+  const [mentorsLoading, setMentorsLoading] = useState(false);
+  const [mentorsError, setMentorsError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,9 +49,61 @@ export function CreateProjectControl({
     setTitle("");
     setSlug("");
     setSummary("");
+    setMentorMembershipId("");
+    setMentorsError(null);
     setError(null);
     setOpen(true);
   }
+
+  useEffect(() => {
+    if (!open) return;
+    const controller = new AbortController();
+    setMentorsLoading(true);
+    setMentorsError(null);
+
+    void fetch(
+      "/api/projects/mentor-candidates?collegeId=" +
+        encodeURIComponent(collegeId) +
+        "&limit=100",
+      { signal: controller.signal },
+    )
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(
+            "Mentor candidates could not be loaded.",
+          );
+        }
+        const body = (await response.json()) as {
+          mentors?: {
+            membershipId: string;
+            displayName: string;
+            email: string;
+          }[];
+        };
+        setMentors(body.mentors ?? []);
+      })
+      .catch((caught: unknown) => {
+        if (
+          caught instanceof DOMException &&
+          caught.name === "AbortError"
+        ) {
+          return;
+        }
+        setMentors([]);
+        setMentorsError(
+          caught instanceof Error
+            ? caught.message
+            : "Mentor candidates could not be loaded.",
+        );
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setMentorsLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [open, collegeId]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,6 +120,8 @@ export function CreateProjectControl({
           title: title.trim(),
           slug: slug.trim(),
           summary: summary.trim() || undefined,
+          primaryMentorMembershipId:
+            mentorMembershipId || undefined,
         },
       )) as { project: { id: string } };
 
@@ -169,6 +229,40 @@ export function CreateProjectControl({
               placeholder="Optional context specific to this Project instance."
             />
           </label>
+          <label>
+            <span className="mb-1.5 block text-xs font-semibold text-body">
+              Primary mentor
+            </span>
+            <Select
+              value={mentorMembershipId}
+              disabled={mentorsLoading}
+              onChange={(event) =>
+                setMentorMembershipId(event.target.value)
+              }
+            >
+              <option value="">
+                {mentorsLoading
+                  ? "Loading mentors…"
+                  : "Assign later"}
+              </option>
+              {mentors.map((mentor) => (
+                <option
+                  key={mentor.membershipId}
+                  value={mentor.membershipId}
+                >
+                  {mentor.displayName} · {mentor.email}
+                </option>
+              ))}
+            </Select>
+            <span className="mt-1 block text-xs text-muted-foreground">
+              If selected, the Mentor assignment is validated and committed atomically with workspace creation.
+            </span>
+          </label>
+          {mentorsError ? (
+            <p role="alert" className="m-0 text-xs font-semibold text-warning">
+              {mentorsError} You can create the planned workspace and assign a Mentor from Team later.
+            </p>
+          ) : null}
           {error ? (
             <p role="alert" className="m-0 text-sm font-semibold text-error">
               {error}
