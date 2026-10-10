@@ -1,0 +1,3693 @@
+{
+  "schemaVersion": 1,
+  "taskId": "DB-004",
+  "worker": "CHAT_02",
+  "scope": "ONLY physical column presence in committed Drizzle snapshot; does NOT claim migrations replayed or any runtime semantic parity.",
+  "source": {
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "sourceLedger": "docs/planning/db01-chat02-312-field-source-triage.json",
+    "sourceLedgerBlobSha": "efedb62f8738798e757186c7143836345405d33a",
+    "drizzleSnapshot": "drizzle/meta/0040_snapshot.json",
+    "snapshotBlobSha": "2d5064fb2e2b687e694340c2c62ddafe1c9c03cd"
+  },
+  "counts": {
+    "legacyCandidateRows": 312,
+    "snapshotDeclaredTableCount": 90,
+    "byStatus": {
+      "NO_TARGET_PROPOSED": 196,
+      "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT": 76,
+      "STAGED_NOT_IN_REGISTERED_SNAPSHOT": 22,
+      "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF": 18
+    },
+    "activeOrLifecycleSourceCandidates": 288,
+    "activeOrLifecycleByStatus": {
+      "NO_TARGET_PROPOSED": 173,
+      "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT": 75,
+      "STAGED_NOT_IN_REGISTERED_SNAPSHOT": 22,
+      "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF": 18
+    },
+    "runtimeSemanticVerified": 0,
+    "executedPostgresTests": 0
+  },
+  "rules": [
+    "Single-column presence is not field semantic parity; no approved target field can be declared verified by this report.",
+    "Staged fields do not exist in the committed snapshot until Chat 1 registers generated migrations.",
+    "No target proposed does not equal missing feature; determine provider-managed, feature-owned typed schema or approved retirement.",
+    "Normalization expressions require role/tenant/temporal field-by-field proof and executed negative tests.",
+    "Recompute on every snapshot or triage-ledger change; do not carry stale evidence to final database gate."
+  ],
+  "rows": [
+    {
+      "legacyField": "auth_handoff_token.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_handoff_token.created_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_handoff_token.updated_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_handoff_token.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_handoff_token.token",
+      "legacySourceType": "varchar(128)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_handoff_token.access_token",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_handoff_token.refresh_token",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_handoff_token.expires_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_handoff_token.used",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_token.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_token.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_token.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_token.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "auth_token.token",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "NO_CURRENT_WORKFLOW_FOUND_MODEL_ONLY_TREE_EVIDENCE",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "college.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": true,
+        "default": "gen_random_uuid()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.created_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.status",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "status",
+        "pgType": "college_status",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "'ACTIVE'"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.updated_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.address_line1",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.address_line1",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "address_line1",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.address_line2",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.address_line2",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "address_line2",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.city",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.city",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "city",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.college_chair_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "college.college_vice_chair_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "college.country",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.country",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "country",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.landmark",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.landmark",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "landmark",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.logo",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.logo_object_path",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "logo_object_path",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.name",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "name",
+        "pgType": "text",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.org_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.organization_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "organization_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.pin_code",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.postal_code",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "postal_code",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.state",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.state",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "state",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college.unique_id",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.code",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "colleges",
+        "column": "code",
+        "pgType": "varchar(64)",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "college_branding.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.college_id (STAGED; legacy surrogate id replaced by college key)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.created_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.created_at (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.updated_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.updated_at (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.archived_at (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.college_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.college_id (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.logo_url",
+      "legacySourceType": "varchar(1024)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.logo_url (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.favicon_url",
+      "legacySourceType": "varchar(1024)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.favicon_url (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.login_background_url",
+      "legacySourceType": "varchar(1024)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.login_background_url (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.login_background_url_mobile",
+      "legacySourceType": "varchar(1024)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.login_background_url_mobile (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.primary_color",
+      "legacySourceType": "varchar(64)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.primary_color (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.secondary_color",
+      "legacySourceType": "varchar(64)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.secondary_color (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.support_email",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.support_email (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.support_phone",
+      "legacySourceType": "varchar(64)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.support_phone (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.terms_url",
+      "legacySourceType": "varchar(1024)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.terms_url (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "college_branding.privacy_url",
+      "legacySourceType": "varchar(1024)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_branding.privacy_url (STAGED)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "department.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "departments.id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "departments",
+        "column": "id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": true,
+        "default": "gen_random_uuid()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "department.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "departments.created_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "departments",
+        "column": "created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "department.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "departments.archived_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "departments",
+        "column": "archived_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "department.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "departments.updated_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "departments",
+        "column": "updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "department.college_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "departments.college_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "departments",
+        "column": "college_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "department.dept_chair_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "BACKEND_COMPAT_ONLY_FRONTEND_PRODUCT_FIELD_RETIRED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "department.dept_vice_chair_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "BACKEND_COMPAT_ONLY_FRONTEND_PRODUCT_FIELD_RETIRED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "department.name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "departments.name",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "departments",
+        "column": "name",
+        "pgType": "text",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "email_verification_token.token",
+      "legacySourceType": "varchar(36)",
+      "sourceActiveStatus": "REPOSITORY_PRESENT_CALLSITE_PENDING",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "email_verification_token.application_id",
+      "legacySourceType": "varchar(36)",
+      "sourceActiveStatus": "REPOSITORY_PRESENT_CALLSITE_PENDING",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "email_verification_token.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "REPOSITORY_PRESENT_CALLSITE_PENDING",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "email_verification_token.email",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "REPOSITORY_PRESENT_CALLSITE_PENDING",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "email_verification_token.expires_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "REPOSITORY_PRESENT_CALLSITE_PENDING",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "email_verification_token.verified",
+      "legacySourceType": "bit(1)",
+      "sourceActiveStatus": "REPOSITORY_PRESENT_CALLSITE_PENDING",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "email_verification_token.verified_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "REPOSITORY_PRESENT_CALLSITE_PENDING",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.id + college_memberships.id + faculty_profiles.membership_id",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "faculty.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.created_at / faculty_profiles.created_at",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "faculty.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.status / users.platform_status",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "faculty.suspended_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.suspended_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "college_memberships",
+        "column": "suspended_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.suspension_reason",
+      "legacySourceType": "varchar(500)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.suspension_reason",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "college_memberships",
+        "column": "suspension_reason",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.updated_at / faculty_profiles.updated_at",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "faculty.address",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.awards",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.blood_group",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.certifications",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.city",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.college_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.college_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "college_memberships",
+        "column": "college_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.contact_mail",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.email",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "email",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.contact_mobile",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.phone_e164",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "phone_e164",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.contact_phone",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.current_address",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.department",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "faculty_profiles.primary_department_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "faculty_profiles",
+        "column": "primary_department_id",
+        "pgType": "uuid",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.dept_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "faculty_profiles.primary_department_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "faculty_profiles",
+        "column": "primary_department_id",
+        "pgType": "uuid",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.description",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.dob",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.experiences",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.faculty_type",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "faculty_profiles.employment_type",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "faculty_profiles",
+        "column": "employment_type",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.first_name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.given_name (STAGED W01)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "faculty.gender",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.google_scholar",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.identity",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.languages",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.last_name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.family_name (STAGED W01)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "faculty.linkedin",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.metadata",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.organization_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.organization_id via college_memberships.college_id",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "faculty.organizations",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.permanent_address",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.pincode",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.publications",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.qualifications",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.research_gate",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.skills",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.state",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.token_version",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.unique_id",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.user_type",
+      "legacySourceType": "varchar(22)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "membership_roles.role",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "membership_roles",
+        "column": "role",
+        "pgType": "membership_role",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "faculty.website",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.version",
+      "legacySourceType": "bigint",
+      "sourceActiveStatus": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.current_city",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.current_state",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.current_pincode",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.permanent_city",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.permanent_state",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty.permanent_pincode",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.blocked_till_ts",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.faculty_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.incorrect_attempts",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.is_expired",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.max_resend_attempts",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.otp",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.phone_number",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "faculty_acct_verification.verify_status",
+      "legacySourceType": "bit(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.id + college_memberships.id + learner_profiles.membership_id",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "learner.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.created_at / learner_profiles.created_at",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "learner.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.status / users.platform_status",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "learner.suspended_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.suspended_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "college_memberships",
+        "column": "suspended_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.suspension_reason",
+      "legacySourceType": "varchar(500)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.suspension_reason",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "college_memberships",
+        "column": "suspension_reason",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.updated_at / learner_profiles.updated_at",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "learner.achievements",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.address",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.blood_group",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.certifications",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.city",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.class_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "section_enrollments.section_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "section_enrollments",
+        "column": "section_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.college_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "college_memberships.college_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "college_memberships",
+        "column": "college_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.contact_mail",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.email",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "email",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.contact_mobile",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.phone_e164",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "phone_e164",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.contact_phone",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.current_address",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.department",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.description",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.dob",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.experiences",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.extracurricular",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.first_name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.given_name (STAGED W01)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "learner.gender",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.github",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.hobbies",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.identity",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.languages",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.last_name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.family_name (STAGED W01)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "learner.linkedin",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.metadata",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.organization_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.organization_id via college_memberships.college_id",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "learner.organizations",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.permanent_address",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.pincode",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.portfolio",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.program_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "learner_program_enrollments.program_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "learner_program_enrollments",
+        "column": "program_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.projects",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.resume_url",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.roll_number",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "learner_profiles.roll_number",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "learner_profiles",
+        "column": "roll_number",
+        "pgType": "varchar(128)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.skills",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.state",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.token_version",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.twitter",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.unique_id",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.user_type",
+      "legacySourceType": "varchar(22)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "membership_roles.role",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "membership_roles",
+        "column": "role",
+        "pgType": "membership_role",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "learner.video_intro_uploaded_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.video_intro_url",
+      "legacySourceType": "text",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.website",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.version",
+      "legacySourceType": "bigint",
+      "sourceActiveStatus": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.bulk_import_batch_id",
+      "legacySourceType": "varchar(64)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.current_city",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.current_state",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.current_pincode",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.permanent_city",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.permanent_state",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.permanent_pincode",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner.coding_profiles",
+      "legacySourceType": "json",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.blocked_till_ts",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.incorrect_attempts",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.is_expired",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.learner_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.max_resend_attempts",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.otp",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.phone_number",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.roll_number",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "learner_acct_verification.verify_status",
+      "legacySourceType": "bit(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "login_user.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "login_user.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "login_user.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "login_user.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "login_user.password",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "login_user.user_name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "RETIRED_WORKFLOW_EVIDENCE_CURRENT_AUTH_ENDPOINT_REMOVED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.attempt_id",
+      "legacySourceType": "varchar(64)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.college_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.expires_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.email_otp_expires_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.email_otp_sent_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.organization_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.otp",
+      "legacySourceType": "varchar(12)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.email_otp",
+      "legacySourceType": "varchar(12)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.phone",
+      "legacySourceType": "varchar(32)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.used",
+      "legacySourceType": "bit(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.user_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.user_type",
+      "legacySourceType": "varchar(16)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.verified_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "mobile_login_attempt.verification_attempts",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "organization.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "organizations.id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "organizations",
+        "column": "id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": true,
+        "default": "gen_random_uuid()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "organization.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "organizations.created_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "organizations",
+        "column": "created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "organization.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "organizations.status",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "organizations",
+        "column": "status",
+        "pgType": "organization_status",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "'ACTIVE'"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "organization.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "organizations.updated_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "organizations",
+        "column": "updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "organization.name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "organizations.name",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "organizations",
+        "column": "name",
+        "pgType": "text",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.id / placement_recruiter_profiles.user_id",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "recruiter.first_name",
+      "legacySourceType": "varchar(100)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.given_name (STAGED W01)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "recruiter.last_name",
+      "legacySourceType": "varchar(100)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.family_name (STAGED W01)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "recruiter.contact_mobile",
+      "legacySourceType": "varchar(15)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.phone_e164",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "phone_e164",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter.contact_mail",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.email",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "email",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter.designation",
+      "legacySourceType": "varchar(150)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.industry_company_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.suspended_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.platform_status / placement_recruiter_profiles.status",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "recruiter.suspension_reason",
+      "legacySourceType": "varchar(500)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.token_version",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.last_login_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.created_by_user_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.created_by_user_type",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter.is_deleted",
+      "legacySourceType": "boolean",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_profiles.archived_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_profiles",
+        "column": "archived_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter.version",
+      "legacySourceType": "bigint",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": true,
+        "default": "gen_random_uuid()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.college_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_company_relationships.college_id via company_relationship_id",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "recruiter_college_access.organization_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "colleges.organization_id via relationship.college_id",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "recruiter_college_access.status",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.status",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "status",
+        "pgType": "varchar(24)",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "'ACTIVE'"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.valid_until",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_by_user_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.granted_by_user_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "granted_by_user_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_by_user_type",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.revoked_by_user_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.revoked_by_user_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "revoked_by_user_id",
+        "pgType": "uuid",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.revoked_by_user_type",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.revoked_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.revoked_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "revoked_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.revoke_reason",
+      "legacySourceType": "varchar(500)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.created_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.updated_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.is_deleted",
+      "legacySourceType": "boolean",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.status",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "status",
+        "pgType": "varchar(24)",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "'ACTIVE'"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.version",
+      "legacySourceType": "bigint",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.granted_by_type",
+      "legacySourceType": "varchar(15)",
+      "sourceActiveStatus": "LEGACY_DDL_PRESENT_NO_CURRENT_RECRUITER_SOURCE_CONSUMER",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.verification",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.hiring_for_company_id",
+      "legacySourceType": "bigint",
+      "sourceActiveStatus": "LEGACY_DDL_PRESENT_NO_CURRENT_RECRUITER_SOURCE_CONSUMER",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_company_relationships.company_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_company_relationships",
+        "column": "company_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.agency_for_company_name",
+      "legacySourceType": "varchar(150)",
+      "sourceActiveStatus": "LEGACY_DDL_PRESENT_NO_CURRENT_RECRUITER_SOURCE_CONSUMER",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access.recruiter_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.recruiter_user_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "recruiter_user_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access.pending_recruiter_lead_id",
+      "legacySourceType": "bigint",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access_capability.access_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "placement_recruiter_college_grants.id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "placement_recruiter_college_grants",
+        "column": "id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": true,
+        "default": "gen_random_uuid()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "recruiter_college_access_capability.capability",
+      "legacySourceType": "varchar(64)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "recruiter_college_access_capability.granted_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_DB_DEFAULT_METADATA_NO_CURRENT_JPA_CONSUMER",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "refresh_token_blocklist.jti",
+      "legacySourceType": "varchar(36)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "refresh_token_blocklist.user_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "refresh_token_blocklist.user_type",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "refresh_token_blocklist.blocked_at",
+      "legacySourceType": "timestamp",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "refresh_token_blocklist.expires_at",
+      "legacySourceType": "timestamp",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "role.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "role.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "SOURCE_SEMANTICS_UNRESOLVED",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "role.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "role.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "SOURCE_SEMANTICS_UNRESOLVED",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "role.description",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "role.name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "membership_roles.role / system_roles.role",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "tenant_domain.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": true,
+        "default": "gen_random_uuid()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.created_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.created_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.updated_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.updated_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "tenant_domain.college_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.college_id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "college_id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.host",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.host",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "host",
+        "pgType": "varchar(255)",
+        "nullable": false,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.is_primary",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.is_primary",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "is_primary",
+        "pgType": "boolean",
+        "nullable": false,
+        "primaryKey": false,
+        "default": false
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.verification_token",
+      "legacySourceType": "varchar(64)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.verification_token",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "verification_token",
+        "pgType": "varchar(255)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.verified_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.verified_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "verified_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.is_verified",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.is_verified",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "is_verified",
+        "pgType": "boolean",
+        "nullable": false,
+        "primaryKey": false,
+        "default": false
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.last_checked_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.last_checked_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "last_checked_at",
+        "pgType": "timestamp with time zone",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.last_check_result",
+      "legacySourceType": "varchar(32)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.last_check_result",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "tenant_domains",
+        "column": "last_check_result",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "tenant_domain.last_found_values",
+      "legacySourceType": "varchar(512)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STAGED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "tenant_domains.last_found_values (STAGED SQL ONLY)",
+      "structuralStatus": "STAGED_NOT_IN_REGISTERED_SNAPSHOT",
+      "presence": null,
+      "remainingProof": "Review staging for one canonical choice and integrate with W01 generated migration and target snapshot; cannot count as current table."
+    },
+    {
+      "legacyField": "user.id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.id",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "id",
+        "pgType": "uuid",
+        "nullable": false,
+        "primaryKey": true,
+        "default": "gen_random_uuid()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "user.created_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.created_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "created_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "user.is_deleted",
+      "legacySourceType": "tinyint(1)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.platform_status",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "platform_status",
+        "pgType": "user_platform_status",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "'ACTIVE'"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "user.updated_at",
+      "legacySourceType": "datetime(6)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.updated_at",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "updated_at",
+        "pgType": "timestamp with time zone",
+        "nullable": false,
+        "primaryKey": false,
+        "default": "now()"
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "user.business_title",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user.email",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.email",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "email",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "user.name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.display_name",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "display_name",
+        "pgType": "text",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "user.password",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user.phone",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "STRUCTURAL_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.phone_e164",
+      "structuralStatus": "SINGLE_COLUMN_DECLARED_IN_SNAPSHOT",
+      "presence": {
+        "table": "users",
+        "column": "phone_e164",
+        "pgType": "varchar(32)",
+        "nullable": true,
+        "primaryKey": false,
+        "default": null
+      },
+      "remainingProof": "Physical column presence ONLY; legacy type/nullability/tenant FK/write-read/role/semantics/DB runtime equivalence still unverified."
+    },
+    {
+      "legacyField": "user.unique_id",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user.user_name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user.user_type",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "membership_roles.role / system_roles.role",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "user_roles.user_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "users.id / college_memberships.user_id",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "user_roles.role_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "NORMALIZED_CANDIDATE_UNVERIFIED",
+      "sourceCandidateTarget": "membership_roles.role / system_roles.role",
+      "structuralStatus": "NORMALIZED_EXPRESSION_REQUIRES_SEMANTIC_PROOF",
+      "presence": null,
+      "remainingProof": "A relational/path expression rather than a column; validate every real pointer, actor/tenant lineage, current-vs-history and persisted read/write witnesses."
+    },
+    {
+      "legacyField": "user_session.jti",
+      "legacySourceType": "varchar(36)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user_session.user_id",
+      "legacySourceType": "int",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user_session.user_type",
+      "legacySourceType": "varchar(20)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user_session.device_name",
+      "legacySourceType": "varchar(255)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user_session.user_agent",
+      "legacySourceType": "varchar(512)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user_session.ip_address",
+      "legacySourceType": "varchar(64)",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user_session.created_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user_session.last_used_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    },
+    {
+      "legacyField": "user_session.expires_at",
+      "legacySourceType": "datetime",
+      "sourceActiveStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "sourceCandidateTarget": null,
+      "structuralStatus": "NO_TARGET_PROPOSED",
+      "presence": null,
+      "remainingProof": "First choose provider-managed, normalized feature-owned, retired-approved, or new explicit persisted target; no vNext parity proof."
+    }
+  ]
+}
