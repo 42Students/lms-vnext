@@ -95,25 +95,35 @@
       "paths": [
         "docs/planning/db00-historical-engine-disposition.json"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 6,
+      "pickedAt": "2026-10-10T20:22:09.399Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 6,
+          "pickedAt": "2026-10-10T20:22:09.399Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-10T20:22:09.399Z",
+          "reason": "Automation-triggered substantive DB00 source audit, reserved by available Chat 6 worker after live queue and checkpoint review."
         }
       ]
     },
