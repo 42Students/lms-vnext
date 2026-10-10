@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-10T20:27:20.228Z",
+  "updatedOn": "2026-10-10T20:32:14.301Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -223,7 +223,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "latestEvidenceSha": "e3dee78622848463c4d3400b01f1618b25278640",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -257,7 +257,8 @@
           "at": "2026-10-10T20:27:20.228Z",
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
-      ]
+      ],
+      "progressNote": "Chat 4 DB02 source audit: 125 legacy fields classified into 24 same-name, 32 normalized/derived, 69 no confirmed snapshot mapping; no semantic or runtime verification. See worker checkpoint and issue #24."
     },
     {
       "id": "DB-006",
