@@ -1,0 +1,180 @@
+{
+  "taskId": "DB-008",
+  "phase": "DATABASE",
+  "createdOn": "2026-10-11",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "source": "src/main/java/com/_42students/lms/dto/request/ContentDataDTO.java",
+  "persistedVia": "LessonContents.contentDataDTO mapped as legacy lesson_contents.content_data JSON",
+  "vnextSource": [
+    "src/db/schema/courses.ts",
+    "src/db/schema/lesson-content-materials-staged.ts",
+    "src/db/schema/course-upload-receipts-staged.ts",
+    "src/db/schema/assessments.ts"
+  ],
+  "sourceFieldCount": 17,
+  "status": "SOURCE_REVIEW_ONLY_NOT_VERIFIED",
+  "knownV163Retirement": "PDF/PPT/LECTURE/BYO/GOOGLE_MEET retired via V163; no reactivation without review",
+  "guardrails": [
+    "Legacy JSON boolean flags are distinct from published/active status.",
+    "Legacy times are strings and timeZone is independent; do not silently cast without policy.",
+    "Assignment resources/files and allowedSubmissionTypes are DB06 integration, not generic public JSON.",
+    "FileDTO/resourceMaterials need authenticated object receipt, private ACL and per-tenant checks.",
+    "Legacy schedule gating before/after must be reconciled with current timed content behavior.",
+    "HTML/text and external resource URLs must be validated/sanitized by service before release."
+  ],
+  "fields": [
+    {
+      "legacyField": "fileDTO",
+      "javaType": "FileDTO",
+      "proposedVnext": "W02 lesson_content_materials/course_upload_receipts candidate; private object proof required",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "htmlContent",
+      "javaType": "String",
+      "proposedVnext": "lesson_content_settings.html_content (isolated proposed SQL)",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "allowDiscussions",
+      "javaType": "boolean",
+      "proposedVnext": "lesson_content_settings.allow_discussions (isolated proposed SQL)",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "viewAfterSchedule",
+      "javaType": "boolean",
+      "proposedVnext": "lesson_content_settings.view_after_schedule (isolated proposed SQL)",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "viewBeforeSchedule",
+      "javaType": "boolean",
+      "proposedVnext": "lesson_content_settings.view_before_schedule (isolated proposed SQL)",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "text",
+      "javaType": "String",
+      "proposedVnext": "lesson_content_settings.plain_text (isolated proposed SQL)",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "duration",
+      "javaType": "Long",
+      "proposedVnext": "lesson_contents.duration_seconds candidate; source unit/range not yet established",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "dueDate",
+      "javaType": "String",
+      "proposedVnext": "lesson_content_settings.legacy_due_date_raw (isolated proposed SQL), NOT authoritative DB06 dueAt",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "link",
+      "javaType": "String",
+      "proposedVnext": "lesson_contents.external_url or lesson_content_materials.external_url candidate by subtype",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "resourceMaterials",
+      "javaType": "List<ResourceMaterialDTO>",
+      "proposedVnext": "W02 lesson_content_materials staged; receipt provenance + file metadata required",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "assignmentResources",
+      "javaType": "List<AssignmentResourceDTO>",
+      "proposedVnext": "DB06 assignment resources; distinct text/link/FILE item; no direct mapping verified",
+      "classification": "MISSING_OR_UNPROVEN",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "allowedSubmissionTypes",
+      "javaType": "List<String>",
+      "proposedVnext": "DB06 course assignment submission controls, service contract not verified",
+      "classification": "MISSING_OR_UNPROVEN",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "calendarEventId",
+      "javaType": "String",
+      "proposedVnext": "lesson_content_settings.calendar_event_id (isolated proposed SQL)",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "timeZone",
+      "javaType": "String",
+      "proposedVnext": "lesson_content_settings.calendar_time_zone (isolated proposed SQL)",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "endTime",
+      "javaType": "String",
+      "proposedVnext": "lesson_contents.ends_at candidate; legacy string timeZone semantics unresolved",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "startTime",
+      "javaType": "String",
+      "proposedVnext": "lesson_contents.starts_at candidate; legacy string timeZone semantics unresolved",
+      "classification": "REMODELED_NEEDS_PROOF",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    },
+    {
+      "legacyField": "thumbnail",
+      "javaType": "String",
+      "proposedVnext": "lesson_content_settings.thumbnail_url (isolated proposed SQL)",
+      "classification": "UNREGISTERED_DRAFT",
+      "verified": false,
+      "postgresExecuted": false,
+      "producerConsumerVerified": false
+    }
+  ]
+}
