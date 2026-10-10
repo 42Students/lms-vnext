@@ -109,7 +109,7 @@ CREATE INDEX course_offerings_program_term_idx
   ON course_offerings(program_term_id, status);
 
 CREATE FUNCTION db02_guard_course_offering_program_term_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   term_program uuid;
   cohort_program uuid;
@@ -170,7 +170,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_course_offering_program_term_guard
 BEFORE INSERT OR UPDATE OF course_id, cohort_id, academic_period_id, type, program_term_id
@@ -570,7 +570,7 @@ CREATE INDEX faculty_course_associations_course_active_idx
   WHERE ended_at IS NULL;
 
 CREATE FUNCTION db02_guard_faculty_course_association_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   membership_college uuid;
   course_college uuid;
@@ -598,7 +598,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_faculty_course_association_scope_guard
 BEFORE INSERT OR UPDATE OF membership_id, course_id
