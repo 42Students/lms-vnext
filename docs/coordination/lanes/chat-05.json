@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "PICKED",
+  "activeTaskId": "DB-006",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "PHASE_SYSTEM_V2_MIGRATION_NO_TASK_CLAIMED",
+    "checkpointKind": "DB006_CLAIMED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a5235d8b7e4164f626a163eef51ca1ee2df713ab",
+    "observedMainSha": "bb204ff46c77c1c33b204b6ea4c4b9fe017651d4",
     "lastWorkerMergedSha": null,
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Worker state upgraded for picked / implemented-completed / independently verified counters. Historical domain attribution is archival only. No tasks have been picked."
+    "summary": "CAS-picked global DATABASE DB-006 groups/electives reconciliation; no implementation or tests yet."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,7 +30,7 @@
   "lastExecutedPassingTests": [],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "Select highest-priority eligible READY task and record PICKED event; mark COMPLETED with commit SHA after finishing, DONE_VERIFIED only with executed acceptance evidence; claim another within DATABASE.",
+  "nextAction": "Reconcile DB03 79 source-field candidates and state-history, membership, waitlist, locking and project-group invariants. Stage findings safely without modifying Chat 1-owned migration/barrel files.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -45,9 +45,11 @@
     "https://github.com/42Students/lms-vnext/issues/25"
   ],
   "overallPercentComplete": null,
-  "pickedTaskIds": [],
+  "pickedTaskIds": [
+    "DB-006"
+  ],
   "completedTaskIds": [],
-  "lastPickedAt": null,
+  "lastPickedAt": "2026-10-10T20:27:07.841Z",
   "lastCompletedAt": null,
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
