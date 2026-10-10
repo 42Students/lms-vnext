@@ -28,6 +28,7 @@ export type PlatformPermission =
   | "project-template.manage"
   | "project-template.assign"
   | "people.manage"
+  | "profile.self.manage"
   | "profile-verification.review"
   | "system-role.manage"
   | "membership.role.manage"
@@ -122,6 +123,18 @@ export function can(
     permission === "placements.recruiter.result.stage"
   ) {
     return hasRecruiterGrant(context, resource);
+  }
+
+  // Self-profile writes are membership capabilities, never a global
+  // SUPER_ADMIN bypass. A feature service must still assert the exact profile
+  // role (LEARNER or FACULTY) before mutating role-specific persistence.
+  if (permission === "profile.self.manage") {
+    return (
+      hasActiveMembership(context) &&
+      (hasMembershipRole(context, "LEARNER") ||
+        hasMembershipRole(context, "FACULTY")) &&
+      isSameMembershipCollege(context, resource)
+    );
   }
 
   if (
