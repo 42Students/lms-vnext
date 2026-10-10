@@ -107,6 +107,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     });
     expect(lead.emailNorm).toBe("recruiter@example.com");
     expect(lead.phoneNorm).toBe("9876543210");
+    expect(lead.companyName).toBe("EXAMPLE");
     expect(lead.manualStage).toBe("NEW");
     const activity = await logTpoLeadActivity(tpo, lead.id, {
       collegeId: SEED_IDS.collegeA,
