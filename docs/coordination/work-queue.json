@@ -600,7 +600,8 @@
       "dependsOn": [],
       "restriction": "ANY",
       "paths": [
-        "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json"
+        "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+        "src/db/schema/tpo-crm.ts"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
@@ -636,6 +637,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T02:15:00+05:30",
           "reason": "Chat 3 began frozen V162 college placement/privacy settings comparison against staged TPO policy schema."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Chat 3 narrowly extended DB-012 CAS claim to tpo-crm.ts after finding malformed duplicate declarations/unterminated SQL-check template; only this file, no journal/barrel."
         }
       ]
     },
