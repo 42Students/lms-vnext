@@ -474,6 +474,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L15-015 | Undo/dismiss/change reminder | AssessmentsContent | assessments page | GAP |
 | L15-016 | Job/application navigation | AssessmentsContent | career rounds | FIXED |
 | L15-017 | Loading/error/empty/filter-empty | AssessmentsContent | assessments page | GAP |
+| L15-018 | Employer-side submission disclaimer (not a server receipt) | assessments route notice | assessments page notice | FIXED |
 
 ## L16 — Interviews
 
