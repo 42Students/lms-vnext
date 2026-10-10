@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AcademicsOverview } from "@/components/academics/academics-overview";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -37,6 +38,14 @@ export default async function SuperAdminAcademicsPage() {
         title="Academics"
         description="Academic structure inside the selected college safety scope."
       />
+      <div>
+        <Link
+          href="/admin/programs"
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+        >
+          Open Programs directory
+        </Link>
+      </div>
       <AcademicsOverview
         collegeId={collegeId}
         workspace={workspace}
