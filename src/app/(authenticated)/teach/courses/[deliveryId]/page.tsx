@@ -4,6 +4,9 @@ import { FacultyCourseWorkspace } from "@/components/courses/faculty-course-work
 import {
   getFacultyCourseWorkspace,
 } from "@/modules/courses/faculty-course-service";
+import {
+  getFacultyCourseHomeSignals,
+} from "@/modules/courses/faculty-course-home-service";
 
 export default async function FacultyCoursePage({
   params,
@@ -19,6 +22,11 @@ export default async function FacultyCoursePage({
     await getFacultyCourseWorkspace(
       context,
       deliveryId,
+    );
+  const homeSignals =
+    await getFacultyCourseHomeSignals(
+      context,
+      workspace,
     );
 
   return (
@@ -53,6 +61,7 @@ export default async function FacultyCoursePage({
       </div>
       <FacultyCourseWorkspace
         workspace={workspace}
+        homeSignals={homeSignals}
       />
     </div>
   );
