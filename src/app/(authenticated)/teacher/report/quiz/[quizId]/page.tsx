@@ -15,7 +15,14 @@ export default async function FacultyQuizReportPage({
   const { quizId } = await params;
   const { deliveryId } = await searchParams;
   const report = await getFacultyQuizReport(context, quizId, deliveryId ?? null);
-  const { quiz, attempts, notAttemptedLearners, metrics } = report;
+  const {
+    quiz,
+    latestAttempts,
+    distribution,
+    questions,
+    notAttemptedLearners,
+    metrics,
+  } = report;
 
   const formatDate = (value: Date) =>
     new Intl.DateTimeFormat("en-IN", {
@@ -34,10 +41,10 @@ export default async function FacultyQuizReportPage({
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Attempts", metrics.attempted],
-          ["Eligible learners", metrics.eligibleLearners],
-          ["Not attempted", metrics.notAttempted],
-          ["Average score", metrics.averagePercent === null ? "Not yet graded" : `${metrics.averagePercent}%`],
+          ["Submitted", `${metrics.submittedLearners}/${metrics.eligibleLearners}`],
+          ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
+          ["Questions", metrics.questionCount],
+          ["Total attempts", metrics.totalAttempts],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
@@ -57,9 +64,95 @@ export default async function FacultyQuizReportPage({
         </span>
       </div>
 
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">
+          Score distribution
+        </h2>
+        <div
+          className="mt-4 space-y-3"
+          role="img"
+          aria-label={`Score distribution across ${metrics.submittedLearners} learners`}
+        >
+          {distribution.map((bucket) => {
+            const total = Math.max(metrics.submittedLearners, 1);
+            const width = Math.round((bucket.count / total) * 100);
+            return (
+              <div
+                key={bucket.label}
+                className="grid grid-cols-[6rem_1fr_2rem] items-center gap-3 text-sm"
+              >
+                <span className="text-body">{bucket.label}</span>
+                <span className="h-2 overflow-hidden rounded-full bg-muted">
+                  <span
+                    className="block h-full rounded-full bg-primary"
+                    style={{ width: `${width}%` }}
+                  />
+                </span>
+                <strong className="text-right text-foreground">
+                  {bucket.count}
+                </strong>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">
+          Question accuracy
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Worst-answered questions are shown first and use each learner&apos;s
+          latest attempt only.
+        </p>
+        {questions.length === 0 ? (
+          <p className="mt-4 text-sm text-body">
+            This Quiz has no questions.
+          </p>
+        ) : (
+          <ol className="mt-4 space-y-3">
+            {questions.map((question, index) => (
+              <li
+                key={question.id}
+                className="rounded-lg bg-surface-subtle p-4"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="m-0 text-xs font-semibold uppercase text-muted-foreground">
+                      Question {index + 1}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">
+                      {question.prompt}
+                    </p>
+                  </div>
+                  <strong className="text-sm text-foreground">
+                    {question.accuracyPercent === null
+                      ? "Not answered"
+                      : `${question.accuracyPercent}%`}
+                  </strong>
+                </div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                  <span
+                    className="block h-full rounded-full bg-primary"
+                    style={{
+                      width: `${question.accuracyPercent ?? 0}%`,
+                    }}
+                  />
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {question.answeredCount > 0
+                    ? `${question.correctCount}/${question.answeredCount} correct`
+                    : "No answers submitted"}
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
       <section className="overflow-x-auto rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">Submitted attempts</h2>
-        {attempts.length === 0 ? (
+        {latestAttempts.length === 0 ? (
           <p className="mt-3 text-sm text-body">No learners have attempted this Quiz.</p>
         ) : (
           <table className="mt-3 w-full min-w-[40rem] text-left text-sm">
@@ -72,7 +165,7 @@ export default async function FacultyQuizReportPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {attempts.map((attempt) => (
+              {latestAttempts.map((attempt) => (
                 <tr key={attempt.id}>
                   <td className="py-3 pr-3 text-foreground">
                     {attempt.learnerDisplayName || attempt.learnerEmail || "Learner"}
@@ -115,8 +208,7 @@ export default async function FacultyQuizReportPage({
       </section>
 
       <p className="text-sm text-muted-foreground">
-        This report is Section-scoped. Question-level response distribution,
-        export parity and browser verification remain open.
+        This report is Section-scoped. PDF/export parity and browser verification remain open.
       </p>
     </div>
   );
