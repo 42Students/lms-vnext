@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "PICKED",
+  "activeTaskId": "DB-007",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "PHASE_SYSTEM_V2_MIGRATION_NO_TASK_CLAIMED",
+    "checkpointKind": "DB04_FIELD_SEMANTIC_AUDIT_CLAIMED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "a5235d8b7e4164f626a163eef51ca1ee2df713ab",
+    "observedMainSha": "2b63a1b2b0e2b4233d7076eb9847191d6596ae05",
     "lastWorkerMergedSha": null,
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Worker state upgraded for picked / implemented-completed / independently verified counters. Historical domain attribution is archival only. No tasks have been picked."
+    "summary": "CAS-claimed DB-007 profile verification/private documents; inspect 103 source-derived DB04 fields against active legacy semantics, vNext schema, tenant and privacy invariants. No test execution or field verification yet."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,7 +30,7 @@
   "lastExecutedPassingTests": [],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "Select highest-priority eligible READY task and record PICKED event; mark COMPLETED with commit SHA after finishing, DONE_VERIFIED only with executed acceptance evidence; claim another within DATABASE.",
+  "nextAction": "Perform DB-007 schema/source audit; leave runtime DB_TESTED/WORKFLOW_VERIFIED unclaimed until disposable PostgreSQL executes.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -42,12 +42,15 @@
     "note": "Historical ownership/coverage snapshot, NOT a current worker assignment. Do not sum per-chat old domain counts."
   },
   "evidenceLinks": [
-    "https://github.com/42Students/lms-vnext/issues/23"
+    "https://github.com/42Students/lms-vnext/issues/23",
+    "https://github.com/42Students/lms-vnext/commit/2b63a1b2b0e2b4233d7076eb9847191d6596ae05"
   ],
   "overallPercentComplete": null,
-  "pickedTaskIds": [],
+  "pickedTaskIds": [
+    "DB-007"
+  ],
   "completedTaskIds": [],
-  "lastPickedAt": null,
+  "lastPickedAt": "2026-10-11T01:57:00+05:30",
   "lastCompletedAt": null,
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
