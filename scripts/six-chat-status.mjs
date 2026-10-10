@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 /**
- * Offline six-chat checkpoint dashboard.
- * Source: committed docs/coordination/lanes/chat-NN.json and docs/parity/*.md.
- * This does not fetch GitHub, run CI, or assert that authored tests passed.
- *
+ * Offline shared-phase six-chat dashboard. No GitHub/network/CI calls are made.
  * Usage: node scripts/six-chat-status.mjs [--lane 1..6] [--json]
  */
 import fs from 'node:fs';
@@ -12,110 +9,149 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
-const json = args.includes('--json');
-const laneAt = args.indexOf('--lane');
-const n = laneAt >= 0 ? Number(args[laneAt + 1]) : null;
-
+const laneIndex = args.indexOf('--lane');
+const requestedLane = laneIndex < 0 ? null : Number(args[laneIndex + 1]);
+const asJson = args.includes('--json');
 if (args.includes('--help') || args.includes('-h')) {
-  process.stdout.write('Usage: node scripts/six-chat-status.mjs [--lane 1..6] [--json]\n');
+  console.log('Usage: node scripts/six-chat-status.mjs [--lane 1..6] [--json]');
   process.exit(0);
 }
-if (laneAt >= 0 && (!Number.isInteger(n) || n < 1 || n > 6)) {
-  process.stderr.write('Invalid --lane: supply a number 1 through 6.\n');
+if (args.some((arg) => arg.startsWith('--') && !['--lane', '--json'].includes(arg)) ||
+    (laneIndex >= 0 && (!Number.isInteger(requestedLane) || requestedLane < 1 || requestedLane > 6)) ||
+    (laneIndex >= 0 && args[laneIndex + 1]?.startsWith('--'))) {
+  console.error('Invalid args; use --lane 1..6 and/or --json');
   process.exit(2);
 }
-if (args.some((a, i) => a.startsWith('--') && a !== '--json' && a !== '--lane' && a !== '--help')) {
-  process.stderr.write('Unsupported option.\n');
-  process.exit(2);
+
+const load = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
+const phase = load('docs/coordination/phase-state.json');
+const queue = load('docs/coordination/work-queue.json');
+const chat = [];
+const taskIds = new Set();
+const counts = {};
+const totals = { tasks: 0, verified: 0, retired: 0, ready: 0, claimed: 0, blocked: 0, review: 0 };
+const states = new Set(['READY','CLAIMED','BLOCKED','IN_REVIEW','DONE_VERIFIED','RETIRED_APPROVED']);
+
+if (phase.schemaVersion !== 2 || queue.schemaVersion !== 2 ||
+    !phase.phaseOrder.includes(phase.currentPhase) ||
+    phase.phases[phase.currentPhase]?.state !== 'ACTIVE' ||
+    phase.phaseOrder.filter((x) => phase.phases[x]?.state === 'ACTIVE').length !== 1) {
+  throw Error('Invalid shared global phase state');
 }
-const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
-const laneRecords = [];
-const issueIds = new Set();
-const domainIds = new Set();
 for (let i = 1; i <= 6; i += 1) {
-  const name = 'docs/coordination/lanes/chat-' + String(i).padStart(2, '0') + '.json';
-  const s = JSON.parse(read(name));
-  if (s.schemaVersion !== 1 || s.chatNumber !== i || s.issueNumber !== 20 + i ||
-      s.lane !== 'W' + String(i).padStart(2, '0') || s.assignment !== 'FIXED' ||
-      !s.checkpoint || !s.domain || !s.api || !s.qualityGates || !s.nextAction) {
-    throw Error('Invalid fixed lane contract: ' + name);
+  const record = load('docs/coordination/lanes/chat-0' + i + '.json');
+  if (record.schemaVersion !== 2 || record.chatNumber !== i || record.issueNumber !== i + 20 ||
+      record.workerId !== 'CHAT_0' + i || record.assignment !== 'SHARED_PHASE_WORKER' ||
+      record.permanentDomainOwner !== false || record.currentPhase !== phase.currentPhase) {
+    throw Error('Invalid or stale Chat ' + i + ' checkpoint');
   }
-  if (issueIds.has(s.issueNumber)) throw Error('Duplicate issue: ' + s.issueNumber);
-  issueIds.add(s.issueNumber);
-  for (const d of s.domain.ids) {
-    if (domainIds.has(d)) throw Error('Overlapping DB ownership: ' + d);
-    domainIds.add(d);
-  }
-  const fields = s.domain.historicalCandidateFields;
-  const verified = s.domain.fieldSemanticsVerified;
-  if (!Number.isInteger(fields) || fields < 0 ||
-      !Number.isInteger(verified) || verified < 0 || verified > fields) {
-    throw Error('Bad database verified count: ' + name);
-  }
-  laneRecords.push(s);
+  chat.push(record);
 }
-for (let i = 0; i <= 10; i += 1) {
-  const d = 'DB' + String(i).padStart(2, '0');
-  if (!domainIds.has(d)) throw Error('Unowned database domain: ' + d);
-}
-const choose = laneAt >= 0 ? laneRecords.filter((s) => s.chatNumber === n) : laneRecords;
-const pageSpecs = [
-  'learner.md', 'faculty.md', 'mentor.md', 'college-admin.md',
-  'super-admin.md', 'tpo.md', 'hr.md', 'shared-public-ops.md'
-];
-const parity = {};
-const total = { checked: 0, open: 0, partial: 0, total: 0 };
-for (const filename of pageSpecs) {
-  const source = read('docs/parity/' + filename);
-  const matches = [...source.matchAll(/^\s*[-*]\s+\[([ xX~])\]\s/gm)];
-  const c = { checked: 0, open: 0, partial: 0, total: matches.length };
-  for (const m of matches) {
-    if (m[1].toLowerCase() === 'x') c.checked += 1;
-    else if (m[1] === '~') c.partial += 1;
-    else c.open += 1;
+const byTaskId = new Map();
+for (const task of queue.tasks) {
+  if (taskIds.has(task.id)) throw Error('Duplicate task ID ' + task.id);
+  taskIds.add(task.id);
+  byTaskId.set(task.id, task);
+  if (!states.has(task.status) || !phase.phaseOrder.includes(task.phase)) {
+    throw Error('Invalid task state or phase on ' + task.id);
   }
-  for (const key of Object.keys(total)) total[key] += c[key];
-  parity[filename.replace('.md', '')] = c;
+  if (task.status === 'CLAIMED' &&
+      (!Number.isInteger(task.claimedBy) || task.claimedBy < 1 || task.claimedBy > 6)) {
+    throw Error('Claimed task lacks valid worker: ' + task.id);
+  }
+  if (task.status !== 'CLAIMED' && task.claimedBy !== null &&
+      !['BLOCKED', 'IN_REVIEW', 'DONE_VERIFIED', 'RETIRED_APPROVED'].includes(task.status)) {
+    throw Error('Non-claimed task unexpectedly has an owner: ' + task.id);
+  }
+  counts[task.status] = (counts[task.status] || 0) + 1;
+  totals.tasks += 1;
 }
-const database = {
-  historicalCandidateTables: laneRecords.reduce((s, r) => s + r.domain.historicalCandidateTables, 0),
-  historicalCandidateFields: laneRecords.reduce((s, r) => s + r.domain.historicalCandidateFields, 0),
-  formallyVerifiedFieldsRecorded: laneRecords.reduce((s, r) => s + r.domain.fieldSemanticsVerified, 0),
-  note: 'Historical source candidates are not necessarily active tables/fields. Counts are last recorded lane checkpoint values, not live database introspection.'
-};
+for (const task of queue.tasks) {
+  for (const d of task.dependsOn || []) {
+    if (!byTaskId.has(d)) throw Error('Missing prerequisite ' + d + ' for ' + task.id);
+  }
+  if (task.status === 'CLAIMED' &&
+      chat[task.claimedBy - 1].activeTaskId !== task.id) {
+    throw Error('Claim/checkpoint mismatch on ' + task.id);
+  }
+}
+for (const worker of chat) {
+  if (worker.activeTaskId &&
+      !(byTaskId.get(worker.activeTaskId)?.status === 'CLAIMED' &&
+        byTaskId.get(worker.activeTaskId)?.claimedBy === worker.chatNumber)) {
+    throw Error('Worker task claim is inconsistent: Chat ' + worker.chatNumber);
+  }
+}
+for (const [state, key] of [['READY','ready'],['CLAIMED','claimed'],['BLOCKED','blocked'],
+  ['IN_REVIEW','review'],['DONE_VERIFIED','verified'],['RETIRED_APPROVED','retired']]) {
+  totals[key] = counts[state] || 0;
+}
+const readyFor = (worker) => queue.tasks.filter((task) =>
+  task.phase === phase.currentPhase &&
+  task.status === 'READY' &&
+  (task.restriction === 'ANY' || (task.restriction && worker === 1)) &&
+  (task.dependsOn || []).every((id) => ['DONE_VERIFIED','RETIRED_APPROVED'].includes(byTaskId.get(id)?.status))
+).sort((a, b) => (a.priority - b.priority) || a.id.localeCompare(b.id)).map((x) => x.id);
+const specs = ['learner.md','faculty.md','mentor.md','college-admin.md','super-admin.md','tpo.md','hr.md','shared-public-ops.md'];
+const details = { checked: 0, open: 0, partial: 0, total: 0 };
+for (const spec of specs) {
+  const source = fs.readFileSync(path.join(root, 'docs/parity', spec), 'utf8');
+  for (const match of source.matchAll(/^\s*[-*]\s+\[([ xX~])\]\s/gm)) {
+    details.total++;
+    if (match[1].toLowerCase() === 'x') details.checked++;
+    else if (match[1] === '~') details.partial++;
+    else details.open++;
+  }
+}
+const activePhaseTasks = queue.tasks.filter((t) => t.phase === phase.currentPhase);
 const result = {
-  scope: laneAt >= 0 ? 'CHAT_' + n : 'ALL_SIX_CHATS',
-  source: 'Committed lane records and detailed parity Markdown in current working tree',
-  liveGitHubQueried: false,
-  testsExecutedByThisScript: false,
-  lanes: choose,
-  database,
-  detailedPageChecks: { ...total, byAccount: parity, note: 'Page-spec checkmarks are not necessarily fresh oracle/browser verification.' }
+  source: 'Local committed files only, no live GitHub/CI checks',
+  currentPhase: phase.currentPhase,
+  phaseOrder: phase.phaseOrder,
+  phaseGate: phase.phases[phase.currentPhase],
+  workerCount: chat.length,
+  workers: (requestedLane === null ? chat : chat.filter((x) => x.chatNumber === requestedLane)).map((worker) => ({
+    chatNumber: worker.chatNumber,
+    issueNumber: worker.issueNumber,
+    executionState: worker.executionState,
+    activeTaskId: worker.activeTaskId,
+    verifiedCompletedTaskIds: worker.verifiedCompletedTaskIds,
+    reviewTaskIds: worker.reviewTaskIds,
+    blockedTaskIds: worker.blockedTaskIds,
+    nextEligibleTaskIds: readyFor(worker.chatNumber),
+    checkpoint: worker.checkpoint
+  })),
+  tasks: {
+    ...totals,
+    currentPhaseTotal: activePhaseTasks.length,
+    currentPhaseVerified: activePhaseTasks.filter((x) => x.status === 'DONE_VERIFIED').length,
+    currentPhaseApprovedRetirements: activePhaseTasks.filter((x) => x.status === 'RETIRED_APPROVED').length
+  },
+  historicalDatabaseInventory: phase.globalHistoricalInventorySnapshot,
+  detailedPageChecks: details,
+  note: 'Queue coverage is not yet certified exhaustive; task percentages are not overall LMS completion.'
 };
-if (json) {
+if (asJson) {
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
 } else {
-  process.stdout.write('LMS vNext | Six-chat checkpoints (local committed snapshots; NOT live CI)\n\n');
-  for (const l of choose) {
-    process.stdout.write(
-      'Chat ' + l.chatNumber + ' / ' + l.lane + ' / #' + l.issueNumber + ': ' +
-      l.executionState + ' | ' + l.currentPhase + '\n' +
-      '  DB candidates: ' + l.domain.historicalCandidateTables + ' tables / ' +
-      l.domain.historicalCandidateFields + ' fields | formal field verification recorded: ' +
-      l.domain.fieldSemanticsVerified + '\n' +
-      '  API required/mapped/verified: ' +
-      [l.api.requiredOperations, l.api.mappedOperations, l.api.verifiedOperations]
-        .map((x) => x === null ? 'not measured' : String(x)).join(' / ') + '\n' +
-      '  Checkpoint: ' + l.checkpoint.updatedOn + ' (' + l.checkpoint.checkpointKind + ')\n' +
-      '  Blockers: ' + l.blockers.length + ' recorded | Next: ' + l.nextAction + '\n\n'
-    );
+  process.stdout.write('LMS vNext | GLOBAL PHASE: ' + phase.currentPhase +
+    ' | ' + activePhaseTasks.length + ' queued packages, ' +
+    result.tasks.currentPhaseVerified + ' verified, ' +
+    totals.ready + ' ready, ' + totals.claimed + ' claimed, ' +
+    totals.blocked + ' blocked, ' + totals.review + ' in review\n\n');
+  for (const worker of result.workers) {
+    process.stdout.write('Chat ' + worker.chatNumber + ' / issue #' + worker.issueNumber +
+      ' | ' + worker.executionState +
+      ' | active: ' + (worker.activeTaskId ?? 'none') +
+      ' | verified tasks: ' + worker.verifiedCompletedTaskIds.length +
+      ' | next eligible: ' + (worker.nextEligibleTaskIds[0] ?? 'none') +
+      '\n');
   }
-  process.stdout.write(
-    'Across all lanes (recorded): ' + database.historicalCandidateTables + ' table candidates / ' +
-    database.historicalCandidateFields + ' field candidates / ' +
-    database.formallyVerifiedFieldsRecorded + ' formally verified fields.\n' +
-    'Detailed parity spec: ' + total.checked + ' checked / ' + total.open + ' open / ' +
-    total.partial + ' partial (' + total.total + ' total).\n' +
-    'IMPORTANT: Refresh GitHub issues, main HEAD, CI and legacy SHA before reporting live status.\n'
-  );
+  process.stdout.write('\nDB source inventory (not active schema): ' +
+    phase.globalHistoricalInventorySnapshot.tableCandidates + ' table candidates, ' +
+    phase.globalHistoricalInventorySnapshot.fieldCandidates + ' field candidates, formal runtime verified: ' +
+    phase.globalHistoricalInventorySnapshot.formalRuntimeSemanticVerifiedFields + '\n' +
+    'UI detailed historical checklist: ' + details.checked + ' checked, ' +
+    details.open + ' open, ' + details.total + ' total.\n' +
+    'Refresh GitHub and run real tests before claiming live CI/parity status.\n');
 }
