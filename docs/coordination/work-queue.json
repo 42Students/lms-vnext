@@ -762,17 +762,17 @@
       "paths": [
         "docs/planning/database-parity-pass5-probe-manifest.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "4bbb16b2cf2603764873e68cd061281de343bc85",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Chat 5 added a 10-probe cross-domain concurrency/state-transition inventory covering groups, academics, quizzes, projects, placements and shared operations. Source-confirmed gaps: placement application eligibility/module revocation after precheck and learner enrollment into a cohort that changes state after precheck. Five source-protected flows still require execution; three shared-ops lease/outbound/log-alert races are draft-unimplemented. Static assertions were authored; no PostgreSQL race probe executed.",
       "pickedBy": 5,
       "pickedAt": "2026-10-10T20:44:00.000Z",
       "startedAt": "2026-10-10T20:44:15.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-10T20:52:00.000Z",
+      "completionCommitSha": "4bbb16b2cf2603764873e68cd061281de343bc85",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -796,6 +796,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:44:15.000Z",
           "reason": "Chat 5 started cross-domain state-transition/concurrency source audit."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-10T20:52:00.000Z",
+          "reason": "Cross-domain DB race/state inventory committed with explicit NOT_RUN witnesses and two source-confirmed stale-check gaps; runtime acceptance remains downstream."
         }
       ]
     },
