@@ -148,3 +148,64 @@ Legacy `admin_audit_log` is source-reviewed against registered `activity_events`
 ### W06 shared secure outbound invitation transport — 2026-10-10
 
 Legacy source `lms/prod-2026@21bad59d4dfaf2fa11fdeaf9353327ce105697d5` TPO outbox/EmailSuppression and ZeptoMail template docs confirms hold/digest/channel differences and the explicit no-false-send requirement. W06 staged an isolated encrypted, idempotent recruiter invitation/reminder outbox intent, recipient suppression draft, durable enqueue contract behind `DB10_OUTBOUND_READY=DB10_VERIFIED`, and pure retry/bounce/delivery status policy. The DB10 migration journal and schema barrel remain W01-owned/unmodified; **no provider transport exists or is enabled**. Detailed integration/activation checklist: `docs/planning/database-parity-db10-outbound.md`. Tests authored only, no execution evidence, DB10 global verified remains 0/221.
+
+
+## Chat 5 global DB-013 source reconciliation — 2026-10-11
+
+This checkpoint brings DB10 Shared Operations into the global DATABASE queue
+without inflating candidate-table coverage into semantic verification.
+
+### Census result
+
+- **19 legacy tables / 221 source fields** are now source-reviewed at the
+  operational-family level in
+  `db-pass4-columns-db10_shared_operations.json`.
+- `database-parity-db10-field-ledger.json` intentionally remains
+  **221 UNMAPPED / 0 verified**. Every row now carries its family disposition
+  and candidate/gap context, but exact per-field semantics still require
+  evidence before MAPPED/REDESIGNED/RETIRED/BLOCKED status.
+- No runtime, PostgreSQL, typecheck, lint or browser pass is claimed by this
+  checkpoint.
+
+### Retained/redesigned families
+
+- `admin_audit_log` -> registered `activity_events` is a partial normalized
+  replacement. Historical actor-role snapshot, IP and User-Agent remain
+  explicit gaps; copied actor mobile is intentionally not retained.
+- `notification` -> registered `activity_events` +
+  `in_app_notifications` is a partial normalized replacement. Scheduled
+  release/delivery failure and legacy deep-link context need exact disposition.
+- `announcements`, bug-tracker tables, fenced scheduled-job leases and
+  encrypted outbound/suppression models have source-authored drafts, but remain
+  outside the active schema barrel/journal and are not database-verified.
+- `app_setting` must be split deliberately: optional-module decisions can
+  normalize into `module_access_rules`; GLOBAL host/cookie/OTP/operational
+  configuration is not the same data model and needs an explicit environment or
+  managed-config redesign/retirement decision.
+- `sms_delivery_log` can be partially normalized into the encrypted outbound
+  provider-lifecycle model, but that draft currently covers recruiter
+  invitation/reminder traffic only.
+
+### Active gaps that must not be silently retired
+
+1. **Skills:** `skills`, `skill_synonyms`, and `skill_usage` back active
+   legacy taxonomy search, synonym expansion, popularity ranking and profile
+   selection. No vNext persistence/service equivalent exists.
+2. **Operational log alerts:** `log_alert_signature`,
+   `log_alert_signature_account`, and `log_alert_state` persist error
+   fingerprint triage, blast radius, regression memory, poll cursor and
+   admin-last-viewed state. No vNext equivalent exists.
+3. **Notification templates:** neither 28-field legacy template family has a
+   canonical persisted vNext registry. The current outbound contract hardcodes
+   only recruiter invitation/reminder keys and cannot be treated as equivalent.
+4. **Outbound breadth:** the encrypted outbox draft does not yet replace legacy
+   digest/undo hold, general notification scheduling, attendance/OTP/job SMS,
+   DLT/template versioning or provider callback lifecycle.
+
+### Queue disposition
+
+DB-013 is source-reconciled enough to mark **COMPLETED**, but it is explicitly
+**not DONE_VERIFIED**. The migration integrator must decide/promote draft
+schemas, the global active-field audit must make exact 221-field
+MAPPED/REDESIGNED/RETIRED/BLOCKED decisions, and disposable PostgreSQL plus
+producer/consumer evidence is required before the DATABASE phase gate.
