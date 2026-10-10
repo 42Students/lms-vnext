@@ -33,6 +33,7 @@ import {
   getFacultyQuizReport,
 } from "@/modules/courses/faculty-assessment-report-service";
 import { getFacultyClassSchedule } from "@/modules/courses/faculty-schedule-service";
+import { listFacultyContacts } from "@/modules/courses/faculty-contacts-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import {
   createFacultyAttendanceSession,
@@ -952,6 +953,56 @@ describe("courses UI2A faculty read model", () => {
         faculty,
         structure.deliveryB.id,
       ),
+    ).rejects.toMatchObject({
+      code:
+        "FACULTY_TEACHING_SCOPE_REQUIRED",
+    });
+  });
+
+  it("keeps Faculty Contacts same-college and role-filtered", async () => {
+    const learners = await listFacultyContacts(
+      faculty,
+      {
+        tab: "LEARNER",
+        search: "learner.seed@example.com",
+        page: 1,
+        pageSize: 20,
+      },
+    );
+    expect(learners.items).toEqual([
+      expect.objectContaining({
+        membershipId:
+          SEED_IDS.learnerCollegeAMembership,
+        email: "learner.seed@example.com",
+        roles: expect.arrayContaining([
+          "LEARNER",
+        ]),
+      }),
+    ]);
+
+    const teachers = await listFacultyContacts(
+      faculty,
+      {
+        tab: "FACULTY",
+        search: "faculty",
+        page: 1,
+        pageSize: 20,
+      },
+    );
+    expect(
+      teachers.items.some(
+        (person) =>
+          person.membershipId ===
+          SEED_IDS.facultyCollegeAMembership,
+      ),
+    ).toBe(true);
+
+    await expect(
+      listFacultyContacts(learner, {
+        tab: "ALL",
+        page: 1,
+        pageSize: 20,
+      }),
     ).rejects.toMatchObject({
       code:
         "FACULTY_TEACHING_SCOPE_REQUIRED",
