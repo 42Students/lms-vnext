@@ -63,6 +63,13 @@ test("migration manifest lists canonical classroom draft once, never companion",
   const item = readiness.artifacts.find((a) => a.path === canonical);
   assert.equal(item.registered, false);
   assert.equal(item.executedAgainstPostgres, false);
+  assert.equal(item.companionIntegrityDraft.path, "scripts/sql/db05-classroom-chat-parity.draft.sql");
+  assert.equal(item.companionIntegrityDraft.registered, false);
+  assert.equal(item.companionIntegrityDraft.postgresExecuted, false);
+  assert.ok(item.prereqs.includes("CLASSROOM_SAME_COLLEGE_GUARD_MERGED_ONCE"));
+  assert.ok(item.prereqs.includes("CLASSROOM_UPSTREAM_REPARENTING_SAFETY"));
+  assert.ok(readiness.gates.some((g) => g.id === "CLASSROOM_MESSAGE_SAME_COLLEGE_GUARD" && g.status === "BLOCKED"));
+  assert.ok(readiness.gates.some((g) => g.id === "CLASSROOM_MESSAGE_UPSTREAM_REPARENT_PROOF" && g.status === "NOT_RUN"));
 });
 
 test("classroom sender and deletion fields remain unverified until runtime proof", () => {

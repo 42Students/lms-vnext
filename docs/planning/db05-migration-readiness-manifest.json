@@ -66,11 +66,21 @@
       "prereqs": [
         "CLASSROOM_SOFT_DELETE_APP_CHANGE",
         "CLASSROOM_SENDER_SNAPSHOT_APP_CHANGE",
-        "CLASSROOM_CASCADE_RETENTION_POLICY"
+        "CLASSROOM_CASCADE_RETENTION_POLICY",
+        "CLASSROOM_SAME_COLLEGE_GUARD_MERGED_ONCE",
+        "CLASSROOM_UPSTREAM_REPARENTING_SAFETY",
+        "CLASSROOM_PIN_ACTOR_SCOPE_PROOF"
       ],
       "registered": false,
       "executedAgainstPostgres": false,
-      "readyForProduction": false
+      "readyForProduction": false,
+      "companionIntegrityDraft": {
+        "path": "scripts/sql/db05-classroom-chat-parity.draft.sql",
+        "purpose": "SAME_COLLEGE_CLASSROOM_SENDER_AND_DELIVERY_GUARD_ONLY",
+        "registered": false,
+        "postgresExecuted": false,
+        "note": "No duplicate columns/indexes: fold guard into canonical db05-classroom-history migration exactly once."
+      }
     },
     {
       "id": "db05-version-progress",
@@ -135,6 +145,18 @@
     {
       "id": "LINT_TYPECHECK_UNIT_BUILD",
       "status": "NOT_VERIFIED"
+    },
+    {
+      "id": "CLASSROOM_MESSAGE_SAME_COLLEGE_GUARD",
+      "status": "BLOCKED",
+      "owner": 1,
+      "evidence": "Unregistered companion only; clean disposable PostgreSQL cross-college INSERT/UPDATE negatives required."
+    },
+    {
+      "id": "CLASSROOM_MESSAGE_UPSTREAM_REPARENT_PROOF",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Child insert/update guard does not revalidate existing messages after course, section, offering, membership reassignment."
     }
   ],
   "sourceReview": {
