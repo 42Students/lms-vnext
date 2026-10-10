@@ -1,4 +1,10 @@
 -- W03 / DB07 staged SQL candidate only.
+-- SUPERSEDED FOR PROMOTION: retained as historical design evidence only.
+-- DO NOT PROMOTE this file with db07-w03-workspace-state-parity-candidate.sql.
+-- The canonical workspace-state draft owns readiness/delete/restore columns;
+-- in particular, status_before_delete is rejected because frozen legacy restore
+-- recalculates ACTIVE vs BLOCKED from current mentor state instead of restoring
+-- a saved previous status.
 -- W01 owns registered Drizzle migrations, schema barrel changes and replay.
 -- DO NOT add this directly to drizzle/** from W03.
 --
