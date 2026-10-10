@@ -98,3 +98,42 @@ test("DB09 CRM schema declarations parse uniquely with intact SQL checks", async
   assert.match(source, /\^\[0-9\]\{7,20\}\$/);
   assert.match(source, /\^\[a-f0-9\]\{64\}\$/);
 });
+
+test("DB09 source-review field classifications never masquerade as semantic parity", () => {
+  const rows = source.tables.flatMap(t => t.rows);
+  assert.equal(rows.length, 279);
+  const review = {
+    SOURCE_DDL_REVIEWED_UNVERIFIED: 0,
+    SOURCE_TO_VNEXT_DECLARATIONS_COMPARED_UNVERIFIED: 0,
+  };
+  const matching = {
+    MATCHING_NAME_CANDIDATE_ONLY: 0,
+    RENAMED_COLUMN_CANDIDATE_ONLY: 0,
+    NO_DECLARED_FIELD_EQUIVALENCE_IDENTIFIED: 0,
+  };
+  for (const row of rows) {
+    assert.equal(row.reviewStatus, "UNVERIFIED_FIELD_SEMANTICS");
+    assert.equal(row.verifiedMapping, null);
+    assert.ok(row.sourceReview, `missing source review ${row.legacyTable}.${row.legacyColumn}`);
+    assert.equal(row.sourceReview.legacyOracleSha,
+      "21bad59d4dfaf2fa11fdeaf9353327ce105697d5");
+    assert.ok(Object.hasOwn(review, row.sourceReview.status),
+      `unsupported status ${row.sourceReview.status}`);
+    review[row.sourceReview.status]++;
+    if (row.sourceReview.fieldMatching) {
+      assert.ok(Object.hasOwn(matching, row.sourceReview.fieldMatching));
+      matching[row.sourceReview.fieldMatching]++;
+    }
+  }
+  assert.equal(review.SOURCE_DDL_REVIEWED_UNVERIFIED, 14);
+  assert.equal(review.SOURCE_TO_VNEXT_DECLARATIONS_COMPARED_UNVERIFIED, 265);
+  assert.deepEqual(matching, {
+    MATCHING_NAME_CANDIDATE_ONLY: 139,
+    RENAMED_COLUMN_CANDIDATE_ONLY: 45,
+    NO_DECLARED_FIELD_EQUIVALENCE_IDENTIFIED: 81,
+  });
+  assert.equal(source.sourceReviewSummary.fieldCandidatesWithReviewNotes, 279);
+  assert.equal(source.sourceReviewSummary.semanticallyVerified, 0);
+  assert.equal(source.sourceReviewSummary.postgresDbTested, 0);
+  assert.equal(source.sourceReviewSummary.approvedRetirements, 0);
+});
