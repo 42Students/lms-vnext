@@ -43,7 +43,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -78,7 +78,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -113,7 +113,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -148,7 +148,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -183,7 +183,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -220,7 +220,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -255,7 +255,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -292,7 +292,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -327,7 +327,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -362,7 +362,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -397,7 +397,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -432,7 +432,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -467,7 +467,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -504,7 +504,7 @@
         "src/modules/placements/tpo-policy-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Legacy V162 + exact prod JPA model compared with src/db/schema/tpo-policy.ts. Source/default/constraint match is reviewed; downstream behavior and PostgreSQL execution are not verified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -1155,7 +1155,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -1192,7 +1192,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -1229,7 +1229,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -1264,7 +1264,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -1301,7 +1301,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -1338,7 +1338,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -1375,7 +1375,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2811,7 +2811,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2849,7 +2849,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2887,7 +2887,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2923,7 +2923,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2959,7 +2959,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -2997,7 +2997,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3035,7 +3035,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3071,7 +3071,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3107,7 +3107,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3145,7 +3145,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3181,7 +3181,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3217,7 +3217,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3253,7 +3253,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3289,7 +3289,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3327,7 +3327,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3365,7 +3365,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3403,7 +3403,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3441,7 +3441,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3479,7 +3479,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3517,7 +3517,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3555,7 +3555,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3593,7 +3593,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3631,7 +3631,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3668,7 +3668,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3703,7 +3703,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3738,7 +3738,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3773,7 +3773,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3808,7 +3808,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3843,7 +3843,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3880,7 +3880,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -3917,7 +3917,7 @@
         "src/modules/placements/tpo-crm-service.ts"
       ],
       "constraintAndLifecycleEvidence": "Exact prod JPA/service behavior compared with src/db/schema/tpo-crm.ts and docs/planning/sql/db09-tpo-crm-premerge.sql. Staged constraints are unregistered/unexecuted; identity remaps and lifecycle equivalence remain unverified.",
-      "status": "SOURCE_MAPPED_UNVERIFIED",
+      "status": "MAPPED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -7294,6 +7294,7 @@
     "date": "2026-10-11",
     "scope": "V162 college policy/privacy 14 + active recruiter CRM 38",
     "result": "52 source-to-staged mappings reviewed; 0 runtime/semantic verified",
-    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "statusVocabularyNote": "MAPPED means source-to-target proposal reviewed; it does not mean implemented, DB-tested, or workflow-verified."
   }
 }
