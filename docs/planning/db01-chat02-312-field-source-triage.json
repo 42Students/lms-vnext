@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 0,
+    "postV150ActivenessVerified": 23,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -34,7 +34,9 @@
       "CROSS_DOMAIN_DB04_OR_DB02": 67,
       "CROSS_DOMAIN_DB09_OR_DB01": 5,
       "SOURCE_SEMANTICS_UNRESOLVED": 2
-    }
+    },
+    "postV150ActivenessReviewedFields": 41,
+    "postV150ActivenessReviewNote": "23 fields across user_session, refresh_token_blocklist and auth_handoff_token have current writer/consumer workflow proof. 18 mobile_login_attempt fields have current entity/repository proof but calling workflow remains pending. Runtime semantic verification remains 0."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
@@ -54,12 +56,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_handoff_token",
@@ -72,12 +79,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_handoff_token",
@@ -90,12 +102,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_handoff_token",
@@ -106,12 +123,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_handoff_token",
@@ -124,12 +146,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_handoff_token",
@@ -142,12 +169,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_handoff_token",
@@ -160,12 +192,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_handoff_token",
@@ -178,12 +215,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_handoff_token",
@@ -194,12 +236,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     {
       "legacyTable": "auth_token",
@@ -3476,12 +3523,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3494,12 +3546,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3510,12 +3567,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3528,12 +3590,17 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3544,12 +3611,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3562,12 +3634,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3580,12 +3657,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3599,12 +3681,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3618,12 +3705,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3636,12 +3728,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3652,12 +3749,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3670,12 +3772,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3688,12 +3795,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3704,12 +3816,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3722,12 +3839,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3738,12 +3860,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3756,12 +3883,17 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3772,12 +3904,17 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
     },
     {
       "legacyTable": "organization",
@@ -4596,12 +4733,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java@b173f950ea8df0a3d5769f4b2885f655eda06acf",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/RefreshTokenBlocklistRepository.java@a85ed197af9a1e74de2fca3a0ce5296e8d7f1466",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy logout and single-session revoke persist JTI blocklist rows; JWT request authentication rejects blocklisted token JTIs."
     },
     {
       "legacyTable": "refresh_token_blocklist",
@@ -4614,12 +4758,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java@b173f950ea8df0a3d5769f4b2885f655eda06acf",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/RefreshTokenBlocklistRepository.java@a85ed197af9a1e74de2fca3a0ce5296e8d7f1466",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy logout and single-session revoke persist JTI blocklist rows; JWT request authentication rejects blocklisted token JTIs."
     },
     {
       "legacyTable": "refresh_token_blocklist",
@@ -4630,12 +4781,19 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java@b173f950ea8df0a3d5769f4b2885f655eda06acf",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/RefreshTokenBlocklistRepository.java@a85ed197af9a1e74de2fca3a0ce5296e8d7f1466",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy logout and single-session revoke persist JTI blocklist rows; JWT request authentication rejects blocklisted token JTIs."
     },
     {
       "legacyTable": "refresh_token_blocklist",
@@ -4648,12 +4806,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java@b173f950ea8df0a3d5769f4b2885f655eda06acf",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/RefreshTokenBlocklistRepository.java@a85ed197af9a1e74de2fca3a0ce5296e8d7f1466",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy logout and single-session revoke persist JTI blocklist rows; JWT request authentication rejects blocklisted token JTIs."
     },
     {
       "legacyTable": "refresh_token_blocklist",
@@ -4666,12 +4831,19 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java@b173f950ea8df0a3d5769f4b2885f655eda06acf",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/RefreshTokenBlocklistRepository.java@a85ed197af9a1e74de2fca3a0ce5296e8d7f1466",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy logout and single-session revoke persist JTI blocklist rows; JWT request authentication rejects blocklisted token JTIs."
     },
     {
       "legacyTable": "role",
@@ -5246,12 +5418,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     },
     {
       "legacyTable": "user_session",
@@ -5264,12 +5442,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     },
     {
       "legacyTable": "user_session",
@@ -5280,12 +5464,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     },
     {
       "legacyTable": "user_session",
@@ -5296,12 +5486,18 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     },
     {
       "legacyTable": "user_session",
@@ -5314,12 +5510,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     },
     {
       "legacyTable": "user_session",
@@ -5332,12 +5534,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     },
     {
       "legacyTable": "user_session",
@@ -5350,12 +5558,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     },
     {
       "legacyTable": "user_session",
@@ -5368,12 +5582,18 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     },
     {
       "legacyTable": "user_session",
@@ -5386,12 +5606,55 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "NOT_DETERMINED",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
       "reviewStatus": "SOURCE_TRIAGE_ONLY_NOT_RUNTIME_VERIFIED",
-      "verificationEvidence": null
+      "verificationEvidence": null,
+      "postV150Evidence": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "postV150EvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
     }
-  ]
+  ],
+  "postV150ActivenessEvidence": {
+    "user_session": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "proof": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout."
+    },
+    "refresh_token_blocklist": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java@b173f950ea8df0a3d5769f4b2885f655eda06acf",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/RefreshTokenBlocklistRepository.java@a85ed197af9a1e74de2fca3a0ce5296e8d7f1466",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/security/JwtAuthenticationFilter.java@c730bae1ece4a9eca7da642e70ee057e1c6ee244",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "proof": "Current legacy logout and single-session revoke persist JTI blocklist rows; JWT request authentication rejects blocklisted token JTIs."
+    },
+    "auth_handoff_token": {
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "proof": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
+    },
+    "mobile_login_attempt": {
+      "status": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "sources": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "proof": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+    }
+  }
 }
