@@ -6,17 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-003",
-  "blockedTaskIds": [],
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
+  "blockedTaskIds": [
+    "DB-003"
+  ],
   "checkpoint": {
-    "checkpointKind": "DB003_SOURCE_DISPOSITION_EVIDENCE",
+    "checkpointKind": "DB003_SOURCE_EVIDENCE_COMMITTED_BLOCKED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "99433901070d1962c255246aa8bcebe6e06e7068",
-    "lastWorkerMergedSha": null,
+    "observedMainSha": "7a50dcb92d28e741353dd68dc4a36132e519215f",
+    "lastWorkerMergedSha": "f56b84427036c60ae5c34dbf8ccc26f695efcda2",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-003 picked; researching seven Smrithi legacy tables and their producer/consumer evidence; no retirement or runtime parity claims."
+    "summary": "DB-003 source-only artifact and regression guard committed; manual field/constraint equality pass (91/91; 7/7). Open product/producer-consumer decision, live schema and executed DB test evidence. Task BLOCKED, not implemented-complete or verified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -29,8 +31,15 @@
   "lastAuthoredTests": [],
   "lastExecutedPassingTests": [],
   "blockers": [],
-  "handoffs": [],
-  "nextAction": "Audit legacy source references to Smrithi, document per-table producer/consumer reachability and decision dependencies; leave unproven retirements pending.",
+  "handoffs": [
+    {
+      "taskId": "DB-003",
+      "kind": "PRODUCT_SCOPE_AND_LIVE_SCHEMA",
+      "message": "Seven Smrithi source-derived tables/91 fields need explicit product retention/retirement approval and runtime consumer evidence; reference docs/planning/db00-smrithi-source-evidence.json. CI runner unavailable; no executed test claim.",
+      "commitSha": "f56b84427036c60ae5c34dbf8ccc26f695efcda2"
+    }
+  ],
+  "nextAction": "Pick next eligible unclaimed DATABASE task per shared queue, avoiding DB-003 until runtime/product evidence is available. Preserve source-only work on main.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
