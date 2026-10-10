@@ -24,7 +24,7 @@
     "sourceTriageRows": 312,
     "runtimeSemanticVerifiedFields": 0,
     "dbTestsExecuted": 0,
-    "postV150ActivenessVerified": 23,
+    "postV150ActivenessVerified": 41,
     "classifications": {
       "IDENTITY_PROVIDER_OR_SESSION_DECISION": 84,
       "STRUCTURAL_CANDIDATE_UNVERIFIED": 44,
@@ -36,13 +36,14 @@
       "SOURCE_SEMANTICS_UNRESOLVED": 2
     },
     "postV150ActivenessReviewedFields": 41,
-    "postV150ActivenessReviewNote": "23 fields across user_session, refresh_token_blocklist and auth_handoff_token have current writer/consumer workflow proof. 18 mobile_login_attempt fields have current entity/repository proof but calling workflow remains pending. Runtime semantic verification remains 0."
+    "postV150ActivenessReviewNote": "41 legacy source fields now tied to active controller/service workflows: user_session (9), refresh_token_blocklist (5), auth_handoff_token (9), mobile_login_attempt (18). Source active-workflow evidence only; 0 vNext runtime-semantic verified."
   },
   "warnings": [
     "Even STRUCTURAL_CANDIDATE_UNVERIFIED requires runtime behavior and type/default/FK confirmation.",
     "STAGED is unregistered; source-only findings do not close DATABASE gate.",
     "Learner/Faculty field candidates overlap DB04; recruiter grant candidates overlap DB09; obtain explicit handoff.",
-    "No old production data migration is needed; do not invent provider coverage."
+    "No old production data migration is needed; do not invent provider coverage.",
+    "Legacy mobile login OTP storage is active, but vNext should use provider verification or keyed MAC rather than cloning raw short OTP values; execution safety must be proven with real DB/provider tests."
   ],
   "rows": [
     {
@@ -3523,7 +3524,7 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
@@ -3533,7 +3534,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3546,7 +3548,7 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
@@ -3556,7 +3558,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3567,7 +3570,7 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
@@ -3577,7 +3580,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3590,7 +3594,7 @@
       ],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens. Structural record lifecycle may be retired only with explicit provider-backed workflow proof.",
@@ -3600,7 +3604,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3611,7 +3616,7 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3621,7 +3626,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3634,7 +3640,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3644,7 +3650,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3657,7 +3664,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3667,7 +3674,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3681,7 +3689,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3691,7 +3699,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3705,7 +3714,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3715,7 +3724,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3728,7 +3738,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3738,7 +3748,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3749,7 +3760,7 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3759,7 +3770,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3772,7 +3784,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3782,7 +3794,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3795,7 +3808,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3805,7 +3818,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3816,7 +3830,7 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3826,7 +3840,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3839,7 +3854,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3849,7 +3864,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3860,7 +3876,7 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3870,7 +3886,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3883,7 +3900,7 @@
       ],
       "sourceJPAColumnAnnotated": true,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3893,7 +3910,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "mobile_login_attempt",
@@ -3904,7 +3922,7 @@
       "sourceRiskFlags": [],
       "sourceJPAColumnAnnotated": false,
       "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
-      "postV150Active": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "postV150Active": "ACTIVE_WORKFLOW_CONFIRMED",
       "category": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
       "candidateTarget": null,
       "rationaleOrBlocker": "Cannot assume managed identity covers legacy OTP, handoff, token rotation/revocation, device-session UX, expiry, anti-replay and audit; map service behavior before retirement. Never persist raw refresh/access tokens.",
@@ -3914,7 +3932,8 @@
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
       ],
-      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "postV150EvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourceWorkflowEvidence": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:PublicMobileAuthController.java + MobileLoginAttemptRepository.java; attempt creation, HR email OTP, email fallback, SMS OTP, attempt expiry, tenant scope, reserveVerificationAttempt, used/verified lifecycle."
     },
     {
       "legacyTable": "organization",
@@ -5649,12 +5668,13 @@
       "proof": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used."
     },
     "mobile_login_attempt": {
-      "status": "ACTIVE_REPOSITORY_PATH_CONFIRMED_WORKFLOW_CALLSITE_PENDING",
+      "status": "ACTIVE_WORKFLOW_CONFIRMED",
       "sources": [
         "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
-        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/PublicMobileAuthController.java (start, email-fallback, verify, completeAttemptVerification, createAttempt)"
       ],
-      "proof": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof."
+      "proof": "Active controller creates and saves persisted MobileLoginAttempt for SMS login, recruiter email-first and email fallback. It checks college scope/expiry/used, uses the repository's atomic verification_attempts < 5 UPDATE for both channels, and records verified/consumed lifecycle. All 18 candidate columns are live-table candidates; specific optional fields may still be nullable and require independent type/default/producer proof."
     }
   }
 }
