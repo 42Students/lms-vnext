@@ -611,7 +611,9 @@
         "docs/planning/db09-chat03-tenant-integrity-review.md",
         "tests/db-parity-db09-tracker.test.mjs",
         "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
-        "docs/planning/sql/db09-job-outcome-settings-candidate.sql"
+        "docs/planning/sql/db09-job-outcome-settings-candidate.sql",
+        "docs/planning/sql/db09-round-scheduling-candidate.sql",
+        "docs/planning/db09-chat03-round-scheduling-audit.md"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": "730e88e554076168a2db247e6a03d182f1930aa3",
@@ -682,6 +684,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Stage missing V190 TPO custom job-type and outcome-label settings as isolated candidate SQL; migration integrator only."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11",
+          "reason": "Reserve isolated DB09 round-slot/assignment/reschedule source and staging artifacts after finding active V165 tables without direct vNext equivalents."
         }
       ],
       "progressNote": "Chat 3 2026-10-11: 279/279 DB09 source fields now carry explicit source-vs-declared-column candidate evidence: 14 V162 direct source analyses +139 same-name declaration candidates +45 rename candidates +81 no demonstrated target field. All 279 remain UNVERIFIED, zero PostgreSQL executed. Corrected malformed exported tpo-crm.ts (62c5f1c), authored DB09 static regression tests (2d51c71, ad3a419) NOT EXECUTED, staged CRM same-college FK, round capacity/assignment/reschedule, four missing recruiter settings, and final V193 recruiter-code SQL drafts. Read-only connector source/ledger assertions executed and passed. Full details docs/planning/db09-chat03-source-reconciliation-2026-10-11.md. Current CI verify job failed with zero steps (run 38085854862); no passing runtime gates."
