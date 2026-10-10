@@ -173,3 +173,23 @@ A source-shape review checked 18 listed invariants (files, guards, tracking and 
 - `docs/planning/database-parity-db08-field-ledger.json`: all 18 source tables have **candidate destination models** now; **zero of 280 fields are semantically certified**. Candidate table presence is not parity.
 
 **Still NOT implemented or verified:** actual SQL migrations (staging drafts are not in Drizzle journal), external-offer service/APIs, reviewer request workflow, private signed letter delivery, saved-job service/UI, placement report aggregation, offer-status fidelity, and all producer/consumer parity. DB08 work is not finished.
+
+
+## Six-chat W04 implementation checkpoint — 2026-10-10
+
+**Owner:** W04 / Issue [#24](https://github.com/42Students/lms-vnext/issues/24); `main` only. Latest legacy refs used: backend `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`, frontend `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`. See `docs/planning/w04-placement-closure-checklist.md` for the fine-grained domain and UI queue.
+
+**Code committed on main:**
+- `learner-participation-guard.ts`: use **already migrated** current decisions (0035) for a single fail-closed paid-college-module + membership/section/cohort eligibility check. Authenticated user's real ACTIVE learner membership, exactly one ACTIVE same-college program/cohort and non-archived matching section are required; details of the eligibility decision are never included in user errors.
+- Wired two-gate access into learner job feed, new applications, application history/detail/withdrawal, placement journey, results, offers, learner requests and request workspace, selected GET/PUT evidence/preferences and self job-eligibility endpoints, plus the server-side learner placement layout (deep links return 404 on permission denial).
+- Drive Day coordinators remain eligible for **only limited operational work**, even if marked learner-INELIGIBLE, but are blocked when the college-wide paid Placements switch is OFF and cannot use a cross-college job assignment.
+- `batch-participation-service.ts` rejects two ACTIVE academic enrollments or an inactive class; no first-row-wins authorization.
+- New test fixture `tests/support/w04-placement-access-fixture.ts` explicitly creates the academic cohort, paid-module and member-eligibility prerequisite for historical W04 integration tests; eleven existing W04 integration suites were updated. The learner job-feed suite additionally describes paid-module-OFF, learner-INELIGIBLE and forged-user negative paths.
+- New **staged only** DB08 job batch-target relation `placement_job_cohort_targets` in `src/db/schema/placement-job-cohorts.ts`, draft parent/college/DRAFT-state SQL trigger `scripts/sql/db08-job-cohort-targets-staging.sql`, manager draft-target writer `cohort-target-service.ts`, pure fail-closed target predicate and three authored unit checks. This table is NOT yet in the journal or runtime API.
+
+**Hard release gates remain:**
+1. W01 (#21) must journal/replay the canonical DB08 tables, validate SQL tenant guards and parent FKs, and retire mandatory `placement_jobs.season_id` before cohort-target publication; W04 must not edit the shared migration journal.
+2. The active application two-gate check currently occurs before the application transaction; synchronize with eligibility/paid-module writers to close disable-after-check races, and require finished cohort gating once DB08 migration exists.
+3. Neither SQL/PostgreSQL tests nor lint/typecheck/Vitest/build/E2E/browser ran successfully in this workstream. GitHub Actions currently reports failed jobs without assigned runner/step evidence. Test files are **authored**, not **passing**.
+4. Old job/season APIs, recruiter/manager module gating, complete offer breakdown and external verified outcome workflows, secure private letters, per-drive round/applicant integrity and the full placement pages/modal/status parity remain open.
+5. Source-derived field inventory: 18 legacy DB08 tables / 280 fields, **0 semantically runtime verified**. This checkpoint is deliberately **not** a DONE claim.
