@@ -31,6 +31,7 @@ export async function GET(
 
     return NextResponse.json({
       accessMode: result.accessMode,
+      canPost: result.canPost,
       messages: result.messages,
     });
   } catch (error) {
