@@ -85,6 +85,7 @@ export async function requireProjectReadAccess(
 
   const membership = context.membership;
   if (
+    context.user.platformStatus !== "ACTIVE" ||
     !membership ||
     membership.status !== "ACTIVE" ||
     membership.collegeId !== scope.collegeId
