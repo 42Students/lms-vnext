@@ -10,7 +10,7 @@
     "legacyFrontend": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2"
   },
   "migrationIntegratorChat": 1,
-  "strictSequenceNote": "All entries are unregistered DRAFTS. Dependency order is proposed only. Do NOT activate schema before application writes can preserve legacy semantics and tests pass.",
+  "strictSequenceNote": "All seven entries are unregistered DRAFTS. Dependency order is proposed only. Do NOT activate schema before application writes can preserve legacy semantics and tests pass.",
   "artifacts": [
     {
       "id": "db05-course-identity",
@@ -83,6 +83,19 @@
       "registered": false,
       "executedAgainstPostgres": false,
       "readyForProduction": false
+    },
+    {
+      "id": "db05-content-settings",
+      "path": "scripts/sql/db05-lesson-content-settings.draft.sql",
+      "prereqs": [
+        "CORE_LESSON_CONTENT_TABLE",
+        "SOURCE_17_CONTENT_DATA_FIELDS_VERIFIED",
+        "CALENDAR_TIMEZONE_HTML_AND_PRIVACY_GATES",
+        "DB06_ASSIGNMENT_RESOURCE_CONTRACT"
+      ],
+      "registered": false,
+      "executedAgainstPostgres": false,
+      "readyForProduction": false
     }
   ],
   "gates": [
@@ -139,7 +152,9 @@
       "draft": 38,
       "redesignedNeedsProof": 21,
       "missingOrUnproven": 3
-    }
+    },
+    "nestedLessonContentDataFields": 17,
+    "nestedLessonContentDataOpen": 17
   },
   "testFiles": [
     "tests/db05-source-semantic-review.test.mjs",
@@ -150,7 +165,8 @@
     "Three draft categories require running service revisions",
     "Migration replay and test runner acceptance unavailable",
     "Course-parent upstream reparent and discussions tenant integrity must be proven",
-    "Course_display_contents itself remains staged/unregistered"
+    "Course_display_contents itself remains staged/unregistered",
+    "Lesson content source JSON 17 subfields remain unverified, including two DB06-only assignment resources/submission types; new settings table is unregistered."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance."
 }
