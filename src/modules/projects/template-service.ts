@@ -1,6 +1,7 @@
 import {
   and,
   asc,
+  desc,
   eq,
   isNull,
   ne,
@@ -98,6 +99,136 @@ export async function listProjectTemplates(
     .select()
     .from(projectTemplates)
     .orderBy(asc(projectTemplates.title));
+}
+
+export async function getProjectTemplateDetail(
+  context: RequestContext,
+  templateIdInput: string,
+) {
+  requirePermission(
+    context,
+    "project-template.manage",
+  );
+  const templateId =
+    projectTemplateIdSchema.parse(templateIdInput);
+  const template = await loadTemplate(templateId);
+  const [versions, assignments] =
+    await Promise.all([
+      getDb()
+        .select()
+        .from(projectTemplateVersions)
+        .where(
+          eq(
+            projectTemplateVersions.templateId,
+            templateId,
+          ),
+        )
+        .orderBy(
+          desc(projectTemplateVersions.version),
+        ),
+      getDb()
+        .select()
+        .from(projectTemplateCollegeAssignments)
+        .where(
+          and(
+            eq(
+              projectTemplateCollegeAssignments.templateId,
+              templateId,
+            ),
+            isNull(
+              projectTemplateCollegeAssignments.revokedAt,
+            ),
+          ),
+        )
+        .orderBy(
+          asc(
+            projectTemplateCollegeAssignments.assignedAt,
+          ),
+        ),
+    ]);
+
+  const currentVersion =
+    versions.find(
+      (row) =>
+        row.version === template.currentVersion,
+    ) ?? null;
+
+  return {
+    template,
+    currentVersion,
+    versions,
+    assignments,
+  };
+}
+
+export async function getAssignedProjectTemplateDetail(
+  context: RequestContext,
+  collegeIdInput: string,
+  templateIdInput: string,
+) {
+  const collegeId =
+    collegeIdSchema.parse(collegeIdInput);
+  const templateId =
+    projectTemplateIdSchema.parse(templateIdInput);
+  const college =
+    await loadProjectCollegeScope(collegeId);
+
+  requirePermission(
+    context,
+    "projects.manage",
+    {
+      organizationId: college.organizationId,
+      collegeId: college.id,
+    },
+  );
+
+  const [row] = await getDb()
+    .select({
+      assignment:
+        projectTemplateCollegeAssignments,
+      template: projectTemplates,
+      version: projectTemplateVersions,
+    })
+    .from(projectTemplateCollegeAssignments)
+    .innerJoin(
+      projectTemplates,
+      eq(
+        projectTemplates.id,
+        projectTemplateCollegeAssignments.templateId,
+      ),
+    )
+    .innerJoin(
+      projectTemplateVersions,
+      eq(
+        projectTemplateVersions.id,
+        projectTemplateCollegeAssignments.templateVersionId,
+      ),
+    )
+    .where(
+      and(
+        eq(
+          projectTemplateCollegeAssignments.collegeId,
+          collegeId,
+        ),
+        eq(
+          projectTemplateCollegeAssignments.templateId,
+          templateId,
+        ),
+        isNull(
+          projectTemplateCollegeAssignments.revokedAt,
+        ),
+        eq(projectTemplates.status, "PUBLISHED"),
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    throw new ProjectsServiceError(
+      "PROJECT_TEMPLATE_NOT_ASSIGNED",
+    );
+  }
+
+  return row;
 }
 
 export async function createProjectTemplate(
