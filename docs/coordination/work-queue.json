@@ -496,17 +496,17 @@
       "paths": [
         "docs/planning/db07-w03-field-review.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "9593a4c75790fd5412031be53ab1de85cee842af",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB07 source reconciliation complete: all 16 current Project JPA tables / 358 fields explicitly dispositioned with exact-set structural check (358 expected = 358 artifact, 0 missing/extra); 0 semantic/runtime verified and 0 retirements. Four active missing history/comment concepts retained as gaps. Same-project multi-parent FKs, task allocation/backlog, workspace delete/restore/readiness, delivery revision history, PROJECT_TEAM atomic materialization, tenant-scoped Project events and private-file redesign are documented/staged. Contract tests authored/registered but NOT executed because DB-001 remains blocked. No numbered migration promoted; DB-002/DB-017 dependency chain remains.",
       "pickedBy": 1,
       "pickedAt": "2026-10-10T20:37:11.412Z",
       "startedAt": "2026-10-10T20:37:20.502Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-10T20:45:05.515Z",
+      "completionCommitSha": "9593a4c75790fd5412031be53ab1de85cee842af",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -530,6 +530,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:37:20.502Z",
           "reason": "Reviewing existing DB07 W03 field ledger and staged relationship/task/workspace integrity drafts."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-10T20:45:05.515Z",
+          "reason": "DB07 source-field and invariant reconciliation merged; runtime/migration acceptance pending, so not DONE_VERIFIED."
         }
       ]
     },
