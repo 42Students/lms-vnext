@@ -147,7 +147,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "legacyEntityEvidence": "ClassroomMessage.java @Column sender_name String",
+      "sourceReviewFinding": "Legacy message author display snapshot persists independently from sender_id; resolving current user name later loses historical rename semantics."
     },
     {
       "source": "classroom_messages.sender_role",
@@ -252,7 +254,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "legacyEntityEvidence": "Course.java @Column allowed_for_display Integer",
+      "sourceReviewFinding": "Persisted tri-state/int display policy; cannot infer equivalence to vNext courses.status; keep unproven."
     },
     {
       "source": "course.course_name",
@@ -276,7 +280,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "legacyEntityEvidence": "Course.java @Column created_by_org_id Integer",
+      "sourceReviewFinding": "Nullable authored-organization attribution, not equivalent to vNext department_id; requires tenant identity mapping."
     },
     {
       "source": "course.default_subscription_days",
@@ -348,7 +354,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "legacyEntityEvidence": "Course.java @Column parent_course_id int",
+      "sourceReviewFinding": "Legacy primitive int defaults to zero for absent parent; a nullable vNext UUID parent FK must normalize sentinel zero and prevent cycles/cross-college links."
     },
     {
       "source": "course.short_title",
@@ -724,7 +732,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "legacyEntityEvidence": "LearnerContentProgress.java extends BaseModel",
+      "sourceReviewFinding": "Soft-delete state is inherited from BaseModel; cannot assume absence in subclass means retired."
     },
     {
       "source": "learner_content_progress.first_completed_at",
@@ -1086,7 +1096,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "legacyEntityEvidence": "LessonContents.java @Column course_name String",
+      "sourceReviewFinding": "Legacy denormalized content-level course-name snapshot is persisted; deriving live course name changes historical display behavior."
     },
     {
       "source": "lesson_contents.enabled",
@@ -1134,7 +1146,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "legacyEntityEvidence": "LessonContents.java @Column points long",
+      "sourceReviewFinding": "Legacy persisted primitive long points is content-scoped; cannot silently substitute assignment grade max points."
     },
     {
       "source": "lesson_contents.sequence",
@@ -1158,7 +1172,9 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
+      "legacyEntityEvidence": "LessonContents.java @Column deadline LocalDateTime",
+      "sourceReviewFinding": "Legacy content submission deadline is LocalDateTime; vNext starts_at/ends_at are availability windows, not proven equivalent; timezone conversion requires policy."
     },
     {
       "source": "lesson_contents.version",
@@ -1195,5 +1211,26 @@
     ],
     "notes": "ShortTitle is a required authored string distinct from vNext code; slug is globally reserved even for archived rows; V131 lower(trim) uniqueness. These four mappings are unregistered drafts, not implemented/verified. Other course flags, parent and display semantics remain unresolved.",
     "tests": "None of Node, Postgres, CI, typecheck or build executed."
+  },
+  "latestUnprovenEntityReview": {
+    "reviewedOn": "2026-10-11",
+    "legacyBackendRef": "prod-2026",
+    "sources": [
+      "Course.java",
+      "LessonContents.java",
+      "LearnerContentProgress.java",
+      "ClassroomMessage.java"
+    ],
+    "fieldsReviewed": [
+      "course.allowed_for_display",
+      "course.created_by_org_id",
+      "course.parent_course_id",
+      "lesson_contents.points",
+      "lesson_contents.deadline",
+      "classroom_messages.sender_name",
+      "learner_content_progress.is_deleted",
+      "lesson_contents.course_name"
+    ],
+    "finding": "Entity declarations prove persistence but do not establish active producer/consumer semantics or approve a migration; all eight fields remain MISSING_OR_UNPROVEN."
   }
 }
