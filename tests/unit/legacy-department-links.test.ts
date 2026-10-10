@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   legacyDepartmentDestination,
+  legacyProgramDestination,
 } from "@/modules/admin-ui/legacy-department-links";
 import type { RequestContext } from "@/modules/identity/context";
 
@@ -58,4 +59,19 @@ describe("legacy College/Super Admin Department bookmarks", () => {
       },
     }, "SUPER_ADMIN")).toBe("/dashboard");
   });
+  it("preserves Programs bookmarks without widening admin roles", () => {
+    expect(legacyProgramDestination(collegeAdmin, "COLLEGE_ADMIN"))
+      .toBe("/college/programs");
+    expect(legacyProgramDestination(collegeAdmin, "SUPER_ADMIN"))
+      .toBe("/dashboard");
+    expect(legacyProgramDestination({
+      ...collegeAdmin,
+      user: { ...collegeAdmin.user, systemRoles: ["SUPER_ADMIN"] },
+    }, "SUPER_ADMIN")).toBe("/admin/programs");
+    expect(legacyProgramDestination({
+      ...collegeAdmin,
+      membership: { ...collegeAdmin.membership!, status: "SUSPENDED" },
+    }, "COLLEGE_ADMIN")).toBe("/dashboard");
+  });
+
 });

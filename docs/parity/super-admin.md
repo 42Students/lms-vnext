@@ -491,3 +491,6 @@ These user jobs are functionally similar to College Admin; detailed field/action
 - [ ] Legacy `/college-admin/programs` and `/superadmin/programs` bookmark aliases are not yet implemented. Match source-route manifest before closing.
 
 **Status remains PARTIAL; tests authored and not run, no migration or W01 shared schema changes.**
+
+
+**W06 Programs bookmark alias:** `/college-admin/programs` and `/superadmin/programs` now enter their respective existing scoped Programs page via authenticated, role-fenced redirects. Existing vNext pages and service permissions remain authoritative. Negative role tests authored; run/browser evidence still OPEN.
