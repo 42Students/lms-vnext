@@ -71,10 +71,4 @@ export async function replacePlacementJobCohortTargets(
   });
 }
 
-export function isPlacementJobTargetCohort(
-  cohortId: string | null,
-  targetedCohortIds: readonly string[],
-): boolean {
-  // Empty targets is not "everyone" during the batch migration.
-  return cohortId !== null && targetedCohortIds.includes(cohortId);
-}
+export { isPlacementJobTargetCohort } from "./cohort-target-policy";
