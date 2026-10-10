@@ -28,7 +28,13 @@ export function scoreSummary(
   rows: readonly { score: number | null; maxScore: number | null }[],
 ) {
   const graded = rows.filter((row) =>
-    row.score !== null && row.maxScore !== null && row.maxScore > 0,
+    row.score !== null &&
+    row.maxScore !== null &&
+    Number.isFinite(row.score) &&
+    Number.isFinite(row.maxScore) &&
+    row.maxScore > 0 &&
+    row.score >= 0 &&
+    row.score <= row.maxScore,
   );
   const averagePercent = graded.length
     ? Math.round(
