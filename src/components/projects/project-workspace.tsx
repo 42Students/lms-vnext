@@ -175,7 +175,7 @@ export function ProjectWorkspace({
   const show = (section: ProjectWorkspaceSection) =>
     !activeSection ||
     activeSection === section ||
-    (mode === "LEARNER" &&
+    (mode !== "ADMIN" &&
       activeSection === "team" &&
       section === "meetings");
   const tasksBySprint = new Map<
