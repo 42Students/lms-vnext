@@ -1,4 +1,7 @@
 -- W03 DB07 DRAFT ONLY — NOT registered in the Drizzle journal.
+-- CANONICAL W03 DB07 WORKSPACE-STATE PROMOTION INPUT. The older
+-- db07-w03-admin-workspace-state-candidate.sql is retained for audit history
+-- but is SUPERSEDED and must not be promoted alongside this file.
 -- W01 owns migration numbering/schema snapshot/replay.
 --
 -- Legacy project_workspace has user-visible state that is not equivalent to
@@ -24,6 +27,15 @@ ALTER TABLE project_instances
   ADD COLUMN deleted_by_user_id uuid,
   ADD COLUMN recoverable_content boolean NOT NULL DEFAULT false;
 
+-- Legacy restore recalculates state: ACTIVE when a mentor exists, BLOCKED
+-- otherwise. vNext currently omits BLOCKED from the project status check, so
+-- parity promotion must extend the canonical status domain.
+ALTER TABLE project_instances
+  DROP CONSTRAINT IF EXISTS project_instances_status_ck;
+ALTER TABLE project_instances
+  ADD CONSTRAINT project_instances_status_ck
+  CHECK (status IN ('PLANNED','ACTIVE','BLOCKED','COMPLETED','ARCHIVED'));
+
 ALTER TABLE project_instances
   ADD CONSTRAINT project_instances_section_fk
   FOREIGN KEY (section_id)
@@ -44,18 +56,20 @@ ALTER TABLE project_instances
   ADD CONSTRAINT project_instances_readiness_override_shape_ck
   CHECK (
     (
-      readiness_override IS DISTINCT FROM TRUE
+      readiness_override IS NULL
       AND readiness_override_note IS NULL
       AND readiness_override_by_user_id IS NULL
       AND readiness_override_at IS NULL
     )
     OR
     (
-      readiness_override = TRUE
-      AND readiness_override_note IS NOT NULL
-      AND length(trim(readiness_override_note)) > 0
+      readiness_override IS NOT NULL
       AND readiness_override_by_user_id IS NOT NULL
       AND readiness_override_at IS NOT NULL
+      AND (
+        readiness_override_note IS NULL
+        OR length(readiness_override_note) <= 2000
+      )
     )
   ),
   ADD CONSTRAINT project_instances_readiness_override_user_fk
@@ -116,9 +130,12 @@ CREATE INDEX IF NOT EXISTS
 --             persisted on project_instances and needs actor-attribution review.
 --
 -- Delete/restore state machine after migration:
+-- status_before_delete is intentionally NOT persisted: the frozen legacy
+-- restore path does not restore an old status. It recalculates ACTIVE when an
+-- active mentor exists and BLOCKED otherwise.
 -- DELETE: set deleted_at/deleted_by_user_id in one locked transaction, emit
 --         PROJECTS_PROJECT_DELETED. Do not overload status='ARCHIVED'.
--- RESTORE: clear deleted_at/deleted_by_user_id, emit PROJECTS_PROJECT_RESTORED.
+-- RESTORE: clear deleted_at/deleted_by_user_id; set ACTIVE when an active mentor exists, otherwise set BLOCKED and a blocker reason; emit PROJECTS_PROJECT_RESTORED.
 -- Active list/read access must exclude deleted rows except explicit Deleted
 -- Workspaces admin surfaces. Restore requires projects.manage in same college.
 -- Permanent purge remains out of scope until retention policy is explicit.
