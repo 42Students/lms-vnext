@@ -71,7 +71,7 @@ SQL
 PID_A=$!
 sleep 0.5
 set +e
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -v cohort="$COHORT_A" <<'SQL' >"$B_LOG" 2>&1
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -v VERBOSITY=verbose -v cohort="$COHORT_A" <<'SQL' >"$B_LOG" 2>&1
 UPDATE cohort_progression_state
    SET current_term_number=2, version=1
  WHERE cohort_id=:'cohort' AND version=0;
@@ -81,6 +81,11 @@ set -e
 wait "$PID_A"
 if [[ "$PROMOTE_RC" -eq 0 ]]; then
   echo "FAIL race 1: promotion succeeded into deactivated target term" >&2
+  cat "$B_LOG" >&2
+  exit 1
+fi
+if ! grep -Eq '23514|check constraint' "$B_LOG"; then
+  echo "FAIL: rejected promotion did not report expected DB check violation (SQLSTATE 23514)" >&2
   cat "$B_LOG" >&2
   exit 1
 fi
@@ -111,7 +116,7 @@ SQL
 PID_A=$!
 sleep 0.5
 set +e
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -v cohort="$COHORT_B" <<'SQL' >"$B_LOG" 2>&1
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -v VERBOSITY=verbose -v cohort="$COHORT_B" <<'SQL' >"$B_LOG" 2>&1
 UPDATE cohort_progression_state
    SET current_term_number=2, version=1
  WHERE cohort_id=:'cohort' AND version=0;
@@ -121,6 +126,11 @@ set -e
 wait "$PID_A"
 if [[ "$PROMOTE_RC" -eq 0 ]]; then
   echo "FAIL race 2: promotion succeeded into concurrently empty curriculum" >&2
+  cat "$B_LOG" >&2
+  exit 1
+fi
+if ! grep -Eq '23514|check constraint' "$B_LOG"; then
+  echo "FAIL: rejected promotion did not report expected DB check violation (SQLSTATE 23514)" >&2
   cat "$B_LOG" >&2
   exit 1
 fi
