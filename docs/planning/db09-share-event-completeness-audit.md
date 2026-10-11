@@ -48,8 +48,13 @@ Deferred checks preserve source-compatible transaction order: link/state may be 
 - revoke without REVOKED fails at commit;
 - REVOKED event on active share fails at commit;
 - duplicate REVOKED fails;
-- backdated CREATED/REVOKED fails;
+- backdated lifecycle/use events fail;
+- OPENED/download/email events appended after revoke or expiry fail;
 - rollback removes both lifecycle state and event;
 - event UPDATE/DELETE remains rejected by the pre-existing append-only trigger.
 
 **Gate:** staged/source implementation only. No migration registration or PostgreSQL execution is claimed by DB-060.
+
+## SQL quoting regression
+
+During this pass, connector-authored PL/pgSQL additions were found with invalid single-dollar function delimiters. All affected DB-057/DB-059/DB-060 functions were repaired to actual `$$ ... $$` quoting, and the DB-060 source test now scans every function in the candidate file to reject a single-dollar delimiter before migration integration.
