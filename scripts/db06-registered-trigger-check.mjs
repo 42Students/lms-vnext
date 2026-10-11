@@ -30,7 +30,7 @@ export function auditDb06Triggers(inputs, snapshot, journal) {
     if(typeof sql!=="string") {errors.push("Missing SQL: "+file);continue;}
     const tag=file.split("/").pop().replace(/\.sql$/,"");
     if(!journal.entries?.some(e=>e.tag===tag))errors.push("Journal missing: "+tag);
-    const definition=/CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\s+([a-z]\w*)\s*\([\s\S]*?\)\s*RETURNS\s+trigger\s+LANGUAGE\s+plpgsql\s+AS\s+(\$[a-z0-9_]*\$)([\s\S]*?)\2\s*;/ig;
+    const definition=/CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\s+([a-z]\w*)\s*\([^)]*\)\s*RETURNS\s+trigger\s+LANGUAGE\s+plpgsql\s+AS\s+(\$[a-z0-9_]*\$)([\s\S]*?)\2\s*;/ig;
     for(const m of sql.matchAll(definition)) {
       const body=m[3],fields=[...new Set([...noStrings(body).matchAll(/\b(?:NEW|OLD)\.([a-z]\w*)\b/ig)].map(x=>x[1].toLowerCase()))];
       functions.set(m[1].toLowerCase(),{body,fields});
