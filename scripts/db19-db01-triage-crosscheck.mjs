@@ -88,6 +88,78 @@ export function reconcileDb01Triage(inventory, triage, { inventoryBlobSha = null
     verification:"FROZEN_SOURCE_ACTIVITY_REVIEW_ONLY_NOT_RUNTIME_VERIFIED",
     summary, errors };
 }
+
+/**
+ * Combine two already-existing DB01 *proposal* supplements (78 auth/
+ * security rows and 150 remaining review rows) with the frozen 312-row
+ * triage. This counts candidate coverage; it NEVER approves the target,
+ * provider behavior, migrations, or PostgreSQL acceptance.
+ */
+export function reconcileDb01ProposalCoverage(triage, auth78, remaining150,
+  {authNoTargetQueueBlobSha = null} = {}) {
+  const errors = [];
+  const src = Array.isArray(triage?.rows) ? triage.rows : [];
+  const a = Array.isArray(auth78?.rows) ? auth78.rows : [];
+  const b = Array.isArray(remaining150?.rows) ? remaining150.rows : [];
+  const byKey = new Map(src.map(r=>[pathOf(r),r]));
+  const unique = new Map();
+  const tableSummary = {};
+  let missing = 0;
+  if(src.length!==312 || a.length!==78 || b.length!==150)
+    errors.push({code:"SOURCE_PROPOSAL_CARDINALITY_DRIFT"});
+  if(!/^[a-f0-9]{40}$/i.test(authNoTargetQueueBlobSha||"") ||
+     auth78?.sourceQueueGitBlob!==authNoTargetQueueBlobSha)
+    errors.push({code:"AUTH78_SOURCE_QUEUE_BLOB_DRIFT"});
+  if(remaining150?.source?.legacyBackendSha!==triage?.sourceInventory?.legacyBackendSha)
+    errors.push({code:"REMAINING150_ORACLE_DRIFT"});
+  if(!validString(remaining150?.source?.blobSha))
+    errors.push({code:"REMAINING150_MISSING_FROZEN_PROVENANCE"});
+  const record=(key,proposal,source,sourceType,nullable,flags)=>{
+    const live=byKey.get(key);
+    if(!live){errors.push({code:"UNKNOWN_PROPOSAL_FIELD",key,source});return;}
+    if(unique.has(key)){errors.push({code:"DUPLICATE_PROPOSAL",key,source});return;}
+    if(sourceType&&sourceType!==live.sourceType || nullable&&nullable!==live.sourceNullable ||
+       flags && JSON.stringify(flags)!==JSON.stringify(live.sourceRiskFlags??[]))
+      errors.push({code:"PROPOSAL_SOURCE_SHAPE_DRIFT",key,source});
+    if(proposal!==null&&!validString(proposal))
+      errors.push({code:"INVALID_PROPOSAL_TARGET",key,source});
+    if(proposal!=null&&live.candidateTarget!=null&&proposal!==live.candidateTarget)
+      errors.push({code:"CONTRADICTING_FROZEN_TARGET",key,source,
+        first:live.candidateTarget,second:proposal});
+    unique.set(key,{source,target:proposal});
+  };
+  for(const row of a){
+    const key=row.sourceField;
+    const live=byKey.get(key);
+    if(row.status!=="SOURCE_REVIEW_ONLY" || row.providerAccepted!==false ||
+       row.postgresVerified!==false ||
+       live && row.sourceActiveness!==live.postV150Active)
+      errors.push({code:"FALSE_AUTH78_ACCEPTANCE",key});
+    record(key,row.candidateTarget,"AUTH78",null,null,null);
+  }
+  for(const row of b){
+    const key=row.legacy;
+    if(row.decision!=="OPEN_NOT_ASSIGNED_OR_VERIFIED"||row.runtimeVerified!==false)
+      errors.push({code:"FALSE_REMAINING150_ACCEPTANCE",key});
+    record(key,row.candidateTarget,"REMAINING150",row.sourceType,row.sourceNullable,row.riskFlags);
+  }
+  const targetRows = new Set(src.filter(r=>r.candidateTarget!=null).map(pathOf));
+  for(const [key,r] of unique){
+    if(r.target!=null)targetRows.add(key);
+    const table=key.split(".")[0];
+    tableSummary[table]=(tableSummary[table]||0)+1;
+  }
+  missing=src.length-targetRows.size;
+  if(unique.size!==228)errors.push({code:"INCOMPLETE_PROPOSAL_SWEEP",actual:unique.size});
+  return {valid:errors.length===0,verification:"UNREGISTERED_TARGET_PROPOSALS_ONLY_NOT_POSTGRES",
+    summary:{sourceRows:src.length,authProposals:a.length,remainingReviewRows:b.length,
+      uniqueSupplementRows:unique.size,priorTriageTargetCandidates:src.filter(r=>r.candidateTarget!=null).length,
+      supplementalTargetCandidates:[...unique].filter(([key,r])=>r.target!=null&&!byKey.get(key)?.candidateTarget).length,
+      unionTargetCandidates:targetRows.size,withoutTargetCandidate:missing,
+      runtimeAcceptedMappings:0,coveragePercent:Number((100*targetRows.size/src.length).toFixed(2)),
+      bySupplementTable:tableSummary},errors};
+}
+
 export function auditDb01TriageCheckout(root) {
   const original = readFileSync(resolve(root,INVENTORY_PATH));
   const triage = JSON.parse(readFileSync(resolve(root,TRIAGE_PATH),"utf8"));
