@@ -2463,10 +2463,10 @@
         "docs/planning/database-parity-db10-notification-campaign-contract.md",
         "tests/db10-notification-campaign-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T08:39:31.780Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T14:22:00+05:30",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
@@ -2492,6 +2492,11 @@
           "status": "PICKED",
           "at": "2026-10-11T08:39:31.780Z",
           "reason": "Chat 5 claims isolated DB10 notification campaign source/SQL/docs/tests; DB041 belongs to Chat 1 and DB042 is distinct."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T14:22:00+05:30",
+          "reason": "Chat 5 started 21-field notification campaign/recipient-delivery source reconciliation and isolated staging."
         }
       ]
     }
