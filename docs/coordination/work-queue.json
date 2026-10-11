@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T20:49:00+05:30",
+  "updatedOn": "2026-10-11",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3372,6 +3372,57 @@
           "status": "COMPLETED",
           "at": "2026-10-11T20:49:00+05:30",
           "reason": "Read watermark grant/future/monotonic/identity guards + audit/regression committed; 5/5 source assertions passed, PostgreSQL pending."
+        }
+      ]
+    },
+    {
+      "id": "DB-058",
+      "phase": "DATABASE",
+      "title": "Fail-close PostgreSQL negative-witness database targeting",
+      "scope": "Prevent standalone DB18 direct SQL and concurrency suites from reaching application or unapproved remote DB targets: reusable target validation via existing central disposable guard, tests for production-name/local and remote/app alias rejection, explicit independent-verifier compatibility. No shared migrations or journal edits.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "tests/support/db018-test-target.mjs",
+        "tests/support/db018-test-target.d.mts",
+        "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+        "tests/integration/db18-registered-negative-witnesses.test.ts",
+        "tests/integration/db18-concurrency-witnesses.test.ts",
+        "tests/integration/db18-known-race-gaps.test.ts",
+        "tests/integration/db18-placement-race-gap.test.ts",
+        "tests/db058-witness-target-safety.test.mjs",
+        "docs/planning/db058-disposable-witness-target-safety.md"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T15:12:09.007Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T15:12:09.007Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T15:12:09.007Z",
+          "reason": "Verified exact database target safety missing in DB018 tests despite isolated flag."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T15:12:09.007Z",
+          "reason": "Chat 5 reserved independent DB witness safety fix; no active domain overlap."
         }
       ]
     }
