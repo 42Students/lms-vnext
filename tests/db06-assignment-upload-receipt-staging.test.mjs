@@ -290,7 +290,7 @@ test("DB053 explicitly records current producer/read cutover gaps instead of ena
   );
   assert.match(
     contract,
-    /insert submission.*consume.*receipt.*insert.*file/i,
+    /insert submission[\s\S]*consume[\s\S]*receipt[\s\S]*insert[\s\S]*file/i,
   );
   assert.match(
     contract,
@@ -441,4 +441,70 @@ test("DB053 read revocation remains an explicit runtime activation blocker", () 
   const readGrant = fileService.slice(readGrantStart);
   assert.match(readGrant, /assignmentSubmissionFiles/);
   assert.doesNotMatch(readGrant, /courseUploadReceipts/);
+});
+
+
+test("DB053 deferred completeness prevents dangling FILE submissions and consumed receipts", () => {
+  for (const trigger of [
+    "db06_assignment_submission_file_set_required",
+    "db06_consumed_receipt_file_row_required",
+  ]) {
+    assert.match(
+      sql,
+      new RegExp(`CREATE CONSTRAINT TRIGGER ${trigger}`),
+    );
+  }
+  assert.ok(
+    (sql.match(/DEFERRABLE INITIALLY DEFERRED/g) ?? []).length >= 2,
+  );
+  assert.match(
+    sql,
+    /FILE submission requires at least one immutable file row/,
+  );
+  assert.match(
+    sql,
+    /consumed assignment receipt requires immutable file row/,
+  );
+});
+
+test("DB053 terminal scan evidence and revocation authority remain auditable", () => {
+  assert.match(
+    staged,
+    /scanStatus} in \(\\'CLEAN\\',\\'REJECTED\\'\)[\s\S]*lms-vnext-privileged-scanner/,
+  );
+  assert.match(
+    sql,
+    /scan attestation evidence is immutable/,
+  );
+  assert.match(
+    sql,
+    /consumed upload receipt revocation requires COLLEGE_ADMIN or SUPER_ADMIN/,
+  );
+  assert.match(
+    sql,
+    /upload receipt revocation evidence is immutable/,
+  );
+  assert.match(
+    contract,
+    /consumed receipt may be revoked only by an active same-college COLLEGE_ADMIN or persisted active SUPER_ADMIN/i,
+  );
+});
+
+test("DB053 receipt-to-file composite attestation pins original filename too", () => {
+  const uniqueStart = staged.indexOf(
+    "course_upload_receipts_consumed_attestation_uq",
+  );
+  const fkStart = staged.indexOf(
+    "assignment_submission_files_consumed_attestation_fk",
+  );
+  assert.ok(uniqueStart >= 0);
+  assert.ok(fkStart >= 0);
+  assert.match(
+    staged.slice(uniqueStart, uniqueStart + 600),
+    /table\.originalName/,
+  );
+  assert.match(
+    staged.slice(fkStart, fkStart + 1400),
+    /table\.originalName[\s\S]*courseUploadReceipts\.originalName/,
+  );
 });
