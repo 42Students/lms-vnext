@@ -1,0 +1,515 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-041",
+  "legacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceLedgerSha": "5c9a6239abb64057c97818a52056da66709d3711",
+  "domain": "DB10_LEGACY_NOTIFICATION_CAMPAIGN_AND_RECIPIENT_PARITY",
+  "status": "21_SOURCE_DISPOSITIONED_ZERO_RUNTIME_VERIFIED",
+  "scope": "Legacy notification table, not notification_template and not DB09 general_notification_outbox.",
+  "counts": {
+    "legacyFields": 21,
+    "sourceDispositions": 21,
+    "runtimeVerified": 0,
+    "retirementApproved": 0
+  },
+  "invariants": [
+    "Recipient-targeted receipt is per-user in_app_notifications; broadcast source rows cannot share read state.",
+    "Legacy class_id=0 and a positive course_id means course-wide, not an absent target.",
+    "Historical actor and target membership roles must be server-validated; recipient of mentor/faculty can be user UUID.",
+    "Scheduled SCHEDULED records must not appear in user inbox until published in a transaction.",
+    "A publish event creates one per-user notification receipt using unique(user_id,event_id); duplicate tasks remain idempotent.",
+    "A user losing authorization between enqueue and publish must not be notified.",
+    "Creator must not supply raw arbitrary recipient identity, external assessment_url, delivery_error or private data.",
+    "Campaign state changes and scope/owner changes must be auditable and race safe.",
+    "Source-determined times were local datetime; explicit IANA timezone is mandatory at new vNext schedule input.",
+    "No original data migration required; all work targets greenfield vNext data."
+  ],
+  "records": [
+    {
+      "legacyId": "DB10-NOTIFICATION-01",
+      "legacyTable": "notification",
+      "legacyColumn": "id",
+      "legacyType": "int",
+      "nullable": "NOT_NULL",
+      "defaultValue": null,
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "canonicalTarget": "notification_campaigns.id",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Greenfield UUID campaign identity; direct user delivery remains in_app_notifications.id.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-02",
+      "legacyTable": "notification",
+      "legacyColumn": "created_at",
+      "legacyType": "datetime(6)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "canonicalTarget": "notification_campaigns.created_at",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Creation precedes scheduled publication; recipient created_at is actual delivery receipt time.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-03",
+      "legacyTable": "notification",
+      "legacyColumn": "is_deleted",
+      "legacyType": "tinyint(1)",
+      "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "defaultValue": "'0'",
+      "riskFlags": [],
+      "canonicalTarget": "notification_campaigns.archived_at",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Soft delete hides future/not-published campaigns; already published per-user history requires explicit privacy/retention policy.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-04",
+      "legacyTable": "notification",
+      "legacyColumn": "updated_at",
+      "legacyType": "datetime(6)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "canonicalTarget": "notification_campaigns.updated_at",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Preserve persisted admin edit/update timestamp.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-05",
+      "legacyTable": "notification",
+      "legacyColumn": "class_id",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "canonicalTarget": "notification_campaigns.target_section_id",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Legacy classId=0 course-wide must translate to typed COURSE scope, not UUID zero or null.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-06",
+      "legacyTable": "notification",
+      "legacyColumn": "course_id",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "canonicalTarget": "notification_campaigns.target_course_id",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Preserve course-scoped targeting through tenant-validated course reference, not legacy int.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-07",
+      "legacyTable": "notification",
+      "legacyColumn": "learner_id",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "canonicalTarget": "notification_campaigns.target_user_id",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Legacy optional learnerId was also overloaded as faculty/mentor recipient; canonical users UUID and scoped receipt.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-08",
+      "legacyTable": "notification",
+      "legacyColumn": "is_read",
+      "legacyType": "bit(1)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "canonicalTarget": "in_app_notifications.read_at",
+      "disposition": "REGISTERED_RECIPIENT_MODEL_PRODUCER_PENDING",
+      "sourceRationale": "Read timestamp per recipient avoids legacy class-broadcast shared boolean bug.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-09",
+      "legacyTable": "notification",
+      "legacyColumn": "message",
+      "legacyType": "varchar(255)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "canonicalTarget": "notification_campaigns.body; in_app_notifications.body",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Author body once, fan out sanitized content; legacy HTML requires explicit policy rather than raw HTML projection.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-10",
+      "legacyTable": "notification",
+      "legacyColumn": "title",
+      "legacyType": "varchar(255)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "canonicalTarget": "notification_campaigns.title; in_app_notifications.title",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Persist original author title and copied per-user receipt at release.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-11",
+      "legacyTable": "notification",
+      "legacyColumn": "context_label",
+      "legacyType": "varchar(255)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "canonicalTarget": "notification_campaigns.context_label",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Human-readable course/company label, not a permission authority.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-12",
+      "legacyTable": "notification",
+      "legacyColumn": "notification_type",
+      "legacyType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "canonicalTarget": "notification_campaigns.notification_type; activity_events.module",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Legacy JOB/COURSE/SYSTEM classification becomes typed enum and activity taxonomy.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-13",
+      "legacyTable": "notification",
+      "legacyColumn": "application_id",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "canonicalTarget": "typed subject reference + safe internal actionHref",
+      "disposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceRationale": "Revalidate application ownership; do not store unsafe legacy integer or action query payload.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-14",
+      "legacyTable": "notification",
+      "legacyColumn": "job_id",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "canonicalTarget": "typed subject reference + safe internal actionHref",
+      "disposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceRationale": "Normalize placement job UUID and tenant/scope/authorization.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-15",
+      "legacyTable": "notification",
+      "legacyColumn": "assessment_url",
+      "legacyType": "varchar(2048)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "canonicalTarget": "safe internal assessment redirect only",
+      "disposition": "SECURITY_REDESIGN_PROOF_PENDING",
+      "sourceRationale": "Legacy URL allowed any http(s) external address; no unchecked browser-controlled URL or bearer link persistence.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-16",
+      "legacyTable": "notification",
+      "legacyColumn": "interview_id",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "canonicalTarget": "typed interview subject + safe internal actionHref",
+      "disposition": "API_TRANSLATION_NOT_IMPLEMENTED",
+      "sourceRationale": "Scope interview to same college/user and type-safe internal route.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-17",
+      "legacyTable": "notification",
+      "legacyColumn": "creator_faculty_id",
+      "legacyType": "int",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "canonicalTarget": "notification_campaigns.creator_membership_id",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Server-verified college membership, never trusted client faculty integer.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-18",
+      "legacyTable": "notification",
+      "legacyColumn": "scheduled_at",
+      "legacyType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "canonicalTarget": "notification_campaigns.scheduled_at",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Timestamptz with explicit timezone policy; a future schedule is invisible until publish.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-19",
+      "legacyTable": "notification",
+      "legacyColumn": "delivery_status",
+      "legacyType": "varchar(20)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "canonicalTarget": "notification_campaigns.status",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "SCHEDULED/FAILED/PUBLISHED are campaign states; PUBLISHED requires committed recipient receipts, not provider acceptance.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-20",
+      "legacyTable": "notification",
+      "legacyColumn": "delivery_error",
+      "legacyType": "varchar(500)",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [],
+      "canonicalTarget": "notification_campaigns.last_failure_code",
+      "disposition": "PRIVACY_REDESIGN_STAGED_UNREGISTERED",
+      "sourceRationale": "Safe bounded machine code, never raw provider/exception response or PII.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    },
+    {
+      "legacyId": "DB10-NOTIFICATION-21",
+      "legacyTable": "notification",
+      "legacyColumn": "delivered_at",
+      "legacyType": "datetime",
+      "nullable": "NULL_ALLOWED",
+      "defaultValue": "NULL",
+      "riskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "canonicalTarget": "notification_campaigns.published_at",
+      "disposition": "REDESIGNED_STAGED_UNREGISTERED",
+      "sourceRationale": "Actual successful fan-out publish time, not schedule, not misleading transport provider acceptance.",
+      "sourceEvidence": [
+        "Notification.java",
+        "NotificationServiceImpl.java",
+        "NotificationRepository.java",
+        "NotificationDTO.java",
+        "NotificationResponseDTO.java",
+        "src/db/schema/activity.ts"
+      ],
+      "runtimeVerified": false,
+      "finalRetirementApproved": false
+    }
+  ]
+}
