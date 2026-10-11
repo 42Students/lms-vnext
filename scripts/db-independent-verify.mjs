@@ -94,7 +94,11 @@ async function findFreePort() {
 }
 
 async function startDockerPostgres() {
-  shellText("docker", ["version", "--format", "{{.Server.Version}}"]);
+  const dockerVersion = shellText("docker", [
+    "version",
+    "--format",
+    "{{.Server.Version}}",
+  ]);
   const port = await findFreePort();
   const password = `verify-${process.pid}`;
   const dbName = `lms_vnext_verify_${process.pid}`;
@@ -144,11 +148,7 @@ async function startDockerPostgres() {
           "postgres",
           "--version",
         ]),
-        dockerVersion: shellText("docker", [
-          "version",
-          "--format",
-          "{{.Server.Version}}",
-        ]),
+        dockerVersion,
       };
     }
     await new Promise((resolveWait) => setTimeout(resolveWait, 500));
@@ -166,34 +166,74 @@ function stopDockerPostgres() {
   dockerStarted = false;
 }
 
+function providedPostgresVersion(env) {
+  return shellText(
+    "node",
+    [
+      "--input-type=module",
+      "--eval",
+      [
+        'import pg from "pg";',
+        "const client = new pg.Client({ connectionString: process.env.TEST_DATABASE_URL });",
+        "await client.connect();",
+        'const result = await client.query("show server_version");',
+        "process.stdout.write(result.rows[0].server_version);",
+        "await client.end();",
+      ].join(" "),
+    ],
+    env,
+  );
+}
+
+function redactDatabaseUrl(value) {
+  if (!value) return null;
+  const parsed = new URL(value);
+  if (parsed.password) parsed.password = "***";
+  if (parsed.username) parsed.username = "***";
+  return parsed.toString();
+}
+
 async function main() {
-  const gitSha = shellText("git", ["rev-parse", "HEAD"]);
-  const nodeVersion = process.version;
-  const npmVersion = shellText("npm", ["--version"]);
-
-  let provider;
-  if (databaseUrl) {
-    provider = {
-      mode: "provided-url",
-      host: new URL(databaseUrl).hostname,
-      database: new URL(databaseUrl).pathname.replace(/^\//, ""),
-      note:
-        "TEST_DATABASE_URL supplied externally; scripts/db-test-prepare.ts still enforces reset safety.",
-    };
-  } else {
-    provider = await startDockerPostgres();
-  }
-
-  const env = {
-    ...process.env,
-    DATABASE_URL: databaseUrl,
-    TEST_DATABASE_URL: databaseUrl,
-    DB03_ISOLATED_TEST_DATABASE: "1",
-  };
-
   const startedAt = new Date().toISOString();
+  const nodeVersion = process.version;
+  let npmVersion = null;
+  let gitSha = null;
+  let provider = null;
   let failure = null;
+
   try {
+    gitSha = shellText("git", ["rev-parse", "HEAD"]);
+    npmVersion = shellText("npm", ["--version"]);
+
+    if (databaseUrl) {
+      const env = {
+        ...process.env,
+        DATABASE_URL: databaseUrl,
+        TEST_DATABASE_URL: databaseUrl,
+      };
+      provider = {
+        mode: "provided-url",
+        host: new URL(databaseUrl).hostname,
+        database: new URL(databaseUrl).pathname.replace(/^\//, ""),
+        postgresVersion: providedPostgresVersion(env),
+        note:
+          "TEST_DATABASE_URL supplied externally; scripts/db-test-prepare.ts still enforces reset safety.",
+      };
+    } else {
+      provider = await startDockerPostgres();
+    }
+
+    if (!databaseUrl) {
+      throw new Error("Disposable PostgreSQL URL was not resolved");
+    }
+
+    const env = {
+      ...process.env,
+      DATABASE_URL: databaseUrl,
+      TEST_DATABASE_URL: databaseUrl,
+      DB03_ISOLATED_TEST_DATABASE: "1",
+    };
+
     runStep(
       "Migration journal integrity",
       "npm",
@@ -238,19 +278,16 @@ async function main() {
       nodeVersion,
       npmVersion,
       postgresImage:
-        provider.mode === "docker" ? postgresImage : null,
+        provider?.mode === "docker" ? postgresImage : null,
       provider,
       githubActionsUsed: false,
-      databaseUrlRedacted: databaseUrl
-        ? (() => {
-            const parsed = new URL(databaseUrl);
-            if (parsed.password) parsed.password = "***";
-            if (parsed.username) parsed.username = "***";
-            return parsed.toString();
-          })()
-        : null,
+      databaseUrlRedacted: redactDatabaseUrl(databaseUrl),
       steps: results,
-      passed: failure === null && results.every((step) => step.exitCode === 0),
+      passed:
+        failure === null &&
+        provider !== null &&
+        results.length === 5 &&
+        results.every((step) => step.exitCode === 0),
       failure,
     };
     mkdirSync(dirname(evidencePath), { recursive: true });
