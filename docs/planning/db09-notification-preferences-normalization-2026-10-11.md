@@ -46,7 +46,7 @@ The frozen `TpoSettingsHubService.myPrefs` and `saveMyPrefs` persist exactly fiv
 
 VNext uses the existing composite primary key `(college_id, user_id)` for the personal row; only an appropriately scoped TPO user may read/write. Keep the college identifier derived from the current authorized membership or reject an arbitrary unrelated college. Do not flatten to a global `user_id` key and allow one college to change another college's preferences.
 
-**API wave contract:** keep the live GET/PUT endpoint contract and return the same five camelCase properties; write partial boolean updates without erasing unaffected values. On GET, missing row yields the documented defaults. UI phase must independently decide whether to surface these controls because current frozen page consumption is not proven. These rules are **not** proof of personal-preference delivery enforcement.
+**API wave contract:** keep the live GET/PUT endpoint contract and return the same five camelCase properties; write partial boolean updates without erasing unaffected values. On GET, missing row yields the documented defaults. UI phase must independently decide whether to surface these controls because current frozen TPO page consumption is not proven. These rules are **not** proof of personal-preference delivery enforcement.
 
 ## Existing schema corruption repaired in the same claimed file
 
