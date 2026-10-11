@@ -132,7 +132,9 @@
         "candidateColumn": "learner_content_progress.deleted_at",
         "sourceOracle": "LearnerContentProgressRepository.countCompletedPerLearner selects MAX(attempt) before filtering is_deleted",
         "consumerVerified": false,
-        "postgresVerified": false
+        "postgresVerified": false,
+        "sourceClassification": "UNREGISTERED_DRAFT_SOURCE_PROVEN_CONSUMER_PARITY_OPEN",
+        "rowDisposition": "OPEN"
       },
       "companionSameCollegeDraft": {
         "path": "scripts/sql/db05-progress-same-college.draft.sql",
@@ -472,18 +474,20 @@
     "nestedCourseMetadataFields": 14,
     "unprovenActiveHistoricals": [
       "course.default_subscription_days",
-      "course.formal_title",
-      "learner_content_progress.is_deleted"
+      "course.formal_title"
     ],
     "classifications": {
       "candidate": 30,
-      "draft": 37,
+      "draft": 38,
       "redesignedNeedsProof": 22,
-      "missingOrUnproven": 3
+      "missingOrUnproven": 2
     },
     "nestedLessonContentDataFields": 17,
     "nestedLessonContentDataOpen": 17,
-    "outstandingSemanticDecisions": 25
+    "outstandingSemanticDecisions": 25,
+    "sourceConfirmedNotYetConsumerVerified": [
+      "learner_content_progress.is_deleted"
+    ]
   },
   "testFiles": [
     "tests/db05-source-semantic-review.test.mjs",
@@ -501,7 +505,7 @@
     "tests/db05-course-soft-delete-guard.test.mjs"
   ],
   "currentBlockers": [
-    "Unknown active consumers for three historical source columns",
+    "Two remaining historical-only source columns (course.default_subscription_days, course.formal_title) lack current producer/consumer proof; learner_content_progress.is_deleted is separately source-confirmed but application+PG unverified.",
     "Three draft categories require running service revisions",
     "Migration replay and test runner acceptance unavailable",
     "Course-parent upstream reparent and discussions tenant integrity must be proven",
