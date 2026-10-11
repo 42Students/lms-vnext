@@ -2162,25 +2162,35 @@
         "docs/planning/database-parity-db06-assessment-retention-contract.md",
         "tests/db06-assessment-retention-staging.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T08:25:15.235Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T08:25:15.235Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Fresh implementation follow-up: DB-009 left quiz attempt/answer is_deleted retention unresolved; 0042 freezes attribution only and does not freeze score/snapshots or prevent hard deletion."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T08:25:15.235Z",
+          "reason": "Chat 1 claims DB06 source-only assessment retention staging after DB-035 completion."
         }
       ]
     }
