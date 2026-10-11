@@ -10,11 +10,11 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_DB064_QUOTE_SYNTAX_REPAIR_SOURCE_ONLY",
-    "updatedOn": "2026-10-11T20:41:25.440Z",
-    "observedMainSha": "6ef9b04cebe4fb61d8ed31c46356b5891458469f",
-    "lastWorkerMergedSha": "6ef9b04cebe4fb61d8ed31c46356b5891458469f",
-    "summary": "Recovered and fixed malformed SQL function dollar delimiters in two DB004 auth lifecycle staging guards and two DB064 TPO lifecycle functions. SQL `AS $` invalid; DB09 also had invalid `END $;`. CI-selected DB01 guard file added 3 negative/positive tests; CI-selected DB09 parity added 2; CI-selected shared DB contracts scans all 112 staged + 43 registered SQL for lone-dollar syntax. New isolated exact-GitHub V8 callbacks: DB01 3/3 PASS, DB09 2/2 PASS, shared detector synthetic 1/1 PASS. Focused structural inspection across 155 SQL files found no remaining same-pattern violations. PostgreSQL/Node full suite NOT_RUN; GitHub Actions intentionally unused due billing; private repo preserved. DB004 still IN_PROGRESS."
+    "checkpointKind": "DB004_PINNED_312_FIELD_TRIAGE_175_TARGET_PROPOSALS_PG_WITNESS_RUNNER_UNEXECUTED",
+    "updatedOn": "2026-10-11T21:12:16.499Z",
+    "observedMainSha": "3f7b9c0f2a4bdebe807e12b9e26675949d00c33e",
+    "lastWorkerMergedSha": "3f7b9c0f2a4bdebe807e12b9e26675949d00c33e",
+    "summary": "Reviewed exact frozen DB01 source: 312/312 source activity classified; 175 distinct unverified candidate targets across 312 legacy fields using 78 auth + 150 remaining supplement union; 137 fields still need target/disposition, 70 active fields lack direct consumer proof. 32/32 in-process V8 adversarial reconciliation callbacks PASS; full 11-domain source inventory PASS, 0 runtime verified. Added five-witness, opt-in, anti-skip non-Actions PostgreSQL runner and 22/22 in-process source safety callbacks; actual Node runner and PostgreSQL NOT RUN. DB004 remains IN_PROGRESS; no migration registration or falsely verified task."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -53,13 +53,17 @@
     "tests/db01-auth-handoff-lifecycle-pg.test.mjs (additional future proof case unexecuted)",
     "tests/db01-test-database-guard.test.mjs (+3 SQL delimiter cases, CI parity script)",
     "tests/db-parity-db09-tracker.test.mjs (+2 DB09 delimiter cases, CI parity script)",
-    "tests/db-parity-contracts.test.mjs (+2 cross-domain registered/staged SQL delimiter cases, CI parity script)"
+    "tests/db-parity-contracts.test.mjs (+2 cross-domain registered/staged SQL delimiter cases, CI parity script)",
+    "tests/db19-db01-triage-crosscheck.test.mjs (32 source cases)",
+    "tests/db-staged-pg-witnesses.test.mjs (22 runner safety cases)"
   ],
   "lastExecutedPassingTests": [
     "DB-065: node --test tests/db065-database-phase-gate.test.mjs 30/30 PASS, Node v22.16.0, exact committed blob hashes 947ecb6 and be55547",
     "DB-064: exact fetched source V8 callbacks 20/20 PASS, NOT node --test / PG",
     "DB004 2026-10-12: 35/35 V8 exact-GitHub source-test callbacks PASS, NOT Node node:test/PG",
-    "2026-10-12: DB004 exact GitHub V8 3/3 + DB064 exact GitHub V8 2/2 + shared delimiter synthetic 1/1, no Node/PG runtime"
+    "2026-10-12: DB004 exact GitHub V8 3/3 + DB064 exact GitHub V8 2/2 + shared delimiter synthetic 1/1, no Node/PG runtime",
+    "DB004: 32/32 exact-GitHub source crosswalk V8 callbacks PASS (NOT node --test/PG)",
+    "DB004: 22/22 isolated witness runner V8 safety callbacks PASS using synthetic URL facade (NOT Node/PG)"
   ],
   "blockers": [
     "DB015 P5-R01: learner placement application can race paid-module/inherited-eligibility revocation after precheck.",
@@ -104,7 +108,7 @@
     "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows.",
     "DB-049 → Chat 1: integrate staged notification_campaigns SQL guarded at PUBLISHING/PUBLISHED with FOR SHARE target membership/active delivery, run DB49-01..16 in independent disposable PG. 10 Node tests authored not executed."
   ],
-  "nextAction": "Continue DB004 identity P0 reconciliation and provider decision; independently execute disposable PostgreSQL DB01-auth-attempt and handoff tests and registered migration replay when runner available. Schema/migration promotion remains Chat1-only. Keep private repo, leave global DATABASE active.",
+  "nextAction": "DB004: close 137 legacy field target/disposition decisions with concrete source producer-consumer evidence and Identity Platform/provider decision; run exact five disposable PostgreSQL source witnesses via node scripts/db-staged-pg-witnesses.mjs --plan/--run with explicit separate TEST_DATABASE_URL; coordinate registered migrations with Chat1. Do NOT mark DONE_VERIFIED without PG.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -148,7 +152,9 @@
     "https://github.com/42Students/lms-vnext/commit/9c56dcf67a13419cf651c0845698ca36dee222d1",
     "docs/planning/db065-phase-gate-audit.md",
     "docs/planning/db01-auth-otp-handoff-contract.md",
-    "docs/planning/db09-user-state-lifecycle-audit.md"
+    "docs/planning/db09-user-state-lifecycle-audit.md",
+    "docs/planning/db19-independent-source-review.md",
+    "docs/planning/db01-disposable-postgres-test-preflight.md"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
