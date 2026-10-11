@@ -36,6 +36,7 @@ DECLARE
   term_course_core_a uuid;
   course_core_a uuid;
   course_elective_a uuid;
+  course_order_peer_a uuid;
   course_b uuid;
   section_a uuid;
   section_a2 uuid;
@@ -135,6 +136,8 @@ BEGIN
   INSERT INTO courses(department_id, name, code)
   VALUES (dept_a, 'DB02 Elective A', 'DB02-ELECTIVE-A') RETURNING id INTO course_elective_a;
   INSERT INTO courses(department_id, name, code)
+  VALUES (dept_a, 'DB02 Order Peer A', 'DB02-ORDER-PEER-A') RETURNING id INTO course_order_peer_a;
+  INSERT INTO courses(department_id, name, code)
   VALUES (dept_b, 'DB02 Course B', 'DB02-COURSE-B') RETURNING id INTO course_b;
 
   INSERT INTO program_terms(program_id, term_number, name, is_active, total_credits)
@@ -145,6 +148,20 @@ BEGIN
   INSERT INTO program_term_courses(program_term_id, course_id, type, credits, display_order)
   VALUES (term_a1, course_core_a, 'CORE', 0, 1)
   RETURNING id INTO term_course_core_a;
+
+  -- Legacy semester_course has no uniqueness on course_order and single-row updates can
+  -- intentionally collide. Preserve that compatibility state; reads must tie-break stably.
+  INSERT INTO program_term_courses(program_term_id, course_id, type, credits, display_order)
+  VALUES (term_a1, course_order_peer_a, 'ELECTIVE', 3, 1);
+
+  IF (
+    SELECT count(*)
+      FROM program_term_courses
+     WHERE program_term_id = term_a1
+       AND display_order = 1
+  ) <> 2 THEN
+    RAISE EXCEPTION 'duplicate curriculum display_order was unexpectedly rejected';
+  END IF;
 
   INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status,
                       start_date, end_date)
