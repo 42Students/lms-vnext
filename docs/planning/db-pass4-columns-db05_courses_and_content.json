@@ -1485,7 +1485,19 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "SOURCE-BASED UNREGISTERED DRAFT: scripts/sql/db05-version-progress-attempts.draft.sql -> learner_content_progress.deleted_at, preserves legacy BaseModel.isDeleted. LearnerContentProgressRepository.countCompletedPerLearner chooses highest attempt BEFORE deleted filtering; direct latest-attempt reads do NOT filter deleted. API consumer parity, same-college scope and PG negative/race not verified.",
+          "db008SourceDisposition": "ACTIVE_LEGACY_REPOSITORY_TOMBSTONE_CONSUMER_CONFIRMED_UNREGISTERED_CANDIDATE",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "BaseModel.java @Column is_deleted false default",
+            "LearnerContentProgress.java extends BaseModel",
+            "V36__learner_content_progress.sql",
+            "V132__learner_content_progress_attempt.sql",
+            "LearnerContentProgressRepository.countCompletedPerLearner, findTopByLearnerIdAndLessonContentIdOrderByAttemptDesc, findByLearnerIdAndLessonContentIdIn, startNewAttempt",
+            "scripts/sql/db05-version-progress-attempts.draft.sql (UNREGISTERED, not PG tested)",
+            "docs/planning/db05-progress-deletion-attempt-contract.md"
+          ]
         },
         {
           "legacyTable": "learner_content_progress",
