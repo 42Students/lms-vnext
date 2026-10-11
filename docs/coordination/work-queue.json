@@ -2106,14 +2106,14 @@
         "docs/planning/database-parity-db10-notification-template-contract.md",
         "tests/db10-notification-template-disposition.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 5,
       "pickedAt": "2026-10-11T13:42:00+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T13:42:30+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2135,6 +2135,11 @@
           "status": "PICKED",
           "at": "2026-10-11T13:42:00+05:30",
           "reason": "Chat 5 reserved isolated notification-template disposition/docs/test paths; no migration/schema-barrel or Chat 3 DB09 paths overlap."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T13:42:30+05:30",
+          "reason": "Chat 5 started exact 56-field template-registry disposition against current pinned runtime consumers."
         }
       ]
     }
