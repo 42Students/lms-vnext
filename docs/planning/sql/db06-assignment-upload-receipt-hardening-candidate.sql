@@ -20,7 +20,9 @@ DECLARE
   owner_college uuid;
   owner_user uuid;
   assignment_college uuid;
+  assignment_offering uuid;
   content_college uuid;
+  content_delivery uuid;
 BEGIN
   SELECT cm.college_id, cm.user_id
     INTO owner_college, owner_user
@@ -52,8 +54,8 @@ BEGIN
         USING ERRCODE='23514';
     END IF;
 
-    SELECT dep.college_id
-      INTO assignment_college
+    SELECT dep.college_id, lp.offering_id
+      INTO assignment_college, assignment_offering
       FROM course_assignments a
       JOIN course_lessons l ON l.id = a.lesson_id
       JOIN course_learning_paths lp ON lp.id = l.learning_path_id
@@ -66,14 +68,35 @@ BEGIN
       FOR SHARE OF a, l, lp, co, c, dep;
 
     IF assignment_college IS NULL
-       OR assignment_college IS DISTINCT FROM NEW.college_id THEN
+       OR assignment_college IS DISTINCT FROM NEW.college_id
+       OR NEW.delivery_id IS NULL THEN
       RAISE EXCEPTION
         'DB06 assignment upload receipt target tenant/state mismatch'
         USING ERRCODE='23514';
     END IF;
+
+    PERFORM 1
+      FROM course_assignments a
+      JOIN course_section_deliveries d ON d.id = NEW.delivery_id
+      WHERE a.id = NEW.assignment_id
+        AND d.offering_id = assignment_offering
+        AND (a.delivery_id IS NULL OR a.delivery_id = NEW.delivery_id)
+      FOR SHARE OF a, d;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION
+        'DB06 assignment upload receipt delivery mismatch'
+        USING ERRCODE='23514';
+    END IF;
+
+    -- Reuse registered DB06 learner/delivery roster logic (0042) so receipt
+    -- grants cannot outlive or bypass section/elective learner scope.
+    PERFORM db06_guard_learner_delivery(
+      NEW.delivery_id,
+      NEW.owner_membership_id
+    );
   ELSIF NEW.purpose = 'COURSE_RESOURCE' THEN
-    SELECT dep.college_id
-      INTO content_college
+    SELECT dep.college_id, lc.delivery_id
+      INTO content_college, content_delivery
       FROM lesson_contents lc
       JOIN course_lessons l ON l.id = lc.lesson_id
       JOIN course_learning_paths lp ON lp.id = l.learning_path_id
@@ -84,7 +107,8 @@ BEGIN
       FOR SHARE OF lc, l, lp, co, c, dep;
 
     IF content_college IS NULL
-       OR content_college IS DISTINCT FROM NEW.college_id THEN
+       OR content_college IS DISTINCT FROM NEW.college_id
+       OR NEW.delivery_id IS DISTINCT FROM content_delivery THEN
       RAISE EXCEPTION
         'DB06 course-resource upload receipt target tenant mismatch'
         USING ERRCODE='23514';
@@ -123,6 +147,7 @@ BEGIN
      OR NEW.owner_membership_id IS DISTINCT FROM OLD.owner_membership_id
      OR NEW.purpose IS DISTINCT FROM OLD.purpose
      OR NEW.assignment_id IS DISTINCT FROM OLD.assignment_id
+     OR NEW.delivery_id IS DISTINCT FROM OLD.delivery_id
      OR NEW.lesson_content_id IS DISTINCT FROM OLD.lesson_content_id
      OR NEW.object_key IS DISTINCT FROM OLD.object_key
      OR NEW.upload_token_hash IS DISTINCT FROM OLD.upload_token_hash
@@ -256,6 +281,7 @@ BEGIN
     IF submission_assignment IS NULL
        OR submission_type <> 'FILE'
        OR submission_assignment IS DISTINCT FROM NEW.assignment_id
+       OR submission_delivery IS DISTINCT FROM NEW.delivery_id
        OR submission_membership IS DISTINCT FROM NEW.owner_membership_id
        OR submission_college IS DISTINCT FROM NEW.college_id THEN
       RAISE EXCEPTION
@@ -383,22 +409,26 @@ EXECUTE FUNCTION db06_reject_assignment_file_history_mutation();
 -- 1. readPrivateObjectAttestation must require and return a trusted
 --    scan_attested_at value from privileged scanner metadata. Do not synthesize
 --    the scanner timestamp in the application/database.
--- 2. FILE submission transaction order must become:
+-- 2. Persist input.deliveryId on every ASSIGNMENT_SUBMISSION receipt. Legacy
+--    submission_assets is a list and may consume multiple unique receipts, so
+--    consumed_by_submission_id is intentionally NOT unique and
+--    assignment_submission_files is an ordered many-row relation.
+-- 3. FILE submission transaction order must become:
 --      INSERT assignment_submissions
 --      -> UPDATE/consume course_upload_receipts with CLEAN attestation,
 --         scan actor/time and explicit retention_until
 --      -> INSERT assignment_submission_files.
 --    The composite FK deliberately makes the current file-before-receipt order
 --    invalid once this schema is promoted.
--- 3. Receipt consumption must use a CAS predicate:
+-- 4. Receipt consumption must use a CAS predicate:
 --      consumed_at IS NULL AND revoked=false AND deleted_at IS NULL
 --    plus the exact owner/assignment/college identity.
--- 4. createAssignmentFileReadGrant must join the receipt and refuse signed reads
+-- 5. createAssignmentFileReadGrant must join the receipt and refuse signed reads
 --    when revoked, deleted, pending/rejected, attestation mismatched, or after
 --    the domain's read-retention policy no longer permits access.
--- 5. Revocation/deletion service operations must write actor/time/reason and
+-- 6. Revocation/deletion service operations must write actor/time/reason and
 --    never mutate object identity or immutable file evidence.
--- 6. The DB06_ASSIGNMENT_FILES_READY gate must remain fail-closed until the
+-- 7. The DB06_ASSIGNMENT_FILES_READY gate must remain fail-closed until the
 --    numbered migration, producer cutover, read-path cutover and all witnesses
 --    execute successfully.
 
@@ -412,11 +442,12 @@ EXECUTE FUNCTION db06_reject_assignment_file_history_mutation();
 -- G consume after expiry, revoked/deleting/deleted, unscanned or mismatched
 --   MIME/size fails.
 -- H consume against wrong assignment/member/college/delivery/submission type
---   fails.
+--   fails; a receipt granted for delivery A cannot be consumed in delivery B.
 -- I consumed receipt cannot be reassigned/unconsumed.
 -- J retention cannot move backwards; deletion cannot begin before retention.
 -- K file INSERT before receipt consumption fails composite FK/guard.
--- L exact consumed receipt -> file row succeeds.
+-- L exact consumed receipt -> file row succeeds; multiple distinct consumed
+--   receipts may bind to one submission at unique sequence positions.
 -- M file key/generation/MIME/size/hash/name drift fails.
 -- N file UPDATE/DELETE/TRUNCATE and receipt DELETE/TRUNCATE fail.
 -- O second concurrent consumer loses the receipt CAS.
