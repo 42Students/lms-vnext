@@ -37,7 +37,10 @@ test("DB02 draft persists canonical cohort term, period, year, and history", () 
   assert.match(sql, /CREATE TRIGGER db02_cohort_progression_initialize\s+AFTER INSERT ON cohorts/);
   assert.match(sql, /NEW\.current_term_number <> OLD\.current_term_number \+ 1/);
   assert.match(sql, /NEW\.version <> OLD\.version \+ 1/);
-  assert.match(sql, /CREATE TRIGGER db02_cohort_progression_history\s+AFTER UPDATE ON cohort_progression_state/);
+  assert.match(
+    sql,
+    /CREATE TRIGGER db02_cohort_progression_history\s+AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version\s+ON cohort_progression_state/,
+  );
   assert.match(sql, /CREATE TRIGGER db02_cohort_progression_events_immutable\s+BEFORE INSERT OR UPDATE OR DELETE/);
   assert.match(sql, /pg_trigger_depth\(\)/);
   assert.match(sql, /UNIQUE \(cohort_id, state_version\)/);
