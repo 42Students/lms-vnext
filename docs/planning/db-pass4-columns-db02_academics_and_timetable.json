@@ -349,12 +349,17 @@
             },
             "vnextTargetDisposition": {
               "decisionId": "CHAT04_DB005_ALL_TARGET_DISPOSITIONS_2026_10_11",
-              "kind": "DERIVED_CANONICAL_COUNT",
-              "target": "learner_program_enrollments filtered by cohort/status",
-              "rationale": "Server-managed count is derived from canonical active cohort enrollment; exact legacy filter equivalence remains an acceptance test.",
+              "kind": "DERIVED_CANONICAL_SECTIONED_COUNT",
+              "target": "COUNT DISTINCT learner_program_enrollments.id JOIN active section_enrollments -> active sections WHERE learner_program_enrollments.cohort_id = cohort AND learner_program_enrollments.status = ACTIVE AND sections.cohort_id matches",
+              "rationale": "Legacy count follows non-deleted learner.class_id -> non-deleted ordinary class -> batch, so active cohort enrollment alone is too broad. Count only academically active learners actually placed into an active ordinary section; GROUP_BACKED/elective rosters do not inflate the count. Temporary membership SUSPENDED remains academically counted; LEARNER role removal or membership ENDED withdraws active program/section enrollment.",
               "registrationStatus": "DESIGN_DISPOSITION_ONLY",
               "semanticEquivalenceStatus": "NOT_RUNTIME_VERIFIED",
-              "postgresStatus": "NOT_EXECUTED"
+              "postgresStatus": "NOT_EXECUTED",
+              "evidenceAddendum": {
+                "legacy": "BatchRepository.findUsageCounts counts DISTINCT learner rows joined via non-GROUP_BACKED class.batch_id and excludes soft-deleted class/learner, without suspended_at filter.",
+                "vnextAcceptance": "scripts/sql/db02-postgres-acceptance-unregistered.sql",
+                "acceptanceCommit": "957a17f7b77f18c3be89d7bd2e63eaec6da2ece7"
+              }
             }
           }
         },
@@ -7783,6 +7788,16 @@
         "coreRule": "CORE offering must have matching program_term_courses(program_term_id, course_id).",
         "electiveRule": "ELECTIVE offering remains program-term bound but is not required to be in the fixed curriculum mapping.",
         "runtimePostgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "BATCH_CURRENT_STUDENTS_SECTIONED_DERIVATION",
+        "status": "DESIGN_MAPPED_NOT_RUNTIME_VERIFIED",
+        "target": "Distinct ACTIVE learner_program_enrollments with at least one ACTIVE section_enrollment into an ACTIVE section of the same cohort.",
+        "excludes": "Unsectioned cohort enrollment and elective/group-backed rosters.",
+        "suspensionRule": "Temporary SUSPENDED membership remains academic/current-student state; LEARNER role removal or membership ENDED closes active academic enrollment.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "acceptanceCommit": "957a17f7b77f18c3be89d7bd2e63eaec6da2ece7",
+        "postgresStatus": "NOT_EXECUTED"
       }
     ],
     "targetDispositionCoverage": {
@@ -7861,7 +7876,7 @@
       "parentEnrollmentExtension": {
         "path": "scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql",
         "blobSha": "4c05a2c5301da5983f9c15de750ba91b6cfde294",
-        "plpgsqlFunctions": 7,
+        "plpgsqlFunctions": 8,
         "pairedDollarQuoteOpenings": 7,
         "triggerNameOverlapWithCanonical": []
       },
@@ -7877,7 +7892,9 @@
             "delivery/event scope",
             "learner enrollment tenant/role/history identity",
             "faculty association/teaching identity lifecycle",
-            "lecture hall overlap/cancellation/archive behavior"
+            "lecture hall overlap/cancellation/archive behavior",
+            "legacy-compatible current_students sectioned learner derivation",
+            "learner suspension vs role-removal/membership-end academic lifecycle"
           ],
           "executedPostgres": false
         },
@@ -7897,7 +7914,7 @@
       ],
       "staticChecks": {
         "canonicalFunctionDelimiterPairs": "25/25",
-        "extensionFunctionDelimiterPairs": "7/7",
+        "extensionFunctionDelimiterPairs": "8/8",
         "canonicalExtensionTriggerOverlap": 0,
         "singleSessionHarnessEndsWithRollback": true,
         "concurrencyRaceFamilies": 5
