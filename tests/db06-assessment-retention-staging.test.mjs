@@ -157,6 +157,34 @@ test("DB038 requires quiz total_points to equal authored question points at comm
   );
 });
 
+test("DB038 mirrors option-set scoring shape at the DB boundary", () => {
+  assert.match(
+    sql,
+    /CREATE UNIQUE INDEX quiz_options_question_lower_text_uq/,
+  );
+  for (const trigger of [
+    "db06_quiz_question_shape_from_question",
+    "db06_quiz_question_shape_from_options",
+  ]) {
+    assert.match(
+      sql,
+      new RegExp(`CREATE CONSTRAINT TRIGGER ${trigger}`),
+    );
+  }
+  assert.match(
+    sql,
+    /DB06 quiz question requires 2 to 20 options/,
+  );
+  assert.match(
+    sql,
+    /DB06 single-choice question requires exactly one correct option/,
+  );
+  assert.match(
+    sql,
+    /DB06 multiple-choice question requires correct and incorrect options/,
+  );
+});
+
 test("DB038 validates answer snapshots against the committed question and option definition", () => {
   for (const token of [
     "db06_quiz_answer_snapshot_guard",
@@ -263,8 +291,8 @@ test("DB038 closes the DB009 quiz status and soft-delete disposition gaps", () =
   }
 });
 
-test("DB038 contract preserves the 24 PostgreSQL promotion witnesses", () => {
-  for (let i = 1; i <= 24; i += 1) {
+test("DB038 contract preserves the 26 PostgreSQL promotion witnesses", () => {
+  for (let i = 1; i <= 26; i += 1) {
     assert.match(
       contract,
       new RegExp(`^\\s*${i}\\.\\s`, "m"),
