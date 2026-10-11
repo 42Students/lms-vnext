@@ -225,7 +225,7 @@ Before DB-012 can move beyond source/design completion:
 9. scheduling cross-job/cross-round FK negatives and assignment/reschedule races;
 10. coordinator cross-college authorization negatives;
 11. TPO bell independent-reader semantics;
-12. prep assignment tenant/catalog authorization and dedupe race;
+12. prep assignment learner/TPO authorization, same-organization course catalog parity, cross-organization rejection and dedupe race;
 12a. trusted-domain malformed/free-mail/cross-college writer negatives and exact-match isolation;
 12b. normalized prep-course same-organization FK/scope, archived/inactive parent rejection and atomic settings replacement;
 13. notification undo vs claim race, APP exactly-once fanout, digest isolation;
@@ -297,3 +297,30 @@ definitions assert unique exports, correct nine boolean source defaults and
 the two ledger redesign mappings. Inspect these source and schema gates before
 building the registered migration. Neither SQL nor Node integration tests are
 implicitly certified by this audit.
+
+
+## CRM canonical-source corruption recovery
+
+A registration-readiness sweep on 2026-10-11 found that parallel staging edits had accidentally reintroduced a malformed/duplicated recruiter-CRM source: `src/db/schema/tpo-crm.ts` had a truncated invite-hash regex plus duplicate activity/follow-up exports, and `db09-tpo-crm-premerge.sql` had duplicate CREATE blocks/functions plus the same truncated CHECK. Chat 3 rebuilt both canonical files from the frozen source contract and retained the stronger tenant/recruiter/follow-up invariants.
+
+W01 must integrate only the clean canonical sources at/after:
+
+- `2495e05501968a57e373651248db7c35340f3178` — rebuilt Drizzle CRM schema.
+- `5aabd4122b4fa3d336c94397ee51bda2f5581147` — rebuilt canonical CRM premerge SQL.
+- `2ff5928f1c5f572c038d1986924ad96466f5da62` — static guards for Drizzle single-copy integrity and duplicate DDL objects.
+
+The DB09 static guard now protects both TypeScript structural source and staged SQL from this class of concatenation regression. This is authored/read-only evidence, not PostgreSQL replay proof.
+
+## Prep course scope reconciliation
+
+The legacy TPO prep-course selector is organization-scoped, and DB09 normalized settings intentionally preserve that behavior. A later prep-assignment draft had accidentally narrowed the course requirement to the learner's exact college, which would reject a course that the settings contract legally exposes from a sibling college in the same organization.
+
+The canonical prep-assignment trigger at/after `530cc01cb3b1d7df654cf7b799c6fd93dfe7bcb5` now requires:
+
+- active assignment college;
+- ACTIVE LEARNER membership in that college;
+- ACTIVE course in an unarchived department of any ACTIVE college in the same organization;
+- TPO-scoped assigning actor;
+- non-past due date.
+
+The static guard compares the settings and assignment drafts so they cannot drift back to conflicting course scopes.
