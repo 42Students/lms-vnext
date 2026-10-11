@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T13:55:00+05:30",
+  "updatedOn": "2026-10-11T08:04:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -1742,13 +1742,18 @@
           "status": "BLOCKED",
           "at": "2026-10-11T07:58:09.728Z",
           "reason": "Source promotion is registered as 0041 with full acceptance suite, but required real PostgreSQL PG01–PG16 execution cannot run in the current connector-only runtime. Do not count authored tests as completion."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11T08:04:00.000Z",
+          "reason": "DB-030 source/migration package strengthened through registered 0042 and 24/24 source acceptance. Runtime remains blocked only on approved disposable PostgreSQL execution; authored PG witnesses are not counted as executed."
         }
       ],
-      "latestEvidenceSha": "3c88d2d99a34061b82766a0e6dba920d06d7f8f5",
+      "latestEvidenceSha": "458b2b9bf0da729f51f988cb2c24266fec425207",
       "verificationEvidence": [],
       "blockers": [
-        "0041 implementation and PG01–PG16 acceptance suite are committed, but this chat runtime has no repository checkout/disposable PostgreSQL and shell network access cannot fetch the private repo. 0 PostgreSQL witnesses are claimed executed. This is NOT a GitHub Actions billing blocker; resume with any approved executable checkout + disposable PostgreSQL.",
-        "When DB02/DB05 staged parent-integrity migrations are promoted, reconcile overlapping delivery/offering/section parent guards and preserve DB06 lock ordering before final phase certification."
+        "0041 + forward-only 0042 are registered; current-main connector/source audit is 24/24 and PG01–PG22 plus PG15B/PG16B/PG19B are authored. 0 PostgreSQL witnesses are claimed executed. Resume with any approved executable checkout + disposable PostgreSQL; this is NOT a GitHub Actions billing blocker.",
+        "When DB02/DB05 parent-integrity migrations are promoted, reconcile overlapping delivery/offering/section parent guards and preserve DB06 lock ordering before final database-phase certification."
       ],
       "completionNote": null
     },
