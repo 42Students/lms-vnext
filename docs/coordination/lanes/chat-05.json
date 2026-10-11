@@ -6,15 +6,15 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-064",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB064_RESUMED_BY_CHAT05",
-    "updatedOn": "2026-10-11T19:40:18.249Z",
-    "observedMainSha": "44b043b7193509f202dac809796684dad302eca6",
-    "lastWorkerMergedSha": "fb5504028847a9b1ca36611fe9ae942c735b351f",
-    "summary": "User-authorized takeover of prior Chat3 in-progress TPO preference/saved-view lifecycle task. Preserve Chat3 source contributions; no migration/schema-barrel or CI changes."
+    "checkpointKind": "DB064_SOURCE_IMPLEMENTATION_COMPLETE_PG_PENDING",
+    "updatedOn": "2026-10-11T19:48:16.195Z",
+    "observedMainSha": "d87390e8a05ecb76fbffff2240b1f88ddb82a8b3",
+    "lastWorkerMergedSha": "cc08b221e2614f6f48310ba588c7e77bd6a21623",
+    "summary": "User-authorized takeover closed DB-064 staged TPO preferences & saved-view lifecycle without stealing Chat3 credit. 20/20 exact blob V8 source-contract tests passed; Node --test and PostgreSQL NOT RUN, no registered migration or global gate completion."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -45,10 +45,12 @@
     "tests/db10-campaign-publish-guard.test.mjs: 10 authored Node source guards NOT_EXECUTED; DB49-01..16 PostgreSQL witnesses NOT_RUN.",
     "DB-018: 21 read-only Pass-5 probes + 13 direct negative SQL cases + 4 positive concurrency witnesses + 2 known-red race witnesses (P5-R01/P5-R02), authored not executed",
     "DB-054: deterministic isolated P5-R01 placement paid-access revocation race regression + 5 no-DB source lock-order assertions; authored, runtime not executed",
-    "tests/db065-database-phase-gate.test.mjs (30 cases, executed Node 30/30)"
+    "tests/db065-database-phase-gate.test.mjs (30 cases, executed Node 30/30)",
+    "tests/db09-user-state-lifecycle.test.mjs (20 cases, authored)"
   ],
   "lastExecutedPassingTests": [
-    "DB-065: node --test tests/db065-database-phase-gate.test.mjs 30/30 PASS, Node v22.16.0, exact committed blob hashes 947ecb6 and be55547"
+    "DB-065: node --test tests/db065-database-phase-gate.test.mjs 30/30 PASS, Node v22.16.0, exact committed blob hashes 947ecb6 and be55547",
+    "DB-064: exact fetched source V8 callbacks 20/20 PASS, NOT node --test / PG"
   ],
   "blockers": [
     "DB015 P5-R01: learner placement application can race paid-module/inherited-eligibility revocation after precheck.",
@@ -93,7 +95,7 @@
     "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows.",
     "DB-049 → Chat 1: integrate staged notification_campaigns SQL guarded at PUBLISHING/PUBLISHED with FOR SHARE target membership/active delivery, run DB49-01..16 in independent disposable PG. 10 Node tests authored not executed."
   ],
-  "nextAction": "Implement source-only DB064 TPO preference fixed ownership/version timestamps and saved-view immutable updates, author tests and run Node fixtures; hand off PostgreSQL to integrator.",
+  "nextAction": "Global DATABASE still active. Prioritize independent executable PostgreSQL acceptance if isolated runner available; DB056/DB064 source-only completion is not schema certification.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -185,10 +187,11 @@
     "DB-018",
     "DB-054",
     "DB-058",
-    "DB-065"
+    "DB-065",
+    "DB-064"
   ],
   "lastPickedAt": "2026-10-12T00:42:19+05:30",
-  "lastCompletedAt": "2026-10-12T00:48:19+05:30",
+  "lastCompletedAt": "2026-10-11T19:47:56.682Z",
   "verifiedTaskIds": [
     "DB-065"
   ],
@@ -212,7 +215,8 @@
     "DB-049",
     "DB-018",
     "DB-054",
-    "DB-058"
+    "DB-058",
+    "DB-064"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
