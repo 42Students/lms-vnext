@@ -409,14 +409,17 @@
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
-          "proposedSemanticMapping": "scripts/sql/db05-course-parent-facets.draft.sql -> courses.allowed_for_display",
-          "db008SourceDisposition": "LEGACY_PERSISTED_DTO_FIELD_SEMANTIC_VALUES_UNPROVEN",
+          "proposedSemanticMapping": "StudentCourseServiceImpl: explicit Integer.valueOf(0).equals(course.getAllowedForDisplay()) skips semester card. Staged courses.allowed_for_display integer, no global enum proof; docs/planning/db05-learner-course-card-source-contract.json",
+          "db008SourceDisposition": "ACTIVE_STUDENT_CARD_SOURCE_CONSUMER_CONFIRMED_DB_PARITY_UNVERIFIED",
           "db008Evidence": [
             "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "legacy source Course.java",
             "legacy source CourseDTO.java",
             "legacy source CourseServiceImpl.java",
-            "staged draft only; no registered migration or execution"
+            "staged draft only; no registered migration or execution",
+            "Legacy StudentCourseServiceImpl.java source-backed 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "docs/planning/db05-learner-course-card-source-contract.json",
+            "No executed PostgreSQL API frontend acceptance"
           ]
         },
         {
@@ -573,14 +576,17 @@
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
           "validationEvidence": null,
-          "proposedSemanticMapping": "scripts/sql/db05-course-metadata-extension.draft.sql + W02 course_display_contents -> full 14 MetaData source fields; see docs/planning/db05-course-metadata-subfields.json",
-          "db008SourceDisposition": "LEGACY_JSON_PAYLOAD_ACTIVE_14_SUBFIELDS_SOURCE_CONFIRMED_W02_PARTIAL_STAGED",
+          "proposedSemanticMapping": "Legacy MetaData 14 keys staged in course_display_contents extension; learner card courseCode = nonblank MetaData.courseCode or fallback shortTitle, distinct from vNext courses.code; docs/planning/db05-learner-course-card-source-contract.json",
+          "db008SourceDisposition": "ACTIVE_STUDENT_CARD_SOURCE_CONSUMER_CONFIRMED_DB_PARITY_UNVERIFIED",
           "db008Evidence": [
             "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "legacy source Course.java",
             "legacy source MetaData.java",
             "legacy source CourseServiceImpl.java",
-            "staged draft only; no registered migration or execution"
+            "staged draft only; no registered migration or execution",
+            "Legacy StudentCourseServiceImpl.java source-backed 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "docs/planning/db05-learner-course-card-source-contract.json",
+            "No executed PostgreSQL API frontend acceptance"
           ]
         },
         {
