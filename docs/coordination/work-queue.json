@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T13:40:00+05:30",
+  "updatedOn": "2026-10-11T13:45:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -1822,17 +1822,17 @@
         "docs/planning/sql/db09-tpo-crm-premerge.sql",
         "src/db/schema/tpo-crm.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "0bb1cd6188e6d7fbb777ce8366bbb33de7753ab6",
+      "status": "COMPLETED",
+      "latestEvidenceSha": "b348a8c3ef052b7f7e7c3450d9954a167901db41",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Adversarially hardened canonical DB09 staging before W01 registration: active recruiter/TPO principal scope, same-company grant enforcement, message/share/bell history immutability, share disclosure/JSON checks, multi-college drive-group recruiter/company and one-child-per-college invariants, slot-capacity locking/booked-slot guards, prep/course/learner and coordinator scope, atomic notification undo + SKIP LOCKED claims, CRM invite/join/follow-up lifecycle checks, and PL/pgSQL $$ syntax regression guards. Final connector-based read-only consistency sweep: 79/79 source assertions clean. Node test runner and disposable PostgreSQL NOT RUN; no runtime/phase verification claimed. No drizzle journal or schema-barrel edit.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T13:32:00+05:30",
       "startedAt": "2026-10-11T13:33:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T13:45:00+05:30",
+      "completionCommitSha": "b348a8c3ef052b7f7e7c3450d9954a167901db41",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1856,6 +1856,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:33:00+05:30",
           "reason": "Chat 3 began adversarial DB09 staging hardening and static registration guards on main."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T13:45:00+05:30",
+          "reason": "DB09 fail-close staging, static guards and W01 integration handoff committed on main; 79/79 connector source assertions clean; Node/PostgreSQL execution remains downstream verification."
         }
       ],
       "progressNote": "Adversarial DB09 staging hardening in progress; scope expanded to canonical CRM staging after source review proved additional recruiter grant/company, owner/activity principal, invite-lifecycle and terminal follow-up invariants."
