@@ -1,4 +1,9 @@
-/** W02 DB05/DB06 staged only; W01 owns migration registration/index export. */
+/**
+ * DB-053 / DB06 SOURCE-ONLY staged private upload receipts/files.
+ * Do not export from the schema barrel or treat as migrated until the migration
+ * integrator reconciles DB-016 overlap, producer/read cutover and PostgreSQL
+ * acceptance.
+ */
 import { sql } from "drizzle-orm";
 import { boolean, check, foreignKey, index, integer, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { courseAssignments, assignmentSubmissions } from "./assessments";
