@@ -1,0 +1,39 @@
+{
+  "task": "DB-008",
+  "observedOn": "2026-10-12",
+  "scope": "BOUNDED_NOT_EXHAUSTIVE",
+  "legacyOracleRef": "prod-2026",
+  "backendBranchCandidateJavaFileCount": 207,
+  "frontendBranchCandidateUiFileCount": 175,
+  "exactGitBlobFilesChecked": 70,
+  "backendChecked": 40,
+  "frontendChecked": 30,
+  "failedFileReads": 0,
+  "duplicates": 0,
+  "keywordHitFiles": [
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/LearnerController.java",
+      "sha": "776864f594e28a28fe3052ee0237c101b6d9d4c3",
+      "matches": [
+        {
+          "term": "formal_title",
+          "line": 186
+        },
+        {
+          "term": "formal_title",
+          "line": 210
+        }
+      ]
+    }
+  ],
+  "batchPaths": [
+    "docs/planning/db05-historical-terms-scan-batch-01.json",
+    "docs/planning/db05-historical-terms-scan-batch-02.json",
+    "docs/planning/db05-historical-terms-scan-batch-03.json",
+    "docs/planning/db05-historical-terms-scan-batch-04.json",
+    "docs/planning/db05-historical-terms-scan-batch-05.json"
+  ],
+  "patternDescription": "Exact source identifier boundary scan for default_subscription_days/defaultSubscriptionDays/formal_title/formalTitle.",
+  "caution": "This scan found the derived formal_title wire response in LearnerController. It does not prove use of the physical historical course.formal_title column; zero hits for default_subscription_days is not full repository/external SQL/partner audit. No migration registered or tests executed."
+}
