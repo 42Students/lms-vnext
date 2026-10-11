@@ -16,7 +16,7 @@
     "lastWorkerMergedSha": "35cbcbd65a2abdd9af0c7afb651a12d6a11c332b",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.\nAdded source-owned fail-closed disposable PostgreSQL URL preflight and 8 test cases. Executed independent Node v22 runner with byte-identical Git blob copies: 8/8 PASS. This is test destination safety only, not database runtime proof. Shared db-lib fallback remains unpatched by W01; CI billing disabled is not an engineering blocker.",
+    "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.\nAdded source-owned fail-closed disposable PostgreSQL URL preflight and 8 test cases. Executed independent Node v22 runner with byte-identical Git blob copies: 8/8 PASS. This is test destination safety only, not database runtime proof. Shared db-lib fallback remains unpatched by W01; CI billing disabled is not an engineering blocker.\nNew direct-main batch: brought five audited membership suspension staging/test/evidence files from Chat 2 draft to main without PR merge; source-domain behavior 20/20 earlier locally executed. Identified check-then-update archive-org vs create-college cross-table race; staged guarded parent FOR UPDATE triggers, mutation-based source test and interleaving acceptance doc, 10/10 connector-source assertions passed. Zero new PG/Node execution for that trigger; no registered migration/phase promotion.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
@@ -220,7 +220,31 @@
       "runtimeTestBlob": "d44fae11e93ed3ef82dd02a433876a00db7f796f",
       "runtimeEvidence": "docs/planning/db01-membership-suspension-local-test-evidence.md",
       "actualPostgresExecution": 0,
-      "note": "Executed actual vNext business TypeScript function with TypeScript transpileModule in isolated local Node runner, not a PostgreSQL test or full TS typecheck. Source blobs matched exact GitHub files."
+      "note": "Executed actual vNext business TypeScript function with TypeScript transpileModule in isolated local Node runner, not a PostgreSQL test or full TS typecheck. Source blobs matched exact GitHub files.",
+      "stateOnMain": "ALL_FIVE_STAGE_TEST_AND_EVIDENCE_FILES_DIRECT_MAIN",
+      "directMainCommits": [
+        "37ed5d60a19f2f24431c17611fb94d66e999244d",
+        "f62b776f2e14349cc2428947eabaf415ae5d3df4",
+        "067d18d7340a8856daf8c7223f064cc15c184c1c",
+        "7d8820f0f9e989fb44999c5bc606070e99b014d0",
+        "9fdc0a33d69023337ecacef43311d5ae971cbacd"
+      ]
+    },
+    "organizationCollegeLifecycleRace": {
+      "status": "STAGED_SOURCE_ONLY_ON_MAIN",
+      "sourceModel": "src/modules/organizations/service.ts archiveOrganization + src/modules/colleges/service.ts createCollege",
+      "sql": "docs/planning/sql/db01-org-college-archive-race-staging.sql",
+      "sourceTest": "tests/db01-org-college-archive-race-source.test.mjs",
+      "contract": "docs/planning/db01-org-college-archive-race-contract.md",
+      "sourceGuard": {
+        "passed": 10,
+        "total": 10,
+        "environment": "GITHUB_CONNECTOR_JAVASCRIPT_SOURCE_EVALUATION_NOT_NODE_TEST",
+        "postgresExecuted": 0
+      },
+      "w01Handoff": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6106770007",
+      "approvedMigration": false,
+      "notes": "Archive organization/child activation can race to persisted ACTIVE college under ARCHIVED org; staged twin trigger + parent FOR UPDATE requires W01 review and independent two-connection PG tests."
     }
   },
   "qualityGates": {
@@ -273,7 +297,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DB-004 DATABASE IN_PROGRESS. Ignore Actions billing; 26 executed standalone Node checks PASS (6 tombstone source, 8 membership source, 12 actual membership-domain TS behavior), but 14 integration PG witnesses remain UNEXECUTED and migration/source semantic verification remains pending. Coordinate Chat 1 registration and disposable PG acceptance.",
+  "nextAction": "DB-004 remains IN_PROGRESS. Coordinate W01 promotion of reviewed staging only after independent disposable PostgreSQL replay/race witnesses; direct-main source test and staged SQL for org/college archive are prepared, test Node+2-connection PG after W01 register.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -333,7 +357,12 @@
     "https://github.com/42Students/lms-vnext/commit/4ed151a3dc6f00c5b1bb8dfcfd204d5be48c0957",
     "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6105903851",
     "https://github.com/42Students/lms-vnext/commit/e1fd0c938074c7a2bc25675f954461105f2f98b1",
-    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6105924393"
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6105924393",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-org-college-archive-race-contract.md",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/sql/db01-org-college-archive-race-staging.sql",
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-org-college-archive-race-source.test.mjs",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6106770007",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-membership-suspension-local-test-evidence.md"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
