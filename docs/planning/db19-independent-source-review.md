@@ -29,7 +29,7 @@ All **199** table names and **2,829** `table.column` keys are distinct across th
 
 **Not yet closed:**
 - **1,618** fields still have `UNVERIFIED_FIELD_SEMANTICS` in the master ledgers; separate specialist reviews may exist but are not registered as runtime-verified ledger mappings.
-- **631** DB00 backup/history field rows say `CLASSIFY_HISTORIC_RETIREMENT`. This is a *request for a product disposition*, not an approved retirement.
+- **631** DB00 *raw master-ledger* rows still say `CLASSIFY_HISTORIC_RETIREMENT`, but the separate source-owned `db00-historical-engine-disposition.json` already classifies the matching **31 backup tables / 631 fields** as `RETIRE_GREENFIELD_BACKUP`. **One Flyway metadata table / 10 fields** is source-classified as platform migration metadata, leaving **7 Smrithi tables / 91 fields** awaiting an explicit product decision. Do not count the 631 as a newly undecided product decision; none of these source dispositions proves runtime database acceptance.
 - **580** fields have `SOURCE_REVIEWED_*` statuses, but they are **source triage**, not a passed PostgreSQL parity test.
 - **118** fields contain candidate target mappings or proposed semantic mapping strings; **zero** fields have a runtime-verified `verifiedMapping` in this evidence set.
 - Current DB-019 prerequisites include unresolved DB00/01/02/04/05/09 owners, and database registration/replay is reserved for Chat 1. No source-only inventory check can satisfy those completion/phase gates.
@@ -51,9 +51,13 @@ The **20 Node tests executed successfully** in an independent local source copy.
 ## Handoff / criteria before DB-019 can close
 
 1. Finish DB-003, DB-004, DB-005, DB-007, DB-008, DB-012 and other DB-019 explicit dependencies. Do not claim Chat 1's migration-only paths or overwrite active workers' ledgers.
-2. Resolve the 631 history/backup field dispositions with explicit product/retention decision, and move the 1,618 unverified field candidates through evidence-backed semantic crosswalks.
+2. Cross-reference the already source-classified **631 historical backup fields** without deleting their source ledger rows; resolve the distinct **91 Smrithi product-decision fields**, and move the other unverified active fields through evidence-backed semantic crosswalks.
 3. Record `verifiedMapping` only against the actual registered schema, executed database acceptance and real consumers; document approved retirements without deleting historical inventory rows.
 4. Re-run the full checker and Node tests after each domain-ledger change. Re-fetch both legacy source heads, exact current Drizzle journal, and maintain source-to-live drift checks before phase certification.
 5. Keep the queue DB-019 READY until all dependencies and acceptance are actually satisfied. Its source inventory tooling may be `IMPLEMENTED` without the global task becoming `COMPLETED` or `DONE_VERIFIED`.
 
 The global implementation tracker remains **52 / 64 COMPLETED**. The machine-source inventory pass here is a real engineering safety improvement but **does not increase completed-task percentage** because the task's actual semantic and database-verification requirements have not been met.
+
+## DB00 disposition reconciliation addendum
+
+A separate fail-closed reader `scripts/db19-db00-disposition-crosscheck.mjs` and `tests/db19-db00-disposition-crosscheck.test.mjs` compare exact source-ledger table/field inventories against the Chat 6-owned DB00 disposition without editing those records. **17/17 real Node v22 tests passed** against byte-identical GitHub blobs; the actual two GitHub DB00 inputs produced `valid=true`, 39 tables/732 fields, 32 source-dispositioned tables/641 fields and 7 product-decision-pending tables/91 fields. Source-oracle drift, missing/duplicate table dispositions and unapproved Smrithi retirement fail closed. See [DB00 reconciliation evidence](./db19-db00-disposition-crosscheck.md). All evidence remains SOURCE_ONLY; DB003 is still BLOCKED pending product decision and consumer/runtime proof.
