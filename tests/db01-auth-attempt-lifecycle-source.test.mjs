@@ -69,6 +69,24 @@ function missing(ddlText, guardText, tsText) {
     [/db01_auth_attempt_consumed_immutable_ck/i, "terminal consumed challenge"]
   ];
   for (const [pattern, reason] of requiredGuard) if (!pattern.test(triggerCode)) absent.push(reason);
+
+  // Do not permit an UPDATE-only expression to accidentally satisfy an
+  // INSERT invariant. Check the actual first-issuance trigger branch.
+  const issuance = /IF TG_OP = 'INSERT' THEN([\s\S]*?)RETURN NEW;\s*END IF;/i.exec(triggerCode)?.[1] || "";
+  const creationGuards = [
+    [/NEW.verified_at IS NOT NULL/i, "cannot insert verified challenge"],
+    [/NEW.used_at IS NOT NULL/i, "cannot insert consumed challenge"],
+    [/NEW.verification_attempts <> 0/i, "new verification counters start zero"],
+    [/NEW.resend_attempts <> 0/i, "new resend counters start zero"],
+    [/NEW.version <> 1/i, "new challenge starts first version"],
+    [/NEW.created_at > clock_timestamp\(\)/i, "fresh creation time"],
+    [/NEW.expires_at <= clock_timestamp\(\)/i, "future deadline at issuance"],
+    [/db01_auth_attempt_creation_state_ck/i, "new challenge constraint"],
+  ];
+  if (!issuance) absent.push("first issuance conditional guard");
+  for (const [pattern, reason] of creationGuards)
+    if (!pattern.test(issuance)) absent.push(reason);
+
   if (/\bDROP\s+(?:TABLE|SCHEMA)\b|\bTRUNCATE\b|\bDELETE\s+FROM\b/i.test(ddlCode + " " + triggerCode)) absent.push("destructive staging SQL");
   return absent;
 }
