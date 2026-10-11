@@ -197,8 +197,8 @@
     "membershipStateGuardDraft": {
       "pullRequest": 84,
       "branch": "chat-02-db004-membership-state-guard",
-      "headSha": "4ed151a3dc6f00c5b1bb8dfcfd204d5be48c0957",
-      "status": "DRAFT_UNREGISTERED_NODE_SOURCE_GUARDS_PASSED",
+      "headSha": "e1fd0c938074c7a2bc25675f954461105f2f98b1",
+      "status": "DRAFT_UNREGISTERED_SOURCE_AND_DOMAIN_NODE_PASSED",
       "sql": "docs/planning/sql/db01-membership-suspension-state-staging.sql",
       "contract": "docs/planning/db01-membership-suspension-contract.md",
       "nodeTest": "tests/db01-membership-suspension-source.test.mjs",
@@ -208,12 +208,24 @@
       "executedNodeCases": 8,
       "passedNodeCases": 8,
       "executedPostgresCases": 0,
-      "decisionRequired": "Review current status metadata invariant and ENDED/reenrollment semantics; Chat 1 owns registered migration"
+      "decisionRequired": "Review current status metadata invariant and ENDED/reenrollment semantics; Chat 1 owns registered migration",
+      "sourceGuardCases": 8,
+      "sourceGuardPassed": 8,
+      "actualDomainBehaviorCases": 12,
+      "actualDomainBehaviorPassed": 12,
+      "totalLocalExecutedCases": 20,
+      "totalLocalPasses": 20,
+      "runtimeDomainSource": "src/modules/people/membership-domain.ts",
+      "runtimeTest": "tests/db01-membership-domain-runtime.test.mjs",
+      "runtimeTestBlob": "d44fae11e93ed3ef82dd02a433876a00db7f796f",
+      "runtimeEvidence": "docs/planning/db01-membership-suspension-local-test-evidence.md",
+      "actualPostgresExecution": 0,
+      "note": "Executed actual vNext business TypeScript function with TypeScript transpileModule in isolated local Node runner, not a PostgreSQL test or full TS typecheck. Source blobs matched exact GitHub files."
     }
   },
   "qualityGates": {
     "lint": "NOT_EXECUTED_INDEPENDENT_RUNNER",
-    "typecheck": "NOT_EXECUTED_INDEPENDENT_RUNNER",
+    "typecheck": "NOT_EXECUTED_FULL_PROJECT_TYPECHECK",
     "unit": "SOURCE_NODE_14_OF_14_PASSED_OTHER_UNIT_NOT_EXECUTED",
     "postgresIntegration": "NOT_EXECUTED_NO_DISPOSABLE_POSTGRES_RUNNER",
     "build": "NOT_EXECUTED_INDEPENDENT_RUNNER",
@@ -223,7 +235,9 @@
     "databaseReplay": "NOT_EXECUTED",
     "realTenantIsolation": "NOT_EXECUTED",
     "sourceTombstoneGuard": "PASS_LOCAL_NODE_6_OF_6_EXACT_GIT_BLOBS",
-    "sourceMembershipGuard": "PASS_LOCAL_NODE_8_OF_8_EXACT_GIT_BLOBS"
+    "sourceMembershipGuard": "PASS_LOCAL_NODE_8_OF_8_EXACT_GIT_BLOBS",
+    "membershipDomainBehavior": "PASS_LOCAL_NODE_12_OF_12_ACTUAL_VNEXT_TS_SOURCE",
+    "totalExecutedNodeChecks": "PASS_LOCAL_NODE_26_OF_26"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -238,7 +252,8 @@
     "tests/db01-type-nullability-review.test.mjs",
     "tests/db01-test-database-guard.test.mjs",
     "tests/db01-tenant-domain-tombstone-source.test.mjs",
-    "tests/db01-membership-suspension-source.test.mjs"
+    "tests/db01-membership-suspension-source.test.mjs",
+    "tests/db01-membership-domain-runtime.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)"
@@ -258,7 +273,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "Continue DB-004 DATABASE only; ignore GitHub Actions billing. Independently run disposable Postgres migration replay/negative tests when a runner exists, have Chat 1 review staged DB01 schema. Already executed source guard tests: 14/14 Node local PASS against blob-identical GitHub files; never claim these are PostgreSQL proofs or DB01 semantic verified.",
+  "nextAction": "DB-004 DATABASE IN_PROGRESS. Ignore Actions billing; 26 executed standalone Node checks PASS (6 tombstone source, 8 membership source, 12 actual membership-domain TS behavior), but 14 integration PG witnesses remain UNEXECUTED and migration/source semantic verification remains pending. Coordinate Chat 1 registration and disposable PG acceptance.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -316,7 +331,9 @@
     "https://github.com/42Students/lms-vnext/pull/84",
     "https://github.com/42Students/lms-vnext/commit/2d97369518561f5cdc798fba833325407d0ee0b4",
     "https://github.com/42Students/lms-vnext/commit/4ed151a3dc6f00c5b1bb8dfcfd204d5be48c0957",
-    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6105903851"
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6105903851",
+    "https://github.com/42Students/lms-vnext/commit/e1fd0c938074c7a2bc25675f954461105f2f98b1",
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6105924393"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
