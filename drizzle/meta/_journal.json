@@ -295,6 +295,13 @@
       "when": 1791594600000,
       "tag": "0041_db06_assessment_parent_scope",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1791598200000,
+      "tag": "0042_db06_assessment_scope_hardening",
+      "breakpoints": true
     }
   ]
 }
