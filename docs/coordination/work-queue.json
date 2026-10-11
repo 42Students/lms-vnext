@@ -1537,17 +1537,17 @@
         "docs/planning/sql/db04-education-media-candidate.sql",
         "docs/planning/sql/db04-private-receipt-hardening-candidate.sql"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "4433430505f7d246f4020ef7cab02c6a9fdf306b",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Committed cross-domain read-only staged-SQL catalog/lexer/checker (duplicate CREATE within/across drafts, journal overlaps, unresolved parents, cross-file ordering/cycles, superseded/unsafe SQL), 14 authored Node tests and source-evidence report. Safely tombstoned two DB04 duplicate SQL drafts while preserving historical text. Ran 12/12 pure isolated V8 source checks plus new duplicate/ordering and real DB04 canonical/tombstone inspections; full Node suite and disposable PostgreSQL NOT RUN. Completed source-only task; no verified DB acceptance/phase promotion.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T13:10:00+05:30",
       "startedAt": "2026-10-11T13:12:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T07:46:54.073Z",
+      "completionCommitSha": "4433430505f7d246f4020ef7cab02c6a9fdf306b",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1576,6 +1576,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:22:00+05:30",
           "reason": "Narrow claim extension: replace two redundant DB04 executable drafts with explicit source-only tombstones, because canonical DB04 draft already has more complete education/media and private receipt invariants. Preserve historical design as comments; do not alter canonical migration."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T07:46:54.073Z",
+          "reason": "Source tooling, tests, DB04 deduplication and integration handoff committed to main; still only source-level tests, no PostgreSQL evidence."
         }
       ]
     },
