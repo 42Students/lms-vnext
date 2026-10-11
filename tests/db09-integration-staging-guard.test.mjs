@@ -230,3 +230,23 @@ test("DB09 prep and TPO bell staging fail closed on tenant and history", () => {
   assert.match(sql, /CREATE TRIGGER db09_bell_item_immutable/);
   assert.match(sql, /CREATE TRIGGER db09_bell_receipt_immutable/);
 });
+
+
+test("DB09 scheduling serializes slot capacity and coordinator scope", () => {
+  const sql = read("docs/planning/sql/db09-round-scheduling-candidate.sql");
+  assert.match(sql, /CREATE TRIGGER db09_round_assignment_capacity_guard/);
+  assert.match(sql, /FROM placement_round_slots[\s\S]*FOR UPDATE/);
+  assert.match(sql, /v_booked >= v_capacity/);
+  assert.match(sql, /CREATE TRIGGER db09_round_slot_mutation_guard/);
+  assert.match(sql, /NEW\.capacity < v_booked/);
+  assert.match(sql, /v_booked > 0 AND NEW\.status <> 'CONFIRMED'/);
+  assert.match(sql, /CREATE TRIGGER db09_drive_coordinator_principal_scope_guard/);
+  assert.match(
+    sql,
+    /JOIN membership_roles r ON r\.membership_id = m\.id[\s\S]*r\.role = 'LEARNER'/,
+  );
+  assert.match(
+    sql,
+    /m\.user_id = NEW\.created_by_user_id[\s\S]*m\.college_id = NEW\.college_id[\s\S]*m\.status = 'ACTIVE'/,
+  );
+});
