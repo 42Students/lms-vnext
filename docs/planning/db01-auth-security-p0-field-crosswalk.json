@@ -35,9 +35,10 @@
     "approvedRetirements": 0,
     "registeredMigrations": 0,
     "runtimeVerified": 0,
-    "providerVerified": 0
+    "providerVerified": 0,
+    "currentSourceEvidenceGaps": 3
   },
-  "policy": "Raw short OTP, bearer tokens, legacy refresh/ID tokens or password secrets may not be retained for convenience. Target columns are staged suggestions, not proof of safe parity. DB04/DB09 owners must approve their own decisions. Cannot close fields without real migration/provider tests.",
+  "policy": "Raw short OTP, bearer tokens, legacy refresh/ID tokens or password secrets may not be retained for convenience. Target columns are staged suggestions, not proof of safe parity. DB04/DB09 owners must approve their own decisions. Cannot close fields without real migration/provider tests. Three source-queue candidates lack named source paths, documented as currentSourceEvidenceGap; do not treat legacy DDL alone as current producer/consumer proof.",
   "rows": [
     {
       "legacyField": "auth_handoff_token.is_deleted",
@@ -62,7 +63,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "auth_handoff_token.token",
@@ -87,7 +89,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "auth_handoff_token.access_token",
@@ -112,7 +115,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "auth_handoff_token.refresh_token",
@@ -137,7 +141,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "auth_handoff_token.expires_at",
@@ -162,7 +167,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "auth_handoff_token.used",
@@ -187,7 +193,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "faculty.token_version",
@@ -212,7 +219,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "faculty_acct_verification.is_deleted",
@@ -237,7 +245,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "faculty_acct_verification.blocked_till_ts",
@@ -262,7 +271,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "faculty_acct_verification.incorrect_attempts",
@@ -287,7 +297,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "faculty_acct_verification.max_resend_attempts",
@@ -312,7 +323,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "faculty_acct_verification.otp",
@@ -337,7 +349,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "faculty_acct_verification.verify_status",
@@ -362,7 +375,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "learner.token_version",
@@ -387,7 +401,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "learner_acct_verification.is_deleted",
@@ -412,7 +427,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "learner_acct_verification.blocked_till_ts",
@@ -437,7 +453,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "learner_acct_verification.incorrect_attempts",
@@ -462,7 +479,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "learner_acct_verification.max_resend_attempts",
@@ -487,7 +505,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "learner_acct_verification.otp",
@@ -512,7 +531,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "learner_acct_verification.verify_status",
@@ -537,7 +557,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "mobile_login_attempt.is_deleted",
@@ -562,7 +583,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "mobile_login_attempt.expires_at",
@@ -587,7 +609,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "mobile_login_attempt.email_otp_expires_at",
@@ -612,7 +635,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "mobile_login_attempt.otp",
@@ -637,7 +661,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "mobile_login_attempt.email_otp",
@@ -662,7 +687,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "mobile_login_attempt.phone",
@@ -687,7 +713,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "mobile_login_attempt.used",
@@ -712,7 +739,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "mobile_login_attempt.verification_attempts",
@@ -737,7 +765,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "recruiter.token_version",
@@ -762,7 +791,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "recruiter_college_access.valid_until",
@@ -787,7 +817,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "recruiter_college_access_capability.capability",
@@ -812,7 +843,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "refresh_token_blocklist.jti",
@@ -837,7 +869,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "refresh_token_blocklist.expires_at",
@@ -862,7 +895,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "role.is_deleted",
@@ -884,7 +918,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": true
     },
     {
       "legacyField": "tenant_domain.is_deleted",
@@ -906,7 +941,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": true
     },
     {
       "legacyField": "user.password",
@@ -928,7 +964,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": true
     },
     {
       "legacyField": "user_session.jti",
@@ -953,7 +990,8 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     },
     {
       "legacyField": "user_session.expires_at",
@@ -978,7 +1016,13 @@
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
-      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
+      "currentSourceEvidenceGap": false
     }
+  ],
+  "currentSourceEvidenceGapFields": [
+    "role.is_deleted",
+    "tenant_domain.is_deleted",
+    "user.password"
   ]
 }
