@@ -62,6 +62,8 @@ export const courseUploadReceipts = pgTable(
     check("course_upload_receipts_target_ck", sql`(${table.purpose} = \'ASSIGNMENT_SUBMISSION\' and ${table.assignmentId} is not null and ${table.deliveryId} is not null and ${table.lessonContentId} is null) or (${table.purpose} = \'COURSE_RESOURCE\' and ${table.lessonContentId} is not null and ${table.assignmentId} is null)`),
     check("course_upload_receipts_object_scope_ck", sql`(${table.purpose} = \'ASSIGNMENT_SUBMISSION\' and ${table.objectKey} like (\'private/\' || ${table.collegeId}::text || \'/\' || ${table.ownerMembershipId}::text || \'/assignment-submission/%\')) or (${table.purpose} = \'COURSE_RESOURCE\' and ${table.objectKey} like (\'private/\' || ${table.collegeId}::text || \'/\' || ${table.ownerMembershipId}::text || \'/course-resource/%\'))`),
     check("course_upload_receipts_token_hash_ck", sql`${table.uploadTokenHash} ~ \'^[0-9a-f]{64}$\'`),
+    check("course_upload_receipts_original_name_ck", sql`length(trim(${table.originalName})) between 1 and 255 and ${table.originalName} not like \'%/%\' and position(\'\\\' in ${table.originalName}) = 0 and trim(${table.originalName}) not in (\'.\',\'..\')`),
+    check("course_upload_receipts_declared_content_type_ck", sql`length(trim(${table.declaredContentType})) between 1 and 128`),
     check("course_upload_receipts_declared_size_ck", sql`${table.declaredSizeBytes} > 0 and ${table.declaredSizeBytes} <= 52428800`),
     check("course_upload_receipts_expiry_ck", sql`${table.expiresAt} > ${table.createdAt} and ${table.expiresAt} <= ${table.createdAt} + interval \'15 minutes\'`),
     check("course_upload_receipts_scan_status_ck", sql`${table.scanStatus} in (\'PENDING\',\'CLEAN\',\'REJECTED\')`),
