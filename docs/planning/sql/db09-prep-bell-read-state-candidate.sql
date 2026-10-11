@@ -25,7 +25,7 @@ CREATE INDEX placement_prep_assignments_student_idx
   ON placement_prep_assignments(learner_membership_id,created_at);
 
 CREATE FUNCTION db09_assert_prep_assignment_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1
@@ -68,7 +68,7 @@ BEGIN
   END IF;
 
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_prep_assignment_scope_guard
   BEFORE INSERT OR UPDATE OF
     college_id,learner_membership_id,course_id,due_at,assigned_by_user_id
@@ -120,7 +120,7 @@ CREATE INDEX placement_tpo_bell_reads_reader_time_idx
   ON placement_tpo_bell_receipts(reader_user_id,read_at);
 
 CREATE FUNCTION db09_assert_bell_reader_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1
@@ -133,28 +133,28 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_bell_reader_scope_guard
   BEFORE INSERT OR UPDATE OF college_id,reader_user_id
   ON placement_tpo_bell_receipts
   FOR EACH ROW EXECUTE FUNCTION db09_assert_bell_reader_scope();
 
 CREATE FUNCTION db09_reject_bell_item_rewrite() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   RAISE EXCEPTION 'TPO bell event history is append-only'
     USING ERRCODE = '23514';
-END $;
+END $$;
 CREATE TRIGGER db09_bell_item_immutable
   BEFORE UPDATE OR DELETE ON placement_tpo_bell_items
   FOR EACH ROW EXECUTE FUNCTION db09_reject_bell_item_rewrite();
 
 CREATE FUNCTION db09_reject_bell_receipt_rewrite() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   RAISE EXCEPTION 'TPO bell read receipt is append-only'
     USING ERRCODE = '23514';
-END $;
+END $$;
 CREATE TRIGGER db09_bell_receipt_immutable
   BEFORE UPDATE OR DELETE ON placement_tpo_bell_receipts
   FOR EACH ROW EXECUTE FUNCTION db09_reject_bell_receipt_rewrite();
