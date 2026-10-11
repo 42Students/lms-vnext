@@ -115,37 +115,42 @@ CREATE TRIGGER db069_job_owner_scope_guard
 -- removal cannot race a lead-owner assignment and leave the source member
 -- owning a lead after deletion.
 CREATE FUNCTION db069_lock_lead_owner_change() RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql AS $
 DECLARE
   v_old_college uuid;
   v_old_owner uuid;
   v_new_college uuid;
   v_new_owner uuid;
+  v_old_key text;
+  v_new_key text;
 BEGIN
   v_old_college := CASE WHEN TG_OP='UPDATE' THEN OLD.college_id ELSE NULL END;
   v_old_owner := CASE WHEN TG_OP='UPDATE' THEN OLD.owner_membership_id ELSE NULL END;
   v_new_college := NEW.college_id;
   v_new_owner := NEW.owner_membership_id;
+  v_old_key := CASE WHEN v_old_owner IS NULL THEN NULL
+                    ELSE v_old_college::text || ':' || v_old_owner::text END;
+  v_new_key := CASE WHEN v_new_owner IS NULL THEN NULL
+                    ELSE v_new_college::text || ':' || v_new_owner::text END;
 
-  -- Stable lock ordering prevents opposite owner transfers from deadlocking.
-  IF v_old_owner IS NOT NULL
-     AND (v_new_owner IS NULL
-          OR v_old_owner::text < v_new_owner::text
-          OR (v_old_owner = v_new_owner AND v_old_college::text <= v_new_college::text)) THEN
-    PERFORM db069_lock_owner_identity(v_old_college,v_old_owner);
-  END IF;
-  IF v_new_owner IS NOT NULL THEN
+  -- Stable full-identity lock ordering prevents opposite owner transfers,
+  -- including the same membership being moved across colleges, from deadlocking.
+  IF v_old_key IS NOT NULL
+     AND v_new_key IS NOT NULL
+     AND v_new_key < v_old_key THEN
     PERFORM db069_lock_owner_identity(v_new_college,v_new_owner);
-  END IF;
-  IF v_old_owner IS NOT NULL
-     AND v_old_owner IS DISTINCT FROM v_new_owner
-     AND NOT (
-       v_old_owner::text < COALESCE(v_new_owner::text,'ffffffff-ffff-ffff-ffff-ffffffffffff')
-     ) THEN
     PERFORM db069_lock_owner_identity(v_old_college,v_old_owner);
+  ELSE
+    IF v_old_key IS NOT NULL THEN
+      PERFORM db069_lock_owner_identity(v_old_college,v_old_owner);
+    END IF;
+    IF v_new_key IS NOT NULL
+       AND v_new_key IS DISTINCT FROM v_old_key THEN
+      PERFORM db069_lock_owner_identity(v_new_college,v_new_owner);
+    END IF;
   END IF;
   RETURN NEW;
-END $$;
+END $;
 CREATE TRIGGER db069_lead_owner_serialization_guard
   BEFORE INSERT OR UPDATE OF college_id,owner_membership_id
   ON placement_tpo_leads
