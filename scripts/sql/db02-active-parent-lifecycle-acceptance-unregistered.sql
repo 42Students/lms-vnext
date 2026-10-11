@@ -260,7 +260,7 @@ BEGIN
     section_id, membership_id, role, started_at, ended_at
   )
   VALUES (
-    archived_section_id, faculty_membership_id, 'FACULTY',
+    archived_section_id, faculty_membership_id, 'ADVISOR',
     now() - interval '2 days', now() - interval '1 day'
   )
   RETURNING id INTO historical_section_faculty_id;
