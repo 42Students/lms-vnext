@@ -4,8 +4,8 @@
   "worker": "CHAT_02",
   "task": "DB-004",
   "phase": "DATABASE",
-  "state": "PRODUCTION_REPOSITORY_PATCHED_SOURCE_CONFIRMED_RUNTIME_POSTGRES_UNVERIFIED",
-  "verificationMethod": "Fetched exact post-patch GitHub blob content for src/modules/people/repository.ts, source regression suite and real-repository PG suite, then ran 22 JavaScript source checks within connected Github V8 orchestration. This was not Node test runner, TypeScript compiler or database execution.",
+  "state": "PRODUCTION_REPOSITORY_LOCK_AND_SCOPE_PATCHED_38_OF_38_SOURCE_CHECKS_PG_UNVERIFIED",
+  "verificationMethod": "Refetched 4 exact GitHub main blobs and executed 38 JavaScript source assertions within connected GitHub V8 orchestration. Not node:test, Vitest, TypeScript compiler or PostgreSQL execution.",
   "sources": [
     {
       "path": "src/modules/people/repository.ts",
@@ -17,19 +17,19 @@
     },
     {
       "path": "tests/integration/db01-membership-role-parent-lock.test.ts",
-      "gitBlob": "dc2d57706aae7f6ecb203c99fdf941c58c42510a"
+      "gitBlob": "fb7fafc30e0b6b64cfd500031d56e38ad364afa1"
     },
     {
       "path": "docs/planning/db01-ended-membership-role-race-contract.md",
-      "gitBlob": "8d9e3a416ac8b31c960ed76ccc1781f82bd2e66c"
+      "gitBlob": "3f9b240fec2c8749f563c97cc56df74e8866271a"
     }
   ],
   "summary": {
-    "sourceChecksExecuted": 22,
-    "sourceChecksPassed": 22,
+    "sourceChecksExecuted": 38,
+    "sourceChecksPassed": 38,
     "sourceChecksFailed": 0,
     "authoredNodeSourceCases": 18,
-    "authoredRealRepositoryPgCases": 8,
+    "authoredRealRepositoryPgCases": 10,
     "executedNodeTests": 0,
     "executedPostgresqlTests": 0,
     "executedTypecheck": 0,
@@ -56,7 +56,8 @@
     "Run npm run typecheck and relevant people membership regression suites",
     "Independent PostgreSQL END-before-grant, grant-before-END, two concurrent removals, stale onboarding and cross-college ownership proof",
     "Ensure direct privileged SQL inserts follow identical parent-row lock or separately approved database guard; app-level fix is not a universal database constraint",
-    "Do not mark DB-004 or global DATABASE DONE_VERIFIED based only on 22 in-process static source checks"
+    "Do not mark DB-004 or global DATABASE DONE_VERIFIED based only on 22 in-process static source checks",
+    "Execute committed 10-case PG suite on isolated PostgreSQL; include direct SQL rebind and SUSPENDED onboarding negatives. Source checks alone do not establish DB invariants."
   ],
   "actionsCommits": [
     "2194420972bd8fd7562ed6923a0c6720948e7c2d",
@@ -64,6 +65,8 @@
     "1c1951bfe9886d2759065b15a4635cf65b627091",
     "b3041c17e83a36580f39b16f78545995305f579b",
     "d223c7414bcceeaa36ccb15f7c1696cf257c4833",
-    "9a28402590d513f0f56044ecb77175739d37b553"
+    "9a28402590d513f0f56044ecb77175739d37b553",
+    "9b1c0ac49c4eb27024d7ab08ba72ab44f423705f",
+    "8949261283f3b99ba56afd461b60fbdd510af165"
   ]
 }
