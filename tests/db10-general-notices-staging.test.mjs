@@ -91,3 +91,19 @@ test("DB24 source event, idempotency and claim audit hardening stay aligned", ()
   assert.doesNotMatch(sql, /status <> 'CLAIMED' AND claimed_by IS NULL\s+AND claimed_at IS NULL/);
   assert.match(spec, /V193 explicitly rewrites stored `recipient_type='HR'` to `RECRUITER`/);
 });
+
+test("DB24 dual-role fanout preserves same-role deduplication and requires DB witness", () => {
+  assert.match(
+    sql,
+    /CREATE UNIQUE INDEX db10_general_notices_source_recipient_channel_uq\s+ON general_notification_outbox \(source_event_id,recipient_user_id,recipient_type,channel\)/,
+  );
+  assert.match(
+    schema,
+    /uniqueIndex\("db10_general_notices_source_recipient_channel_uq"\)\s+\.on\(t\.sourceEventId, t\.recipientUserId, t\.recipientType, t\.channel\)/,
+  );
+  assert.match(sql, /CREATE UNIQUE INDEX db10_general_notices_idempotency_uq\s+ON general_notification_outbox \(idempotency_key\)/);
+  assert.match(spec, /\*\*DB24-13:\*\*/);
+  assert.match(spec, /DB24-13:[\s\S]*?NOT_RUN/);
+  // Source guards cannot substitute for two direct PostgreSQL INSERTs against
+  // distinct valid LEARNER and FACULTY memberships, followed by duplicate writes.
+});
