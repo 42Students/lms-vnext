@@ -223,7 +223,7 @@ ALTER TABLE sections
 -- Teaching assignments and schedules inherit cohort/period/term identity through delivery.
 -- Protect that chain at the database boundary instead of relying only on service validation.
 CREATE FUNCTION db02_guard_course_section_delivery_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   offering_cohort uuid;
   offering_period uuid;
@@ -252,7 +252,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_course_section_delivery_scope_guard
 BEFORE INSERT OR UPDATE OF offering_id, section_id
@@ -260,7 +260,7 @@ ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_section_delivery_scope();
 
 CREATE FUNCTION db02_guard_schedule_event_delivery_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   event_section uuid;
   delivery_section uuid;
@@ -287,7 +287,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_schedule_event_delivery_scope_guard
 BEFORE INSERT OR UPDATE OF schedule_event_id, delivery_id
@@ -707,7 +707,7 @@ ALTER TABLE section_schedule_events
 -- 3b) Course teaching assignment tenant/role integrity
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_course_teaching_assignment_scope()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   delivery_college uuid;
   membership_college uuid;
@@ -750,7 +750,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_course_teaching_assignment_scope_guard
 BEFORE INSERT OR UPDATE OF delivery_id, membership_id
@@ -840,7 +840,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 -- The insert/update guard alone is insufficient: admins can later remove FACULTY or suspend/end
 -- the membership. These AFTER triggers close active associations in the same transaction.
 CREATE FUNCTION db02_end_faculty_course_associations_on_role_removal()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.role = 'FACULTY' THEN
     UPDATE faculty_course_associations
@@ -863,14 +863,14 @@ BEGIN
   END IF;
   RETURN OLD;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_faculty_course_associations_role_removal
 AFTER DELETE ON membership_roles
 FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_role_removal();
 
 CREATE FUNCTION db02_end_faculty_course_associations_on_membership_inactive()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
     UPDATE faculty_course_associations
@@ -893,14 +893,14 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_faculty_course_associations_membership_inactive
 AFTER UPDATE OF status ON college_memberships
 FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_membership_inactive();
 
 CREATE FUNCTION db02_end_faculty_course_associations_on_course_archive()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
     UPDATE faculty_course_associations
@@ -911,7 +911,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_faculty_course_associations_course_archive
 AFTER UPDATE OF status ON courses
