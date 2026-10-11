@@ -637,6 +637,16 @@
       "nodeTestPath": "tests/db05-lesson-restore-parent-reference.test.mjs",
       "sourceTestPath": "tests/db05-lesson-restore-parent-guard.test.mjs",
       "postgresExecuted": false
+    },
+    {
+      "id": "DB05_TOMBSTONE_ANCESTOR_ZERO_STATE_PREFLIGHT",
+      "status": "NOT_RUN",
+      "owner": "W01_DB05",
+      "evidence": "Read-only aggregate preflight detects LIVE_LESSON_UNDER_DELETED_COURSE, LIVE_CONTENT_UNDER_DELETED_LESSON, LIVE_CONTENT_UNDER_DELETED_COURSE before tombstone migration activation. Node 22.16 native source checks 6/6 PASS exact SQL/test Git blob, not a PostgreSQL row witness. Require zero counts on approved disposable PostgreSQL after W01 integration and rerun after controlled races.",
+      "sqlPath": "scripts/sql/db05-tombstone-ancestor-preflight.readonly.sql",
+      "nodeTestPath": "tests/db05-tombstone-ancestor-preflight.test.mjs",
+      "postgresExecuted": false,
+      "mismatchCounts": null
     }
   ],
   "sourceReview": {
