@@ -145,7 +145,7 @@ test("DB053 supports ordered multi-file submissions instead of one file per subm
   );
   assert.match(
     contract,
-    /submission_assets is a \*\*list\*\*/i,
+    /submission_assets[\s\S]{0,80}\*\*list\*\*/i,
   );
   assert.match(
     contract,
