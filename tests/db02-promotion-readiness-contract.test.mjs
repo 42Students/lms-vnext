@@ -7,21 +7,22 @@ const canonical = readFileSync(
   new URL("../scripts/sql/db02-academic-progression-and-rooms-staging.sql", import.meta.url),
   "utf8",
 );
-const draft = readFileSync(
-  new URL("../scripts/sql/db02-promotion-readiness-guard.draft.sql", import.meta.url),
-  "utf8",
-);
+// Both guards are consolidated into canonical DB02 SQL; isolate this function
+// and its trigger to avoid matching other curriculum clauses in the whole draft.
+const promotionStart = canonical.indexOf("CREATE FUNCTION db02_guard_cohort_promotion_readiness()");
+const promotionEnd = canonical.indexOf("CREATE FUNCTION db02_record_cohort_progression_event()", promotionStart);
+const draft = canonical.slice(promotionStart, promotionEnd);
 const acceptance = readFileSync(
   new URL("../scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql", import.meta.url),
   "utf8",
 );
 
-test("promotion draft has exactly one paired PL/pgSQL trigger and unique name", () => {
+test("canonical promotion guard has exactly one paired function body", () => {
   assert.match(draft, /CREATE FUNCTION db02_guard_cohort_promotion_readiness\(\)/);
   assert.match(draft, /RETURNS trigger LANGUAGE plpgsql AS \$\$/);
   assert.equal([...draft.matchAll(/\$\$/g)].length, 2);
   assert.match(draft, /CREATE TRIGGER db02_cohort_promotion_readiness_guard/);
-  assert.doesNotMatch(canonical, /CREATE TRIGGER db02_cohort_promotion_readiness_guard/);
+  assert.match(canonical, /CREATE TRIGGER db02_cohort_promotion_readiness_guard/);
 });
 
 test("promotions only from ACTIVE cohorts and to active program-specific terms", () => {
