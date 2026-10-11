@@ -31,7 +31,7 @@ test("formal_title source producer is not misrepresented as proof of persisted c
     f.path.endsWith("/LearnerController.java") &&
     f.matches.some((m) => m.term === "formal_title")
   ));
-  assert.match(sourceProof.newSourceConsumerDiscovery.note, /does not prove/i);
+  assert.match(sourceProof.newSourceConsumerDiscovery.note, /NOT the historical persisted column/i);
   assert.match(summary.caution, /physical historical course.formal_title column/);
   assert.ok(summary.exactGitBlobFilesChecked >= 70);
 });
