@@ -11,33 +11,34 @@ const base = read("db02-academic-progression-and-rooms-staging.sql");
 const overlay = read("db02-schedule-progression-integrity-overlay.draft.sql");
 const acceptance = read("db02-schedule-progression-integrity-acceptance-unregistered.sql");
 
-test("audit and schedule overlay is syntactically dollar-quote paired", () => {
-  const functions = [...overlay.matchAll(/CREATE (?:OR REPLACE )?FUNCTION db02_[a-z_]+\(\)/g)].length;
+test("audit and room overlay has two paired PL/pgSQL function bodies", () => {
+  const functions = [...overlay.matchAll(/CREATE FUNCTION db02_[a-z_]+\(\)/g)].length;
   const opens = [...overlay.matchAll(/RETURNS trigger LANGUAGE plpgsql AS \$\$/g)].length;
   const quotes = [...overlay.matchAll(/\$\$/g)].length;
-  assert.equal(functions, 4);
-  assert.equal(opens, 4);
-  assert.equal(quotes, 8);
+  assert.equal(functions, 2);
+  assert.equal(opens, 2);
+  assert.equal(quotes, 4);
+  assert.doesNotMatch(overlay, /CREATE OR REPLACE FUNCTION/);
   assert.doesNotMatch(overlay, /LANGUAGE plpgsql AS \$(?:\r?\n)/);
 });
 
-test("overlay works against the canonical exact function identities", () => {
-  for (const name of [
-    "db02_guard_cohort_progression_state",
-    "db02_record_cohort_progression_event",
-  ]) {
-    assert.match(base, new RegExp("CREATE FUNCTION " + name + "\\(\\)"));
-    assert.match(overlay, new RegExp("CREATE OR REPLACE FUNCTION " + name + "\\(\\)"));
-  }
+test("newer canonical SQL exclusively owns audit-actor deletion semantics", () => {
+  assert.match(base, /CREATE FUNCTION db02_guard_cohort_progression_state\(\)/);
+  assert.match(base, /CREATE FUNCTION db02_record_cohort_progression_event\(\)/);
   assert.match(base, /updated_by_user_id uuid REFERENCES users\(id\) ON DELETE SET NULL/);
-  assert.match(base, /CREATE TRIGGER db02_cohort_progression_history/);
+  assert.match(base, /pg_trigger_depth\(\) >= 2/);
+  assert.match(base, /NEW\.updated_by_user_id IS NULL/);
+  assert.match(
+    base,
+    /CREATE TRIGGER db02_cohort_progression_history\s+AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version/,
+  );
+  assert.doesNotMatch(overlay, /CREATE OR REPLACE FUNCTION/);
 });
 
-test("FK-driven actor pseudonymization cannot forge academic progression history", () => {
-  const filter = /\bpg_trigger_depth\(\) >= 2[\s\S]*?OLD\.updated_by_user_id IS NOT NULL[\s\S]*?NEW\.updated_by_user_id IS NULL[\s\S]*?to_jsonb\(NEW\) - 'updated_by_user_id'/;
-  const occurrences = [...overlay.matchAll(new RegExp(filter.source, "g"))];
-  assert.equal(occurrences.length, 2, "one exception each in guard/history");
-  assert.match(overlay, /to_jsonb\(OLD\) - 'updated_by_user_id'/);
+test("FK-driven actor cleanup has no academic event; acceptance checks full history", () => {
+  assert.match(base, /OLD\.updated_by_user_id IS NOT NULL/);
+  assert.match(base, /NEW\.current_term_number IS NOT DISTINCT FROM OLD\.current_term_number/);
+  assert.match(base, /NEW\.version IS NOT DISTINCT FROM OLD\.version/);
   assert.match(acceptance, /DELETE FROM users WHERE id=actor_id/);
   assert.match(acceptance, /Audit actor cleanup forged an academic event/);
 });
