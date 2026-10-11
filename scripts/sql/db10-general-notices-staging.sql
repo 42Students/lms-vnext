@@ -111,7 +111,9 @@ BEGIN
         AND m.college_id = NEW.college_id
         AND m.status = 'ACTIVE'
         AND mr.role::text = NEW.recipient_type
-      FOR SHARE OF m;
+      -- Lock the matching role row too, so a concurrent role revocation cannot
+      -- remove the authorization witness while this INSERT is committing.
+      FOR SHARE OF m, mr;
     IF NOT FOUND THEN
       RAISE EXCEPTION 'NOTIFICATION_MEMBERSHIP_SCOPE_INVALID' USING ERRCODE='23514';
     END IF;
