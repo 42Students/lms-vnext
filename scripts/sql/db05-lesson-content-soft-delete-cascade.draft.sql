@@ -16,6 +16,10 @@
 -- NULL = not deleted, non-NULL = deleted. Historical deletion times cannot
 -- be reconstructed from the legacy Boolean (greenfield vNext only).
 -- This draft stages data constraints; it does not authorize API activation.
+-- INTEGRATION ORDER: db05-version-progress-attempts.draft.sql MUST first
+-- register lesson_contents.version bigint NOT NULL, since the trigger below
+-- increments content version when it changes a deletion tombstone. Deploying
+-- this alone before the version column exists is invalid and prohibited.
 BEGIN;
 
 ALTER TABLE course_lessons
@@ -35,6 +39,10 @@ CREATE INDEX IF NOT EXISTS db05_lesson_contents_legacy_live_idx
 -- Cascading child tombstones occurs in the SAME SQL transaction. Preserve
 -- a child that was already independently deleted (its original timestamp
 -- and state cannot be inferred/reconstructed from a later lesson delete).
+-- Increment optimistic version for each changed child: without this, an old
+-- content editor could apply a stale WHERE id AND version update after the
+-- cascading tombstone, losing deletion history. W01 must coordinate CAS
+-- consumer cutover and parent lesson version bump in the deletion service.
 CREATE OR REPLACE FUNCTION db05_cascade_lesson_soft_delete()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -44,6 +52,7 @@ BEGIN
      AND NEW.legacy_deleted_at IS NOT NULL THEN
     UPDATE lesson_contents c
        SET legacy_deleted_at = NEW.legacy_deleted_at,
+           version = c.version + 1,
            updated_at = now()
      WHERE c.lesson_id = NEW.id
        AND c.legacy_deleted_at IS NULL;
@@ -109,9 +118,14 @@ COMMIT;
 --  5. Live child INSERT and move into deleted parent are now blocked via
 --     parent FOR SHARE. This is source-only; two-session race proof NOT RUN.
 --  6. Deleted course/path/lesson ancestor still hides descendant content.
---  7. Trigger child UPDATE increments history/versions consistently;
---     concurrent lesson editing and reparenting can never race to leak.
+--  7. Child tombstone increments content.version exactly once and prevents
+--     a stale CAS writer from committing a post-delete update. Independently
+--     deleted content retains its prior timestamp and version. Parent lesson
+--     soft-delete service must increment course_lessons.version on commit.
+--     Verify concurrent lesson editing/reparenting cannot race to leak.
 --  8. Two-session delete/move/restore races and wrong-college restore denied
 --     on actual disposable PostgreSQL under documented transaction level.
---  9. No current vNext route interprets these draft columns; API must
+--  9. Parent/child version migrations must precede tombstone trigger; a clean
+--     replay with opposite ordering MUST be rejected in the readiness gate.
+-- 10. No current vNext route interprets these draft columns; API must
 --     change atomically with registered W01 migrations.
