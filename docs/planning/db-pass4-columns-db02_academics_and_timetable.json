@@ -7846,6 +7846,26 @@
           "88f51fb3c50f24f19f71bd5840c8d7c08573881f"
         ],
         "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "HISTORY_SAFE_LEGACY_BATCH_DELETE",
+        "status": "STAGED_UNREGISTERED",
+        "databaseTarget": "cohort_progression_state.cohort_id ON DELETE CASCADE; cohort_progression_events.cohort_id ON DELETE RESTRICT; all real academic children remain restrictive",
+        "rule": "Only a child-free, history-free cohort may hard-delete; its version-0 initializer state cascades. Direct state DELETE/TRUNCATE is forbidden. Any progression event or academic child keeps the cohort undeletable.",
+        "legacyEvidence": "BatchServiceImpl.deleteBatch allows delete when no linked classes; current DB02 additionally protects vNext unsectioned learner/offering/history children.",
+        "stagingCommit": "e69aa8a83f5f0113f9e0ba1c861da6be00bbbb25",
+        "acceptanceCommit": "66c5136c191b946646357ec41f2e4e814f625b8a",
+        "concurrencyCommit": "ba821f036be51c72dac1c6c9067a3b738fc2e08e",
+        "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "EXTERNAL_STUDENT_REGISTRATION_NO_DB02_DEPENDENCY",
+        "status": "SOURCE_EVIDENCE_NO_DB02_DEPENDENCY_PRODUCT_RETIREMENT_OPEN",
+        "target": "none in DB02 canonical academics schema",
+        "evidence": "Pinned legacy backend/frontend exact searches return zero student_registration/crm_sync consumers; connected-org peer sweep also found none. Canonical DB02 learner/cohort/section state has no dependency on the historical sync table.",
+        "boundary": "This is not product-level retirement approval. If a detached external CRM/roster importer exists outside connected source, model that actual import contract separately rather than cloning the historical table.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2"
       }
     ],
     "targetDispositionCoverage": {
@@ -7905,7 +7925,7 @@
     },
     "integrationReadiness": {
       "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
-      "observedMainSha": "68f0ba3d352e2639c92eae93fde49b2568d3826d",
+      "observedMainSha": "83830d3456a6f6377e0343b7fa195b27b362a0a8",
       "sourceDispositions": {
         "classified": 125,
         "total": 125
@@ -7916,10 +7936,10 @@
       },
       "canonicalStaging": {
         "path": "scripts/sql/db02-academic-progression-and-rooms-staging.sql",
-        "blobSha": "6345292ed22f8c88dce3d95612ba2a0847ca1959",
-        "plpgsqlFunctions": 45,
-        "triggers": 53,
-        "pairedDollarQuoteOpenings": 45,
+        "blobSha": "f42abb83897a63c74bfe90a500b26677e91dd392",
+        "plpgsqlFunctions": 48,
+        "triggers": 56,
+        "pairedDollarQuoteOpenings": 48,
         "malformedSingleDollarBodies": false,
         "duplicateFunctionNames": [],
         "duplicateTriggerNames": [],
@@ -7927,13 +7947,16 @@
           "academic progression/curriculum/rooms/faculty",
           "parent/enrollment/history integrity",
           "progression-state and future-room lifecycle",
-          "historic offering/delivery/event parent integrity"
+          "historic offering/delivery/event parent integrity",
+          "referenced-period and cohort-window parent stability",
+          "CORE concrete curriculum-row identity",
+          "history-safe empty cohort deletion"
         ]
       },
       "acceptanceHarnesses": [
         {
           "path": "scripts/sql/db02-postgres-acceptance-unregistered.sql",
-          "blobSha": "eb4ec20a4362ee6a743c73565d5a0e9bfd5af5b2",
+          "blobSha": "04e51aa3d332020c57f694c2a3e8eb3b51aad5d8",
           "type": "SINGLE_SESSION_TRANSACTIONAL_ROLLBACK",
           "covers": [
             "tenant owner immutability",
@@ -7954,28 +7977,33 @@
           ],
           "executedPostgres": false,
           "addedCoverage": [
-            "historic offering identity after delivery",
-            "historic delivery identity after teaching/event history",
-            "historic schedule section identity after attendance history",
-            "progression actor deletion without fake event"
+            "historic offering/delivery/event identity",
+            "progression actor deletion without fake event",
+            "referenced academic-period date stability",
+            "cohort expected-end shrink protection",
+            "CORE concrete curriculum-row FK and ELECTIVE-null rule",
+            "history-free cohort hard delete plus historical delete rejection"
           ]
         },
         {
           "path": "scripts/sql/db02-postgres-concurrency-unregistered.sh",
-          "blobSha": "271c6a871b67940ae2829c32c83fe4e300ea2d05",
+          "blobSha": "5d5511f1848b9e1378085a9393372b5956d422ad",
           "type": "TWO_SESSION_PSQL_RACES",
           "covers": [
-            "cohort promotion compare-and-set single winner",
-            "hall archive wins vs booking",
-            "booking wins vs hall archive",
-            "history insert wins vs section reparent",
-            "section reparent wins before serialized history insert"
+            "promotion CAS",
+            "hall archive/booking both orders",
+            "section reparent/history both orders",
+            "offering reparent/delivery both orders",
+            "event reparent/attendance both orders",
+            "CORE offering/curriculum delete both orders",
+            "academic-period edit/cohort creation both orders",
+            "empty cohort delete/section creation both orders"
           ],
           "executedPostgres": false
         },
         {
           "path": "scripts/sql/db02-schedule-progression-integrity-acceptance-unregistered.sql",
-          "blobSha": "825bb76275c8d9e0cc0c6d9c6ea6915a1824c0e7",
+          "blobSha": "d3734222854e428cbb30476d3d30c3df2d344bae",
           "type": "SPECIALIZED_SINGLE_SESSION_ROLLBACK",
           "covers": [
             "progression state identity/delete/truncate",
@@ -7983,24 +8011,35 @@
             "timestamp-only future schedule mutation against archived hall"
           ],
           "executedPostgres": false
+        },
+        {
+          "path": "scripts/sql/db02-historic-parent-reassignment-acceptance-unregistered.sql",
+          "blobSha": "5b33dfa495967e7d9948534c32fa196b2254dee2",
+          "type": "HISTORIC_PARENT_SINGLE_SESSION_ROLLBACK",
+          "covers": [
+            "offering parent identity after delivery",
+            "delivery parent identity after teaching/course history",
+            "schedule-event section identity after course/attendance history"
+          ],
+          "executedPostgres": false
         }
       ],
       "staticChecks": {
-        "canonicalFunctionDelimiterPairs": "45/45",
-        "canonicalTriggerCount": 53,
+        "canonicalFunctionDelimiterPairs": "48/48",
+        "canonicalTriggerCount": 56,
         "duplicateCanonicalFunctions": 0,
         "duplicateCanonicalTriggers": 0,
         "malformedSingleDollarBodies": 0,
         "singleSessionHarnessEndsWithRollback": true,
-        "concurrencyRaceFamilies": 5,
-        "historicParentSingleSessionWitnesses": 3,
+        "concurrencyRaceFamilies": 15,
+        "authoredSourceTestCases": 42,
         "consolidatedOverlayDraftsRemaining": 0
       },
       "registeredDrizzleDb02Found": false,
       "postgresTestsExecuted": 0,
       "runtimeEquivalenceVerifiedFields": 0,
       "status": "READY_FOR_CHAT1_REGISTRATION_REVIEW_AND_DISPOSABLE_POSTGRES_ACCEPTANCE",
-      "warning": "Source classification and target mapping are 125/125, and all DB02 staging layers are consolidated into one canonical unregistered SQL file. This is not a database PASS: Chat 1 must register reviewed Drizzle/migrations, replay zero-to-current, then execute the single-session, specialized and concurrency PostgreSQL harnesses.",
+      "warning": "Source and target mapping are 125/125 and the canonical unregistered DB02 stage is structurally reconciled. Runtime proof remains 0: Chat 1 must register reviewed Drizzle/migrations, replay zero-to-current and execute all rollback/concurrency PostgreSQL harnesses.",
       "apiFollowupMatrix": {
         "path": "docs/planning/db02-api-followup-after-database.md",
         "commitSha": "c463accc1839f3513c851354261a30393e7a2454",
