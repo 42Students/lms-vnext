@@ -1,0 +1,118 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+import { assertDb018DisposableTarget } from "./support/db018-test-target.mjs";
+
+const local = "postgresql://tester:example-secret@127.0.0.1:5432/lms_vnext_test_4242";
+const isolated = { TEST_DATABASE_URL: local, DB018_ISOLATED_TEST_DATABASE: "1" };
+const verifier = {
+  TEST_DATABASE_URL: local,
+  DATABASE_URL: local,
+  DB03_ISOLATED_TEST_DATABASE: "1",
+};
+const remote = "postgresql://tester:remote-secret@pg.internal/lms_vnext_test_4242";
+
+test("DB058 allows explicitly isolated local TEST_DATABASE_URL only", () => {
+  assert.deepEqual(assertDb018DisposableTarget(isolated), {
+    host: "127.0.0.1",
+    database: "lms_vnext_test_4242",
+    mode: "local",
+  });
+});
+test("DB058 denies a URL without an isolated flag", () => {
+  assert.throws(() => assertDb018DisposableTarget({ TEST_DATABASE_URL: local }),
+    /isolation flag required/);
+});
+test("DB058 denies an isolation flag without TEST_DATABASE_URL", () => {
+  assert.throws(() => assertDb018DisposableTarget({ DB018_ISOLATED_TEST_DATABASE: "1" }),
+    /TEST_DATABASE_URL/);
+});
+test("DB058 refuses production names even with an isolated flag", () => {
+  assert.throws(() => assertDb018DisposableTarget({
+    ...isolated,
+    TEST_DATABASE_URL: "postgresql://tester:secret@localhost/lms_prod",
+  }), /not explicitly a test database/);
+});
+test("DB058 refuses wrong URL protocol before connecting", () => {
+  assert.throws(() => assertDb018DisposableTarget({
+    ...isolated,
+    TEST_DATABASE_URL: "https://localhost/lms_vnext_test_4242",
+  }), /PostgreSQL URL/);
+});
+test("DB058 refuses unconfirmed remote hosts before connecting", () => {
+  assert.throws(() => assertDb018DisposableTarget({
+    ...isolated, TEST_DATABASE_URL: remote,
+  }), /Remote test database requires/);
+});
+test("DB058 refuses stale remote confirmation", () => {
+  assert.throws(() => assertDb018DisposableTarget({
+    ...isolated, TEST_DATABASE_URL: remote,
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:other.internal/lms_vnext_test_4242",
+  }), /Remote test database requires/);
+});
+test("DB058 only allows a precisely confirmed remote disposable target", () => {
+  assert.deepEqual(assertDb018DisposableTarget({
+    ...isolated, TEST_DATABASE_URL: remote,
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:pg.internal/lms_vnext_test_4242",
+  }), { host: "pg.internal", database: "lms_vnext_test_4242", mode: "explicit-remote" });
+});
+test("DB058 refuses alias to application database with manually set witness flag", () => {
+  assert.throws(() => assertDb018DisposableTarget({
+    ...isolated, DATABASE_URL: local,
+  }), /application database alias requires independent verifier/);
+});
+test("DB058 allows exact safe alias only when independent verifier flag is supplied", () => {
+  assert.deepEqual(assertDb018DisposableTarget(verifier, { serviceBound: true }), {
+    host: "127.0.0.1",
+    database: "lms_vnext_test_4242",
+    mode: "local",
+  });
+});
+test("DB058 service-backed tests refuse unbound application URL", () => {
+  assert.throws(() => assertDb018DisposableTarget(isolated, { serviceBound: true }),
+    /must equal TEST_DATABASE_URL/);
+});
+test("DB058 service-backed tests refuse a different application database", () => {
+  assert.throws(() => assertDb018DisposableTarget({
+    ...verifier,
+    DATABASE_URL: "postgresql://tester:secret@127.0.0.1:5432/lms_production",
+  }, { serviceBound: true }), /must equal TEST_DATABASE_URL/);
+});
+test("DB058 canonical guard compares application and test target despite different credentials", () => {
+  assert.throws(() => assertDb018DisposableTarget({
+    ...isolated,
+    DATABASE_URL: "postgresql://someone:else@127.0.0.1:5432/lms_vnext_test_4242",
+  }), /configured application database/);
+});
+test("DB058 never includes a password in refusal messages", () => {
+  let message = "";
+  try {
+    assertDb018DisposableTarget({
+      ...isolated, TEST_DATABASE_URL: "postgresql://tester:verySensitivePassword@pg.internal/lms_vnext_test_4242",
+    });
+  } catch (error) {
+    message = error.message;
+  }
+  assert.match(message, /Remote test database requires/);
+  assert.doesNotMatch(message, /verySensitivePassword/);
+});
+test("DB058 all five DB18 integration suites preflight before Pool construction", () => {
+  const names = [
+    "db018-relational-and-boundary-witnesses",
+    "db18-registered-negative-witnesses",
+    "db18-concurrency-witnesses",
+    "db18-known-race-gaps",
+    "db18-placement-race-gap",
+  ];
+  for (const name of names) {
+    const source = readFileSync(`tests/integration/${name}.test.ts`, "utf8");
+    const importAt = source.indexOf('from "../support/db018-test-target.mjs"');
+    const preflightAt = source.indexOf("assertDb018DisposableTarget(process.env");
+    const poolAt = source.indexOf("new Pool(");
+    assert.ok(importAt >= 0, name + " must import the shared guard");
+    assert.ok(preflightAt > importAt, name + " must actually use the guard");
+    assert.ok(poolAt > preflightAt, name + " must preflight before creating a DB pool");
+    assert.doesNotMatch(source, /process\.env\.TEST_DATABASE_URL\s*\?\?\s*process\.env\.DATABASE_URL/);
+    if (name.includes("race-gap")) assert.match(source, /serviceBound: true/);
+  }
+});
