@@ -2,9 +2,10 @@ import {
   and,
   asc,
   eq,
+  ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { courseLessons } from "@/db/schema";
+import { courseLearningPaths, courseLessons } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   can,
@@ -127,20 +128,39 @@ export async function createCourseLesson(
   });
 
   try {
-    const [created] = await getDb()
-      .insert(courseLessons)
-      .values({
-        learningPathId:
-          input.learningPathId,
-        name: input.name,
-        description:
-          input.description ?? null,
-        sequence: input.sequence,
-      })
-      .returning();
+    return await getDb().transaction(async (tx) => {
+      // Path can be archived after loadLearningPathScope. Lock and recheck
+      // in this transaction; path transition UPDATE conflicts with SHARE.
+      const [openPath] = await tx
+        .select({ id: courseLearningPaths.id })
+        .from(courseLearningPaths)
+        .where(and(
+          eq(courseLearningPaths.id, input.learningPathId),
+          ne(courseLearningPaths.status, "ARCHIVED"),
+        ))
+        .for("share")
+        .limit(1);
 
-    return created;
+      if (!openPath) {
+        throw new CoursesServiceError("LEARNING_PATH_NOT_FOUND");
+      }
+
+      const [created] = await tx
+        .insert(courseLessons)
+        .values({
+          learningPathId:
+            input.learningPathId,
+          name: input.name,
+          description:
+            input.description ?? null,
+          sequence: input.sequence,
+        })
+        .returning();
+
+      return created;
+    });
   } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
     throw mapLessonConstraint(error);
   }
 }
