@@ -402,19 +402,19 @@
       "id": "LESSON_CONTENT_OWNER_SAME_COLLEGE_GUARD",
       "status": "NOT_RUN",
       "owner": 1,
-      "evidence": "Candidate child trigger validates owner membership, course department, offering academic period, section delivery cohort/period and college. Actual PG wrong-college negatives NOT_RUN."
+      "evidence": "Candidate child trigger validates owner membership, course department, offering academic period, section delivery cohort/period and college. Actual PG wrong-college negatives NOT_RUN. Canonical SQL: scripts/sql/db05-lesson-content-faculty-owner.draft.sql. No duplicate owner_membership_id column permitted. Role checks on new owner, not historic role loss; independent delivery scope companion required."
     },
     {
       "id": "LESSON_CONTENT_OWNER_VS_CREATOR_AND_FACULTY_ROLE",
       "status": "BLOCKED",
       "owner": "DATABASE_ENGINEERING_TO_API_PHASE_HANDOFF",
-      "evidence": "Legacy facultyId ownership not equivalent to created_by_user_id; generic content requires actual teaching scope, owner mismatch admin-only. Source truth needs trusted API identity and role cutover."
+      "evidence": "Legacy facultyId ownership not equivalent to created_by_user_id; generic content requires actual teaching scope, owner mismatch admin-only. Source truth needs trusted API identity and role cutover. Canonical SQL: scripts/sql/db05-lesson-content-faculty-owner.draft.sql. No duplicate owner_membership_id column permitted. Role checks on new owner, not historic role loss; independent delivery scope companion required."
     },
     {
       "id": "LESSON_CONTENT_OWNER_UPSTREAM_REPARENT",
       "status": "NOT_RUN",
       "owner": 1,
-      "evidence": "Child owner scope trigger alone does not guard upstream department/section/period/course/lesson/membership move and race; requires accepted immutability or upstream guards."
+      "evidence": "Child owner scope trigger alone does not guard upstream department/section/period/course/lesson/membership move and race; requires accepted immutability or upstream guards. Canonical SQL: scripts/sql/db05-lesson-content-faculty-owner.draft.sql. No duplicate owner_membership_id column permitted. Role checks on new owner, not historic role loss; independent delivery scope companion required."
     },
     {
       "id": "LESSON_ACTIVE_ENABLED_OMITTED_UPDATE_PARITY",
@@ -516,7 +516,7 @@
     "Lesson content basic optional delivery FK still allows wrong offering/cohort/period/college via direct SQL; companion staged, W01 integration and disposable PostgreSQL negatives pending.",
     "Legacy lesson_contents.faculty_id owner distinct from vNext creator: same-college membership+role companion staged, but API owner assignment/edit authorization and membership race policy pending.",
     "Legacy delete lesson cascades content tombstones atomically; restore parent only. SQL draft is unregistered and current vNext reads do NOT filter these tombstones; stop release until atomic API/DB cutover and 2-session PG tests.",
-    "Legacy content owner membership is not createdByUserId and may be nullable; member tenant/teaching scope on source create/edit/delete and upstream reparent constraints require cross-role DB/API proof.",
+    "Legacy content faculty owner membership is not createdByUserId and may be nullable; member tenant/teaching scope on source create/edit/delete and upstream reparent constraints require cross-role DB/API proof.",
     "Legacy content classId positive/zero/negative create-vs-update semantics and optional courseSlug override are not represented by current vNext content update input; API disposition and downstream progress/discussion/order reparent proof pending.",
     "Legacy course delete rejects only nondeleted descendants; vNext status ARCHIVED not equivalent. Course soft tombstone and locked lesson insert draft is unregistered, upstream offering/path reparent and PG negative/race/restore acceptance pending."
   ],
@@ -646,23 +646,6 @@
         "PG_DELETE_RESTORE_MOVE_RACE"
       ],
       "note": "Non-numbered SQL companion, NEVER auto-restore child. Reader/writer cutover required before registering.",
-      "registered": false,
-      "postgresExecuted": false,
-      "readyForProduction": false
-    },
-    {
-      "id": "DB05_LESSON_CONTENT_OWNER_MEMBERSHIP",
-      "path": "scripts/sql/db05-lesson-content-owner-membership.draft.sql",
-      "baseCandidate": "src/db/schema/courses.ts lesson_contents; college_memberships",
-      "dependencies": [
-        "AUTHOR_ID_NOT_OWNER_MEMBER_ID",
-        "SAME_COLLEGE_OWNER_OFFORDING_DEPARTMENT_SCOPE",
-        "GENERIC_CONTENT_FACULTY_ASSIGNMENT_GUARD",
-        "ADMIN_EXCEPTION_TEACHING_SCOPE",
-        "UPSTREAM_REPARENT_AND_MEMBERSHIP_MOVE",
-        "PG_OWNER_NEGATIVE_AND_RACE"
-      ],
-      "note": "Nullable content owner membership distinct from creator; child row tenant trigger alone not proof of upstream integrity.",
       "registered": false,
       "postgresExecuted": false,
       "readyForProduction": false
