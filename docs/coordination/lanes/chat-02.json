@@ -247,7 +247,7 @@
       "notes": "Archive organization/child activation can race to persisted ACTIVE college under ARCHIVED org; staged twin trigger + parent FOR UPDATE requires W01 review and independent two-connection PG tests."
     },
     "db01MainDirectAcceptance": {
-      "status": "AUTHORED_ON_MAIN_SOURCE_VERIFIED_RUNTIME_PENDING",
+      "status": "ON_MAIN_SOURCE_CHECKS_15_OF_15_PG_VITEST_PENDING",
       "testFiles": [
         "tests/integration/db01-tenant-identity-invariants.test.ts",
         "tests/integration/db01-identity-fk-invariants.test.ts",
@@ -256,10 +256,10 @@
       ],
       "acceptance": "docs/planning/db01-tenant-identity-pg-negative-acceptance.md",
       "sourceEvidence": "docs/planning/db01-chat02-main-test-source-evidence.json",
-      "authoredPostgresCases": 26,
+      "authoredPostgresCases": 32,
       "authoredAuthorizationUnitCases": 14,
-      "sourceChecksExecuted": 13,
-      "sourceChecksPassed": 13,
+      "sourceChecksExecuted": 15,
+      "sourceChecksPassed": 15,
       "executedVitestCases": 0,
       "executedPostgresCases": 0,
       "landingEvidenceSha": "10857a211d652874679ec3538d5e15da0a442bcb",
@@ -278,7 +278,13 @@
         "870642b5ce7cb0e8cd02da095b740369da033a8c",
         "58ae2037decc1a0a37c2856587c370694216dac7",
         "10857a211d652874679ec3538d5e15da0a442bcb"
-      ]
+      ],
+      "raceSuite": "tests/integration/db01-concurrent-integrity.test.ts",
+      "raceSuiteCases": 6,
+      "raceCommit": "d86c0fbb46b703f9c9e6c62cd2613382cccf4c0f",
+      "raceAcceptanceCommit": "dafd334fa127baad210c7b011b36ac33afc9d643",
+      "sourceEvidenceCommit": "2ce1933a0e47e07386a280d468a894de4541984f",
+      "sharedResetHelperSafety": "FIXED_ON_MAIN_BY_CHAT1_NO_DATABASE_URL_FALLBACK"
     }
   },
   "qualityGates": {
@@ -296,8 +302,8 @@
     "sourceMembershipGuard": "PASS_LOCAL_NODE_8_OF_8_EXACT_GIT_BLOBS",
     "membershipDomainBehavior": "PASS_LOCAL_NODE_12_OF_12_ACTUAL_VNEXT_TS_SOURCE",
     "totalExecutedNodeChecks": "PASS_LOCAL_NODE_26_OF_26",
-    "db01SourceContract": "PASS_13_OF_13_CONNECTOR_EXECUTED_NO_PG",
-    "db01NewPostgresCases": "AUTHORED_26_EXECUTED_0",
+    "db01SourceContract": "PASS_15_OF_15_CONNECTOR_EXECUTED_NO_PG",
+    "db01NewPostgresCases": "AUTHORED_32_EXECUTED_0",
     "db01NewUnitCases": "AUTHORED_14_EXECUTED_0"
   },
   "lastAuthoredTests": [
@@ -316,7 +322,8 @@
     "tests/db01-membership-suspension-source.test.mjs",
     "tests/db01-membership-domain-runtime.test.mjs",
     "tests/integration/db01-core-structure-invariants.test.ts",
-    "tests/unit/db01-tenant-domain-authorization.test.ts"
+    "tests/unit/db01-tenant-domain-authorization.test.ts",
+    "tests/integration/db01-concurrent-integrity.test.ts"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)"
@@ -336,7 +343,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DB-004 remains IN_PROGRESS (DATABASE): 40 new cases are authored on main and 13 source checks passed; need independent Vitest/Postgres and 312-field semantic acceptance. W01 sole migration/schema integrator; no Actions billing wait.",
+  "nextAction": "DB-004 DATABASE IN_PROGRESS: 32 PostgreSQL + 14 permission tests authored on main, 15 source checks passed, no executed PG/Vitest in this iteration. Continue runtime parity/migration readiness and independent disposable Postgres acceptance; do not wait for GitHub Actions.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -404,7 +411,10 @@
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-membership-suspension-local-test-evidence.md",
     "https://github.com/42Students/lms-vnext/commit/10857a211d652874679ec3538d5e15da0a442bcb",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-main-test-source-evidence.json",
-    "https://github.com/42Students/lms-vnext/commit/58ae2037decc1a0a37c2856587c370694216dac7"
+    "https://github.com/42Students/lms-vnext/commit/58ae2037decc1a0a37c2856587c370694216dac7",
+    "https://github.com/42Students/lms-vnext/commit/d86c0fbb46b703f9c9e6c62cd2613382cccf4c0f",
+    "https://github.com/42Students/lms-vnext/commit/dafd334fa127baad210c7b011b36ac33afc9d643",
+    "https://github.com/42Students/lms-vnext/commit/2ce1933a0e47e07386a280d468a894de4541984f"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
