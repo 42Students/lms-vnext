@@ -71,6 +71,16 @@ export function stripSqlLiterals(sql, lexicalErrors = []) {
 const creations=/\bCREATE\s+(?:UNLOGGED\s+)?TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?("[\w]+"|[\w]+)/gi;
 const alters=/\bALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:public\.)?("[\w]+"|[\w]+)/gi;
 const refs=/\bREFERENCES\s+(?:public\.)?("[\w]+"|[\w]+)/gi;
+// Source-only hazard detection: never authorize migration promotion from regex.
+const destructiveStatements = [
+  /\bDROP\s+(?:TABLE|INDEX|SCHEMA|TYPE|DOMAIN|EXTENSION|FUNCTION|TRIGGER|VIEW|MATERIALIZED\s+VIEW|SEQUENCE|COLUMN|CONSTRAINT|DEFAULT|NOT\s+NULL|POLICY|RULE|OWNED|IDENTITY)\b/i,
+  /(?:^|;)\s*TRUNCATE\s+(?:TABLE\s+)?(?:ONLY\s+)?(?:"[\w]+"|[\w.]+)/im,
+  /\bDELETE\s+FROM\b/i,
+  /\bALTER\s+(?:TABLE|INDEX|TYPE|SCHEMA)\b[^;]*?\bRENAME\b/i,
+  /\bALTER\s+TABLE\b[^;]*?\bALTER\s+COLUMN\b[^;]*?\b(?:SET\s+DATA\s+)?TYPE\b/i,
+  /\bALTER\s+TABLE\b[^;]*?\bSET\s+SCHEMA\b/i,
+  /\bALTER\s+TABLE\b[^;]*?\b(?:DISABLE\s+(?:ROW\s+LEVEL\s+SECURITY|TRIGGER)|NO\s+FORCE\s+ROW\s+LEVEL\s+SECURITY)\b/i,
+];
 function take(body,re){return [...new Set([...body.matchAll(re)].map(m=>m[1].replaceAll('"',"").toLowerCase()))];}
 export function classify(sql) {
   const head=sql.split("\n").slice(0,20).join("\n");
@@ -86,7 +96,7 @@ export function inspect(item){
   return {path:item.path,state:classify(item.sql),lexicalErrors,
     create:[...new Set(allCreates)],createDuplicates,
     alter:take(body,alters),references:take(body,refs),
-    destructive:/\b(?:DROP\s+TABLE|TRUNCATE\s+TABLE|DELETE\s+FROM)\b/i.test(body)};
+    destructive:destructiveStatements.some(pattern=>pattern.test(body))};
 }
 export function analyze({candidates,registered=[],declared=[]}) {
   const files=candidates.map(inspect).sort((a,b)=>a.path.localeCompare(b.path));
