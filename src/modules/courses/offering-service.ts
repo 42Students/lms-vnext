@@ -311,48 +311,52 @@ export async function archiveCourseOffering(
     collegeId: current.collegeId,
   });
 
-  const db = getDb();
-  const [delivery] = await db
-    .select({ id: courseSectionDeliveries.id })
-    .from(courseSectionDeliveries)
-    .where(
-      and(
-        eq(
-          courseSectionDeliveries.offeringId,
-          offeringId,
-        ),
-        isNull(
-          courseSectionDeliveries.endedAt,
-        ),
-      ),
-    )
-    .limit(1);
-
-  if (delivery) {
-    throw new CoursesServiceError(
-      "OFFERING_HAS_ACTIVE_DELIVERIES",
-    );
-  }
-
-  const [archived] = await db
-    .update(courseOfferings)
-    .set({
-      status: "ARCHIVED",
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
+  // FK KEY SHARE on offering for a new delivery conflicts with FOR UPDATE.
+  // Hold the parent lock from the child check through the archive UPDATE.
+  return getDb().transaction(async (tx) => {
+    const [lockedOffering] = await tx
+      .select({ id: courseOfferings.id })
+      .from(courseOfferings)
+      .where(and(
         eq(courseOfferings.id, offeringId),
         eq(courseOfferings.status, "ACTIVE"),
-      ),
-    )
-    .returning();
+      ))
+      .for("update")
+      .limit(1);
 
-  if (!archived) {
-    throw new CoursesServiceError(
-      "OFFERING_NOT_FOUND",
-    );
-  }
+    if (!lockedOffering) {
+      throw new CoursesServiceError("OFFERING_NOT_FOUND");
+    }
 
-  return archived;
+    const [delivery] = await tx
+      .select({ id: courseSectionDeliveries.id })
+      .from(courseSectionDeliveries)
+      .where(and(
+        eq(courseSectionDeliveries.offeringId, offeringId),
+        isNull(courseSectionDeliveries.endedAt),
+      ))
+      .limit(1);
+
+    if (delivery) {
+      throw new CoursesServiceError("OFFERING_HAS_ACTIVE_DELIVERIES");
+    }
+
+    const [archived] = await tx
+      .update(courseOfferings)
+      .set({
+        status: "ARCHIVED",
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(courseOfferings.id, offeringId),
+        eq(courseOfferings.status, "ACTIVE"),
+      ))
+      .returning();
+
+    if (!archived) {
+      throw new CoursesServiceError("OFFERING_NOT_FOUND");
+    }
+
+    return archived;
+  });
 }
