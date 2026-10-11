@@ -202,12 +202,25 @@ test("CORE offering locks curriculum and materialized curriculum cannot be delet
   const offeringGuardEnd = sql.indexOf("CREATE TRIGGER db02_course_offering_program_term_guard", offeringGuardStart);
   assert.ok(offeringGuardStart !== -1 && offeringGuardEnd > offeringGuardStart);
   const offeringGuard = sql.slice(offeringGuardStart, offeringGuardEnd);
+  assert.match(sql, /ADD COLUMN program_term_course_id uuid[\s\S]*REFERENCES program_term_courses\(id\) ON DELETE RESTRICT/);
+  assert.match(sql, /course_offerings_curriculum_ref_ck/);
+  assert.match(sql, /type = 'CORE' AND program_term_course_id IS NOT NULL/);
+  assert.match(sql, /type = 'ELECTIVE' AND program_term_course_id IS NULL/);
+  assert.match(offeringGuard, /ptc\.id = NEW\.program_term_course_id/);
+  assert.match(offeringGuard, /ptc\.program_term_id = NEW\.program_term_id/);
+  assert.match(offeringGuard, /ptc\.course_id = NEW\.course_id/);
+  assert.match(offeringGuard, /ptc\.type = 'CORE'/);
+  assert.match(offeringGuard, /Elective course offering must not claim a fixed curriculum row/);
   assert.match(offeringGuard, /FROM program_term_courses ptc[\s\S]*FOR SHARE/);
   assert.match(sql, /CREATE TRIGGER db02_program_term_course_identity_guard/);
   assert.match(sql, /CREATE TRIGGER db02_program_term_course_delete_guard/);
   assert.match(sql, /Program-term course cannot be removed after an offering exists/);
+  assert.match(acceptanceSql, /program_term_course_id/);
   assert.match(acceptanceSql, /materialized curriculum row was deleted/);
   assert.match(acceptanceSql, /program-term course identity was rewritten/);
+  assert.match(acceptanceSql, /ELECTIVE offering claimed a fixed curriculum row/);
+  assert.match(concurrencyShell, /TERM_COURSE_RACE_A_ID/);
+  assert.match(concurrencyShell, /program_term_course_id/);
 });
 
 
