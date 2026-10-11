@@ -104,7 +104,7 @@ CREATE TABLE placement_notification_intents (
       (channel IN ('EMAIL','SMS') AND status <> 'APP_PUBLISHED')
     ),
   CONSTRAINT db09_notify_failure_shape_ck
-    CHECK ((status = 'FAILED') = (failure_code IS NOT NULL)),
+    CHECK (status <> 'FAILED' OR failure_code IS NOT NULL),
   CONSTRAINT db09_notify_external_ref_ck
     CHECK (channel = 'APP' OR encrypted_outbound_ref_id IS NOT NULL),
   CONSTRAINT db09_notify_app_ref_ck
