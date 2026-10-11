@@ -1,6 +1,6 @@
 -- DB02 overlay regression acceptance; DO NOT run against production.
 -- Requires a clean disposable PostgreSQL database where Chat 1 has registered
--- canonical DB02, parent/enrollment extension, and reviewed overlay.
+-- the reviewed single consolidated canonical DB02 stage.
 -- Source-only authored acceptance: NOT EXECUTED. Rolls back ALL fixtures.
 BEGIN;
 
