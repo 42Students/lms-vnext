@@ -535,7 +535,7 @@ CREATE TRIGGER db09_tpo_saved_views_scope_guard
 -- timestamp is database-controlled to prevent backdating, synthetic updates
 -- or a producer writing a future timestamp. Equal writes stay idempotent.
 CREATE FUNCTION db09_restrict_tpo_user_preferences_lifecycle() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_OP = 'DELETE' THEN
     RAISE EXCEPTION 'TPO user preference record cannot be deleted'
@@ -591,7 +591,7 @@ CREATE TRIGGER db09_tpo_user_preferences_lifecycle_guard
 -- scoped owner. The active legacy TpoSettingsHubService has no edit path.
 -- An UPDATE (including ownership/scope/filters/timestamps) is never valid.
 CREATE FUNCTION db09_restrict_tpo_saved_view_lifecycle() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_OP = 'INSERT' THEN
     IF NEW.created_at > statement_timestamp() THEN
