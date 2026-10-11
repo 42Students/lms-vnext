@@ -12,22 +12,29 @@
 
 Previous implementations did a child `SELECT` before a parent `UPDATE`, using separate autocommit statements. An insert after SELECT but before UPDATE could violate the state relationship, despite FK row existence constraints.
 
-## Main implementation
+## Main implementation — paired parent/child row locking
+
+**Critical concurrency correction:** the archive-side FOR UPDATE by itself is NOT enough: a child creator could check an ACTIVE parent before the archive, block on its FK KEY SHARE during the archive, and then INSERT after the parent became ARCHIVED (the FK verifies identity, not status). Both sides must lock and recheck the live parent **inside** their respective transactions. The six code paths below implement that pairing for normal service operations. Direct SQL, upstream moves and alternate status writes still require the DB trigger and PG evidence.
 
 - `src/modules/courses/course-service.ts`: within `getDb().transaction`, lock `courses` row `FOR UPDATE`, then check `course_offerings.status='ACTIVE'`, then set course ARCHIVED in same transaction.
 - `src/modules/courses/offering-service.ts`: transactionally lock `course_offerings FOR UPDATE`, then check `course_section_deliveries.ended_at IS NULL` and archive.
 - `src/modules/courses/delivery-service.ts`: transactionally lock `course_section_deliveries FOR UPDATE`, check `course_teaching_assignments.ended_at IS NULL`, then set `ended_at`.
 
-PostgreSQL FK child INSERT obtains `FOR KEY SHARE` on its referenced parent row; it conflicts with `FOR UPDATE`. The row-lock must be held **before checking active children and until UPDATE commit**. The parent first/child first schedules must be verified with two sessions under READ COMMITTED.
+- `src/modules/courses/offering-service.ts` create: after preliminary scope/permission checks, lock course `FOR SHARE`, require course ACTIVE and INSERT offering in the same transaction.
+- `src/modules/courses/delivery-service.ts` create: lock offering `FOR SHARE`, require ACTIVE and INSERT delivery in the same transaction.
+- `src/modules/courses/teaching-assignment-service.ts` create: lock delivery `FOR SHARE`, require `ended_at IS NULL` and INSERT faculty assignment in the same transaction.
 
-**Scope of this fix:** normal service archive/end vs new child **INSERT**. It does not prove safety against direct privileged SQL, child reactivation or upstream reparenting. Source-level test is not a PostgreSQL witness.
+PostgreSQL FK child INSERT obtains `FOR KEY SHARE` on its referenced parent row, but that **does not revalidate parent status**. The explicit child `FOR SHARE` and post-lock state predicate are required alongside the archive `FOR UPDATE`. Both locks must be held until commit. The parent first/child first schedules must be verified with two sessions under READ COMMITTED.
+
+**Scope of this fix:** paired normal service archive/end vs new child **INSERT**. It does not prove safety against direct privileged SQL, child reactivation or upstream reparenting. Source-level test is not a PostgreSQL witness.
 
 ## W01 non-numbered companion and drift preflight
 
 - `scripts/sql/db05-hierarchy-active-child-archive-guard.draft.sql`: six triggers. Three parent state transitions reject active children; three child create/reactivate/reparent paths take a parent `FOR SHARE` lock and reject inactive parents. This is defense-in-depth for paths beyond current application services. **Do not register blindly**; cross-trigger lock order and transaction isolation require acceptance.
 - `scripts/sql/db05-hierarchy-archive-state-preflight.readonly.sql`: three aggregate counts; all must equal zero on a disposable database before the guards become active. A zero-row report is necessary but cannot prove concurrency correctness.
 - `tests/db05-hierarchy-archive-race.test.mjs`: eight authored static contract tests.
-- `tests/db05-hierarchy-archive-transactions.test.mjs`: four authored service transactional lock-order tests.
+- `tests/db05-hierarchy-archive-transactions.test.mjs`: four authored archive-side transactional lock-order tests.
+- `tests/db05-hierarchy-paired-row-locks.test.mjs`: five authored assertions for corresponding child CREATE-side `FOR SHARE` + state recheck before INSERT.
 
 ## Mandatory disposable PostgreSQL test cases
 
@@ -43,7 +50,7 @@ The SQL companion contains **HL-01 through HL-20**, which must be run at exact m
 
 ## Evidence accounting
 
-- Application TS service commits: `dabe1e4`, `d50ae54`, `7fa2b3c`.
+- Application TS archive/end commits: `dabe1e4`, `d50ae54`, `7fa2b3c`. Matching child CREATE commits: `9778ce1`, `36cbf87`, `0a7287e`.
 - SQL draft: `5ead8a2`; read-only preflight: `27a319f`.
-- Authored tests: `9b43308` and `2db1f93`.
+- Authored tests: `9b43308`, `2db1f93`, `10a8dd9` (17 new test definitions; not executed).
 - Real Node/typecheck/build/PG validation: **NOT EXECUTED in this worker iteration**. GitHub Actions is intentionally unused due to billing and is *not* itself a blocker; an independent runner may provide equivalent acceptance evidence.
