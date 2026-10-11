@@ -435,6 +435,20 @@ BEGIN
   VALUES (elective_offering_a, section_a)
   RETURNING id INTO delivery_a;
 
+  -- Offering identity is historical once any delivery exists. period_a_alt is otherwise a
+  -- valid same-college/in-window period, so this specifically exercises the history guard.
+  failed := false;
+  BEGIN
+    UPDATE course_offerings
+       SET academic_period_id = period_a_alt
+     WHERE id = elective_offering_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'offering academic identity changed after delivery history existed';
+  END IF;
+
   INSERT INTO section_schedule_events(section_id, title, starts_at, ends_at)
   VALUES (
     section_b, 'DB02 Section B event',
@@ -982,6 +996,20 @@ BEGIN
   VALUES (delivery_a, faculty_membership_a, 'PRIMARY')
   RETURNING id INTO teaching_a;
 
+  -- section_a2 shares cohort+period, so the normal delivery scope permits it; teaching history
+  -- must make the delivery's parent identity immutable.
+  failed := false;
+  BEGIN
+    UPDATE course_section_deliveries
+       SET section_id = section_a2
+     WHERE id = delivery_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'delivery parent changed after teaching history existed';
+  END IF;
+
   INSERT INTO section_faculty_assignments(section_id, membership_id, role)
   VALUES (section_a, faculty_membership_a, 'ADVISOR')
   RETURNING id INTO section_faculty_a;
@@ -1164,6 +1192,23 @@ BEGIN
     slot_a_start,
     slot_a_end
   ) RETURNING id INTO event_a;
+
+  INSERT INTO attendance_sessions(schedule_event_id)
+  VALUES (event_a);
+
+  -- A same-period section move would otherwise remain tenant-valid. Attendance makes the
+  -- schedule event historical and its section identity immutable.
+  failed := false;
+  BEGIN
+    UPDATE section_schedule_events
+       SET section_id = section_a2
+     WHERE id = event_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'schedule event moved section after attendance history existed';
+  END IF;
 
   failed := false;
   BEGIN
