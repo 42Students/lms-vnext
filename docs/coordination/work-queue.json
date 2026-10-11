@@ -690,13 +690,15 @@
         "docs/planning/sql/db09-recruiter-grant-company-integrity-candidate.sql",
         "docs/planning/db09-recruiter-grant-company-audit.md"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": "7f7e8aa99dc04a76fd7cb73e76d6c63e2dca105b",
+      "status": "BLOCKED",
+      "latestEvidenceSha": "5509683a87d376523413b1334499dc02259730fa",
       "verificationEvidence": [],
       "blockers": [
         "W01/Chat 1 must register the approved DB09 schema/staged SQL in dependency order and reconcile parent composite constraints with DB01/DB08/DB10.",
         "CI-independent disposable PostgreSQL replay plus tenant/privacy/concurrency acceptance witnesses have not executed; GitHub Actions billing/availability is not a blocker.",
-        "Runtime producer/consumer cutover and API compatibility against the exact registered schema remain unverified."
+        "Runtime producer/consumer cutover and API compatibility against the exact registered schema remain unverified.",
+        "Integrate/reconcile same-company grant invariant (candidate SQL vs optional composite company FK) with W01/DB08, including two-connection race verification; source-level messaging predicate merged but candidate SQL unregistered.",
+        "Run authored tests/db09-grant-company-isolation.test.mjs static Node checks and opt-in disposable PostgreSQL witnesses; the latter did not execute here."
       ],
       "completionNote": null,
       "pickedBy": 3,
@@ -793,9 +795,14 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T19:40:00+05:30",
           "reason": "Narrow DB-012 path extension for new isolated same-company grant source guard, candidate relational integrity SQL and review memo."
+        },
+        {
+          "status": "BLOCKED",
+          "at": "2026-10-11T19:48:00+05:30",
+          "reason": "Chat 3 committed fail-closed recruiter messaging grant company predicate, isolated DB-level same-company guard candidate, static + opt-in PostgreSQL and two-client race witnesses. Source assertions 12/12 connector-executed; migration/Node/PG still pending. Released task to preserve newer Chat 3 checkpoint."
         }
       ],
-      "progressNote": "Canonical DB09 source/design disposition is closed on main: 279/279 reviewed, 199 MAPPED, 80 REDESIGNED, 0 field-level BLOCKED, 0 runtime/PostgreSQL verified. PR #85 merged the integration-readiness cleanup: repaired malformed/duplicated CRM premerge SQL, collapsed superseded duplicate CRM/scheduling/notification drafts, promoted one canonical scheduling candidate, and added the W01 integration manifest/static guard. Remaining blockers are migration registration, CI-independent PostgreSQL replay/negative/concurrency witnesses, and runtime producer/consumer/API compatibility only. Chat 3 19:39 IST: resume isolated recruiter same-company grant query hardening and guard."
+      "progressNote": "Canonical DB09 source/design disposition is closed on main: 279/279 reviewed, 199 MAPPED, 80 REDESIGNED, 0 field-level BLOCKED, 0 runtime/PostgreSQL verified. PR #85 merged the integration-readiness cleanup: repaired malformed/duplicated CRM premerge SQL, collapsed superseded duplicate CRM/scheduling/notification drafts, promoted one canonical scheduling candidate, and added the W01 integration manifest/static guard. Remaining blockers are migration registration, CI-independent PostgreSQL replay/negative/concurrency witnesses, and runtime producer/consumer/API compatibility only. Chat 3 19:39 IST: resume isolated recruiter same-company grant query hardening and guard. Chat 3 additional source-confirmed discrepancy corrected: messaging grant lookup now enforces recruiter profile company = college relationship company; independent staging for base grant trigger and parent reassignment guards + 2 static and opt-in PostgreSQL race/negative tests + memo. Connector-run static assertions 12/12 passed; Node and PostgreSQL not executed. Commit 053b16a/21bdc4a/474d2bf/3f8e792/5509683/724d0a1."
     },
     {
       "id": "DB-013",
