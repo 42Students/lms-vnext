@@ -349,6 +349,12 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Six upstream triggers plus child scope share 605008003 advisory lock, but disposable PostgreSQL same-college, wrong-tenant, reparent, two-session race and deadlock acceptance not executed."
+    },
+    {
+      "id": "LEARNER_CONTENT_PUBLISH_ACTIVE_ENABLED_INTERSECTION",
+      "status": "BLOCKED",
+      "owner": "DB05_W01_API_PHASE",
+      "evidence": "Legacy LessonContentsServiceImpl requires active&&enabled for learner visibility; current vNext filters PUBLISHED and path publication but not separate persisted flags. Source truth table docs/planning/db05-learner-content-visibility-matrix.json; no API/PG acceptance. Keep PUBLISHED gate while reconciling independent flags."
     }
   ],
   "sourceReview": {
@@ -377,7 +383,8 @@
     "tests/db05-content-delivery-order-unique.test.mjs",
     "tests/db05-lesson-content-authoring-facets.test.mjs",
     "tests/db05-learner-course-card-source-contract.test.mjs",
-    "tests/db05-content-order-upstream-reparent.test.mjs"
+    "tests/db05-content-order-upstream-reparent.test.mjs",
+    "tests/db05-learner-content-visibility-matrix.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
