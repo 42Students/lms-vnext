@@ -109,7 +109,8 @@ RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
     UPDATE section_enrollments
-       SET status = 'WITHDRAWN',
+       SET status = CASE WHEN NEW.status = 'COMPLETED' THEN 'COMPLETED'::section_enrollment_status
+                         ELSE 'WITHDRAWN'::section_enrollment_status END,
            ended_at = COALESCE(ended_at, statement_timestamp()),
            updated_at = statement_timestamp()
      WHERE learner_enrollment_id = NEW.id AND status = 'ACTIVE';
