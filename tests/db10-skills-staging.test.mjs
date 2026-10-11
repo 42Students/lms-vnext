@@ -62,3 +62,12 @@ test("DB22 safeguards names, active ranking, counter and priority bounds", () =>
   assert.match(sql, /search_priority BETWEEN 0 AND 100/);
   assert.match(sql, /CREATE INDEX db10_skills_active_category_name_idx/);
 });
+
+test("DB22 usage names preserve legacy whitespace until product approves redesign", () => {
+  assert.match(sql, /VALUES\(lower\(:name\),1,clock_timestamp\(\)\)/);
+  assert.doesNotMatch(sql, /VALUES\(lower\(trim\(:name\)\)/);
+  assert.match(sql, /SkillUsageTracker\.recordUsage uses toLowerCase\(\) WITHOUT trim/);
+  assert.match(contract, /Whitespace-parity exception/);
+  // The SQL comment is staging guidance, NOT an executed database writer.
+  // A product decision is still needed about tightening blank-only skill names.
+});
