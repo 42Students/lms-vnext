@@ -173,7 +173,10 @@ BEGIN
     NEW.object_key FROM length(required_key_prefix) + 1
   );
 
-  IF object_key_suffix !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}
+  IF object_key_suffix !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$' THEN
+    RAISE EXCEPTION 'course receipt private object key must end with one uuid'
+      USING ERRCODE = '23514';
+  END IF;
 
   IF NEW.upload_token_hash !~ '^[0-9a-f]{64}$' THEN
     RAISE EXCEPTION 'course receipt upload token hash must be sha256 hex'
