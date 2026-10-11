@@ -657,21 +657,25 @@ ALTER TABLE sections
 -- Teaching assignments and schedules inherit cohort/period/term identity through delivery.
 -- Protect that chain at the database boundary instead of relying only on service validation.
 CREATE FUNCTION db02_guard_course_section_delivery_scope()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   offering_cohort uuid;
   offering_period uuid;
+  offering_status course_offering_status;
+  course_status_value course_status;
   section_cohort uuid;
   section_period uuid;
+  section_status_value section_status;
 BEGIN
-  SELECT co.cohort_id, co.academic_period_id
-    INTO offering_cohort, offering_period
+  SELECT co.cohort_id, co.academic_period_id, co.status, crs.status
+    INTO offering_cohort, offering_period, offering_status, course_status_value
     FROM course_offerings co
+    JOIN courses crs ON crs.id = co.course_id
    WHERE co.id = NEW.offering_id
-   FOR SHARE OF co;
+   FOR SHARE OF co, crs;
 
-  SELECT s.cohort_id, s.academic_period_id
-    INTO section_cohort, section_period
+  SELECT s.cohort_id, s.academic_period_id, s.status
+    INTO section_cohort, section_period, section_status_value
     FROM sections s
    WHERE s.id = NEW.section_id
    FOR SHARE OF s;
@@ -686,12 +690,22 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
+  IF NEW.ended_at IS NULL
+     AND (
+       offering_status IS DISTINCT FROM 'ACTIVE'
+       OR course_status_value IS DISTINCT FROM 'ACTIVE'
+       OR section_status_value IS DISTINCT FROM 'ACTIVE'
+     ) THEN
+    RAISE EXCEPTION 'Active course delivery requires ACTIVE offering, course and section'
+      USING ERRCODE = '23514';
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_course_section_delivery_scope_guard
-BEFORE INSERT OR UPDATE OF offering_id, section_id
+BEFORE INSERT OR UPDATE OF offering_id, section_id, ended_at
 ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_section_delivery_scope();
 
@@ -1159,24 +1173,29 @@ CREATE INDEX section_schedule_events_hall_time_idx
   WHERE lecture_hall_id IS NOT NULL AND status = 'SCHEDULED';
 
 CREATE FUNCTION db02_guard_schedule_hall_tenant()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   section_college uuid;
+  section_status_value section_status;
   faculty_college uuid;
   hall_college uuid;
 BEGIN
-  -- Validate section and faculty even if there is no assigned lecture hall.
-  -- The earlier early-return allowed direct SQL to attach a cross-college
-  -- faculty_membership_id whenever lecture_hall_id was NULL.
-  SELECT d.college_id INTO section_college
+  SELECT d.college_id, s.status
+    INTO section_college, section_status_value
     FROM sections s
     JOIN cohorts c ON c.id = s.cohort_id
     JOIN programs p ON p.id = c.program_id
     JOIN departments d ON d.id = p.department_id
-   WHERE s.id = NEW.section_id;
+   WHERE s.id = NEW.section_id
+   FOR SHARE OF s;
 
   IF section_college IS NULL THEN
     RAISE EXCEPTION 'Unknown schedule section scope' USING ERRCODE = '23503';
+  END IF;
+
+  IF NEW.status = 'SCHEDULED' AND section_status_value IS DISTINCT FROM 'ACTIVE' THEN
+    RAISE EXCEPTION 'Scheduled event requires an ACTIVE section'
+      USING ERRCODE = '23514';
   END IF;
 
   IF NEW.faculty_membership_id IS NOT NULL THEN
@@ -1204,8 +1223,6 @@ BEGIN
   END IF;
 
   IF NEW.lecture_hall_id IS NOT NULL THEN
-    -- Existing cancelled sessions may retain an archived hall reference.
-    -- New active bookings may only use currently ACTIVE lecture halls.
     SELECT college_id INTO hall_college
       FROM lecture_halls
      WHERE id = NEW.lecture_hall_id
@@ -1221,10 +1238,10 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_schedule_hall_tenant_guard
-BEFORE INSERT OR UPDATE OF section_id, faculty_membership_id, lecture_hall_id, status
+BEFORE INSERT OR UPDATE OF section_id, faculty_membership_id, lecture_hall_id, status, starts_at, ends_at
 ON section_schedule_events
 FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_hall_tenant();
 
@@ -1281,40 +1298,31 @@ ALTER TABLE section_schedule_events
 -- 3a) Section faculty assignment tenant/role integrity
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_section_faculty_assignment_scope()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   section_college uuid;
+  section_status_value section_status;
   membership_college uuid;
+  membership_status_value membership_status;
 BEGIN
-  SELECT d.college_id
-    INTO section_college
+  SELECT d.college_id, s.status
+    INTO section_college, section_status_value
     FROM sections s
     JOIN cohorts c ON c.id = s.cohort_id
     JOIN programs p ON p.id = c.program_id
     JOIN departments d ON d.id = p.department_id
-   WHERE s.id = NEW.section_id;
+   WHERE s.id = NEW.section_id
+   FOR SHARE OF s;
 
-  SELECT cm.college_id
-    INTO membership_college
+  SELECT cm.college_id, cm.status
+    INTO membership_college, membership_status_value
     FROM college_memberships cm
    WHERE cm.id = NEW.membership_id
-     AND cm.status = 'ACTIVE'
    FOR SHARE;
 
   IF section_college IS NULL OR membership_college IS NULL THEN
-    RAISE EXCEPTION 'Unknown section or inactive faculty membership'
+    RAISE EXCEPTION 'Unknown section or faculty membership'
       USING ERRCODE = '23503';
-  END IF;
-
-  PERFORM 1
-    FROM membership_roles mr
-   WHERE mr.membership_id = NEW.membership_id
-     AND mr.role = 'FACULTY'
-   FOR SHARE;
-
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Section faculty assignment requires FACULTY role'
-      USING ERRCODE = '23514';
   END IF;
 
   IF section_college <> membership_college THEN
@@ -1322,12 +1330,31 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
+  IF NEW.ended_at IS NULL THEN
+    IF section_status_value IS DISTINCT FROM 'ACTIVE'
+       OR membership_status_value IS DISTINCT FROM 'ACTIVE' THEN
+      RAISE EXCEPTION 'Active section faculty assignment requires ACTIVE section and membership'
+        USING ERRCODE = '23514';
+    END IF;
+
+    PERFORM 1
+      FROM membership_roles mr
+     WHERE mr.membership_id = NEW.membership_id
+       AND mr.role = 'FACULTY'
+     FOR SHARE;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Section faculty assignment requires FACULTY role'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_section_faculty_assignment_scope_guard
-BEFORE INSERT OR UPDATE OF section_id, membership_id
+BEFORE INSERT OR UPDATE OF section_id, membership_id, ended_at
 ON section_faculty_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_faculty_assignment_scope();
 
@@ -1335,42 +1362,38 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_faculty_assignment_scope();
 -- 3b) Course teaching assignment tenant/role integrity
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_course_teaching_assignment_scope()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   delivery_college uuid;
+  delivery_ended_at timestamptz;
+  offering_status_value course_offering_status;
+  course_status_value course_status;
+  section_status_value section_status;
   membership_college uuid;
+  membership_status_value membership_status;
 BEGIN
-  SELECT d.college_id
-    INTO delivery_college
+  SELECT d.college_id, csd.ended_at, co.status, crs.status, s.status
+    INTO delivery_college, delivery_ended_at, offering_status_value,
+         course_status_value, section_status_value
     FROM course_section_deliveries csd
     JOIN course_offerings co ON co.id = csd.offering_id
+    JOIN courses crs ON crs.id = co.course_id
+    JOIN sections s ON s.id = csd.section_id
     JOIN cohorts c ON c.id = co.cohort_id
     JOIN programs p ON p.id = c.program_id
     JOIN departments d ON d.id = p.department_id
    WHERE csd.id = NEW.delivery_id
-   FOR SHARE OF csd;
+   FOR SHARE OF csd, co, crs, s;
 
-  SELECT cm.college_id
-    INTO membership_college
+  SELECT cm.college_id, cm.status
+    INTO membership_college, membership_status_value
     FROM college_memberships cm
    WHERE cm.id = NEW.membership_id
-     AND cm.status = 'ACTIVE'
    FOR SHARE;
 
   IF delivery_college IS NULL OR membership_college IS NULL THEN
-    RAISE EXCEPTION 'Unknown delivery or inactive faculty membership'
+    RAISE EXCEPTION 'Unknown delivery or faculty membership'
       USING ERRCODE = '23503';
-  END IF;
-
-  PERFORM 1
-    FROM membership_roles mr
-   WHERE mr.membership_id = NEW.membership_id
-     AND mr.role = 'FACULTY'
-   FOR SHARE;
-
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Course teaching assignment requires FACULTY role'
-      USING ERRCODE = '23514';
   END IF;
 
   IF delivery_college <> membership_college THEN
@@ -1378,12 +1401,34 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
+  IF NEW.ended_at IS NULL THEN
+    IF delivery_ended_at IS NOT NULL
+       OR offering_status_value IS DISTINCT FROM 'ACTIVE'
+       OR course_status_value IS DISTINCT FROM 'ACTIVE'
+       OR section_status_value IS DISTINCT FROM 'ACTIVE'
+       OR membership_status_value IS DISTINCT FROM 'ACTIVE' THEN
+      RAISE EXCEPTION 'Active teaching assignment requires active delivery chain and membership'
+        USING ERRCODE = '23514';
+    END IF;
+
+    PERFORM 1
+      FROM membership_roles mr
+     WHERE mr.membership_id = NEW.membership_id
+       AND mr.role = 'FACULTY'
+     FOR SHARE;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Course teaching assignment requires FACULTY role'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_course_teaching_assignment_scope_guard
-BEFORE INSERT OR UPDATE OF delivery_id, membership_id
+BEFORE INSERT OR UPDATE OF delivery_id, membership_id, ended_at
 ON course_teaching_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_teaching_assignment_scope();
 
@@ -1413,42 +1458,28 @@ CREATE INDEX faculty_course_associations_course_active_idx
   WHERE ended_at IS NULL;
 
 CREATE FUNCTION db02_guard_faculty_course_association_scope()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   membership_college uuid;
+  membership_status_value membership_status;
   course_college uuid;
+  course_status_value course_status;
 BEGIN
-  SELECT cm.college_id
-    INTO membership_college
+  SELECT cm.college_id, cm.status
+    INTO membership_college, membership_status_value
     FROM college_memberships cm
    WHERE cm.id = NEW.membership_id
-     AND cm.status = 'ACTIVE'
    FOR SHARE;
 
-  IF membership_college IS NULL THEN
-    RAISE EXCEPTION 'Unknown or inactive faculty membership'
-      USING ERRCODE = '23503';
-  END IF;
-
-  PERFORM 1
-    FROM membership_roles mr
-   WHERE mr.membership_id = NEW.membership_id
-     AND mr.role = 'FACULTY'
-   FOR SHARE;
-
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Faculty-course association requires FACULTY role'
-      USING ERRCODE = '23514';
-  END IF;
-
-  SELECT d.college_id
-    INTO course_college
+  SELECT d.college_id, c.status
+    INTO course_college, course_status_value
     FROM courses c
     JOIN departments d ON d.id = c.department_id
-   WHERE c.id = NEW.course_id;
+   WHERE c.id = NEW.course_id
+   FOR SHARE OF c;
 
-  IF course_college IS NULL THEN
-    RAISE EXCEPTION 'Unknown course'
+  IF membership_college IS NULL OR course_college IS NULL THEN
+    RAISE EXCEPTION 'Unknown faculty membership or course'
       USING ERRCODE = '23503';
   END IF;
 
@@ -1457,9 +1488,28 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
+  IF NEW.ended_at IS NULL THEN
+    IF membership_status_value IS DISTINCT FROM 'ACTIVE'
+       OR course_status_value IS DISTINCT FROM 'ACTIVE' THEN
+      RAISE EXCEPTION 'Active faculty-course association requires ACTIVE membership and course'
+        USING ERRCODE = '23514';
+    END IF;
+
+    PERFORM 1
+      FROM membership_roles mr
+     WHERE mr.membership_id = NEW.membership_id
+       AND mr.role = 'FACULTY'
+     FOR SHARE;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Faculty-course association requires FACULTY role'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_faculty_course_association_scope_guard
 BEFORE INSERT OR UPDATE OF membership_id, course_id
@@ -1728,11 +1778,13 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_history_reparent();
 -- 5c) Learner program/section enrollment scope
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_learner_program_enrollment_tenant()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   membership_college uuid;
   program_college uuid;
+  program_status_value program_status;
   cohort_program uuid;
+  cohort_status_value cohort_status;
 BEGIN
   SELECT college_id
     INTO membership_college
@@ -1757,16 +1809,18 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
-  SELECT d.college_id
-    INTO program_college
+  SELECT d.college_id, p.status
+    INTO program_college, program_status_value
     FROM programs p
     JOIN departments d ON d.id = p.department_id
-   WHERE p.id = NEW.program_id;
+   WHERE p.id = NEW.program_id
+   FOR SHARE OF p;
 
-  SELECT program_id
-    INTO cohort_program
+  SELECT program_id, status
+    INTO cohort_program, cohort_status_value
     FROM cohorts
-   WHERE id = NEW.cohort_id;
+   WHERE id = NEW.cohort_id
+   FOR SHARE;
 
   IF program_college IS NULL
      OR cohort_program IS NULL
@@ -1776,9 +1830,18 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
+  IF NEW.status = 'ACTIVE'
+     AND (
+       program_status_value IS DISTINCT FROM 'ACTIVE'
+       OR cohort_status_value NOT IN ('PLANNED','ACTIVE')
+     ) THEN
+    RAISE EXCEPTION 'Active learner enrollment requires ACTIVE program and PLANNED/ACTIVE cohort'
+      USING ERRCODE = '23514';
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_learner_program_enrollment_tenant
 BEFORE INSERT OR UPDATE OF membership_id, program_id, cohort_id
@@ -1786,21 +1849,32 @@ ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_enrollment_tenant();
 
 CREATE FUNCTION db02_guard_section_enrollment_cohort_period()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   learner_cohort uuid;
+  learner_status_value learner_program_enrollment_status;
   target_cohort uuid;
   target_period uuid;
+  target_status section_status;
+  period_status_value academic_period_status;
 BEGIN
-  SELECT cohort_id
-    INTO learner_cohort
+  SELECT cohort_id, status
+    INTO learner_cohort, learner_status_value
     FROM learner_program_enrollments
-   WHERE id = NEW.learner_enrollment_id;
+   WHERE id = NEW.learner_enrollment_id
+   FOR SHARE;
 
-  SELECT cohort_id, academic_period_id
-    INTO target_cohort, target_period
+  SELECT cohort_id, academic_period_id, status
+    INTO target_cohort, target_period, target_status
     FROM sections
-   WHERE id = NEW.section_id;
+   WHERE id = NEW.section_id
+   FOR SHARE;
+
+  SELECT status
+    INTO period_status_value
+    FROM academic_periods
+   WHERE id = NEW.academic_period_id
+   FOR SHARE;
 
   IF learner_cohort IS NULL
      OR target_cohort IS NULL
@@ -1811,9 +1885,19 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
+  IF NEW.status = 'ACTIVE'
+     AND (
+       learner_status_value IS DISTINCT FROM 'ACTIVE'
+       OR target_status IS DISTINCT FROM 'ACTIVE'
+       OR period_status_value IS DISTINCT FROM 'ACTIVE'
+     ) THEN
+    RAISE EXCEPTION 'Active section enrollment requires ACTIVE learner program, section and period'
+      USING ERRCODE = '23514';
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_section_enrollment_cohort_period
 BEFORE INSERT OR UPDATE OF learner_enrollment_id, section_id, academic_period_id
@@ -2246,27 +2330,65 @@ FOR EACH ROW EXECUTE FUNCTION db02_lock_event_for_attendance_history();
 -- Closing historical faculty/learner rows remains valid during de-role/end;
 -- reopening cannot bypass initial membership/role checks by editing status/ended_at.
 CREATE FUNCTION db02_guard_faculty_assignment_reactivation()
-RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE v_status membership_status;
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  v_status membership_status;
 BEGIN
   IF OLD.ended_at IS NULL OR NEW.ended_at IS NOT NULL THEN
     RETURN NEW;
   END IF;
+
   SELECT status INTO v_status FROM college_memberships
    WHERE id = NEW.membership_id FOR SHARE;
   IF v_status IS DISTINCT FROM 'ACTIVE' THEN
     RAISE EXCEPTION 'Cannot reactivate faculty assignment without ACTIVE membership'
       USING ERRCODE='23514';
   END IF;
+
   PERFORM 1 FROM membership_roles
    WHERE membership_id = NEW.membership_id AND role = 'FACULTY' FOR SHARE;
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Cannot reactivate faculty assignment without FACULTY role'
       USING ERRCODE='23514';
   END IF;
+
+  IF TG_TABLE_NAME = 'faculty_course_associations' THEN
+    PERFORM 1 FROM courses
+     WHERE id = NEW.course_id AND status = 'ACTIVE'
+     FOR SHARE;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Cannot reactivate faculty-course association for archived course'
+        USING ERRCODE='23514';
+    END IF;
+  ELSIF TG_TABLE_NAME = 'section_faculty_assignments' THEN
+    PERFORM 1 FROM sections
+     WHERE id = NEW.section_id AND status = 'ACTIVE'
+     FOR SHARE;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Cannot reactivate faculty assignment for archived section'
+        USING ERRCODE='23514';
+    END IF;
+  ELSIF TG_TABLE_NAME = 'course_teaching_assignments' THEN
+    PERFORM 1
+      FROM course_section_deliveries csd
+      JOIN course_offerings co ON co.id = csd.offering_id
+      JOIN courses crs ON crs.id = co.course_id
+      JOIN sections s ON s.id = csd.section_id
+     WHERE csd.id = NEW.delivery_id
+       AND csd.ended_at IS NULL
+       AND co.status = 'ACTIVE'
+       AND crs.status = 'ACTIVE'
+       AND s.status = 'ACTIVE'
+     FOR SHARE OF csd, co, crs, s;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Cannot reactivate teaching assignment without active delivery chain'
+        USING ERRCODE='23514';
+    END IF;
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_course_pool_reactivation_role_guard
 BEFORE UPDATE OF ended_at ON faculty_course_associations
@@ -2281,42 +2403,62 @@ BEFORE UPDATE OF ended_at ON course_teaching_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_assignment_reactivation();
 
 CREATE FUNCTION db02_guard_learner_program_reactivation()
-RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE v_status membership_status;
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  v_status membership_status;
+  v_program_status program_status;
+  v_cohort_status cohort_status;
 BEGIN
   IF NEW.status <> 'ACTIVE' OR OLD.status = 'ACTIVE' THEN
     RETURN NEW;
   END IF;
+
   SELECT status INTO v_status FROM college_memberships
    WHERE id = NEW.membership_id FOR SHARE;
   IF v_status IS DISTINCT FROM 'ACTIVE' THEN
     RAISE EXCEPTION 'Cannot reactivate learner program without ACTIVE membership'
       USING ERRCODE='23514';
   END IF;
+
   PERFORM 1 FROM membership_roles
    WHERE membership_id = NEW.membership_id AND role = 'LEARNER' FOR SHARE;
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Cannot reactivate learner program without LEARNER role'
       USING ERRCODE='23514';
   END IF;
+
+  SELECT status INTO v_program_status
+    FROM programs WHERE id = NEW.program_id FOR SHARE;
+  SELECT status INTO v_cohort_status
+    FROM cohorts WHERE id = NEW.cohort_id FOR SHARE;
+
+  IF v_program_status IS DISTINCT FROM 'ACTIVE'
+     OR v_cohort_status NOT IN ('PLANNED','ACTIVE') THEN
+    RAISE EXCEPTION 'Cannot reactivate learner program under inactive program/cohort'
+      USING ERRCODE='23514';
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_program_enrollment_reactivation_role_guard
 BEFORE UPDATE OF status ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_reactivation();
 
 CREATE FUNCTION db02_guard_learner_section_reactivation()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 DECLARE
   v_program_status learner_program_enrollment_status;
   v_membership uuid;
   v_status membership_status;
+  v_section_status section_status;
+  v_period_status academic_period_status;
 BEGIN
   IF NEW.status <> 'ACTIVE' OR OLD.status = 'ACTIVE' THEN
     RETURN NEW;
   END IF;
+
   SELECT status, membership_id INTO v_program_status, v_membership
     FROM learner_program_enrollments WHERE id = NEW.learner_enrollment_id
     FOR SHARE;
@@ -2324,21 +2466,35 @@ BEGIN
     RAISE EXCEPTION 'Cannot reactivate section without ACTIVE learner program'
       USING ERRCODE='23514';
   END IF;
+
   SELECT status INTO v_status FROM college_memberships
    WHERE id = v_membership FOR SHARE;
   IF v_status IS DISTINCT FROM 'ACTIVE' THEN
     RAISE EXCEPTION 'Cannot reactivate section without ACTIVE college membership'
       USING ERRCODE='23514';
   END IF;
+
   PERFORM 1 FROM membership_roles
    WHERE membership_id = v_membership AND role = 'LEARNER' FOR SHARE;
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Cannot reactivate section without LEARNER role'
       USING ERRCODE='23514';
   END IF;
+
+  SELECT status INTO v_section_status
+    FROM sections WHERE id = NEW.section_id FOR SHARE;
+  SELECT status INTO v_period_status
+    FROM academic_periods WHERE id = NEW.academic_period_id FOR SHARE;
+
+  IF v_section_status IS DISTINCT FROM 'ACTIVE'
+     OR v_period_status IS DISTINCT FROM 'ACTIVE' THEN
+    RAISE EXCEPTION 'Cannot reactivate section enrollment under inactive section/period'
+      USING ERRCODE='23514';
+  END IF;
+
   RETURN NEW;
 END;
-$$;
+$;
 
 CREATE TRIGGER db02_section_enrollment_reactivation_role_guard
 BEFORE UPDATE OF status ON section_enrollments
