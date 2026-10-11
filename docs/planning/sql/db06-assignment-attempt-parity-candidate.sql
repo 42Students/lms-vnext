@@ -1,0 +1,30 @@
+-- DB-044 / DB06 SOURCE-ONLY RETIREMENT CANDIDATE.
+-- NO DDL IS REQUIRED OR ALLOWED FOR attempt_number / semester_number parity.
+--
+-- Frozen current-prod evidence:
+-- * V28__student_assignment_unique_submission.sql deletes duplicates and adds
+--   UNIQUE(student_id, lesson_content_id).
+-- * AssignmentServiceImpl.submit() rejects a second row through
+--   existsByStudentIdAndLessonContentId(...) before INSERT.
+-- * DataIntegrityViolationException is mapped to the same duplicate-submission
+--   failure, so the database unique key is the concurrency backstop.
+-- * Current submit code never reads/writes StudentAssignment.attemptNumber or
+--   StudentAssignment.semesterNumber.
+-- * V57 added semester_number for a proposed semester-scoped attempt counter,
+--   but the current submit path does not set it and the repository counter has
+--   no current producer/consumer in the pinned source census.
+--
+-- vNext already matches the active contract with
+-- assignment_submissions_assignment_membership_uq(assignment_id,membership_id).
+-- Replacing that key with attempt_number would resurrect dormant behavior and
+-- weaken current one-submission semantics.
+--
+-- semester scope is already relational in vNext:
+-- assignment -> delivery -> offering -> academic_period_id. A redundant scalar
+-- semester_number on each submission would be denormalized and is unnecessary
+-- while only one submission is allowed.
+--
+-- PROMOTION DECISION: NO-OP / DO NOT REGISTER.
+-- Keep the existing vNext unique key. If a future product explicitly adds
+-- assignment re-attempts, design a new versioned attempt model and API contract
+-- rather than reviving these legacy columns implicitly.
