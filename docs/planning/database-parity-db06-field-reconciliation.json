@@ -19,7 +19,7 @@
     {
       "legacyTable": "assignment_upload_receipt",
       "sourceFieldCount": 19,
-      "targetTable": "assignment_upload_receipts",
+      "targetTable": "course_upload_receipts",
       "sourceEvidence": [
         "JPA_ENTITY",
         "AssignmentServiceImpl",
@@ -34,11 +34,11 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "decision": "TARGET_GAP_REQUIRED",
-          "targetRef": "assignment_upload_receipts.id",
-          "reason": "UUID primary key in normalized target.",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.id",
+          "reason": "Legacy integer identity becomes UUID receipt identity.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "receipt_id",
@@ -46,11 +46,11 @@
           "nullable": "NOT_NULL",
           "defaultValue": null,
           "riskFlags": [],
-          "decision": "SECURITY_REDESIGN_REQUIRED",
-          "targetRef": "assignment_upload_receipts.receipt_id / token_hash",
-          "reason": "Opaque one-time receipt identity; never trust raw client-selected paths.",
+          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.id",
+          "reason": "Legacy opaque receipt lookup ID is normalized to UUID receipt identity; upload grant secret is never persisted raw and uses upload_token_hash.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "storage_key",
@@ -58,11 +58,11 @@
           "nullable": "NOT_NULL",
           "defaultValue": null,
           "riskFlags": [],
-          "decision": "SECURITY_REDESIGN_REQUIRED",
-          "targetRef": "assignment_upload_receipts.object_key",
-          "reason": "Private GCS object key.",
+          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.object_key",
+          "reason": "Private GCS object key is scoped to exact college/membership/purpose namespace and becomes immutable identity.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "public_url",
@@ -72,9 +72,9 @@
           "riskFlags": [],
           "decision": "RETIRE_SECURITY_ANTI_PATTERN",
           "targetRef": "null",
-          "reason": "Public URL must not be authoritative for private assignment objects.",
+          "reason": "Public URL is not persisted as private-object identity; signed reads are generated only after authorization.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "folder",
@@ -82,11 +82,11 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "private object namespace",
-          "reason": "Namespace is encoded by server-owned object contract.",
+          "decision": "DERIVED_METADATA_NOT_PERSISTED",
+          "targetRef": "course_upload_receipts.purpose + object_key namespace",
+          "reason": "Folder/namespace is server-derived from purpose and private object key contract.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "upload_type",
@@ -94,11 +94,11 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "NORMALIZED_TARGET_FIELD",
-          "targetRef": "assignment_upload_receipts.upload_type",
-          "reason": "Retain only if multiple submission asset policies query it.",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.purpose",
+          "reason": "Legacy upload type becomes constrained receipt purpose rather than free-form upload metadata.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "owner_user_id",
@@ -109,10 +109,10 @@
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
           "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "assignment_upload_receipts.owner_membership_id",
-          "reason": "Tenant-scoped membership replaces global user integer.",
+          "targetRef": "course_upload_receipts.owner_membership_id + created_by_user_id",
+          "reason": "Tenant membership is the scope anchor while created_by_user_id proves the exact membership user.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "owner_user_type",
@@ -121,10 +121,10 @@
           "defaultValue": "NULL",
           "riskFlags": [],
           "decision": "DERIVED_METADATA_NOT_PERSISTED",
-          "targetRef": "college_memberships.role",
-          "reason": "Role is canonical membership data.",
+          "targetRef": "membership_roles",
+          "reason": "Owner role is canonical membership data; assignment receipt insert requires persisted LEARNER role.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "lesson_content_id",
@@ -135,10 +135,10 @@
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
           "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "assignment_upload_receipts.assignment_id",
-          "reason": "Bind receipt to canonical assignment/delivery scope.",
+          "targetRef": "course_upload_receipts.assignment_id + delivery_id / lesson_content_id",
+          "reason": "Assignment receipts bind canonical assignment plus exact delivery; course-resource receipts bind lesson content.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "declared_content_type",
@@ -146,11 +146,11 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "SECURITY_REDESIGN_REQUIRED",
-          "targetRef": "assignment_upload_receipts.expected_content_type",
-          "reason": "Expected signed-upload MIME.",
+          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.declared_content_type",
+          "reason": "Signed-upload expected MIME is persisted and assignment MIME allowlist is DB-guarded.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "declared_content_length",
@@ -158,11 +158,11 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "SECURITY_REDESIGN_REQUIRED",
-          "targetRef": "assignment_upload_receipts.expected_size_bytes",
-          "reason": "Expected signed-upload size.",
+          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.declared_size_bytes",
+          "reason": "Signed-upload expected size is persisted with 50 MiB bound.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "actual_content_type",
@@ -170,11 +170,11 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "SECURITY_REDESIGN_REQUIRED",
-          "targetRef": "assignment_upload_receipts.attested_content_type",
-          "reason": "Scanner/object metadata attestation.",
+          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.actual_content_type",
+          "reason": "Privileged object attestation supplies actual MIME and consumption requires equality with declared MIME.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "actual_content_length",
@@ -182,11 +182,11 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "SECURITY_REDESIGN_REQUIRED",
-          "targetRef": "assignment_upload_receipts.attested_size_bytes",
-          "reason": "Scanner/object metadata attestation.",
+          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.actual_size_bytes",
+          "reason": "Privileged object attestation supplies actual size and consumption requires equality with declared size.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "expires_at",
@@ -196,11 +196,11 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "TARGET_GAP_REQUIRED",
-          "targetRef": "assignment_upload_receipts.expires_at",
-          "reason": "One-time receipt expiry.",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.expires_at",
+          "reason": "One-time receipt expiry is persisted and bounded to at most 15 minutes after creation.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "consumed_at",
@@ -210,11 +210,11 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "TARGET_GAP_REQUIRED",
-          "targetRef": "assignment_upload_receipts.consumed_at",
-          "reason": "Atomic anti-replay marker.",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.consumed_at",
+          "reason": "One-time consumption marker is retained with CAS and immutable reassignment prevention.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "student_assignment_id",
@@ -225,10 +225,10 @@
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
           "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "assignment_upload_receipts.assignment_submission_id",
-          "reason": "Final receipt consumption links to created submission.",
+          "targetRef": "course_upload_receipts.consumed_by_submission_id",
+          "reason": "Consumed receipt links exact normalized submission; multiple unique receipts may link the same multi-file submission.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "created_at",
@@ -238,11 +238,11 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "TARGET_GAP_REQUIRED",
-          "targetRef": "assignment_upload_receipts.created_at",
-          "reason": "Receipt creation time.",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.created_at",
+          "reason": "Receipt creation timestamp.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "updated_at",
@@ -252,11 +252,11 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "TARGET_GAP_REQUIRED",
-          "targetRef": "assignment_upload_receipts.updated_at",
-          "reason": "Receipt lifecycle update time.",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "targetRef": "course_upload_receipts.updated_at",
+          "reason": "Receipt lifecycle update timestamp; identity/attestation fields remain one-way or immutable.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "is_deleted",
@@ -265,10 +265,10 @@
           "defaultValue": "'0'",
           "riskFlags": [],
           "decision": "NORMALIZED_LIFECYCLE",
-          "targetRef": "assignment_upload_receipts.status/consumed_at/expires_at",
-          "reason": "Receipt validity is explicit, not generic soft-delete.",
+          "targetRef": "course_upload_receipts.revoked/revoked_at + deletion_requested_at/deleted_at + retention_until",
+          "reason": "Generic soft delete becomes explicit irreversible revocation plus retention-aware physical deletion lifecycle; receipt evidence rows are retained.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         }
       ]
     },
@@ -1410,11 +1410,11 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "decision": "SECURITY_REDESIGN_REQUIRED",
-          "targetRef": "assignment_submission_assets / private object receipt",
-          "reason": "Legacy JSON file object must become private object references with attestation.",
+          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
+          "targetRef": "assignment_submission_files + course_upload_receipts",
+          "reason": "Legacy file JSON is normalized to immutable receipt-backed private object evidence with generation/MIME/size/SHA/scanner/retention proof.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "graded",
@@ -1458,11 +1458,11 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "NORMALIZED_TARGET_FIELD",
-          "targetRef": "assignment_submissions.submission_type",
-          "reason": "Active payload discriminator; multi-part/file expansion may require a child asset relation.",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "targetRef": "assignment_submissions.submission_type + assignment_submission_files",
+          "reason": "Current vNext single TEXT/LINK/FILE discriminator is implemented, but pinned legacy MULTI_PART asset semantics require later API/type cutover while DB-053 stages plural file persistence.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "submission_link",
@@ -1484,11 +1484,11 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "decision": "SECURITY_REDESIGN_REQUIRED",
-          "targetRef": "assignment_submission_assets / assignment_upload_receipts",
-          "reason": "Active multi-part/file contract cannot remain opaque JSON authoritative storage.",
+          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
+          "targetRef": "assignment_submission_files (ordered many-row file assets) + course_upload_receipts",
+          "reason": "Pinned legacy submission_assets is an ordered list and may consume multiple unique file receipts. DB-053 replaces opaque JSON file evidence with ordered many-row receipt-backed files; mixed text/link MULTI_PART API cutover remains later-phase work.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
         {
           "legacyField": "lesson_content_id",
@@ -1666,5 +1666,26 @@
         }
       ]
     }
-  ]
+  ],
+  "db053PrivateUploadReconciliation": {
+    "observedOn": "2026-10-11",
+    "task": "DB-053",
+    "status": "SOURCE_STAGED_RUNTIME_UNVERIFIED",
+    "legacyReceiptFields": 19,
+    "legacyReceiptFieldsDispositioned": 19,
+    "privateAssetFields": [
+      "assignment_contents",
+      "submission_assets",
+      "submission_type"
+    ],
+    "targetTables": [
+      "course_upload_receipts",
+      "assignment_submission_files"
+    ],
+    "multiFileParity": "STAGED_ORDERED_MANY_ROW_FILES",
+    "exactDeliveryBinding": "STAGED",
+    "scannerTimestamp": "PRODUCER_CUTOVER_REQUIRED_TRUSTED_METADATA",
+    "readRevocationCheck": "PRODUCER_CUTOVER_REQUIRED",
+    "runtimeVerified": false
+  }
 }
