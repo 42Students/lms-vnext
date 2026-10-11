@@ -350,7 +350,7 @@ CREATE TRIGGER db09_recruiter_private_note_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_recruiter_private_note_scope();
 
 CREATE FUNCTION db09_restrict_recruiter_private_note_lifecycle() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.created_at > statement_timestamp() + interval '5 minutes'
      OR NEW.updated_at > statement_timestamp() + interval '5 minutes' THEN
@@ -384,7 +384,8 @@ BEGIN
   END IF;
 
   RETURN NEW;
-END $;
+END $$;
+
 CREATE TRIGGER db09_recruiter_private_note_lifecycle_guard
   BEFORE INSERT OR UPDATE ON placement_recruiter_applicant_notes
   FOR EACH ROW EXECUTE FUNCTION db09_restrict_recruiter_private_note_lifecycle();
