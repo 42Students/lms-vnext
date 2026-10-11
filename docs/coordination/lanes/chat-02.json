@@ -368,7 +368,7 @@
       "w01Handoff": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107170040"
     },
     "db01Auth78Crosswalk": {
-      "status": "78_SOURCE_ONLY_CANDIDATE_DISPOSITIONS_NO_RUNTIME_VERIFICATION",
+      "status": "78_SOURCE_PROPOSALS_ON_MAIN_17_CONNECTOR_ASSERTIONS_PASS",
       "crosswalk": "docs/planning/db01-chat02-auth-78-field-proposal-crosswalk.json",
       "guard": "tests/db01-auth-78-source-crosswalk.test.mjs",
       "sourceQueue": "docs/planning/db01-chat02-no-target-disposition-queue.json",
@@ -376,13 +376,17 @@
       "stagedFieldCandidates": 55,
       "openRedesignDecisions": 19,
       "normalizedCandidates": 4,
-      "connectorSourceChecksRun": 14,
-      "connectorSourceChecksPassed": 14,
-      "nodeGuardAuthoredCases": 14,
+      "connectorSourceChecksRun": 17,
+      "connectorSourceChecksPassed": 17,
+      "nodeGuardAuthoredCases": 15,
       "nodeGuardExecutedCases": 0,
       "actualPostgresVerifiedFields": 0,
       "providerVerifiedFields": 0,
-      "commit": "f5ca3369fc107125187ba73e524901b73908df18"
+      "commit": "f5ca3369fc107125187ba73e524901b73908df18",
+      "highSecurityOpenDecisions": 6,
+      "crosswalkBlob": "a94ca33ff460cd75742691adc6a71848cff774a2",
+      "guardBlob": "e5f5ea66bc50dec9f4e1fe0ce1d2b3f63d5a9ed8",
+      "lastGuardCommit": "4093d49c0990c9f42d6cbab2a9bbd33b18041971"
     }
   },
   "qualityGates": {
@@ -409,8 +413,9 @@
     "collegeArchiveDb01Postgres": "AUTHORED_FOUR_TWO_SESSION_RACES_NOT_EXECUTED",
     "db01TypedPolicyNode": "EXECUTED_PASS_16_OF_16_SOURCE_ONLY",
     "db01TypedPolicyFullRegistry": "PASS_10_OF_10_CONNECTOR_SOURCE",
-    "db01Auth78Mapping": "PASS_14_OF_14_CONNECTOR_SOURCE",
-    "db01NewPostgres": "NOT_EXECUTED"
+    "db01Auth78Mapping": "PASS_17_OF_17_IN_PROCESS_SOURCE",
+    "db01NewPostgres": "NOT_EXECUTED",
+    "db01SecurityPolicyNode": "PASS_16_OF_16_INDEPENDENT_NODE"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -454,7 +459,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DATABASE DB-004 remains IN_PROGRESS: typed seven-key security settings policy source verified with local Node 16/16; 78 auth/tenant no-target fields mapped to 55 staged / 19 open / 4 normalized. Await provider decisions, Chat 1 migration registration and independently executed PostgreSQL acceptance, not GitHub Actions billing.",
+  "nextAction": "DB-004 remains DATABASE IN_PROGRESS. DB01 security settings 16/16 local Node source tests pass; 78 auth/tenant no-target fields mapped (55 staged, 19 open, 4 normalized), 17 source checks pass. No PostgreSQL acceptance or policy approval; Chat1 sole migration integrator. Continue other bounded DATABASE work without waiting for Actions billing.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
