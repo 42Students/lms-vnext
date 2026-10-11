@@ -110,6 +110,7 @@ if (!optIn) {
         "db01_auth_attempt_verified_mac_immutable_ck");
       await update("UPDATE identity_auth_attempts SET used_at=now(),email_code_mac=NULL,email_code_expires_at=NULL,version=version+1 WHERE id=$1", [emailOnly]);
       await expect23514(update("UPDATE identity_auth_attempts SET resend_attempts=1,version=version+1 WHERE id=$1", [emailOnly]), "db01_auth_attempt_consumed_immutable_ck");
+      await expect23514(update("UPDATE identity_auth_attempts SET version=version+1 WHERE id=$1", [emailOnly]), "db01_auth_attempt_consumed_immutable_ck");
 
       const raceId = await createAttempt();
       // Reach the penultimate slot using four legal one-step reservations.
