@@ -91,6 +91,7 @@ test("runner inventory includes every DB02 rollback acceptance suite", () => {
     "db02-promotion-readiness-acceptance-unregistered.sql",
     "db02-curriculum-type-history-acceptance-unregistered.sql",
     "db02-activation-role-lifecycle-acceptance-unregistered.sql",
+    "db02-active-parent-lifecycle-acceptance-unregistered.sql",
   ]) {
     assert.ok(runner.includes(path), "missing rollback suite: " + path);
   }
@@ -131,4 +132,16 @@ test("direct concurrency scripts fail closed to the explicitly named disposable 
       name + ": database identity check must run only after psql availability is established",
     );
   }
+});
+
+test("runner requires active-parent transition trigger registration", () => {
+  for (const trigger of [
+    "db02_course_archive_dependency_guard",
+    "db02_course_offering_archive_dependency_guard",
+    "db02_delivery_end_dependency_guard",
+    "db02_section_archive_dependency_guard",
+  ]) {
+    assert.ok(runner.includes(trigger), "missing trigger witness: " + trigger);
+  }
+  assert.match(runner, /required trigger witnesses: 22/);
 });
