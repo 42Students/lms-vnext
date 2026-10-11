@@ -13,7 +13,7 @@
     "checkpointKind": "DB004_SOURCE_RECONCILIATION_WITH_EXECUTED_DB_TEST_URL_GUARD",
     "updatedOn": "2026-10-11",
     "observedMainSha": "c48f3dd64fb5591c3ea9d6e3834c66d7e982c689",
-    "lastWorkerMergedSha": "14dabc3698f5fc638e538852a6f436f598d50e01",
+    "lastWorkerMergedSha": "c03cb4164dd97db31b1c362c0898e491433737ef",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
     "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.\nAdded source-owned fail-closed disposable PostgreSQL URL preflight and 8 test cases. Executed independent Node v22 runner with byte-identical Git blob copies: 8/8 PASS. This is test destination safety only, not database runtime proof. Shared db-lib fallback remains unpatched by W01; CI billing disabled is not an engineering blocker.\nNew direct-main batch: brought five audited membership suspension staging/test/evidence files from Chat 2 draft to main without PR merge; source-domain behavior 20/20 earlier locally executed. Identified check-then-update archive-org vs create-college cross-table race; staged guarded parent FOR UPDATE triggers, mutation-based source test and interleaving acceptance doc, 10/10 connector-source assertions passed. Zero new PG/Node execution for that trigger; no registered migration/phase promotion.",
@@ -593,6 +593,25 @@
       "providerVerified": false,
       "verificationWarning": "Source matching tests only, no exact Node/PG test execution; no live schema mutation",
       "latestCommit": "14dabc3698f5fc638e538852a6f436f598d50e01"
+    },
+    "db01TombstoneArchiveConflict": {
+      "status": "SOURCE_CONFIRMED_APPROVAL_PENDING",
+      "evidence": "docs/planning/db01-chat02-domain-tombstone-archive-conflict-source-evidence.json",
+      "contract": "docs/planning/db01-domain-tombstone-archive-policy-decision.md",
+      "alternativeSql": "docs/planning/sql/db01-college-archive-tombstone-consistency-staging.sql",
+      "sourceTest": "tests/db01-domain-tombstone-archive-policy-source.test.mjs",
+      "sourceChecks": {
+        "passed": 29,
+        "total": 29,
+        "kind": "GITHUB_CONNECTOR_JS_IN_PROCESS_NOT_NODE"
+      },
+      "nodeTestsAuthored": 12,
+      "nodeTestsExecuted": 0,
+      "postgreSQLExecuted": 0,
+      "migrationRegistered": false,
+      "policyApproved": false,
+      "blocker": "resolveCollegeUsage count(*) across all domains and old archive guard would permanently block archive after tombstone; active-only alternative requires explicit product approval and coupled API/DB cutover",
+      "commit": "c03cb4164dd97db31b1c362c0898e491433737ef"
     }
   },
   "qualityGates": {
