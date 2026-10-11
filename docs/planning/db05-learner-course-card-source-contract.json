@@ -1,0 +1,56 @@
+{
+  "phase": "DATABASE",
+  "task": "DB-008",
+  "sourceBackend": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceFrontend": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+  "status": "SOURCE_CONTRACT_NOT_RUNTIME_VERIFIED",
+  "legacySource": [
+    "src/main/java/com/_42students/lms/service/impl/StudentCourseServiceImpl.java",
+    "src/main/java/com/_42students/lms/model/Course.java",
+    "src/main/java/com/_42students/lms/dto/request/MetaData.java"
+  ],
+  "vnextSource": [
+    "src/modules/courses/learner-course-service.ts",
+    "src/db/schema/courses.ts",
+    "src/db/schema/course-display-staged.ts"
+  ],
+  "coreRules": [
+    {
+      "id": "COURSE_CARD_HIDDEN_ON_EXPLICIT_ZERO",
+      "legacy": "StudentCourseServiceImpl line ~222 skips course when Integer.valueOf(0).equals(course.getAllowedForDisplay()). Null/nonzero not filtered by this condition; do not invent 0/1/2 enumeration globally.",
+      "vnext": "courses.status and learner queries do not establish equivalence to allowed_for_display",
+      "scope": "legacy StudentCourseServiceImpl semester mapping card loop only",
+      "verified": false
+    },
+    {
+      "id": "COURSE_CARD_CODE_PRECEDENCE",
+      "legacy": "code initialized to course.shortTitle then replaced by metadata.courseCode only when nonnull/nonblank; null/blank fallback shortTitle.",
+      "vnext": "learner-course-service.ts selects courses.code. It is a distinct canonical code, not proven equivalent to metadata override and shortTitle.",
+      "scope": "student course card code",
+      "verified": false
+    },
+    {
+      "id": "COURSE_CARD_HTML_PRIVACY",
+      "legacy": "byClass comment says details htmlContent/introductionContent visible while byStudent redacts; verify actual complete controller DTO paths before implementing.",
+      "vnext": "client-specific course display fields must be authorized before read and safe HTML/URL sanitized; display table is staged/disabled",
+      "scope": "learner course detail exposure",
+      "verified": false
+    }
+  ],
+  "proposedSchema": {
+    "visibility": "scripts/sql/db05-course-parent-facets.draft.sql allowed_for_display integer",
+    "shortTitle": "scripts/sql/db05-course-identity.draft.sql courses.short_title",
+    "metadataCode": "scripts/sql/db05-course-metadata-extension.draft.sql course_display_contents.course_code"
+  },
+  "acceptance": [
+    "Explicit allowed_for_display=0 absent from legacy student semester card. Nonzero/null behavior reviewed per consuming surface.",
+    "Card code metadata override when present and nonblank, fallback shortTitle, distinguish courses.code.",
+    "Cross-tenant or unassigned learner cannot retrieve card details. Current release guarded.",
+    "HTML/introductions never returned from untrusted partial access, public-safe sanitization verified.",
+    "Run PostgreSQL/API/frontend tests on exact main SHA; no executed evidence yet."
+  ],
+  "postgreSQL": "NOT_RUN",
+  "api": "NOT_RUN",
+  "frontend": "NOT_RUN",
+  "formalVerified": false
+}
