@@ -2484,17 +2484,20 @@
         "docs/planning/database-parity-db10-notification-campaign-contract.md",
         "tests/db10-notification-campaign-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T08:39:31.780Z",
       "startedAt": "2026-10-11T14:22:00+05:30",
-      "latestEvidenceSha": null,
+      "latestEvidenceSha": "24a0e55efeebdf9adf9a83634f41b17705bd24be",
       "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "blockers": [
+        "MIGRATION_UNREGISTERED: Chat 1 must review/add staged notification_campaigns only after DB10 integration and Postgres race acceptance; current vNext API notification producer and publisher do not yet implement campaign flow.",
+        "RUNTIME_NOT_VERIFIED: authored Node/PG tests not executed; current registered user receipts alone do not implement scheduled broadcast/admin recycle."
+      ],
+      "completionNote": "SOURCE-LEVEL COMPLETED: Pinned legacy notification 21/21 columns dispositioned with explicit audience/scheduled/admin/per-user receipt semantics; tenant-guarded notification_campaigns staging SQL (unregistered), migration/DB24 collision handoff, 12 authored Node tests and 20 PostgreSQL negative/race witnesses. Connector source checks 33/33 passed. Actual Node/Postgres migration/typecheck/integration NOT EXECUTED, DB-019/DB-020 runtime acceptance remains pending. Actions billing is NOT a blocker.",
+      "completedBy": 5,
+      "completedAt": "2026-10-11T08:43:16.980Z",
+      "completionCommitSha": "24a0e55efeebdf9adf9a83634f41b17705bd24be",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2518,6 +2521,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T14:22:00+05:30",
           "reason": "Chat 5 started 21-field notification campaign/recipient-delivery source reconciliation and isolated staging."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T08:43:16.980Z",
+          "reason": "21 legacy fields source-dispositioned, staged one unregistered scoped campaign table, authored 12 Node tests, 20 PostgreSQL acceptance cases; 33/33 cross-file connector checks passed, runtime 0 verified."
         }
       ]
     },
