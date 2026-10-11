@@ -258,7 +258,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "8c2c63d8a28d41dcba1c188a3a551c60390ab742",
+      "latestEvidenceSha": "905620c62467dbdf842be7fcb5c963a8004cf57a",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -293,7 +293,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 source classification and target design mapping remain 125/125; runtime verified remains 0. Canonical UNREGISTERED stage is statically reconciled at 52 paired PL/pgSQL functions / 60 unique triggers with zero malformed or duplicate definitions. 60 authored source-test cases across 6 files; 5 rollback-only PostgreSQL acceptance suites; 3 two-session concurrency harnesses (combined harness has 17 named race families, plus focused promotion/type suites). Latest hardening covers concrete CORE curriculum-row identity/type history, source-parity promotion readiness, progression-backed program-term retention, history-safe empty cohort delete, archive-vs-INACTIVE separation, referenced-period/window integrity, parent/history races, rooms/faculty lifecycle. Shared CAS harnesses were repaired to satisfy the new promotion-readiness preconditions. No Node/PostgreSQL/CI execution claimed. Chat1 must register numbered Drizzle/migrations, replay zero-to-current, and execute disposable PostgreSQL acceptance before verification; DB-005 stays IN_PROGRESS."
+      "progressNote": "DB02 source classification and target mapping 125/125; runtime verified 0. Canonical UNREGISTERED stage: 52 paired PL/pgSQL functions, 60 unique triggers, zero malformed/duplicate definitions. 66 authored source-test cases across 7 files. Guarded disposable runner inventories 5 rollback-only PostgreSQL suites + 3 concurrency suites and fails closed unless 12 critical triggers, 6 staged tables, 9 staged columns and cohort_status.INACTIVE are registered. Combined concurrency harness specifies 17 named races; focused promotion/type suites add exact-error scenarios. Promotion-readiness dependencies in shared CAS/rollback fixtures were repaired. Recent hardening includes CORE curriculum row/type history, progression-backed term retention, safe empty-cohort delete, archive-vs-INACTIVE separation, referenced period/window integrity, rooms/faculty/parent-history races. No Node/PostgreSQL/CI execution claimed. Chat1 migration registration/replay/disposable execution remains the verification gate; DB-005 IN_PROGRESS."
     },
     {
       "id": "DB-006",
