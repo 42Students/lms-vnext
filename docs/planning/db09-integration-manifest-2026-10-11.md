@@ -84,6 +84,8 @@ Supplemental scope proposal: `docs/planning/sql/db09-collaboration-scoped-fk-can
 
 Includes message threads/messages, share links/events, college settings, user preferences, saved views, student notes, team members, recruiter-private notes and recruiter read-through state.
 
+The supplemental collaboration SQL now also stages fail-closed principal-scope guards: active same-company recruiter grants for threads/read markers/private notes; recruiter message author must equal the thread recruiter; TPO message authors must hold an ACTIVE college membership; published message identity/body cannot be rewritten and read state cannot be rewound; share events are append-only. W01 must preserve these semantics when translating the candidate into the registered migration.
+
 The canonical schema uses final recruiter-era codes directly: `RECRUITER` and `RECRUITER_LEADS`. No HR→RECRUITER data-conversion migration is needed in greenfield vNext.
 
 ### 4. College TPO settings
@@ -170,7 +172,7 @@ Before DB-012 can move beyond source/design completion:
 4. lead/company/owner actor forgery rejection;
 5. append-only CRM activity enforcement;
 6. duplicate contact/invite-hash and invitation rotation races;
-7. message/share/recruiter-private-note cross-tenant privacy;
+7. message/share/recruiter-private-note cross-tenant privacy, including direct-SQL recruiter-grant/company mismatch, forged sender identity, read-marker scope and immutable message/share history;
 8. share token/code hash, expiry, revocation and disclosure caps;
 9. scheduling cross-job/cross-round FK negatives and assignment/reschedule races;
 10. coordinator cross-college authorization negatives;
@@ -185,3 +187,10 @@ GitHub Actions availability/billing is **not** a gate. Use the CI-independent di
 ## Gate statement
 
 This manifest resolves staging ownership/order ambiguity only. It does not convert authored SQL/tests into executed evidence, and it does not authorize DATABASE → API phase promotion.
+
+
+### Collaboration principal-scope integration note
+
+Post-source review found that parent FKs alone were insufficient for collaboration tables: a syntactically valid recruiter UUID plus college UUID could still be combined by direct SQL without proving an active same-company college grant. The canonical supplemental source is now `db09-collaboration-scoped-fk-candidate.sql` at/after commit `4bb1e313b87a394694bdac198e8cf82b9383d075`, with static guard coverage added in `tests/db09-integration-staging-guard.test.mjs`.
+
+This is still authored staging evidence only. W01 must validate function/trigger ordering, existing parent statuses, empty-DB replay and negative PostgreSQL witnesses before registration.
