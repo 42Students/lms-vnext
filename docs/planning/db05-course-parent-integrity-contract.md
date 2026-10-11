@@ -1,48 +1,47 @@
-# DB-008: course-parent cycles, tenant lineage, and concurrent edits
+# DB-008 — one canonical course-parent integrity guard, plus an upstream companion
 
-**Chat 6 DATABASE source candidate, 2026-10-11.** This is **NOT** a registered migration and **NOT** an executed PostgreSQL proof.  
-**Candidate:** `scripts/sql/db05-course-parent-integrity.draft.sql` (standalone companion to the existing `db05-course-parent-facets.draft.sql`).  
-**Legacy oracle:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`, particularly `Course.java`, `CourseDTO.java`, `CourseServiceImpl.setCourseFields`.  
-**vNext oracle:** `src/db/schema/courses.ts`, `src/db/schema/departments.ts`, `src/modules/courses/course-service.ts`.  
-**Owner of integration:** Chat 1 exclusively registers Drizzle migrations and schema-barrel exports.
+**Status:** source-only and UNREGISTERED, no PostgreSQL execution. **Owner:** Chat 6, active DATABASE task DB-008; Chat 1 exclusively registers numbered migrations.
 
-## Verified from source, not runtime
+**Legacy oracle:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`, especially `Course.java`, `CourseDTO.java`, and `CourseServiceImpl.setCourseFields`.  
+**vNext:** `src/db/schema/courses.ts`, `src/db/schema/departments.ts`, `src/db/schema/academics.ts` and `src/modules/courses/course-service.ts`.
 
-The legacy course has integer `parent_course_id` and integer `dept_id`. The update DTO boxes `parentCourseId`: **absent/null means preserve**, while an explicit nonpositive value clears the parent (the legacy writer normalizes with `Math.max(input, 0)`). vNext has UUID `courses.id`, `courses.department_id`, `departments.college_id`. Existing `db05-course-parent-facets.draft.sql` stages a nullable UUID self-FK and `parent_course_id <> id` check. That check prevents only a one-node loop, not `A→B→A` or deeper cycles.
+## Coordination / duplicate resolution
 
-A parent in a different department may still be in the **same college**. Merely checking `department_id` equality would incorrectly forbid legitimate cross-department parent links; compare `departments.college_id` instead. A parent course is a business relationship, not a tenant grant or proof of parent access rights.
+During parallel work, two alternative unregistered parent guards appeared. The **canonical** parent implementation remains **`scripts/sql/db05-course-parent-graph-guard.draft.sql`**, already recorded by the DB05 readiness manifest; it uses a single transaction advisory lock `605008001` and rejects non-`READ COMMITTED` writes pending proof. The overlapping `db05-course-parent-integrity.draft.sql` was removed, NOT registered or applied. **Do not register both variants.**
 
-## Candidate database invariants
+The remaining unique improvement is `scripts/sql/db05-department-college-move.draft.sql`: a *department-table* trigger that uses the **same advisory lock** to forbid moving an existing department between colleges while it has ANY courses. This fills a bypass of a course-row-only guard; it must be merged by Chat 1 **once** with the canonical migration. It has no duplicate column, FK, index or `courses` trigger.
 
-| Invariant | Candidate mechanism | Remaining proof |
+## Source evidence
+
+- Legacy `parent_course_id` is integer; DTO `parentCourseId` is boxed. When omitted, preserve the current parent. Legacy explicit zero/negative clears parent by `Math.max(value,0)`. vNext's proposed self-FK is nullable UUID, so API clear must be translated to null rather than written as a UUID zero sentinel.
+- `courses.department_id` and `departments.college_id` together establish owning college. Same **college**, not necessarily same department, is the proposed parent graph invariant pending product approval.
+- A self-FK and `parent_course_id <> id` do not prevent `A→B→A` or `A→B→C→A`. The canonical guard traverses ancestors with cycle detection and checks child and offering cross-college relations when course department changes.
+- Changing `departments.college_id` leaves `courses.department_id` untouched and therefore never fires a `courses` UPDATE trigger. The new narrow upstream guard blocks that route while courses exist.
+- Changing `academic_periods.college_id` or reparenting an offering/section/membership can still affect existing dependents; these are **not solved** by either course or department guard. Continue a separately scoped upstream invariant audit; never assert complete tenant proof from the two triggers.
+
+## Guard and acceptance matrix
+
+| Scope | Draft | Accepted evidence |
 | --- | --- | --- |
-| Parent is not this course | Existing self-ID CHECK and trigger | Actual PostgreSQL insert/update rejection |
-| Parent and child have same college | Resolve both department college IDs inside trigger | Wrong-college negative tests, null, missing parent |
-| Ancestor chains are acyclic | Recursive parent traversal with visited UUID path and repeated-node detection | Two-node, three-node, malformed existing ancestry, multirow statements |
-| Ancestors do not traverse into another college | Compare every ancestor college against proposed child's college | Cross-college grandparent and bad preexisting data |
-| Concurrent opposing edits cannot both commit | Transaction-scoped advisory key per college, checked after locking | Run synchronized two-connection write-skew tests, isolation-mode coverage |
-| Course department move cannot invalidate parent/children | Reject cross-college course move if it has parent OR any children; lock old/new college keys in a fixed order | Concurrent department move and parent edit/insert |
-| Department's college cannot be reassigned while it holds courses | Independent `departments` UPDATE trigger using same advisory key ordering | Race with new course write, nullable/no-course department move |
-| Authenticated actor/permission and explicit parent clear | Remains exclusively in authorized service layer | Tenant API negative tests; absent vs 0 semantics |
+| Parent belongs to same college | Canonical `db05-course-parent-graph-guard.draft.sql` | Source proposal only |
+| Self / multi-hop cycles | Canonical recursive ancestry | Source proposal only |
+| Course move breaking child or offering tenant scope | Canonical child/offering checks | Source proposal only |
+| Two transactions set reciprocal parent pointers | Canonical `pg_advisory_xact_lock(605008001::bigint)` | NOT RUN; expected READ COMMITTED serialization |
+| Department college changes with attached courses | New `db05-department-college-move.draft.sql`; same lock and isolation rule | NOT RUN |
+| Academic period, section, offering, membership reparenting | Unresolved upstream paths | BLOCKED |
+| Caller organization spoof / role authorization | Authorized service layer, not trigger | Not verified |
+| Drizzle migration replay | Chat 1 after consumer rollout | NOT RUN |
 
-## Serializability and rollout constraints
+## Postgres scenarios to execute before registration
 
-- Advisory transaction locks serialize mutations among writers that run these triggers. Do **not** infer full production safety from source inspection. Validate READ COMMITTED and SERIALIZABLE writers, deadlock retries, bulk updates, and PostgreSQL's trigger snapshot behavior. If another path bypasses triggers (replication role or privileged trigger disabling), enforce privileges operationally.
-- The companion guard is **not** a replacement for FK identity checks, constraint on `parent_course_id`, application role authorization, or verification of legacy parent semantics. It is also not an application-visible hierarchy feature.
-- Later migrations must not install a duplicate `parent_course_id` column/index. Integrate the helper functions/triggers into the parent-facets migration once and reconcile trigger/function names with the latest journal.
-- A department college move that already references any course is prohibited by this draft. Confirm whether the product requires an administrative *move course between colleges* workflow; if it does, define a transactional cross-college transfer protocol before registration.
-- A nullable UUID `parent_course_id` replaces legacy integer zero sentinel in the **database only**. APIs must translate explicit clear to null while preserving omitted fields.
+1. Valid root course, same-college parent, multi-depth same-college chain, same-college **different department** parent; explicit clear via authorized API.
+2. Invalid self-parent and 2-/3-node cycles. Invalid parent/child from different colleges. Invalid existing-child and existing-offering tenant break on department move.
+3. Unused department can switch college; a department owning even a root/no-parent course cannot switch college. Check existing parent and offering histories remain unchanged.
+4. Concurrent transactions: `A.parent=B` and `B.parent=A` race; a course INSERT races with department college reassignment; course parent mutation races with course/department move. Assert only safe outcomes or explicit deadlock/serialization abort + retry.
+5. For now, non-READ-COMMITTED course parent/department college writes fail with the canonical `25001` policy; do not imply SERIALIZABLE success without a dedicated design.
+6. Test missing/deleted IDs, wrong-college actor, bulk updates, mutation of upstream academic periods/sections/offerings, trigger-disable privileges, rollback and complete journal replay.
+7. Compare exact current source SHAs, verify SQL state, run PostgreSQL negative/race tests, lint/typecheck/unit/build, then Chat 1 registers a single reconciled guard.
 
-## Disposable PostgreSQL acceptance plan
+No data is migrated from legacy; this is greenfield parity of behavior and future persisted invariants.
 
-Run on a clean migrated schema with a real set of two colleges, departments within and across colleges, courses A/B/C and at least two concurrent connections.
-
-1. Legal: root course with null parent; B with A parent same college; C with B parent; cross-department within the *same* college; clear B.parent with explicit API command.
-2. Illegal: A parent A; A parent B while B parent A; A parent C while B→A and C→B; ancestor loop preexisting from earlier stages; parent in different college; ancestor with different college.
-3. Legal cross-department *same-college* change; illegal course department change to different college when parent/child exists; department college change rejected while any course references department.
-4. Race: two sessions set A.parent=B and B.parent=A simultaneously. Expect at most one commit; include repeatable/read-committed/serializable policies and deadlock/serialization retry assertions.
-5. Race: move a department's college while a course is inserted into it; move a course's department while another session establishes parent/child relation; preserve invariant or reject one txn.
-6. Cross-tenant direct SQL paths bypassing services must still fail. API must independently reject unauthorized parent changes and spoofed organization identifiers.
-7. Clean migration replay, rollback, schema drift, index collision, trigger-name collision, and constraint lifecycle tests. Record actual command results, PostgreSQL version, exact commit and run artifacts.
-
-**Status:** SOURCE-BASED UNREGISTERED PROPOSAL. No PostgreSQL/Node suite has been executed in this authoring batch. Never promote a DB05 field to VERIFIED from the existence of a guard.
+**Current state:** both candidates are UNREGISTERED. Node tests in `tests/db05-course-parent-integrity.test.mjs` are authored, not executed. No fields formally verified. DB-008 remains IN_PROGRESS.
