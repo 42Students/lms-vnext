@@ -29,6 +29,8 @@ DECLARE
   cohort_a uuid;
   cohort_a2 uuid;
   cohort_b uuid;
+  cohort_delete_empty uuid;
+  cohort_delete_history uuid;
   term_a1 uuid;
   term_a2 uuid;
   term_course_core_a uuid;
@@ -161,6 +163,65 @@ BEGIN
   VALUES (program_b, 'DB02 Cohort B', 'DB02-CB', period_b, period_b, 'ACTIVE',
           period_start, period_end)
   RETURNING id INTO cohort_b;
+
+  -- Legacy batch delete succeeds when there are no linked classes. The canonical cohort
+  -- initializer state must therefore cascade only for a truly history-free/child-free cohort.
+  INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status)
+  VALUES (
+    program_a, 'DB02 Empty Delete Cohort', 'DB02-DEL-EMPTY',
+    period_a, period_a, 'PLANNED'
+  )
+  RETURNING id INTO cohort_delete_empty;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM cohort_progression_state WHERE cohort_id = cohort_delete_empty
+  ) THEN
+    RAISE EXCEPTION 'empty cohort did not receive initializer progression state';
+  END IF;
+
+  DELETE FROM cohorts WHERE id = cohort_delete_empty;
+
+  IF EXISTS (SELECT 1 FROM cohorts WHERE id = cohort_delete_empty)
+     OR EXISTS (
+       SELECT 1 FROM cohort_progression_state WHERE cohort_id = cohort_delete_empty
+     ) THEN
+    RAISE EXCEPTION 'history-free cohort delete did not cascade initializer state';
+  END IF;
+
+  -- Real progression history changes the contract: the immutable event FK keeps the cohort
+  -- and its state alive, so a legacy-compatible delete cannot erase promoted/corrected history.
+  INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status)
+  VALUES (
+    program_a, 'DB02 Historical Delete Cohort', 'DB02-DEL-HIST',
+    period_a, period_a, 'ACTIVE'
+  )
+  RETURNING id INTO cohort_delete_history;
+
+  UPDATE cohort_progression_state
+     SET current_term_number = 2,
+         version = 1
+   WHERE cohort_id = cohort_delete_history
+     AND version = 0;
+
+  failed := false;
+  BEGIN
+    DELETE FROM cohorts WHERE id = cohort_delete_history;
+  EXCEPTION WHEN foreign_key_violation OR check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cohort with progression history was deleted';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM cohorts WHERE id = cohort_delete_history)
+     OR NOT EXISTS (
+       SELECT 1 FROM cohort_progression_state WHERE cohort_id = cohort_delete_history
+     )
+     OR NOT EXISTS (
+       SELECT 1 FROM cohort_progression_events WHERE cohort_id = cohort_delete_history
+     ) THEN
+    RAISE EXCEPTION 'failed historical cohort delete corrupted cohort/state/history';
+  END IF;
 
   SELECT current_term_number, version
     INTO progression_term, progression_version
