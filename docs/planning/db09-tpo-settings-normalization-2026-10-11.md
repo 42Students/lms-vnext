@@ -81,7 +81,13 @@ The settings API may still expose `prepCourseIds: string[]`, but those IDs are p
 
 `src/db/schema/tpo-collaboration.ts` no longer carries `trustedDomains` or `prepCourseIds` JSON fields. It defines the two normalized tables instead. This avoids two writable canonical copies.
 
-`notify_toggles`, `job_types` and `outcome_labels` remain separate settings concerns; DB-034 does not redesign them.
+At DB-034's source freeze, `notify_toggles`, `job_types` and
+`outcome_labels` were separate settings concerns. **Subsequent DB-036**
+normalizes the fixed four `notify_toggles` booleans and five personal TPO
+preference booleans; see
+[DB-036 contract](db09-notification-preferences-normalization-2026-10-11.md).
+`job_types` and `outcome_labels` remain flexible JSONB.
+Neither DB-034 nor DB-036 has registered SQL or executed PostgreSQL proof.
 
 ## Migration/integration order
 
