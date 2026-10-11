@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T21:20:00+05:30",
+  "updatedOn": "2026-10-11T21:23:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3623,6 +3623,53 @@
           "status": "COMPLETED",
           "at": "2026-10-11T21:20:00+05:30",
           "reason": "Message chronology/thread projection/immutability guards committed; 9/9 source assertions pass and 18/18 function quoting valid; PostgreSQL pending."
+        }
+      ]
+    },
+    {
+      "id": "DB-062",
+      "phase": "DATABASE",
+      "title": "Freeze recruiter-private applicant note identity and timestamp lifecycle",
+      "scope": "Harden staged DB09 recruiter-private applicant notes against direct-SQL reassignment and chronology drift. Preserve source behavior: recruiter/college/job/application identity is fixed after insert; only rating/note mutate; deleting the row is valid when both are cleared. created_at immutable, updated_at nondecreasing/not materially future-dated. Add audit/static regression only; no migration/API/UI activation.",
+      "priority": 2,
+      "dependsOn": [
+        "DB-056"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+        "docs/planning/db09-recruiter-private-note-lifecycle-audit.md",
+        "tests/db09-recruiter-private-note-lifecycle.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T21:23:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T21:23:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T21:23:00+05:30",
+          "reason": "Legacy RecruiterWorkspaceService saveNote only upserts rating/note on fixed recruiter+application identity and deletes when both empty; staged table scope trigger allows direct-SQL identity/created_at reassignment and timestamp regression."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T21:23:00+05:30",
+          "reason": "Chat 3 claimed fresh non-overlapping DB09 private-note persistence gap after DB-061 completion."
         }
       ]
     }
