@@ -3,8 +3,9 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 // All assertions are source/static and MUST NOT be called PostgreSQL acceptance.
+// History guards have been consolidated into canonical DB02 staging.
 const draft = readFileSync(new URL(
-  "../scripts/sql/db02-historic-parent-reassignment-guards.draft.sql",
+  "../scripts/sql/db02-academic-progression-and-rooms-staging.sql",
   import.meta.url,
 ), "utf8");
 const acceptance = readFileSync(new URL(
@@ -15,25 +16,36 @@ const base = readFileSync(new URL(
   "../scripts/sql/db02-academic-progression-and-rooms-staging.sql",
   import.meta.url,
 ), "utf8");
-const extension = readFileSync(new URL(
-  "../scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql",
-  import.meta.url,
-), "utf8");
+const extension = base;
 
-test("all seven history-parent guards have paired PL/pgSQL bodies", () => {
-  assert.equal([...draft.matchAll(/CREATE FUNCTION db02_[a-z_]+\(\)/g)].length, 7);
-  assert.equal([...draft.matchAll(/RETURNS trigger LANGUAGE plpgsql AS \$\$/g)].length, 7);
-  assert.equal([...draft.matchAll(/\$\$/g)].length, 14);
-  assert.equal([...draft.matchAll(/CREATE TRIGGER db02_[a-z_]+/g)].length, 8);
+test("consolidated SQL retains all seven history-parent functions and paired bodies", () => {
+  const all = [...draft.matchAll(/CREATE FUNCTION (db02_[a-z_]+)\(\)/g)].map(m => m[1]);
+  for (const name of [
+    "db02_guard_historic_offering_parent",
+    "db02_guard_historic_delivery_parent",
+    "db02_guard_historic_event_section",
+    "db02_lock_offering_for_delivery",
+    "db02_lock_delivery_for_teaching",
+    "db02_lock_event_delivery_for_course_link",
+    "db02_lock_event_for_attendance_history",
+  ]) assert.ok(all.includes(name), "missing history guard " + name);
+  assert.equal([...draft.matchAll(/RETURNS trigger LANGUAGE plpgsql AS \$\$/g)].length, all.length);
+  assert.equal([...draft.matchAll(/\$\$/g)].length, all.length * 2);
 });
 
-test("new history-parent triggers do not collide with earlier DB02 drafts", () => {
-  const names = (sql) => [...sql.matchAll(/CREATE TRIGGER (db02_[a-z_]+)/g)]
-    .map((m) => m[1]);
-  const existing = new Set([...names(base), ...names(extension)]);
-  for (const name of names(draft)) {
-    assert.ok(!existing.has(name), "duplicate trigger: " + name);
-  }
+test("consolidated SQL has unique history trigger names", () => {
+  const names = [...draft.matchAll(/CREATE TRIGGER (db02_[a-z_]+)/g)].map(m => m[1]);
+  assert.equal(new Set(names).size, names.length);
+  for (const name of [
+    "db02_historic_offering_parent_guard",
+    "db02_historic_delivery_parent_guard",
+    "db02_historic_event_section_guard",
+    "db02_delivery_parent_serialization",
+    "db02_teaching_delivery_serialization",
+    "db02_event_course_parent_serialization",
+    "db02_attendance_session_event_serialization",
+    "db02_attendance_record_event_serialization",
+  ]) assert.ok(names.includes(name), "missing historic trigger " + name);
 });
 
 test("a linked course offering has immutable historical curriculum identity", () => {
