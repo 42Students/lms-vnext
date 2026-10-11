@@ -68,3 +68,28 @@ DB-036 surgically removed the duplicate block and completed the frozen trusted-d
 `docs/planning/database-parity-db09-field-ledger.json` rows `DB09-TPO_COLLEGE_SETTINGS-12` and `DB09-TPO_USER_PREFS-02` are now `REDESIGNED` with comma-delimited exact normalized target columns. **279/279** original source candidates have disposition records: **195 MAPPED, 84 REDESIGNED**, **0 DB/runtime or workflow verified**. No retirement was silently introduced.
 
 Seven Node static regression definitions were authored. Running `node --test tests/db09-notification-preferences-normalization.test.mjs` in a suitable checkout and the full independent migration harness is still required; do not claim a passed Node suite or PostgreSQL until executed and evidenced. GitHub Actions billing is intentionally not a blocker.
+
+## Source-level test execution evidence (not Node/PostgreSQL)
+
+The connector fetched source artifacts from `main`, then executed the **actual
+committed test callback bodies** in an isolated V8 runtime using read-file and
+assertion shims (not Node's `node:test` runner):
+
+| Checked source | Result | Scope |
+| --- | --- | --- |
+| `tests/db09-notification-preferences-normalization.test.mjs` at blob `9391fc0eb4e2cb4efe9dea788f9130a066074565` | 7 / 7 passed | Typed defaults, intact college/user PK, no duplicate exports, legacy source-status proof |
+| `tests/db-parity-db09-ledger.test.mjs` at blob `92437febe5def39867ceff6b58807c536a8b290a` | 5 / 5 passed | 279 source fields, 195 MAPPED, 84 REDESIGNED, zero blocked/verified |
+| Updated DB09 collaboration JSON/typed-settings test at blob `3031c59f4692677372921666b6038fb169d2877f` | 1 / 1 passed | Canonical share privacy source guards + nine typed settings |
+
+**13/13 source-level test callbacks passed under V8 shims; 0 Node suite,
+0 TypeScript compiler, 0 PostgreSQL or runtime API/notification verification.**
+The isolated evaluator is not a substitute for `npm run test:db:parity`,
+`node --test tests/db09-notification-preferences-normalization.test.mjs`
+or `npm run db:verify:independent`. Those gates are still pending.
+
+The earlier DB09 ledger test embedded stale intermediate assertions
+(199 MAPPED / 65 REDESIGNED / 15 BLOCKED) and the collaboration test required
+the now-removed JSONB checks. Both were updated under DB-036's expanded
+claimed paths, to reflect the actual 279-field source/design ledger without
+claiming runtime verification. DB-034's earlier normalization report was also
+cross-linked to this subsequent DB-036 redesign.
