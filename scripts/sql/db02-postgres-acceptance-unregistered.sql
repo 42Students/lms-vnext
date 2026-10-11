@@ -401,6 +401,33 @@ BEGIN
                                type, credits, display_order)
   VALUES (course_core_a, cohort_a, period_a, term_a1, 'CORE', 0, 1);
 
+  -- Once a CORE offering materializes the curriculum pair, removing or reparenting
+  -- that program-term course would rewrite history and must fail.
+  failed := false;
+  BEGIN
+    DELETE FROM program_term_courses
+     WHERE program_term_id = term_a1
+       AND course_id = course_core_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'materialized curriculum row was deleted';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE program_term_courses
+       SET course_id = course_elective_a
+     WHERE program_term_id = term_a1
+       AND course_id = course_core_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'program-term course identity was rewritten';
+  END IF;
+
   failed := false;
   BEGIN
     INSERT INTO course_offerings(course_id, cohort_id, academic_period_id, program_term_id,
