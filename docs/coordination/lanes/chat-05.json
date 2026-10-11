@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-033",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB031_SMS_ATTEMPT_LEDGER_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB033_APP_SETTING_DISPOSITION_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "548f7293f5bbf495eb6ea88dfd636c77520891ad",
+    "observedMainSha": "a7684260bb44bd2f819f9455274de13c40984b95",
     "lastWorkerMergedSha": "d0fd4ddd7612624656d2afe559c8f1c9126d9005",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-031 staged active generic SMS provider-attempt audit separate from recruiter command queue. Truthful PROVIDER_ACCEPTED vs FAILED, last-four privacy, tenant guard and append-only history. 32/32 source assertions passed; Node/PostgreSQL NOT RUN."
+    "summary": "DB-033 started to prevent false app_setting→module_access_rules parity: enumerate known active keys, route cross-domain ownership, preserve module controls, flag arbitrary-key admin persistence redesign."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -70,7 +70,7 @@
     "Chat 1: integrate DB-031 append-only SMS attempt ledger in migration order without broadening recruiter outbound send permissions.",
     "Chat 3 DB-027: include DB-031 SQL and trigger/function names in staged SQL collision preflight."
   ],
-  "nextAction": "Refresh DATABASE queue; claim the next eligible task or identify a new nonduplicating source-backed gap while dependency gates remain closed.",
+  "nextAction": "Commit machine-readable active-key dispositions plus source contract/static assertions; do not edit DB01/DB05/DB08 implementation or migration/barrel files.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -110,7 +110,8 @@
     "DB-024",
     "DB-026",
     "DB-029",
-    "DB-031"
+    "DB-031",
+    "DB-033"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -125,7 +126,7 @@
     "DB-029",
     "DB-031"
   ],
-  "lastPickedAt": "2026-10-11T13:15:00+05:30",
+  "lastPickedAt": "2026-10-11T13:24:00+05:30",
   "lastCompletedAt": "2026-10-11T13:21:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
