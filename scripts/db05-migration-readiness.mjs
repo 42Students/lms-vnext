@@ -44,6 +44,41 @@ for (const item of manifest.artifacts) {
     productionReady: item.readyForProduction,
   });
 }
+// Companion SQL is just as security-critical as a primary numbered draft.
+// A manifest must not pass merely because seven primary drafts were replayed
+// while an ancestor, tenant, content owner or lesson-restore guard was omitted.
+const companionDetail = [];
+const companions = manifest.crossDomainCompanions || [];
+if (companions.length === 0) block("DB05 companion registry missing.");
+for (const item of companions) {
+  if (!item.id || !item.path) {
+    block("DB05 companion has missing id or path");
+    continue;
+  }
+  if (seen.has(item.path)) block("Repeated companion path: " + item.path);
+  seen.add(item.path);
+  if (!existsSync(resolve(root, item.path))) block("Missing companion: " + item.path);
+  if (!item.registered || !item.postgresExecuted || !item.readyForProduction) {
+    block("Companion NOT acceptance-ready: " + item.id);
+  }
+  if (item.uniqueLessonCompanion) {
+    if (seen.has(item.uniqueLessonCompanion)) {
+      block("Repeated subordinate companion path: " + item.uniqueLessonCompanion);
+    }
+    seen.add(item.uniqueLessonCompanion);
+    if (!existsSync(resolve(root, item.uniqueLessonCompanion))) {
+      block("Missing subordinate companion: " + item.uniqueLessonCompanion);
+    }
+    // Parent companion's acceptance must incorporate this subordinate file,
+    // not treat a file-exists probe as executed PostgreSQL evidence.
+  }
+  companionDetail.push({
+    companion: item.id,
+    registered: item.registered,
+    postgresExecuted: item.postgresExecuted,
+    productionReady: item.readyForProduction,
+  });
+}
 for (const gate of manifest.gates) {
   if (gate.status !== "PASS") block("Required " + gate.id + ": " + gate.status);
 }
@@ -64,6 +99,7 @@ const report = {
   reminder: "This is a read-only source/manifest consistency probe, not executed PostgreSQL/CI proof.",
   blockers,
   artifacts: detail,
+  companions: companionDetail,
 };
 if (process.argv.includes("--json")) {
   process.stdout.write(JSON.stringify(report, null, 2) + "\n");
