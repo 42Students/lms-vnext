@@ -1356,11 +1356,11 @@
           "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
-          "targetRef": "assignment submission lifecycle/history",
-          "reason": "Do not copy soft-delete blindly; confirm learner/faculty delete/restore requirements.",
+          "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
+          "targetRef": "assignment_submissions retained row + DB038 DELETE/TRUNCATE prohibition",
+          "reason": "Pinned AssignmentServiceImpl/AssignmentController expose submit/read/grade/publish flows but no submission delete/restore producer; repository filters inherited BaseModel is_deleted. vNext keeps learner submission history retained while grading remains mutable.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-assessment-history-retention-candidate.sql + legacy AssignmentServiceImpl/AssignmentController/StudentAssignmentRepository@prod-2026 + vNext assignment-submission-service.ts"
         },
         {
           "legacyField": "updated_at",
