@@ -104,3 +104,39 @@ export const db10OutboundSuppressions = pgTable(
       sql`${t.clearedAt} is null or ${t.clearedAt} >= ${t.createdAt}`),
   ],
 );
+
+/**
+ * Legacy email_suppression.email_norm was globally keyed across colleges.
+ * A tenant-scoped recipientHash cannot represent that: it contains the
+ * organization UUID. Global HMAC is derived separately with a distinct domain
+ * label and must not store or expose the plaintext email.
+ *
+ * This table is intentionally EMAIL-only. Tenant-specific ADMIN_BLOCK and
+ * future SMS/WhatsApp suppression remain in outbound_suppressions. No generic
+ * worker access is granted until migration, role privileges and pre-send
+ * rechecks pass independent database verification.
+ */
+export const db10GlobalEmailSuppressions = pgTable(
+  "outbound_global_email_suppressions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    recipientHash: varchar("recipient_hash", { length: 64 }).notNull(),
+    reason: varchar("reason", { length: 24 }).notNull(),
+    /** Null for an externally originated opt-out not tied to an event. */
+    sourceEventId: uuid("source_event_id"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull().defaultNow(),
+    clearedAt: timestamp("cleared_at", { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("db10_global_email_suppressions_active_uq")
+      .on(t.recipientHash).where(sql`${t.clearedAt} is null`),
+    index("db10_global_email_suppressions_created_idx").on(t.createdAt),
+    check("db10_global_email_suppressions_hash_ck",
+      sql`${t.recipientHash} ~ '^[0-9a-f]{64}$'`),
+    check("db10_global_email_suppressions_reason_ck",
+      sql`${t.reason} in ('UNSUBSCRIBED','BOUNCE','COMPLAINT')`),
+    check("db10_global_email_suppressions_clear_order_ck",
+      sql`${t.clearedAt} is null or ${t.clearedAt} >= ${t.createdAt}`),
+  ],
+);
