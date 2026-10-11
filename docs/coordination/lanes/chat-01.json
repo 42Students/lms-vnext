@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-051",
   "blockedTaskIds": [
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB048_REMOTE_RESET_SAFETY_COMPLETED",
+    "checkpointKind": "DB051_LOCAL_PROXY_RESET_GUARD_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "50256eec71475bd60da352b770cc7f8023949967",
+    "observedMainSha": "bd085b480031afc7dcef0d2031ac64a9ad55e0cf",
     "lastWorkerMergedSha": "8585e875e6112fe94b93c4e3f305904ba0a5ba8d",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-048 source-complete: exact remote reset confirmation, target-redirect rejection, regression definitions and runbooks committed. 24/24 connector source assertions true; Node/PG execution not claimed."
+    "summary": "Chat 1 started DB-051 CORE_INFRA: localhost is not sufficient proof of disposability because Cloud SQL Auth Proxy also appears local."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -49,7 +49,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Refresh queue and continue DATABASE work. Review localhost/proxy ambiguity in destructive reset safety separately; do not conflate source assertions with executable Node/PostgreSQL verification.",
+  "nextAction": "Require exact DB_RESET_CONFIRM for local non-test/non-E2E reset targets, leave explicit disposable test/E2E local DBs frictionless, preserve DB-048 remote guard, add process/static regressions and workflow docs.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -85,7 +85,8 @@
     "DB-041",
     "DB-044",
     "DB-045",
-    "DB-048"
+    "DB-048",
+    "DB-051"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -101,7 +102,7 @@
     "DB-045",
     "DB-048"
   ],
-  "lastPickedAt": "2026-10-11T14:08:00.000Z",
+  "lastPickedAt": "2026-10-11T14:30:00.000Z",
   "lastCompletedAt": "2026-10-11T14:18:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
