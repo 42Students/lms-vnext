@@ -25,11 +25,13 @@ Current vNext behavior is stronger and simpler:
 - it INSERTs one attempt and all answer snapshots in one transaction;
 - attempt/answer rows are subsequently read, not edited;
 - assignment submission learner payload is insert-once; only grading/feedback/publication/version fields are legitimate post-submission mutations.
+- pinned `AssignmentServiceImpl` / `AssignmentController` expose submit/read/grade/publish paths but no submission delete/restore producer; `StudentAssignmentRepository` only carries inherited `is_deleted` read filters.
 
 Accordingly DB-038 updates the DB06 field ledger:
 
 - `quiz_attempts.status` → derived metadata, not persisted;
 - `quiz_attempts.is_deleted` / `quiz_answers.is_deleted` → normalized immutable history;
+- `student_assignment.is_deleted` → normalized immutable retained assignment history; no active pinned delete/restore producer was found;
 - mutable legacy `updated_at` on attempt/answer rows → unnecessary because the target history cannot UPDATE.
 
 ## Attempt and answer immutability
@@ -86,6 +88,8 @@ Question `quiz_id` and option `question_id` are immutable; the live authoring se
 
 After attempts exist, `max_attempts` and `total_points` are also immutable.
 
+Title, description, due date and sequence remain editable metadata. They are intentionally not frozen by DB-038 because both pinned legacy and current vNext separate those fields from the submitted answer definition; quiz status/results publication remain lifecycle state.
+
 ## Scoring coherence
 
 ### Sequential attempt number / max attempts
@@ -123,7 +127,7 @@ The active quiz validator requires:
 
 Base schema already owns option sequence uniqueness. DB-038 stages:
 
-- `quiz_options_question_lower_text_uq` for case-insensitive text uniqueness;
+- `quiz_options_question_lower_text_uq` on `lower(trim(option_text))` for the same trim + case-insensitive uniqueness used by the live validator;
 - deferred question/option shape triggers so multi-row DRAFT rewrites may occur in any order inside one transaction, but invalid final option sets cannot commit.
 
 These constraints are required because the answer-snapshot validator derives correctness from the persisted option set. A malformed direct-SQL authoring state must not become a valid scoring oracle.
@@ -166,9 +170,15 @@ The staged preflight checks:
 - attempt max score vs quiz total points;
 - answer question belongs to attempt quiz;
 - answer question type/prompt/points match current definition;
-- answer options snapshot matches the canonical current option set.
+- answer options snapshot matches the canonical current option set;
+- option count, trimmed/case-insensitive option-text uniqueness and correct-option cardinality;
+- selected option uniqueness/membership, SINGLE_CHOICE selection cardinality and persisted correctness/points.
 
-Before actual registration, extend executed PostgreSQL preflight evidence to selected-option/correctness edge cases and existing option-set duplicate/cardinality poison too.
+These are source-only staged checks until the candidate is registered and executed on disposable PostgreSQL.
+
+## Explicitly outside this candidate
+
+`course_upload_receipts` and `assignment_submission_files` still live in the staged `src/db/schema/course-upload-receipts-staged.ts` surface and are not exported from the canonical schema barrel. DB-038 therefore does not create triggers against those unregistered tables. When that private-file schema is promoted, consumed receipt/file attestation must receive equivalent immutable-history protection without weakening DB-038.
 
 ## Interaction with registered 0041/0042
 
