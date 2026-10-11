@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-047",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB042_ATTENDANCE_INTEGRITY_COMPLETED_SOURCE_ONLY",
+    "checkpointKind": "DB047_COMPANY_SHARE_DEFAULT_DRIFT_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "100fcd8d09ef231a3e7e1a3bfc33423b2a4bb941",
-    "lastWorkerMergedSha": "f28f77851ab9d782df4c3000eb524718f620587b",
+    "observedMainSha": "51690ce85342bd24fa4dd814e109299b7815a614",
+    "lastWorkerMergedSha": "51690ce85342bd24fa4dd814e109299b7815a614",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-042 COMPLETED source/staging. Attendance event-delivery tenant scope, ordinary/elective roster, authorized marker, future/correction-window timing, session lifecycle and DB-035 current-row/history composition staged. 12/12 V8-shim callbacks and 43/43 source assertions passed; PostgreSQL/runtime remains unverified."
+    "summary": "DB-047 IN_PROGRESS. Align DB09 tenant-safe company share_column_defaults candidate/ledger redesign with canonical placementCompanyRelationships Drizzle source; no journal/runtime claim."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -56,7 +56,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Pick next eligible DATABASE task; do not mark DB-042 DONE_VERIFIED until disposable PostgreSQL executes the negative/concurrency/replay matrix.",
+  "nextAction": "Add canonical nullable JSONB share-column default plus exact allowlist check, document source/tenant redesign, guard candidate↔Drizzle parity, and leave per-share snapshots immutable.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -165,7 +165,8 @@
     "DB-032",
     "DB-034",
     "DB-036",
-    "DB-042"
+    "DB-042",
+    "DB-047"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -174,7 +175,7 @@
     "DB-036",
     "DB-042"
   ],
-  "lastPickedAt": "2026-10-11T13:12:00+05:30",
+  "lastPickedAt": "2026-10-11T13:43:00+05:30",
   "lastCompletedAt": "2026-10-11T13:35:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
