@@ -627,6 +627,16 @@
       "witnesses": 12,
       "pgExecuted": false,
       "nodeExecuted": false
+    },
+    {
+      "id": "DB05_LESSON_RESTORE_PARENT_LIVE_PG_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": "W01_DB05_DB02",
+      "evidence": "Course soft-delete draft now guards in-place lesson legacy_deleted_at NULL restores as well as INSERT and learning_path moves. 12 LR-01..LR-12 disposable PG / two-session archive/restore/FOR SHARE cases mandatory; pure Node source model 10/10 PASS is NOT SQL evidence.",
+      "sourcePath": "scripts/sql/db05-course-soft-delete-guard.draft.sql",
+      "nodeTestPath": "tests/db05-lesson-restore-parent-reference.test.mjs",
+      "sourceTestPath": "tests/db05-lesson-restore-parent-guard.test.mjs",
+      "postgresExecuted": false
     }
   ],
   "sourceReview": {
@@ -873,7 +883,7 @@
         "UPSTREAM_OFFERING_PATH_REPARENT_MUTABILITY",
         "DISPOSABLE_POSTGRES_TWO_SESSION_RACE"
       ],
-      "note": "Not independent eighth DB05 numbered migration. Legacy source refuses delete with any live lesson/content but ignores already deleted child rows. Restore only course, never descendants."
+      "note": "Not independent eighth DB05 numbered migration. Legacy source refuses delete with any live lesson/content but ignores already deleted child rows. Restore only course, never descendants. W06 2026-10-12 expands lesson trigger to legacy_deleted_at updates so direct restore under deleted course is blocked; full LR-01..12 race/PG testing unexecuted."
     },
     {
       "id": "DB05_TOMBSTONE_OPTIMISTIC_VERSION_GUARD",
