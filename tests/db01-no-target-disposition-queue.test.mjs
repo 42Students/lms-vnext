@@ -127,6 +127,25 @@ test("expired recruiter grant and deleted domain gaps stay high priority", () =>
   }
 });
 
+test("latest registered journal cannot silently invalidate DB01 mapping", () => {
+  const journal = json("drizzle/meta/_journal.json");
+  const latest = journal.entries.at(-1);
+  assert.equal(latest.tag, queue.source.latestJournalObserved);
+  const snapshot = json(queue.source.latestSnapshotObserved);
+  const previous = json("drizzle/meta/0040_snapshot.json");
+  assert.equal(
+    gitBlobSha(bytes(queue.source.latestSnapshotObserved)),
+    queue.source.latestSnapshotBlob,
+  );
+  let changes = 0;
+  for (const table of queue.source.comparedRegisteredTables) {
+    if (JSON.stringify(snapshot.tables[table]) !==
+        JSON.stringify(previous.tables[table])) changes += 1;
+  }
+  assert.equal(changes, queue.source.db01RegisteredTableStructuralDiffSince0040);
+  assert.equal(changes, 0);
+});
+
 test("queue cannot be mistaken for a global database phase certification", () => {
   assert.equal(queue.phase, "DATABASE");
   assert.equal(queue.status, "SOURCE_ONLY_NEEDS_DECISIONS_NOT_VERIFIED");
