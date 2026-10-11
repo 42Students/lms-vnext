@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "kind": "DB01_SOURCE_LEVEL_ACCEPTANCE_EVIDENCE_NOT_RUNTIME",
   "worker": "CHAT_02",
   "task": "DB-004",
@@ -7,75 +7,87 @@
   "date": "2026-10-11",
   "sourceWitness": "Connector-executed JavaScript source assertions; NOT Node/Vitest/PostgreSQL or migration replay",
   "summary": {
-    "postgresIntegrationTestFiles": 4,
-    "postgresAuthoredCases": 32,
+    "postgresIntegrationTestFiles": 5,
+    "postgresAuthoredCases": 36,
     "permissionUnitTestFiles": 1,
     "permissionAuthoredCases": 14,
-    "sourceChecksExecuted": 15,
-    "sourceChecksPassed": 15,
+    "sourceChecksExecuted": 18,
+    "sourceChecksPassed": 18,
     "postgresExecutedCases": 0,
     "vitestExecutedCases": 0,
     "postgresVerifiedCases": 0
   },
   "checks": [
     {
-      "contract": "four integration test files require explicit TEST_DATABASE_URL",
+      "contract": "six suite case counts = 5, 9, 12, 6, 4, 14",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "three negative constraint suites use transaction rollback",
+      "contract": "five PostgreSQL suites require explicit TEST_DATABASE_URL",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "race suite invokes two concurrent PostgreSQL pool queries",
+      "contract": "three negative suites use BEGIN/ROLLBACK",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "race suite has random identifiers + finally cleanup",
+      "contract": "race suite invokes concurrent independent PG connections",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "all relevant unique constraint/index names present in Drizzle snapshot",
+      "contract": "race suite uses random identifiers and cleanup",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "registered domain verified-primary guard present",
+      "contract": "routing lifecycle demands application DATABASE_URL equals TEST_DATABASE_URL",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "email/identity uniqueness present",
+      "contract": "routing lifecycle uses real tenant repository",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "organization ACTIVE partial uniqueness present",
+      "contract": "routing lifecycle tests college and organization ARCHIVED exclusion",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "college global-code uniqueness present",
+      "contract": "routing lifecycle verifies unverified hostname denial",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "membership uniqueness present",
+      "contract": "routing lifecycle removes fixtures by generated UUID",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "shared db-lib now no longer falls back from TEST_DATABASE_URL to DATABASE_URL",
+      "contract": "unique constraints present in Drizzle 0040 snapshot",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "seed data does not create tenant_domains",
+      "contract": "verified-primary CHECK exists",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "unit permission suite includes suspended/ended/disabled actors",
+      "contract": "user UID and email uniqueness exist",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "race asserts SQLSTATE 23505",
+      "contract": "ACTIVE organization uniqueness exists",
       "sourceLevel": "PASS"
     },
     {
-      "contract": "all five suite case counts exact",
+      "contract": "global college code uniqueness exists",
+      "sourceLevel": "PASS"
+    },
+    {
+      "contract": "membership uniqueness exists",
+      "sourceLevel": "PASS"
+    },
+    {
+      "contract": "shared db-lib test URL helper no longer falls back",
+      "sourceLevel": "PASS"
+    },
+    {
+      "contract": "unit permission suite covers suspended, ended and disabled statuses and admin scope",
       "sourceLevel": "PASS"
     }
   ],
@@ -101,6 +113,11 @@
       "authoredCases": 6
     },
     {
+      "path": "tests/integration/db01-tenant-routing-lifecycle.test.ts",
+      "blobSha": "bcddd1e63f2e0a68322e989554358c13b4bcf596",
+      "authoredCases": 4
+    },
+    {
       "path": "tests/unit/db01-tenant-domain-authorization.test.ts",
       "blobSha": "4fb9c22058d0208c032ba8e2d66b4bb8eacf40ef",
       "authoredCases": 14
@@ -115,5 +132,5 @@
     "globalPhase": "DATABASE",
     "db004Task": "IN_PROGRESS"
   },
-  "next": "Run npm ci, Vitest and npm run db:verify:independent on a disposable PostgreSQL using exact main commit; preserve logs. No DONE_VERIFIED until acceptance."
+  "next": "36 PostgreSQL + 14 authorization unit cases authored; 18/18 in-process static source checks PASS. Node/Vitest/PG still unexecuted for these suites. Execute on independently available disposable PostgreSQL and preserve SHA+logs."
 }
