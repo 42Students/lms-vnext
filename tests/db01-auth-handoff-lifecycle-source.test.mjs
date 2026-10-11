@@ -29,7 +29,12 @@ function missing(source) {
   if (!/NEW\.consumed_at IS NOT NULL\s+AND clock_timestamp\(\) >= NEW\.expires_at/.test(source)) {
     out.push("wall clock recheck");
   }
-  if (!/BEFORE UPDATE ON identity_auth_handoffs/.test(source)) out.push("installed trigger");
+  if (!/BEFORE INSERT OR UPDATE ON identity_auth_handoffs/.test(source)) out.push("insert+update trigger");
+  if (!/IF TG_OP = 'INSERT' THEN/.test(source)) out.push("fresh handoff insertion branch");
+  if (!/NEW.consumed_at IS NOT NULL/.test(source)) out.push("no pre-consumed insertion");
+  if (!/NEW.created_at > clock_timestamp\(\)/.test(source)) out.push("no future handoff issue");
+  if (!/NEW.expires_at <= clock_timestamp\(\)/.test(source)) out.push("no expired handoff issue");
+  if (!/db01_auth_handoff_creation_state_ck/.test(source)) out.push("creation diagnostic");
   return out;
 }
 
@@ -80,4 +85,16 @@ test("disposable PostgreSQL witness requires separate URL, opt-in, lock wait and
   assert.match(pgWitness, /DROP SCHEMA/);
   assert.match(pgWitness, /wait_event_type === "Lock"/);
   assert.match(pgWitness, /second\.rowCount, 0/);
+});
+
+test("handoff can only be freshly created, never already consumed", () => {
+  assert.match(code, /IF TG_OP = 'INSERT' THEN[\s\S]*NEW.consumed_at IS NOT NULL/);
+  assert.match(code, /BEFORE INSERT OR UPDATE ON identity_auth_handoffs/);
+  assert.ok(missing(code.replace("NEW.consumed_at IS NOT NULL", "FALSE")).includes("no pre-consumed insertion"));
+});
+test("handoff creation is time bounded by live PostgreSQL clock", () => {
+  for (const [needle,label] of [
+    ["NEW.created_at > clock_timestamp()","no future handoff issue"],
+    ["NEW.expires_at <= clock_timestamp()","no expired handoff issue"],
+  ]) assert.ok(missing(code.replace(needle,"FALSE")).includes(label),needle);
 });
