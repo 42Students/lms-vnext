@@ -4,7 +4,7 @@
 **Status:** implementation staged (unregistered SQL + staged Drizzle model + disabled writer). NOT PostgreSQL verified.  
 **Source oracle:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5` (lesson/class content sequence)  
 **vNext evidence:** `src/db/schema/lesson-content-order-staged.ts`, `src/modules/courses/lesson-content-order-service.ts`  
-**Companions:** `scripts/sql/db05-content-delivery-order-scope.draft.sql` and `scripts/sql/db05-content-delivery-order-unique-lesson.draft.sql`  
+**Companions:** `scripts/sql/db05-content-delivery-order-scope.draft.sql` and `scripts/sql/db05-content-delivery-order-unique.draft.sql`  
 **Registration:** Chat 1 must fold both into the staged base table migration, after consumer/collision checks.
 
 ## Correct uniqueness scope
@@ -19,7 +19,7 @@ Because legacy source content identity is `lesson_contents.id` and the owning le
 2. Derives it from `lesson_contents.lesson_id` for any seed rows, then marks it NOT NULL.
 3. Adds parent key `UNIQUE(lesson_contents.id, lesson_contents.lesson_id)` solely to support a composite FK (the existing single-column PK remains).
 4. Enforces `FOREIGN KEY(lesson_content_id, lesson_id) REFERENCES lesson_contents(id, lesson_id) ON UPDATE RESTRICT ON DELETE CASCADE` to prohibit mismatched witnesses and unsafe content-to-lesson reparenting.
-5. Enforces immediate uniqueness on `(delivery_id, lesson_id, sequence)` using a PostgreSQL unique index.
+5. Enforces **DEFERRABLE INITIALLY IMMEDIATE** uniqueness on `(delivery_id, lesson_id, sequence)` using a PostgreSQL table constraint; the current full-delete+reinsert writer operates with immediate checking.
 
 The Drizzle staged schema adds a `lessonId` column but deliberately does **not** invent independent FK equivalence. The service writer now inserts the lesson ID from the already-authorized `input.lessonId`, after validating every ordered content belongs to that lesson. `DB05_CONTENT_ORDER_READY` remains required to activate the path. This is not a release toggle flip.
 
@@ -42,7 +42,7 @@ The Drizzle staged schema adds a `lessonId` column but deliberately does **not**
 | Existing seed overrides before DDL | Backfill authoritative `lesson_id`, reject orphan/wrong-parent rows |
 | Move learning path to another offering/section after overrides | MUST stay blocked until upstream guard / immutability enforced |
 
-**Additional gate:** canonical draft uses an immediate unique index, rather than a deferrable constraint. The current writer deletes and reinserts a complete lesson order under a delivery lock; it must not try transient in-place swaps that violate immediate uniqueness. Chat 1 must inspect `pg_indexes`, the Drizzle SQL export, schema drift, and concurrent reorder behavior. If in-place updates are later introduced, redesign the transaction/constraint explicitly.
+**Additional gate:** canonical draft uses a deferrable PostgreSQL unique constraint, not a plain unique index. Chat 1 must inspect `pg_constraint.condeferrable` and `pg_constraint.condeferred`, the Drizzle SQL export, schema drift, and concurrent reorder behavior. If in-place swaps are introduced, they must explicitly defer the constraint transactionally; the current complete-delete+reinsert writer does not need to defer it.
 
 ## Source-level test versus actual executed proof
 
