@@ -66,6 +66,13 @@ check("candidate keeps creator and stages separate owner membership", () => {
   assert.match(candidate, /db069_job_owner_college_fk/);
 });
 
+check("live DRAFT/PUBLISHED jobs require owner after conservative backfill", () => {
+  assert.match(candidate, /db069_owner_preflight/);
+  assert.match(candidate, /db069_live_job_owner_ck/);
+  assert.match(candidate, /status NOT IN \('DRAFT','PUBLISHED'\)[\s\S]*owner_membership_id IS NOT NULL/);
+  assert.match(candidate, /m\.user_id = j\.created_by_user_id/);
+});
+
 check("delegated coordinator ownership is operation-specific", () => {
   assert.match(candidate, /db069_has_active_drive_owner/);
   assert.match(candidate, /r\.role IN \('TPO','COLLEGE_ADMIN'\)/);
@@ -94,7 +101,7 @@ check("owner assignment and removal share transaction lock", () => {
   assert.match(candidate, /pg_advisory_xact_lock/);
   assert.match(candidate, /CREATE TRIGGER db069_job_owner_scope_guard/);
   assert.match(candidate, /CREATE TRIGGER db069_lead_owner_serialization_guard/);
-  assert.match(candidate, /CREATE TRIGGER db069_team_member_delete_guard/);
+  assert.match(candidate, /CREATE TRIGGER db069_team_member_identity_guard/);
 });
 
 check("lock ordering includes full college+membership identity", () => {
