@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_DESIGN_COMPLETE_DECONFLICTED_ACCEPTANCE_HARNESSES_READY",
+    "checkpointKind": "DB005_DESIGN_COMPLETE_RUNTIME_SAFETY_AND_API_SEAM_AUDITED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "cf7cf01345331655083e4b58b273a4b67b78e798",
-    "lastWorkerMergedSha": "9e46023437bd1c6cd851c7e62e686833d874566c",
+    "observedMainSha": "19fc69d96f3d94fa6052623f432a0118cbe99e80",
+    "lastWorkerMergedSha": "c877e6f62514b311cc2388519711ff5e1fb9bbe5",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 source+target design disposition is 125/125. Canonical staging and parent/enrollment extension are deconflicted (25/25 and 7/7 PL/pgSQL function pairing, zero trigger overlap). Single-session rollback and two-session race acceptance harnesses now cover the remaining tenant/enrollment/history/faculty/schedule invariants. No registered Drizzle DB02 structures or executed PostgreSQL/runtime witnesses are claimed."
+    "summary": "DB02 design is 125/125 source + 125/125 target. Canonical staging is 25/25 PL/pgSQL functions; deconflicted extension is 9/9 with zero trigger overlap and no heterogeneous record return coercion. Acceptance adds exact current_students/classCount parity, reversible INACTIVE, zero-credit DB parity, learner identity lifecycle, tenant/history/faculty/schedule invariants and five two-session race families. API-after-DATABASE handoff matrix is committed. No DB02 registration or PostgreSQL execution is claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -72,7 +72,7 @@
       "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Chat 1 must consolidate canonical DB02 plus the deconflicted parent/enrollment extension into registered Drizzle/schema-barrel migrations, perform zero-to-current disposable PostgreSQL replay, then execute scripts/sql/db02-postgres-acceptance-unregistered.sql and scripts/sql/db02-postgres-concurrency-unregistered.sh. Chat 4 should keep DB-005 IN_PROGRESS and re-reconcile exact source/main SHAs after integration; runtime verified remains 0 until those witnesses exist.",
+  "nextAction": "Continue adversarial DB02 staging review while Chat 1 has not registered it. When Chat 1 integrates, immediately rebase/reconcile both drafts against registered schema, run zero-to-current disposable PostgreSQL replay and both acceptance harnesses, then re-check pinned legacy heads before any COMPLETED/DONE_VERIFIED transition. API follow-up matrix is informational until global phase advances.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -121,7 +121,14 @@
     "https://github.com/42Students/lms-vnext/commit/690bc2f1f991f59659f423f18a810f1c3aea1019",
     "https://github.com/42Students/lms-vnext/commit/dcc5cbeb8b98cd11c07e9f41d4afdfcd9c5c567c",
     "https://github.com/42Students/lms-vnext/commit/e91bb7c2f65a66dbdae81da09e7e46ad24fb83b3",
-    "https://github.com/42Students/lms-vnext/commit/9e46023437bd1c6cd851c7e62e686833d874566c"
+    "https://github.com/42Students/lms-vnext/commit/9e46023437bd1c6cd851c7e62e686833d874566c",
+    "https://github.com/42Students/lms-vnext/commit/96898051a5dc5b48b7c40cc6f9c2772e01c7dc5d",
+    "https://github.com/42Students/lms-vnext/commit/957a17f7b77f18c3be89d7bd2e63eaec6da2ece7",
+    "https://github.com/42Students/lms-vnext/commit/5cff3087f7ed724a06cfcd590893610ae5cd89b0",
+    "https://github.com/42Students/lms-vnext/commit/0f7a7ef7115bedd2d68f8fc1bc94d9247202bf4e",
+    "https://github.com/42Students/lms-vnext/commit/ec2c10f738f764d6e6b7cef74b07ed1d2c3b6be3",
+    "https://github.com/42Students/lms-vnext/commit/c463accc1839f3513c851354261a30393e7a2454",
+    "https://github.com/42Students/lms-vnext/commit/c877e6f62514b311cc2388519711ff5e1fb9bbe5"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
