@@ -1,0 +1,3332 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_ACTIVE_SOURCE_NO_REGISTERED_TARGET_DISPOSITION_QUEUE",
+  "task": "DB-004",
+  "worker": "CHAT_02",
+  "phase": "DATABASE",
+  "status": "SOURCE_ONLY_NEEDS_DECISIONS_NOT_VERIFIED",
+  "source": {
+    "presenceLedger": "docs/planning/db01-chat02-snapshot-column-presence.json",
+    "presenceBlob": "31cabc702022145443987286a7d31eb1649f7137",
+    "activenessLedger": "docs/planning/db01-chat02-312-field-source-triage.json",
+    "activenessBlob": "efedb62f8738798e757186c7143836345405d33a",
+    "snapshot": "drizzle/meta/0040_snapshot.json",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
+  },
+  "interpretation": [
+    "These are 173 no-proposed-target fields out of 288 current active/lifecycle source candidate fields, not automatically 173 missing DB columns.",
+    "Staged-only concepts, normalized expressions, provider ownership and justified security redesigns need review; not all require a new vNext table.",
+    "DB04 and DB09 are cross-domain reconciliation consumers within the same global DATABASE phase, not permanent chat ownership or permission to work API/UI early.",
+    "No old LMS user data needs migration. Never port raw password, OTP, refresh/access token or model-only legacy implementation without provider/job proof.",
+    "All 173 rows remain open; a written destination or source audit does not count as vNext runtime-semantic verification."
+  ],
+  "summary": {
+    "sourceCandidates": 312,
+    "activeOrLifecycleSourceFields": 288,
+    "noTargetActiveFields": 173,
+    "byDomain": {
+      "DB01": 78,
+      "DB04": 76,
+      "DB09": 19
+    },
+    "byPriority": {
+      "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF": 56,
+      "P0_SECURITY_OR_AUTH_LIFECYCLE": 27,
+      "P1_DB04_ACTIVE_PROFILE_PARITY": 74,
+      "P1_DB09_GRANT_LIFECYCLE": 16
+    },
+    "sourceReviewed": 173,
+    "implementationVerified": 0,
+    "postgresVerified": 0,
+    "providerVerified": 0
+  },
+  "rows": [
+    {
+      "queueId": "DB01-MISSING-001",
+      "legacyField": "auth_handoff_token.id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-002",
+      "legacyField": "auth_handoff_token.created_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-003",
+      "legacyField": "auth_handoff_token.updated_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-004",
+      "legacyField": "auth_handoff_token.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-005",
+      "legacyField": "auth_handoff_token.token",
+      "sourceType": "varchar(128)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-006",
+      "legacyField": "auth_handoff_token.access_token",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-007",
+      "legacyField": "auth_handoff_token.refresh_token",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-008",
+      "legacyField": "auth_handoff_token.expires_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-009",
+      "legacyField": "auth_handoff_token.used",
+      "sourceType": "tinyint(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-010",
+      "legacyField": "college.college_chair_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-011",
+      "legacyField": "college.college_vice_chair_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-012",
+      "legacyField": "faculty.address",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-013",
+      "legacyField": "faculty.awards",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-014",
+      "legacyField": "faculty.blood_group",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-015",
+      "legacyField": "faculty.certifications",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-016",
+      "legacyField": "faculty.city",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-017",
+      "legacyField": "faculty.contact_phone",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-018",
+      "legacyField": "faculty.current_address",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-019",
+      "legacyField": "faculty.description",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-020",
+      "legacyField": "faculty.dob",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-021",
+      "legacyField": "faculty.experiences",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-022",
+      "legacyField": "faculty.gender",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-023",
+      "legacyField": "faculty.google_scholar",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-024",
+      "legacyField": "faculty.identity",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-025",
+      "legacyField": "faculty.languages",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-026",
+      "legacyField": "faculty.linkedin",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-027",
+      "legacyField": "faculty.metadata",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-028",
+      "legacyField": "faculty.organizations",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-029",
+      "legacyField": "faculty.permanent_address",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-030",
+      "legacyField": "faculty.pincode",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-031",
+      "legacyField": "faculty.publications",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-032",
+      "legacyField": "faculty.qualifications",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-033",
+      "legacyField": "faculty.research_gate",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-034",
+      "legacyField": "faculty.skills",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-035",
+      "legacyField": "faculty.state",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-036",
+      "legacyField": "faculty.token_version",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-037",
+      "legacyField": "faculty.unique_id",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-038",
+      "legacyField": "faculty.website",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-039",
+      "legacyField": "faculty.version",
+      "sourceType": "bigint",
+      "sourceActiveness": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-040",
+      "legacyField": "faculty.current_city",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-041",
+      "legacyField": "faculty.current_state",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-042",
+      "legacyField": "faculty.current_pincode",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-043",
+      "legacyField": "faculty.permanent_city",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-044",
+      "legacyField": "faculty.permanent_state",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-045",
+      "legacyField": "faculty.permanent_pincode",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-046",
+      "legacyField": "faculty_acct_verification.id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-047",
+      "legacyField": "faculty_acct_verification.created_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-048",
+      "legacyField": "faculty_acct_verification.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-049",
+      "legacyField": "faculty_acct_verification.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-050",
+      "legacyField": "faculty_acct_verification.blocked_till_ts",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-051",
+      "legacyField": "faculty_acct_verification.faculty_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-052",
+      "legacyField": "faculty_acct_verification.incorrect_attempts",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-053",
+      "legacyField": "faculty_acct_verification.is_expired",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-054",
+      "legacyField": "faculty_acct_verification.max_resend_attempts",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-055",
+      "legacyField": "faculty_acct_verification.otp",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-056",
+      "legacyField": "faculty_acct_verification.phone_number",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-057",
+      "legacyField": "faculty_acct_verification.verify_status",
+      "sourceType": "bit(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-058",
+      "legacyField": "learner.achievements",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-059",
+      "legacyField": "learner.address",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-060",
+      "legacyField": "learner.blood_group",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-061",
+      "legacyField": "learner.certifications",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-062",
+      "legacyField": "learner.city",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-063",
+      "legacyField": "learner.contact_phone",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-064",
+      "legacyField": "learner.current_address",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-065",
+      "legacyField": "learner.department",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-066",
+      "legacyField": "learner.description",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-067",
+      "legacyField": "learner.dob",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-068",
+      "legacyField": "learner.experiences",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-069",
+      "legacyField": "learner.extracurricular",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-070",
+      "legacyField": "learner.gender",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-071",
+      "legacyField": "learner.github",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-072",
+      "legacyField": "learner.hobbies",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-073",
+      "legacyField": "learner.identity",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-074",
+      "legacyField": "learner.languages",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-075",
+      "legacyField": "learner.linkedin",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-076",
+      "legacyField": "learner.metadata",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-077",
+      "legacyField": "learner.organizations",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-078",
+      "legacyField": "learner.permanent_address",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-079",
+      "legacyField": "learner.pincode",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-080",
+      "legacyField": "learner.portfolio",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-081",
+      "legacyField": "learner.projects",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-082",
+      "legacyField": "learner.resume_url",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-083",
+      "legacyField": "learner.skills",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-084",
+      "legacyField": "learner.state",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-085",
+      "legacyField": "learner.token_version",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-086",
+      "legacyField": "learner.twitter",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-087",
+      "legacyField": "learner.unique_id",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-088",
+      "legacyField": "learner.video_intro_uploaded_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-089",
+      "legacyField": "learner.video_intro_url",
+      "sourceType": "text",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-090",
+      "legacyField": "learner.website",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-091",
+      "legacyField": "learner.version",
+      "sourceType": "bigint",
+      "sourceActiveness": "ACTIVE_PERSISTENCE_LIFECYCLE_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-092",
+      "legacyField": "learner.bulk_import_batch_id",
+      "sourceType": "varchar(64)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-093",
+      "legacyField": "learner.current_city",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-094",
+      "legacyField": "learner.current_state",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-095",
+      "legacyField": "learner.current_pincode",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-096",
+      "legacyField": "learner.permanent_city",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-097",
+      "legacyField": "learner.permanent_state",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-098",
+      "legacyField": "learner.permanent_pincode",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-099",
+      "legacyField": "learner.coding_profiles",
+      "sourceType": "json",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB04_OR_DB02",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB04",
+      "decisionType": "CROSS_DOMAIN_PROFILE_APPROVAL",
+      "priority": "P1_DB04_ACTIVE_PROFILE_PARITY",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-100",
+      "legacyField": "learner_acct_verification.id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-101",
+      "legacyField": "learner_acct_verification.created_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-102",
+      "legacyField": "learner_acct_verification.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-103",
+      "legacyField": "learner_acct_verification.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-104",
+      "legacyField": "learner_acct_verification.blocked_till_ts",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-105",
+      "legacyField": "learner_acct_verification.incorrect_attempts",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-106",
+      "legacyField": "learner_acct_verification.is_expired",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-107",
+      "legacyField": "learner_acct_verification.learner_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-108",
+      "legacyField": "learner_acct_verification.max_resend_attempts",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-109",
+      "legacyField": "learner_acct_verification.otp",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-110",
+      "legacyField": "learner_acct_verification.phone_number",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-111",
+      "legacyField": "learner_acct_verification.roll_number",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-112",
+      "legacyField": "learner_acct_verification.verify_status",
+      "sourceType": "bit(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-113",
+      "legacyField": "mobile_login_attempt.id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-114",
+      "legacyField": "mobile_login_attempt.created_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-115",
+      "legacyField": "mobile_login_attempt.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-116",
+      "legacyField": "mobile_login_attempt.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-117",
+      "legacyField": "mobile_login_attempt.attempt_id",
+      "sourceType": "varchar(64)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-118",
+      "legacyField": "mobile_login_attempt.college_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-119",
+      "legacyField": "mobile_login_attempt.expires_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-120",
+      "legacyField": "mobile_login_attempt.email_otp_expires_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-121",
+      "legacyField": "mobile_login_attempt.email_otp_sent_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-122",
+      "legacyField": "mobile_login_attempt.organization_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-123",
+      "legacyField": "mobile_login_attempt.otp",
+      "sourceType": "varchar(12)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-124",
+      "legacyField": "mobile_login_attempt.email_otp",
+      "sourceType": "varchar(12)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-125",
+      "legacyField": "mobile_login_attempt.phone",
+      "sourceType": "varchar(32)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-126",
+      "legacyField": "mobile_login_attempt.used",
+      "sourceType": "bit(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-127",
+      "legacyField": "mobile_login_attempt.user_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-128",
+      "legacyField": "mobile_login_attempt.user_type",
+      "sourceType": "varchar(16)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-129",
+      "legacyField": "mobile_login_attempt.verified_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-130",
+      "legacyField": "mobile_login_attempt.verification_attempts",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-131",
+      "legacyField": "recruiter.designation",
+      "sourceType": "varchar(150)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-132",
+      "legacyField": "recruiter.industry_company_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-133",
+      "legacyField": "recruiter.suspension_reason",
+      "sourceType": "varchar(500)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-134",
+      "legacyField": "recruiter.token_version",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-135",
+      "legacyField": "recruiter.last_login_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-136",
+      "legacyField": "recruiter.created_by_user_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-137",
+      "legacyField": "recruiter.created_by_user_type",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-138",
+      "legacyField": "recruiter.created_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-139",
+      "legacyField": "recruiter.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "CROSS_DOMAIN_DB09_OR_DB01",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-140",
+      "legacyField": "recruiter.version",
+      "sourceType": "bigint",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-141",
+      "legacyField": "recruiter_college_access.valid_until",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-142",
+      "legacyField": "recruiter_college_access.granted_by_user_type",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-143",
+      "legacyField": "recruiter_college_access.granted_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-144",
+      "legacyField": "recruiter_college_access.revoked_by_user_type",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-145",
+      "legacyField": "recruiter_college_access.revoke_reason",
+      "sourceType": "varchar(500)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-146",
+      "legacyField": "recruiter_college_access.version",
+      "sourceType": "bigint",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-147",
+      "legacyField": "recruiter_college_access.verification",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-148",
+      "legacyField": "recruiter_college_access.pending_recruiter_lead_id",
+      "sourceType": "bigint",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P1_DB09_GRANT_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-149",
+      "legacyField": "recruiter_college_access_capability.capability",
+      "sourceType": "varchar(64)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB09",
+      "decisionType": "CROSS_DOMAIN_RECRUITER_GRANT_APPROVAL",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-150",
+      "legacyField": "refresh_token_blocklist.jti",
+      "sourceType": "varchar(36)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-151",
+      "legacyField": "refresh_token_blocklist.user_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-152",
+      "legacyField": "refresh_token_blocklist.user_type",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-153",
+      "legacyField": "refresh_token_blocklist.blocked_at",
+      "sourceType": "timestamp",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-154",
+      "legacyField": "refresh_token_blocklist.expires_at",
+      "sourceType": "timestamp",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-155",
+      "legacyField": "role.id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-156",
+      "legacyField": "role.created_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "SOURCE_SEMANTICS_UNRESOLVED",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-157",
+      "legacyField": "role.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-158",
+      "legacyField": "role.updated_at",
+      "sourceType": "datetime(6)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "SOURCE_SEMANTICS_UNRESOLVED",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-159",
+      "legacyField": "role.description",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-160",
+      "legacyField": "tenant_domain.is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-161",
+      "legacyField": "user.business_title",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-162",
+      "legacyField": "user.password",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-163",
+      "legacyField": "user.unique_id",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-164",
+      "legacyField": "user.user_name",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "MISSING_OR_DESIGN_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "TENANT_IDENTITY_STRUCTURE_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-165",
+      "legacyField": "user_session.jti",
+      "sourceType": "varchar(36)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-166",
+      "legacyField": "user_session.user_id",
+      "sourceType": "int",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-167",
+      "legacyField": "user_session.user_type",
+      "sourceType": "varchar(20)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-168",
+      "legacyField": "user_session.device_name",
+      "sourceType": "varchar(255)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-169",
+      "legacyField": "user_session.user_agent",
+      "sourceType": "varchar(512)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-170",
+      "legacyField": "user_session.ip_address",
+      "sourceType": "varchar(64)",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-171",
+      "legacyField": "user_session.created_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-172",
+      "legacyField": "user_session.last_used_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P2_DOMAIN_DESIGN_AND_RUNTIME_PROOF",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    },
+    {
+      "queueId": "DB01-MISSING-173",
+      "legacyField": "user_session.expires_at",
+      "sourceType": "datetime",
+      "sourceActiveness": "ACTIVE_WORKFLOW_CONFIRMED",
+      "sourceCategory": "IDENTITY_PROVIDER_OR_SESSION_DECISION",
+      "currentRegisteredPresence": "NO_TARGET_PROPOSED",
+      "responsibleDomain": "DB01",
+      "decisionType": "PROVIDER_OR_STAGED_AUTH_CONTRACT_DECISION",
+      "priority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "status": "OPEN_SOURCE_ONLY",
+      "completionProof": [
+        "Choose provider-owned behavior, normalized persistence target, staged DB migration, or explicitly approved retirement",
+        "Do not clone raw passwords, OTPs, handoff access/refresh tokens, or duplicate auth authorities",
+        "Tie target to exact legacy user job and role/tenant/temporal semantics",
+        "Attach executable DB/service/provider evidence and exact revision before marking VERIFIED"
+      ],
+      "verifiedInVnext": false
+    }
+  ]
+}
