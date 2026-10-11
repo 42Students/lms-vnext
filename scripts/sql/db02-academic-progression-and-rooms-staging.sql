@@ -106,27 +106,12 @@ BEGIN
     RAISE EXCEPTION 'Program-term course identity is immutable'
       USING ERRCODE = '23514';
   END IF;
-
-  -- Legacy can edit mandatory/elective before materialization. Once a CORE offering points at
-  -- this exact curriculum row, changing its type would make the persisted offering/reference
-  -- semantically contradictory. Offering creation takes FOR SHARE on this row, so the update
-  -- and materialization paths serialize in both orders.
-  IF NEW.type IS DISTINCT FROM OLD.type
-     AND EXISTS (
-       SELECT 1
-         FROM course_offerings co
-        WHERE co.program_term_course_id = OLD.id
-     ) THEN
-    RAISE EXCEPTION 'Program-term course type cannot change after an offering materializes it'
-      USING ERRCODE = '23514';
-  END IF;
-
   RETURN NEW;
 END;
 $$;
 
 CREATE TRIGGER db02_program_term_course_identity_guard
-BEFORE UPDATE OF program_term_id, course_id, type ON program_term_courses
+BEFORE UPDATE OF program_term_id, course_id ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_identity();
 
 -- A curriculum row may be removed while unused, matching legacy semester-course removal.
