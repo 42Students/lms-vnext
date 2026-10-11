@@ -126,15 +126,19 @@ export function auditDb41(stagedSql,historySql){
     }
   }
 
-  if(!/delivery_id\s+uuid(?:\s|\n)/i.test(attendanceSql))
-    errors.push("attendance_record_events: delivery_id snapshot is missing");
+  if(!/delivery_id\s+uuid\s+NOT\s+NULL/i.test(attendanceSql))
+    errors.push("attendance_record_events: delivery_id must be NOT NULL");
+  if(!/linked_delivery\s+IS\s+NULL[\s\S]*attendance event requires a course-linked schedule/i.test(attendanceWhole))
+    errors.push("attendance history must reject a schedule event without a delivery link");
   if(!/NEW\.delivery_id\s+IS\s+DISTINCT\s+FROM\s+linked_delivery/i.test(attendanceWhole))
-    errors.push("attendance history must mirror the optional canonical schedule delivery link");
+    errors.push("attendance history must mirror the required canonical schedule delivery link");
   if(!/section_schedule_event_courses[\s\S]*schedule_event_id\s*=\s*NEW\.schedule_event_id/i.test(attendanceWhole))
     errors.push("attendance history does not resolve the canonical schedule delivery link");
   for(const token of [
     "attendance_record_events_record_identity_fk",
+    "attendance_record_events_delivery_identity_fk",
     "attendance_records_event_identity_uq",
+    "section_schedule_event_courses_event_delivery_uq",
     "ADD COLUMN version integer NOT NULL DEFAULT 0"
   ]){
     if(!attendanceWhole.includes(token))
@@ -163,9 +167,9 @@ export function auditDb41(stagedSql,historySql){
     readyForPromotion:false,verifiedPostgreSQL:false,fieldDifferences,
     malformedRawSqlLiterals:malformed,tables,errors,warnings,
     requiredEvidence:[
-      "Stable attendance-record version model retained through migration integration",
-      "Drizzle+SQL field and CHECK parity",
-      "Atomic grade/publish/attendance producers with request actor and CAS",
+      "Retained explicit-PRESENT attendance row + monotonic version model preserved through migration integration",
+      "Drizzle+SQL field/CHECK parity plus current-row and schedule-delivery composite identities",
+      "Atomic grade/publish/attendance producers with request actor, exact snapshots and CAS",
       "Real disposable PostgreSQL replay and negative/race tests"
     ]
   };
