@@ -7,6 +7,11 @@ const sql = readFileSync(
   "utf8",
 );
 
+const acceptanceSql = readFileSync(
+  new URL("../scripts/sql/db02-postgres-acceptance-unregistered.sql", import.meta.url),
+  "utf8",
+);
+
 test("DB02 draft has paired PL/pgSQL dollar-quoted function bodies", () => {
   const functions = [...sql.matchAll(/\bCREATE FUNCTION\s+db02_[a-z_]+\s*\(/g)];
   const openings = [...sql.matchAll(/\bRETURNS trigger LANGUAGE plpgsql AS \$\$/g)];
@@ -91,4 +96,55 @@ test("schedule instructor is active, authorized, and from the section college", 
   assert.match(sql, /faculty_membership_id AND status = 'ACTIVE'/);
   assert.match(sql, /mr\.role = 'FACULTY'/);
   assert.match(sql, /faculty_college <> section_college/);
+});
+
+
+test("DB02 draft has no duplicate created tables, functions, triggers, or compatibility column blocks", () => {
+  const uniqueNames = (regex, label) => {
+    const names = [...sql.matchAll(regex)].map((match) => match[1]);
+    const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
+    assert.deepEqual(duplicates, [], `Duplicate ${label}: ${duplicates.join(", ")}`);
+  };
+
+  uniqueNames(/\bCREATE TABLE\s+([a-z_][a-z0-9_]*)/gi, "tables");
+  uniqueNames(/\bCREATE FUNCTION\s+([a-z_][a-z0-9_]*)\s*\(/gi, "functions");
+  uniqueNames(/\bCREATE TRIGGER\s+([a-z_][a-z0-9_]*)/gi, "triggers");
+
+  assert.equal([...sql.matchAll(/ADD COLUMN description text/g)].length, 1);
+  assert.equal([...sql.matchAll(/ADD COLUMN minimum_capacity integer/g)].length, 1);
+  assert.equal([...sql.matchAll(/cohorts_lifecycle_date_order_ck/g)].length, 1);
+  assert.doesNotMatch(sql, /ADD COLUMN lifecycle_start_date/);
+  assert.doesNotMatch(sql, /ADD COLUMN lifecycle_end_date/);
+});
+
+test("DB02 preserves reversible legacy INACTIVE cohort state and independent batch dates", () => {
+  assert.match(sql, /ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE'/);
+  assert.match(sql, /ALTER TABLE cohorts\s+ADD COLUMN start_date date,\s+ADD COLUMN end_date date/);
+  assert.match(sql, /cohorts_lifecycle_date_order_ck/);
+});
+
+test("DB02 user deletion scrubs progression actor references without creating academic history", () => {
+  const guardStart = sql.indexOf("CREATE FUNCTION db02_guard_cohort_progression_state()");
+  const guardEnd = sql.indexOf("CREATE TRIGGER db02_cohort_progression_state_guard", guardStart);
+  assert.ok(guardStart !== -1 && guardEnd > guardStart);
+  const guard = sql.slice(guardStart, guardEnd);
+
+  assert.match(guard, /pg_trigger_depth\(\) >= 2/);
+  assert.match(guard, /OLD\.updated_by_user_id IS NOT NULL/);
+  assert.match(guard, /NEW\.updated_by_user_id IS NULL/);
+  assert.match(guard, /NEW\.current_term_number IS NOT DISTINCT FROM OLD\.current_term_number/);
+  assert.match(guard, /NEW\.version IS NOT DISTINCT FROM OLD\.version/);
+
+  assert.match(
+    sql,
+    /CREATE TRIGGER db02_cohort_progression_history\s+AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version\s+ON cohort_progression_state/,
+  );
+  assert.doesNotMatch(
+    sql,
+    /db02_cohort_progression_history\s+AFTER UPDATE OF[^\n]*updated_by_user_id/,
+  );
+
+  assert.match(acceptanceSql, /DELETE FROM users WHERE id = user_progression_actor/);
+  assert.match(acceptanceSql, /actor deletion mutated progression state/);
+  assert.match(acceptanceSql, /actor deletion manufactured progression history/);
 });
