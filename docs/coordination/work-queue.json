@@ -2112,17 +2112,17 @@
         "tests/db10-notification-template-disposition.test.mjs",
         "docs/planning/database-parity-db10-field-ledger.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "ef781089f34d2e49c1eb2773276f65aa3883906e",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Dispositioned all 56 legacy notification_template/lms_notification_template fields against current executable runtime. Current dispatcher uses typed in-code event/channel/in-app content plus provider/DLT configuration; no generic vNext template table staged. Updated shared DB10 ledger with exact source dispositions while preserving UNMAPPED/0 verified status. Fresh connector consistency audit passed 39/39; static Node guards authored; final retirement/native-live proof and runtime execution remain downstream.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T13:42:00+05:30",
       "startedAt": "2026-10-11T13:42:30+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T13:49:30+05:30",
+      "completionCommitSha": "ef781089f34d2e49c1eb2773276f65aa3883906e",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2146,6 +2146,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:42:30+05:30",
           "reason": "Chat 5 started exact 56-field template-registry disposition against current pinned runtime consumers."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T13:49:30+05:30",
+          "reason": "56-field source disposition + contract + static guard + shared DB10 ledger reconciliation complete; final retirement still gated on DB00/DB19 proof."
         }
       ]
     },
