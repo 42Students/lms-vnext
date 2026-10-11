@@ -69,6 +69,10 @@ Source-level hardening was committed directly on `main` without editing
   [4edbcf75](https://github.com/42Students/lms-vnext/commit/4edbcf759917a3917fdbced627abb39d895cb2e5),
   `node --test tests/db07-project-history-retention.test.mjs`;
   includes three negative mutant tests and a read-only staging assertion.
+- Additional four-table SQL/Drizzle field and composite-FK parity guards:
+  [3d94f650](https://github.com/42Students/lms-vnext/commit/3d94f65095cd91a069770dd1093b81f2965a3114),
+  `node --test tests/db07-history-schema-parity.test.mjs`;
+  includes negative mutation checks for missing JSON snapshots, unmirrored fields and cross-project FK drift.
 - PostgreSQL acceptance witness:
   [b88c282d](https://github.com/42Students/lms-vnext/commit/b88c282df85bc1aeba4b116140e8e864a67a078b),
   `docs/planning/sql/db07-w03-history-retention-acceptance-unregistered.sql`.
