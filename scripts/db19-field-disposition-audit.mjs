@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reconcileDb00 } from './db19-db00-disposition-crosscheck.mjs';
+import { reconcileDb01Triage, gitBlobSha } from './db19-db01-triage-crosscheck.mjs';
 
 export const DOMAIN_SUFFIXES = Object.freeze([
   'db00_historical_and_engine', 'db01_identity_and_tenancy',
@@ -17,7 +18,8 @@ export const HISTORICAL_FLOOR = Object.freeze({ tables: 199, fields: 2829 });
 const LEDGER_PREFIX = 'docs/planning/db-pass4-columns-';
 const missing = value => typeof value !== 'string' || value.trim() === '';
 
-export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = true, db00Disposition = null } = {}) {
+export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = true,
+  db00Disposition = null, db01Triage = null, db01InventoryBlobSha = null } = {}) {
   const errors = [];
   const tableOwners = new Map();
   const fieldOwners = new Map();
@@ -138,6 +140,17 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
     errors.push({ code: 'DB00_RETIREMENT_STATUS_OVERLAY_DRIFT',
       rawBackupCandidateRows: historicRetirementPending,
       sourceApprovedBackupFields: db00Review.summary.retiredBackupFields });
+  // DB01 owns an exact 312-field source activity triage in a separate
+  // immutably pinned file. Do not rewrite its raw ledger or conflate
+  // current-source activeness with approved runtime schema mappings.
+  const db01Review = db01Triage === null ? null : reconcileDb01Triage(
+    inputs.find(entry => entry?.ledger?.domain === 'DB01_IDENTITY_AND_TENANCY')?.ledger,
+    db01Triage, {inventoryBlobSha:db01InventoryBlobSha},
+  );
+  if (db01Review && !db01Review.valid)
+    for (const detail of db01Review.errors)
+      errors.push({code:'DB01_SOURCE_TRIAGE_' + detail.code,detail});
+
   return {
     verification: 'SOURCE_LEDGER_INTEGRITY_ONLY_NOT_POSTGRES_ACCEPTANCE',
     sourceInventoryIntegrity: errors.length === 0 ? 'PASS' : 'FAIL',
@@ -148,8 +161,12 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
       rowsMissingSourceEvidence: noSourceEvidence, legacyOracleShas: [...sourceShas].sort(),
       backupFieldsSourceDisposed: db00Review?.valid ? db00Review.summary.retiredBackupFields : null,
       migrationMetadataFieldsSourceDisposed: db00Review?.valid ? db00Review.summary.replacedMetadataFields : null,
-      smrithiFieldsPendingProductDecision: db00Review?.valid ? db00Review.summary.pendingProductFields : null },
-    statusCounts, perDomain, db00DispositionOverlay: db00Review, errors,
+      smrithiFieldsPendingProductDecision: db00Review?.valid ? db00Review.summary.pendingProductFields : null,
+      db01SourceActivenessReviewed: db01Review?.valid ? db01Review.summary.reviewedFields : null,
+      db01SourceActiveFields: db01Review?.valid ? db01Review.summary.sourceActiveFields : null,
+      db01TargetCandidatesUnverified: db01Review?.valid ? db01Review.summary.targetCandidatesUnverified : null },
+    statusCounts, perDomain, db00DispositionOverlay: db00Review,
+    db01SourceTriageOverlay: db01Review, errors,
   };
 }
 
@@ -163,7 +180,13 @@ export function auditCheckout(root) {
   const decisionPath = path.join(root, 'docs/planning/db00-historical-engine-disposition.json');
   const db00Disposition = fs.existsSync(decisionPath)
     ? JSON.parse(fs.readFileSync(decisionPath, 'utf8')) : null;
-  return auditLedgers(inputs, { db00Disposition });
+  const triagePath = path.join(root, 'docs/planning/db01-chat02-312-field-source-triage.json');
+  const db01Triage = fs.existsSync(triagePath)
+    ? JSON.parse(fs.readFileSync(triagePath, 'utf8')) : null;
+  const db01LedgerPath = path.join(root, 'docs/planning/db-pass4-columns-db01_identity_and_tenancy.json');
+  const db01InventoryBlobSha = fs.existsSync(db01LedgerPath)
+    ? gitBlobSha(fs.readFileSync(db01LedgerPath)) : null;
+  return auditLedgers(inputs, { db00Disposition, db01Triage, db01InventoryBlobSha });
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
