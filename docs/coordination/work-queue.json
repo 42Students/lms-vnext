@@ -2384,6 +2384,41 @@
           "reason": "Chat 1 claims isolated DB06 shuffle persistence staging; no overlap with active DB01/DB02/DB05/DB10 workers."
         }
       ]
+    },
+    {
+      "id": "DB-042",
+      "phase": "DATABASE",
+      "title": "Stage DB06 attendance roster, tenant and marker integrity",
+      "scope": "Current-row attendance integrity, distinct from DB-035 history: enforce event↔learner same-college/roster scope, authorized marker identity (superadmin/college admin/assigned faculty), course-linked/elective delivery roster semantics, session mark lifecycle, and start-time safety. Source-only staging; no journal registration or API cutover.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db06-attendance-scope-candidate.sql",
+        "docs/planning/database-parity-db06-attendance-scope-contract.md",
+        "tests/db06-attendance-scope-staging.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Distinct implementation follow-up to DB-009/DB-035: active attendance rows have independent event/membership/user FKs but no current-row roster, tenant or marker authorization relationship."
+        }
+      ]
     }
   ],
   "eventModel": {
