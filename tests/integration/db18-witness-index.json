@@ -102,6 +102,13 @@
       "file": "tests/integration/db18-concurrency-witnesses.test.ts",
       "title": "allows exactly one concurrent cohort compare-and-set transition",
       "state": "AUTHORED_DB018_NOT_RUN"
+    },
+    {
+      "id": "DB18-C04",
+      "raceProbe": "P5-R06",
+      "file": "tests/integration/db18-concurrency-witnesses.test.ts",
+      "title": "allows exactly one concurrent project task submission transition",
+      "state": "AUTHORED_DB018_NOT_RUN"
     }
   ],
   "missingConcurrencyWitnesses": [
@@ -118,13 +125,6 @@
       "domain": "ACADEMICS",
       "state": "SOURCE_CONFIRMED_GAP_TEST_MISSING",
       "required": "Prove enrollment cannot commit after cohort becomes completed/archived between precheck and insert."
-    },
-    {
-      "id": "DB18-M03",
-      "raceProbe": "P5-R06",
-      "domain": "PROJECTS",
-      "state": "SOURCE_PROTECTED_EXPLICIT_CONCURRENCY_TEST_MISSING",
-      "required": "Two simultaneous submissions for one task must yield one task transition/submission and one clean loser with no orphan activity."
     }
   ],
   "excludedUntilRegistered": [
@@ -143,8 +143,8 @@
   ],
   "counts": {
     "directNegativeAuthored": 8,
-    "existingConcurrencyAuthored": 3,
-    "explicitConcurrencyMissing": 3,
+    "existingConcurrencyAuthored": 4,
+    "explicitConcurrencyMissing": 2,
     "draftUnregisteredExcluded": 3,
     "runtimeExecuted": 0,
     "runtimePassed": 0
