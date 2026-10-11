@@ -28,9 +28,11 @@
       "currentJpaMapped": false,
       "currentCourseDtoInput": false,
       "inspectedRelevantCodeHits": 0,
-      "candidateDecision": "RETAIN_OPTIONAL_DISPLAY_ALIAS_OR_EXPLICITLY_RETIRE_AFTER_READ/EXPORT/AUDIENCE_AUDIT",
+      "candidateDecision": "RETAIN nullable SQL compatibility only if physical-column consumer proof warrants it; independently recreate derived formal_title API response from shortTitle ?? courseName, preserving null-vs-empty semantics.",
       "runtimeConsumerVerified": false,
-      "retirementApproved": false
+      "retirementApproved": false,
+      "activeDerivedWireResponseEvidence": "LearnerController attendance/courses + NewProgramDetailsDTO.CourseInfo + NewProgramServiceImpl setFormalTitle; value is computed from shortTitle or courseName, not physical course.formal_title in these source paths",
+      "directPhysicalColumnConsumerStillUnproven": true
     }
   ],
   "inspectedRelevantCurrentLegacyFiles": [
@@ -113,7 +115,7 @@
       "defaultSubscriptionDaysHits": 0
     }
   ],
-  "noClaim": "This is a bounded negative result only, not proof these fields are unused in all native SQL, historical services, exports or other clients. No vNext migration should silently invent semantics.",
+  "noClaim": "Expanded source finding confirms formal_title is an active serialized response name, but it is derived in inspected code, and does not prove the historical physical course.formal_title column is read or written. Source-level evidence does not replace runtime or full-repository consumer verification.",
   "acceptance": [
     "Search any remaining active SQL/native query/report/export/partner/FE consumer and course provisioning config for BOTH names",
     "Choose explicit preservation or removal with dated API/database decision, never assume retired",
@@ -216,5 +218,43 @@
     }
   ],
   "boundedInspectedFilesTotal": 28,
-  "scopeNote": "13 source Java course surfaces and 15 source React/JS course surfaces on pinned old production branches. Exact field names/camel variants absent in these 28 inspected files only; not whole-repo proof."
+  "scopeNote": "13 source Java course surfaces and 15 source React/JS course surfaces on pinned old production branches. Exact field names/camel variants absent in these 28 inspected files only; not whole-repo proof.",
+  "newSourceConsumerDiscovery": {
+    "observedOn": "2026-10-12",
+    "scope": "CURRENT_LEGACY_SOURCE_PRODUCER_WITH_NO_COLUMN_READ_CONFIRMED",
+    "apiResponseField": "formal_title",
+    "backingCoursePhysicalColumnAccess": "NOT_OBSERVED_IN_THE_INSPECTED_PERSISTENCE_OR_DTO_PRODUCERS",
+    "derivedExpression": "course.shortTitle != null ? course.shortTitle : course.courseName",
+    "note": "NewProgramDetailsDTO.CourseInfo and LearnerController attendance/courses expose formal_title. They compute/forward from current Course fields; the historical MySQL course.formal_title column is not a mapped Course entity field. This proves an active serialized response concept, NOT the historical persisted column is used, retired, or safe to drop.",
+    "files": [
+      {
+        "path": "src/main/java/com/_42students/lms/controller/LearnerController.java",
+        "blobSha": "776864f594e28a28fe3052ee0237c101b6d9d4c3",
+        "formalTitleResponseHits": 2,
+        "directCourseFormalTitleColumnAccess": false,
+        "evidence": "GET /attendance/courses constructs formal_title from NewProgramDetailsDTO.CourseInfo.formalTitle; fallback constructs from Course.shortTitle or Course.courseName."
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/dto/response/NewProgramDetailsDTO.java",
+        "blobSha": "14f2e4985585b9aceb06b5a43e892e6b618a9fff",
+        "formalTitleResponseHits": 1,
+        "directCourseFormalTitleColumnAccess": false,
+        "evidence": "CourseInfo.formalTitle serializes as @JsonProperty(formal_title)."
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/impl/NewProgramServiceImpl.java",
+        "blobSha": "8149df6879e0cdfc6362d1c302b01537decac77c",
+        "formalTitleResponseHits": 1,
+        "directCourseFormalTitleColumnAccess": false,
+        "evidence": "setFormalTitle(course.getShortTitle()!=null ? getShortTitle() : getCourseName()) in program structure course projection."
+      }
+    ],
+    "unverified": [
+      "frontend consumer usage",
+      "all native SQL/exports",
+      "other partner callers",
+      "blank-string vs null precedence in vNext",
+      "execution of API/browser regression tests"
+    ]
+  }
 }
