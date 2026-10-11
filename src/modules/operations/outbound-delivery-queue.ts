@@ -7,7 +7,7 @@ import {
   OutboundDeliveryError,
   parseOutboundIntent,
 } from "./outbound-delivery-contract";
-import { sealOutboundDelivery } from "./outbound-delivery-envelope";
+import { deriveGlobalEmailSuppressionHash, sealOutboundDelivery } from "./outbound-delivery-envelope";
 
 /**
  * W06 durable queue boundary, deliberately disabled until W01 migrates the
@@ -76,12 +76,18 @@ export async function queueOutboundDeliveryInTransaction(
 
   const encryptionKey = process.env.DB10_OUTBOUND_ENCRYPTION_KEY_BASE64 ?? "";
   const envelope = sealOutboundDelivery(intent, encryptionKey);
+  // Global email recipient HMAC is intentionally different from the
+  // organization-scoped recipientHash. Null for SMS and WhatsApp.
+  const globalEmailSuppressionHash =
+    deriveGlobalEmailSuppressionHash(intent, encryptionKey);
   const notBefore = envelope.notBefore
     ? new Date(envelope.notBefore) : null;
   const expiresAt = envelope.expiresAt
     ? new Date(envelope.expiresAt) : null;
 
-  // Enqueue only when no *currently active* suppression exists.
+  // Enqueue only when no active local OR EMAIL-global suppression exists.
+  // The sender MUST recheck both immediately before dispatch; statement
+  // snapshot checks cannot resolve a concurrent unsubscribe/send race.
   // Business idempotency is atomic via the unique index, not a read-check.
   // Invitation token, recipient PII and variables are exclusively ciphertext.
   const inserted = await db.execute<QueueInsertionRow>(sql`
@@ -107,6 +113,12 @@ export async function queueOutboundDeliveryInTransaction(
           and s.recipient_hash = ${envelope.recipientHash}
           and s.cleared_at is null
       )
+        and not exists (
+          select 1 from outbound_global_email_suppressions g
+          where ${envelope.channel} = 'EMAIL'
+            and g.recipient_hash = ${globalEmailSuppressionHash}
+            and g.cleared_at is null
+        )
       on conflict (idempotency_key) do nothing
       returning id
     )
@@ -118,6 +130,11 @@ export async function queueOutboundDeliveryInTransaction(
           and s.channel = ${envelope.channel}
           and s.recipient_hash = ${envelope.recipientHash}
           and s.cleared_at is null
+      ) or exists (
+        select 1 from outbound_global_email_suppressions g
+        where ${envelope.channel} = 'EMAIL'
+          and g.recipient_hash = ${globalEmailSuppressionHash}
+          and g.cleared_at is null
       ) as suppressed
   `);
   const row = inserted.rows[0];
