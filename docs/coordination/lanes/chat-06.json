@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_RECEIPT_SQL_SYNTAX_FIXED_COHORT_PERIOD_SCOPE_GUARDS_SOURCE_ONLY",
+    "checkpointKind": "DB008_TOMBSTONE_VERSION_CAS_GENERIC_CONTENT_ANCESTRY_SOURCE_GATES_OPEN",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "be382487960ce25c5b667df8058688a2bc33b92d",
-    "lastWorkerMergedSha": "a9e08e1104eaf954b5bd128cf6e1a575535f3a4f",
+    "observedMainSha": "4e5d5c65f9461c961897874658a469b459c800ce",
+    "lastWorkerMergedSha": "4e5d5c65f9461c961897874658a469b459c800ce",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB008 remains IN_PROGRESS. This batch fixed invalid duplicate executable SQL after COMMIT in private receipt companion and strengthened cohort+academic-period matching in receipt create/consume, classroom messages, lesson discussions, learner progress; all 4 companions UNREGISTERED. Scanned 22 DB05 SQL drafts for transaction/dollar quote/tail anomalies, then ran 17 connected source assertions (all true); authored two node:test files and 22-case PG negative matrix, Node suite/PG not executed. Existing 7 primary DB05 drafts not registered; 0/92 formally DB-verified, 25 unresolved semantics. GitHub Actions billing intentionally disabled and is NOT a coding blocker; real PostgreSQL acceptance remains outstanding."
+    "summary": "Chat6 direct-main iteration corrected faculty owner delivery exact cohort/period, made lesson deletion child cascade version-aware, staged UNREGISTERED three-table tombstone version guard, staged conservative authored-content ancestry guard for five upstream tables including generic NULL-delivery reader scope, plus tests and two fail-closed manifest gates. On exact fetched GitHub blobs, 61 test assertion callbacks passed in JavaScript V8 with Node imports/filesystem mocked; this is NOT node --test nor PostgreSQL acceptance. 24 SQL drafts structurally scanned; 7 DB05 principal drafts and 11 companions unregistered; 0/92 DB verified and 24 remodeled/missing mappings open. DB008 IN_PROGRESS; global DATABASE active."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -54,7 +54,10 @@
     "tests/db05-draft-contract-integrity.test.mjs (11 authored at last source scan, NOT executed)",
     "tests/db05-lesson-faculty-owner-guard.test.mjs (canonical peer tests authored, not executed)",
     "tests/db05-sql-draft-structure.test.mjs: 3 Node tests authored, NOT executed",
-    "tests/db05-delivery-cohort-period-integrity.test.mjs: 6 Node tests authored, NOT executed"
+    "tests/db05-delivery-cohort-period-integrity.test.mjs: 6 Node tests authored, NOT executed",
+    "tests/db05-tombstone-version-invariant.test.mjs (4 V8 mocked-source callbacks PASS; native Node and PostgreSQL NOT RUN)",
+    "tests/db05-content-ancestry-authored-guard.test.mjs (6 V8 mocked-source callbacks PASS incl generic content; native Node/PG NOT RUN)",
+    "tests/db05-lesson-delete-restore-and-owner.test.mjs (10 V8 mocked-source callbacks PASS after brittle regex repair; native Node/PG NOT RUN)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [],
@@ -184,9 +187,15 @@
       "kind": "20261011_DB05_TYPED_DISCUSSION_SETTINGS_OFFERING_DELIVERY_SCOPE_LOCAL_REFERENCE_PASS",
       "commitSha": "8ac01931c0857cfce2e9696f796cc9068e76002f",
       "message": "Chat6 appended without overwriting parallel checkpoint. Main commits db45563 typed lesson discussions (17 cols), 082f813 lesson settings (14 cols), 3a57b46 bigint precision, 2e56368 opt-in read-only PG catalog probe, 259e9c2 unregistered offering/delivery scope guard, cec340a W01 20-negative-case handoff, 32ceea existing-row readonly preflight, 21e9ada exact SHA Node 19/19 execution log, df62f3a manifest tests evidence, b99c625 preflight blocked gate, 946ec8e handoff refresh. Current manifest 7 unregistered primary SQL drafts, 11 non-numbered cross companions, 64 acceptance gates none PASS. Formal DB05 0/92. 19/19 offering pure Node model plus older 8/8 progress pure model executed, not actual DB/FE/API. 18 connected source assertions passed. W01 only can merge schema barrel/journal. GLOBAL phase DATABASE, DB008 IN_PROGRESS."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB008_TOMBSTONE_VERSION_AND_GENERIC_CONTENT_REPARENT_20261011",
+      "commitSha": "4e5d5c65f9461c961897874658a469b459c800ce",
+      "message": "Staged isolated optimistic CAS tombstone trigger and authored-content ancestry guard beyond order overrides; corrected generic NULL-delivery audience. 61 source assertion callbacks V8 mocked replay PASS; Node CLI/PG NOT_RUN. Dedicated 14 TV and 18 CA PostgreSQL cases remain. Seven primary drafts/11 companion drafts not registered; 0/92 DB verified."
     }
   ],
-  "nextAction": "Continue DB008 source-contract closure and coordinate with Chat1: register only after same-college + cohort + exact academic period guard integration, upstream reparent race policy, typed source/DB06 cross-contract and 22-case disposable PostgreSQL acceptance. Verify actual Node tests on independent local runner. Global phase remains DATABASE.",
+  "nextAction": "Coordinate W01/DB02/DB06 integration ordering and execute disposable PostgreSQL TV-01..14 / CA-01..18, including generic NULL-delivery content audience, two-session stale CAS, upstream change race/deadlock, tenant/role/assignment/receipt. Run actual native node --test and lint/typecheck/build on reconciled main. Check READ COMMITTED lock contention. Do not mark gates PASS or register migration without runtime evidence.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -317,7 +326,8 @@
     "https://github.com/42Students/lms-vnext/commit/259e9c21aa3b4bd5b84dc040ee2ed1618a742e48",
     "https://github.com/42Students/lms-vnext/commit/21e9ada1b559033b29c227c0c1c289389c9d978d",
     "https://github.com/42Students/lms-vnext/commit/32ceeac8794ca7a49fd703aa9d300981625a8195",
-    "https://github.com/42Students/lms-vnext/commit/8ac01931c0857cfce2e9696f796cc9068e76002f"
+    "https://github.com/42Students/lms-vnext/commit/8ac01931c0857cfce2e9696f796cc9068e76002f",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/coordination/evidence/chat-06-db008-tombstone-ancestry-source-check-2026-10-11.md"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
