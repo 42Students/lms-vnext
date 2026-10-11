@@ -69,6 +69,7 @@ test("DB-069 serializes owner assignment against removal", () => {
   assert.match(candidate, /pg_advisory_xact_lock/);
   assert.match(candidate, /db069_job_owner_scope_guard/);
   assert.match(candidate, /db069_lead_owner_serialization_guard/);
+  assert.match(candidate, /db069_lead_owner_scope/);
   assert.match(candidate, /db069_team_member_identity_guard/);
   assert.match(candidate, /v_old_college::text \|\| ':' \|\| v_old_owner::text/);
   assert.match(candidate, /v_new_college::text \|\| ':' \|\| v_new_owner::text/);
@@ -77,7 +78,7 @@ test("DB-069 serializes owner assignment against removal", () => {
 test("source verifier covers frozen owner fields and current schema gap", () => {
   assert.match(verifier, /owner_faculty_id/);
   assert.match(verifier, /current placement_jobs has creator but no mutable owner/);
-  assert.match(verifier, /direct team removal refuses owned leads and live jobs/);
+  assert.match(verifier, /direct team identity removal\/change refuses owned leads and live jobs/);
   assert.match(verifier, /lock ordering includes full college\+membership identity/);
 });
 
@@ -270,6 +271,16 @@ test(
         "db069_job_owner_scope",
       );
 
+      // vNext hardening: ordinary faculty outside the placement team cannot
+      // be resurrected as a lead owner after team removal.
+      await fail23514(
+        client.query(
+          "INSERT INTO placement_tpo_leads(id,college_id,owner_membership_id) VALUES ($1,$2,$3)",
+          [randomUUID(),collegeA,ordinaryMem],
+        ),
+        "db069_lead_owner_scope",
+      );
+
       // Direct removal is blocked by owned live drive.
       await fail23514(
         client.query(
@@ -353,13 +364,21 @@ test(
         "INSERT INTO placement_tpo_team_members(college_id,membership_id,role) VALUES ($1,$2,'FACULTY_COORDINATOR')",
         [collegeA,coord3Mem],
       );
+      const closedJob = randomUUID();
       await client.query(
         "INSERT INTO placement_jobs(id,college_id,status,created_by_user_id,owner_membership_id) VALUES ($1,$2,'CLOSED',$3,$4)",
-        [randomUUID(),collegeA,actorUser,coord3Mem],
+        [closedJob,collegeA,actorUser,coord3Mem],
       );
       await client.query(
         "DELETE FROM placement_tpo_team_members WHERE college_id=$1 AND membership_id=$2",
         [collegeA,coord3Mem],
+      );
+      await fail23514(
+        client.query(
+          "UPDATE placement_jobs SET status='PUBLISHED' WHERE id=$1",
+          [closedJob],
+        ),
+        "db069_job_owner_scope",
       );
 
       // Race 1: delete obtains owner lock first. Concurrent new drive assignment
@@ -402,8 +421,8 @@ test(
         throw error;
       }
 
-      // Race 2: lead ownership obtains lock first. Team deletion waits and then
-      // rejects because the committed lead is visible after the lock releases.
+      // Race 2: delete obtains owner lock first for lead ownership.
+      // The pending lead insert must wake after deletion and fail owner scope.
       const coord5User = randomUUID();
       const coord5Mem = randomUUID();
       await client.query("INSERT INTO users(id,platform_status) VALUES ($1,'ACTIVE')",[coord5User]);
@@ -420,12 +439,44 @@ test(
       await client.query("BEGIN");
       try {
         await client.query(
+          "DELETE FROM placement_tpo_team_members WHERE college_id=$1 AND membership_id=$2",
+          [collegeA,coord5Mem],
+        );
+        const pendingLead = racer.query(
           "INSERT INTO placement_tpo_leads(id,college_id,owner_membership_id) VALUES ($1,$2,$3)",
           [randomUUID(),collegeA,coord5Mem],
         );
+        await client.query("COMMIT");
+        await fail23514(pendingLead,"db069_lead_owner_scope");
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw error;
+      }
+
+      // Race 3: lead ownership obtains lock first. Team deletion waits and then
+      // rejects because the committed lead is visible after the lock releases.
+      const coord6User = randomUUID();
+      const coord6Mem = randomUUID();
+      await client.query("INSERT INTO users(id,platform_status) VALUES ($1,'ACTIVE')",[coord6User]);
+      await client.query(
+        "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES ($1,$2,$3,'ACTIVE')",
+        [coord6Mem,coord6User,collegeA],
+      );
+      await client.query("INSERT INTO membership_roles(membership_id,role) VALUES ($1,'FACULTY')",[coord6Mem]);
+      await client.query(
+        "INSERT INTO placement_tpo_team_members(college_id,membership_id,role) VALUES ($1,$2,'FACULTY_COORDINATOR')",
+        [collegeA,coord6Mem],
+      );
+
+      await client.query("BEGIN");
+      try {
+        await client.query(
+          "INSERT INTO placement_tpo_leads(id,college_id,owner_membership_id) VALUES ($1,$2,$3)",
+          [randomUUID(),collegeA,coord6Mem],
+        );
         const pendingDelete = racer.query(
           "DELETE FROM placement_tpo_team_members WHERE college_id=$1 AND membership_id=$2",
-          [collegeA,coord5Mem],
+          [collegeA,coord6Mem],
         );
         await client.query("COMMIT");
         await fail23514(pendingDelete,"db069_team_member_owned_leads");
