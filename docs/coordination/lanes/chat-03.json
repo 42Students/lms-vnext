@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-047",
+  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
+  "activeTaskId": null,
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB047_COMPANY_SHARE_DEFAULT_DRIFT_STARTED",
+    "checkpointKind": "DB047_COMPANY_SHARE_DEFAULTS_COMPLETED_SOURCE_ONLY",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "51690ce85342bd24fa4dd814e109299b7815a614",
-    "lastWorkerMergedSha": "51690ce85342bd24fa4dd814e109299b7815a614",
+    "observedMainSha": "ed535e3b1f02f6a2700d05c810ed146dd9df7948",
+    "lastWorkerMergedSha": "f1e8b53baf5278754bd9caeb7f86af8d0a0045fc",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-047 IN_PROGRESS. Align DB09 tenant-safe company share_column_defaults candidate/ledger redesign with canonical placementCompanyRelationships Drizzle source; no journal/runtime claim."
+    "summary": "DB-047 COMPLETED source/staging. Canonical placement company relationship schema now owns tenant-safe share_column_defaults/check; obsolete DB09 ALTER draft converted to source-reference only. 8/8 V8-shim callbacks and 29/29 source assertions passed; PostgreSQL/runtime remains unverified."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -56,7 +56,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Add canonical nullable JSONB share-column default plus exact allowlist check, document source/tenant redesign, guard candidate↔Drizzle parity, and leave per-share snapshots immutable.",
+  "nextAction": "Refresh global DATABASE queue; pick next eligible task or identify a fresh non-overlapping DB gap. Do not mark DB-047 DONE_VERIFIED until registered migration/PostgreSQL/runtime witnesses execute.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -173,10 +173,11 @@
     "DB-032",
     "DB-034",
     "DB-036",
-    "DB-042"
+    "DB-042",
+    "DB-047"
   ],
   "lastPickedAt": "2026-10-11T13:43:00+05:30",
-  "lastCompletedAt": "2026-10-11T13:35:00+05:30",
+  "lastCompletedAt": "2026-10-11T13:50:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
   "trackingDefinitions": {
