@@ -2624,6 +2624,52 @@
         "PRODUCER_AND_RUNTIME_PROOF: grade/publish/attendance writers do not yet atomically emit event rows; no disposable PostgreSQL acceptance witnesses executed."
       ],
       "completionNote": null
+    },
+    {
+      "id": "DB-046",
+      "phase": "DATABASE",
+      "title": "Close DB10 221-field source disposition denominator",
+      "scope": "Apply exact per-field source dispositions to all 77 DB10 rows still lacking sourceDisposition, using completed DB-022/023/031/033/043 evidence: app_setting 9, log-alert triage 24, notification 21, skills catalog/usage 15, SMS delivery audit 8. Produce a machine-readable closure overlay and static consistency guard. Preserve every global row status as UNMAPPED and verified=0 until migration/runtime/DB19 proof.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/database-parity-db10-source-disposition-closure.json",
+        "docs/planning/database-parity-db10-source-disposition-closure.md",
+        "tests/db10-source-disposition-closure.test.mjs",
+        "docs/planning/database-parity-db10-field-ledger.json"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T14:34:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T14:34:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "DB10 ledger has 221 source rows and 144 already carry exact sourceDisposition. The remaining 77 all belong to completed Chat 5 source-reviewed families and need shared-ledger per-field closure."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T14:34:00+05:30",
+          "reason": "Chat 5 reserved a ledger/source-evidence closure pass only; no new schema or migration ownership overlaps active workers."
+        }
+      ]
     }
   ],
   "eventModel": {
