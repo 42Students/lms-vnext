@@ -17,9 +17,9 @@ const snapshot = JSON.parse(
 );
 
 test("DB06 hardening is registered as trigger-only 0042", () => {
-  const last = journal.entries.at(-1);
-  assert.equal(last.idx, 42);
-  assert.equal(last.tag, "0042_db06_assessment_scope_hardening");
+  const entry = journal.entries.find((item) => item.idx === 42);
+  assert.ok(entry);
+  assert.equal(entry.tag, "0042_db06_assessment_scope_hardening");
   assert.equal(snapshot.prevId, previous.id);
   assert.notEqual(snapshot.id, previous.id);
 
