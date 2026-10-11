@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T19:39:45.704Z",
+  "updatedOn": "2026-10-11T19:47:56.682Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3758,17 +3758,31 @@
         "docs/planning/db09-user-state-lifecycle-audit.md",
         "tests/db09-user-state-lifecycle.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
+      "status": "COMPLETED",
+      "latestEvidenceSha": "cc08b221e2614f6f48310ba588c7e77bd6a21623",
+      "verificationEvidence": [
+        {
+          "type": "SOURCE_ONLY_EXECUTED_IN_PROCESS",
+          "mode": "EXACT_GITHUB_BLOB_V8",
+          "testCases": 20,
+          "passed": 20,
+          "failed": 0,
+          "postgres": "NOT_RUN",
+          "nodeRunner": "NOT_RUN",
+          "sqlBlobSha": "a16c86896c4481b771d14e8227986af3ddc91352",
+          "testBlobSha": "679e7c38dca010009bf4e5e06ef65b005814527c",
+          "sourceSchemaBlobSha": "17284285f360ebac8957fa382f26a7d29d3def60",
+          "auditPath": "docs/planning/db09-user-state-lifecycle-audit.md"
+        }
+      ],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Staged DB09 preferences/saved-view INSERT/UPDATE/DELETE lifecycle guard completed; active TPO scope rechecked on every preference write, identity frozen, future timestamps rejected, monotonic changes and idempotent no-op, snapshot views UPDATE denied. 20/20 exact-source V8 callbacks passed; Node suite and PG not run. Original Chat3 source work credited, no migration/barrel registration.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T21:40:00+05:30",
       "startedAt": "2026-10-11T21:41:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T19:47:56.682Z",
+      "completionCommitSha": "cc08b221e2614f6f48310ba588c7e77bd6a21623",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -3797,6 +3811,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T19:39:45.704Z",
           "reason": "Explicit nonconcurrent transfer Chat 3→Chat 5; completion credit stays with actual committer. DB056 source-only prerequisite not accepted as PostgreSQL proof."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T19:47:56.682Z",
+          "reason": "Staged DB09 preferences/saved-view INSERT/UPDATE/DELETE lifecycle guard completed; active TPO scope rechecked on every preference write, identity frozen, future timestamps rejected, monotonic changes and idempotent no-op, snapshot views UPDATE denied. 20/20 exact-source V8 callbacks passed; Node suite and PG not run. Original Chat3 source work credited, no migration/barrel registration."
         }
       ],
       "takeoverHistory": [
