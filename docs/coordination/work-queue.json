@@ -209,10 +209,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "549e8e9d03416887f6b0758387abd953e9640a5f",
+      "latestEvidenceSha": "32eec78a241b782048535fe94d1833ef53f9640c",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "DB004 IN_PROGRESS: 312/312 source dispositions, 0 VNext semantic fields verified. Main now contains direct-source membership suspension guard/evidence files (20 earlier local Node checks passed) and staged org/college archival race guard/source tests (10 in-process source assertions passed). No new numbered Drizzle migrations; no PostgreSQL replay, lock concurrency tests or provider acceptance. CI billing ignored as blocker.",
+      "completionNote": "DB-004 IN_PROGRESS: 312/312 source dispositions (not DB verified); 0 vNext runtime-semantic verified fields. Staged unregistered membership suspend and org/college + DB01 college/membership/domain race guards plus device/OTP/handoff and domain tombstone candidates. New 4 two-session PG schedules authored but NOT executed; no numbered migration or full-schema PG replay. CI billing intentionally irrelevant.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
@@ -243,7 +243,8 @@
           "at": "2026-10-10T20:27:16.242Z",
           "reason": "Chat 2 now auditing DB01 source semantics."
         }
-      ]
+      ],
+      "progressNote": "Chat 2 directly committed DB01 college archive vs membership/domain two-way row-lock draft, synthetic-schema PG witness (4 two-connection schedules) and 13 source/mutation tests. Verified 16/16 in-process GitHub-source assertions only; Node test execution 0 THIS BATCH; PG tests 0; migration registration 0. Other 7 usage families, org/college race and domain-tombstone rules need cross-domain review. Global DATABASE remains active; DB-004 0 runtime-semantic verified fields."
     },
     {
       "id": "DB-005",
