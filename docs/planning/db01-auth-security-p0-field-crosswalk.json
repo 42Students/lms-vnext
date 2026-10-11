@@ -1,0 +1,984 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_P0_SECURITY_FIELD_POLICY_CROSSWALK",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "state": "SOURCE_POLICY_DRAFT_NOT_RUNTIME_VERIFIED",
+  "scope": "The exact 38 P0 active/lifecycle NO_TARGET fields in the pinned DB01 source queue, including DB04 and DB09 handoffs. This does not claim they are missing physical columns.",
+  "source": {
+    "noTargetQueue": "docs/planning/db01-chat02-no-target-disposition-queue.json",
+    "queueBlobSha": "f46d7ebcca52eb57759a7a8fa55973451b4449dc",
+    "sourceTriage": "docs/planning/db01-chat02-312-field-source-triage.json",
+    "triageBlobSha": "efedb62f8738798e757186c7143836345405d33a"
+  },
+  "counts": {
+    "rows": 38,
+    "byDomain": {
+      "DB01": 33,
+      "DB04": 2,
+      "DB09": 3
+    },
+    "byPolicy": {
+      "RETENTION_LIFECYCLE_REVIEW": 2,
+      "STAGED_UNREGISTERED": 4,
+      "SECURITY_RETIREMENT_PROPOSED": 3,
+      "CROSS_DOMAIN_REVOCATION_REVIEW": 3,
+      "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION": 12,
+      "STAGED_OPTIONAL_PROVIDER_DECISION": 7,
+      "DB09_GRANT_LIFECYCLE_OWNER": 1,
+      "DB09_CAPABILITY_GRANT_OWNER": 1,
+      "PROVIDER_REVOCATION_OR_SESSION_LEDGER_PENDING": 2,
+      "ROLE_LIFECYCLE_REVIEW": 1,
+      "OPTIONAL_DEVICE_LEDGER_PENDING": 2
+    },
+    "approvedRetirements": 0,
+    "registeredMigrations": 0,
+    "runtimeVerified": 0,
+    "providerVerified": 0
+  },
+  "policy": "Raw short OTP, bearer tokens, legacy refresh/ID tokens or password secrets may not be retained for convenience. Target columns are staged suggestions, not proof of safe parity. DB04/DB09 owners must approve their own decisions. Cannot close fields without real migration/provider tests.",
+  "rows": [
+    {
+      "legacyField": "auth_handoff_token.is_deleted",
+      "queueId": "DB01-MISSING-004",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "RETENTION_LIFECYCLE_REVIEW",
+        "candidate": null,
+        "explanation": "Legacy soft-delete is not identical to consumed_at; choose bounded retention and immutable consumed state before approval.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "auth_handoff_token.token",
+      "queueId": "DB01-MISSING-005",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_UNREGISTERED",
+        "candidate": "identity_auth_handoffs.code_mac",
+        "explanation": "Normalized single-use two-minute host-bound HMAC handoff candidate, pending service/provider proof and migration.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "auth_handoff_token.access_token",
+      "queueId": "DB01-MISSING-006",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SECURITY_RETIREMENT_PROPOSED",
+        "candidate": null,
+        "explanation": "Legacy persisted raw bearer credentials; vNext must never store them, issue provider credentials only after independently verified one-time host handoff.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "auth_handoff_token.refresh_token",
+      "queueId": "DB01-MISSING-007",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SECURITY_RETIREMENT_PROPOSED",
+        "candidate": null,
+        "explanation": "Legacy persisted raw bearer credentials; vNext must never store them, issue provider credentials only after independently verified one-time host handoff.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "auth_handoff_token.expires_at",
+      "queueId": "DB01-MISSING-008",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_UNREGISTERED",
+        "candidate": "identity_auth_handoffs.expires_at",
+        "explanation": "Normalized single-use two-minute host-bound HMAC handoff candidate, pending service/provider proof and migration.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "auth_handoff_token.used",
+      "queueId": "DB01-MISSING-009",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_UNREGISTERED",
+        "candidate": "identity_auth_handoffs.consumed_at",
+        "explanation": "Normalized single-use two-minute host-bound HMAC handoff candidate, pending service/provider proof and migration.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy cross-host membership switch creates a 2-minute handoff token; /handoff/consume enforces single-use/expiry and marks it used.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/AuthHandoffToken.java@c00ceb12e1c29be8b974813f2d6854927408fd28",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AuthController.java@b802e800ae99fd7410e51138fed81f90e3c082ce"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "faculty.token_version",
+      "queueId": "DB01-MISSING-036",
+      "ownerDomain": "DB04",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "CROSS_DOMAIN_REVOCATION_REVIEW",
+        "candidate": null,
+        "explanation": "Token version represents revocation/rotation; provider token revocation or session ledger must prove enforcement on every relevant session, not substitute user platform status.",
+        "evidenceArtifact": "docs/planning/db01-device-session-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current JWT issuance/authentication carries and compares faculty.token_version; suspension/session invalidation bumps the version so stale tokens fail.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Faculty.java@9ab2159da0c1717bd3abaa1dd83b3fd1d3d64035",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "faculty_acct_verification.is_deleted",
+      "queueId": "DB01-MISSING-048",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "faculty_acct_verification.blocked_till_ts",
+      "queueId": "DB01-MISSING-050",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "faculty_acct_verification.incorrect_attempts",
+      "queueId": "DB01-MISSING-052",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "faculty_acct_verification.max_resend_attempts",
+      "queueId": "DB01-MISSING-054",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "faculty_acct_verification.otp",
+      "queueId": "DB01-MISSING-055",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "faculty_acct_verification.verify_status",
+      "queueId": "DB01-MISSING-057",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy faculty login sends an OTP, persists faculty_acct_verification, verifies the latest active OTP through VerificationService, and gates login on that result.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/FacultyVerification.java@c19708d7dd9b917d37e0378ab5d30b884cd0492e",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/FacultyVerificationRepository.java@a4ef07a3730a89474039cf3cbad4b8a39c01c199"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "learner.token_version",
+      "queueId": "DB01-MISSING-085",
+      "ownerDomain": "DB04",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "CROSS_DOMAIN_REVOCATION_REVIEW",
+        "candidate": null,
+        "explanation": "Token version represents revocation/rotation; provider token revocation or session ledger must prove enforcement on every relevant session, not substitute user platform status.",
+        "evidenceArtifact": "docs/planning/db01-device-session-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current JWT issuance/authentication carries and compares learner.token_version; suspension/session invalidation bumps the version so stale tokens fail.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Learner.java@e016c0f8e7e0890f5ff72a3ca3e95e3982d3e444",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java@4e0e71fcd77703c2f7b380e3a57f9b0742d7770f"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "learner_acct_verification.is_deleted",
+      "queueId": "DB01-MISSING-102",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "learner_acct_verification.blocked_till_ts",
+      "queueId": "DB01-MISSING-104",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "learner_acct_verification.incorrect_attempts",
+      "queueId": "DB01-MISSING-105",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "learner_acct_verification.max_resend_attempts",
+      "queueId": "DB01-MISSING-108",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "learner_acct_verification.otp",
+      "queueId": "DB01-MISSING-109",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "learner_acct_verification.verify_status",
+      "queueId": "DB01-MISSING-112",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SEPARATE_ACCOUNT_VERIFICATION_PROVIDER_DECISION",
+        "candidate": null,
+        "explanation": "Account-claim/verification may differ from login OTP: prove claim binding, lockout, resend allowance, verified-state persistence and separate purpose before choosing a shared challenge or provider-only model.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy OTP login writes learner_acct_verification rows, reads the latest non-expired OTP, rate-limits verification, verifies the OTP, and issues the authenticated session.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/LearnerVerification.java@199c65309cff45a59165a4ef2053af208f49a07c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/LearnerAccountVerificationRepository.java@4062789d7ba9e6f638b84a63b8c0a0de55f3867d"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "mobile_login_attempt.is_deleted",
+      "queueId": "DB01-MISSING-115",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "RETENTION_LIFECYCLE_REVIEW",
+        "candidate": null,
+        "explanation": "Deleted/used/expired challenges need an explicit retention plan; consumed status is not identical to soft-delete.",
+        "evidenceArtifact": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "mobile_login_attempt.expires_at",
+      "queueId": "DB01-MISSING-119",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_OPTIONAL_PROVIDER_DECISION",
+        "candidate": "identity_auth_attempts.expires_at",
+        "explanation": "Unregistered challenge with five-minute expiry, atomic five-try budget, immutable actor/tenant scope and single-use consumption; provider-only option remains open.",
+        "evidenceArtifact": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "mobile_login_attempt.email_otp_expires_at",
+      "queueId": "DB01-MISSING-120",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_OPTIONAL_PROVIDER_DECISION",
+        "candidate": "identity_auth_attempts.email_code_expires_at",
+        "explanation": "Unregistered challenge with five-minute expiry, atomic five-try budget, immutable actor/tenant scope and single-use consumption; provider-only option remains open.",
+        "evidenceArtifact": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "mobile_login_attempt.otp",
+      "queueId": "DB01-MISSING-123",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_OPTIONAL_PROVIDER_DECISION",
+        "candidate": "identity_auth_attempts.sms_code_mac",
+        "explanation": "Unregistered challenge with five-minute expiry, atomic five-try budget, immutable actor/tenant scope and single-use consumption; provider-only option remains open.",
+        "evidenceArtifact": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "mobile_login_attempt.email_otp",
+      "queueId": "DB01-MISSING-124",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_OPTIONAL_PROVIDER_DECISION",
+        "candidate": "identity_auth_attempts.email_code_mac",
+        "explanation": "Unregistered challenge with five-minute expiry, atomic five-try budget, immutable actor/tenant scope and single-use consumption; provider-only option remains open.",
+        "evidenceArtifact": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "mobile_login_attempt.phone",
+      "queueId": "DB01-MISSING-125",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_OPTIONAL_PROVIDER_DECISION",
+        "candidate": "identity_auth_attempts.contact_fingerprint",
+        "explanation": "Keyed fingerprint supports rate limits only; provider-owned normalized contact and phone ownership verification remain separate.",
+        "evidenceArtifact": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "mobile_login_attempt.used",
+      "queueId": "DB01-MISSING-126",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_OPTIONAL_PROVIDER_DECISION",
+        "candidate": "identity_auth_attempts.used_at",
+        "explanation": "Unregistered challenge with five-minute expiry, atomic five-try budget, immutable actor/tenant scope and single-use consumption; provider-only option remains open.",
+        "evidenceArtifact": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "mobile_login_attempt.verification_attempts",
+      "queueId": "DB01-MISSING-130",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_OPTIONAL_PROVIDER_DECISION",
+        "candidate": "identity_auth_attempts.verification_attempts",
+        "explanation": "Unregistered challenge with five-minute expiry, atomic five-try budget, immutable actor/tenant scope and single-use consumption; provider-only option remains open.",
+        "evidenceArtifact": "docs/planning/db01-auth-attempt-monotonic-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy repository implements active-attempt lookup, rate counting and atomic five-attempt verification budget. Calling controller/service still needs direct source proof.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/MobileLoginAttempt.java@72688319549f4f8c9c7ed26b9399de6e1a2f8b47",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/MobileLoginAttemptRepository.java@d18f9ec90d6f0786eefc0ad2231f107e6ddee093"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "recruiter.token_version",
+      "queueId": "DB01-MISSING-134",
+      "ownerDomain": "DB09",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "CROSS_DOMAIN_REVOCATION_REVIEW",
+        "candidate": null,
+        "explanation": "Token version represents revocation/rotation; provider token revocation or session ledger must prove enforcement on every relevant session, not substitute user platform status.",
+        "evidenceArtifact": "docs/planning/db01-device-session-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current Recruiter identity entity is actively created/edited/suspended/authenticated. Admin/auth flows use contact identity, company/designation, suspension, token-version, last-login, creator metadata, soft-delete and optimistic version semantics.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Recruiter.java@cef0e4bc47cd0de457af5bb560be750c514b32d3",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAdminService.java@4ed2060a88222885b99fccb18653644485431944"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "recruiter_college_access.valid_until",
+      "queueId": "DB01-MISSING-141",
+      "ownerDomain": "DB09",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "DB09_GRANT_LIFECYCLE_OWNER",
+        "candidate": "placement_recruiter_college_grants.<expiry field pending DB09>",
+        "explanation": "Time-bounded recruiter-college authorization must be enforced at grant query/authorization time; status ACTIVE alone does not prove valid_until.",
+        "evidenceArtifact": "docs/planning/db01-chat02-no-target-disposition-queue.json",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current recruiter access/admin/TPO/invite flows create, reactivate, expire, extend, revoke and audit college grants. Expiry and capabilities are checked from the database on each recruiter request; pending_recruiter_lead_id is actively written by invite flow.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "recruiter_college_access_capability.capability",
+      "queueId": "DB01-MISSING-149",
+      "ownerDomain": "DB09",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "DB09_CAPABILITY_GRANT_OWNER",
+        "candidate": "DB09 grant capability relation (candidate only)",
+        "explanation": "Distinct scoped recruiter capability should be proven against DB09 persisted role/grant/capability enforcement, not collapsed to generic recruiter role.",
+        "evidenceArtifact": "docs/planning/db01-chat02-no-target-disposition-queue.json",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current RecruiterCollegeAccess maps the capability collection eagerly; RecruiterAccessService enforces requested capability on each request and V178 backfills DRIVE_WORK.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java@744d5fbff0445c2598fee8c6a51081b07a1ae8b5",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java@ab737953cce9ff9a04b88f5515007bf76ec3d918"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "refresh_token_blocklist.jti",
+      "queueId": "DB01-MISSING-150",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "PROVIDER_REVOCATION_OR_SESSION_LEDGER_PENDING",
+        "candidate": null,
+        "explanation": "Legacy refresh-token JWT jti/blocklist lifetime must be replaced by proven provider revocation/session cookie checks; raw JTI must not be treated as equivalent to keyed session credential digest.",
+        "evidenceArtifact": "docs/planning/db01-device-session-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy logout and single-session revoke persist JTI blocklist rows; JWT request authentication rejects blocklisted token JTIs.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java@b173f950ea8df0a3d5769f4b2885f655eda06acf",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/RefreshTokenBlocklistRepository.java@a85ed197af9a1e74de2fca3a0ce5296e8d7f1466"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "refresh_token_blocklist.expires_at",
+      "queueId": "DB01-MISSING-154",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "PROVIDER_REVOCATION_OR_SESSION_LEDGER_PENDING",
+        "candidate": null,
+        "explanation": "Legacy refresh-token JWT jti/blocklist lifetime must be replaced by proven provider revocation/session cookie checks; raw JTI must not be treated as equivalent to keyed session credential digest.",
+        "evidenceArtifact": "docs/planning/db01-device-session-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy logout and single-session revoke persist JTI blocklist rows; JWT request authentication rejects blocklisted token JTIs.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java@b173f950ea8df0a3d5769f4b2885f655eda06acf",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/RefreshTokenBlocklistRepository.java@a85ed197af9a1e74de2fca3a0ce5296e8d7f1466"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "role.is_deleted",
+      "queueId": "DB01-MISSING-157",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "ROLE_LIFECYCLE_REVIEW",
+        "candidate": null,
+        "explanation": "Historic role soft-delete and grant revocation must be reconciled with normalized membership_roles/system_roles and audit history.",
+        "evidenceArtifact": "docs/planning/db01-chat02-no-target-disposition-queue.json",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": null,
+      "sourcePaths": [],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "tenant_domain.is_deleted",
+      "queueId": "DB01-MISSING-160",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "STAGED_UNREGISTERED",
+        "candidate": "tenant_domains.deleted_at",
+        "explanation": "Tenant hostname tombstone must exclude routing/verification while preserving lifetime host uniqueness pending host-reuse decision.",
+        "evidenceArtifact": "docs/planning/sql/db01-tenant-domain-tombstone-staging.sql",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": null,
+      "sourcePaths": [],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "user.password",
+      "queueId": "DB01-MISSING-162",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "SECURITY_RETIREMENT_PROPOSED",
+        "candidate": null,
+        "explanation": "Do not store legacy password hash/secret in vNext. Provider-managed sign-in only, subject to actual account recovery and login verification.",
+        "evidenceArtifact": "docs/planning/db01-auth-otp-handoff-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": null,
+      "sourcePaths": [],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "user_session.jti",
+      "queueId": "DB01-MISSING-165",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "OPTIONAL_DEVICE_LEDGER_PENDING",
+        "candidate": "identity_device_sessions.credential_digest (not an exact JTI mapping)",
+        "explanation": "Legacy per-device JWT identifier and expiry require targeted revoke-one/expiry parity; Firebase global revocation alone is not proof of per-device behavior.",
+        "evidenceArtifact": "docs/planning/db01-device-session-contract.md",
+        "mustNotStoreRaw": true,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    },
+    {
+      "legacyField": "user_session.expires_at",
+      "queueId": "DB01-MISSING-173",
+      "ownerDomain": "DB01",
+      "sourceStatus": "ACTIVE_WORKFLOW_CONFIRMED",
+      "securityPriority": "P0_SECURITY_OR_AUTH_LIFECYCLE",
+      "review": {
+        "policy": "OPTIONAL_DEVICE_LEDGER_PENDING",
+        "candidate": "identity_device_sessions.expires_at",
+        "explanation": "Legacy per-device JWT identifier and expiry require targeted revoke-one/expiry parity; Firebase global revocation alone is not proof of per-device behavior.",
+        "evidenceArtifact": "docs/planning/db01-device-session-contract.md",
+        "mustNotStoreRaw": false,
+        "requiresRuntimeEvidence": true
+      },
+      "sourceEvidenceSummary": "Current legacy controller lists /sessions, revokes /sessions/{jti}, rotates session JTI on refresh, and deletes session on logout.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/UserSession.java@9090a2ae12e9d2b373e50af207c48186fb62c7c0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserSessionServiceImpl.java@992d92a0a58fea8ae9edc8eaa3a21f28960ba153"
+      ],
+      "approvedRetirement": false,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "runtimeSemanticVerified": false,
+      "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED"
+    }
+  ]
+}
