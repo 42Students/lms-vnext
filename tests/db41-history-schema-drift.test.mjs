@@ -137,23 +137,23 @@ test("DB41 canonical attendance model uses stable record versions, not delete-re
 });
 
 
-test("DB45 semantic preflight rejects nullable or detached attendance delivery identity",()=>{
-  const nullable=sql.replace(
-    "delivery_id uuid NOT NULL\n    REFERENCES course_section_deliveries",
-    "delivery_id uuid\n    REFERENCES course_section_deliveries",
+test("DB45 semantic preflight requires exact optional schedule-delivery linkage",()=>{
+  const noCanonicalLink=sql.replace(
+    "IF NEW.delivery_id IS DISTINCT FROM linked_delivery THEN",
+    "IF false THEN",
   );
   assert.match(
-    auditDb41(staged,nullable).errors.join("\n"),
-    /delivery_id must be NOT NULL/,
+    auditDb41(staged,noCanonicalLink).errors.join("\n"),
+    /optional canonical schedule delivery link/,
   );
 
-  const detached=sql.replace(
-    "attendance_record_events_delivery_identity_fk",
-    "removed_delivery_identity_fk",
+  const noResolution=sql.replace(
+    "FROM section_schedule_event_courses ec",
+    "FROM renamed_schedule_event_courses ec",
   );
   assert.match(
-    auditDb41(staged,detached).errors.join("\n"),
-    /attendance_record_events_delivery_identity_fk/,
+    auditDb41(staged,noResolution).errors.join("\n"),
+    /does not resolve the canonical schedule delivery link/,
   );
 });
 
