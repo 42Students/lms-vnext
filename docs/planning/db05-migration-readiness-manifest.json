@@ -487,7 +487,13 @@
     "outstandingSemanticDecisions": 25,
     "sourceConfirmedNotYetConsumerVerified": [
       "learner_content_progress.is_deleted"
-    ]
+    ],
+    "historicalCourseColumnEvidence": "docs/planning/db05-historical-course-columns-source-evidence.json",
+    "remainingHistoricalOnlyUnmapped": [
+      "course.default_subscription_days",
+      "course.formal_title"
+    ],
+    "referencedSourceAuditFiles": 13
   },
   "testFiles": [
     "tests/db05-source-semantic-review.test.mjs",
@@ -701,5 +707,20 @@
       ],
       "note": "Not independent eighth DB05 numbered migration. Legacy source refuses delete with any live lesson/content but ignores already deleted child rows. Restore only course, never descendants."
     }
-  ]
+  ],
+  "verifiedSourceReferenceTests": {
+    "suite": "tests/db05-progress-consumer-reference.test.mjs",
+    "evidence": "docs/coordination/evidence/chat-06-db008-progress-reference-node-2026-10-11.md",
+    "githubBlobSha": "1d6dd100b35f77fed90b06acec6cd13a0fd42ba2",
+    "runner": "Node.js v22.16.0",
+    "command": "node --test /tmp/db05-progress-consumer-reference.test.mjs",
+    "testCount": 8,
+    "passed": 8,
+    "failed": 0,
+    "executed": true,
+    "validatedGitBlobIdentity": true,
+    "appliesTo": "PURE_REFERENCE_MODEL_ONLY",
+    "countsForPgGate": false,
+    "countsForApplicationIntegration": false
+  }
 }
