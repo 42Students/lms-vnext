@@ -89,7 +89,7 @@ BEGIN
   SELECT q.status::text INTO target_status
     FROM course_quizzes q
     WHERE q.id = target_quiz
-    FOR SHARE;
+    FOR UPDATE;
 
   IF target_status IS NULL THEN
     RAISE EXCEPTION 'DB06 quiz question parent is missing' USING ERRCODE='23503';
@@ -105,7 +105,7 @@ BEGIN
       WHERE q.id = OLD.quiz_id
         AND q.status = 'DRAFT'
         AND NOT EXISTS (SELECT 1 FROM quiz_attempts a WHERE a.quiz_id = OLD.quiz_id)
-      FOR SHARE;
+      FOR UPDATE;
     IF NOT FOUND THEN
       RAISE EXCEPTION 'DB06 source quiz is not mutable for question reparent'
         USING ERRCODE='23514';
@@ -131,7 +131,8 @@ BEGIN
     FROM quiz_questions qq
     JOIN course_quizzes q ON q.id = qq.quiz_id
     WHERE qq.id = target_question
-    FOR SHARE OF qq, q;
+    FOR SHARE OF qq
+    FOR UPDATE OF q;
 
   IF target_quiz IS NULL THEN
     RAISE EXCEPTION 'DB06 quiz option parent question is missing' USING ERRCODE='23503';
@@ -149,7 +150,8 @@ BEGIN
       WHERE qq.id = OLD.question_id
         AND q.status = 'DRAFT'
         AND NOT EXISTS (SELECT 1 FROM quiz_attempts a WHERE a.quiz_id = q.id)
-      FOR SHARE OF qq, q;
+      FOR SHARE OF qq
+      FOR UPDATE OF q;
     IF NOT FOUND THEN
       RAISE EXCEPTION 'DB06 source quiz is not mutable for option reparent'
         USING ERRCODE='23514';
@@ -163,6 +165,226 @@ CREATE TRIGGER db06_quiz_option_authoring_guard
 BEFORE INSERT OR UPDATE OR DELETE ON quiz_options
 FOR EACH ROW EXECUTE FUNCTION db06_guard_quiz_option_authoring();
 
+-- Snapshot fidelity ---------------------------------------------------------
+-- submitCourseQuiz currently materializes question/option rows before opening
+-- its write transaction. A concurrent authoring transaction could therefore
+-- commit between that read and the attempt INSERT. Validate every persisted
+-- answer against the database definition that is current at INSERT time.
+CREATE FUNCTION db06_guard_quiz_answer_snapshot()
+RETURNS trigger LANGUAGE plpgsql AS $db06_answer_snapshot$
+DECLARE
+  q_quiz uuid;
+  q_type text;
+  q_prompt text;
+  q_points integer;
+  canonical_options jsonb;
+  selected_count integer;
+  distinct_selected_count integer;
+  invalid_selected_count integer;
+  correct_option_count integer;
+  selected_correct_count integer;
+  selected_incorrect_count integer;
+  expected_correct boolean;
+BEGIN
+  SELECT q.quiz_id, q.question_type::text, q.prompt, q.points,
+         COALESCE(
+           jsonb_agg(
+             jsonb_build_object(
+               'id', o.id::text,
+               'text', o.option_text,
+               'sequence', o.sequence,
+               'correct', o.is_correct
+             )
+             ORDER BY o.sequence, o.id
+           ) FILTER (WHERE o.id IS NOT NULL),
+           '[]'::jsonb
+         )
+    INTO q_quiz, q_type, q_prompt, q_points, canonical_options
+    FROM quiz_questions q
+    LEFT JOIN quiz_options o ON o.question_id = q.id
+    WHERE q.id = NEW.question_id
+    GROUP BY q.id, q.quiz_id, q.question_type, q.prompt, q.points
+    FOR SHARE OF q;
+
+  IF q_quiz IS NULL THEN
+    RAISE EXCEPTION 'DB06 answer snapshot question is missing'
+      USING ERRCODE='23503';
+  END IF;
+
+  PERFORM 1
+    FROM quiz_attempts a
+    WHERE a.id = NEW.attempt_id
+      AND a.quiz_id = q_quiz
+    FOR SHARE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'DB06 answer snapshot question belongs to another quiz'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF NEW.question_type::text IS DISTINCT FROM q_type
+     OR NEW.prompt_snapshot IS DISTINCT FROM q_prompt
+     OR NEW.points_possible IS DISTINCT FROM q_points
+     OR NEW.options_snapshot IS DISTINCT FROM canonical_options THEN
+    RAISE EXCEPTION 'DB06 answer snapshot does not match committed quiz definition'
+      USING ERRCODE='23514';
+  END IF;
+
+  SELECT count(*), count(DISTINCT value)
+    INTO selected_count, distinct_selected_count
+    FROM jsonb_array_elements_text(NEW.selected_option_ids);
+
+  IF selected_count <> distinct_selected_count THEN
+    RAISE EXCEPTION 'DB06 answer contains duplicate selected option ids'
+      USING ERRCODE='23514';
+  END IF;
+
+  SELECT count(*)
+    INTO invalid_selected_count
+    FROM jsonb_array_elements_text(NEW.selected_option_ids) selected(value)
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM quiz_options o
+      WHERE o.question_id = NEW.question_id
+        AND o.id::text = selected.value
+    );
+
+  IF invalid_selected_count > 0 THEN
+    RAISE EXCEPTION 'DB06 answer contains option outside committed question'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF q_type = 'SINGLE_CHOICE' AND selected_count > 1 THEN
+    RAISE EXCEPTION 'DB06 single-choice answer selected multiple options'
+      USING ERRCODE='23514';
+  END IF;
+
+  SELECT
+      count(*) FILTER (WHERE o.is_correct),
+      count(*) FILTER (
+        WHERE o.is_correct
+          AND NEW.selected_option_ids ? o.id::text
+      ),
+      count(*) FILTER (
+        WHERE NOT o.is_correct
+          AND NEW.selected_option_ids ? o.id::text
+      )
+    INTO correct_option_count, selected_correct_count, selected_incorrect_count
+    FROM quiz_options o
+    WHERE o.question_id = NEW.question_id;
+
+  expected_correct :=
+    selected_count > 0
+    AND selected_incorrect_count = 0
+    AND selected_correct_count = correct_option_count;
+
+  IF NEW.correct IS DISTINCT FROM expected_correct
+     OR NEW.points_awarded IS DISTINCT FROM
+       (CASE WHEN expected_correct THEN q_points ELSE 0 END) THEN
+    RAISE EXCEPTION 'DB06 answer correctness/points do not match committed options'
+      USING ERRCODE='23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$db06_answer_snapshot$;
+
+CREATE TRIGGER db06_quiz_answer_snapshot_guard
+BEFORE INSERT ON quiz_attempt_answers
+FOR EACH ROW EXECUTE FUNCTION db06_guard_quiz_answer_snapshot();
+
+-- A committed attempt must contain exactly one answer snapshot per current
+-- question (including unanswered questions, represented by []), and aggregate
+-- scores must equal the persisted answer snapshots and quiz total_points.
+CREATE FUNCTION db06_require_complete_quiz_attempt()
+RETURNS trigger LANGUAGE plpgsql AS $db06_complete_attempt$
+DECLARE
+  question_count integer;
+  answer_count integer;
+  answer_score integer;
+  answer_max integer;
+  quiz_total integer;
+BEGIN
+  SELECT q.total_points,
+         (SELECT count(*) FROM quiz_questions qq WHERE qq.quiz_id = q.id)
+    INTO quiz_total, question_count
+    FROM course_quizzes q
+    WHERE q.id = NEW.quiz_id
+    FOR SHARE;
+
+  SELECT count(*),
+         COALESCE(sum(points_awarded), 0),
+         COALESCE(sum(points_possible), 0)
+    INTO answer_count, answer_score, answer_max
+    FROM quiz_attempt_answers
+    WHERE attempt_id = NEW.id;
+
+  IF question_count <= 0
+     OR answer_count <> question_count
+     OR answer_score <> NEW.score
+     OR answer_max <> NEW.max_score
+     OR quiz_total <> NEW.max_score THEN
+    RAISE EXCEPTION 'DB06 quiz attempt is missing or inconsistent answer snapshots'
+      USING ERRCODE='23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$db06_complete_attempt$;
+
+CREATE CONSTRAINT TRIGGER db06_complete_quiz_attempt_required
+AFTER INSERT ON quiz_attempts
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION db06_require_complete_quiz_attempt();
+
+-- Non-destructive promotion preflight. Refuse to install retention guards over
+-- already-poisoned historical rows.
+DO $db06_retention_preflight$
+DECLARE
+  bad_attempt uuid;
+BEGIN
+  SELECT a.id INTO bad_attempt
+    FROM quiz_attempts a
+    JOIN course_quizzes q ON q.id = a.quiz_id
+    LEFT JOIN LATERAL (
+      SELECT count(*) AS answer_count,
+             COALESCE(sum(aa.points_awarded), 0) AS answer_score,
+             COALESCE(sum(aa.points_possible), 0) AS answer_max
+      FROM quiz_attempt_answers aa
+      WHERE aa.attempt_id = a.id
+    ) x ON true
+    LEFT JOIN LATERAL (
+      SELECT count(*) AS question_count
+      FROM quiz_questions qq
+      WHERE qq.quiz_id = a.quiz_id
+    ) qc ON true
+    WHERE qc.question_count <= 0
+       OR x.answer_count <> qc.question_count
+       OR x.answer_score <> a.score
+       OR x.answer_max <> a.max_score
+       OR q.total_points <> a.max_score
+    LIMIT 1;
+
+  IF bad_attempt IS NOT NULL THEN
+    RAISE EXCEPTION 'DB06 retention preflight: inconsistent quiz attempt %', bad_attempt
+      USING ERRCODE='23514';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM quiz_attempt_answers aa
+    JOIN quiz_questions qq ON qq.id = aa.question_id
+    JOIN quiz_attempts a ON a.id = aa.attempt_id
+    WHERE qq.quiz_id IS DISTINCT FROM a.quiz_id
+       OR aa.question_type::text IS DISTINCT FROM qq.question_type::text
+       OR aa.prompt_snapshot IS DISTINCT FROM qq.prompt
+       OR aa.points_possible IS DISTINCT FROM qq.points
+  ) THEN
+    RAISE EXCEPTION 'DB06 retention preflight: answer snapshots mismatch question identity'
+      USING ERRCODE='23514';
+  END IF;
+END;
+$db06_retention_preflight$;
+
 -- Required promotion witnesses:
 -- A attempt UPDATE/DELETE/TRUNCATE fails;
 -- B answer UPDATE/DELETE/TRUNCATE fails;
@@ -172,3 +394,7 @@ FOR EACH ROW EXECUTE FUNCTION db06_guard_quiz_option_authoring();
 -- F non-DRAFT or post-attempt question/option authoring fails;
 -- G max_attempts/total_points mutation after attempts fails;
 -- H attempt INSERT vs authoring race serializes without history reinterpretation.
+-- I stale answer snapshot/options/correctness/points INSERT fails.
+-- J attempt without exactly one answer per question fails at COMMIT.
+-- K attempt score/max_score must equal answer sums/current quiz total_points.
+-- L preflight refuses existing inconsistent attempt/answer history.
