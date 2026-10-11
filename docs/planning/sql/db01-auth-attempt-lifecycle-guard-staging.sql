@@ -76,7 +76,7 @@ BEGIN
   -- lock. created_at <= verified_at < expires_at is not sufficient: a SQL
   -- writer could otherwise backdate verified_at/used_at on an already expired
   -- challenge, or reserve an expired retry/resend slot.
-  IF clock_timestamp() >= OLD.expires_at
+  IF clock_timestamp() >= LEAST(OLD.expires_at, NEW.expires_at)
      AND (
        (OLD.verified_at IS NULL AND NEW.verified_at IS NOT NULL)
        OR (OLD.used_at IS NULL AND NEW.used_at IS NOT NULL)
