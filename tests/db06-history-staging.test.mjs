@@ -69,7 +69,7 @@ test("DB035 grade history is versioned, tenant scoped and publisher-aware", () =
   }
   assert.match(
     contract,
-    /publisher may differ from the original grader/i,
+    /can be executed later by another authorized user/i,
   );
   assert.match(
     contract,
