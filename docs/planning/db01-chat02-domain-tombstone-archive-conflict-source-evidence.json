@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_DOMAIN_TOMBSTONE_ARCHIVE_POLICY_CONFLICT_SOURCE_WITNESS",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "date": "2026-10-11",
+  "evidenceType": "CONNECTED_GITHUB_SOURCE_TEXT_V8_STATIC_ASSERTIONS_NOT_NODE_OR_POSTGRES",
+  "summary": {
+    "staticAssertionsExecuted": 29,
+    "staticAssertionsPassed": 29,
+    "staticAssertionsFailed": 0,
+    "authoredNodeCases": 12,
+    "executedNodeCases": 0,
+    "executedPostgresCases": 0,
+    "migrationsRegistered": 0,
+    "policyApproved": false,
+    "semanticRuntimeVerification": false
+  },
+  "sources": [
+    {
+      "path": "src/modules/colleges/service.ts",
+      "sha": "a7acba7a3b76c633774c40d1223d31d8305ef613"
+    },
+    {
+      "path": "docs/planning/sql/db01-college-membership-domain-archive-guard-staging.sql",
+      "sha": "044498844efa66c23576c4cf18803ee9ba4b6b5e"
+    },
+    {
+      "path": "docs/planning/sql/db01-college-archive-tombstone-consistency-staging.sql",
+      "sha": "61d2713740ed07cf8a768478933666096dad7302"
+    },
+    {
+      "path": "docs/planning/sql/db01-tenant-domain-tombstone-staging.sql",
+      "sha": "7c35723cecbe8851a52298dbdf8729fde9a30a58"
+    },
+    {
+      "path": "docs/planning/sql/db01-domain-tombstone-state-guard-staging.sql",
+      "sha": "41dd70170287ecace62f35c05c8d780e3b33301f"
+    },
+    {
+      "path": "src/db/schema/tenant-domains.ts",
+      "sha": "a60513d017138c9d5e2abdc0ab426eb7143cc8cf"
+    },
+    {
+      "path": "docs/planning/db01-domain-tombstone-archive-policy-decision.md",
+      "sha": "f112028fb1fd726d6997a353e669549246813e42"
+    },
+    {
+      "path": "tests/db01-domain-tombstone-archive-policy-source.test.mjs",
+      "sha": "1becc05e741f45fb7b3ca7b8e50b0dbf74370d1a"
+    },
+    {
+      "path": "docs/planning/db01-chat02-migration-integration-manifest.json",
+      "sha": "6ed1d0bedabc830ea63bd29d75cc04a33265cc4f"
+    }
+  ],
+  "sourceConfirmedDefect": "Current resolveCollegeUsage and existing staged archive guard count all tenant_domains rows; adding deleted_at historical tombstones without paired active-only policy makes former domain-owning colleges permanently nonarchivable.",
+  "alternativeStatus": "STAGED_POLICY_APPROVAL_PENDING_NOT_REGISTERED",
+  "proposedRemediation": "Count only deleted_at IS NULL domain associations in BOTH college service usage and archive guard after an explicit policy approval, while preserving audit tombstones and all-time hostname uniqueness.",
+  "gateDependencies": [
+    "W01 approve source contract; choose whether archive retains all-row block or active-only usage",
+    "Chat 1 register only one selected archive-guard function with tombstone constraints",
+    "API phase replace domain hard DELETE and align every host/admin/verification resolver filter",
+    "Real PostgreSQL clean/latest migration replay and two-client race witnesses, including active-domain create vs college archive",
+    "All additional academic/project/placement descendant state guards remain required"
+  ],
+  "warning": "29/29 is a source consistency predicate count only. No Node source runner, PostgreSQL, or app/browser/provider execution in this batch."
+}
