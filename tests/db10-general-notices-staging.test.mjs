@@ -107,3 +107,18 @@ test("DB24 dual-role fanout preserves same-role deduplication and requires DB wi
   // Source guards cannot substitute for two direct PostgreSQL INSERTs against
   // distinct valid LEARNER and FACULTY memberships, followed by duplicate writes.
 });
+
+test("DB24 authorization witness rows remain locked during enqueue", () => {
+  assert.match(
+    sql,
+    /JOIN membership_roles mr ON mr\.membership_id = m\.id[\s\S]*?mr\.role::text = NEW\.recipient_type[\s\S]*?FOR SHARE OF m, mr;/,
+    "both membership status and matching role must be protected from concurrent updates",
+  );
+  assert.doesNotMatch(
+    sql,
+    /mr\.role::text = NEW\.recipient_type\s+FOR SHARE OF m;/,
+    "membership-only lock does not protect role-row revocation",
+  );
+  assert.match(spec, /DB24-14/);
+  // PostgreSQL race proof still requires two actual transactions.
+});
