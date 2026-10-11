@@ -31,6 +31,7 @@ DECLARE
   submission_delivery_id uuid;
   required_namespace text;
   required_key_prefix text;
+  object_key_suffix text;
 BEGIN
   SELECT membership.college_id INTO owner_college_id
     FROM college_memberships membership
@@ -154,15 +155,60 @@ BEGIN
     END IF;
   END IF;
 
-  -- Prefix check only. It does NOT attest an object exists, is clean, has the
-  -- promised generation, or is readable by this actor. Those remain storage
-  -- and DB16 receipt-state acceptance requirements.
+  -- This check validates the exact private storage key SHAPE, not merely a
+  -- prefix: private/<college>/<membership>/<namespace>/<uuid>. It forbids
+  -- extra path segments, '..' traversal, embedded URLs and arbitrary suffixes.
+  -- It does NOT attest an object exists, is malware-clean, has the promised
+  -- generation, or is readable by this actor. DB16/storage still prove that.
   required_key_prefix := 'private/' || NEW.college_id::text || '/' ||
     NEW.owner_membership_id::text || '/' || required_namespace || '/';
 
   IF left(NEW.object_key, length(required_key_prefix))
      IS DISTINCT FROM required_key_prefix THEN
     RAISE EXCEPTION 'course receipt object key violates private owner namespace'
+      USING ERRCODE = '23514';
+  END IF;
+
+  object_key_suffix := substring(
+    NEW.object_key FROM length(required_key_prefix) + 1
+  );
+
+  IF object_key_suffix !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}
+
+  IF NEW.upload_token_hash !~ '^[0-9a-f]{64}$' THEN
+    RAISE EXCEPTION 'course receipt upload token hash must be sha256 hex'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$db05_course_receipt$;
+
+CREATE TRIGGER db05_course_receipt_tenant_before_write
+BEFORE INSERT OR UPDATE OF college_id, owner_membership_id, purpose,
+    assignment_id, lesson_content_id, object_key, upload_token_hash,
+    consumed_by_submission_id
+ON course_upload_receipts
+FOR EACH ROW EXECUTE FUNCTION db05_course_receipt_tenant_guard();
+
+COMMIT;
+
+-- REQUIRED PRE-REGISTRATION ACCEPTANCE, ALL NOT RUN:
+-- 1. Same-college ASSIGNMENT_SUBMISSION and COURSE_RESOURCE receipt accepted.
+-- 2. Wrong-college membership, assignment offering-period, course department,
+--    content lesson, assignment/content delivery and section period rejected.
+-- 3. Wrong namespace/path, arbitrary object key, malformed sha256 hash rejected.
+-- 4. Cross-learner, cross-assignment and cross-delivery consumption rejected.
+-- 5. Private object generation/sha/malware attestation still checked by API.
+-- 6. Assignment submission file link and receipt immutable identity/retention
+--    verified with DB06/DB16; DO NOT add duplicate identity trigger here.
+-- 7. Upstream reparent of membership, department, offering, assignment,
+--    lesson/content/delivery/section/period must be prohibited or revalidated.
+--    Child receipt trigger alone does NOT protect existing rows retroactively.
+-- 8. Parallel receipt consumption, revoke/expire races, auth spoof, clean
+--    PostgreSQL replay, rollback, negative tests and service test evidence.
+ THEN
+    RAISE EXCEPTION 'course receipt private object key must end with one uuid'
       USING ERRCODE = '23514';
   END IF;
 
