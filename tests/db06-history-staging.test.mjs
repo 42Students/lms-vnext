@@ -87,6 +87,18 @@ test("DB035 grading mutations require matching immutable events at commit", () =
     sql,
     /DB06 grading mutation missing immutable audit event/,
   );
+  assert.match(
+    sql,
+    /NEW\.graded_by_user_id IS NOT DISTINCT FROM OLD\.graded_by_user_id/,
+  );
+  assert.match(
+    sql,
+    /NEW\.graded_at IS NOT DISTINCT FROM OLD\.graded_at/,
+  );
+  assert.match(
+    sql,
+    /expected_action = 'PUBLISH_GRADE'[\s\S]*e\.actor_user_id = NEW\.graded_by_user_id/,
+  );
   assert.doesNotMatch(
     sql,
     /CREATE CONSTRAINT TRIGGER db06_assignment_grade_event_required[\s\S]{0,100}UPDATE OF/,
