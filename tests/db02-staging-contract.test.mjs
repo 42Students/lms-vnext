@@ -275,3 +275,15 @@ test("history-free cohort hard delete cascades only initializer state", () => {
   assert.match(concurrencyShell, /PASS cohort delete race A/);
   assert.match(concurrencyShell, /PASS cohort delete race B/);
 });
+
+
+test("curriculum display order remains non-unique for legacy parity", () => {
+  const start = sql.indexOf("CREATE TABLE program_term_courses");
+  const end = sql.indexOf("CREATE INDEX program_term_courses_course_idx", start);
+  assert.ok(start !== -1 && end > start);
+  const table = sql.slice(start, end);
+  assert.match(table, /UNIQUE \(program_term_id, course_id\)/);
+  assert.doesNotMatch(table, /UNIQUE \(program_term_id, display_order\)/);
+  assert.match(table, /CHECK \(display_order >= 1\)/);
+  assert.match(acceptanceSql, /duplicate curriculum display_order was unexpectedly rejected/);
+});
