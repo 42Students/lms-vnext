@@ -193,6 +193,12 @@
       "kind": "DB008_TOMBSTONE_VERSION_AND_GENERIC_CONTENT_REPARENT_20261011",
       "commitSha": "4e5d5c65f9461c961897874658a469b459c800ce",
       "message": "Staged isolated optimistic CAS tombstone trigger and authored-content ancestry guard beyond order overrides; corrected generic NULL-delivery audience. 61 source assertion callbacks V8 mocked replay PASS; Node CLI/PG NOT_RUN. Dedicated 14 TV and 18 CA PostgreSQL cases remain. Seven primary drafts/11 companion drafts not registered; 0/92 DB verified."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "20261011_DB05_OFFERING_DELIVERY_INSERT_ONLY_LIFECYCLE_26_OF_26_EXACT_BLOB",
+      "commitSha": "d6bd0af17496362e0244c8ed6f9ca3d2cd05572f",
+      "message": "Preserving prior peer checkpoint. SQL companion scripts/sql/db05-offering-delivery-scope.draft.sql is UNREGISTERED and now checks INSERT-only source lifecycle state for offering/delivery; source model Node v22.16.0 26/26 PASS on exact GitHub blob b2ef07b1535082cbbf0b01391e15e8476eb372e5. Evidence docs/coordination/evidence/chat-06-db008-offering-delivery-source-model-v2-26-2026-10-11.md. Previous 8/8 progress reference PASS; 34/34 pure tests only, no database acceptance. 15 GitHub source assertions true. Staged types, PG catalog probe and seeded-row readonly preflight authored and NOT RUN. Manifest 7 primary drafts, 64 PG/source gates 0 PASS, DB05 formal verified 0/92, DATABASE phase, DB008 IN_PROGRESS. Source historical preservation/lifecycle not complete; W01 sole migration integrator."
     }
   ],
   "nextAction": "Coordinate W01/DB02/DB06 integration ordering and execute disposable PostgreSQL TV-01..14 / CA-01..18, including generic NULL-delivery content audience, two-session stale CAS, upstream change race/deadlock, tenant/role/assignment/receipt. Run actual native node --test and lint/typecheck/build on reconciled main. Check READ COMMITTED lock contention. Do not mark gates PASS or register migration without runtime evidence.",
@@ -327,7 +333,11 @@
     "https://github.com/42Students/lms-vnext/commit/21e9ada1b559033b29c227c0c1c289389c9d978d",
     "https://github.com/42Students/lms-vnext/commit/32ceeac8794ca7a49fd703aa9d300981625a8195",
     "https://github.com/42Students/lms-vnext/commit/8ac01931c0857cfce2e9696f796cc9068e76002f",
-    "https://github.com/42Students/lms-vnext/blob/main/docs/coordination/evidence/chat-06-db008-tombstone-ancestry-source-check-2026-10-11.md"
+    "https://github.com/42Students/lms-vnext/blob/main/docs/coordination/evidence/chat-06-db008-tombstone-ancestry-source-check-2026-10-11.md",
+    "https://github.com/42Students/lms-vnext/commit/6d9c938f70d0354c5c0962cc778ec7edd5ace250",
+    "https://github.com/42Students/lms-vnext/commit/6a11cd5aa8252c144efe26c9f93f60f82871ff59",
+    "https://github.com/42Students/lms-vnext/commit/2a49056f13196a5361321bae22c8d667c1b005f5",
+    "https://github.com/42Students/lms-vnext/commit/d9361e74c7b3a6c0879d596edd4f9b0a0ed5222e"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
