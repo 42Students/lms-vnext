@@ -105,7 +105,8 @@
       "scope": "W01-only replay of Drizzle 0000..latest on clean PostgreSQL with schema/snapshot/FK/check/index inspection and documented reproducible outputs",
       "priority": 1,
       "dependsOn": [
-        "DB-001"
+        "DB-001",
+        "DB-025"
       ],
       "restriction": "MIGRATION_INTEGRATOR",
       "paths": [
@@ -131,6 +132,11 @@
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        },
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Dependency hardening: destructive/replay DB execution must wait for DB-025 fail-closed TEST_DATABASE_URL safety before using shared reset paths."
         }
       ]
     },
@@ -1012,7 +1018,8 @@
       "scope": "Build and execute wrong-tenant/role, direct SQL, concurrency and missing-parent regression tests against approved schema once PG available",
       "priority": 3,
       "dependsOn": [
-        "DB-001"
+        "DB-001",
+        "DB-025"
       ],
       "restriction": "ANY",
       "paths": [
@@ -1038,6 +1045,11 @@
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Seeded global shared-phase DATABASE queue; no task picked yet."
+        },
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Dependency hardening: destructive/replay DB execution must wait for DB-025 fail-closed TEST_DATABASE_URL safety before using shared reset paths."
         }
       ]
     },
