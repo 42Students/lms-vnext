@@ -135,3 +135,17 @@ DATABASE phase.
 **Integration dependency:** Registration of auth OTP/handoff tables remains contingent on the product/provider choice (Identity Platform versus database-backed challenges). Source-only tests do not approve adding a second OTP engine. Chat 1's reserved migration/schema-barrel authority remains unchanged. **DB-004 remains IN_PROGRESS and global DATABASE remains ACTIVE.**
 
 **Fastest real completion path:** Execute both opt-in disposable PostgreSQL witnesses and independently generated registered schema replay, reconcile the source-to-provider account-verification and token-revocation decisions, and then verify end-to-end auth session issuance against that exact database revision. GitHub Actions billing is intentionally irrelevant; use a local or ephemeral PostgreSQL runner and record actual output.
+
+
+## 2026-10-12 SQL compiler delimiter correction
+
+During independent staging review, both authored PL/pgSQL lifecycle files were discovered to contain invalid `LANGUAGE plpgsql AS $` (a single dollar), although their previously authored source-behavior tests had passed. PostgreSQL requires a **matching paired dollar-quote tag**, such as `$$` or `$tag$`. Both files now use correctly matched openers and closers. This is a prerequisite for executing either disposable PostgreSQL witness; **no execution of PostgreSQL is claimed**.
+
+A new regression was integrated into `tests/db01-test-database-guard.test.mjs`, which already belongs to the existing `npm run test:db:parity` CI command. It asserts both exact staged trigger definitions have paired PL/pgSQL dollar delimiters and includes negative mutants that remove a leading or trailing dollar. The three new test callbacks ran against the **actual latest GitHub SQL blobs**, with **3/3 passing** in an isolated JavaScript source evaluator (not the full Node test runner).
+
+Corrected file blobs at verification:
+- `docs/planning/sql/db01-auth-attempt-lifecycle-guard-staging.sql`: `146898685b74a262a19dc67d0fd34c42a6d26985`
+- `docs/planning/sql/db01-auth-handoff-lifecycle-guard-staging.sql`: `dd8971f03ba9cde4a1cbcb9660c3f9c998ee3aa7`
+- CI-covered static test: `tests/db01-test-database-guard.test.mjs` at `3e8e5ac361a852578fb8a749957cfe9379bfe0c5`
+
+The source SQL is still **UNREGISTERED** pending explicit provider model selection, scoped composite FK reconciliation and executed disposable PostgreSQL acceptance. Do not call DB-004 verified based on delimiter syntax or source tests.
