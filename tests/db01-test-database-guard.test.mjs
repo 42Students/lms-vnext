@@ -244,3 +244,87 @@ test("DB28 browser E2E preparation refuses a production-like target before conne
   assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
   assert.doesNotMatch(output, new RegExp(secret));
 });
+
+
+test("DB48 shared reset helper requires exact remote target confirmation", () => {
+  const start = dbLibSource.indexOf(
+    "export function assertResetAllowed",
+  );
+  const end = dbLibSource.indexOf(
+    "export async function migrateDatabase",
+    start,
+  );
+  assert.notEqual(start, -1);
+  assert.notEqual(end, -1);
+  const helper = dbLibSource.slice(start, end);
+
+  assert.match(helper, /ALLOW_DB_RESET/);
+  assert.match(helper, /DB_RESET_CONFIRM/);
+  assert.match(helper, /target\.host/);
+  assert.match(helper, /target\.port/);
+  assert.match(helper, /target\.name/);
+  assert.match(helper, /postgresql:/);
+  assert.match(helper, /postgres:/);
+  assert.match(helper, /\[::1\]/);
+});
+
+test("DB48 remote db:reset refuses missing exact confirmation before network access", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB48 process regression");
+
+  const secret = "remoteResetSecret";
+  const result = spawnSync(
+    process.execPath,
+    [tsx, "scripts/db-reset.ts"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        DATABASE_URL:
+          `postgresql://admin:${secret}@pg.internal:5544/lms_vnext_test`,
+        ALLOW_DB_RESET: "true",
+        DB_RESET_CONFIRM: "",
+      },
+    },
+  );
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /DB_RESET_CONFIRM=RESET:pg\.internal:5544\/lms_vnext_test/,
+  );
+  assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
+});
+
+test("DB48 remote db:reset rejects wrong target confirmation before network access", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB48 process regression");
+
+  const secret = "wrongConfirmSecret";
+  const result = spawnSync(
+    process.execPath,
+    [tsx, "scripts/db-reset.ts"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        DATABASE_URL:
+          `postgresql://admin:${secret}@pg.internal:5544/lms_vnext_test`,
+        ALLOW_DB_RESET: "true",
+        DB_RESET_CONFIRM:
+          "RESET:other.internal:5544/lms_vnext_test",
+      },
+    },
+  );
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /DB_RESET_CONFIRM=RESET:pg\.internal:5544\/lms_vnext_test/,
+  );
+  assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
+});
