@@ -137,3 +137,49 @@ test("DB09 source-review field classifications never masquerade as semantic pari
   assert.equal(source.sourceReviewSummary.postgresDbTested, 0);
   assert.equal(source.sourceReviewSummary.approvedRetirements, 0);
 });
+
+// DB-064: Guard against an invalid lone-dollar SQL function opener. The TPO
+// source-contract tests once accepted two "LANGUAGE plpgsql AS $" functions:
+// these compile neither in PostgreSQL nor in a numbered migration.
+const lifecycleSql = fs.readFileSync(
+  path.join(root, "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql"),
+  "utf8",
+);
+function assertTpoLifecycleQuoted(sql, functionName) {
+  const anchor = "CREATE FUNCTION " + functionName + "() RETURNS trigger";
+  const start = sql.indexOf(anchor);
+  assert.notEqual(start, -1, "missing " + functionName);
+  const next = sql.indexOf("CREATE FUNCTION ", start + anchor.length);
+  const section = sql.slice(start, next === -1 ? undefined : next);
+  assert.match(section, /LANGUAGE plpgsql AS \$\$\s*BEGIN/,
+    functionName + " requires paired PostgreSQL dollar-quote opener");
+  assert.match(section, /\bEND \$\$;\s*CREATE TRIGGER /,
+    functionName + " requires paired PostgreSQL dollar-quote close");
+  assert.equal(section.split("$$").length - 1, 2,
+    functionName + " requires exactly two body delimiters");
+}
+
+test("DB09 staged personal TPO SQL functions have paired PostgreSQL delimiters", () => {
+  for (const name of [
+    "db09_restrict_tpo_user_preferences_lifecycle",
+    "db09_restrict_tpo_saved_view_lifecycle",
+  ]) assertTpoLifecycleQuoted(lifecycleSql, name);
+});
+
+test("DB09 TPO SQL lexical regression rejects the previously broken lone-dollar openers", () => {
+  for (const name of [
+    "db09_restrict_tpo_user_preferences_lifecycle",
+    "db09_restrict_tpo_saved_view_lifecycle",
+  ]) {
+    const anchor = "CREATE FUNCTION " + name + "() RETURNS trigger";
+    const start = lifecycleSql.indexOf(anchor);
+    assert.ok(start >= 0);
+    const prefix = lifecycleSql.slice(0, start);
+    const suffix = lifecycleSql.slice(start).replace("LANGUAGE plpgsql AS $$", "LANGUAGE plpgsql AS $");
+    assert.notEqual(suffix, lifecycleSql.slice(start));
+    assert.throws(
+      () => assertTpoLifecycleQuoted(prefix + suffix, name),
+      /paired PostgreSQL dollar-quote opener/,
+    );
+  }
+});
