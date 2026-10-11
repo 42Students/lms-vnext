@@ -177,9 +177,28 @@ Promotion must end outgoing-term assignments through this delivery/offering chai
 
 The following legacy values may be redesigned as calculated values **only with exact documented filters and tests**:
 
-- `batch.current_students`: legacy response is server-managed and derived from primary class→batch learner membership;
+- `batch.current_students`: legacy response is server-managed and derived from learner → **ordinary/non-GROUP_BACKED primary class** → batch, excluding soft-deleted learner/class rows. It does **not** exclude a temporarily suspended learner.
 - class counts / usage counts;
 - some academic-year display strings when canonical start-year state is persisted.
+
+### Exact `current_students` compatibility derivation
+
+Counting every active `learner_program_enrollments` row in a cohort is too broad because a learner can exist in the cohort before being placed into a primary section. The canonical compatibility read is:
+
+- `learner_program_enrollments.status = 'ACTIVE'`;
+- joined to at least one `section_enrollments.status = 'ACTIVE'`;
+- joined section is `sections.status = 'ACTIVE'`;
+- section and learner-program enrollment resolve to the **same cohort**;
+- count `DISTINCT learner_program_enrollments.id` so multi-row period/history state cannot double-count;
+- elective/group-backed rosters do not contribute because they are modeled in the elective/group kernel rather than primary section enrollment.
+
+Identity lifecycle is intentionally asymmetric:
+
+- temporary college-membership `SUSPENDED` blocks access but **does not academically withdraw** the learner and therefore still contributes when the active section relationship remains;
+- removing the `LEARNER` role or changing the membership to `ENDED` closes active section enrollment and marks the active learner-program enrollment `WITHDRAWN`;
+- restoring a role/membership must not silently resurrect old academic history; reactivation/transfer is an explicit academic operation.
+
+The unregistered parent/enrollment extension and single-session acceptance harness encode these rules. They remain unexecuted PostgreSQL evidence.
 
 Calculated redesign does not mean “unmapped.” The producer, filter semantics, tenant scope and race behavior must still be recorded in the DB02 row-level audit.
 
@@ -234,7 +253,8 @@ This extension deliberately does **not** redefine canonical triggers. It adds on
 - active LEARNER program-enrollment tenant/program/cohort checks;
 - learner section-enrollment cohort/period checks;
 - section parent row locks against history-insert vs structural-move races;
-- immutable learner-program and section-enrollment parent identity.
+- immutable learner-program and section-enrollment parent identity;
+- LEARNER-role removal / membership-END lifecycle cleanup that withdraws active academic state, while temporary SUSPENDED membership preserves it.
 
 Static deconfliction safety net:
 
@@ -243,7 +263,7 @@ Static deconfliction safety net:
 Direct latest-content reconciliation on 2026-10-11 found:
 
 - canonical PL/pgSQL functions: **25/25 paired**;
-- extension PL/pgSQL functions: **7/7 paired**;
+- extension PL/pgSQL functions: **8/8 paired**;
 - canonical ↔ extension trigger-name overlap: **0**.
 
 Executable but still **unexecuted** PostgreSQL acceptance helpers:
@@ -266,7 +286,7 @@ Design classification is complete, but DB-005 remains open until the registered 
 7. cohort/section/offering/progression periods remain in the owning college and cohort window; closed/out-of-window targets fail;
 8. cohort lifecycle date round-trip/order plus section description/min/max/compatibility-date behavior matches source contract;
 9. program-term uniqueness, term bounds, curriculum 0..30 credits, 1-based ordering and CORE-vs-ELECTIVE offering rules pass;
-10. learner program/section enrollment tenant, role, cohort, period and immutable-history constraints pass, including concurrent section move vs history insert;
+10. learner program/section enrollment tenant, role, cohort, period and immutable-history constraints pass, including concurrent section move vs history insert; exact `current_students` compatibility must exclude unsectioned learners, preserve temporarily suspended academic membership, and drop LEARNER-role-removed / ENDED-membership state;
 11. faculty-course pool, section faculty and course teaching assignment tests prove ACTIVE FACULTY role, tenant scope, historical deactivation and de-role/suspension cleanup;
 12. term jump/backward promotion fails; progression history rejects direct INSERT/UPDATE/DELETE/TRUNCATE while actor-FK cleanup does not create fake promotion history;
 13. same faculty/section/hall overlap fails, adjacent `[start,end)` succeeds, cancellation releases resources and attendance/history remains;
