@@ -6,7 +6,7 @@
   "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
   "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-  "vnextObservedSha": "d44887b17805aceaee42c7fddd63a415b017c6f8",
+  "vnextObservedSha": "3bad7173974fde952e49c9e2fb40e2987401bf7f",
   "evidenceDocument": "docs/planning/database-parity-db06-reconciliation.md",
   "policy": "Source-semantic disposition only. runtimeVerified=false everywhere until disposable PostgreSQL/live-schema evidence executes.",
   "counts": {
@@ -620,11 +620,11 @@
           "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
-          "targetRef": "attempt/answer retention policy",
-          "reason": "Submitted assessment history should not be silently hard-deleted; confirm any current delete/restore producer.",
+          "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
+          "targetRef": "quiz_attempt_answers retained row + DB038 immutable UPDATE/DELETE/TRUNCATE policy",
+          "reason": "Legacy BaseModel soft-delete is not an active attempt/answer lifecycle producer in the pinned QuizService review. vNext preserves submitted assessment history as immutable retained rows instead of adding a deletable flag.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-assessment-history-retention-candidate.sql + legacy QuizServiceImpl@prod-2026 + vNext quiz-attempt-service.ts"
         },
         {
           "legacyField": "created_at",
@@ -648,11 +648,11 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "REDESIGNED_IMMUTABLE_OR_REPLACED",
-          "targetRef": "null",
-          "reason": "Target row is immutable or replaced rather than updated in place; runtime producer review still required.",
+          "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
+          "targetRef": "quiz_attempt_answers.created_at",
+          "reason": "vNext submission history is write-once; no mutable updated_at is required when UPDATE is rejected at the database boundary.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-assessment-history-retention-candidate.sql + legacy QuizServiceImpl@prod-2026 + vNext quiz-attempt-service.ts"
         }
       ]
     },
@@ -726,11 +726,11 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'SUBMITTED'",
           "riskFlags": [],
-          "decision": "PENDING_RETIRE_IF_CONSTANT",
-          "targetRef": "null",
-          "reason": "Current source writes SUBMITTED only; producer/consumer sweep must prove no other persisted states before retirement.",
+          "decision": "DERIVED_METADATA_NOT_PERSISTED",
+          "targetRef": "quiz_attempts row existence + submitted_at",
+          "reason": "Pinned legacy QuizAttempt defaults status to SUBMITTED and current QuizService submit path never writes another attempt status; vNext models only completed submitted attempts, so persisted constant state is redundant.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "legacy QuizAttempt.java + QuizServiceImpl.java pinned prod-2026 source; vNext submitCourseQuiz insert-only attempt path"
         },
         {
           "legacyField": "score",
@@ -776,11 +776,11 @@
           "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
-          "targetRef": "attempt/answer retention policy",
-          "reason": "Submitted assessment history should not be silently hard-deleted; confirm any current delete/restore producer.",
+          "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
+          "targetRef": "quiz_attempts retained row + DB038 immutable UPDATE/DELETE/TRUNCATE policy",
+          "reason": "Legacy BaseModel soft-delete is not an active attempt/answer lifecycle producer in the pinned QuizService review. vNext preserves submitted assessment history as immutable retained rows instead of adding a deletable flag.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-assessment-history-retention-candidate.sql + legacy QuizServiceImpl@prod-2026 + vNext quiz-attempt-service.ts"
         },
         {
           "legacyField": "created_at",
@@ -804,11 +804,11 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "REDESIGNED_IMMUTABLE_OR_REPLACED",
-          "targetRef": "null",
-          "reason": "Target row is immutable or replaced rather than updated in place; runtime producer review still required.",
+          "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
+          "targetRef": "quiz_attempts.created_at/submitted_at",
+          "reason": "vNext submission history is write-once; no mutable updated_at is required when UPDATE is rejected at the database boundary.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-assessment-history-retention-candidate.sql + legacy QuizServiceImpl@prod-2026 + vNext quiz-attempt-service.ts"
         }
       ]
     },
