@@ -2923,17 +2923,17 @@
         "tests/unit/outbound-global-email-suppression.test.ts",
         "docs/planning/sql/db10-global-email-suppression-candidate.sql"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "f80329431da5321e66441902889295c9b7f4462c",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Committed DB10 global EMAIL unsubscribe parity: stable dedicated HMAC derivation independent of outbox encryption rotation; org-local+global suppression anti-join in queued insertion, draft global table with active HMAC unique index, seven Vitest functional tests and five zero-dependency source test callbacks, SQL candidate and migration/dispatcher handoff. Five exact committed source-test callbacks executed with V8 shim and passed (NOT node:test, TS unit test or PostgreSQL). Migration, key provisioning, sender handoff races and DB witnesses remain NOT_VERIFIED; DO NOT promote to DONE_VERIFIED.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T19:35:00+05:30",
       "startedAt": "2026-10-11T19:36:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T19:45:00+05:30",
+      "completionCommitSha": "f80329431da5321e66441902889295c9b7f4462c",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2957,6 +2957,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T19:36:00+05:30",
           "reason": "Implement separately derived secret HMAC global opt-out check, draft schema and executable contract regression without activating sender."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T19:45:00+05:30",
+          "reason": "All bounded DB-050 staging changes committed directly to main. Source callbacks executed 5/5 via V8 file/assert shim; database/runtime proof remains outstanding."
         }
       ],
       "id": "DB-050"
