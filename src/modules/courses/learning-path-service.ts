@@ -9,6 +9,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   courseLearningPaths,
+  courseOfferings,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -134,18 +135,37 @@ export async function createLearningPath(
   });
 
   try {
-    const [created] = await getDb()
-      .insert(courseLearningPaths)
-      .values({
-        offeringId: input.offeringId,
-        title: input.title,
-        description:
-          input.description ?? null,
-      })
-      .returning();
+    return await getDb().transaction(async (tx) => {
+      // A stale offering scope read must not allow a new path after archive.
+      // Offering archive holds FOR UPDATE; SHARE rechecks status in this tx.
+      const [activeOffering] = await tx
+        .select({ id: courseOfferings.id })
+        .from(courseOfferings)
+        .where(and(
+          eq(courseOfferings.id, input.offeringId),
+          eq(courseOfferings.status, "ACTIVE"),
+        ))
+        .for("share")
+        .limit(1);
 
-    return created;
+      if (!activeOffering) {
+        throw new CoursesServiceError("OFFERING_NOT_FOUND");
+      }
+
+      const [created] = await tx
+        .insert(courseLearningPaths)
+        .values({
+          offeringId: input.offeringId,
+          title: input.title,
+          description:
+            input.description ?? null,
+        })
+        .returning();
+
+      return created;
+    });
   } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
     throw mapLearningPathConstraint(error);
   }
 }
