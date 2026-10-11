@@ -2912,7 +2912,8 @@
         "src/modules/operations/outbound-delivery-queue.ts",
         "tests/db10-global-email-suppression-contract.test.mjs",
         "docs/planning/db10-global-email-suppression-parity.md",
-        "tests/unit/outbound-global-email-suppression.test.ts"
+        "tests/unit/outbound-global-email-suppression.test.ts",
+        "docs/planning/sql/db10-global-email-suppression-candidate.sql"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
