@@ -12,13 +12,13 @@
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB030_REGISTERED_0042_RUNTIME_BLOCKED",
+    "checkpointKind": "DB038_SOURCE_STAGING_COMPLETED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "4b744e0c27fec909a2a53bebe1438856be89df86",
-    "lastWorkerMergedSha": "458b2b9bf0da729f51f988cb2c24266fec425207",
+    "observedMainSha": "d67ff1cd3d092b73f97560906c4a9f4c88cfc67e",
+    "lastWorkerMergedSha": "c981943904764bab2bcaebae8964629bd51fd71a",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-030 now has registered 0041+0042, expanded PG witness matrix, targeted DB06 command, independent-verifier wiring, and 24/24 current-main source acceptance. Runtime remains blocked only on actual disposable PostgreSQL execution."
+    "summary": "DB-038 source-only assessment retention staging completed and post-completion hardened. Current source guards immutable quiz/answer history, assignment learner payload retention, authoring/scoring/snapshot coherence and poisoned-history preflight. Connector review 19/19; Node/PG not claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -36,7 +36,8 @@
     "tests/db04-candidate-sql-integrity.test.mjs",
     "tests/db16-private-storage-safety.test.mjs",
     "tests/db-independent-verifier.test.mjs",
-    "tests/db01-test-database-guard.test.mjs"
+    "tests/db01-test-database-guard.test.mjs",
+    "tests/db06-assessment-retention-staging.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)"
@@ -45,7 +46,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Refresh shared DATABASE queue and pick a dependency-satisfied nonconflicting source/integration task; leave DB-030 blocked until real PG execution is available.",
+  "nextAction": "Refresh global DATABASE queue. Pick a dependency-satisfied nonconflicting task; leave DB-030/DB-038 runtime verification pending until disposable PostgreSQL is executable.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -76,7 +77,8 @@
     "DB-014",
     "DB-016",
     "DB-025",
-    "DB-028"
+    "DB-028",
+    "DB-038"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -85,10 +87,11 @@
     "DB-016",
     "DB-001",
     "DB-025",
-    "DB-028"
+    "DB-028",
+    "DB-038"
   ],
-  "lastPickedAt": "2026-10-11T07:42:00.000Z",
-  "lastCompletedAt": "2026-10-11T07:49:00.000Z",
+  "lastPickedAt": "2026-10-11T08:25:15.235Z",
+  "lastCompletedAt": "2026-10-11T08:34:45.119Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
@@ -97,7 +100,8 @@
     "DB-016",
     "DB-001",
     "DB-025",
-    "DB-028"
+    "DB-028",
+    "DB-038"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
