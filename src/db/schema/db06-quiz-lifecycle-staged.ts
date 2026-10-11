@@ -99,7 +99,7 @@ export const courseQuizLifecycleEventsStaged = pgTable(
     check(
       "course_quiz_lifecycle_events_action_ck",
       sql`${table.action} in (
-        'BASELINE','CREATE','PUBLISH','UNPUBLISH','CLOSE','ARCHIVE',
+        'BASELINE','CREATE','PUBLISH','CLOSE','ARCHIVE',
         'RESULTS_PUBLISH','RESULTS_UNPUBLISH'
       )`,
     ),
@@ -139,6 +139,11 @@ export const courseQuizLifecycleEventsStaged = pgTable(
   ],
 );
 
+// Legacy prod has QUIZ_UNPUBLISH (status -> DRAFT), but current vNext exposes
+// no UNPUBLISH action. DB-052 preserves the stricter normalized vNext state
+// machine; restoring unpublish is an API/product compatibility decision, not a
+// hidden database transition.
+//
 // Promotion prerequisite on course_quizzes:
 //   lifecycle_version integer NOT NULL DEFAULT 0 CHECK (lifecycle_version >= 0)
 //
