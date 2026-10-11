@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_TWO_SOURCE_INVARIANTS_DISCUSSION_ANCESTRY_AND_LESSON_RESTORE_STAGED",
+    "checkpointKind": "DB008_DISCUSSION_RESTORE_AND_READONLY_TOMBSTONE_PREFLIGHT_MERGED",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "b323d1838e4654b3064ee34ee4a8d89756e1f6e6",
-    "lastWorkerMergedSha": "b323d1838e4654b3064ee34ee4a8d89756e1f6e6",
+    "observedMainSha": "23f731d0a428a29d29d12b44cf8be7cee9a4c8d5",
+    "lastWorkerMergedSha": "23f731d0a428a29d29d12b44cf8be7cee9a4c8d5",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "PR #97 and #98 merged DB008 unregistered integrity drafts: multi-hop content discussion parent graph acyclicity + preserved history preventing direct content reparent; and course-lesson soft-deletion guard now also checks in-place lesson RESTORE. Native Node pure reference models 11/11 +10/10 PASS on exact GitHub-matching local blobs, source V8 checks 16/16 and 12/12 PASS (not database acceptance). DB05 7 primary drafts and 12 companions unregistered, 73 gate entries pending, 0/92 DB runtime verified. W01-only migration integration and DG/LR PostgreSQL race matrices unexecuted; DATABASE ACTIVE, DB008 IN_PROGRESS."
+    "summary": "Three merged Chat6 DB008 PRs #97/#98/#99: staged unregistered discussion acyclic + content reparent guard; fixed unregistered course-soft-delete guard for in-place deleted lesson RESTORE; added aggregate read-only tombstone ancestry violation preflight. Native exact-blob Node tests 11+10+6=27/27 PASS; 16+12 connector source structure assertions passed. No PostgreSQL service/runtime, so migrations and 20 DG /12 LR race tests, proof of 0 mismatches, lint/typecheck/API/browser not executed. Seven main draft migrations/12 companions remain unregistered; manifest now 74 gates, 0/92 formal DB05 fields verified. DATABASE active, DB008 IN_PROGRESS. W01 solely owns numbered journal and barrel."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -65,11 +65,13 @@
     "tests/db05-hierarchy-paired-row-locks.test.mjs (5 authored; not executed)",
     "tests/db05-authoring-parent-locks.test.mjs (7 authored; not executed)",
     "tests/db05-lesson-restore-parent-reference.test.mjs (10/10 native pure reference-model PASS, not SQL)",
-    "tests/db05-lesson-restore-parent-guard.test.mjs (authored source SQL/manifest checks, NOT native-executed)"
+    "tests/db05-lesson-restore-parent-guard.test.mjs (authored source SQL/manifest checks, NOT native-executed)",
+    "tests/db05-tombstone-ancestor-preflight.test.mjs (6/6 native read-only SQL source checks PASS, not PostgreSQL)"
   ],
   "lastExecutedPassingTests": [
     "2026-10-12: node --test /mnt/data/db008-check/tests/db05-discussion-ancestry-reference.test.mjs | native Node 22.16.0 11/11 PASS | exact blob 5581c1ae8c512614910a3fe72c2d315a96ee67a4 | PURE REFERENCE MODEL ONLY, NOT POSTGRES",
-    "2026-10-12: node --test /mnt/data/db008-check/tests/db05-lesson-restore-parent-reference.test.mjs | native Node 22.16.0 10/10 PASS | exact GitHub matching blob e95168a6a11bff101a0a9215a0899a36f1567848 | PURE REFERENCE MODEL ONLY, NOT POSTGRES"
+    "2026-10-12: node --test /mnt/data/db008-check/tests/db05-lesson-restore-parent-reference.test.mjs | native Node 22.16.0 10/10 PASS | exact GitHub matching blob e95168a6a11bff101a0a9215a0899a36f1567848 | PURE REFERENCE MODEL ONLY, NOT POSTGRES",
+    "2026-10-12: node --test /mnt/data/db008-check/tests/db05-tombstone-ancestor-preflight.test.mjs | native Node 22.16.0 6/6 PASS | exact SQL/test Git blobs 62aaee7168e87d051320b29c2396cec9e36a4509 and 5207360638af7cf437f4c03e4db981917f4a8091 | SOURCE-ONLY, NOT POSTGRES"
   ],
   "blockers": [],
   "handoffs": [
@@ -234,6 +236,12 @@
       "kind": "DB05_LESSON_RESTORE_TOMBSTONED_COURSE_GUARD",
       "commitSha": "b323d1838e4654b3064ee34ee4a8d89756e1f6e6",
       "message": "PR #98 corrects unregistered draft `db05-course-soft-delete-guard.draft.sql`: BEFORE UPDATE now covers legacy_deleted_at so deleted lesson cannot silently restore under deleted course; still allows historic cleanup. Native pure reference Node 10/10 PASS exact blob e95168a6a11bff101a0a9215a0899a36f1567848; 12 source checks PASS. LR-01..LR-12 disposable PG and two-session locks NOT_RUN, W01 migration integrator only. Evidence docs/coordination/evidence/chat-06-db008-lesson-restore-2026-10-12.md."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB05_TOMBSTONE_ANCESTOR_ZERO_DRIFT_PREFLIGHT",
+      "commitSha": "23f731d0a428a29d29d12b44cf8be7cee9a4c8d5",
+      "message": "PR #99 adds read-only 3-count tombstone ancestor probe; Node source tests 6/6 PASS exact blob, not SQL output. Execute only on disposable PG after W01 registers course/lesson/content tombstone columns. Require zero counts and separate actual two-session race acceptance; leave 74th manifest gate NOT_RUN. DB05 formal runtime 0/92."
     }
   ],
   "nextAction": "Run actual native Node regression/tests and independent TS build; W01 merge archive guard exactly once and run HL-01..20 disposable PG two-session interleavings/read committed lock order, plus existing TV/CA and DB02 academic guards. Continue DB05 unresolved semantic and private receipt consumer cutovers; no phase jump.\n2026-10-12 handoff: run native Node/TS and two-session PG HL-01..20, LC-01..12, register trigger once only after W01 clean replay. Current live normal-service paired locks do not replace tenant/reparent/direct SQL DB acceptance.",
