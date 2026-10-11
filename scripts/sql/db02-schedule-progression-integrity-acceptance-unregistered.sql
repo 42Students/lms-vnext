@@ -11,7 +11,7 @@ DECLARE
   department_id uuid;
   program_id uuid;
   period_id uuid;
-  cohort_id uuid;
+  fixture_cohort_id uuid;
   section_id uuid;
   hall_id uuid;
   event_id uuid;
@@ -47,9 +47,9 @@ BEGIN
   INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status)
   VALUES (program_id, 'DB02 overlay cohort', 'OVERLAY-COH-' || substr(gen_random_uuid()::text,1,8),
           period_id, period_id, 'ACTIVE')
-    RETURNING id INTO cohort_id;
+    RETURNING id INTO fixture_cohort_id;
   INSERT INTO sections(cohort_id, academic_period_id, name, code, capacity)
-  VALUES (cohort_id, period_id, 'DB02 overlay section', 'OVERLAY-SEC-' || substr(gen_random_uuid()::text,1,8), 60)
+  VALUES (fixture_cohort_id, period_id, 'DB02 overlay section', 'OVERLAY-SEC-' || substr(gen_random_uuid()::text,1,8), 60)
     RETURNING id INTO section_id;
   INSERT INTO lecture_halls(college_id, department_id, name, capacity, room_type)
   VALUES (college_id, department_id, 'DB02 overlay hall', 100, 'CLASSROOM')
@@ -98,7 +98,7 @@ BEGIN
   failed := false;
   BEGIN
     UPDATE cohort_progression_state SET cohort_id=gen_random_uuid()
-    WHERE cohort_id=cohort_id;
+    WHERE cohort_id=fixture_cohort_id;
   EXCEPTION WHEN check_violation THEN
     failed := true;
   END;
@@ -108,7 +108,7 @@ BEGIN
 
   failed := false;
   BEGIN
-    DELETE FROM cohort_progression_state WHERE cohort_id=cohort_id;
+    DELETE FROM cohort_progression_state WHERE cohort_id=fixture_cohort_id;
   EXCEPTION WHEN check_violation THEN
     failed := true;
   END;
@@ -136,13 +136,13 @@ BEGIN
      SET current_academic_year_start=current_academic_year_start + 1,
          version=version + 1,
          updated_by_user_id=actor_id
-   WHERE cohort_id=cohort_id;
+   WHERE cohort_id=fixture_cohort_id;
 
   SELECT current_term_number, current_academic_year_start, version
   INTO term_before, year_before, version_before
-  FROM cohort_progression_state WHERE cohort_id=cohort_id;
+  FROM cohort_progression_state WHERE cohort_id=fixture_cohort_id;
   SELECT count(*) INTO event_count FROM cohort_progression_events
-  WHERE cohort_id=cohort_id;
+  WHERE cohort_id=fixture_cohort_id;
   IF event_count <> 1 OR version_before <> 1 OR term_before <> 1 THEN
     RAISE EXCEPTION 'Precondition correction/history event missing';
   END IF;
@@ -151,7 +151,7 @@ BEGIN
 
   IF NOT EXISTS (
     SELECT 1 FROM cohort_progression_state
-    WHERE cohort_id=cohort_id
+    WHERE cohort_id=fixture_cohort_id
       AND updated_by_user_id IS NULL
       AND current_term_number=term_before
       AND current_academic_year_start=year_before
@@ -161,11 +161,11 @@ BEGIN
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM cohort_progression_events
-    WHERE cohort_id=cohort_id AND state_version=version_before AND actor_user_id IS NULL
+    WHERE cohort_id=fixture_cohort_id AND state_version=version_before AND actor_user_id IS NULL
   ) THEN
     RAISE EXCEPTION 'Audit actor cleanup did not preserve anonymized history';
   END IF;
-  SELECT count(*) INTO tmp FROM cohort_progression_events WHERE cohort_id=cohort_id;
+  SELECT count(*) INTO tmp FROM cohort_progression_events WHERE cohort_id=fixture_cohort_id;
   IF tmp<>event_count THEN
     RAISE EXCEPTION 'Audit actor cleanup forged an academic event';
   END IF;
