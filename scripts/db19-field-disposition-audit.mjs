@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { reconcileDb00 } from './db19-db00-disposition-crosscheck.mjs';
 
 export const DOMAIN_SUFFIXES = Object.freeze([
   'db00_historical_and_engine', 'db01_identity_and_tenancy',
@@ -16,7 +17,7 @@ export const HISTORICAL_FLOOR = Object.freeze({ tables: 199, fields: 2829 });
 const LEDGER_PREFIX = 'docs/planning/db-pass4-columns-';
 const missing = value => typeof value !== 'string' || value.trim() === '';
 
-export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = true } = {}) {
+export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = true, db00Disposition = null } = {}) {
   const errors = [];
   const tableOwners = new Map();
   const fieldOwners = new Map();
@@ -125,6 +126,18 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
   if (enforceFloor && (totalTables < HISTORICAL_FLOOR.tables || totalFields < HISTORICAL_FLOOR.fields))
     errors.push({ code: 'HISTORICAL_INVENTORY_REGRESSION', floor: HISTORICAL_FLOOR,
       actual: { tables: totalTables, fields: totalFields } });
+  // Source-owned DB00 decisions are a separate overlay, NOT an inferred
+  // upgrade of 631 raw backup rows to runtime-verified field mappings.
+  const db00Review = db00Disposition === null ? null : reconcileDb00(
+    inputs.find(entry => entry?.ledger?.domain === 'DB00_HISTORICAL_AND_ENGINE')?.ledger,
+    db00Disposition,
+  );
+  if (db00Review && !db00Review.valid) for (const detail of db00Review.errors)
+    errors.push({ code: 'DB00_DISPOSITION_' + detail.code, detail });
+  if (db00Review?.valid && historicRetirementPending !== db00Review.summary.retiredBackupFields)
+    errors.push({ code: 'DB00_RETIREMENT_STATUS_OVERLAY_DRIFT',
+      rawBackupCandidateRows: historicRetirementPending,
+      sourceApprovedBackupFields: db00Review.summary.retiredBackupFields });
   return {
     verification: 'SOURCE_LEDGER_INTEGRITY_ONLY_NOT_POSTGRES_ACCEPTANCE',
     sourceInventoryIntegrity: errors.length === 0 ? 'PASS' : 'FAIL',
@@ -132,8 +145,11 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
     counts: { domains: perDomain.length, tables: totalTables, fields: totalFields,
       uniqueTables: tableOwners.size, uniqueFields: fieldOwners.size,
       sourceReviewed, proposedMappings, runtimeMappings, historicRetirementPending,
-      rowsMissingSourceEvidence: noSourceEvidence, legacyOracleShas: [...sourceShas].sort() },
-    statusCounts, perDomain, errors,
+      rowsMissingSourceEvidence: noSourceEvidence, legacyOracleShas: [...sourceShas].sort(),
+      backupFieldsSourceDisposed: db00Review?.valid ? db00Review.summary.retiredBackupFields : null,
+      migrationMetadataFieldsSourceDisposed: db00Review?.valid ? db00Review.summary.replacedMetadataFields : null,
+      smrithiFieldsPendingProductDecision: db00Review?.valid ? db00Review.summary.pendingProductFields : null },
+    statusCounts, perDomain, db00DispositionOverlay: db00Review, errors,
   };
 }
 
@@ -144,7 +160,10 @@ export function auditCheckout(root) {
     if (!fs.existsSync(full)) return { path: filename, ledger: null };
     return { path: filename, ledger: JSON.parse(fs.readFileSync(full, 'utf8')) };
   });
-  return auditLedgers(inputs);
+  const decisionPath = path.join(root, 'docs/planning/db00-historical-engine-disposition.json');
+  const db00Disposition = fs.existsSync(decisionPath)
+    ? JSON.parse(fs.readFileSync(decisionPath, 'utf8')) : null;
+  return auditLedgers(inputs, { db00Disposition });
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
