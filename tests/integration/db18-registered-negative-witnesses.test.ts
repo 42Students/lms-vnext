@@ -453,4 +453,18 @@ describe("DB-018 registered negative PostgreSQL witnesses", () => {
       );
     });
   });
+
+  it("rejects a group membership whose parent group does not exist", async () => {
+    await withRollback(async (client) => {
+      await expectSqlState(
+        client,
+        `insert into lms_group_members
+           (group_id, membership_id, member_type, state, source)
+         values ($1, $2, 'LEARNER', 'ACTIVE', 'MANUAL')`,
+        [randomUUID(), SEED_IDS.learnerCollegeAMembership],
+        "23503",
+      );
+    });
+  });
+
 });
