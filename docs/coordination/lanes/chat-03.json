@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
+  "executionState": "IDLE_NO_ELIGIBLE_DATABASE_TASK",
   "activeTaskId": null,
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB007_INTEGRATION_READY_STAGING_BLOCKED",
+    "checkpointKind": "DB050_GLOBAL_EMAIL_SUPPRESSION_STAGED_SOURCE_ONLY",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "1785044ea5454a3def40a21dd755df91a6423874",
-    "lastWorkerMergedSha": "1785044ea5454a3def40a21dd755df91a6423874",
+    "observedMainSha": "5aed311981438c713a92355b70457379f93fb9f2",
+    "lastWorkerMergedSha": "f80329431da5321e66441902889295c9b7f4462c",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-007 remains blocked but is now integration-ready at source/staging level: 103/103 reviewed; 33 historical rows have strong retirement-candidate evidence but no approval; normalized education/profile-image Drizzle staging exists; profile receipt composite parent keys and path/generation/digest checks are staged; W01 manifest/static guards are on main. No numbered migration, barrel export, PostgreSQL replay or runtime verification."
+    "summary": "DB-050 COMPLETED implementation on main: legacy global email suppression honored across org-scoped HMAC identities, separate stable HMAC secret, staged Drizzle table and SQL, 7 Vitest tests authored, 5 standalone source tests authored; exact test callbacks 5/5 passed via V8 read/assert shim. No Node/Vitest/PG execution, no migration registration, no sender activation. Global DATABASE phase remains active."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -30,13 +30,16 @@
     "browser": "NOT_VERIFIED"
   },
   "lastAuthoredTests": [
-    "tests/db09-notification-undo-digest-staging.test.mjs (6 node:test static source tests AUTHORED; command not executed)"
+    "tests/db09-notification-undo-digest-staging.test.mjs (6 node:test static source tests AUTHORED; command not executed)",
+    "tests/unit/outbound-global-email-suppression.test.ts (7 Vitest cases AUTHORED NOT EXECUTED)",
+    "tests/db10-global-email-suppression-contract.test.mjs (5 source callbacks AUTHORED; V8 shim 5/5 passed; Node command NOT RUN)"
   ],
   "lastExecutedPassingTests": [
     "2026-10-11 10 read-only GitHub source assertions (not Node runner / PostgreSQL)",
     "2026-10-11 11 read-only GitHub source + ledger assertions (not Node runner / PostgreSQL)",
     "2026-10-11 DB-032: 79/79 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)",
-    "2026-10-11 DB-034: 47/47 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)"
+    "2026-10-11 DB-034: 47/47 connector-based read-only source consistency assertions clean (NOT node:test / PostgreSQL)",
+    "2026-10-11 DB-050: 5/5 exact standalone source-guard callbacks executed via V8 readFileSync/assert shim, NOT Node or PG"
   ],
   "blockers": [
     "DB-012: W01 migration registration/dependency reconciliation pending.",
@@ -54,9 +57,19 @@
       "to": "CHAT_01",
       "scope": "DB04 staged schema/migration acceptance",
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
+    },
+    {
+      "to": "CHAT_01",
+      "scope": "DB-050 global email suppression draft/migration",
+      "request": "Register exactly one canonical db10GlobalEmailSuppressions table from db10-outbound-messages.draft.ts; do not execute reference SQL additionally. Verify SQL negative witnesses, stable dedicated HMAC secret and privileges before any DB10_VERIFIED activation."
+    },
+    {
+      "to": "DB10 sender/domain owner",
+      "scope": "DB-050 legacy global unsubscribe",
+      "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "If no free DATABASE task is claimable, only reduce Chat 3-owned blockers. W01 should consume docs/planning/db04-migration-integration-manifest.json; after registration use the DB-001 independent PostgreSQL path for DB04 negatives/concurrency. Do not steal DB-018 or migration-integrator tasks.",
+  "nextAction": "No dependency-satisfied eligible pre-seeded task currently; in next continuation refresh queue. DB-050 needs Chat 1 migration integration and independent PG/dispatcher suppression race witnesses, not DONE_VERIFIED. Consider independent peer review if queue stays blocked.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -166,7 +179,11 @@
     "https://github.com/42Students/lms-vnext/commit/775cc1eaf74e6403ff144f649112d2d5a0e4e179",
     "https://github.com/42Students/lms-vnext/commit/c311626fa631bfab20c98f14639bf7c1c3e1abc4",
     "https://github.com/42Students/lms-vnext/commit/b63b08ff738dbd0e20bd4d727ad06b37ec22aa1d",
-    "https://github.com/42Students/lms-vnext/commit/1785044ea5454a3def40a21dd755df91a6423874"
+    "https://github.com/42Students/lms-vnext/commit/1785044ea5454a3def40a21dd755df91a6423874",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db10-global-email-suppression-parity.md",
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db10-global-email-suppression-contract.test.mjs",
+    "https://github.com/42Students/lms-vnext/blob/main/tests/unit/outbound-global-email-suppression.test.ts",
+    "https://github.com/42Students/lms-vnext/commit/f80329431da5321e66441902889295c9b7f4462c"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -177,7 +194,8 @@
     "DB-034",
     "DB-036",
     "DB-042",
-    "DB-047"
+    "DB-047",
+    "DB-050"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -185,7 +203,8 @@
     "DB-034",
     "DB-036",
     "DB-042",
-    "DB-047"
+    "DB-047",
+    "DB-050"
   ],
   "lastPickedAt": "2026-10-11T13:43:00+05:30",
   "lastCompletedAt": "2026-10-11T13:50:00+05:30",
