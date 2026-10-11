@@ -156,3 +156,40 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.ok(index.missingConcurrencyWitnesses.every((w) => /MISSING/.test(w.state)));
   assert.ok(index.excludedUntilRegistered.every((w) => /unregistered/.test(w.reason)));
 });
+
+test("DB18 stale-check races stay red until transaction revalidation is implemented", () => {
+  const placementSource = fs.readFileSync(
+    "src/modules/placements/application-service.ts",
+    "utf8",
+  );
+  const applyStart = placementSource.indexOf("export async function applyToPlacementJob");
+  const applyEnd = placementSource.indexOf("\nexport async function ", applyStart + 1);
+  const applyBody = placementSource.slice(applyStart, applyEnd > 0 ? applyEnd : undefined);
+  const placementTx = applyBody.indexOf("const created = await getDb().transaction");
+  assert.ok(placementTx > 0);
+  assert.ok(applyBody.indexOf("await requireLearnerPlacementAccess(context);") < placementTx);
+  assert.ok(applyBody.indexOf("await evaluatePlacementEligibility(") < placementTx);
+  const placementTxBody = applyBody.slice(placementTx);
+  assert.equal(placementTxBody.includes("requireLearnerPlacementAccess("), false);
+  assert.equal(placementTxBody.includes("evaluatePlacementEligibility("), false);
+
+  const academicSource = fs.readFileSync(
+    "src/modules/academics/enrollment-service.ts",
+    "utf8",
+  );
+  const createStart = academicSource.indexOf("export async function createLearnerProgramEnrollment");
+  const createEnd = academicSource.indexOf("export async function transitionLearnerProgramEnrollment", createStart);
+  const createBody = academicSource.slice(createStart, createEnd);
+  const academicTx = createBody.indexOf("return await db.transaction");
+  const cohortPrecheck = createBody.indexOf('cohort.status !== "PLANNED"');
+  assert.ok(cohortPrecheck > 0 && cohortPrecheck < academicTx);
+  const academicTxBody = createBody.slice(academicTx);
+  assert.equal(academicTxBody.includes(".from(cohorts)"), false);
+  assert.equal(academicTxBody.includes("cohorts.status"), false);
+
+  const index = load("tests/integration/db18-witness-index.json");
+  assert.deepEqual(
+    index.missingConcurrencyWitnesses.map((w) => w.raceProbe),
+    ["P5-R01", "P5-R02"],
+  );
+});
