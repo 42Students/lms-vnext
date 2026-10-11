@@ -21,9 +21,7 @@ const DOMAIN_B = "44444444-4444-4444-8444-444444444444";
 function actor(overrides: {
   platformStatus?: "ACTIVE" | "DISABLED";
   status?: "ACTIVE" | "SUSPENDED" | "ENDED";
-  roles?: RequestContext["membership"] extends infer M
-    ? NonNullable<M>["roles"]
-    : never;
+  roles?: NonNullable<RequestContext["membership"]>["roles"];
   collegeId?: string;
   organizationId?: string;
   systemRoles?: RequestContext["user"]["systemRoles"];
@@ -201,13 +199,15 @@ describe("DB01 tenant-domain authorization and identity-state regression", () =>
     await deleteTenantDomain(actor({
       noMembership: true, systemRoles: ["SUPER_ADMIN"],
     }), DOMAIN_B, s.repository);
-    expect(s.remove).toHaveBeenCalledExactlyOnceWith(DOMAIN_B);
+    expect(s.remove).toHaveBeenCalledTimes(1);
+    expect(s.remove).toHaveBeenCalledWith(DOMAIN_B);
   });
 
   it("allows an active admin to select a verified primary in their own college", async () => {
     const s = store();
     await setPrimaryTenantDomain(actor(), DOMAIN_A, s.repository);
-    expect(s.primary).toHaveBeenCalledExactlyOnceWith(DOMAIN_A);
+    expect(s.primary).toHaveBeenCalledTimes(1);
+    expect(s.primary).toHaveBeenCalledWith(DOMAIN_A);
   });
 
   it("prevents an ended membership from listing active tenant domains", async () => {
