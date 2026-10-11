@@ -29,6 +29,8 @@ function missing(source) {
   if (!/NEW\.consumed_at IS NOT NULL\s+AND clock_timestamp\(\) >= NEW\.expires_at/.test(source)) {
     out.push("wall clock recheck");
   }
+  if (!/NEW.consumed_at > clock_timestamp\(\)/.test(source)) out.push("future consumption timestamp");
+  if (!/db01_auth_handoff_future_consume_ck/.test(source)) out.push("future consumption diagnostic");
   if (!/BEFORE INSERT OR UPDATE ON identity_auth_handoffs/.test(source)) out.push("insert+update trigger");
   const insertBody = source.match(/IF TG_OP = 'INSERT' THEN([\s\S]*?)RETURN NEW;\s*END IF;/)?.[1] || "";
   if (!insertBody) out.push("fresh handoff insertion branch");
@@ -98,4 +100,10 @@ test("handoff creation is time bounded by live PostgreSQL clock", () => {
     ["NEW.created_at > clock_timestamp()","no future handoff issue"],
     ["NEW.expires_at <= clock_timestamp()","no expired handoff issue"],
   ]) assert.ok(missing(code.replace(needle,"FALSE")).includes(label),needle);
+});
+
+test("DB01 cannot forge handoff consumed_at in the future before its deadline", () => {
+  assert.match(code,/NEW.consumed_at > clock_timestamp\(\)/);
+  assert.match(code,/db01_auth_handoff_future_consume_ck/);
+  assert.ok(missing(code.replace("NEW.consumed_at > clock_timestamp()", "FALSE")).includes("future consumption timestamp"));
 });
