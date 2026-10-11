@@ -6,17 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "BLOCKED",
-  "activeTaskId": "DB-030",
-  "blockedTaskIds": [],
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
+  "blockedTaskIds": [
+    "DB-030"
+  ],
   "checkpoint": {
-    "checkpointKind": "DB030_REGISTERED_PG_EXECUTION_BLOCKED",
+    "checkpointKind": "DB030_REGISTERED_0042_RUNTIME_BLOCKED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "0a0f961aa16d6d3c40718b3eba7fb89ae66bf294",
-    "lastWorkerMergedSha": "3c88d2d99a34061b82766a0e6dba920d06d7f8f5",
+    "observedMainSha": "4b744e0c27fec909a2a53bebe1438856be89df86",
+    "lastWorkerMergedSha": "458b2b9bf0da729f51f988cb2c24266fec425207",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-030 registered 0041 trigger-only assessment integrity migration: 11 functions/triggers, non-destructive poison preflight, offering/section/learner locks, history reparent guards, assignment score-scale freeze, PG01–PG16 suite and independent-verifier opt-in. Source acceptance clean; 0 real PostgreSQL witnesses executed in current runtime."
+    "summary": "DB-030 now has registered 0041+0042, expanded PG witness matrix, targeted DB06 command, independent-verifier wiring, and 24/24 current-main source acceptance. Runtime remains blocked only on actual disposable PostgreSQL execution."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -43,7 +45,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Do not idle on DB-030. Refresh global DATABASE queue and work another dependency-satisfied unowned task; return to DB-030 when a disposable PostgreSQL checkout is available.",
+  "nextAction": "Refresh shared DATABASE queue and pick a dependency-satisfied nonconflicting source/integration task; leave DB-030 blocked until real PG execution is available.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
