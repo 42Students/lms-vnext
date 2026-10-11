@@ -287,6 +287,37 @@ BEGIN
       RAISE EXCEPTION 'Cohort expected end period cannot end before cohort start'
         USING ERRCODE = '23514';
     END IF;
+
+    -- A PLANNED cohort may change its expected end through the API, but the parent window
+    -- cannot be shrunk underneath already-materialized section/offering/progression state.
+    IF TG_OP = 'UPDATE'
+       AND NEW.expected_end_period_id IS DISTINCT FROM OLD.expected_end_period_id
+       AND (
+         EXISTS (
+           SELECT 1
+             FROM sections s
+             JOIN academic_periods ap ON ap.id = s.academic_period_id
+            WHERE s.cohort_id = OLD.id
+              AND ap.end_date > expected_end_day
+         )
+         OR EXISTS (
+           SELECT 1
+             FROM course_offerings co
+             JOIN academic_periods ap ON ap.id = co.academic_period_id
+            WHERE co.cohort_id = OLD.id
+              AND ap.end_date > expected_end_day
+         )
+         OR EXISTS (
+           SELECT 1
+             FROM cohort_progression_state cps
+             JOIN academic_periods ap ON ap.id = cps.current_period_id
+            WHERE cps.cohort_id = OLD.id
+              AND ap.end_date > expected_end_day
+         )
+       ) THEN
+      RAISE EXCEPTION 'Cohort expected end cannot exclude existing academic state'
+        USING ERRCODE = '23514';
+    END IF;
   END IF;
 
   RETURN NEW;
@@ -316,7 +347,8 @@ BEGIN
     JOIN departments d ON d.id = p.department_id
     JOIN academic_periods start_ap ON start_ap.id = c.start_period_id
     LEFT JOIN academic_periods end_ap ON end_ap.id = c.expected_end_period_id
-   WHERE c.id = NEW.cohort_id;
+   WHERE c.id = NEW.cohort_id
+   FOR SHARE OF c;
 
   SELECT ap.college_id, ap.start_date, ap.end_date, ap.status
     INTO period_college, period_start_day, period_end_day, period_status
@@ -453,7 +485,8 @@ BEGIN
     FROM cohorts c
     JOIN academic_periods start_ap ON start_ap.id = c.start_period_id
     LEFT JOIN academic_periods end_ap ON end_ap.id = c.expected_end_period_id
-   WHERE c.id = NEW.cohort_id;
+   WHERE c.id = NEW.cohort_id
+   FOR SHARE OF c;
 
   SELECT ap.start_date, ap.end_date, ap.status
     INTO period_start_day, period_end_day, period_status
