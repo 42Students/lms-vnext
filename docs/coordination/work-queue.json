@@ -2706,14 +2706,14 @@
         "tests/db09-company-share-defaults-staging.test.mjs",
         "docs/planning/db09-integration-manifest-2026-10-11.md"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 3,
       "pickedAt": "2026-10-11T13:42:00+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T13:43:00+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2735,6 +2735,11 @@
           "status": "PICKED",
           "at": "2026-10-11T13:42:00+05:30",
           "reason": "Chat 3 claimed fresh non-overlapping DB09 structural-drift gap after DB-042 completion."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T13:43:00+05:30",
+          "reason": "Chat 3 began canonical placementCompanyRelationships schema alignment against DB09 source ledger/candidate SQL."
         }
       ]
     }
