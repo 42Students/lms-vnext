@@ -2407,13 +2407,13 @@
         "docs/planning/database-parity-db06-attendance-scope-contract.md",
         "tests/db06-attendance-scope-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "READY",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": 1,
-      "pickedAt": "2026-10-11T08:37:48.826Z",
+      "pickedBy": null,
+      "pickedAt": null,
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
@@ -2436,6 +2436,11 @@
           "status": "PICKED",
           "at": "2026-10-11T08:37:48.826Z",
           "reason": "Chat 1 claims current-row attendance scope staging after DB-038 completion."
+        },
+        {
+          "status": "READY",
+          "at": "2026-10-11T08:38:21.542Z",
+          "reason": "Released immediately: Chat 1 already had DB-041 reserved; one-active-task invariant restored before DB-042 implementation began."
         }
       ]
     }
