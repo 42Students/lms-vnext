@@ -137,19 +137,22 @@ export function sealOutboundDelivery(
  *
  * Derive a second deterministic, secret-keyed, domain-separated HMAC only for
  * EMAIL; never store raw addresses or a plain SHA256 of an address. The HMAC
- * value is deliberately not added to the generic encrypted envelope/DB row:
- * it belongs only in restricted global-suppression checks and records.
+ * uses a separate stable key from outbound encryption so ordinary envelope
+ * key rotation cannot silently forget prior opt-outs. The HMAC is deliberately
+ * not added to the generic encrypted envelope/DB row.
  *
  * The final dispatcher must re-derive and recheck this immediately before
  * provider handoff; an unsubscribe can race with queued messages.
  */
 export function deriveGlobalEmailSuppressionHash(
   rawIntent: unknown,
-  keyBase64: string,
+  globalEmailHmacKeyBase64: string,
 ): string | null {
   const intent = parseOutboundIntent(rawIntent);
   if (intent.channel !== "EMAIL") return null;
-  const { digestKey } = keyMaterial(keyBase64);
+  // Separate key from ciphertext: opt-outs must remain stable when the
+  // outbox AES encryption key rotates. Missing/malformed key fails closed.
+  const { digestKey } = keyMaterial(globalEmailHmacKeyBase64);
   return digest(digestKey, "global-email-suppression-v1", intent.recipient);
 }
 
