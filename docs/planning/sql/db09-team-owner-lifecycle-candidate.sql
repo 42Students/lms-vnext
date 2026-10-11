@@ -16,11 +16,11 @@
 --   * canonical UNIQUE college_memberships(id,college_id)
 --   * canonical UNIQUE placement_jobs(id,college_id) if another child later needs it
 --
--- This candidate intentionally does NOT add owner_membership_id NOT NULL.
--- Frozen legacy REQUEST jobs could be ownerless until approval and current vNext
--- does not persist REQUEST as a placement_jobs status. API cutover must set an
--- owner for TPO-created/approved DRAFT/PUBLISHED jobs; the DB validates every
--- non-null owner but does not invent a recruiter-request lifecycle.
+-- owner_membership_id remains nullable at the column level for historical
+-- CLOSED/ARCHIVED rows and because frozen legacy REQUEST jobs could be ownerless
+-- until approval. Current vNext does not persist REQUEST as a placement_jobs
+-- status, so a CHECK requires owner on every live DRAFT/PUBLISHED row after a
+-- conservative backfill. The DB does not invent a recruiter-request lifecycle.
 
 ALTER TABLE placement_jobs
   ADD COLUMN owner_membership_id uuid;
