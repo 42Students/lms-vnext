@@ -24,9 +24,9 @@ CREATE TABLE placement_prep_assignments (
 CREATE INDEX placement_prep_assignments_student_idx
   ON placement_prep_assignments(learner_membership_id,created_at);
 
--- WARN: Existing college_memberships(id,college_id) must have a unique
--- parent constraint at migration integration (coordinate CRM tenant-FK
--- proposals with Chat 1). Legacy prep_assignment.assessment_id is intentionally
+-- Existing college_memberships(id,college_id) composite uniqueness is owned
+-- by db09-parent-composite-keys-candidate.sql; W01 must register/deduplicate
+-- that parent key before this child FK. Legacy prep_assignment.assessment_id is intentionally
 -- retired for greenfield vNext: the frozen production UI only posts courseId,
 -- the frozen backend tree has no generic assessment entity/table, and the
 -- current prepProgress read path only renders course-backed rows. Do not invent

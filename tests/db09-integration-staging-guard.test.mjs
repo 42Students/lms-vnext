@@ -125,3 +125,32 @@ test("DB09 college settings are structural, not post-create ALTERs", () => {
   assert.match(v190, /SOURCE REFERENCE ONLY/);
   assert.doesNotMatch(v190, /^ALTER TABLE/m);
 });
+
+
+test("DB09 staged SQL avoids non-executable JSON CHECK subqueries", () => {
+  const sql = read("docs/planning/sql/db09-company-export-preference-candidate.sql");
+  assert.doesNotMatch(sql, /CHECK\s*\([\s\S]*?NOT EXISTS\s*\(\s*SELECT/i);
+  assert.match(sql, /share_column_defaults\s*<@/);
+  assert.match(sql, /jsonb_typeof\(share_column_defaults\) = 'array'/);
+});
+
+test("DB09 notification intents reference encrypted DB10 child and close sent state", () => {
+  const sql = read("docs/planning/sql/db09-notification-undo-digest-candidate.sql");
+  assert.match(
+    sql,
+    /encrypted_outbound_ref_id uuid[\s\S]*REFERENCES outbound_messages\(id\) ON DELETE RESTRICT/,
+  );
+  assert.match(
+    sql,
+    /status NOT IN \('APP_PUBLISHED','PROVIDER_ACCEPTED','DELIVERED'\)[\s\S]*AND sent_at IS NULL/,
+  );
+});
+
+test("DB09 prep FK depends on centralized parent key", () => {
+  const sql = read("docs/planning/sql/db09-prep-bell-read-state-candidate.sql");
+  assert.match(sql, /db09-parent-composite-keys-candidate\.sql/);
+  assert.match(
+    sql,
+    /FOREIGN KEY \(learner_membership_id, college_id\)[\s\S]*REFERENCES college_memberships\(id, college_id\)/,
+  );
+});
