@@ -322,6 +322,71 @@ CREATE TRIGGER db09_share_creator_scope_guard
   ON placement_tpo_share_links
   FOR EACH ROW EXECUTE FUNCTION db09_assert_share_creator_scope();
 
+CREATE FUNCTION db09_restrict_share_link_update() RETURNS trigger
+LANGUAGE plpgsql AS $
+DECLARE
+  v_code_rotated boolean;
+  v_revoked_now boolean;
+BEGIN
+  -- The source creation call snapshots the disclosure contract. Subsequent
+  -- source mutations only rotate the emailed verification code or revoke the
+  -- link. Direct SQL must not change who/what the existing token discloses.
+  IF NEW.id IS DISTINCT FROM OLD.id
+     OR NEW.college_id IS DISTINCT FROM OLD.college_id
+     OR NEW.job_id IS DISTINCT FROM OLD.job_id
+     OR NEW.token_hash IS DISTINCT FROM OLD.token_hash
+     OR NEW.recipient_email IS DISTINCT FROM OLD.recipient_email
+     OR NEW.code_hash IS DISTINCT FROM OLD.code_hash
+     OR NEW.columns IS DISTINCT FROM OLD.columns
+     OR NEW.max_stage IS DISTINCT FROM OLD.max_stage
+     OR NEW.shortlist_by IS DISTINCT FROM OLD.shortlist_by
+     OR NEW.expires_at IS DISTINCT FROM OLD.expires_at
+     OR NEW.created_by_user_id IS DISTINCT FROM OLD.created_by_user_id
+     OR NEW.created_at IS DISTINCT FROM OLD.created_at THEN
+    RAISE EXCEPTION 'secure share disclosure contract is immutable after creation'
+      USING ERRCODE = '23514';
+  END IF;
+
+  v_code_rotated :=
+    NEW.email_code_hash IS DISTINCT FROM OLD.email_code_hash
+    OR NEW.email_code_expires_at IS DISTINCT FROM OLD.email_code_expires_at;
+  v_revoked_now := OLD.revoked_at IS NULL AND NEW.revoked_at IS NOT NULL;
+
+  IF OLD.revoked_at IS NOT NULL
+     AND NEW.revoked_at IS DISTINCT FROM OLD.revoked_at THEN
+    RAISE EXCEPTION 'secure share revocation cannot be cleared or rewritten'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF v_revoked_now AND NEW.revoked_at > statement_timestamp() THEN
+    RAISE EXCEPTION 'secure share revocation cannot be future dated'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF v_code_rotated THEN
+    IF OLD.revoked_at IS NOT NULL
+       OR OLD.expires_at <= statement_timestamp() THEN
+      RAISE EXCEPTION 'secure share code cannot rotate after revoke or expiry'
+        USING ERRCODE = '23514';
+    END IF;
+    IF v_revoked_now THEN
+      RAISE EXCEPTION 'secure share code rotation and revocation must be separate transitions'
+        USING ERRCODE = '23514';
+    END IF;
+    IF NEW.email_code_hash IS NULL
+       OR NEW.email_code_expires_at IS NULL
+       OR NEW.email_code_expires_at <= statement_timestamp() THEN
+      RAISE EXCEPTION 'secure share rotated code must have a future expiry'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_share_link_update_guard
+  BEFORE UPDATE ON placement_tpo_share_links
+  FOR EACH ROW EXECUTE FUNCTION db09_restrict_share_link_update();
+
 CREATE FUNCTION db09_assert_tpo_user_state_scope() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
@@ -438,3 +503,6 @@ CREATE TRIGGER db09_share_event_immutable
 -- 17. Recruiter notification read-through is an immutable-identity monotonic
 --     watermark: ACTIVE grant required, no future timestamps and no backward
 --     movement on update.
+-- 18. Secure share identity/disclosure/token/base-code/expiry is immutable
+--     after creation. Only email-code rotation while usable and one-way
+--     revocation are valid post-create transitions; neither can be rewound.
