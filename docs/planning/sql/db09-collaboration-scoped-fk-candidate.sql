@@ -288,7 +288,7 @@ CREATE TRIGGER db09_recruiter_read_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_recruiter_read_scope();
 
 CREATE FUNCTION db09_assert_share_creator_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT db09_has_active_tpo_actor(
     NEW.created_by_user_id,
@@ -298,21 +298,21 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_share_creator_scope_guard
   BEFORE INSERT OR UPDATE OF college_id,created_by_user_id
   ON placement_tpo_share_links
   FOR EACH ROW EXECUTE FUNCTION db09_assert_share_creator_scope();
 
 CREATE FUNCTION db09_assert_tpo_user_state_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT db09_has_active_tpo_actor(NEW.user_id,NEW.college_id) THEN
     RAISE EXCEPTION 'TPO user-scoped record belongs to user without TPO scope'
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_tpo_user_preferences_scope_guard
   BEFORE INSERT OR UPDATE OF college_id,user_id
   ON placement_tpo_user_preferences
@@ -323,7 +323,7 @@ CREATE TRIGGER db09_tpo_saved_views_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_tpo_user_state_scope();
 
 CREATE FUNCTION db09_assert_student_note_principals() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1
@@ -345,7 +345,7 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_student_note_principal_scope_guard
   BEFORE INSERT OR UPDATE OF
     college_id,learner_membership_id,created_by_user_id
@@ -353,7 +353,7 @@ CREATE TRIGGER db09_student_note_principal_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_student_note_principals();
 
 CREATE FUNCTION db09_assert_team_member_principal_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1
@@ -368,7 +368,7 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_team_member_principal_scope_guard
   BEFORE INSERT OR UPDATE OF college_id,membership_id,role
   ON placement_tpo_team_members
