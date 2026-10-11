@@ -34,9 +34,16 @@ CREATE TABLE assignment_grade_events (
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
   actor_user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   actor_membership_id uuid REFERENCES college_memberships(id) ON DELETE RESTRICT,
+  actor_role varchar(24) NOT NULL,
   action varchar(40) NOT NULL,
   previous_points integer,
   new_points integer,
+  previous_feedback text,
+  new_feedback text,
+  previous_graded_by_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
+  new_graded_by_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
+  previous_graded_at timestamptz,
+  new_graded_at timestamptz,
   previous_grading_status varchar(24) NOT NULL,
   new_grading_status varchar(24) NOT NULL,
   previous_grade_published boolean NOT NULL,
@@ -49,6 +56,11 @@ CREATE TABLE assignment_grade_events (
       assignment_submission_id, assignment_id, delivery_id, learner_membership_id
     ) REFERENCES assignment_submissions(id, assignment_id, delivery_id, membership_id)
       ON DELETE RESTRICT,
+  CONSTRAINT assignment_grade_events_actor_role_ck
+    CHECK (actor_role IN ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')),
+  CONSTRAINT assignment_grade_events_actor_shape_ck
+    CHECK ((actor_role = 'SUPER_ADMIN' AND actor_membership_id IS NULL)
+       OR (actor_role IN ('COLLEGE_ADMIN','FACULTY') AND actor_membership_id IS NOT NULL)),
   CONSTRAINT assignment_grade_events_action_ck
     CHECK (action IN ('GRADE','REGRADE','PUBLISH_GRADE')),
   CONSTRAINT assignment_grade_events_status_ck
@@ -68,21 +80,33 @@ CREATE TABLE assignment_grade_events (
     ),
   CONSTRAINT assignment_grade_events_shape_ck
     CHECK (
-      (
-        action IN ('GRADE','REGRADE')
+      (action = 'GRADE'
+        AND previous_grading_status = 'NOT_GRADED'
+        AND new_grading_status = 'GRADED'
+        AND previous_points IS NULL
+        AND new_points IS NOT NULL
+        AND previous_grade_published = false
+        AND new_grade_published = false
+        AND new_graded_by_user_id IS NOT NULL
+        AND new_graded_at IS NOT NULL)
+      OR
+      (action = 'REGRADE'
+        AND previous_grading_status = 'GRADED'
         AND new_grading_status = 'GRADED'
         AND new_points IS NOT NULL
         AND new_grade_published = false
-      )
+        AND new_graded_by_user_id IS NOT NULL
+        AND new_graded_at IS NOT NULL)
       OR
-      (
-        action = 'PUBLISH_GRADE'
+      (action = 'PUBLISH_GRADE'
         AND previous_grading_status = 'GRADED'
         AND new_grading_status = 'GRADED'
         AND previous_grade_published = false
         AND new_grade_published = true
         AND previous_points IS NOT DISTINCT FROM new_points
-      )
+        AND previous_feedback IS NOT DISTINCT FROM new_feedback
+        AND previous_graded_by_user_id IS NOT DISTINCT FROM new_graded_by_user_id
+        AND previous_graded_at IS NOT DISTINCT FROM new_graded_at)
     )
 );
 CREATE UNIQUE INDEX assignment_grade_events_submission_version_uq
@@ -335,6 +359,7 @@ DECLARE
   expected_action text;
 BEGIN
   IF NEW.points_awarded IS NOT DISTINCT FROM OLD.points_awarded
+     AND NEW.feedback IS NOT DISTINCT FROM OLD.feedback
      AND NEW.grading_status IS NOT DISTINCT FROM OLD.grading_status
      AND NEW.grade_published IS NOT DISTINCT FROM OLD.grade_published
      AND NEW.graded_by_user_id IS NOT DISTINCT FROM OLD.graded_by_user_id
@@ -360,6 +385,12 @@ BEGIN
         AND e.action = expected_action
         AND e.previous_points IS NOT DISTINCT FROM OLD.points_awarded
         AND e.new_points IS NOT DISTINCT FROM NEW.points_awarded
+        AND e.previous_feedback IS NOT DISTINCT FROM OLD.feedback
+        AND e.new_feedback IS NOT DISTINCT FROM NEW.feedback
+        AND e.previous_graded_by_user_id IS NOT DISTINCT FROM OLD.graded_by_user_id
+        AND e.new_graded_by_user_id IS NOT DISTINCT FROM NEW.graded_by_user_id
+        AND e.previous_graded_at IS NOT DISTINCT FROM OLD.graded_at
+        AND e.new_graded_at IS NOT DISTINCT FROM NEW.graded_at
         AND e.previous_grading_status = OLD.grading_status
         AND e.new_grading_status = NEW.grading_status
         AND e.previous_grade_published = OLD.grade_published
