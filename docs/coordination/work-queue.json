@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T20:58:00+05:30",
+  "updatedOn": "2026-10-11T21:00:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3484,6 +3484,53 @@
           "status": "COMPLETED",
           "at": "2026-10-11T20:58:00+05:30",
           "reason": "Secure share lifecycle guard + audit/regression committed; 5/5 connector source assertions passed, PostgreSQL pending."
+        }
+      ]
+    },
+    {
+      "id": "DB-060",
+      "phase": "DATABASE",
+      "title": "Require DB09 secure share lifecycle event completeness",
+      "scope": "Preserve active legacy secure-share audit semantics with staged DB constraints: every share has exactly one CREATED event; every revoked share has exactly one REVOKED event in the same transaction; REVOKED history cannot exist for an unrevoked share. Use deferred completeness checks so legacy-compatible write order remains valid. Add source audit/static regression only; no migration/API/UI activation.",
+      "priority": 2,
+      "dependsOn": [
+        "DB-059"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+        "docs/planning/db09-share-event-completeness-audit.md",
+        "tests/db09-share-event-completeness.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T21:00:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T21:00:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T21:00:00+05:30",
+          "reason": "Legacy TpoShareService creates CREATED event with each share and REVOKED event in same transaction as revocation; staged DB only makes events append-only and permits lifecycle changes without matching audit history."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T21:00:00+05:30",
+          "reason": "Chat 3 claimed fresh DB09 share audit-completeness gap after DB-059 source implementation completed."
         }
       ]
     }
