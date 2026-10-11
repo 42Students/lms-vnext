@@ -86,14 +86,19 @@ Includes message threads/messages, share links/events, college settings, user pr
 
 The canonical schema uses final recruiter-era codes directly: `RECRUITER` and `RECRUITER_LEADS`. No HR→RECRUITER data-conversion migration is needed in greenfield vNext.
 
-### 4. College TPO setting extensions
+### 4. College TPO settings
 
-Apply only after `placement_tpo_college_settings` exists:
+All four later settings are now canonical columns in
+`src/db/schema/tpo-collaboration.ts :: placementTpoCollegeSettings`:
 
-- `docs/planning/sql/db09-college-recruiter-settings-candidate.sql`
-- `docs/planning/sql/db09-job-outcome-settings-candidate.sql`
+- `job_types`
+- `outcome_labels`
+- `recruiter_access_months`
+- `recruiter_drive_needs_approval`
 
-These preserve recruiter-access/approval and custom job/outcome settings that arrived after the first TPO settings migration.
+Do **not** register a post-create ALTER for these fields. The old
+`db09-college-recruiter-settings-candidate.sql` is superseded, and
+`db09-job-outcome-settings-candidate.sql` is source-reference text only.
 
 ### 5. Company relationship share defaults
 
@@ -153,6 +158,7 @@ These remain only as tombstones so future workers do not accidentally revive the
 - `docs/planning/sql/db09-scheduling-premerge.sql`
 - `docs/planning/sql/db09-notification-intents-candidate.sql`
 - `docs/planning/sql/db09-final-recruiter-codes-candidate.sql`
+- `docs/planning/sql/db09-college-recruiter-settings-candidate.sql`
 
 ## PostgreSQL acceptance matrix
 
