@@ -26,6 +26,10 @@ ALTER TABLE placement_company_relationships
   ADD CONSTRAINT db09_company_relationships_id_college_uq
   UNIQUE (id, college_id);
 
+ALTER TABLE placement_recruiter_profiles
+  ADD CONSTRAINT db09_recruiter_profiles_user_company_uq
+  UNIQUE (user_id, company_id);
+
 ALTER TABLE placement_jobs
   ADD CONSTRAINT db09_placement_jobs_id_college_uq
   UNIQUE (id, college_id);
