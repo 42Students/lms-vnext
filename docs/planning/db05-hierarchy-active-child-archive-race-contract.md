@@ -54,3 +54,23 @@ The SQL companion contains **HL-01 through HL-20**, which must be run at exact m
 - SQL draft: `5ead8a2`; read-only preflight: `27a319f`.
 - Authored tests: `9b43308`, `2db1f93`, `10a8dd9` (17 new test definitions; not executed).
 - Real Node/typecheck/build/PG validation: **NOT EXECUTED in this worker iteration**. GitHub Actions is intentionally unused due to billing and is *not* itself a blocker; an independent runner may provide equivalent acceptance evidence.
+
+
+## Additional learning-content authoring lock chain (2026-10-12)
+
+This follow-up extends the live-service race correction beyond the first three hierarchy edges:
+
+| Parent mutation | Child creation | Same-transaction parent-state recheck |
+| --- | --- | --- |
+| `archiveCourseOffering` (offering `FOR UPDATE`) | `createLearningPath` | offering `FOR SHARE`; status ACTIVE before INSERT |
+| `transitionLearningPath` (single transaction status UPDATE) | `createCourseLesson` | path `FOR SHARE`; status <> ARCHIVED before INSERT |
+| `archiveCourseLesson` (lesson `FOR UPDATE`) | `createLessonContent` | lesson `FOR SHARE`; status ACTIVE before INSERT |
+| `endCourseSectionDelivery` (delivery `FOR UPDATE`) | delivery-targeted `createLessonContent` | delivery `FOR SHARE`; `ended_at IS NULL` and offering id matches lesson before INSERT |
+
+`transitionLearningPath` now includes `status='DRAFT'` in the final UPDATE when publishing and `status<>'ARCHIVED'` when archiving. `transitionLessonContent` similarly requires DRAFT in the final publication UPDATE, preventing a concurrent duplicate publication from passing its earlier pre-check.
+
+**Unverified acceptance LC-01..LC-12:** (01) offering archive versus learning-path INSERT both commit orders; (02) path publish versus path archive; (03) path archive versus lesson INSERT both orders; (04) lesson archive versus content INSERT both orders; (05) delivery END versus targeted content INSERT both orders; (06) same offering when content has delivery id; (07) stale path DRAFT concurrent two publishers only one succeeds; (08) stale content DRAFT concurrent two publishers only one succeeds; (09) aborted transaction rolls back child INSERT; (10) generic NULL-delivery remains valid only under the correct lesson/offering, and its audience cannot be silently reparented; (11) lock-order/deadlock with DB02/DB05 upstream triggers and direct SQL negative; (12) tenant/teaching-scope plus active faculty membership and archive permission unchanged.
+
+These are normal application-path guards. The existing W01-owned unregistered schema/ancestor companions must still cover privileged direct-SQL writes, source tombstone semantics, student historical read behavior and upstream owner reparenting. No PostgreSQL or native Node result is claimed.
+
+**Additional app commits:** `3ccb4d8`, `e8f35c4`, `a521cbd`, `00f4a22`, `52c9fea`, `8513226`, `cadfd98`. Seven new regression definitions in `tests/db05-authoring-parent-locks.test.mjs` (last added `5a2ce8b`), authored only. Ten exact-connected-source checks passed, but this is **not** native Node or PG acceptance.
