@@ -89,3 +89,28 @@ test('checkout reader finds missing inventories and does not silently pass', () 
     assert.equal(result.counts.fields,0);
   } finally { fs.rmSync(root,{recursive:true,force:true}); }
 });
+
+test('malformed evidence must never upgrade an alleged mapping into runtime verified', () => {
+  const result = run(ledger('db01_identity_and_tenancy','users', [field('users','id', {
+    verifiedMapping: 'users.id', validationEvidence: 'PostgreSQL success',
+    databaseAcceptanceEvidence: { kind: 'DISPOSABLE_POSTGRES', sourceCommitSha: 'deadbeef', exitCode: 0,
+      result: 'PASS', command: 'psql', postgresVersion: '17' },
+  })]));
+  assert.equal(result.counts.runtimeMappings, 0);
+  assert.ok(result.errors.some(x => x.code === 'UNSUPPORTED_VERIFIED_MAPPING'));
+});
+test('executed proof envelope distinguishes verified mapping from a source-only proposal', () => {
+  const result = run(ledger('db01_identity_and_tenancy','users', [field('users','id', {
+    verifiedMapping: 'users.id', validationEvidence: 'Executed independent Postgres fixture on target SHA',
+    databaseAcceptanceEvidence: { kind: 'DISPOSABLE_POSTGRES', sourceCommitSha: 'a'.repeat(40),
+      exitCode: 0, result: 'PASS', command: 'psql -X -v ON_ERROR_STOP=1', postgresVersion: '17.4' },
+  })]));
+  assert.equal(result.sourceInventoryIntegrity, 'PASS');
+  assert.equal(result.counts.runtimeMappings, 1);
+  assert.equal(result.databaseParityVerified, false);
+});
+test('missing field source provenance is a structural error, not just a warning count', () => {
+  const result = run(ledger('db01_identity_and_tenancy','users', [field('users','id', { sourceEvidence: null })]));
+  assert.equal(result.counts.rowsMissingSourceEvidence, 1);
+  assert.ok(result.errors.some(x => x.code === 'FIELD_WITHOUT_SOURCE_EVIDENCE'));
+});
