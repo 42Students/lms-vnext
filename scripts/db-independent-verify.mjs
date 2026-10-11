@@ -101,7 +101,7 @@ async function startDockerPostgres() {
   ]);
   const port = await findFreePort();
   const password = `verify-${process.pid}`;
-  const dbName = `lms_vnext_verify_${process.pid}`;
+  const dbName = `lms_vnext_test_${process.pid}`;
 
   shellText("docker", [
     "run",
@@ -217,7 +217,7 @@ async function main() {
         database: new URL(databaseUrl).pathname.replace(/^\//, ""),
         postgresVersion: providedPostgresVersion(env),
         note:
-          "TEST_DATABASE_URL supplied externally; scripts/db-test-prepare.ts still enforces reset safety.",
+          "TEST_DATABASE_URL supplied externally; destructive reset runs with TEST_DATABASE_URL only, while later non-destructive gates receive both DB URLs.",
       };
     } else {
       provider = await startDockerPostgres();
@@ -233,6 +233,11 @@ async function main() {
       TEST_DATABASE_URL: databaseUrl,
       DB03_ISOLATED_TEST_DATABASE: "1",
     };
+    // The destructive reset command must never see the application URL as an
+    // alias for its target. Preserve the explicit TEST_DATABASE_URL but remove
+    // DATABASE_URL for this one subprocess; later migrate/test steps use both.
+    const destructiveEnv = { ...env };
+    delete destructiveEnv.DATABASE_URL;
 
     runStep(
       "Migration journal integrity",
@@ -244,7 +249,7 @@ async function main() {
       "Disposable database reset + zero-to-head migration + seed",
       "npm",
       ["run", "db:test:prepare"],
-      env,
+      destructiveEnv,
     );
     runStep(
       "Migration idempotence smoke",
