@@ -201,3 +201,36 @@ test("DB18 stale-check races stay red until transaction revalidation is implemen
   );
   assert.deepEqual(index.missingConcurrencyWitnesses, []);
 });
+
+
+test("DB18 canonical denominator stays source-grounded", () => {
+  const index = load("tests/integration/db18-witness-index.json");
+  assert.equal(index.counts.observationalReadOnlyAuthored, 21);
+  assert.equal(index.counts.directNegativeTotalAuthored, 13);
+  assert.equal(index.counts.positiveConcurrencyAuthored, 4);
+  assert.equal(index.counts.knownRedRaceAuthored, 2);
+  assert.equal(index.counts.explicitConcurrencyMissing, 0);
+  assert.equal(index.counts.runtimeExecuted, 0);
+  assert.equal(index.counts.runtimePassed, 0);
+
+  assert.equal(index.observationalWitnesses.count, manifest.probes.length);
+  assert.ok(fs.existsSync(index.observationalWitnesses.executableFile));
+
+  for (const witness of index.baselineDirectBoundaryWitnesses) {
+    assert.equal(witness.execution, "NOT_RUN");
+    assert.ok(["23503", "23505", "23514"].includes(witness.expectedSqlState));
+    assert.ok(fs.existsSync(witness.file));
+    const source = fs.readFileSync(witness.file, "utf8");
+    assert.ok(source.includes(witness.title), witness.id + ": baseline title missing");
+  }
+
+  const coverage = fs.readFileSync(
+    "docs/planning/db18-negative-witness-coverage.md",
+    "utf8",
+  );
+  assert.match(coverage, /Read-only relational mismatch probes \| 21 \| 0/);
+  assert.match(coverage, /Direct negative SQL boundary tests \| 13 \| 0/);
+  assert.match(coverage, /Positive concurrency witnesses \| 4 \| 0/);
+  assert.match(coverage, /Known-defect red concurrency witnesses \| 2 \| 0/);
+  assert.match(coverage, /must \*\*not\*\* become `DONE_VERIFIED`/);
+});
