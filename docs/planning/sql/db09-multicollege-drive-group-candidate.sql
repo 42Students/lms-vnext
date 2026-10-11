@@ -9,13 +9,16 @@
 
 CREATE TABLE placement_recruiter_drive_groups (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  recruiter_user_id uuid
-    REFERENCES placement_recruiter_profiles(user_id) ON DELETE RESTRICT,
-  company_id uuid
+  recruiter_user_id uuid NOT NULL,
+  company_id uuid NOT NULL
     REFERENCES placement_companies(id) ON DELETE RESTRICT,
   shared_form jsonb,
   created_at timestamptz NOT NULL DEFAULT now(),
   created_by_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
+  CONSTRAINT placement_recruiter_drive_groups_recruiter_company_fk
+    FOREIGN KEY (recruiter_user_id, company_id)
+    REFERENCES placement_recruiter_profiles(user_id, company_id)
+    ON DELETE RESTRICT,
   CONSTRAINT placement_recruiter_drive_group_form_ck
     CHECK (shared_form IS NULL OR jsonb_typeof(shared_form) = 'object')
 );
@@ -29,14 +32,76 @@ ALTER TABLE placement_jobs
 CREATE INDEX placement_jobs_recruiter_group_idx
   ON placement_jobs(recruiter_drive_group_id, college_id);
 
+CREATE UNIQUE INDEX placement_jobs_recruiter_group_college_uq
+  ON placement_jobs(recruiter_drive_group_id, college_id)
+  WHERE recruiter_drive_group_id IS NOT NULL;
+
+CREATE FUNCTION db09_assert_drive_group_job_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+DECLARE
+  v_group_recruiter uuid;
+  v_group_company uuid;
+  v_relationship_company uuid;
+BEGIN
+  IF NEW.recruiter_drive_group_id IS NULL THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT recruiter_user_id, company_id
+    INTO v_group_recruiter, v_group_company
+    FROM placement_recruiter_drive_groups
+   WHERE id = NEW.recruiter_drive_group_id;
+
+  IF v_group_recruiter IS NULL OR v_group_company IS NULL THEN
+    RAISE EXCEPTION 'recruiter drive group does not exist'
+      USING ERRCODE = '23503';
+  END IF;
+
+  SELECT company_id
+    INTO v_relationship_company
+    FROM placement_company_relationships
+   WHERE id = NEW.company_relationship_id
+     AND college_id = NEW.college_id
+     AND status = 'ACTIVE';
+
+  IF v_relationship_company IS NULL
+     OR v_relationship_company <> v_group_company THEN
+    RAISE EXCEPTION 'drive group company does not match child job relationship'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+      FROM placement_recruiter_college_grants g
+      JOIN placement_company_relationships r
+        ON r.id = g.company_relationship_id
+     WHERE g.recruiter_user_id = v_group_recruiter
+       AND g.status = 'ACTIVE'
+       AND r.id = NEW.company_relationship_id
+       AND r.college_id = NEW.college_id
+       AND r.company_id = v_group_company
+       AND r.status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'drive group recruiter lacks active grant for child job college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_drive_group_job_scope_guard
+  BEFORE INSERT OR UPDATE OF
+    recruiter_drive_group_id,college_id,company_relationship_id
+  ON placement_jobs
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_drive_group_job_scope();
+
 -- Proof requirements prior to adoption:
 -- (1) same recruiter and normalized global company for all jobs sharing a
 --     group, but each job separately authorized by a LIVE college grant;
 -- (2) per-college job status, decisions, dates, permissions and publishing
 --     are independent; group does not authorize cross-college reads;
--- (3) one child job per group+college unless current source expressly
---     permits multiples. Consider UNIQUE partial index only after contract
---     and legacy concurrency analysis.
+-- (3) one child job per group+college is staged as a partial UNIQUE because
+--     the active RecruiterPlanDriveService creates one Job per chosen college
+--     and addCollege adds exactly one new college copy.
 -- (4) shared_form may be null in legacy; do not accidentally require a form,
 --     leak it in student/recruiter public projections, or deserialize
 --     arbitrary JSON without size/shape validation.
@@ -45,3 +110,9 @@ CREATE INDEX placement_jobs_recruiter_group_idx
 --     import/backfill is out of scope (vNext is greenfield).
 -- (6) after DB08/Chat1 review, add Drizzle schema and compose disposable
 --     PostgreSQL FK, tenant isolation and rejection tests.
+-- (7) recruiter/company composite FK rejects a group pairing a recruiter to a
+--     company other than placement_recruiter_profiles.company_id.
+-- (8) a grouped child job whose company relationship belongs to another
+--     company or lacks an ACTIVE grant for the group recruiter is rejected.
+-- (9) concurrent attempts to attach two child jobs for the same group+college
+--     yield one winner via placement_jobs_recruiter_group_college_uq.
