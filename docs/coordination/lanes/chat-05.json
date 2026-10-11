@@ -6,17 +6,24 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-043",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB043_NOTIFICATION_CAMPAIGN_STARTED",
+    "checkpointKind": "DB043_NOTIFICATION_CAMPAIGN_PARITY_SOURCE_COMPLETE_PG_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "5c00d2c3dbada1dbbc83be75d49681e321e798e1",
-    "lastWorkerMergedSha": "6c652ef6d03758d2b303c142ee719320a41965fe",
+    "observedMainSha": "e31e3d8c4d77d846097ac49ab852a721a62c0896",
+    "lastWorkerMergedSha": "e31e3d8c4d77d846097ac49ab852a721a62c0896",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-043 started: reconcile all 21 legacy notification fields across campaign authoring, audience targeting, recipient delivery/read state, safe actions, schedule/delivery status and creator-owned lifecycle."
+    "summary": "DB-043 SOURCE COMPLETE on main: 21/21 legacy notification fields disposed with typed user/class/course campaign audience; isolated tenant-guarded scheduled campaign SQL staging, independent admin/schedule/soft-delete + per-user receipt contract, 12 Node tests and 20 PG witnesses authored. 33/33 connector source checks PASS; tests/PG not executed. Registered schema/Drizzle journal unchanged. GitHub Actions paused for billing is NOT a blocker.",
+    "evidenceFiles": [
+      "docs/planning/database-parity-db10-notification-campaign-field-map.json",
+      "scripts/sql/db10-notification-campaign-staging.sql",
+      "docs/planning/database-parity-db10-notification-campaign-contract.md",
+      "tests/db10-notification-campaign-staging.test.mjs"
+    ],
+    "qualityNote": "Node/PG authoring is not runtime verification. DB043 remains COMPLETED, not DONE_VERIFIED."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -42,7 +49,8 @@
     "tests/db10-app-setting-disposition.test.mjs: 8 static cross-domain key/disposition/security assertions (authored, Node runtime not executed)",
     "tests/db10-notification-template-disposition.test.mjs: 8 static duplicate-registry/source-disposition guards (authored, Node runtime not executed)",
     "tests/db10-activity-audit-context-staging.test.mjs: 8 static forensic-field/privacy/source guards (authored, Node runtime not executed)",
-    "tests/db10-staged-drafts-source-map.test.mjs: 8 static 75-field draft-target/migration-readiness guards (authored; source audit 342/342, Node runtime not executed)"
+    "tests/db10-staged-drafts-source-map.test.mjs: 8 static 75-field draft-target/migration-readiness guards (authored; source audit 342/342, Node runtime not executed)",
+    "tests/db10-notification-campaign-staging.test.mjs: 12 Node source assertions authored; not executed"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -87,7 +95,7 @@
     "Chat 1: register DB-039 three-column activity audit context stage through forward migration; preserve privacy/retention gates.",
     "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows."
   ],
-  "nextAction": "Author exact 21-field map, isolated campaign SQL, contract and static guards; keep DB10 general outbox separate and no migration/barrel edits.",
+  "nextAction": "Continue claiming next dependency-eligible DATABASE task. Chat 1 must integrate DB10 campaign after review and disposable PostgreSQL proof; DB19 must reconcile all 21 legacy rows once DB040 releases ledger. Never wait for GitHub CI billing.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -163,7 +171,8 @@
     "DB-033",
     "DB-037",
     "DB-039",
-    "DB-040"
+    "DB-040",
+    "DB-043"
   ],
   "lastPickedAt": "2026-10-11T14:22:00+05:30",
   "lastCompletedAt": "2026-10-11T14:18:00+05:30",
