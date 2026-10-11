@@ -1506,6 +1506,51 @@
           "reason": "Scope expanded non-conflictingly after source recheck confirmed legacy createOffering materializes backed class in slot program while current vNext backed-delivery validation omits cohort-program equality."
         }
       ]
+    },
+    {
+      "id": "DB-027",
+      "phase": "DATABASE",
+      "title": "Cross-domain staged SQL collision and dependency preflight",
+      "scope": "Build executable, read-only cross-domain candidate SQL inventory/preflight: reject duplicate table declarations, missorted parent references, accidental promotion of superseded drafts, and surface blockers for Chat 1 without editing journal/barrel",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "scripts/db27-stage-sql-preflight.mjs",
+        "tests/db27-stage-sql-preflight.test.mjs",
+        "docs/planning/db27-cross-domain-staged-sql-integration-audit.md"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T13:10:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T13:10:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T13:10:00+05:30",
+          "reason": "New non-overlapping DB integration-readiness gap documented when only migration/integration-dependent tasks remained READY."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T13:10:00+05:30",
+          "reason": "Chat 3 CAS-picked read-only global staged SQL preflight; no edit permission to migrations/schema-barrel."
+        }
+      ]
     }
   ],
   "eventModel": {
