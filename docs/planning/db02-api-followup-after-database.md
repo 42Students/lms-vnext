@@ -22,7 +22,9 @@ Current API gaps:
 - `src/modules/academics/constants.ts` does not expose `INACTIVE` in `COHORT_STATUSES`.
 - `cohortTransitionSchema` only supports ACTIVATE / COMPLETE / ARCHIVE; legacy INACTIVE is reversible and requires explicit deactivate/reactivate behavior.
 - cohort create/update validation does not author compatibility `startDate`, `endDate`, or explicit legacy academic-year override.
-- no vNext promotion API currently drives compare-and-set `current_term_number/version`, current period/year, outgoing teaching assignment closure and promotion preview semantics.
+- no vNext promotion API currently drives compare-and-set `current_term_number/version`, current period/year, outgoing teaching assignment closure and promotion preview semantics;
+- legacy batch **delete** is distinct from native cohort archive: compatibility delete must refuse while linked classes/sections exist, matching the production server/UI dependency contract;
+- expected-end-period updates must map the database conflict when shrinking the cohort window would exclude existing sections, offerings or current progression state.
 
 Compatibility reads:
 
@@ -47,7 +49,8 @@ API work required:
 - curriculum add/remove/update/reorder;
 - duplicate course and reorder race error mapping;
 - program duration shrink conflict mapping;
-- compatibility projections for any retained `new_program_structure` API.
+- compatibility projections for any retained `new_program_structure` API;
+- curriculum remove must map the database conflict once any offering materializes the term/course pair; do not silently delete historical curriculum identity.
 
 Do not revive JSON `course_ids` storage.
 
@@ -65,7 +68,8 @@ Current API gaps:
 - create-course-offering input has no `programTermId`;
 - offering queries do not return program-term identity;
 - `src/modules/courses/validation.ts` currently uses `.min(1)` for offering credits; change create/update validation to `.min(0)` after DB registration;
-- offering producer must pass the stable term FK atomically.
+- offering producer must pass the stable term FK atomically;
+- period/date-parent conflict mapping must be deterministic when a referenced academic period can no longer be moved.
 
 ## 4. Section / legacy class compatibility
 
@@ -82,7 +86,8 @@ Current API gaps:
 
 - section create/update validation does not expose description, minimumCapacity, startDate or endDate;
 - error mapping must preserve min >= 0, max 1..500, min <= max and ordered compatibility dates;
-- controlled historical section transfer needs an explicit API workflow. The DB allows empty same-tenant/window reparenting but rejects silent reparent once learner/faculty/delivery/schedule history exists.
+- controlled historical section transfer needs an explicit API workflow. The DB allows empty same-tenant/window reparenting but rejects silent reparent once learner/faculty/delivery/schedule history exists;
+- legacy class **delete** compatibility must refuse while enrolled learners or non-deleted/scheduled sessions exist. Native vNext archive may remain a separate history-preserving operation; do not silently equate archive with legacy delete.
 
 ## 5. Lecture halls / schedule room identity
 
@@ -152,7 +157,18 @@ Current API work:
 - surface database conflict errors deterministically;
 - retain past faculty attribution while future events are unassigned when faculty identity becomes inactive.
 
-## 9. API phase entry gate
+## 9. Academic period mutation compatibility
+
+Database target now makes `academic_periods.start_date/end_date` stable after any cohort, section, offering or current progression state references that period. Unused PLANNED periods remain editable.
+
+API work required:
+
+- surface a stable conflict when an admin tries to move referenced period dates;
+- do not work around the constraint by rewriting children in place;
+- use an explicit new-period / controlled academic-structure workflow when history already exists;
+- keep status transition semantics separate from date mutability: closing a period is not equivalent to changing its historical calendar boundaries.
+
+## 10. API phase entry gate
 
 Do not start these changes merely because this file exists. API work begins only after:
 
