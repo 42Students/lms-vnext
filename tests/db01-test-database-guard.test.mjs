@@ -443,3 +443,87 @@ test("DB48 protected PostgreSQL database names are case-insensitive", () => {
     assert.ok(helper.includes(`"${name}"`));
   }
 });
+
+
+test("DB51 localhost non-test db:reset requires exact confirmation before network access", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB51 process regression");
+
+  const secret = "proxyResetSecret";
+  const result = spawnSync(
+    process.execPath,
+    [tsx, "scripts/db-reset.ts"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        DATABASE_URL:
+          `postgresql://admin:${secret}@127.0.0.1:1/lms_vnext`,
+        ALLOW_DB_RESET: "true",
+        DB_RESET_CONFIRM: "",
+      },
+    },
+  );
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /DB_RESET_CONFIRM=RESET:127\.0\.0\.1:1\/lms_vnext/,
+  );
+  assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
+});
+
+test("DB51 local disposable-name bypass is limited to explicit test/E2E names", () => {
+  const helperStart = dbLibSource.indexOf(
+    "export function assertResetAllowed",
+  );
+  const helperEnd = dbLibSource.indexOf(
+    "export async function migrateDatabase",
+    helperStart,
+  );
+  const helper = dbLibSource.slice(helperStart, helperEnd);
+
+  assert.match(helper, /explicitlyDisposableName/);
+  assert.match(
+    helper,
+    /\(\?:test\|e2e\).*\(\?:test\|e2e\)/,
+  );
+  assert.match(
+    helper,
+    /if \(isLocal && explicitlyDisposableName\) \{\s*return;/,
+  );
+  assert.doesNotMatch(
+    helper,
+    /if \(localHosts\.has\(target\.host\)\) \{\s*return;/,
+  );
+});
+
+test("DB51 wrong localhost confirmation refuses before any connection", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB51 process regression");
+
+  const result = spawnSync(
+    process.execPath,
+    [tsx, "scripts/db-reset.ts"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        DATABASE_URL:
+          "postgresql://admin:redacted@localhost:1/lms_vnext",
+        DB_RESET_CONFIRM:
+          "RESET:localhost:1/lms_vnext_other",
+      },
+    },
+  );
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /DB_RESET_CONFIRM=RESET:localhost:1\/lms_vnext/,
+  );
+  assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
+});
