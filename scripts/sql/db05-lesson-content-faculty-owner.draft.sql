@@ -43,8 +43,12 @@ DECLARE
   owner_status text;
   faculty_role_row_id uuid;
   content_offering_id uuid;
+  offering_cohort_id uuid;
+  offering_period_id uuid;
   delivery_offering_id uuid;
   section_period_college_id uuid;
+  section_cohort_id uuid;
+  section_period_id uuid;
   newly_assigned boolean;
 BEGIN
   -- Generic content has no assigned owner; other lesson/delivery scope guards
@@ -64,9 +68,13 @@ BEGIN
   PERFORM pg_advisory_xact_lock(605008003::bigint);
 
   SELECT department.college_id, period.college_id, offering.id,
-         delivery.offering_id, section_period.college_id
+         offering.cohort_id, offering.academic_period_id,
+         delivery.offering_id, section_period.college_id,
+         section_row.cohort_id, section_row.academic_period_id
     INTO course_college_id, period_college_id, content_offering_id,
-         delivery_offering_id, section_period_college_id
+         offering_cohort_id, offering_period_id,
+         delivery_offering_id, section_period_college_id,
+         section_cohort_id, section_period_id
   FROM course_lessons lesson
   JOIN course_learning_paths path ON path.id = lesson.learning_path_id
   JOIN course_offerings offering ON offering.id = path.offering_id
@@ -96,7 +104,9 @@ BEGIN
        (delivery_offering_id IS NULL
         OR delivery_offering_id IS DISTINCT FROM content_offering_id
         OR section_period_college_id IS NULL
-        OR section_period_college_id IS DISTINCT FROM course_college_id)) THEN
+        OR section_period_college_id IS DISTINCT FROM course_college_id
+        OR section_cohort_id IS DISTINCT FROM offering_cohort_id
+        OR section_period_id IS DISTINCT FROM offering_period_id)) THEN
     RAISE EXCEPTION 'faculty owner violates lesson content college or delivery scope'
       USING ERRCODE = '23514';
   END IF;
@@ -148,7 +158,8 @@ COMMIT;
 -- 3. Cross-college membership, course department and offering period rejected
 --    23514 even though independent FKs exist.
 -- 4. Content delivery linked to a different offering or another college
---    rejected 23514.
+--    rejected 23514. Same-college but mismatched cohort or term also
+--    rejected 23514; delivery equivalence is not merely college equivalence.
 -- 5. Learner-only, suspended or missing role membership cannot be newly
 --    assigned owner; role loss after ownership does not delete history.
 -- 6. Reassign owner under admin permission only; faculty cannot spoof
