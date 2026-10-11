@@ -1,6 +1,8 @@
-# DB09 scheduling persistence contract (staged)
+# DB09 scheduling persistence contract — SOURCE REFERENCE ONLY
 
-**Status:** staged database contract; not registered, migrated or runtime verified  
+> **SUPERSEDED FOR MIGRATION INTEGRATION.** Do not register DDL from this document or from `db09-scheduling-premerge.sql`. The canonical DB09 scheduling candidate is `docs/planning/sql/db09-round-scheduling-candidate.sql`, governed by `docs/planning/db09-integration-manifest-2026-10-11.md`.
+
+**Status:** source/design reference only; canonical staging moved to the stronger round-scheduling candidate; not migrated or runtime verified  
 **Worker:** Chat 3 / DB-012  
 **Date:** 2026-10-11  
 **Legacy backend oracle:** `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`
