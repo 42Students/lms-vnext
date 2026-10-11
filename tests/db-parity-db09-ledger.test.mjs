@@ -69,9 +69,9 @@ test("DB09 canonical disposition review closes every source field without claimi
   assert.equal(audit.reviewedFieldCount, 279);
   assert.equal(audit.verifiedFieldCount, 0);
   assert.equal(counts.UNMAPPED ?? 0, 0);
-  assert.equal(counts.MAPPED, 199);
-  assert.equal(counts.REDESIGNED, 65);
-  assert.equal(counts.BLOCKED, 15);
+  assert.equal(counts.MAPPED, 195);
+  assert.equal(counts.REDESIGNED, 84);
+  assert.equal(counts.BLOCKED ?? 0, 0);
   assert.equal(counts.WORKFLOW_VERIFIED ?? 0, 0);
   assert.equal(counts.DB_TESTED ?? 0, 0);
   assert.ok(audit.records.every(row =>
@@ -80,16 +80,18 @@ test("DB09 canonical disposition review closes every source field without claimi
   ));
 });
 
-test("DB09 unresolved blockers stay explicit rather than masquerading as mappings", () => {
-  const blocked = new Set(
-    audit.records.filter(row => row.status === "BLOCKED").map(key),
-  );
-  assert.ok(!blocked.has("tpo_message.sender_type"));
-  assert.ok(blocked.has("industry_company.export_columns_json"));
-  for (const row of audit.records.filter(r => r.legacyTable === "notification_outbox")) {
-    assert.equal(row.status, "BLOCKED");
-  }
+test("DB09 earlier blocked historical fields have recorded redesign dispositions without false DB verification", () => {
+  assert.ok(audit.records.every(row => row.status !== "BLOCKED"));
+  const industry = audit.records.find(r =>
+    r.legacyTable === "industry_company" && r.legacyColumn === "export_columns_json");
+  assert.equal(industry?.status, "REDESIGNED");
+  const outbox = audit.records.filter(r => r.legacyTable === "notification_outbox");
+  assert.equal(outbox.length, 13);
+  assert.ok(outbox.every(row => row.status === "REDESIGNED"));
   const prep = audit.records.filter(r => r.legacyTable === "prep_assignment");
-  assert.equal(prep.find(r => r.legacyColumn === "assessment_id")?.status, "BLOCKED");
+  assert.equal(prep.find(r => r.legacyColumn === "assessment_id")?.status, "REDESIGNED");
   assert.ok(prep.filter(r => r.legacyColumn !== "assessment_id").every(r => r.status === "MAPPED"));
+  assert.equal(audit.verifiedFieldCount, 0);
+  assert.ok(audit.records.every(row =>
+    !["DB_TESTED", "WORKFLOW_VERIFIED"].includes(row.status)));
 });
