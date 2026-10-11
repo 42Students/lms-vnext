@@ -685,7 +685,10 @@
         "docs/planning/sql/db09-job-outcome-settings-candidate.sql",
         "docs/planning/sql/db09-round-scheduling-candidate.sql",
         "docs/planning/db09-chat03-round-scheduling-audit.md",
-        "src/modules/placements/tpo-messaging-service.ts"
+        "src/modules/placements/tpo-messaging-service.ts",
+        "tests/db09-grant-company-isolation.test.mjs",
+        "docs/planning/sql/db09-recruiter-grant-company-integrity-candidate.sql",
+        "docs/planning/db09-recruiter-grant-company-audit.md"
       ],
       "status": "IN_PROGRESS",
       "latestEvidenceSha": "7f7e8aa99dc04a76fd7cb73e76d6c63e2dca105b",
@@ -785,6 +788,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T19:39:00+05:30",
           "reason": "Reopen own DB-012 for demonstrated recruiter-grant cross-company read authorization gap; targeted service predicate + contract test, no schema barrel/journal."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T19:40:00+05:30",
+          "reason": "Narrow DB-012 path extension for new isolated same-company grant source guard, candidate relational integrity SQL and review memo."
         }
       ],
       "progressNote": "Canonical DB09 source/design disposition is closed on main: 279/279 reviewed, 199 MAPPED, 80 REDESIGNED, 0 field-level BLOCKED, 0 runtime/PostgreSQL verified. PR #85 merged the integration-readiness cleanup: repaired malformed/duplicated CRM premerge SQL, collapsed superseded duplicate CRM/scheduling/notification drafts, promoted one canonical scheduling candidate, and added the W01 integration manifest/static guard. Remaining blockers are migration registration, CI-independent PostgreSQL replay/negative/concurrency witnesses, and runtime producer/consumer/API compatibility only. Chat 3 19:39 IST: resume isolated recruiter same-company grant query hardening and guard."
