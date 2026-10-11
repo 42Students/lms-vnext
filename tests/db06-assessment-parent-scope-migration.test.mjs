@@ -146,3 +146,34 @@ test("DB06 freezes parent identity once assessment history would be reinterprete
     /Delivery with assessment history requires controlled transfer/,
   );
 });
+
+
+const pgAcceptanceSource = fs.readFileSync(
+  "tests/integration/db06-assessment-parent-scope.test.ts",
+  "utf8",
+);
+const independentVerifierSource = fs.readFileSync(
+  "scripts/db-independent-verify.mjs",
+  "utf8",
+);
+
+test("DB06 acceptance wiring retains the full PG01-PG16 matrix and isolated-db opt in", () => {
+  for (const id of [
+    "PG01","PG02","PG03","PG04","PG05","PG06","PG07","PG08",
+    "PG09","PG10","PG11","PG12","PG13","PG14A","PG14B","PG14C",
+    "PG14D","PG15","PG16",
+  ]) {
+    assert.ok(
+      pgAcceptanceSource.includes(id),
+      "missing DB06 acceptance witness " + id,
+    );
+  }
+  assert.match(
+    pgAcceptanceSource,
+    /DB06_ISOLATED_TEST_DATABASE===["']1["']/,
+  );
+  assert.match(
+    independentVerifierSource,
+    /DB06_ISOLATED_TEST_DATABASE:\s*["']1["']/,
+  );
+});
