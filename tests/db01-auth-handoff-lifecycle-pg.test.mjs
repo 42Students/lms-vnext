@@ -111,11 +111,30 @@ if (!optIn) {
         "db01_auth_handoff_consumed_immutable_ck",
       );
 
-      // The row's initial timestamps pass the CHECK, but it is already expired
-      // when a direct SQL caller supplies an old consumed_at timestamp.
-      const expired = await issue({ createdAgoSeconds: 119, lifetimeSeconds: 90 });
+      // A spent/expired handoff cannot be fabricated at INSERT time. This
+      // is a negative creation witness, not a second OTP/provider engine.
       await expect23514(
-        admin.query("UPDATE identity_auth_handoffs SET consumed_at=created_at+interval '1 second' WHERE id=$1", [expired]),
+        admin.query(`INSERT INTO identity_auth_handoffs
+          (id,user_id,college_id,target_membership_id,target_domain_id,target_host,
+           code_mac,created_at,expires_at,consumed_at)
+         SELECT $1,user_id,college_id,target_membership_id,target_domain_id,target_host,
+                $2,clock_timestamp()-interval '1 second',
+                clock_timestamp()+interval '90 seconds',clock_timestamp()
+           FROM identity_auth_handoffs WHERE id=$3`,
+          [randomUUID(), "f".repeat(64), id]),
+        "db01_auth_handoff_creation_state_ck",
+      );
+      await expect23514(
+        issue({ createdAgoSeconds: 119, lifetimeSeconds: 90 }),
+        "db01_auth_handoff_creation_state_ck",
+      );
+
+      // For a genuinely issued handoff, wait for its short real deadline
+      // and prove a backdated consumed_at cannot bypass expiry.
+      const expired = await issue({ lifetimeSeconds: 1 });
+      await delay(1200);
+      await expect23514(
+        admin.query("UPDATE identity_auth_handoffs SET consumed_at=created_at+interval '0.1 seconds' WHERE id=$1", [expired]),
         "db01_auth_handoff_expired_consume_ck",
       );
 
