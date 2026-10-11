@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { Pool, type PoolClient } from "pg";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -215,6 +215,37 @@ describe("DB01 parent-lock role mutation against membership END", () => {
       );
       expect(remaining).toEqual(["FACULTY"]);
       expect(await countRole(f.membershipId, "MENTOR")).toBe(0);
+    });
+  });
+
+
+  it("onboarding cannot grant a new role to an ENDED existing membership", async () => {
+    await withFixture(async (f) => {
+      await pool.query(
+        "update college_memberships set status='ENDED' where id=$1",
+        [f.membershipId],
+      );
+      const phoneE164 = `+1${randomInt(2_000_000_000, 9_000_000_000)}`;
+      await expect(
+        drizzlePeopleRepository.persistPersonMembership(
+          {
+            identityUid: f.identityUid,
+            phoneE164,
+            displayName: "DB01 stale onboarding fixture",
+            collegeId: SEED_IDS.collegeA,
+            roles: ["FACULTY", "MENTOR"],
+          },
+          { context: actor, organizationId: SEED_IDS.organization },
+        ),
+      ).rejects.toMatchObject({ code: "MEMBERSHIP_NOT_ACTIVE" });
+      expect(await countRole(f.membershipId, "MENTOR")).toBe(0);
+      const user = await pool.query<{ phone_e164: string | null }>(
+        "select phone_e164 from users where id=$1",
+        [f.userId],
+      );
+      // The identity update performed earlier in the transaction must
+      // roll back together with the failed stale-membership role write.
+      expect(user.rows[0]?.phone_e164).toBeNull();
     });
   });
 
