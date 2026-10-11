@@ -7608,7 +7608,9 @@
       "Chat 1 must consolidate the canonical DB02 staging and deconflicted parent/enrollment extension into one registered Drizzle migration set; current runtime/PostgreSQL verification remains zero.",
       "Execute both DB02 PostgreSQL acceptance harnesses after registration, including promotion CAS, hall booking/archive races, and section reparent/history insertion lock-order races.",
       "API phase follow-up: course offering create/update validation currently rejects 0 credits (min 1), while DB02 legacy curriculum parity requires 0..30; do not mark end-to-end parity until validator is aligned.",
-      "Batch response classCount compatibility must read active sections in cohort_progression_state.current_period_id rather than all period-scoped sections ever created for the cohort."
+      "Batch response classCount compatibility must read active sections in cohort_progression_state.current_period_id rather than all period-scoped sections ever created for the cohort.",
+      "API phase follow-up: cohort INACTIVE is staged in PostgreSQL but current vNext constants/transitions cannot deactivate/reactivate cohorts; do not conflate INACTIVE with ARCHIVED.",
+      "Use docs/planning/db02-api-followup-after-database.md only after the global DATABASE gate closes; it is a handoff matrix, not API implementation authorization."
     ],
     "followUpEvidenceRequired": [
       "Read academic setup and timetable service/endpoint writes against pinned and newest backend/FE source SHAs; classify each unconfirmed field as active, retired or calculated",
@@ -7818,6 +7820,16 @@
         "stagingCommit": "5cff3087f7ed724a06cfcd590893610ae5cd89b0",
         "acceptanceCommit": "0f7a7ef7115bedd2d68f8fc1bc94d9247202bf4e",
         "postgresStatus": "NOT_EXECUTED"
+      },
+      {
+        "id": "COHORT_INACTIVE_API_FOLLOWUP",
+        "status": "DB_STAGED_API_FOLLOWUP_REQUIRED",
+        "databaseTarget": "cohort_status includes INACTIVE and acceptance harness round-trips ACTIVE -> INACTIVE -> ACTIVE",
+        "apiGap": "src/modules/academics/constants.ts lacks INACTIVE and cohortTransitionSchema has no deactivate/reactivate action.",
+        "databaseAcceptanceCommit": "58f6b38f7aeb503d7d390c13ca8677610244bdff",
+        "staticContractCommit": "30b303fba663196fbd3c82f6296488e30cc7b3a4",
+        "apiHandoff": "docs/planning/db02-api-followup-after-database.md",
+        "postgresStatus": "NOT_EXECUTED"
       }
     ],
     "targetDispositionCoverage": {
@@ -7877,7 +7889,7 @@
     },
     "integrationReadiness": {
       "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
-      "observedMainSha": "8197cf95d37a640b9684c47de9dbaef8199cba58",
+      "observedMainSha": "c463accc1839f3513c851354261a30393e7a2454",
       "sourceDispositions": {
         "classified": 125,
         "total": 125
@@ -7903,7 +7915,7 @@
       "acceptanceHarnesses": [
         {
           "path": "scripts/sql/db02-postgres-acceptance-unregistered.sql",
-          "blobSha": "74c1294f07750bdce79e02595f69d9984527d41a",
+          "blobSha": "d019f302b0db19ec04aa2435db54d2427ffe78d5",
           "type": "SINGLE_SESSION_TRANSACTIONAL_ROLLBACK",
           "covers": [
             "tenant owner immutability",
@@ -7916,7 +7928,11 @@
             "legacy-compatible current_students sectioned learner derivation",
             "learner suspension vs role-removal/membership-end academic lifecycle",
             "zero-credit curriculum -> CORE offering database compatibility",
-            "legacy-compatible current-period batch classCount projection"
+            "legacy-compatible current-period batch classCount projection",
+            "reversible cohort INACTIVE database state",
+            "sectioned current_students semantics with suspension vs role/end lifecycle",
+            "current-period batch classCount projection",
+            "zero-credit CORE offering database parity"
           ],
           "executedPostgres": false
         },
@@ -7945,7 +7961,22 @@
       "postgresTestsExecuted": 0,
       "runtimeEquivalenceVerifiedFields": 0,
       "status": "READY_FOR_CHAT1_CONSOLIDATION_AND_DISPOSABLE_POSTGRES_ACCEPTANCE",
-      "warning": "Static/source/design evidence is not PASS. Chat 1 must consolidate/register schema and migrations, replay zero-to-current, then execute both PostgreSQL harnesses on an exact disposable-DB SHA."
+      "warning": "Static/source/design evidence is not PASS. Chat 1 must consolidate/register schema and migrations, replay zero-to-current, then execute both PostgreSQL harnesses on an exact disposable-DB SHA.",
+      "apiFollowupMatrix": {
+        "path": "docs/planning/db02-api-followup-after-database.md",
+        "commitSha": "c463accc1839f3513c851354261a30393e7a2454",
+        "phase": "API_AFTER_DATABASE_GATE_ONLY",
+        "currentKnownGaps": [
+          "cohort INACTIVE + reactivation and promotion API",
+          "cohort compatibility dates/year fields",
+          "program-term/curriculum APIs",
+          "course offering programTermId producer/read + credits min(0)",
+          "section description/minimum-capacity/compatibility dates",
+          "lecture hall CRUD + schedule lectureHallId",
+          "broad faculty-course association APIs and legacy projections",
+          "controlled section transfer and learner lifecycle semantics"
+        ]
+      }
     }
   }
 }
