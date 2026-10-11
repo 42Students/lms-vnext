@@ -7,9 +7,9 @@
 --   grade_audit_log via AssignmentServiceImpl:
 --     UPDATE_POINTS, ADD_DESCRIPTIVE_POINTS, PUBLISH_GRADE
 --   attend:
---     one current absence row is soft-deleted/revived/corrected; marked_by and
---     attendance_status preserve only current state, so immutable corrections
---     need a normalized event ledger in vNext.
+--     legacy soft-delete/revive captures only current absence state. vNext
+--     intentionally normalizes this to one stable attendance_records row for
+--     every explicit status (including PRESENT) plus immutable versioned events.
 --
 -- Normalized vNext event actions:
 --   assignment_grade_events: GRADE, REGRADE, PUBLISH_GRADE
@@ -123,17 +123,24 @@ CREATE TABLE attendance_record_events (
   attendance_record_id uuid NOT NULL,
   schedule_event_id uuid NOT NULL
     REFERENCES section_schedule_events(id) ON DELETE RESTRICT,
+  delivery_id uuid
+    REFERENCES course_section_deliveries(id) ON DELETE RESTRICT,
   membership_id uuid NOT NULL
     REFERENCES college_memberships(id) ON DELETE RESTRICT,
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
   actor_user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   actor_membership_id uuid
     REFERENCES college_memberships(id) ON DELETE RESTRICT,
+  actor_role varchar(24) NOT NULL,
   action varchar(24) NOT NULL,
   previous_status varchar(24),
   new_status varchar(24) NOT NULL,
   previous_note text,
   new_note text,
+  previous_marked_by_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
+  new_marked_by_user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  previous_marked_at timestamptz,
+  new_marked_at timestamptz NOT NULL,
   record_version_before integer,
   record_version_after integer NOT NULL,
   occurred_at timestamptz NOT NULL DEFAULT now(),
@@ -141,6 +148,11 @@ CREATE TABLE attendance_record_events (
     FOREIGN KEY (attendance_record_id, schedule_event_id, membership_id)
     REFERENCES attendance_records(id, schedule_event_id, membership_id)
       ON DELETE RESTRICT,
+  CONSTRAINT attendance_record_events_actor_role_ck
+    CHECK (actor_role IN ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')),
+  CONSTRAINT attendance_record_events_actor_shape_ck
+    CHECK ((actor_role = 'SUPER_ADMIN' AND actor_membership_id IS NULL)
+       OR (actor_role IN ('COLLEGE_ADMIN','FACULTY') AND actor_membership_id IS NOT NULL)),
   CONSTRAINT attendance_record_events_action_ck
     CHECK (action IN ('MARK','CORRECT')),
   CONSTRAINT attendance_record_events_status_ck
@@ -151,11 +163,22 @@ CREATE TABLE attendance_record_events (
         OR previous_status IN ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE')
       )
     ),
+  CONSTRAINT attendance_record_events_version_ck
+    CHECK (
+      (record_version_before IS NULL AND record_version_after = 0)
+      OR (
+        record_version_before >= 0
+        AND record_version_after = record_version_before + 1
+      )
+    ),
   CONSTRAINT attendance_record_events_shape_ck
     CHECK (
       (
         action = 'MARK'
         AND previous_status IS NULL
+        AND previous_note IS NULL
+        AND previous_marked_by_user_id IS NULL
+        AND previous_marked_at IS NULL
         AND record_version_before IS NULL
         AND record_version_after = 0
       )
@@ -163,11 +186,14 @@ CREATE TABLE attendance_record_events (
       (
         action = 'CORRECT'
         AND previous_status IS NOT NULL
+        AND previous_marked_by_user_id IS NOT NULL
+        AND previous_marked_at IS NOT NULL
         AND record_version_before IS NOT NULL
-        AND record_version_before >= 0
         AND record_version_after = record_version_before + 1
       )
     )
+    AND new_marked_by_user_id IS NOT NULL
+    AND new_marked_at IS NOT NULL
 );
 CREATE UNIQUE INDEX attendance_record_events_record_version_uq
   ON attendance_record_events(attendance_record_id, record_version_after);
@@ -175,8 +201,12 @@ CREATE INDEX attendance_record_events_record_time_idx
   ON attendance_record_events(attendance_record_id, occurred_at);
 CREATE INDEX attendance_record_events_member_time_idx
   ON attendance_record_events(membership_id, occurred_at);
+CREATE INDEX attendance_record_events_session_time_idx
+  ON attendance_record_events(schedule_event_id, occurred_at);
 CREATE INDEX attendance_record_events_college_time_idx
   ON attendance_record_events(college_id, occurred_at);
+CREATE INDEX attendance_record_events_actor_time_idx
+  ON attendance_record_events(actor_user_id, occurred_at);
 
 -- Tenant/actor validation ---------------------------------------------------
 
