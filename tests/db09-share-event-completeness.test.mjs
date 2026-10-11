@@ -41,3 +41,38 @@ test("CREATED event cannot predate its share", () => {
   assert.match(sql, /CREATED event predates share creation/);
   assert.match(sql, /NEW\.created_at < v_created_at/);
 });
+
+
+test("share use/delivery events require a live unrevoked link", () => {
+  assert.match(sql, /use\/delivery event cannot be appended after revocation/);
+  assert.match(sql, /use\/delivery event cannot be appended after expiry/);
+  assert.match(
+    sql,
+    /'OPENED','DOWNLOADED_LIST','DOWNLOADED_ZIP','LINK_EMAILED','CODE_EMAILED'/,
+  );
+});
+
+test("all staged DB09 SQL functions use valid dollar quoting", () => {
+  const functionStarts = [...sql.matchAll(/CREATE FUNCTION\s+([a-zA-Z0-9_]+)\(/g)];
+  assert.ok(functionStarts.length > 0);
+  for (const match of functionStarts) {
+    const start = match.index;
+    const next = sql.indexOf("\nCREATE ", start + 20);
+    const block = sql.slice(start, next === -1 ? sql.length : next);
+    assert.match(
+      block,
+      /LANGUAGE\s+(?:plpgsql|sql)(?:\s+STABLE)?\s+AS \$\$/,
+      `${match[1]} must start with $$`,
+    );
+    assert.match(
+      block,
+      /\$\$;/,
+      `${match[1]} must close with $$;`,
+    );
+    assert.doesNotMatch(
+      block,
+      /LANGUAGE\s+plpgsql\s+AS \$\n/,
+      `${match[1]} must not use a single-dollar delimiter`,
+    );
+  }
+});
