@@ -44,7 +44,9 @@ test("DB06 migration fails closed on poisoned relational history before installi
 
 test("DB06 child writes serialize with mutable parent and enrollment rows", () => {
   for (const token of [
-    "FOR SHARE OF l, lp",
+    "FOR SHARE OF l, lp, o",
+    "FOR SHARE OF q, l, lp, o",
+    "FOR SHARE OF a, l, lp, o",
     "FOR SHARE OF d",
     "FOR SHARE OF m, role, u",
     "FOR SHARE OF se, le",
