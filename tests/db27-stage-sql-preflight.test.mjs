@@ -85,6 +85,27 @@ test("stripSqlLiterals preserves its text API and optionally reports syntax gaps
   assert.deepEqual(valid,[]);
 });
 
+
+test("complex quoted DDL identifiers are not silently ignored", () => {
+  const cases=[
+    candidate("strange-create.sql",'CREATE TABLE "a table" (id int);'),
+    candidate("strange-fk.sql",'CREATE TABLE child (parent_id uuid REFERENCES "odd parent"(id));'),
+    candidate("strange-alter.sql",'ALTER TABLE "odd""identifier" ADD name text;'),
+  ];
+  const report=analyze({candidates:cases});
+  assert.deepEqual(report.lexicalHazards,[
+    {file:"strange-alter.sql",errors:["UNSUPPORTED_QUOTED_DDL_IDENTIFIER"]},
+    {file:"strange-create.sql",errors:["UNSUPPORTED_QUOTED_DDL_IDENTIFIER"]},
+    {file:"strange-fk.sql",errors:["UNSUPPORTED_QUOTED_DDL_IDENTIFIER"]},
+  ]);
+  assert.equal(report.hazards,true);
+  assert.equal(report.safeForAutomaticPromotion,false);
+  const harmless=inspect(candidate("normal-quoted-sql.sql",
+    'SELECT "not a DDL identifier" FROM "real_table"; CREATE TABLE normal (id uuid);'));
+  assert.deepEqual(harmless.lexicalErrors,[]);
+  assert.deepEqual(harmless.create,["normal"]);
+});
+
 test("source-only and superseded SQL cannot silently become active drafts", () => {
   assert.equal(classify("-- SUPERSEDED DB09\nCREATE TABLE old (id int);"),"SUPERSEDED");
   assert.equal(classify("-- DB09 SOURCE REFERENCE ONLY\n-- NO DDL\n"),"REFERENCE_ONLY");
