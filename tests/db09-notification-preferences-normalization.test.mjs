@@ -140,7 +140,7 @@ test("personal preference evidence is API-persistent without invented UI or deli
   assert.match(contract, /PUT \/api\/v1\/tpo\/my-preferences/);
   assert.match(contract, /current frozen TPO page consumption is not proven/i);
   assert.match(row.semanticDefinition, /current frozen TPO page consumption.*not proven/i);
-  assert.match(row.constraintAndLifecycleEvidence, /rendered consumer.*did not prove/i);
+  assert.match(row.constraintAndLifecycleEvidence, /did not prove.*rendered consumer/i);
   assert.match(row.constraintAndLifecycleEvidence, /delivery honoring.*NOT established/i);
   assert.ok(
     row.consumerPaths.includes("src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java"),
