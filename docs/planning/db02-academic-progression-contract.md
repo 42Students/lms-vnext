@@ -98,10 +98,11 @@ Every `course_offerings` row must retain a stable `program_term_id` in addition 
 - `program_term_id` answers **which program curriculum term** the delivery belongs to;
 - the term's program must equal the cohort's program;
 - course, cohort and period must remain in one college;
-- a `CORE` offering must have a matching `program_term_courses` row;
-- an `ELECTIVE` offering remains term-bound but is not forced to have a fixed curriculum row, matching the legacy elective path where the selected course can be outside the fixed semester-course list.
+- a `CORE` offering additionally persists `program_term_course_id -> program_term_courses.id`; that row must match the offering's exact term, course, and CORE curriculum type;
+- PostgreSQL `ON DELETE RESTRICT` on the concrete curriculum-row FK protects a materialized CORE offering from concurrent curriculum deletion;
+- an `ELECTIVE` offering keeps `program_term_course_id = NULL`: it remains term-bound but is not forced into the fixed curriculum list, matching the legacy elective path where the selected course can be outside `semester_course`.
 
-This link is also the historical semester anchor for delivery-bound teaching assignments. A cohort's mutable current progression state cannot reconstruct an old assignment's semester after promotion.
+The stable term link is the historical semester anchor for all delivery-bound teaching assignments. The concrete CORE curriculum-row link additionally preserves exactly which reusable curriculum mapping materialized the offering. A cohort's mutable current progression state cannot reconstruct either fact after promotion.
 
 ### Zero-credit curriculum alignment
 
