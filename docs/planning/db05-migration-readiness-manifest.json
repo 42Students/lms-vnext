@@ -288,13 +288,25 @@
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UNIQUE_PER_LESSON",
       "status": "BLOCKED",
       "owner": "DB05_W01_W02",
-      "evidence": "Current table has no lesson_id and a nonunique delivery/sequence index; needs scope-safe UNIQUE(delivery_id,lesson_id,sequence) design, not global delivery+sequence uniqueness."
+      "evidence": "Source-backed unregistered per-(delivery_id,lesson_id,sequence) unique companion now staged at scripts/sql/db05-content-delivery-order-unique-lesson.draft.sql with composite lesson-parent FK. W01 must integrate after base table; PG duplicate, wrong-lesson, multi-lesson and reparent negatives NOT_RUN. Do NOT count as verified."
     },
     {
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UPSTREAM_REPARENT_INTEGRITY",
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Child-only trigger cannot detect later content/lesson/learning-path/section/cohort/academic-period/course department reparent changes."
+    },
+    {
+      "id": "COURSE_CONTENT_DELIVERY_ORDER_UNIQUE_BACKFILL_AND_PARENT_FK",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Add lesson_id to staged override table and backfill from lesson_contents; two-column FK RESTRICT on lesson reparent; fail migration on duplicate/orphan; clean PG replay not executed."
+    },
+    {
+      "id": "COURSE_CONTENT_DELIVERY_ORDER_MULTI_LESSON_SCOPE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Same delivery two lessons may each use sequence 0; same delivery and same lesson duplicate position must reject 23505. Not executed."
     }
   ],
   "sourceReview": {
@@ -319,7 +331,8 @@
   },
   "testFiles": [
     "tests/db05-source-semantic-review.test.mjs",
-    "tests/db05-draft-contract-integrity.test.mjs"
+    "tests/db05-draft-contract-integrity.test.mjs",
+    "tests/db05-content-delivery-order-unique-lesson.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -367,9 +380,13 @@
         "CONTENT_DELIVERY_SCOPE_NEGATIVE",
         "PER_LESSON_DELIVERY_SEQUENCE_UNIQUE_POLICY",
         "UPSTREAM_LESSON_COURSE_OFFERING_SECTION_REPARENT_GUARD",
-        "CONCURRENT_FULL_ORDER_REWRITE_TESTS"
+        "CONCURRENT_FULL_ORDER_REWRITE_TESTS",
+        "PERSISTED_LESSON_ID_COMPOSITE_FK",
+        "UNIQUE_DELIVERY_LESSON_SEQUENCE_POSTGRES_NEGATIVE"
       ],
-      "note": "Not an eighth DB05 migration; fold as one SQL companion after base order table and service cutover. Duplicate sequences within a lesson/delivery unresolved."
+      "note": "Not an eighth independent DB05 migration; fold both scope and unique-lesson companions after base table and service cutover. Design STAGED, PostgreSQL proof still OPEN.",
+      "uniqueLessonCompanion": "scripts/sql/db05-content-delivery-order-unique-lesson.draft.sql",
+      "integrationNote": "Requires 2-column parent FK (lesson_content_id,lesson_id), derived lesson_id materialization, per-(delivery_id,lesson_id,sequence) unique index. Both scope and unique companions are UNREGISTERED and must be folded once by Chat1 after base table."
     }
   ]
 }
