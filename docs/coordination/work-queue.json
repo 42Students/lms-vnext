@@ -209,7 +209,7 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "ff461cb7ff41b7043c4c742038cb5a1289612f32",
+      "latestEvidenceSha": "c03cb4164dd97db31b1c362c0898e491433737ef",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": "DB-004 IN_PROGRESS: DB01 312 source candidates dispositioned only, no accepted runtime semantics. Direct-main locking and canonical ownership guard for membership role mutation landed; 18 authored Node and 8 authored PG cases, none executed. Staged DB01 auth/tenant changes remain unregistered; Chat 1 migration owner. DATABASE phase active.",
@@ -244,7 +244,7 @@
           "reason": "Chat 2 now auditing DB01 source semantics."
         }
       ],
-      "progressNote": "Chat 2 DB-004 direct-main critical DB/tenant correctness patch: people/repository.ts grant/removal/onboarding now acquire parent college_memberships FOR UPDATE and recheck status plus exact canonical userId/collegeId before roles. Commits 2194420 and e7bab10. Authored 18 Node source guards and 8 real-repository PostgreSQL integration tests incl concurrent END/grant, last-role removal, stale user/college and onboarding rollback. Ran 22/22 in-process GitHub exact-blob static checks and recorded ff461cb7 evidence; Node/Vitest/PG/typecheck NOT executed. CI Actions disabled billing not engineering blocker. DB01 312/312 source triage, 38 P0 dispositions source-only, 0 vNext runtime fields verified."
+      "progressNote": "Chat 2 DB-004 direct-main critical DB/tenant correctness patch: people/repository.ts grant/removal/onboarding now acquire parent college_memberships FOR UPDATE and recheck status plus exact canonical userId/collegeId before roles. Commits 2194420 and e7bab10. Authored 18 Node source guards and 8 real-repository PostgreSQL integration tests incl concurrent END/grant, last-role removal, stale user/college and onboarding rollback. Ran 22/22 in-process GitHub exact-blob static checks and recorded ff461cb7 evidence; Node/Vitest/PG/typecheck NOT executed. CI Actions disabled billing not engineering blocker. DB01 312/312 source triage, 38 P0 dispositions source-only, 0 vNext runtime fields verified.\nChat 2 tombstone/archive active-domain conflict: confirmed legacy current vNext college usage counts every persisted hostname, so preserving DNS history as deleted_at creates permanent archive deadlock. Prepared explicit policy decision and active-only staged replacement preserving non-ENDED membership and all-time host uniqueness; 12 Node tests authored, 29/29 connector in-process source assertions PASS, 0 Node/PG executed, approval FALSE. Evidence docs/planning/db01-chat02-domain-tombstone-archive-conflict-source-evidence.json."
     },
     {
       "id": "DB-005",
