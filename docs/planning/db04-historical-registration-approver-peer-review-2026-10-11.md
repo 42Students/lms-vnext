@@ -52,23 +52,30 @@ Therefore **do not map `student_registration` to `placement_registration`**. The
 
 Frozen BE/FE tree-path inspection found no exact-name `student_registration` source path. This strengthens the retirement candidacy but does not prove absence of native SQL, scheduled integration, another deployed service, or an external DB consumer.
 
-## `approver_id_card` is tied to a historical assigned-exam workflow
+## `approver_id_card` is explicitly retired with the old proctored-exam module
 
 The historical table has **11 fields**:
 
 `id, created_at, is_deleted, updated_at, cloud_storage_object, encoding, media_code, mimetype, original_name, url, assigned_exam_id`.
 
-Its only declared relationship is:
+Its declared relationship is:
 
 `approver_id_card.assigned_exam_id -> assigned_exam.id`.
 
-Frozen backend/frontend tree-path inspection found no current `AssignedExam`, `ApproverIdCard`, approver-card, or assigned-exam implementation path.
+A broader historical-tree review corrected the earlier package-scope ambiguity: before retirement, this workflow lived under the separate Java package `com._42students.exam`, not `com._42students.lms`.
 
-The current backend exam code found in this sweep is `ExamConfig` / `QualifyingExamConfigUtil`, which is a learner-profile catalog for qualifying exams (JEE, CAT, GATE, etc.). That is semantically unrelated to an approver identity-card file belonging to an assigned-exam workflow.
+At the April 3/April pre-cleanup source, the exam module contains **87 files**, including:
 
-Therefore **do not map `approver_id_card` to learner identity/profile documents** merely because both are files, and do not map its `assigned_exam_id` to current qualifying-exam profile configuration.
+- `com._42students.exam.model.ApproverIdCard`;
+- `com._42students.exam.model.AssignedExam`;
+- exam/examinee/faculty/question controllers, repositories and services;
+- assignment converters, monitoring, chat/warning/recording support and WebRTC signaling.
 
-This is a strong historical-subsystem retirement candidate, but explicit retirement/product signoff or detached/native/external-consumer evidence is still needed.
+Commit `87731589d37f7a2fe3bce6a689b3f440a77de28c` on **2026-08-28** removes the old proctored-exam package wholesale. Its diff explicitly deletes `ApproverIdCard.java`, `AssignedExam.java`, all exam controllers, all exam repositories, all exam services/implementations, converters, DTOs, monitoring, validation and WebRTC signaling. At the frozen October oracle there are **0 files** under `src/main/java/com/_42students/exam/`.
+
+The current qualifying-exam profile catalog (`ExamConfig` / `QualifyingExamConfigUtil`) is a different product concept and must not be used as a target for this historical approver-card file.
+
+Therefore the 11 `approver_id_card` fields have source disposition **RETIRED_WITH_LEGACY_PROCTORED_EXAM_MODULE_ON_2026-08-28**. No vNext table should be created for them unless product explicitly reintroduces that retired exam subsystem.
 
 ## DB-007 disposition impact
 
