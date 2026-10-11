@@ -10,13 +10,13 @@
   "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB024_GENERAL_OUTBOX_STAGED_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB024_GENERAL_OUTBOX_HARDENED_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "443f7d5c7245c64fb46a1d960311da67f2cd1b36",
-    "lastWorkerMergedSha": "a33d10c014847f4e75f9601fd2a28c0f69bc8b02",
+    "observedMainSha": "50f004358cc2004286fd22380af5dd9a6a3bc3a5",
+    "lastWorkerMergedSha": "bc71648077a9ca4e8a06b680438ef208410b3618",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-024 COMPLETED SOURCE/STAGING: all 13 V161 notification_outbox fields mapped with APP/EMAIL/SMS intents, 30s undo, typed recipient and tenant guard, digest local date, atomic claim/fencing/idempotency and fail-closed DB09 recruiter grant candidate. Drizzle+SQL+contract+six authored Node guard definitions on main; 56 in-process source checks PASS, 0 Node/PG execution. GitHub Actions billing never a blocker."
+    "summary": "DB-024 remains COMPLETED/unverified. Newest staged artifacts add source-event FK/scope, matching learner/faculty membership-role guard, logical source-event idempotency, retained claim audit and safe legacy failure detail; 14/14 connector source consistency checks PASS, 0 Node/PG execution."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -52,7 +52,7 @@
     "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
     "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified."
   ],
-  "nextAction": "Review fresh DATABASE queue and peer handoffs; Chat 1 owns migration for DB-024 and Chat 3 owns dependent DB09 field disposition. Choose unclaimed non-overlapping DB work or independent source verification; no CI billing wait, no phase promotion without real DB evidence.",
+  "nextAction": "Refresh DATABASE queue and claim the next eligible unowned task; if none, peer-review active blockers without stealing claims.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -68,7 +68,9 @@
     "https://github.com/42Students/lms-vnext/pull/55",
     "https://github.com/42Students/lms-vnext/commit/2aee7b66f5b949a3bedda7ba5e962a684bddcd00",
     "https://github.com/42Students/lms-vnext/commit/4bbb16b2cf2603764873e68cd061281de343bc85",
-    "https://github.com/42Students/lms-vnext/actions/runs/38085390907"
+    "https://github.com/42Students/lms-vnext/actions/runs/38085390907",
+    "https://github.com/42Students/lms-vnext/commit/bc71648077a9ca4e8a06b680438ef208410b3618",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6105897209"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
