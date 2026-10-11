@@ -7,19 +7,19 @@
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
   "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-057",
+  "activeTaskId": "DB-059",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB057_RECRUITER_READ_WATERMARK_STARTED",
+    "checkpointKind": "DB059_SECURE_SHARE_LIFECYCLE_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "5a01133cd0be6a6b00b6421c38906fa5b45db5d5",
-    "lastWorkerMergedSha": "5a01133cd0be6a6b00b6421c38906fa5b45db5d5",
+    "observedMainSha": "51c0e16674758a783c8f4b1a41d23984c57a9ed3",
+    "lastWorkerMergedSha": "51c0e16674758a783c8f4b1a41d23984c57a9ed3",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-057 active. Legacy recruiter notification read-through is a per-recruiter/per-college database-now watermark. Staged vNext currently validates grant scope only; direct SQL can set future/regressed watermark. Hardening staged trigger without migration/API changes."
+    "summary": "DB-057 completed source-only (5/5 connector source assertions). DB-059 active: legacy secure share link fixes disclosure/token/recipient/job/expiry at creation; only email-code rotation and one-way revocation mutate later. Staged vNext currently lacks that immutability."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -64,7 +64,7 @@
       "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "Make recruiter read marker identity immutable, reject future watermarks and regression, add exact source audit/regression, execute connector source assertions, then complete source-only task.",
+  "nextAction": "Stage share-link mutation guard, audit contract and static source regression; preserve email-code rotation/revocation while rejecting disclosure/token/identity rewrites and post-expiry/revocation code rotation.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -195,7 +195,8 @@
     "DB-047",
     "DB-050",
     "DB-056",
-    "DB-057"
+    "DB-057",
+    "DB-059"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -205,9 +206,10 @@
     "DB-042",
     "DB-047",
     "DB-050",
-    "DB-056"
+    "DB-056",
+    "DB-057"
   ],
-  "lastPickedAt": "2026-10-11T20:44:00+05:30",
+  "lastPickedAt": "2026-10-11T20:52:00+05:30",
   "lastCompletedAt": "2026-10-11T13:50:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
