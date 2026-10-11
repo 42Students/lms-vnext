@@ -61,13 +61,13 @@ function malformedSqlDollarDelimiters(sql) {
   ].map(match => ({ offset: match.index, fragment: match[0] }));
 }
 
-test("staged database function SQL rejects lone-dollar PL/pgSQL delimiters", () => {
-  const paths = ["docs/planning/sql", "scripts/sql"].flatMap(directory =>
+test("staged and registered database SQL rejects lone-dollar function delimiters", () => {
+  const paths = ["docs/planning/sql", "scripts/sql", "drizzle"].flatMap(directory =>
     fs.readdirSync(path.join(root, directory))
       .filter(filename => filename.endsWith(".sql"))
       .map(filename => path.join(directory, filename)),
   );
-  assert.ok(paths.length >= 100, "staged SQL inventory unexpectedly shrunk");
+  assert.ok(paths.length >= 150, "staged/registered SQL inventory unexpectedly shrunk");
   for (const filename of paths) {
     const src = fs.readFileSync(path.join(root, filename), "utf8");
     assert.deepEqual(malformedSqlDollarDelimiters(src), [], filename);
