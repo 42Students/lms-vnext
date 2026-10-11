@@ -494,10 +494,9 @@ export async function transitionLessonContent(
     .where(
       and(
         eq(lessonContents.id, contentId),
-        ne(
-          lessonContents.status,
-          "ARCHIVED",
-        ),
+        input.action === "PUBLISH"
+          ? eq(lessonContents.status, "DRAFT")
+          : ne(lessonContents.status, "ARCHIVED"),
       ),
     )
     .returning();
