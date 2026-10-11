@@ -619,6 +619,36 @@
       "policyApproved": false,
       "blocker": "resolveCollegeUsage count(*) across all domains and old archive guard would permanently block archive after tombstone; active-only alternative requires explicit product approval and coupled API/DB cutover",
       "commit": "c03cb4164dd97db31b1c362c0898e491433737ef"
+    },
+    "db07TemplateVersionOwnerIntegrity": {
+      "task": "DB-068",
+      "status": "COMPLETED_SOURCE_NOT_DONE_VERIFIED",
+      "stagedSql": "docs/planning/sql/db07-template-version-parent-integrity-staging.sql",
+      "sourceContract": "docs/planning/db07-template-version-integrity-contract.md",
+      "sourceEvidence": "docs/planning/db07-chat02-template-version-source-evidence.json",
+      "authoredNodeTests": 16,
+      "authoredPgTests": 8,
+      "sourceChecksExecuted": 30,
+      "sourceChecksPassed": 30,
+      "nodeRunnerExecuted": 0,
+      "postgresExecuted": 0,
+      "migrationRegistered": false,
+      "evidenceCommitSha": "5c71edb1e91dd4f86d30a70bc9ef6dc1bb2b385e"
+    },
+    "db07TemplateVersionAppendOnly": {
+      "task": "DB-070",
+      "status": "COMPLETED_SOURCE_NOT_DONE_VERIFIED",
+      "stagedSql": "docs/planning/sql/db07-template-version-append-only-staging.sql",
+      "sourceContract": "docs/planning/db07-template-version-append-only-contract.md",
+      "sourceEvidence": "docs/planning/db07-chat02-template-version-append-only-source-evidence.json",
+      "authoredNodeTests": 14,
+      "authoredPgTests": 8,
+      "sourceChecksExecuted": 26,
+      "sourceChecksPassed": 26,
+      "nodeRunnerExecuted": 0,
+      "postgresExecuted": 0,
+      "migrationRegistered": false,
+      "evidenceCommitSha": "f8afd44ed8b6835e72ed84748e06dc4492475ace"
     }
   },
   "qualityGates": {
@@ -679,7 +709,11 @@
     "tests/db01-identity-security-settings-contract.test.mjs",
     "tests/db01-auth-78-source-crosswalk.test.mjs",
     "tests/db01-ended-membership-role-race-source.test.mjs",
-    "tests/integration/db01-membership-role-parent-lock.test.ts"
+    "tests/integration/db01-membership-role-parent-lock.test.ts",
+    "tests/db07-template-version-parent-integrity-source.test.mjs",
+    "tests/integration/db07-template-version-parent-integrity.test.ts",
+    "tests/db07-template-version-append-only-source.test.mjs",
+    "tests/integration/db07-template-version-append-only.test.ts"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)",
@@ -707,7 +741,7 @@
       "request": "User-authorized resumed database identity work; original Chat2 findings, commits, tests and pending policy decisions retained; Chat5 owns current source-only hardening."
     }
   ],
-  "nextAction": "DB004 transferred to Chat5 by user for current single-worker session; Chat2 lane AVAILABLE.",
+  "nextAction": "Chat2 DB-068 and DB-070 source implementation completed, not verified. Chat 1 integrates DB07 template owner composite FKs + append-only revision trigger; then run 30 standalone Node and 16 opt-in PostgreSQL witnesses. Continue global DATABASE work only; DB004 transferred to Chat5.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -814,20 +848,29 @@
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-membership-parent-lock-source-evidence.json",
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6110532364",
     "https://github.com/42Students/lms-vnext/commit/3111fb89575e8bf939263b15c0d0b0aa61fa2622",
-    "https://github.com/42Students/lms-vnext/commit/b450951878901b52247d0e7c7bbe1a26a85b420e"
+    "https://github.com/42Students/lms-vnext/commit/b450951878901b52247d0e7c7bbe1a26a85b420e",
+    "https://github.com/42Students/lms-vnext/commit/5c71edb1e91dd4f86d30a70bc9ef6dc1bb2b385e",
+    "https://github.com/42Students/lms-vnext/commit/f8afd44ed8b6835e72ed84748e06dc4492475ace"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
     "DB-004",
-    "DB-067"
+    "DB-067",
+    "DB-068",
+    "DB-070"
   ],
   "completedTaskIds": [
-    "DB-067"
+    "DB-067",
+    "DB-068",
+    "DB-070"
   ],
   "lastPickedAt": "2026-10-10T20:26:41.998Z",
-  "lastCompletedAt": null,
+  "lastCompletedAt": "2026-10-11T21:10:35.301Z",
   "verifiedTaskIds": [],
-  "awaitingVerificationTaskIds": [],
+  "awaitingVerificationTaskIds": [
+    "DB-068",
+    "DB-070"
+  ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
     "completedTaskIds": "Unique task IDs for which this chat finished committed implementation (completedBy proof). Not automatically verified.",
