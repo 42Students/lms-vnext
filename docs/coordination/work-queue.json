@@ -4213,14 +4213,14 @@
         "tests/db07-template-version-append-only-source.test.mjs",
         "tests/integration/db07-template-version-append-only.test.ts"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 2,
       "pickedAt": "2026-10-11T21:07:02.420Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T21:07:16.163Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -4242,6 +4242,11 @@
           "status": "PICKED",
           "at": "2026-10-11T21:07:02.420Z",
           "reason": "Chat 2 claims independent project-version history integrity after DB068 source completion."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T21:07:16.163Z",
+          "reason": "Stage DB07 revision append-only SQL, direct PostgreSQL negative cases, and Node source checks."
         }
       ]
     }
