@@ -251,7 +251,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "952e197d7f2945facec2cb928f2e951bcb9d9191",
+      "latestEvidenceSha": "9e46023437bd1c6cd851c7e62e686833d874566c",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -286,7 +286,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 125/125 source/target disposition completed (0 runtime verified). Chat 4 additionally staged isolated parent-college, cohort/section/enrollment, LEARNER/FACULTY role and historical reparent locking guards with 10 authored static contract cases; 12/12 tool-executed source checks pass. All SQL unregistered; PostgreSQL replay/concurrency/tenant acceptance not executed. See DB02 updated contract and #24."
+      "progressNote": "DB02 source and target design disposition is complete 125/125. Canonical staging and the parent/enrollment extension are deconflicted (25/25 + 7/7 paired PL/pgSQL functions; zero trigger-name overlap). Single-session rollback acceptance now covers tenant owners, period/window scope, learner enrollment/history, faculty lifecycle, delivery/schedule scope and rooms; two-session harness covers promotion CAS, both hall booking/archive lock orders, and both section reparent/history lock orders. All SQL remains unregistered/unexecuted: PostgreSQL tests=0, runtime-equivalence verified fields=0. Chat 1 must consolidate/register and run disposable PostgreSQL gates; DB-005 stays IN_PROGRESS."
     },
     {
       "id": "DB-006",
