@@ -263,6 +263,31 @@
       "postgresTest": "tests/db01-auth-attempt-lifecycle-pg.test.mjs",
       "acceptance": "docs/planning/db01-auth-attempt-monotonic-contract.md",
       "executedTests": 0
+    },
+    {
+      "id": "DB01-DOMAIN-ARCHIVE-TOMBSTONE-CONSISTENCY",
+      "feature": "Avoid permanent college-archive deadlock when deleted hostnames are retained for audit",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/tenant-domains.ts",
+      "stagingSql": "docs/planning/sql/db01-college-archive-tombstone-consistency-staging.sql",
+      "dependencies": [
+        "DB01-DOMAIN-TOMBSTONE",
+        "DB01-DOMAIN-TOMBSTONE-STATE"
+      ],
+      "relatedStagedSql": "docs/planning/sql/db01-college-membership-domain-archive-guard-staging.sql",
+      "status": "ALTERNATIVE_STAGED_AWAITING_EXPLICIT_POLICY_APPROVAL",
+      "decision": "Recommend archive usage count only nondeleted domains, not tombstones. This changes an unregistered guard and MUST align with API resolveCollegeUsage and deleteDomain cutover; decision approval and real PG regression mandatory.",
+      "sourceTest": "tests/db01-domain-tombstone-archive-policy-source.test.mjs",
+      "contract": "docs/planning/db01-domain-tombstone-archive-policy-decision.md",
+      "executedPostgresTests": 0,
+      "tests": [
+        "active verified or unverified host denies archive",
+        "all-only-tombstone domain counts permit archive if other usage empty",
+        "SUSPENDED/ACTIVE memberships still deny archive",
+        "ENDED membership remains historical",
+        "existing all-time hostname uniqueness remains",
+        "archive/host-create two-session parent lock safety"
+      ]
     }
   ],
   "deprecatedAlternatives": [
@@ -291,7 +316,8 @@
     "otpMonotonicStatePgVerified": false,
     "otpProviderReplacementVerified": false,
     "handoffLifecyclePgVerified": false,
-    "domainTombstoneRacePgVerified": false
+    "domainTombstoneRacePgVerified": false,
+    "domainTombstoneArchiveUsagePolicyApproved": false
   },
   "promotionChecklist": [
     "Chat 1 review active legacy source semantic contracts and approve redesign/retirements field by field.",
@@ -304,7 +330,8 @@
     "Only after all implementation and executed acceptance update DB-004 to COMPLETED then DONE_VERIFIED; no worker may advance the shared phase alone.",
     "If and only if DB-backed auth is chosen, apply OTP table five-minute TTL/consumed check and OLD/NEW monotonic trigger together; run separate 5th-retry concurrency and terminal-row negative tests, never silently substitute static proof for PostgreSQL.",
     "If DB-backed handoffs are approved, register db01-auth-handoff-lifecycle-guard-staging.sql with its table and execute the opt-in two-client PostgreSQL witness; conditional consume alone is insufficient against direct SQL rearm or expiry-edge races.",
-    "Tombstone activation must atomically replace repository hard DELETE with update clearing is_primary and verification_token, filter every host path on deleted_at IS NULL, register the immutability/no-hard-delete trigger with deleted_at columns and run both two-client deletion-versus-DNS race orders."
+    "Tombstone activation must atomically replace repository hard DELETE with update clearing is_primary and verification_token, filter every host path on deleted_at IS NULL, register the immutability/no-hard-delete trigger with deleted_at columns and run both two-client deletion-versus-DNS race orders.",
+    "Resolve policy conflict: all-row domain usage causes college archive deadlock after tombstoning. Approve active-only counts in BOTH college service and DB01 archive guard, or explicitly accept permanent archive denial and retention implications. Do not activate tombstone guard alone."
   ],
   "crossRowInvariantCandidates": [
     {
