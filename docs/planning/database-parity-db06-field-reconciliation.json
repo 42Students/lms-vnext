@@ -1292,11 +1292,11 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
           "targetRef": "course_quizzes.shuffle_questions",
-          "reason": "Actively written and read by legacy QuizServiceImpl; missing in vNext schema.",
+          "reason": "Active legacy quiz presentation flag; DB-041 stages a non-null boolean with false default. API learner-specific deterministic shuffle behavior remains later-phase cutover.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-quiz-shuffle-parity-candidate.sql + docs/planning/database-parity-db06-quiz-shuffle-contract.md + pinned Quiz.java/QuizServiceImpl@prod-2026"
         },
         {
           "legacyField": "shuffle_options",
@@ -1304,11 +1304,11 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
           "targetRef": "course_quizzes.shuffle_options",
-          "reason": "Actively written and read by legacy QuizServiceImpl; missing in vNext schema.",
+          "reason": "Active legacy quiz presentation flag; DB-041 stages a non-null boolean with false default. API learner-specific deterministic shuffle behavior remains later-phase cutover.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-quiz-shuffle-parity-candidate.sql + docs/planning/database-parity-db06-quiz-shuffle-contract.md + pinned Quiz.java/QuizServiceImpl@prod-2026"
         }
       ]
     },
