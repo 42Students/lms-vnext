@@ -209,10 +209,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "32eec78a241b782048535fe94d1833ef53f9640c",
+      "latestEvidenceSha": "a23c300bf5c967de909efe0e05ac538f6976cb27",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "DB-004 IN_PROGRESS: 312/312 source dispositions (not DB verified); 0 vNext runtime-semantic verified fields. Staged unregistered membership suspend and org/college + DB01 college/membership/domain race guards plus device/OTP/handoff and domain tombstone candidates. New 4 two-session PG schedules authored but NOT executed; no numbered migration or full-schema PG replay. CI billing intentionally irrelevant.",
+      "completionNote": "DB-004 IN_PROGRESS: 312/312 candidate source dispositions, 0 runtime-semantic verified. Current staging includes identity OTP/time/retry/session/handoff, state guards, hostname and organization/college archival concurrency. P0 security crosswalk draft covers 38 fields; 3 source-evidence gaps. All stages UNREGISTERED and PostgreSQL/provider acceptance not executed. GitHub Actions billing intentionally not a blocker.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
@@ -244,7 +244,7 @@
           "reason": "Chat 2 now auditing DB01 source semantics."
         }
       ],
-      "progressNote": "Chat 2 directly committed DB01 college archive vs membership/domain two-way row-lock draft, synthetic-schema PG witness (4 two-connection schedules) and 13 source/mutation tests. Verified 16/16 in-process GitHub-source assertions only; Node test execution 0 THIS BATCH; PG tests 0; migration registration 0. Other 7 usage families, org/college race and domain-tombstone rules need cross-domain review. Global DATABASE remains active; DB-004 0 runtime-semantic verified fields."
+      "progressNote": "Chat 2 committed unregistered DB01 five-minute OTP attempt lifecycle checks and monotonic OLD/NEW guard; 14 source/mutation Node tests authored plus one disposable PostgreSQL fifth-retry contention/anti-replay suite. 24/24 previous in-process source assertions passed (no actual Node/PG run); provider-only vs DB-backed approach undecided, no migration registered. 38 exact P0 auth/security no-target rows now have explicit policy crosswalk (DB01=33, DB04=2, DB09=3); 3 rows lack named current producer evidence; zero runtime/provider verified and zero approved retirements."
     },
     {
       "id": "DB-005",
