@@ -73,6 +73,12 @@ LANGUAGE sql STABLE AS $$
   );
 $$;
 
+-- IMPORTANT: this helper mirrors canonical placements.manage. A row in
+-- placement_tpo_team_members is NOT a substitute for a persisted TPO or
+-- COLLEGE_ADMIN membership role. In particular, FACULTY_COORDINATOR is
+-- department-scoped in the legacy product and must never satisfy a
+-- college-wide database principal check. Future coordinator workflows need
+-- operation-specific department/job guards rather than widening this helper.
 CREATE FUNCTION db09_has_active_tpo_actor(
   p_user_id uuid,
   p_college_id uuid
@@ -88,20 +94,11 @@ LANGUAGE sql STABLE AS $$
        AND m.status = 'ACTIVE'
        AND u.platform_status = 'ACTIVE'
        AND c.status = 'ACTIVE'
-       AND (
-         EXISTS (
-           SELECT 1
-             FROM membership_roles r
-            WHERE r.membership_id = m.id
-              AND r.role IN ('TPO','COLLEGE_ADMIN')
-         )
-         OR EXISTS (
-           SELECT 1
-             FROM placement_tpo_team_members tm
-            WHERE tm.membership_id = m.id
-              AND tm.college_id = p_college_id
-              AND tm.role IN ('TPO_ADMIN','FACULTY_COORDINATOR')
-         )
+       AND EXISTS (
+         SELECT 1
+           FROM membership_roles r
+          WHERE r.membership_id = m.id
+            AND r.role IN ('TPO','COLLEGE_ADMIN')
        )
   );
 $$;
@@ -412,7 +409,8 @@ CREATE TRIGGER db09_share_event_immutable
 -- 15. Share creators, TPO preferences/views, student-note authors and team
 --     members require active same-college principals; team rows require a
 --     current staff membership role.
--- 16. TPO-authored collaboration rows require TPO/COLLEGE_ADMIN role or an
---     explicit placement_tpo_team_members role; ordinary LEARNER membership
---     alone cannot satisfy the DB principal check. Student-note subjects must
+-- 16. College-wide TPO-authored collaboration rows require a persisted
+--     TPO/COLLEGE_ADMIN membership role. placement_tpo_team_members (including
+--     FACULTY_COORDINATOR) does not widen this authority; coordinator workflows
+--     require separate department/job-scoped guards. Student-note subjects
 --     themselves carry an ACTIVE LEARNER membership role.
