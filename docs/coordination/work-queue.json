@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T19:47:56.682Z",
+  "updatedOn": "2026-10-11T19:50:23.621Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -213,7 +213,7 @@
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": "DB-004 IN_PROGRESS: DB01 312 source candidates dispositioned only, no accepted runtime semantics. Direct-main locking and canonical ownership guard for membership role mutation landed; 18 authored Node and 8 authored PG cases, none executed. Staged DB01 auth/tenant changes remain unregistered; Chat 1 migration owner. DATABASE phase active.",
-      "pickedBy": 2,
+      "pickedBy": 5,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
       "completedBy": null,
@@ -242,9 +242,22 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-10T20:27:16.242Z",
           "reason": "Chat 2 now auditing DB01 source semantics."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T19:50:23.621Z",
+          "reason": "CAS reassignment Chat2→Chat5 under explicit user takeover; partial DB004 source hardening continues, no forged completion."
         }
       ],
-      "progressNote": "Chat 2 DB-004 direct-main critical DB/tenant correctness patch: people/repository.ts grant/removal/onboarding now acquire parent college_memberships FOR UPDATE and recheck status plus exact canonical userId/collegeId before roles. Commits 2194420 and e7bab10. Authored 18 Node source guards and 8 real-repository PostgreSQL integration tests incl concurrent END/grant, last-role removal, stale user/college and onboarding rollback. Ran 22/22 in-process GitHub exact-blob static checks and recorded ff461cb7 evidence; Node/Vitest/PG/typecheck NOT executed. CI Actions disabled billing not engineering blocker. DB01 312/312 source triage, 38 P0 dispositions source-only, 0 vNext runtime fields verified.\nChat 2 tombstone/archive active-domain conflict: confirmed legacy current vNext college usage counts every persisted hostname, so preserving DNS history as deleted_at creates permanent archive deadlock. Prepared explicit policy decision and active-only staged replacement preserving non-ENDED membership and all-time host uniqueness; 12 Node tests authored, 29/29 connector in-process source assertions PASS, 0 Node/PG executed, approval FALSE. Evidence docs/planning/db01-chat02-domain-tombstone-archive-conflict-source-evidence.json.\nChat 2 role-lock source hardening final current batch: direct-main role grant/remove/onboarding row locks revalidate user/college and status (2194420,e7bab10); source guards 18 authored Node and 10 real repo PG cases (9b1c0ac), connector exact-source 38/38 assertions passed (3111fb8), Node/Vitest/typecheck/PG not run. Preserve concurrent tombstone/archive findings and zero runtime verification.\nChat 2 code lock batch final sync: parent-row F/U + user/college check for grant/removal/onboarding on main (2194420,e7bab10); 19 authored Node, 10 real repository PG cases incl locked END race, suspended onboarding, direct SQL college rebind. PG runner fail-close on non-_test URL; exact GitHub blob V8 assertions 38/38 pass, no actual Node/Postgres/typecheck. Evidence b450951. Other Chat2 tombstone archive work preserved."
+      "progressNote": "Chat 2 DB-004 direct-main critical DB/tenant correctness patch: people/repository.ts grant/removal/onboarding now acquire parent college_memberships FOR UPDATE and recheck status plus exact canonical userId/collegeId before roles. Commits 2194420 and e7bab10. Authored 18 Node source guards and 8 real-repository PostgreSQL integration tests incl concurrent END/grant, last-role removal, stale user/college and onboarding rollback. Ran 22/22 in-process GitHub exact-blob static checks and recorded ff461cb7 evidence; Node/Vitest/PG/typecheck NOT executed. CI Actions disabled billing not engineering blocker. DB01 312/312 source triage, 38 P0 dispositions source-only, 0 vNext runtime fields verified.\nChat 2 tombstone/archive active-domain conflict: confirmed legacy current vNext college usage counts every persisted hostname, so preserving DNS history as deleted_at creates permanent archive deadlock. Prepared explicit policy decision and active-only staged replacement preserving non-ENDED membership and all-time host uniqueness; 12 Node tests authored, 29/29 connector in-process source assertions PASS, 0 Node/PG executed, approval FALSE. Evidence docs/planning/db01-chat02-domain-tombstone-archive-conflict-source-evidence.json.\nChat 2 role-lock source hardening final current batch: direct-main role grant/remove/onboarding row locks revalidate user/college and status (2194420,e7bab10); source guards 18 authored Node and 10 real repo PG cases (9b1c0ac), connector exact-source 38/38 assertions passed (3111fb8), Node/Vitest/typecheck/PG not run. Preserve concurrent tombstone/archive findings and zero runtime verification.\nChat 2 code lock batch final sync: parent-row F/U + user/college check for grant/removal/onboarding on main (2194420,e7bab10); 19 authored Node, 10 real repository PG cases incl locked END race, suspended onboarding, direct SQL college rebind. PG runner fail-close on non-_test URL; exact GitHub blob V8 assertions 38/38 pass, no actual Node/Postgres/typecheck. Evidence b450951. Other Chat2 tombstone archive work preserved.",
+      "takeoverHistory": [
+        {
+          "fromChat": 2,
+          "toChat": 5,
+          "at": "2026-10-11T19:50:23.621Z",
+          "reason": "User confirms other chats not active and explicitly directs current worker to pick remaining DATABASE tasks; original Chat2 implementation and evidence preserved."
+        }
+      ]
     },
     {
       "id": "DB-005",
