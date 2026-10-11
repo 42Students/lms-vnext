@@ -452,11 +452,11 @@
     {
       "id": "P5-R01",
       "domain": "PLACEMENTS",
-      "state": "SOURCE_CONFIRMED_GAP",
+      "state": "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION",
       "purpose": "Application must not commit after paid-module or inherited placement eligibility is revoked between precheck and insert",
-      "source": "src/modules/placements/application-service.ts",
-      "currentProtection": "Job and role rows are re-locked in the write transaction, but requireLearnerPlacementAccess/evaluatePlacementEligibility run before it and their snapshot is inserted without an in-transaction recheck.",
-      "requiredWitness": "Coordinate two PostgreSQL transactions so T1 passes learner participation/eligibility, T2 disables the module or changes effective eligibility and commits, then T1 attempts insert. T1 must fail or re-evaluate under a lock/version that orders with the writer.",
+      "source": "src/modules/placements/application-service.ts; src/modules/placements/eligibility-service.ts; tests/integration/db18-placement-race-gap.test.ts",
+      "currentProtection": "DB-054 locks the live job, learner membership/academic chain and existing access/eligibility inputs in the application transaction, re-evaluates eligibility after ordering locks, persists only the live result, and aligns policy/override/evidence writers on job/membership locks. Runtime race proof is still NOT_RUN.",
+      "requiredWitness": "Run the deterministic DB18 P5-R01 witness: a paid-module writer acquires the rule/membership ordering locks first, disables placements, then releases the application. The application must reject and persist zero placement_applications.",
       "executionEvidence": "NOT_RUN"
     },
     {
@@ -687,12 +687,13 @@
     "kind": "SOURCE_AUDITED_CONCURRENCY_AND_STATE_TRANSITION_WITNESSES_NOT_EXECUTED",
     "totalScenarios": 23,
     "stateCounts": {
-      "SOURCE_CONFIRMED_GAP": 4,
+      "SOURCE_CONFIRMED_GAP": 3,
       "SOURCE_PROTECTED_NEEDS_EXECUTION": 13,
       "SOURCE_PROTECTED_DRAFT_UNMIGRATED": 3,
       "PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP": 1,
       "DRAFT_UNIMPLEMENTED": 1,
-      "SOURCE_POLICY_UNDECIDED": 1
+      "SOURCE_POLICY_UNDECIDED": 1,
+      "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION": 1
     },
     "runtimeVerified": 0,
     "blockingGaps": [
