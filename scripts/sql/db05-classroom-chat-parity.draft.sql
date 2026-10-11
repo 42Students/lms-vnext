@@ -38,6 +38,10 @@ BEGIN;
 -- course->department, offering->academic period, section->academic period,
 -- AND exact offering/section cohort + academic period identity (same college
 -- by itself does NOT prove the learner's class belongs to the offering).
+-- The cohort's program department is another independently mutable college
+-- path; matching cohort ID alone does not validate its owning college.
+-- A shared DB05 transaction advisory key serializes cooperating child/ancestor
+-- writes under READ COMMITTED; upstream unguarded mutations are still OPEN.
 -- An INSERT trigger alone does not protect later upstream reparenting.
 CREATE OR REPLACE FUNCTION db05_class_chat_same_college_guard()
 RETURNS trigger
@@ -47,16 +51,28 @@ DECLARE
   course_college_id uuid;
   offering_college_id uuid;
   section_college_id uuid;
+  section_program_college_id uuid;
   offering_cohort_id uuid;
   offering_period_id uuid;
   section_cohort_id uuid;
   section_period_id uuid;
   sender_college_id uuid;
 BEGIN
+  IF current_setting('transaction_isolation') <> 'read committed' THEN
+    RAISE EXCEPTION 'DB05 classroom tenant write requires READ COMMITTED'
+      USING ERRCODE = '25001';
+  END IF;
+
+  -- Share the DB05 lesson-content/delivery/ordering ancestry lock; no
+  -- row snapshots may be read before locking the cooperating scope graph.
+  PERFORM pg_advisory_xact_lock(605008003::bigint);
+
   SELECT dep.college_id, offering_period.college_id, section_period.college_id,
+         section_program_department.college_id,
          offering.cohort_id, offering.academic_period_id,
          section_row.cohort_id, section_row.academic_period_id
     INTO course_college_id, offering_college_id, section_college_id,
+         section_program_college_id,
          offering_cohort_id, offering_period_id,
          section_cohort_id, section_period_id
   FROM course_section_deliveries delivery
@@ -66,6 +82,10 @@ BEGIN
   INNER JOIN academic_periods offering_period
     ON offering_period.id = offering.academic_period_id
   INNER JOIN sections section_row ON section_row.id = delivery.section_id
+  INNER JOIN cohorts section_cohort ON section_cohort.id = section_row.cohort_id
+  INNER JOIN programs section_program ON section_program.id = section_cohort.program_id
+  INNER JOIN departments section_program_department
+    ON section_program_department.id = section_program.department_id
   INNER JOIN academic_periods section_period
     ON section_period.id = section_row.academic_period_id
   WHERE delivery.id = NEW.delivery_id;
@@ -75,13 +95,15 @@ BEGIN
   WHERE membership.id = NEW.sender_membership_id;
 
   IF course_college_id IS NULL OR offering_college_id IS NULL
-     OR section_college_id IS NULL OR sender_college_id IS NULL
+     OR section_college_id IS NULL OR section_program_college_id IS NULL
+     OR sender_college_id IS NULL
      OR course_college_id IS DISTINCT FROM offering_college_id
      OR course_college_id IS DISTINCT FROM section_college_id
+     OR course_college_id IS DISTINCT FROM section_program_college_id
      OR course_college_id IS DISTINCT FROM sender_college_id
      OR offering_cohort_id IS DISTINCT FROM section_cohort_id
      OR offering_period_id IS DISTINCT FROM section_period_id THEN
-    RAISE EXCEPTION 'classroom message violates college boundary'
+    RAISE EXCEPTION 'classroom message violates college/cohort/period boundary'
       USING ERRCODE = '23514';
   END IF;
 
@@ -106,7 +128,12 @@ COMMIT;
 --    and pin/delete paths reject or consistently handle deleted messages.
 -- D. Attempted author spoof, wrong-delivery post, wrong-class post, and
 --    forbidden moderation fail; public reads cannot expose deleted messages.
--- E. Upstream reassignment of offering, academic period, section, department,
---    course and membership cannot invalidate existing message tenant scope.
--- F. No duplicate/named trigger conflicts on clean journal replay; real
+-- E. Upstream reassignment of offering, academic period, section, cohort,
+--    program department, course and membership cannot invalidate existing
+--    message tenant scope. Shared lock only protects cooperating writers;
+--    an upstream guard on every mutable ancestor remains mandatory.
+-- F. READ COMMITTED writer participates in advisory key 605008003;
+--    other isolation levels reject SQLSTATE 25001. Two-session upstream
+--    reparent vs message INSERT/UPDATE must be tested for race/deadlock.
+-- G. No duplicate/named trigger conflicts on clean journal replay; real
 --    PostgreSQL tests, API tests and CI acceptance pass on an exact SHA.
