@@ -1040,13 +1040,13 @@
         "tests/integration/**",
         "tests/db-parity-pass5.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T19:37:00+05:30",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
@@ -1057,6 +1057,10 @@
         {
           "chatNumber": 1,
           "pickedAt": "2026-10-11T19:34:00+05:30"
+        },
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T19:37:00+05:30"
         }
       ],
       "statusHistory": [
@@ -1079,6 +1083,11 @@
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Released conflicting Chat 1 pickup after detecting active DB-048 in Chat 1 checkpoint; preserve pick history."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T19:37:00+05:30",
+          "reason": "Chat 5 available; independent DB018 source/test coverage in new isolated files; no active domain draft overlap."
         }
       ]
     },
