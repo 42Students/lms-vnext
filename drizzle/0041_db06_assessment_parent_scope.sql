@@ -102,11 +102,12 @@ BEGIN
     END IF;
   END IF;
 
-  SELECT lp.offering_id INTO lesson_offering
+  SELECT o.id INTO lesson_offering
     FROM course_lessons l
     JOIN course_learning_paths lp ON lp.id = l.learning_path_id
+    JOIN course_offerings o ON o.id = lp.offering_id
     WHERE l.id = NEW.lesson_id
-    FOR SHARE OF l, lp;
+    FOR SHARE OF l, lp, o;
   IF lesson_offering IS NULL THEN
     RAISE EXCEPTION 'Assessment lesson does not resolve to an offering'
       USING ERRCODE='23514';
@@ -194,13 +195,14 @@ DECLARE
   attempt_offering uuid;
   fixed_delivery uuid;
 BEGIN
-  SELECT lp.offering_id, q.delivery_id
+  SELECT o.id, q.delivery_id
     INTO source_offering, fixed_delivery
     FROM course_quizzes q
     JOIN course_lessons l ON l.id = q.lesson_id
     JOIN course_learning_paths lp ON lp.id = l.learning_path_id
+    JOIN course_offerings o ON o.id = lp.offering_id
     WHERE q.id = NEW.quiz_id
-    FOR SHARE OF q, l, lp;
+    FOR SHARE OF q, l, lp, o;
 
   SELECT d.offering_id INTO attempt_offering
     FROM course_section_deliveries d
@@ -236,13 +238,14 @@ DECLARE
   fixed_delivery uuid;
   max_points integer;
 BEGIN
-  SELECT lp.offering_id, a.delivery_id, a.max_points
+  SELECT o.id, a.delivery_id, a.max_points
     INTO source_offering, fixed_delivery, max_points
     FROM course_assignments a
     JOIN course_lessons l ON l.id = a.lesson_id
     JOIN course_learning_paths lp ON lp.id = l.learning_path_id
+    JOIN course_offerings o ON o.id = lp.offering_id
     WHERE a.id = NEW.assignment_id
-    FOR SHARE OF a, l, lp;
+    FOR SHARE OF a, l, lp, o;
 
   SELECT d.offering_id INTO submission_offering
     FROM course_section_deliveries d
