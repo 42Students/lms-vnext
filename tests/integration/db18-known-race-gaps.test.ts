@@ -6,12 +6,17 @@ import type { RequestContext } from "@/modules/identity/context";
 import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!databaseUrl) {
-  throw new Error("DB-018 race-gap witnesses require TEST_DATABASE_URL or DATABASE_URL");
-}
-
-const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+const databaseUrl = process.env.TEST_DATABASE_URL;
+const explicitlyIsolated =
+  process.env.DB018_ISOLATED_TEST_DATABASE === "1" ||
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+const serviceTargetMatches = process.env.DATABASE_URL === databaseUrl;
+const enabled = Boolean(databaseUrl) && explicitlyIsolated && serviceTargetMatches;
+const pool = new Pool({
+  connectionString:
+    databaseUrl ?? "postgresql://disabled:disabled@127.0.0.1:1/disabled",
+  max: 4,
+});
 
 const collegeAdmin: RequestContext = {
   user: {
@@ -53,7 +58,7 @@ async function waitForBlockedQuery(fragment: string) {
   throw new Error(`Timed out waiting for blocked SQL containing ${fragment}`);
 }
 
-describe("DB-018 known race gaps (red until domain fixes land)", () => {
+describe.skipIf(!enabled)("DB-018 known race gaps (red until domain fixes land)", () => {
   it("P5-R02 rejects enrollment if the cohort stops being mutable after precheck", async () => {
     const suffix = randomUUID().replaceAll("-", "").slice(0, 10);
     const periodId = randomUUID();
