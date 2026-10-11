@@ -129,3 +129,37 @@ test("missing journal migration causes explicit failure rather than green output
     assert.throws(()=>analyzeCheckout(root),/Registered migration missing/);
   }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
+
+test("canonical DB04 draft owns education, images and receipt checks once", () => {
+  const root=path.resolve(import.meta.dirname,"..");
+  const canonical=fs.readFileSync(path.join(root,
+    "docs/planning/db04-proposed-migration.sql"),"utf8");
+  const legacy=[
+    "docs/planning/sql/db04-education-media-candidate.sql",
+    "docs/planning/sql/db04-private-receipt-hardening-candidate.sql",
+  ];
+  const authoritative=inspect({path:"canonical",sql:canonical});
+  for(const table of [
+    "profile_private_document_receipts",
+    "learner_profile_education_entries",
+    "learner_profile_education_documents",
+    "learner_profile_images",
+  ]) assert.ok(authoritative.create.includes(table),
+    "Canonical DB04 is missing "+table);
+  for(const filename of legacy) {
+    const sql=fs.readFileSync(path.join(root,filename),"utf8");
+    const row=inspect({path:filename,sql});
+    assert.equal(row.state,"SUPERSEDED",filename);
+    assert.deepEqual(row.create,[],filename+" must not create competing tables");
+    assert.deepEqual(row.alter,[],filename+" must not add duplicate constraints");
+  }
+  for(const phrase of [
+    "profile_private_doc_id_owner_uq",
+    "profile_private_doc_key_ck",
+    "profile_private_doc_generation_ck",
+    "profile_private_doc_sha256_ck",
+    "profile_private_doc_mimetype_ck",
+    "learner_profile_education_documents_receipt_fk",
+    "learner_profile_images_receipt_fk",
+  ]) assert.ok(canonical.includes(phrase),"Canonical DB04 missing "+phrase);
+});
