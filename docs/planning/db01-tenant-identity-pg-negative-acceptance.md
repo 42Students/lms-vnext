@@ -7,7 +7,7 @@
 
 The three isolated PostgreSQL test files committed to main exercise constraints already present in
 `src/db/schema/{tenant-domains,users,memberships}.ts`; they neither introduce a
-new Drizzle migration nor alter any production API. They cover **32 authored PostgreSQL cases**.
+new Drizzle migration nor alter any production API. They cover **36 authored PostgreSQL cases**.
 
 - `tests/integration/db01-tenant-identity-invariants.test.ts`: **5 witnesses**:
   1. unverified primary tenant domain rejected by
@@ -56,6 +56,14 @@ new Drizzle migration nor alter any production API. They cover **32 authored Pos
   These are committed-positive/rejected-negative outcomes, not mere serial
   transaction rollback cases.
 
+- `tests/integration/db01-tenant-routing-lifecycle.test.ts`: **4 real
+  repository/SQL lifecycle witnesses**, with a temporary organization, college
+  and verified host: normalized host resolution; fail-closed college or parent
+  organization archival; unverified host rejection; and revocation of a
+  removed host. Require `DATABASE_URL === TEST_DATABASE_URL` because the
+  repository under test reads the application database pool. Cleanup is by
+  fixture UUID in FK order even on assertion failures.
+
 - `tests/unit/db01-tenant-domain-authorization.test.ts`: **14 authored unit
   regression cases**, covering suspended/ENDED membership, disabled actors,
   FACULTY/TPO non-admin permissions, foreign-college domain ownership,
@@ -79,7 +87,8 @@ npx vitest run --config vitest.db.config.ts \
   tests/integration/db01-tenant-identity-invariants.test.ts \
   tests/integration/db01-identity-fk-invariants.test.ts \
   tests/integration/db01-core-structure-invariants.test.ts \
-  tests/integration/db01-concurrent-integrity.test.ts
+  tests/integration/db01-concurrent-integrity.test.ts \
+  tests/integration/db01-tenant-routing-lifecycle.test.ts
 npx vitest run --config vitest.config.ts \
   tests/unit/db01-tenant-domain-authorization.test.ts
 ```
@@ -91,19 +100,20 @@ and failed negative-case diagnostics in acceptance evidence.
 **Safety dependency escalated to Chat 1:** `scripts/db-lib.ts` presently lets
 `requireDatabaseUrl("TEST_DATABASE_URL")` fall back to `DATABASE_URL`.
 Fix that shared helper before relying on test-preparation safety; Chat 2 does
-not own it. All three authored DB integration files require an explicit
+not own it. All five authored DB integration files require an explicit
 `TEST_DATABASE_URL` and do not fall back.
 
 ## Outside this bounded batch
 
-These 32 PostgreSQL witnesses and 14 permission unit cases are *not* a replacement for DB01 source-to-target mapping
+These 36 PostgreSQL witnesses and 14 permission unit cases are *not* a replacement for DB01 source-to-target mapping
 of the 312 candidates, managed-identity/provider proof, tenant-domain verified
 recheck and soft-delete lifecycles, cross-college recruiter grant expiry,
 OTP/handoff/session security, tenant branding bootstrap, or migration replay
 of staged DB01 tables. Nothing in this batch can certify the DATABASE phase.
 
-**Evidence status:** 32 PostgreSQL cases authored in four files (26 rollback-only,
-6 committed-winner concurrency tests with explicit cleanup),
+**Evidence status:** 36 PostgreSQL cases authored in five files (26 rollback-only,
+6 committed-winner concurrency tests and 4 real-repository lifecycle cases,
+all with explicit cleanup),
 with explicit TEST_DATABASE_URL; 14 permission unit cases authored. GitHub
 Actions is intentionally unused because of billing, not an engineering blocker.
 None of these newly authored tests was run in this worker environment;
