@@ -54,6 +54,8 @@ The source action names remain documented provenance; they are not copied blindl
 
 ### Publisher attribution is a hard requirement
 
+The publisher may differ from the original grader, so publisher attribution must come from the live request actor rather than `graded_by_user_id`.
+
 A database row-only auto-audit trigger is intentionally **not** used for grade history. Current `assignment_submissions.graded_by_user_id` identifies the grader. `publishAssignmentGrade` can be executed later by another authorized user, and the row does not persist that publisher.
 
 Therefore promotion requires `gradeAssignmentSubmission` and `publishAssignmentGrade` to insert the immutable event **inside the same transaction** using the live `RequestContext` actor.
