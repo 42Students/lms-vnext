@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_LEGACY_USER_REGISTRATION_PRIVILEGE_AND_SERIALIZATION_SOURCE_EXCEPTION",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "sourceOnly": true,
+  "observedLegacyCommit": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "exactBlobs": {
+    "lms/UserController.java": "8d0c9a3c59a66de2e5d627613eb5069f2ca6e3c3",
+    "lms/UserServiceImpl.java": "45e1c992e53be0c7e0f7cdd8f074ffc7fd2363ed",
+    "lms/User.java": "eba5c9607238c06d9cccae50cdfdac1c56d9f51c",
+    "lms-vnext/src/modules/people/service.ts": "ee588e802f58289f75b589deff5d23e4f2a2077b",
+    "lms-vnext/src/modules/permissions/policy.ts": "e98c69a4d9cb6fb4f70e8abeb27f05eacee306b6"
+  },
+  "summary": {
+    "inProcessSourceAssertionsExecuted": 14,
+    "inProcessSourceAssertionsPassed": 14,
+    "inProcessSourceAssertionsFailed": 0,
+    "actualNodeExecuted": 0,
+    "postgresExecuted": 0,
+    "apiResponseExecuted": 0,
+    "providerVerified": 0,
+    "runtimeSemanticFieldsVerified": 0
+  },
+  "checks": [
+    {
+      "name": "register endpoint exists",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "register forwards to service",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "register returns User entity",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "registration lacks method preauthorize",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "source assigns USER",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "source assigns ADMIN",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "ADMIN assignment not inside an active if",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "password field present",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "JsonIgnore commented out",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "User uses Lombok getter annotation",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "legacy save writes bcrypt",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "vNext has people permission",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "vNext role grant global different",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    },
+    {
+      "name": "vNext onboarding returns restricted projection",
+      "status": "PASS",
+      "classification": "CONNECTED_GITHUB_IN_PROCESS_SOURCE_ASSERTION"
+    }
+  ],
+  "risk": {
+    "legacyUnconditionalAdminAssignment": "Legacy save(UserDto) assigns USER and ADMIN to every saved user by unconditional Java path.",
+    "legacyRegistrationRoute": "Controller maps POST /register to userService.save without a method-level PreAuthorize; global security filter chain has NOT been verified.",
+    "legacyPasswordResponse": "Controller returns Response<User> holding entity; User.password lacks active JsonIgnore annotation; serialization leakage is plausible, NOT a captured HTTP response.",
+    "vnextPosition": "VNext onboardPerson calls requirePermission people.manage against active college, system-role.manage remains separately restricted; avoid copy of any of these legacy patterns."
+  },
+  "acceptanceNeeded": [
+    "Independently inspect exact legacy security filter configuration before claiming unauthenticated exploit.",
+    "Test vNext unauthorized self-registration, forged COLLEGE_ADMIN/SUPER_ADMIN roles, cross-tenant create/role mutation.",
+    "Assert every API result, audit event and log redacts password and bearer material.",
+    "Verify provider sign-in/recovery and role revocation against an actual runtime."
+  ]
+}
