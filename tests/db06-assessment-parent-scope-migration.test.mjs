@@ -78,6 +78,22 @@ test("DB06 same-offering and exact-delivery guards cover quiz and assignment his
   );
   assert.match(
     migration,
+    /offering_cohort IS DISTINCT FROM section_cohort/,
+  );
+  assert.match(
+    migration,
+    /offering_period IS DISTINCT FROM section_period/,
+  );
+  assert.match(
+    migration,
+    /offering_college IS DISTINCT FROM section_college/,
+  );
+  assert.match(
+    migration,
+    /Assessment delivery offering\/section scope mismatch/,
+  );
+  assert.match(
+    migration,
     /NEW\.points_awarded > max_points/,
   );
 });
