@@ -118,8 +118,8 @@ DB-029 stages:
 - `actor_type = USER | SYSTEM`;
 - USER requires a real actor id;
 - SYSTEM requires actor id null;
-- SYSTEM history is restricted to the expiry transition plus initial ISSUED
-  compatibility for a future importer.
+- SYSTEM history is restricted to the source-backed ISSUED → EXPIRED
+  scheduler transition.
 
 Never manufacture a user account for a scheduled transition.
 
