@@ -21,7 +21,7 @@ Current vNext adds stronger DRAFT / PUBLISHED / CLOSED / ARCHIVED states plus se
 
 ## Legacy UNPUBLISH parity
 
-Pinned legacy behavior actively exposes unpublishQuiz, changing PUBLISHED back to DRAFT. Current vNext quizTransitionSchema exposes only PUBLISH, CLOSE, and ARCHIVE.
+Pinned legacy behavior actively exposes unpublishQuiz, changing PUBLISHED back to DRAFT. Legacy createQuiz may also create directly as PUBLISHED when the request's publish flag is true. Current vNext quizTransitionSchema exposes only PUBLISH, CLOSE, and ARCHIVE, and current createCourseQuiz always starts DRAFT.
 
 DB-052 therefore treats PUBLISHED -> DRAFT as valid database action UNPUBLISH. This is source parity staging, not an API claim. The API phase must expose it or explicitly retire it with product approval.
 
@@ -99,11 +99,11 @@ This does not replace request authorization. It prevents a same-college but inel
 
 A DEFERRABLE INITIALLY DEFERRED trigger on course_quizzes requires the exact matching immutable event before COMMIT.
 
-A second deferred trigger on the event requires its version/new state/result visibility/delivery to equal the final persisted quiz row.
+A second deferred trigger on each event validates the committed version chain: an event may never be ahead of the final quiz version; nonzero versions must link to the exact previous event state/result snapshot; and the latest event must match the final persisted quiz row.
 
-For an existing quiz they allow row-first or event-first transition/event order in one transaction while rejecting missing events, orphan events, future/stale events, wrong versions, wrong audience, and fabricated transition shape. CREATE necessarily inserts the quiz row before its CREATE event because the event FK and actor/scope validation require the quiz row to exist.
+For an existing quiz this allows row-first or event-first transition/event order in one transaction while rejecting missing events, orphan/future events, broken chains, wrong versions, wrong audience, and fabricated transition shape. CREATE necessarily inserts the quiz row before its CREATE event because the event FK and actor/scope validation require the quiz row to exist.
 
-The target deliberately allows at most one lifecycle mutation per quiz per transaction. Current service operations already perform one lifecycle operation per request.
+Multiple ordered lifecycle mutations in one transaction are allowed when every intermediate event is present. This matters for legacy create-with-publish compatibility: a future API cutover can persist CREATE(DRAFT, version 0) followed by PUBLISH(version 1) atomically without losing either audit fact.
 
 ## Honest baseline
 
@@ -119,7 +119,7 @@ Do not register this candidate by itself.
 
 The compatible cutover must update:
 
-1. createCourseQuiz: create version 0 row plus CREATE event in the same transaction.
+1. createCourseQuiz: create version 0 DRAFT row plus CREATE event in the same transaction. If API parity later restores legacy create-with-publish, append the PUBLISH transition/event as version 1 in that same transaction rather than collapsing both facts into CREATE.
 2. transitionCourseQuiz: lock/read current row, update one status transition and insert the matching event; the database guard increments lifecycle_version.
 3. API validation: add UNPUBLISH unless product explicitly retires the pinned legacy operation.
 4. setCourseQuizResults: update result visibility and insert RESULTS_PUBLISH / RESULTS_UNPUBLISH using the actual actor; the database guard increments lifecycle_version.
@@ -128,6 +128,6 @@ No event may infer actor from created_by_user_id except CREATE.
 
 ## PostgreSQL acceptance before registration
 
-Required witnesses include baseline coverage; CREATE event completeness; creator matching; valid/invalid PUBLISH, UNPUBLISH, CLOSE and ARCHIVE transitions; due-time and question requirements; result publish/unpublish rules; version skip/reuse denial; metadata-only version denial; scope/creator identity freeze; generic Faculty denial; assigned delivery Faculty success; College Admin and Super Admin success; forged actor denial; missing/orphan event denial; tenant/delivery mismatch denial; event and quiz retention guards; and concurrent stale-transition rejection.
+Required witnesses include baseline coverage; CREATE event completeness; creator matching; CREATE(DRAFT)+PUBLISH ordered-chain behavior; valid/invalid PUBLISH, UNPUBLISH, CLOSE and ARCHIVE transitions; due-time and question requirements; result publish/unpublish rules; version skip/reuse denial; metadata-only version denial; scope/creator identity freeze; generic Faculty denial; assigned delivery Faculty success; College Admin and Super Admin success; forged actor denial; missing/orphan event denial; tenant/delivery mismatch denial; event and quiz retention guards; and concurrent stale-transition rejection.
 
 Until those execute on disposable PostgreSQL replay, DB-052 is source-complete at most and must not be DONE_VERIFIED.
