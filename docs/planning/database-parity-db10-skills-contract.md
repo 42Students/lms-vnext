@@ -39,3 +39,14 @@ No Node, TypeScript, PostgreSQL, CI or browser test was executed in this task; a
 ## Integrator handoff
 
 Chat 1 must add the three skill tables in dependency order (`skills`, `skill_synonyms`, `skill_usage`), preserve distinct counters and nonunique alias semantics, update the schema barrel and migration journal, then execute catalog/duplicate/synonym/usage race tests on disposable PostgreSQL. DB-019 independently dispositions all 15 historical fields. Do not mark any as runtime-verified based on source-only schema presence.
+
+
+## Independent review — whitespace and case-only usage keys (2026-10-11)
+
+**Source:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`, `src/main/java/com/_42students/lms/skills/SkillUsageTracker.java`, `recordUsage()`, `loadUsageCounts()` and `getUsageCount()`. The usage tracker checks `null`/`isEmpty()`, then `skillName.toLowerCase()` **without trimming**. This is separate from `SkillSearchService.searchSkills()`, whose user search query is trimmed. A leading/trailing space in a recorded name therefore remains part of the `skill_usage.skill_name` key. Two usage strings `"Java"` and `" Java"` are distinct under legacy usage-key normalization. The previous vNext staging comment suggested `lower(trim(:name))`, which would conflate their counters.
+
+**Correction:** The illustrative atomic INSERT guidance in `scripts/sql/db10-skills-catalog-staging.sql` now uses `lower(:name)` without `trim()`. This is an **unregistered SQL comment**, not a runtime writer. A corresponding source guard rejects reintroduction of `lower(trim(:name))` into that write pattern.
+
+**Whitespace-parity exception still pending product approval:** The staged PostgreSQL `db10_skill_usage_name_ck` rejects whitespace-only names via `length(btrim(skill_name)) > 0`, whereas the legacy code rejects only the *empty* string. For active parity, either (a) retain whitespace-only keys under a narrower not-empty check, or (b) explicitly approve tightened blank-value validation as a documented redesign. The choice is not silently approved by this review, and the DB-022 runtime gate stays open. Also validate JVM default-locale lowercasing versus PostgreSQL collation/case behavior for non-ASCII names before claiming exact semantic parity.
+
+**Executed checks:** The proposed key-normalization expression and guard were source-inspected; no PostgreSQL insert/concurrency tests or application consumer runs were executed here. Keep DB-022 as implemented/staged, **not DONE_VERIFIED**.
