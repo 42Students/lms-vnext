@@ -33,7 +33,7 @@ npm run db:reset
 ```
 
 - `db:migrate`: apply committed migrations
-- `db:seed`: idempotently apply deterministic development seed records
+- `db:seed`: idempotently apply deterministic development seed records **only after target authorization**
 - `db:reset`: drop disposable schemas, re-run migrations, and reseed
 
 Reset refuses PostgreSQL system databases and target-changing URL query parameters.
@@ -71,6 +71,34 @@ npm run db:reset
 ```
 
 The target confirmation is deliberately separate from the URL so accidentally exporting a valuable `DATABASE_URL` is not enough to authorize schema destruction.
+
+## Seed target safety (DB-055)
+
+The deterministic seed upserts fixed identity and SUPER_ADMIN fixture IDs. Merely
+having `DATABASE_URL` set is **not** consent to change a valuable database.
+`seedDatabase` validates the target **before opening any database connection**;
+it rejects malformed/redirectable URLs and system database names.
+
+- Local explicitly named test/E2E databases (`lms_vnext_test`, `lms_vnext_e2e`) can seed directly.
+- For other local direct seeds, set exact
+  `DB_SEED_CONFIRM=SEED:<host>:<port>/<database>`.
+- For remote direct seeds, require **both** `ALLOW_DB_SEED=true` and that
+  exact `DB_SEED_CONFIRM` token; never do this for production.
+- A deliberate reset followed by a seed can reuse its **exact**
+  `DB_RESET_CONFIRM=RESET:<host>:<port>/<database>`. Remote reset still
+  requires `ALLOW_DB_RESET=true`. Merely setting `ALLOW_DB_SEED` does not
+  authorize schema destruction.
+- Example local development seed:
+
+```bash
+DATABASE_URL='postgresql://postgres:postgres@localhost:5432/lms_vnext' \
+DB_SEED_CONFIRM='SEED:localhost:5432/lms_vnext' \
+npm run db:seed
+```
+
+Do not put credentials in confirmation strings, and do not seed shared/staging/
+production data. The CLI guard and library-level guard share the same
+`seedDatabase` enforcement; test/E2E and reset callers are also covered.
 
 ## Test database
 

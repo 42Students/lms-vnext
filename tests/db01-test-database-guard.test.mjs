@@ -552,3 +552,100 @@ test("DB51 explicit local test/E2E names remain on the frictionless branch", () 
     assert.match(name, /^(?:(?:test|e2e)_[a-z0-9_]+|[a-z0-9_]+_(?:test|e2e)(?:_[a-z0-9]+)*)$/i);
   }
 });
+
+
+test("DB55 deterministic seed checks authorization before constructing PostgreSQL Pool", () => {
+  const seedStart = dbLibSource.indexOf("export async function seedDatabase(databaseUrl: string)");
+  const body = dbLibSource.slice(seedStart);
+  assert.ok(seedStart >= 0);
+  const guard = body.indexOf("assertSeedAllowed(databaseUrl);");
+  const pool = body.indexOf("new Pool(");
+  assert.ok(guard >= 0 && pool > guard);
+  const guardStart = dbLibSource.indexOf("export function assertSeedAllowed(databaseUrl: string)");
+  assert.ok(guardStart >= 0);
+  const helper = dbLibSource.slice(guardStart, seedStart);
+  assert.match(helper, /DB_SEED_CONFIRM/);
+  assert.match(helper, /ALLOW_DB_SEED/);
+  assert.match(helper, /DB_RESET_CONFIRM/);
+  assert.match(helper, /assertResetAllowed\(databaseUrl\)/);
+  assert.match(helper, /resetTarget\(databaseUrl\)/);
+  assert.doesNotMatch(helper, /new Pool\(/);
+});
+
+test("DB55 direct local development seed refuses absent confirmation without connecting", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB55 process regression");
+  const secret = "sensitiveLocalSeedSecret";
+  const result = spawnSync(process.execPath, [tsx, "scripts/db-seed.ts"], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      DATABASE_URL: `postgresql://admin:${secret}@localhost:1/lms_vnext`,
+      DB_SEED_CONFIRM: "",
+      DB_RESET_CONFIRM: "",
+      ALLOW_DB_SEED: "",
+    },
+  });
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /DB_SEED_CONFIRM=SEED:localhost:1\/lms_vnext/);
+  assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
+});
+
+test("DB55 direct remote seed requires explicit opt-in even with exact SEED token", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB55 process regression");
+  const result = spawnSync(process.execPath, [tsx, "scripts/db-seed.ts"], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      DATABASE_URL: "postgresql://admin:hiddenRemoteSeed@pg.internal:5444/lms_vnext_test",
+      DB_SEED_CONFIRM: "SEED:pg.internal:5444/lms_vnext_test",
+      DB_RESET_CONFIRM: "",
+      ALLOW_DB_SEED: "",
+    },
+  });
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /ALLOW_DB_SEED=true/);
+  assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused|hiddenRemoteSeed/i);
+});
+
+test("DB55 local fake test target cannot redirect through host query parameter", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB55 process regression");
+  const result = spawnSync(process.execPath, [tsx, "scripts/db-seed.ts"], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      DATABASE_URL: "postgresql://admin:doNotPrint@localhost:1/lms_vnext_test?host=production.internal",
+      DB_SEED_CONFIRM: "",
+      DB_RESET_CONFIRM: "",
+    },
+  });
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /query parameter "host" may redirect the destructive target/);
+  assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused|doNotPrint/i);
+});
+
+test("DB55 reset-authorized seed still requires remote reset opt-in", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB55 process regression");
+  const result = spawnSync(process.execPath, [tsx, "scripts/db-seed.ts"], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      DATABASE_URL: "postgresql://admin:hiddenPassword@pg.internal:5444/lms_vnext_test",
+      DB_RESET_CONFIRM: "RESET:pg.internal:5444/lms_vnext_test",
+      DB_SEED_CONFIRM: "",
+      ALLOW_DB_RESET: "",
+      ALLOW_DB_SEED: "",
+    },
+  });
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /ALLOW_DB_RESET=true/);
+  assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused|hiddenPassword/i);
+});

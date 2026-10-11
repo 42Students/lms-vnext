@@ -154,6 +154,53 @@ export function assertResetAllowed(databaseUrl: string) {
   }
 }
 
+/**
+ * Seed writes deterministic IDs (including SUPER_ADMIN), so it must be
+ * authorized independently of migration and before opening a connection.
+ * Confirmations contain only host/port/database, never URL credentials.
+ */
+export function assertSeedAllowed(databaseUrl: string) {
+  const target = resetTarget(databaseUrl);
+  if (
+    ["postgres", "template0", "template1"].includes(
+      target.name.toLowerCase(),
+    )
+  ) {
+    throw new Error(
+      `Refusing to seed protected PostgreSQL database: ${target.name}`,
+    );
+  }
+
+  const localHosts = new Set([
+    "localhost", "127.0.0.1", "::1", "[::1]",
+  ]);
+  const isLocal = localHosts.has(target.host);
+  const isDisposable =
+    /^(?:(?:test|e2e)_[a-z0-9_]+|[a-z0-9_]+_(?:test|e2e)(?:_[a-z0-9]+)*)$/i.test(
+      target.name,
+    );
+  if (isLocal && isDisposable) return;
+
+  const targetLabel = `${target.host}:${target.port}/${target.name}`;
+  // A deliberate reset authorizes the seed immediately following it, but
+  // a remote reset still needs both its flag and exact confirmation.
+  if (process.env.DB_RESET_CONFIRM === `RESET:${targetLabel}`) {
+    assertResetAllowed(databaseUrl);
+    return;
+  }
+
+  if (!isLocal && process.env.ALLOW_DB_SEED !== "true") {
+    throw new Error(
+      "Refusing direct seed of non-local database. Set ALLOW_DB_SEED=true and provide exact DB_SEED_CONFIRM for an intentionally disposable target.",
+    );
+  }
+  if (process.env.DB_SEED_CONFIRM !== `SEED:${targetLabel}`) {
+    throw new Error(
+      `Refusing deterministic seed without exact DB_SEED_CONFIRM=SEED:${targetLabel}`,
+    );
+  }
+}
+
 export async function migrateDatabase(
   database: string | PoolConfig,
 ) {
@@ -407,6 +454,7 @@ async function upsertCoreSeed(client: PoolClient) {
 }
 
 export async function seedDatabase(databaseUrl: string) {
+  assertSeedAllowed(databaseUrl);
   const pool = new Pool({ connectionString: databaseUrl, max: 1 });
   const client = await pool.connect();
 
