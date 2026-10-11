@@ -43,6 +43,16 @@ DECLARE
   progression_term integer;
   event_count integer;
   ended_at_seen timestamptz;
+  period_start date := current_date - 30;
+  period_end date := current_date + 365;
+  slot_a_start timestamptz := date_trunc('day', now()) + interval '7 days 09 hours';
+  slot_a_end timestamptz := date_trunc('day', now()) + interval '7 days 10 hours';
+  slot_overlap_start timestamptz := date_trunc('day', now()) + interval '7 days 09 hours 30 minutes';
+  slot_overlap_end timestamptz := date_trunc('day', now()) + interval '7 days 10 hours 30 minutes';
+  slot_b_start timestamptz := date_trunc('day', now()) + interval '7 days 10 hours';
+  slot_b_end timestamptz := date_trunc('day', now()) + interval '7 days 11 hours';
+  slot_archived_start timestamptz := date_trunc('day', now()) + interval '8 days 09 hours';
+  slot_archived_end timestamptz := date_trunc('day', now()) + interval '8 days 10 hours';
   failed boolean;
 BEGIN
   -- -------------------------------------------------------------------------
@@ -70,11 +80,13 @@ BEGIN
   VALUES (dept_b, 'DB02 Program B', 'DB02-PB', 4) RETURNING id INTO program_b;
 
   INSERT INTO academic_periods(college_id, name, code, start_date, end_date, status)
-  VALUES (college_a, '2026 H2 A', 'DB02-A-2026-H2', DATE '2026-07-01', DATE '2026-12-31', 'ACTIVE')
+  VALUES (college_a, 'DB02 Acceptance Period A', 'DB02-A-' || substr(gen_random_uuid()::text,1,8),
+          period_start, period_end, 'ACTIVE')
   RETURNING id INTO period_a;
 
   INSERT INTO academic_periods(college_id, name, code, start_date, end_date, status)
-  VALUES (college_b, '2026 H2 B', 'DB02-B-2026-H2', DATE '2026-07-01', DATE '2026-12-31', 'ACTIVE')
+  VALUES (college_b, 'DB02 Acceptance Period B', 'DB02-B-' || substr(gen_random_uuid()::text,1,8),
+          period_start, period_end, 'ACTIVE')
   RETURNING id INTO period_b;
 
   INSERT INTO courses(department_id, name, code)
@@ -95,7 +107,7 @@ BEGIN
   INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status,
                       start_date, end_date)
   VALUES (program_a, 'DB02 Cohort A', 'DB02-CA', period_a, period_a, 'ACTIVE',
-          DATE '2026-07-01', DATE '2026-12-31')
+          period_start, period_end)
   RETURNING id INTO cohort_a;
 
   SELECT current_term_number, version
@@ -111,7 +123,7 @@ BEGIN
   INSERT INTO sections(cohort_id, academic_period_id, name, code, capacity,
                        minimum_capacity, description, start_date, end_date)
   VALUES (cohort_a, period_a, 'Section A', 'DB02-SEC-A', 60, 10,
-          'DB02 acceptance section', DATE '2026-07-01', DATE '2026-12-31')
+          'DB02 acceptance section', period_start, period_end)
   RETURNING id INTO section_a;
 
   INSERT INTO users(identity_uid, email, display_name)
@@ -376,8 +388,8 @@ BEGIN
       section_id, faculty_membership_id, lecture_hall_id, title, starts_at, ends_at
     ) VALUES (
       section_a, faculty_membership_b, hall_a, 'Cross tenant faculty',
-      timestamptz '2026-10-20 09:00:00+05:30',
-      timestamptz '2026-10-20 10:00:00+05:30'
+      slot_a_start,
+      slot_a_end
     );
   EXCEPTION WHEN check_violation THEN
     failed := true;
@@ -390,8 +402,8 @@ BEGIN
     section_id, faculty_membership_id, lecture_hall_id, title, starts_at, ends_at
   ) VALUES (
     section_a, faculty_membership_a, hall_a, 'DB02 Event A',
-    timestamptz '2026-10-20 09:00:00+05:30',
-    timestamptz '2026-10-20 10:00:00+05:30'
+    slot_a_start,
+    slot_a_end
   ) RETURNING id INTO event_a;
 
   failed := false;
@@ -400,8 +412,8 @@ BEGIN
       section_id, faculty_membership_id, lecture_hall_id, title, starts_at, ends_at
     ) VALUES (
       section_a, faculty_membership_a, hall_a, 'DB02 overlapping event',
-      timestamptz '2026-10-20 09:30:00+05:30',
-      timestamptz '2026-10-20 10:30:00+05:30'
+      slot_overlap_start,
+      slot_overlap_end
     );
   EXCEPTION WHEN exclusion_violation THEN
     failed := true;
@@ -415,8 +427,8 @@ BEGIN
     section_id, faculty_membership_id, lecture_hall_id, title, starts_at, ends_at
   ) VALUES (
     section_a, faculty_membership_a, hall_a, 'DB02 Event B',
-    timestamptz '2026-10-20 10:00:00+05:30',
-    timestamptz '2026-10-20 11:00:00+05:30'
+    slot_a_end,
+    slot_b_end
   ) RETURNING id INTO event_b;
 
   UPDATE section_schedule_events
@@ -428,8 +440,8 @@ BEGIN
     section_id, faculty_membership_id, lecture_hall_id, title, starts_at, ends_at
   ) VALUES (
     section_a, faculty_membership_a, hall_a, 'DB02 replacement event',
-    timestamptz '2026-10-20 09:00:00+05:30',
-    timestamptz '2026-10-20 10:00:00+05:30'
+    slot_a_start,
+    slot_a_end
   );
 
   failed := false;
@@ -456,8 +468,8 @@ BEGIN
       section_id, faculty_membership_id, lecture_hall_id, title, starts_at, ends_at
     ) VALUES (
       section_a, faculty_membership_a, hall_a, 'Archived hall booking',
-      timestamptz '2026-10-21 09:00:00+05:30',
-      timestamptz '2026-10-21 10:00:00+05:30'
+      slot_archived_start,
+      slot_archived_end
     );
   EXCEPTION WHEN foreign_key_violation OR check_violation THEN
     failed := true;
