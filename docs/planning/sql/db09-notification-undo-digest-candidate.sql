@@ -133,7 +133,7 @@ CREATE INDEX db09_notification_digest_idx
 -- Recipient identity is tenant-bearing state. A canonical user UUID alone is
 -- not enough to make a learner/faculty/recruiter recipient valid for a college.
 CREATE FUNCTION db09_assert_notification_recipient_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.recipient_kind = 'LEARNER' THEN
     IF NOT EXISTS (
@@ -172,14 +172,14 @@ BEGIN
     END IF;
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_notification_recipient_scope_guard
   BEFORE INSERT OR UPDATE OF college_id,recipient_user_id,recipient_kind
   ON placement_notification_intents
   FOR EACH ROW EXECUTE FUNCTION db09_assert_notification_recipient_scope();
 
 CREATE FUNCTION db09_assert_notification_undo_timing() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_deadline timestamptz;
   v_cancelled timestamptz;
@@ -213,7 +213,7 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_notification_undo_timing_guard
   BEFORE INSERT OR UPDATE OF
     organization_id,college_id,undo_group_id,status,send_after
@@ -224,7 +224,7 @@ CREATE TRIGGER db09_notification_undo_timing_guard
 -- beyond PENDING; callers cannot truthfully report a partial undo as success.
 CREATE FUNCTION db09_cancel_notification_undo_group(p_group_id uuid)
 RETURNS integer
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_group placement_notification_undo_groups%ROWTYPE;
   v_non_pending integer;
@@ -274,7 +274,7 @@ BEGIN
      AND status = 'PENDING';
   GET DIAGNOSTICS v_cancelled = ROW_COUNT;
   RETURN v_cancelled;
-END $;
+END $$;
 
 -- Canonical claim path for workers. Row locks + SKIP LOCKED serialize workers,
 -- while the timing trigger and group predicate make cancellation win before
@@ -284,7 +284,7 @@ CREATE FUNCTION db09_claim_notification_intents(
   p_claim_token uuid,
   p_lease_seconds integer
 ) RETURNS SETOF placement_notification_intents
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF p_limit < 1 OR p_limit > 1000 THEN
     RAISE EXCEPTION 'invalid notification claim batch size'
@@ -326,7 +326,7 @@ BEGIN
     FROM due
    WHERE i.id = due.id
   RETURNING i.*;
-END $;
+END $$;
 
 -- Atomic state transitions expected from the eventual trusted service:
 -- UNDO: db09_cancel_notification_undo_group locks group + member rows,
