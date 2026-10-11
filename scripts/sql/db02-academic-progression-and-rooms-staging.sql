@@ -248,7 +248,8 @@ BEGIN
   SELECT ap.college_id, ap.start_date, ap.status
     INTO start_college, start_day, start_status
     FROM academic_periods ap
-   WHERE ap.id = NEW.start_period_id;
+   WHERE ap.id = NEW.start_period_id
+   FOR SHARE OF ap;
 
   IF program_college IS NULL OR start_college IS NULL THEN
     RAISE EXCEPTION 'Unknown cohort program or start period'
@@ -269,7 +270,8 @@ BEGIN
     SELECT ap.college_id, ap.end_date
       INTO end_college, expected_end_day
       FROM academic_periods ap
-     WHERE ap.id = NEW.expected_end_period_id;
+     WHERE ap.id = NEW.expected_end_period_id
+     FOR SHARE OF ap;
 
     IF end_college IS NULL THEN
       RAISE EXCEPTION 'Unknown cohort expected end period'
@@ -319,7 +321,8 @@ BEGIN
   SELECT ap.college_id, ap.start_date, ap.end_date, ap.status
     INTO period_college, period_start_day, period_end_day, period_status
     FROM academic_periods ap
-   WHERE ap.id = NEW.academic_period_id;
+   WHERE ap.id = NEW.academic_period_id
+   FOR SHARE OF ap;
 
   IF cohort_college IS NULL OR period_college IS NULL THEN
     RAISE EXCEPTION 'Unknown section cohort or academic period'
@@ -455,7 +458,8 @@ BEGIN
   SELECT ap.start_date, ap.end_date, ap.status
     INTO period_start_day, period_end_day, period_status
     FROM academic_periods ap
-   WHERE ap.id = NEW.academic_period_id;
+   WHERE ap.id = NEW.academic_period_id
+   FOR SHARE OF ap;
 
   IF cohort_start_day IS NULL OR period_start_day IS NULL THEN
     RAISE EXCEPTION 'Unknown course offering cohort or academic period'
@@ -696,10 +700,11 @@ BEGIN
   END IF;
 
   IF NEW.current_period_id IS NOT NULL THEN
-    SELECT college_id, start_date, end_date, status
+    SELECT ap.college_id, ap.start_date, ap.end_date, ap.status
       INTO period_college, period_start_day, period_end_day, period_status
-      FROM academic_periods
-     WHERE id = NEW.current_period_id;
+      FROM academic_periods ap
+     WHERE ap.id = NEW.current_period_id
+     FOR SHARE OF ap;
     IF period_college IS NULL THEN
       RAISE EXCEPTION 'Unknown academic period' USING ERRCODE='23503';
     END IF;
@@ -1377,6 +1382,37 @@ $$;
 CREATE TRIGGER db02_academic_period_college_immutable
 BEFORE UPDATE OF college_id ON academic_periods
 FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
+
+-- Period dates may be edited while a PLANNED period is unused. Once academic state points
+-- at the period, changing its boundaries would reinterpret cohort/section/offering history.
+-- Child writers lock the period row before validation so this rule is race-safe.
+CREATE FUNCTION db02_guard_academic_period_date_history()
+RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+  IF NEW.start_date IS NOT DISTINCT FROM OLD.start_date
+     AND NEW.end_date IS NOT DISTINCT FROM OLD.end_date THEN
+    RETURN NEW;
+  END IF;
+
+  IF EXISTS (
+       SELECT 1 FROM cohorts
+        WHERE start_period_id = OLD.id OR expected_end_period_id = OLD.id
+     )
+     OR EXISTS (SELECT 1 FROM sections WHERE academic_period_id = OLD.id)
+     OR EXISTS (SELECT 1 FROM course_offerings WHERE academic_period_id = OLD.id)
+     OR EXISTS (SELECT 1 FROM cohort_progression_state WHERE current_period_id = OLD.id)
+  THEN
+    RAISE EXCEPTION 'Academic period dates cannot change after academic state references the period'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_academic_period_date_history_guard
+BEFORE UPDATE OF start_date, end_date ON academic_periods
+FOR EACH ROW EXECUTE FUNCTION db02_guard_academic_period_date_history();
 
 CREATE TRIGGER db02_membership_college_immutable
 BEFORE UPDATE OF college_id ON college_memberships
