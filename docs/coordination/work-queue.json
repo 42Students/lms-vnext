@@ -209,10 +209,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "35cbcbd65a2abdd9af0c7afb651a12d6a11c332b",
+      "latestEvidenceSha": "549e8e9d03416887f6b0758387abd953e9640a5f",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "DB004 STILL IN_PROGRESS: 312/312 legacy source dispositions, 0 VNext runtime semantic verified. Staged migrations unregistered; PostgreSQL negative/replay not run. Independent Node v22 byte-identical repo preflight guard 8/8 PASSED; W01 owns shared db-lib test-URL fallback fix. CI billing is not an engineering blocker.",
+      "completionNote": "DB004 IN_PROGRESS: 312/312 source dispositions, 0 VNext semantic fields verified. Main now contains direct-source membership suspension guard/evidence files (20 earlier local Node checks passed) and staged org/college archival race guard/source tests (10 in-process source assertions passed). No new numbered Drizzle migrations; no PostgreSQL replay, lock concurrency tests or provider acceptance. CI billing ignored as blocker.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
