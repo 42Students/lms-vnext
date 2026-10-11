@@ -50,3 +50,41 @@ test("the snapshot inventory is internally consistent", () => {
   assert.ok(total > 0);
   assert.equal(source.vnextDrizzleMigrationFilePaths.length, source.summaries.vnextDrizzleMigrationFiles);
 });
+
+// Cross-domain migration staging guard. PostgreSQL requires AS $$...$$
+// (or AS $tag$...$tag$). A JS string replacement once stripped a dollar
+// from four DB01/DB09 trigger bodies, which the source behavior tests missed.
+function malformedSqlDollarDelimiters(sql) {
+  return [
+    ...sql.matchAll(/\bAS\s+\$(?!\$|[A-Za-z_][A-Za-z_0-9]*\$)(?=\s|$)/gi),
+    ...sql.matchAll(/\bEND\s+\$(?!\$|[A-Za-z_][A-Za-z_0-9]*\$)\s*;/gi),
+  ].map(match => ({ offset: match.index, fragment: match[0] }));
+}
+
+test("staged database function SQL rejects lone-dollar PL/pgSQL delimiters", () => {
+  const paths = ["docs/planning/sql", "scripts/sql"].flatMap(directory =>
+    fs.readdirSync(path.join(root, directory))
+      .filter(filename => filename.endsWith(".sql"))
+      .map(filename => path.join(directory, filename)),
+  );
+  assert.ok(paths.length >= 100, "staged SQL inventory unexpectedly shrunk");
+  for (const filename of paths) {
+    const src = fs.readFileSync(path.join(root, filename), "utf8");
+    assert.deepEqual(malformedSqlDollarDelimiters(src), [], filename);
+  }
+});
+
+test("staged SQL delimiter detector rejects broken opener and closing quote", () => {
+  assert.equal(malformedSqlDollarDelimiters(
+    "CREATE FUNCTION f() RETURNS trigger LANGUAGE plpgsql AS $\nBEGIN RETURN NEW; END $$;",
+  ).length, 1);
+  assert.equal(malformedSqlDollarDelimiters(
+    "CREATE FUNCTION f() RETURNS trigger LANGUAGE plpgsql AS $$\nBEGIN RETURN NEW; END $;",
+  ).length, 1);
+  assert.deepEqual(malformedSqlDollarDelimiters(
+    "CREATE FUNCTION f() RETURNS trigger LANGUAGE plpgsql AS $$\nBEGIN RETURN NEW; END $$;",
+  ), []);
+  assert.deepEqual(malformedSqlDollarDelimiters(
+    "CREATE FUNCTION f() RETURNS trigger LANGUAGE plpgsql AS $valid_tag$\nBEGIN RETURN NEW; END; $valid_tag$;",
+  ), []);
+});
