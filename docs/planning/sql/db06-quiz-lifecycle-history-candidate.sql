@@ -569,24 +569,53 @@ AFTER INSERT OR UPDATE ON course_quizzes
 DEFERRABLE INITIALLY DEFERRED
 FOR EACH ROW EXECUTE FUNCTION db06_require_quiz_lifecycle_event();
 
--- Every event must describe the final persisted row version/state. This allows
--- producer code to write row/event in either order but disallows orphan/future
--- events and deliberately permits at most one lifecycle mutation per quiz in a
--- transaction.
+-- Every event must belong to the committed quiz version chain. Earlier
+-- events in a multi-step transaction need not equal the FINAL quiz state, but
+-- they must link exactly to the previous event; the latest event must equal the
+-- final row. Future/orphan events therefore still fail at COMMIT.
 CREATE FUNCTION db06_validate_quiz_lifecycle_event_target()
 RETURNS trigger LANGUAGE plpgsql AS $db06_validate_quiz_event$
+DECLARE
+  final_version integer;
+  final_status text;
+  final_results boolean;
+  final_delivery uuid;
 BEGIN
-  PERFORM 1
+  SELECT q.lifecycle_version, q.status::text, q.results_published, q.delivery_id
+    INTO final_version, final_status, final_results, final_delivery
     FROM course_quizzes q
-    WHERE q.id = NEW.quiz_id
-      AND q.lifecycle_version = NEW.lifecycle_version_after
-      AND q.status::text = NEW.new_status
-      AND q.results_published = NEW.new_results_published
-      AND q.delivery_id IS NOT DISTINCT FROM NEW.delivery_id;
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'DB06 quiz lifecycle event does not match final quiz state'
+    WHERE q.id = NEW.quiz_id;
+
+  IF final_version IS NULL
+     OR NEW.lifecycle_version_after > final_version
+     OR NEW.delivery_id IS DISTINCT FROM final_delivery THEN
+    RAISE EXCEPTION 'DB06 quiz lifecycle event is orphaned or ahead of final quiz state'
       USING ERRCODE='23514';
   END IF;
+
+  IF NEW.lifecycle_version_before IS NOT NULL
+     AND NOT EXISTS (
+       SELECT 1
+       FROM course_quiz_lifecycle_events previous
+       WHERE previous.quiz_id = NEW.quiz_id
+         AND previous.lifecycle_version_after = NEW.lifecycle_version_before
+         AND previous.new_status = NEW.previous_status
+         AND previous.new_results_published IS NOT DISTINCT FROM
+             NEW.previous_results_published
+     ) THEN
+    RAISE EXCEPTION 'DB06 quiz lifecycle event breaks version/state chain'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF NEW.lifecycle_version_after = final_version
+     AND (
+       NEW.new_status IS DISTINCT FROM final_status
+       OR NEW.new_results_published IS DISTINCT FROM final_results
+     ) THEN
+    RAISE EXCEPTION 'DB06 latest lifecycle event does not match final quiz state'
+      USING ERRCODE='23514';
+  END IF;
+
   RETURN NEW;
 END;
 $db06_validate_quiz_event$;
@@ -655,4 +684,6 @@ FOR EACH STATEMENT EXECUTE FUNCTION db06_reject_quiz_lifecycle_history_mutation(
 -- M event tenant/delivery/creator mismatch fails.
 -- N event UPDATE/DELETE/TRUNCATE and quiz DELETE/TRUNCATE fail.
 -- O concurrent lifecycle mutations serialize; stale second transition fails.
--- P event inserted without matching final row state fails at COMMIT.
+-- P event inserted ahead of the row or with a broken previous-event chain fails at COMMIT.
+-- Q CREATE(DRAFT)+PUBLISH in one transaction may commit with versions 0 then 1
+--   when both exact events exist; the latest event must match the final row.
