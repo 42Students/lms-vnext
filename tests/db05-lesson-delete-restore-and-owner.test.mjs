@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 const read = name => readFileSync(new URL(name, import.meta.url), "utf8");
 const cascade = read("../scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql");
-const owner = read("../scripts/sql/db05-lesson-content-owner-membership.draft.sql");
+const owner = read("../scripts/sql/db05-lesson-content-faculty-owner.draft.sql");
 const schema = read("../src/db/schema/courses.ts");
 const contentWriter = read("../src/modules/courses/lesson-content-service.ts");
 const manifest = JSON.parse(read("../docs/planning/db05-migration-readiness-manifest.json"));
@@ -36,24 +36,22 @@ test("DB05 learner read filters currently lack tombstone; migration stays blocke
 });
 
 test("DB05 nullable owner membership is not a creator alias", () => {
-  assert.match(owner, /ADD COLUMN IF NOT EXISTS owner_membership_id uuid/);
+  assert.match(owner, /ADD COLUMN faculty_owner_membership_id uuid/);
   assert.match(owner, /REFERENCES college_memberships\(id\) ON DELETE RESTRICT/);
   assert.match(schema, /createdByUserId: uuid\("created_by_user_id"\)/);
-  assert.match(owner, /DISTINCT[\s\S]{0,12}from the user who created/);
-  assert.match(owner, /Generic unowned lesson content is legal/);
+  assert.match(owner, /Legacy LessonContents\.facultyId/);
+  assert.match(owner, /Generic content has no assigned owner/);
 });
 
 test("DB05 owner scoped against college, offering, cohort, period and delivery", () => {
-  for (const keyword of ["JOIN course_learning_paths path", "JOIN course_offerings offering", "JOIN departments dept", "JOIN academic_periods period","FROM college_memberships cm", "FROM course_section_deliveries delivery"]) {
+  for (const keyword of ["JOIN course_learning_paths path", "JOIN course_offerings offering", "JOIN departments department", "JOIN academic_periods period","FROM college_memberships membership", "LEFT JOIN course_section_deliveries delivery"]) {
     assert.ok(owner.includes(keyword), keyword);
   }
   for (const keyword of [
-    "owner_college_id IS DISTINCT FROM department_college_id",
-    "owner_college_id IS DISTINCT FROM offering_college_id",
-    "delivery_offering_id IS DISTINCT FROM owning_offering_id",
-    "section_college_id IS DISTINCT FROM owner_college_id",
-    "section_cohort_id IS DISTINCT FROM owning_cohort_id",
-    "section_period_id IS DISTINCT FROM owning_period_id"
+    "course_college_id IS DISTINCT FROM owner_college_id",
+    "course_college_id IS DISTINCT FROM period_college_id",
+    "delivery_offering_id IS DISTINCT FROM content_offering_id",
+    "section_period_college_id IS DISTINCT FROM course_college_id"
   ]) assert.ok(owner.includes(keyword), keyword);
   assert.match(owner, /USING ERRCODE = '23514'/);
 });
@@ -68,9 +66,9 @@ test("DB05 owner and soft-delete mappings still unverified", () => {
 });
 
 test("DB05 owner upstream reparent and role security require independent proof", () => {
-  assert.match(owner, /Upstream college/);
-  assert.match(owner, /child INSERT\/UPDATE/);
-  assert.match(owner, /database alone cannot prove role/);
+  assert.match(owner, /upstream offering/path/department/period/membership/);
+  assert.match(owner, /row-write trigger/);
+  assert.match(owner, /membership_role\.role::text = 'FACULTY'/);
   assert.match(cascade, /two-session delete\/move\/restore races/);
   assert.match(owner, /PostgreSQL clean replay/);
 });
