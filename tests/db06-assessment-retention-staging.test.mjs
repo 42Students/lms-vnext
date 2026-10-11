@@ -183,6 +183,15 @@ test("DB038 mirrors option-set scoring shape at the DB boundary", () => {
     sql,
     /DB06 multiple-choice question requires correct and incorrect options/,
   );
+  assert.match(sql, /DO \$db06_option_shape_preflight\$/);
+  assert.match(
+    sql,
+    /duplicate option text within question/,
+  );
+  assert.match(
+    sql,
+    /invalid quiz option-set shape/,
+  );
 });
 
 test("DB038 validates answer snapshots against the committed question and option definition", () => {
@@ -197,6 +206,7 @@ test("DB038 validates answer snapshots against the committed question and option
     "option outside committed question",
     "single-choice answer selected multiple options",
     "answer correctness/points do not match committed options",
+    "answer snapshots must use JSON arrays",
   ]) {
     assert.ok(sql.includes(token), token);
   }
