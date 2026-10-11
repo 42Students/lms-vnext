@@ -116,31 +116,31 @@ export const assignmentGradeEventsStaged = pgTable(
     ),
     check(
       "assignment_grade_events_actor_role_ck",
-      sql.raw(""actor_role" in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')"),
+      sql.raw(`"actor_role" in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')`),
     ),
     check(
       "assignment_grade_events_actor_shape_ck",
-      sql.raw("("actor_role" = 'SUPER_ADMIN' and "actor_membership_id" is null) or ("actor_role" in ('COLLEGE_ADMIN','FACULTY') and "actor_membership_id" is not null)"),
+      sql.raw(`("actor_role" = 'SUPER_ADMIN' and "actor_membership_id" is null) or ("actor_role" in ('COLLEGE_ADMIN','FACULTY') and "actor_membership_id" is not null)`),
     ),
     check(
       "assignment_grade_events_action_ck",
-      sql.raw(""action" in ('GRADE','REGRADE','PUBLISH_GRADE')"),
+      sql.raw(`"action" in ('GRADE','REGRADE','PUBLISH_GRADE')`),
     ),
     check(
       "assignment_grade_events_status_ck",
-      sql.raw(""previous_grading_status" in ('NOT_GRADED','GRADED') and "new_grading_status" in ('NOT_GRADED','GRADED')"),
+      sql.raw(`"previous_grading_status" in ('NOT_GRADED','GRADED') and "new_grading_status" in ('NOT_GRADED','GRADED')`),
     ),
     check(
       "assignment_grade_events_points_ck",
-      sql.raw("("previous_points" is null or "previous_points" >= 0) and ("new_points" is null or "new_points" >= 0)"),
+      sql.raw(`("previous_points" is null or "previous_points" >= 0) and ("new_points" is null or "new_points" >= 0)`),
     ),
     check(
       "assignment_grade_events_version_ck",
-      sql.raw(""submission_version_before" >= 0 and "submission_version_after" = "submission_version_before" + 1"),
+      sql.raw(`"submission_version_before" >= 0 and "submission_version_after" = "submission_version_before" + 1`),
     ),
     check(
       "assignment_grade_events_shape_ck",
-      sql.raw("(("action" = 'GRADE' and "previous_grading_status" = 'NOT_GRADED' and "new_grading_status" = 'GRADED' and "previous_points" is null and "new_points" is not null and "previous_grade_published" = false and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'REGRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "new_points" is not null and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'PUBLISH_GRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "previous_grade_published" = false and "new_grade_published" = true and "previous_points" is not distinct from "new_points" and "previous_feedback" is not distinct from "new_feedback" and "previous_graded_by_user_id" is not distinct from "new_graded_by_user_id" and "previous_graded_at" is not distinct from "new_graded_at"))"),
+      sql.raw(`(("action" = 'GRADE' and "previous_grading_status" = 'NOT_GRADED' and "new_grading_status" = 'GRADED' and "previous_points" is null and "new_points" is not null and "previous_grade_published" = false and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'REGRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "new_points" is not null and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'PUBLISH_GRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "previous_grade_published" = false and "new_grade_published" = true and "previous_points" is not distinct from "new_points" and "previous_feedback" is not distinct from "new_feedback" and "previous_graded_by_user_id" is not distinct from "new_graded_by_user_id" and "previous_graded_at" is not distinct from "new_graded_at"))`),
     ),
   ],
 );
@@ -221,31 +221,31 @@ export const attendanceRecordEventsStaged = pgTable(
     ),
     check(
       "attendance_record_events_actor_role_ck",
-      sql.raw(""actor_role" in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')"),
+      sql.raw(`"actor_role" in ('SUPER_ADMIN','COLLEGE_ADMIN','FACULTY')`),
     ),
     check(
       "attendance_record_events_actor_shape_ck",
-      sql.raw("("actor_role" = 'SUPER_ADMIN' and "actor_membership_id" is null) or ("actor_role" in ('COLLEGE_ADMIN','FACULTY') and "actor_membership_id" is not null)"),
+      sql.raw(`("actor_role" = 'SUPER_ADMIN' and "actor_membership_id" is null) or ("actor_role" in ('COLLEGE_ADMIN','FACULTY') and "actor_membership_id" is not null)`),
     ),
     check(
       "attendance_record_events_action_ck",
-      sql.raw(""action" in ('MARK','CORRECT')"),
+      sql.raw(`"action" in ('MARK','CORRECT')`),
     ),
     check(
       "attendance_record_events_revision_ck",
-      sql.raw(""revision" >= 1"),
+      sql.raw(`"revision" >= 1`),
     ),
     check(
       "attendance_record_events_status_ck",
-      sql.raw(""new_status" in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE') and ("previous_status" is null or "previous_status" in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE'))"),
+      sql.raw(`"new_status" in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE') and ("previous_status" is null or "previous_status" in ('PRESENT','ABSENT','EXCUSED','MEDICAL','LATE'))`),
     ),
     check(
       "attendance_record_events_shape_ck",
-      sql.raw("(("action" = 'MARK' and "revision" = 1 and "previous_status" is null and "previous_attendance_record_id" is null) or ("action" = 'CORRECT' and "revision" >= 2 and "previous_status" is not null))"),
+      sql.raw(`(("action" = 'MARK' and "revision" = 1 and "previous_status" is null and "previous_attendance_record_id" is null) or ("action" = 'CORRECT' and "revision" >= 2 and "previous_status" is not null))`),
     ),
     check(
       "attendance_record_events_present_shape_ck",
-      sql.raw("(("new_status" = 'PRESENT' and "new_attendance_record_id" is null) or ("new_status" <> 'PRESENT' and "new_attendance_record_id" is not null))"),
+      sql.raw(`(("new_status" = 'PRESENT' and "new_attendance_record_id" is null) or ("new_status" <> 'PRESENT' and "new_attendance_record_id" is not null))`),
     ),
   ],
 );
