@@ -51,7 +51,7 @@ test("DB24 cannot bypass the 30-second undo hold or cross-college membership che
   assert.match(sql, /mr\.role::text = NEW\.recipient_type/);
   assert.match(sql, /NOTIFICATION_RECRUITER_GRANT_GUARD_NOT_REGISTERED/);
   assert.match(sql, /m.user_id = NEW.recipient_user_id/);
-  assert.match(sql, /m.college_id = NEW.college_id\\s+AND m.status = 'ACTIVE'/);
+  assert.match(sql, /m.college_id = NEW.college_id\s+AND m.status = 'ACTIVE'/);
   assert.match(sql, /FOR EACH ROW EXECUTE FUNCTION db10_general_notice_scope_guard/);
 });
 test("DB24 digest scheduling, claim shape, fence, idempotency are staged", () => {
