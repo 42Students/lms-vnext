@@ -332,3 +332,47 @@ test("DB09 share disclosure and collaboration JSON are DB constrained", () => {
   assert.match(schema, /placement_tpo_college_settings_json_shape_ck/);
   assert.match(schema, /placement_tpo_user_preferences_json_ck/);
 });
+
+
+test("DB09 recruiter CRM staging enforces joined identity and terminal follow-up rules", () => {
+  const sql = read("docs/planning/sql/db09-tpo-crm-premerge.sql");
+  const schema = read("src/db/schema/tpo-crm.ts");
+
+  assert.match(sql, /placement_tpo_leads_invite_lifecycle_ck/);
+  assert.match(schema, /placement_tpo_leads_invite_lifecycle_ck/);
+  assert.match(
+    sql,
+    /invite_token_hash IS NULL OR invite_sent_at IS NOT NULL/,
+    "a persisted live invite hash must have an issuance time",
+  );
+  assert.match(
+    sql,
+    /unsubscribed_at IS NULL OR invite_token_hash IS NULL/,
+    "unsubscribed leads cannot retain an active invite token",
+  );
+  assert.doesNotMatch(
+    sql,
+    /placement_tpo_leads_not_now_shape_ck/,
+    "legacy not-now details are nullable and must not be over-constrained",
+  );
+  assert.match(
+    sql,
+    /JOIN placement_recruiter_profiles p[\s\S]*JOIN placement_companies co[\s\S]*JOIN users u/,
+  );
+  assert.match(
+    sql,
+    /g\.recruiter_user_id = NEW\.recruiter_user_id[\s\S]*g\.status = 'ACTIVE'[\s\S]*r\.college_id = NEW\.college_id[\s\S]*r\.company_id = v_profile_company/,
+  );
+  assert.match(
+    sql,
+    /mr\.role IN \('FACULTY','COLLEGE_ADMIN','TPO'\)/,
+    "lead owners/activity actors/follow-up owners must be placement-capable staff",
+  );
+  assert.match(sql, /CREATE TRIGGER db09_followup_terminal_guard/);
+  assert.match(
+    sql,
+    /OLD\.done_at IS NOT NULL[\s\S]*NEW\.due_at IS DISTINCT FROM OLD\.due_at/,
+    "a completed follow-up cannot be moved",
+  );
+  assert.match(schema, /placement_tpo_followups_done_time_ck/);
+});
