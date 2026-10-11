@@ -97,11 +97,13 @@ Do not infer success from source review, a green static check, or tests merely
 existing. Preserve test logs, exact migration snapshot SHA, exact commit SHA,
 and failed negative-case diagnostics in acceptance evidence.
 
-**Safety dependency escalated to Chat 1:** `scripts/db-lib.ts` presently lets
-`requireDatabaseUrl("TEST_DATABASE_URL")` fall back to `DATABASE_URL`.
-Fix that shared helper before relying on test-preparation safety; Chat 2 does
-not own it. All five authored DB integration files require an explicit
-`TEST_DATABASE_URL` and do not fall back.
+**Test database safety resolved for explicit variable selection:** Chat 1
+updated `scripts/db-lib.ts` so `requireDatabaseUrl("TEST_DATABASE_URL")`
+does **not** fall back to `DATABASE_URL`. All five authored PostgreSQL suites
+also require an explicit `TEST_DATABASE_URL`. The repository-backed routing
+suite additionally requires `DATABASE_URL === TEST_DATABASE_URL`.
+A reset remains destructive: use only a disposable instance and preserve
+the independent verifier's safety checks.
 
 ## Outside this bounded batch
 
@@ -118,3 +120,19 @@ with explicit TEST_DATABASE_URL; 14 permission unit cases authored. GitHub
 Actions is intentionally unused because of billing, not an engineering blocker.
 None of these newly authored tests was run in this worker environment;
 **0 passing cases claimed**, PostgreSQL/runner acceptance UNVERIFIED.
+
+## Additional source-only queue integrity
+
+For the 173 active/lifecycle DB01 source candidates with no registered column
+mapping proposed at snapshot 0040 (unchanged across seven core DB01 tables in
+journal 0041), see `docs/planning/db01-chat02-no-target-disposition-queue.json`.
+The corresponding independent Node guards are authored at
+`tests/db01-no-target-disposition-queue.test.mjs` (13 cases):
+
+```bash
+node --test tests/db01-no-target-disposition-queue.test.mjs
+```
+
+Source comparisons are not substitute evidence for functional or PostgreSQL
+verification. All 173 queue rows remain OPEN until their design/proof gates are
+fulfilled; ownership is by DB domain, not permanent chat identity.
