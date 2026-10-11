@@ -2362,14 +2362,14 @@
         "tests/db06-quiz-shuffle-staging.test.mjs",
         "docs/planning/database-parity-db06-field-reconciliation.json"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-11T08:39:00.000Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T08:38:34.897Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2391,6 +2391,11 @@
           "status": "PICKED",
           "at": "2026-10-11T08:39:00.000Z",
           "reason": "Chat 1 claims isolated DB06 shuffle persistence staging; no overlap with active DB01/DB02/DB05/DB10 workers."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T08:38:34.897Z",
+          "reason": "Pinning legacy quiz shuffle persistence producer/consumer semantics and staging normalized vNext DB fields."
         }
       ]
     },
