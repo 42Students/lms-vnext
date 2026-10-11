@@ -6,19 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-012",
+  "executionState": "BLOCKED",
+  "activeTaskId": null,
   "blockedTaskIds": [
-    "DB-007"
+    "DB-007",
+    "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB09_279_OF_279_DISPOSITION_CLOSED_ZERO_FIELD_BLOCKERS",
+    "checkpointKind": "DB09_279_DISPOSITIONS_15_SOURCE_RECHECKED_NOTIFICATION_CONTRACT_STAGED_NO_PG",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "ac7a5dbeaecf6a25c42a88d4a8c60b4f409268d0",
-    "lastWorkerMergedSha": "ac7a5dbeaecf6a25c42a88d4a8c60b4f409268d0",
+    "observedMainSha": "2f627d5235dcbed1f8d4b19fc70c7d91ca2f83a7",
+    "lastWorkerMergedSha": "4f34ec1b561a3e55dfd6d79e42ebccefccef328f",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-012 active for integration-readiness only. Canonical DB09 ledger is 279/279 disposition-reviewed: 199 MAPPED, 80 REDESIGNED, 0 field blockers, 0 DB/runtime verified. Remaining gates are W01 migration registration + CI-independent PostgreSQL replay/negative/concurrency witnesses and runtime producer/consumer cutover."
+    "summary": "DB09 279/279 source dispositions: 199 MAPPED, 65 REDESIGNED, 15 BLOCKED, 0 runtime/semantic verified. Chat 3 added source-backed notes to all 15 unresolved fields: notification_outbox (13), prep assessment_id (1), global industry_company export columns (1). Staged undo/digest/app intent SQL and six Node static tests (authored not run). Two batches of 10 and 11 read-only assertions over fetched GitHub blobs passed; PG not run. CI billing intentionally not a blocker."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -28,12 +29,21 @@
     "build": "NOT_VERIFIED",
     "browser": "NOT_VERIFIED"
   },
-  "lastAuthoredTests": [],
-  "lastExecutedPassingTests": [],
+  "lastAuthoredTests": [
+    "tests/db09-notification-undo-digest-staging.test.mjs (6 node:test static source tests AUTHORED; command not executed)"
+  ],
+  "lastExecutedPassingTests": [
+    "2026-10-11 10 read-only GitHub source assertions (not Node runner / PostgreSQL)",
+    "2026-10-11 11 read-only GitHub source + ledger assertions (not Node runner / PostgreSQL)"
+  ],
   "blockers": [
     "W01 migration registration and dependency-ordered replay pending.",
     "CI-independent disposable PostgreSQL witnesses pending.",
-    "Runtime producer/consumer and API compatibility unverified."
+    "Runtime producer/consumer and API compatibility unverified.",
+    "DB-012: 13 notification outbox fields need DB10 general APP/undo/digest, migration and PG proofs.",
+    "DB-012: current UI uses course-only prep, backend assessment_id requires DB06 resource-kind decision.",
+    "DB-012: global export_columns_json source column has no demonstrated active shared producer; per-company browser-local share memory is not a DB-owned preference.",
+    "DB-012: PostgreSQL negative tenant/concurrency acceptance pending independent runner; Actions billing not blocker."
   ],
   "handoffs": [
     {
@@ -47,7 +57,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Audit all DB09 staged SQL/schema artifacts for dependency order, duplicate table/constraint proposals and incompatible assumptions; produce a single integration manifest for W01. Do not edit drizzle journal/schema barrel.",
+  "nextAction": "If no new eligible DATABASE task, seek Chat 1/DB10 decision on generalized notification intent vs outbound queue, DB06 assessment-id FK, and TPO export preference owner. Once unblocked, run local/ephemeral Node and disposable PostgreSQL with exact SHA/commands; do not elevate source-only verification.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -108,7 +118,13 @@
     "https://github.com/42Students/lms-vnext/commit/9aeaf0ac38242e6e1c2cf3dff655495efb1a9d18",
     "https://github.com/42Students/lms-vnext/commit/ca86ade0b9971ce8c41724a5f85e10406f60d801",
     "https://github.com/42Students/lms-vnext/commit/b8f8b3b773f2ab4cbf1b7171c82ec25724914e91",
-    "https://github.com/42Students/lms-vnext/commit/ac7a5dbeaecf6a25c42a88d4a8c60b4f409268d0"
+    "https://github.com/42Students/lms-vnext/commit/ac7a5dbeaecf6a25c42a88d4a8c60b4f409268d0",
+    "https://github.com/42Students/lms-vnext/commit/37fe90a331d922521e59560c359da0acf5bf6076",
+    "https://github.com/42Students/lms-vnext/commit/490e3f9faf955f12156335fb3e742ec9d13563d2",
+    "https://github.com/42Students/lms-vnext/commit/1598a9feb918b3a4e23d70be18eee7a8c8e7c0a0",
+    "https://github.com/42Students/lms-vnext/commit/1aa8edf1c0b71aa0a1cb7ed502c1a0b1328ec93d",
+    "https://github.com/42Students/lms-vnext/commit/dd9ee6b1646d6aadd6e0055095ad68d0ffe39fae",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db09-chat03-crossdomain-unblock-2026-10-11.md"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
