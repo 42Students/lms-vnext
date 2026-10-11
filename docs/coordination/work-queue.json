@@ -17,22 +17,20 @@
     {
       "id": "DB-001",
       "phase": "DATABASE",
-      "title": "Unblock CI runner and disposable PostgreSQL",
-      "scope": "Verify runner allocation/permissions, restore executable CI plus isolated PostgreSQL test harness; record exact logs and no false passing tests",
+      "title": "Provide CI-independent disposable PostgreSQL verification",
+      "scope": "Establish an approved independent executable test environment (local/ephemeral Node plus isolated disposable PostgreSQL or equivalent), run the already-authored migration replay and negative database witnesses, and record exact command/output/commit evidence. GitHub Actions is intentionally unavailable due to billing and must not be a dependency or remediation goal.",
       "priority": 1,
       "dependsOn": [],
       "restriction": "CORE_INFRA",
       "paths": [
-        ".github/workflows/**",
-        "scripts/db-test-prepare.ts"
+        "scripts/db-test-prepare.ts",
+        "docs/coordination/six-chat-operating-system.md"
       ],
-      "status": "BLOCKED",
-      "latestEvidenceSha": "90c6bc5b27ea137590f132b49345e8457b1d06be",
+      "status": "READY",
+      "latestEvidenceSha": "d25f9aa9a31ea217bb0b87d6c2d22387604e5f00",
       "verificationEvidence": [],
-      "blockers": [
-        "Latest CI evidence still fails before repository steps: Actions run 38085950157 at head 90c6bc5b27ea137590f132b49345e8457b1d06be completed failure; verify job 114312358038 has steps=null. Job-log download returns BlobNotFound. Multiple adjacent push runs show the same 2–3 second pre-step failure. Repository workflow already defines postgres:17-alpine plus db:test:prepare/test:db, so no PostgreSQL test has executed. Repo admin must inspect Actions runner allocation/billing/account status or provide an approved alternate runner, then rerun and capture real step logs."
-      ],
-      "completionNote": null,
+      "blockers": [],
+      "completionNote": "CI billing restriction is acknowledged by user as non-blocking. Task is actionable through independent local/ephemeral test execution; final verification remains pending until real PostgreSQL commands run. Prior CI investigations remain historical, not an active blocker.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T01:55:00+05:30",
       "startedAt": "2026-10-10T20:28:11.898Z",
@@ -72,8 +70,14 @@
           "status": "BLOCKED",
           "at": "2026-10-10T21:00:52.827Z",
           "reason": "Rechecked newest push CI after DB-016 completion: run 38085950157 / verify job 114312358038 still fails with steps=null; log artifact unavailable (BlobNotFound). External runner/provisioning blocker persists."
+        },
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Explicit user policy supersedes prior runner-allocation blockage. GitHub Actions paused for billing; engineer independently with optional non-Actions PostgreSQL. Historical CI failures remain recorded but are not an active blocker. Prior Chat 1 pick history retained."
         }
-      ]
+      ],
+      "qualityGateNote": "ACCEPTANCE_NOT_EXECUTED: independent disposable PostgreSQL verification still needs real run logs; Actions billing is NOT a blocker."
     },
     {
       "id": "DB-002",
