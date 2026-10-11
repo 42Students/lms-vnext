@@ -25,6 +25,12 @@
 ALTER TABLE placement_jobs
   ADD COLUMN owner_membership_id uuid;
 
+ALTER TABLE placement_jobs
+  ADD CONSTRAINT db069_job_owner_college_fk
+  FOREIGN KEY(owner_membership_id,college_id)
+  REFERENCES college_memberships(id,college_id)
+  ON UPDATE RESTRICT ON DELETE RESTRICT;
+
 CREATE INDEX db069_placement_jobs_owner_status_idx
   ON placement_jobs(college_id,owner_membership_id,status)
   WHERE owner_membership_id IS NOT NULL;
