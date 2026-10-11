@@ -122,3 +122,12 @@ test('CLI fails closed with exit 2 when synthetic claim is invalid',()=>{
   assert.equal(proc.status,2,proc.stderr);assert.ok(JSON.parse(proc.stdout).errors.length);
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
+
+test('rejects Chat 5 claim on Chat 1-only CORE_INFRA task',()=>{
+ const x=withActive();x.workQueue.tasks[0].restriction='CORE_INFRA';
+ assert.ok(bad(guarded(x)).includes('CORE_INFRA_NOT_CHAT1'));
+});
+test('rejects spurious certification while even one source task remains open',()=>{
+ const x=input();x.phaseState.phases.DATABASE.certifiedAt='2026-10-12T01:00:00Z';
+ assert.ok(bad(guarded(x)).includes('PREMATURE_PHASE_CERTIFICATION'));
+});
