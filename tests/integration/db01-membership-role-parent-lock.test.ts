@@ -219,6 +219,29 @@ describe("DB01 parent-lock role mutation against membership END", () => {
   });
 
 
+
+  it("rejects a stale role-grant snapshot with the wrong canonical user", async () => {
+    await withFixture(async (f) => {
+      const mutation = mutationFor(f);
+      mutation.person.user.id = randomUUID();
+      await expect(
+        drizzlePeopleRepository.addMembershipRole(f.membershipId, "MENTOR", mutation),
+      ).rejects.toMatchObject({ code: "MEMBERSHIP_NOT_FOUND" });
+      expect(await countRole(f.membershipId, "MENTOR")).toBe(0);
+    });
+  });
+
+  it("rejects a stale role-removal snapshot claiming another college", async () => {
+    await withFixture(async (f) => {
+      const mutation = mutationFor(f);
+      mutation.person.membership.collegeId = SEED_IDS.collegeB;
+      await expect(
+        drizzlePeopleRepository.removeMembershipRole(f.membershipId, "FACULTY", mutation),
+      ).rejects.toMatchObject({ code: "MEMBERSHIP_NOT_FOUND" });
+      expect(await countRole(f.membershipId, "FACULTY")).toBe(1);
+    });
+  });
+
   it("onboarding cannot grant a new role to an ENDED existing membership", async () => {
     await withFixture(async (f) => {
       await pool.query(
