@@ -4213,17 +4213,31 @@
         "tests/db07-template-version-append-only-source.test.mjs",
         "tests/integration/db07-template-version-append-only.test.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "f8afd44ed8b6835e72ed84748e06dc4492475ace",
+      "verificationEvidence": [
+        {
+          "type": "SOURCE_ONLY_EXECUTED_IN_PROCESS",
+          "runner": "GITHUB_CONNECTOR_V8",
+          "passed": 26,
+          "total": 26,
+          "failed": 0,
+          "nodeRunnerExecuted": 0,
+          "postgresExecuted": 0,
+          "evidenceFile": "docs/planning/db07-chat02-template-version-append-only-source-evidence.json",
+          "evidenceCommitSha": "f8afd44ed8b6835e72ed84748e06dc4492475ace"
+        }
+      ],
+      "blockers": [
+        "Chat 1 schema/migration integration and acceptance of permanent retention; disposable PostgreSQL replay/8 witness execution outstanding, not an Actions blocker."
+      ],
+      "completionNote": "Source/staging DB07 immutable project template-version history COMPLETED on main: append-only UPDATE/DELETE trigger candidate, 14 authored Node source cases, 8 authored opt-in rollback-only PostgreSQL cases, 26/26 GitHub exact-blob V8 assertions executed/pass. No runtime Node/PG execution, no Drizzle migration or live trigger; PG acceptance and Chat 1 approval still pending.",
       "pickedBy": 2,
       "pickedAt": "2026-10-11T21:07:02.420Z",
       "startedAt": "2026-10-11T21:07:16.163Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 2,
+      "completedAt": "2026-10-11T21:10:09.740Z",
+      "completionCommitSha": "f8afd44ed8b6835e72ed84748e06dc4492475ace",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -4247,6 +4261,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T21:07:16.163Z",
           "reason": "Stage DB07 revision append-only SQL, direct PostgreSQL negative cases, and Node source checks."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T21:10:09.740Z",
+          "reason": "Source-backed append-only template revisions staged; 26/26 V8 source checks PASS. No migration registered/PG run."
         }
       ]
     }
