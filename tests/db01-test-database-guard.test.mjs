@@ -649,3 +649,48 @@ test("DB55 reset-authorized seed still requires remote reset opt-in", () => {
   assert.match(output, /ALLOW_DB_RESET=true/);
   assert.doesNotMatch(output, /ENOTFOUND|ECONNREFUSED|connection refused|hiddenPassword/i);
 });
+
+// DB-004: The staged authentication triggers are deliberately unregistered.
+// Catch SQL lexer failures BEFORE promoting them into a numbered migration.
+// An earlier code-generation edit silently turned "AS $$" into "AS $":
+// JavaScript string replacement interprets "$$" in replacement arguments.
+const authLifecycleSqlPaths = [
+  "docs/planning/sql/db01-auth-attempt-lifecycle-guard-staging.sql",
+  "docs/planning/sql/db01-auth-handoff-lifecycle-guard-staging.sql",
+];
+
+function assertPairedDb01AuthFunctionQuotes(sql) {
+  const declarations = [...sql.matchAll(
+    /\bRETURNS\s+trigger\s+LANGUAGE\s+plpgsql\s+AS\s+(\$\$|\$[A-Za-z_][A-Za-z_0-9]*\$|\$)(?=\s|$)/gi,
+  )];
+  assert.equal(declarations.length, 1, "exactly one PL/pgSQL trigger function must be declared");
+  const delimiter = declarations[0][1];
+  assert.notEqual(delimiter, "$", "lone-dollar PL/pgSQL opener is invalid PostgreSQL syntax");
+  assert.match(sql.slice(declarations[0].index), /\bBEGIN\b[\s\S]*?\bEND;\s*\$\$;/);
+  assert.equal(sql.split(delimiter).length - 1, 2,
+    "exactly one paired SQL function body delimiter required");
+}
+
+test("DB004 auth PL/pgSQL guards require paired dollar delimiters", () => {
+  for (const sqlPath of authLifecycleSqlPaths) {
+    const sql = readFileSync(sqlPath, "utf8");
+    assertPairedDb01AuthFunctionQuotes(sql);
+    assert.match(sql, /BEFORE INSERT OR UPDATE ON identity_auth_(?:attempts|handoffs)/);
+  }
+});
+
+test("DB004 auth SQL preflight detects a malformed lone-dollar function opener", () => {
+  const sql = readFileSync(authLifecycleSqlPaths[0], "utf8");
+  const mutated = sql.replace("LANGUAGE plpgsql AS $$", "LANGUAGE plpgsql AS $");
+  assert.notEqual(mutated, sql);
+  assert.throws(() => assertPairedDb01AuthFunctionQuotes(mutated),
+    /lone-dollar PL\/pgSQL opener/);
+});
+
+test("DB004 auth SQL preflight detects an unpaired function-body terminator", () => {
+  const sql = readFileSync(authLifecycleSqlPaths[1], "utf8");
+  const mutated = sql.replace("END;\n$$;", "END;\n$;");
+  assert.notEqual(mutated, sql);
+  assert.throws(() => assertPairedDb01AuthFunctionQuotes(mutated),
+    /END|paired SQL function body delimiter/);
+});
