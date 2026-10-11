@@ -153,7 +153,7 @@ Legacy `industry_company.export_columns_json` is redesigned to tenant-safe `plac
 
 `docs/planning/sql/db09-multicollege-drive-group-candidate.sql`
 
-Register after recruiter identity/company relationships, the recruiter-profile user/company composite key, and `placement_jobs`. The staged group requires non-null recruiter+company, rejects recruiter/company mismatch, requires each child job's ACTIVE relationship/company and ACTIVE recruiter grant to match the group, and enforces one child job per group+college.
+Register after recruiter identity/company relationships, the recruiter-profile user/company composite key, and `placement_jobs`. The staged group requires non-null recruiter+company **and non-null `created_by_user_id`**, rejects recruiter/company mismatch or a creator other than that recruiter, requires each child job's creator to match the group recruiter, requires the child job's ACTIVE relationship/company and ACTIVE recruiter grant to match the group, and enforces one child job per group+college. Updates to a grouped job's creator must re-run the guard; grant revocation does not erase historic links. The group-owner SQL function must retain paired `$` delimiters (fixed in the unregistered draft).
 
 ### 7. Round scheduling + drive coordinators
 
