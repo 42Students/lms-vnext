@@ -209,7 +209,7 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "a23c300bf5c967de909efe0e05ac538f6976cb27",
+      "latestEvidenceSha": "c0863909c7e1a12e67339b7f50458db00c5e69d9",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": "DB-004 IN_PROGRESS: 312/312 candidate source dispositions, 0 runtime-semantic verified. Current staging includes identity OTP/time/retry/session/handoff, state guards, hostname and organization/college archival concurrency. P0 security crosswalk draft covers 38 fields; 3 source-evidence gaps. All stages UNREGISTERED and PostgreSQL/provider acceptance not executed. GitHub Actions billing intentionally not a blocker.",
@@ -244,7 +244,7 @@
           "reason": "Chat 2 now auditing DB01 source semantics."
         }
       ],
-      "progressNote": "Chat 2 committed unregistered DB01 five-minute OTP attempt lifecycle checks and monotonic OLD/NEW guard; 14 source/mutation Node tests authored plus one disposable PostgreSQL fifth-retry contention/anti-replay suite. 24/24 previous in-process source assertions passed (no actual Node/PG run); provider-only vs DB-backed approach undecided, no migration registered. 38 exact P0 auth/security no-target rows now have explicit policy crosswalk (DB01=33, DB04=2, DB09=3); 3 rows lack named current producer evidence; zero runtime/provider verified and zero approved retirements."
+      "progressNote": "Chat 2 2026-10-11 direct-main source iteration: optional DB-backed OTP challenge staging hardened with five-minute lifetime, consumed-secret clears and OLD/NEW scope/retry/expiry/verified/terminal monotonic trigger. 14 new source tests + one real two-client disposable PostgreSQL acceptance suite authored. 38 exact security P0 no-target fields now have owner/target/policy crosswalk, 13 new source tests, 3 named-current-source evidence gaps. 82/82 source-only in-process GitHub-blob assertions PASS; Node and PostgreSQL tests 0 EXECUTED this iteration, no registered migration or provider acceptance. Evidence docs/planning/db01-chat02-otp-p0-source-static-evidence.json."
     },
     {
       "id": "DB-005",
