@@ -77,19 +77,9 @@ BEGIN
             CONSTRAINT = 'db01_auth_attempt_verified_mac_immutable_ck';
   END IF;
 
-  -- A used challenge is terminal. Its lifecycle metadata and code material
-  -- must never change; separate retention DELETE is a product-policy job.
-  IF OLD.used_at IS NOT NULL
-     AND (
-       NEW.sms_code_mac IS DISTINCT FROM OLD.sms_code_mac
-       OR NEW.email_code_mac IS DISTINCT FROM OLD.email_code_mac
-       OR NEW.sms_code_expires_at IS DISTINCT FROM OLD.sms_code_expires_at
-       OR NEW.email_code_expires_at IS DISTINCT FROM OLD.email_code_expires_at
-       OR NEW.email_code_sent_at IS DISTINCT FROM OLD.email_code_sent_at
-       OR NEW.verification_attempts IS DISTINCT FROM OLD.verification_attempts
-       OR NEW.resend_attempts IS DISTINCT FROM OLD.resend_attempts
-       OR NEW.expires_at IS DISTINCT FROM OLD.expires_at
-     ) THEN
+  -- A used challenge is terminal: even version-only/no-op UPDATEs are
+  -- denied. A separate bounded-retention DELETE must be policy-approved.
+  IF OLD.used_at IS NOT NULL THEN
     RAISE EXCEPTION 'Consumed auth attempt is immutable'
       USING ERRCODE = '23514',
             CONSTRAINT = 'db01_auth_attempt_consumed_immutable_ck';
