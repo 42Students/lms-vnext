@@ -199,3 +199,79 @@ test("fixture: required columns agree and nullable/required changes are detected
     compareColumnNullability(typedTS.replace(".primaryKey()", ""), typedSQL, "missing PK"),
     /nullability drift in typed_table.id/);
 });
+
+
+/**
+ * Foreign-key column/target/delete behavior comparison. Resolves local draft
+ * pgTable variables explicitly; external imports in these source-reviewed
+ * drafts use the corresponding camelCase database table name. This does not
+ * establish tenant-scoped/composite FK correctness or trigger execution.
+ */
+export function compareForeignKeys(schema, sql, label) {
+  const localTables = Object.fromEntries([...schema.matchAll(
+    /\bexport const (\w+) = pgTable\(\s*["'](\w+)["']/gm,
+  )].map((m) => [m[1], m[2]]));
+  const toSqlTable = (name) => localTables[name] ??
+    name.replace(/([a-z\d])([A-Z])/g, "$1_$2").toLowerCase();
+  const draft = [];
+  for (const [, table, body] of schema.matchAll(
+    /\bpgTable\(\s*["'](\w+)["'],\s*{([\s\S]*?)^\s*},\s*\(t\)\s*=>/gm,
+  )) {
+    const columns = [...body.matchAll(/^\s*\w+:\s*uuid\(\s*["'](\w+)["']/gm)];
+    for (let i = 0; i < columns.length; i++) {
+      const part = body.slice(columns[i].index, columns[i + 1]?.index ?? body.length);
+      const target = /\.references\(\s*\(\)\s*=>\s*(\w+)\.(\w+)\s*,\s*\{\s*onDelete:\s*["'](\w+)["']/.exec(part);
+      if (target) draft.push([table, columns[i][1], toSqlTable(target[1]),
+        target[2], target[3].toUpperCase()]);
+    }
+  }
+  const staged = [];
+  for (const [, table, body] of sql.matchAll(
+    /^\s*CREATE\s+TABLE\s+(\w+)\s*\(([\s\S]*?)^\);/gim,
+  )) {
+    for (const m of body.matchAll(
+      /^\s*(\w+)\s+uuid\s+(?:NOT NULL\s+)?REFERENCES\s+(\w+)\((\w+)\)\s+ON DELETE\s+(\w+)/gim,
+    )) staged.push([table, m[1], m[2], m[3], m[4].toUpperCase()]);
+  }
+  assert.ok(draft.length > 0, label + ": missing draft FK relationships");
+  assert.deepEqual(draft.map(JSON.stringify).toSorted(), staged.map(JSON.stringify).toSorted(),
+    label + ": FK table, target, column or delete action drift");
+  return draft.length;
+}
+for (const [draft, stage] of pairs) {
+  test("DB10 draft/SQL foreign-key parity: " + draft, () => {
+    compareForeignKeys(readFileSync(draft, "utf8"), readFileSync(stage, "utf8"), draft);
+  });
+}
+
+const fkTS = [
+  "export const parent = pgTable('parent_table', { id: uuid('id').primaryKey() }, (t) => []);",
+  "export const child = pgTable('child_table', {",
+  "  id: uuid('id').primaryKey(),",
+  "  parentId: uuid('parent_id').notNull()",
+  "    .references(() => parent.id, { onDelete: 'restrict' }),",
+  "}, (t) => []);",
+].join("\n");
+const fkSQL = [
+  "CREATE TABLE parent_table (",
+  "  id uuid PRIMARY KEY",
+  ");",
+  "CREATE TABLE child_table (",
+  "  id uuid PRIMARY KEY,",
+  "  parent_id uuid NOT NULL REFERENCES parent_table(id) ON DELETE RESTRICT",
+  ");",
+].join("\n");
+test("fixture: FK target and delete action match", () => {
+  assert.equal(compareForeignKeys(fkTS, fkSQL, "foreign keys fixture"), 1);
+});
+test("fixture: dropping FK and weakening delete semantics both fail", () => {
+  assert.throws(() =>
+    compareForeignKeys(fkTS, fkSQL.replace("REFERENCES parent_table(id) ON DELETE RESTRICT", ""), "lost FK"),
+    /FK table, target, column or delete action drift/);
+  assert.throws(() =>
+    compareForeignKeys(fkTS, fkSQL.replace("ON DELETE RESTRICT", "ON DELETE CASCADE"), "cascade"),
+    /FK table, target, column or delete action drift/);
+  assert.throws(() =>
+    compareForeignKeys(fkTS.replace("parent.id", "otherParent.id"), fkSQL, "wrong parent"),
+    /FK table, target, column or delete action drift/);
+});
