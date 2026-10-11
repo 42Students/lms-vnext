@@ -171,7 +171,7 @@ CREATE TRIGGER db09_message_thread_principal_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_message_thread_principal_scope();
 
 CREATE FUNCTION db09_restrict_message_thread_update() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_OP = 'DELETE' THEN
     RAISE EXCEPTION 'message thread history is append-only'
@@ -187,7 +187,8 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
+
 CREATE TRIGGER db09_message_thread_update_guard
   BEFORE UPDATE OR DELETE ON placement_tpo_message_threads
   FOR EACH ROW EXECUTE FUNCTION db09_restrict_message_thread_update();
