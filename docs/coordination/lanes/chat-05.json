@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-029",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB029_OFFER_LIFECYCLE_STAGING_STARTED",
+    "checkpointKind": "DB029_OFFER_LIFECYCLE_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "27b8fda3bfe6a7b349e55bb4af72a10f69733a05",
-    "lastWorkerMergedSha": "3dcf5b167cf3324af5621ceb3b20249ad42ac78d",
+    "observedMainSha": "f61cd268c6baf48122ecaa4e3540db3e626e596c",
+    "lastWorkerMergedSha": "5e05ec07b1d42a6099d4fba5045bd0877f121d32",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-029 created after peer review proved active legacy offer lifecycle states not representable in current vNext DB: SELECTED before release, RELEASED→EXPIRED and ACCEPTED→RELEASED reversal. Staging only; no migration/barrel edits."
+    "summary": "DB-029 staged source-active offer lifecycle persistence: SELECTED, canonical RELEASED→ISSUED, EXPIRED, accepted-offer reversal, verifier provenance and system expiry actor. 35/35 source assertions passed; Node/PostgreSQL NOT RUN."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -36,7 +36,8 @@
     "tests/db10-log-alerts-staging.test.mjs: five static privacy/precision contract tests authored NOT_RUN",
     "tests/db10-general-notices-staging.test.mjs: six authored Node static tests NOT_EXECUTED",
     "tests/integration/groups-db03-roster.test.ts: deny stale elective access/rejoin after learner program transfer (authored, not PostgreSQL-executed)",
-    "tests/integration/groups-db03.test.ts: reject wrong-program backed delivery and reject admin elective move after learner program transfer atomically (authored, not PostgreSQL-executed)"
+    "tests/integration/groups-db03.test.ts: reject wrong-program backed delivery and reject admin elective move after learner program transfer atomically (authored, not PostgreSQL-executed)",
+    "tests/db08-offer-lifecycle-staging.test.mjs: 8 static DB29 lifecycle shape/evidence assertions (authored, Node runtime not executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -49,7 +50,10 @@
     "All 23 DB015 race witnesses remain NOT_RUN until disposable PostgreSQL execution is available.",
     "DB026: DB02 current semester/current academic year persistence remains unregistered; do not substitute academic-period equality for the legacy Batch currentSemester/academicYear rule.",
     "DB026: registered DB03 SQL trigger still needs migration-integrator proof/enforcement of slot.program_id = backed delivery cohort program, including upstream parent edit bypasses.",
-    "DB026: PostgreSQL integration witnesses remain NOT_RUN; 9/9 source assertions are not runtime verification."
+    "DB026: PostgreSQL integration witnesses remain NOT_RUN; 9/9 source assertions are not runtime verification.",
+    "DB029: staged lifecycle depends on DB-021 released_at/acceptance_channel and is not registered in Drizzle.",
+    "DB029: API/service writers for SELECTED→ISSUED, expiry, external acceptance and ACCEPTED→ISSUED reversal are not cut over in DATABASE phase.",
+    "DB029: all DB29-01..15 PostgreSQL/workflow witnesses remain NOT_RUN; 35/35 connector source assertions are not runtime evidence."
   ],
   "handoffs": [
     "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55.",
@@ -57,9 +61,11 @@
     "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
     "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified.",
     "DB02/Chat 4: DB026 consumes canonical current term/year once registered; do not create DB03 progression state.",
-    "Chat 1 migration integrator: enforce elective slot-program/backed-delivery cohort-program equality in a new forward-only migration and test reverse-parent edits; canonical decision docs/planning/db03-elective-program-oracle-decision.md."
+    "Chat 1 migration integrator: enforce elective slot-program/backed-delivery cohort-program equality in a new forward-only migration and test reverse-parent edits; canonical decision docs/planning/db03-elective-program-oracle-decision.md.",
+    "Chat 1: integrate DB-029 after DB-021 only; add SELECTED/EXPIRED, verifier fields and USER/SYSTEM offer-history actor through numbered migration/barrel.",
+    "Chat 3 DB-027: include DB-029 staged SQL dependency edge after DB-021 outcome-fidelity stage."
   ],
-  "nextAction": "Author isolated DB08 offer lifecycle SQL/doc/static contract. Preserve normalized joining outcome and DB16 private letter model; do not edit drizzle/schema barrel or runtime API in DATABASE phase.",
+  "nextAction": "Refresh shared DATABASE queue and CAS-pick the next eligible task; otherwise perform non-conflicting peer review while dependencies remain locked.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -79,7 +85,10 @@
     "https://github.com/42Students/lms-vnext/commit/bc71648077a9ca4e8a06b680438ef208410b3618",
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6105897209",
     "https://github.com/42Students/lms-vnext/commit/cfe939cd58e50791ccbeef16a35e0c83ca4e0324",
-    "https://github.com/42Students/lms-vnext/commit/3dcf5b167cf3324af5621ceb3b20249ad42ac78d"
+    "https://github.com/42Students/lms-vnext/commit/3dcf5b167cf3324af5621ceb3b20249ad42ac78d",
+    "https://github.com/42Students/lms-vnext/commit/132ca509bf5a0b2eea270c144bb384524f1d252b",
+    "https://github.com/42Students/lms-vnext/commit/085410a89874da3b0da8efa543bf63d41a8977ac",
+    "https://github.com/42Students/lms-vnext/commit/5e05ec07b1d42a6099d4fba5045bd0877f121d32"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -103,10 +112,11 @@
     "DB-022",
     "DB-023",
     "DB-024",
-    "DB-026"
+    "DB-026",
+    "DB-029"
   ],
   "lastPickedAt": "2026-10-11T13:05:00+05:30",
-  "lastCompletedAt": "2026-10-11T13:13:00+05:30",
+  "lastCompletedAt": "2026-10-11T13:09:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-006",
@@ -117,7 +127,8 @@
     "DB-022",
     "DB-023",
     "DB-024",
-    "DB-026"
+    "DB-026",
+    "DB-029"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
