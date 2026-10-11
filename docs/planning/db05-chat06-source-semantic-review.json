@@ -298,7 +298,10 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_MYSQL_SNAPSHOT_ONLY_IN_BOUNDED_13_CURRENT_COURSE_SURFACE_REVIEW",
+      "sourceReviewFinding": "Column present in historical MySQL snapshot; zero symbol hits in 13 source-controlled current course model/DTO/service/repository/controller/response files inspected at BE 21bad59d. Does NOT rule out native SQL/report/FE/partner usage. Explicit preserve-vs-retire decision OPEN.",
+      "boundedNegativeSourceEvidence": "docs/planning/db05-historical-course-columns-source-evidence.json"
     },
     {
       "source": "course.dept_id",
@@ -333,7 +336,10 @@
       "classification": "MISSING_OR_UNPROVEN",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "HISTORICAL_MYSQL_SNAPSHOT_ONLY_IN_BOUNDED_13_CURRENT_COURSE_SURFACE_REVIEW",
+      "sourceReviewFinding": "Column present in historical MySQL snapshot; zero symbol hits in 13 source-controlled current course model/DTO/service/repository/controller/response files inspected at BE 21bad59d. Does NOT rule out native SQL/report/FE/partner usage. Explicit preserve-vs-retire decision OPEN.",
+      "boundedNegativeSourceEvidence": "docs/planning/db05-historical-course-columns-source-evidence.json"
     },
     {
       "source": "course.contents",
@@ -1386,5 +1392,13 @@
     "sourceBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "contract": "docs/planning/db05-lesson-content-rescope-contract.md",
     "verification": "SOURCE_ONLY_NO_API_OR_PG_PROOF"
+  },
+  "historicalCourseColumnsFollowUp": {
+    "sourceFile": "docs/planning/db05-historical-course-columns-source-evidence.json",
+    "fieldCount": 2,
+    "inspectedLegacyFiles": 13,
+    "verifiedNoActiveConsumer": false,
+    "decision": "RETAIN_TYPED_OR_EXPLICITLY_RETIRE",
+    "status": "OPEN_NOT_VERIFIED"
   }
 }
