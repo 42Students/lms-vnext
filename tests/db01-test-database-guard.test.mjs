@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 import { assertSafeDb01TestTarget } from "../scripts/db01-test-database-guard.mjs";
 
@@ -11,6 +11,11 @@ test("DB01 guard refuses missing TEST_DATABASE_URL", () => {
 test("DB01 guard allows a local isolated test target", () => {
   assert.deepEqual(assertSafeDb01TestTarget({ TEST_DATABASE_URL: local }),
     {host:"127.0.0.1",database:"lms_vnext_test",mode:"local"});
+});
+test("DB25 guard accepts verifier-style disposable local database names", () => {
+  const url = "postgresql://test_user:secret@127.0.0.1:5432/lms_vnext_test_4242";
+  assert.deepEqual(assertSafeDb01TestTarget({ TEST_DATABASE_URL: url }),
+    {host:"127.0.0.1",database:"lms_vnext_test_4242",mode:"local"});
 });
 test("DB01 guard refuses a production database name", () => {
   assert.throws(() => assertSafeDb01TestTarget({ TEST_DATABASE_URL:"postgres://x:x@127.0.0.1/lms_production" }),
@@ -124,13 +129,52 @@ test("DB25 guard subprocess refuses DATABASE_URL-only invocation without leaking
   assert.doesNotMatch(output, new RegExp(secret));
 });
 
-test("DB25 independent verifier still supplies an explicit test target before db:test:prepare", () => {
+test("DB25 independent verifier isolates the destructive reset target", () => {
   assert.match(
     independentVerifierSource,
     /TEST_DATABASE_URL:\s*databaseUrl/,
   );
   assert.match(
     independentVerifierSource,
-    /"db:test:prepare"/,
+    /lms_vnext_test_\$\{process\.pid\}/,
   );
+  const deleteAppAlias = independentVerifierSource.indexOf(
+    "delete destructiveEnv.DATABASE_URL",
+  );
+  const prepareStep = independentVerifierSource.indexOf(
+    '"db:test:prepare"',
+  );
+  assert.ok(deleteAppAlias >= 0);
+  assert.ok(prepareStep > deleteAppAlias);
+  assert.match(
+    independentVerifierSource.slice(prepareStep, prepareStep + 180),
+    /destructiveEnv/,
+  );
+});
+
+
+test("DB25 destructive prepare refuses before any database connection when TEST_DATABASE_URL is absent", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB25 process regression");
+
+  const secret = "valuableAppSecret";
+  const result = spawnSync(
+    process.execPath,
+    [tsx, "scripts/db-test-prepare.ts"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        DATABASE_URL:
+          `postgresql://app:${secret}@127.0.0.1:1/lms_vnext_test`,
+        TEST_DATABASE_URL: "",
+      },
+    },
+  );
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(output, /TEST_DATABASE_URL must be explicitly set/);
+  assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
 });
