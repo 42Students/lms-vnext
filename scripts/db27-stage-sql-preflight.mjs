@@ -170,6 +170,7 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
     if(process.argv.includes("--json"))console.log(JSON.stringify(result,null,2));
     else console.log("DB-027 staged SQL (read-only): "+JSON.stringify({counts:result.counts,
       duplicateCreators:result.duplicates.length,cycles:result.cycles.length,
+      lexicalHazards:result.lexicalHazards.length,
       registeredOverlap:result.registeredOverlap.length,hazards:result.hazards}));
     if(result.hazards)process.exitCode=2;
   }catch(error){console.error(error instanceof Error?error.stack:error);process.exitCode=1;}
