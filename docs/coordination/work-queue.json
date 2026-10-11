@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T08:39:00.000Z",
+  "updatedOn": "2026-10-11T08:44:30.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2362,17 +2362,17 @@
         "tests/db06-quiz-shuffle-staging.test.mjs",
         "docs/planning/database-parity-db06-field-reconciliation.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "7bf177e24018e52903e33b905b5e5b5ba17daeeb",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB06 quiz shuffle persistence source staging complete: pinned legacy producer/consumer semantics prove shuffle_questions/shuffle_options active, false-default learner-presentation metadata; additive non-null false-default course_quizzes columns staged; ledger moved both gaps to STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED; contract/static guard committed and wired. Connector source consistency 11/11 true. No Node/PostgreSQL execution, journal registration, API behavior or UI cutover claimed.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T08:39:00.000Z",
       "startedAt": "2026-10-11T08:38:34.897Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T08:44:30.000Z",
+      "completionCommitSha": "7bf177e24018e52903e33b905b5e5b5ba17daeeb",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2396,6 +2396,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T08:38:34.897Z",
           "reason": "Pinning legacy quiz shuffle persistence producer/consumer semantics and staging normalized vNext DB fields."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T08:44:30.000Z",
+          "reason": "DB-041 source-only shuffle persistence candidate, ledger dispositions, contract and static guard committed; runtime migration/API acceptance remains pending."
         }
       ]
     },
