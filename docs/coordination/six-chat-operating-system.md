@@ -3,6 +3,14 @@
 **Effective:** 2026-10-11 IST · **Repository:** `42Students/lms-vnext` · **Branch:** `main` · **Workers:** Chats 1–6, interchangeable.
 **Authoritative state:** [phase-state.json](phase-state.json) + [work-queue.json](work-queue.json) + [six independent chat checkpoints](lanes/) + GitHub issues [#21–#26](https://github.com/42Students/lms-vnext/issues).
 
+## CI unavailable by choice (billing) — verification provider is replaceable
+
+**User directive, 2026-10-11:** GitHub Actions CI is paused because of billing. It is NOT an impediment to progressing, picking, implementing, committing, peer reviewing, or completing source/implementation tasks. Do not repeatedly check GitHub Actions, demand billing remediation, or classify tasks BLOCKED merely because Actions runs fail at runner allocation. All six workers should proceed with independently bounded DATABASE work and use non-Actions test execution whenever available.
+
+For proof, prefer available local/ephemeral Node tests; use an approved disposable PostgreSQL (local installation/container, temporary non-production database or equivalent isolated runner) for migration replay, negative FK/tenant and race witnesses. Record the **actual** command, runtime/database version, git SHA, exit status, relevant output and evidence location; never invent execution. If the current tooling cannot reach a disposable PostgreSQL, note `PG_VERIFICATION_PENDING` as an **unverified acceptance requirement**, not `CI_BILLING_BLOCKED`. A phase still cannot certify without real DB evidence. Work on other nonconflicting tasks rather than waiting for billing.
+
+Reporting convention: **"CI intentionally unused (billing)"** is environment context, not a blocker or quality verdict. Count authored tests, executed tests and passing tests separately. The single-writer Chat 1 ownership of migration journal/schema barrel remains unchanged. When executable infrastructure becomes available outside Actions, any eligible worker may collect acceptance evidence without waiting for CI.
+
 ## KEY POLICY CHANGE: One GLOBAL phase, six simultaneous contributors
 
 **Permanent domains do not belong to particular chats.** Previous W01–W06 domain-boundaries in `docs/planning/six-chat-closure-plan.md`, previous issue descriptions, and the original operating-system v1 were superseded by this shared-phase contract. Historical work/commits remain valid. Six chat numbers are durable **worker identities**, not domain assignments.
