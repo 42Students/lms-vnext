@@ -11,6 +11,10 @@ const stagedSql = fs.readFileSync(
   "docs/planning/db04-proposed-migration.sql",
   "utf8",
 );
+const verificationSchema = fs.readFileSync(
+  "src/db/schema/profile-verification.ts",
+  "utf8",
+);
 
 test("DB04 normalized education/image schema remains explicitly staged", () => {
   assert.match(staged, /STAGED ONLY/);
@@ -46,4 +50,16 @@ test("DB04 premerge SQL stages receipt parent keys required by composite FKs", (
   assert.match(stagedSql, /profile_private_doc_id_owner_purpose_uq/);
   assert.match(stagedSql, /learner_profile_education_documents_receipt_fk/);
   assert.match(stagedSql, /learner_profile_images_receipt_fk/);
+});
+
+
+test("DB04 staged receipt schema exposes the composite parent identities", () => {
+  assert.match(verificationSchema, /profile_private_doc_id_owner_uq/);
+  assert.match(verificationSchema, /profile_private_doc_id_owner_purpose_uq/);
+  assert.match(verificationSchema, /profile_private_doc_object_key_ck/);
+  assert.match(verificationSchema, /private\/\[A-Za-z0-9_\/-\]\+/);
+  assert.match(verificationSchema, /profile_private_doc_generation_ck/);
+  assert.match(verificationSchema, /\^\[0-9\]\+\$/);
+  assert.match(verificationSchema, /profile_private_doc_sha256_ck/);
+  assert.match(verificationSchema, /\{64\}/);
 });
