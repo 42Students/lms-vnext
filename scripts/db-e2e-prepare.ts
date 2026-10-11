@@ -1,4 +1,37 @@
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import type { RequestContext } from "../src/modules/identity/context";
+
+function assertDestructiveE2ETargetPreflight(databaseUrl: string) {
+  const guardPath = fileURLToPath(
+    new URL("./db01-test-database-guard.mjs", import.meta.url),
+  );
+  const guardEnv = {
+    ...process.env,
+    TEST_DATABASE_URL: databaseUrl,
+  };
+  delete guardEnv.DATABASE_URL;
+
+  const result = spawnSync(process.execPath, [guardPath], {
+    env: guardEnv,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
+  if (result.error) {
+    throw result.error;
+  }
+  if (result.status !== 0) {
+    const detail = (result.stderr || result.stdout || "").trim();
+    throw new Error(
+      detail || "Destructive E2E database target preflight refused",
+    );
+  }
+
+  if (result.stdout) {
+    process.stdout.write(result.stdout);
+  }
+}
 
 async function main() {
   const databaseUrl =
@@ -10,8 +43,10 @@ async function main() {
     );
   }
 
-  process.env.DATABASE_URL = databaseUrl;
+  assertDestructiveE2ETargetPreflight(databaseUrl);
+
   process.env.TEST_DATABASE_URL = databaseUrl;
+  process.env.DATABASE_URL = databaseUrl;
 
   const [
     dbLib,
