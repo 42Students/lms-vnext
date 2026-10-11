@@ -3923,6 +3923,52 @@
           "reason": "Narrow DB065 read-only executable tool accepted by 30/30 independently executed Node tests against exact committed blobs. Not PostgreSQL, database domain, or global phase certification."
         }
       ]
+    },
+    {
+      "id": "DB-066",
+      "phase": "DATABASE",
+      "title": "Enforce same-job placement application/round/request relational scope",
+      "scope": "Stage DB08 same-job composite parent and child FKs for placement application role-option, round results, offer extension, reschedule requests and exception binding; guard cross-parent/tenant direct SQL combinations, author executable source and negative PostgreSQL witnesses, hand integration to Chat 1",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db08-cross-parent-consistency-candidate.sql",
+        "docs/planning/db08-chat03-cross-parent-integrity-contract.md",
+        "tests/db08-cross-parent-integrity.test.mjs",
+        "scripts/verify-db08-cross-parent-source.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-12T02:23:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-12T02:23:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12T02:23:00+05:30",
+          "reason": "New DB08 integrity work item discovered after existing queue had no eligible general-worker READY task; separate from DB09/DB06 blocked claims."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T02:23:00+05:30",
+          "reason": "Chat 3 claims nonoverlapping DB08 candidate SQL/docs/tests; Chat 1 retains exclusive registered migrations/barrel."
+        }
+      ]
     }
   ],
   "eventModel": {
