@@ -485,3 +485,11 @@ test("DB09 drive groups enforce active owner lifecycle and immutable provenance"
     assert.match(sql, new RegExp(active.replace(/[()]/g, "\\$&")));
   }
 });
+
+
+test("old DB09 scheduling narrative is explicitly non-canonical", () => {
+  const doc = read("docs/planning/db09-scheduling-persistence-contract.md");
+  assert.match(doc, /SUPERSEDED FOR MIGRATION INTEGRATION/);
+  assert.match(doc, /db09-round-scheduling-candidate\.sql/);
+  assert.match(doc, /db09-integration-manifest-2026-10-11\.md/);
+});
