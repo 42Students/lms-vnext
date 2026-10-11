@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T14:05:00+05:30",
+  "updatedOn": "2026-10-11T14:10:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2038,6 +2038,53 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T08:01:43.463Z",
           "reason": "Staging append-only assignment grade and attendance correction event tables from DB-009 source semantics; no journal/schema-barrel registration."
+        }
+      ]
+    },
+    {
+      "id": "DB-036",
+      "phase": "DATABASE",
+      "title": "Normalize DB09 notification toggle and TPO preference booleans",
+      "scope": "Replace fixed-key notify_toggles_json and tpo_user_prefs.prefs_json with typed boolean columns. Preserve four college notification switches and five personal TPO preferences with exact source defaults; distinguish active outbound-toggle semantics from personal-preference UI persistence where delivery consumption is not source-proven.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/tpo-collaboration.ts",
+        "docs/planning/database-parity-db09-field-ledger.json",
+        "docs/planning/db09-notification-preferences-normalization-2026-10-11.md",
+        "tests/db09-notification-preferences-normalization.test.mjs",
+        "docs/planning/db09-integration-manifest-2026-10-11.md"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T14:10:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T14:10:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T14:10:00+05:30",
+          "reason": "Fresh source-backed DB09 gap: both JSON objects have fixed boolean key sets; college toggles actively change notification dispatch and personal prefs are live GET/PUT persisted UI state."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T14:10:00+05:30",
+          "reason": "Chat 3 reserved isolated schema/ledger/doc/test/manifest normalization paths."
         }
       ]
     }
