@@ -207,22 +207,11 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_cohort_period();
 -- Legacy batch usage still counts suspended, non-deleted learners attached to primary classes.
 -- Removing LEARNER or ending the college membership is different: active section/program
 -- enrollment must become historical and must not keep contributing to current cohort counts.
-CREATE FUNCTION db02_withdraw_learner_academic_state()
+CREATE FUNCTION db02_withdraw_learner_on_role_delete()
 RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE
-  target_membership uuid;
-  should_withdraw boolean := false;
 BEGIN
-  IF TG_TABLE_NAME = 'membership_roles' THEN
-    target_membership := OLD.membership_id;
-    should_withdraw := OLD.role = 'LEARNER';
-  ELSIF TG_TABLE_NAME = 'college_memberships' THEN
-    target_membership := NEW.id;
-    should_withdraw := OLD.status <> 'ENDED' AND NEW.status = 'ENDED';
-  END IF;
-
-  IF NOT should_withdraw THEN
-    RETURN COALESCE(NEW, OLD);
+  IF OLD.role <> 'LEARNER' THEN
+    RETURN OLD;
   END IF;
 
   UPDATE section_enrollments se
@@ -231,7 +220,7 @@ BEGIN
          updated_at = now()
     FROM learner_program_enrollments lpe
    WHERE lpe.id = se.learner_enrollment_id
-     AND lpe.membership_id = target_membership
+     AND lpe.membership_id = OLD.membership_id
      AND se.status = 'ACTIVE';
 
   UPDATE learner_program_enrollments
@@ -239,20 +228,48 @@ BEGIN
          withdrawn_at = COALESCE(withdrawn_at, now()),
          completed_at = NULL,
          updated_at = now()
-   WHERE membership_id = target_membership
+   WHERE membership_id = OLD.membership_id
      AND status = 'ACTIVE';
 
-  RETURN COALESCE(NEW, OLD);
+  RETURN OLD;
 END;
 $$;
 
 CREATE TRIGGER db02_withdraw_learner_on_role_removal
 AFTER DELETE ON membership_roles
-FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_academic_state();
+FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_on_role_delete();
+
+CREATE FUNCTION db02_withdraw_learner_on_membership_end()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF OLD.status = 'ENDED' OR NEW.status <> 'ENDED' THEN
+    RETURN NEW;
+  END IF;
+
+  UPDATE section_enrollments se
+     SET status = 'WITHDRAWN',
+         ended_at = COALESCE(se.ended_at, now()),
+         updated_at = now()
+    FROM learner_program_enrollments lpe
+   WHERE lpe.id = se.learner_enrollment_id
+     AND lpe.membership_id = NEW.id
+     AND se.status = 'ACTIVE';
+
+  UPDATE learner_program_enrollments
+     SET status = 'WITHDRAWN',
+         withdrawn_at = COALESCE(withdrawn_at, now()),
+         completed_at = NULL,
+         updated_at = now()
+   WHERE membership_id = NEW.id
+     AND status = 'ACTIVE';
+
+  RETURN NEW;
+END;
+$$;
 
 CREATE TRIGGER db02_withdraw_learner_on_membership_end
 AFTER UPDATE OF status ON college_memberships
-FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_academic_state();
+FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_on_membership_end();
 
 -- ---------------------------------------------------------------------------
 -- 4) Serialize history creation against section structural movement
