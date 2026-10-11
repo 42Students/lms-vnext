@@ -32,9 +32,9 @@ When an optional event has **exactly false** for its switch, the legacy dispatch
 
 **API wave contract:** expose the historical `notificationToggles` object with exactly the same four camelCase keys, backed by the four boolean columns. Transactionally merge partial updates instead of replacing all values with defaults. When a switch is false, preserve the APP notification and suppress only the optional external channel(s), exactly like the frozen dispatcher. The database migration does not implement or verify this producer/consumer cutover.
 
-### Personal TPO preferences — saved user choices
+### Personal TPO preferences — active persisted preference API state
 
-The frozen `TpoSettingsHubService.myPrefs` and `saveMyPrefs` persist exactly five boolean choices; missing row yields the defaults below. Writes merge known keys, accepting only booleans. The legacy service reads JSON on GET and writes it on PUT; **the inspected source does not establish that actual notification dispatch uses these personal values**. Do not invent that guarantee as part of this DB phase.
+The frozen `TpoSettingsHubService.myPrefs` and `saveMyPrefs` persist exactly five boolean choices; missing row yields the defaults below. Writes merge known keys, accepting only booleans. `TpoHubController` exposes live `GET /api/v1/tpo/my-preferences` and `PUT /api/v1/tpo/my-preferences` endpoints, and the frozen frontend service defines matching `getMyPreferences` / `saveMyPreferences` calls. However, the inspected frozen TPO pages do **not** prove a rendered UI consumer for these five values, and the inspected source does not establish that notification dispatch uses them. Classify them as active persisted preference API state—not as proven current UI controls or dispatcher policy.
 
 | Legacy API key | Normalized Drizzle field | SQL column | Initial value |
 | --- | --- | --- | --- |
@@ -46,7 +46,7 @@ The frozen `TpoSettingsHubService.myPrefs` and `saveMyPrefs` persist exactly fiv
 
 VNext uses the existing composite primary key `(college_id, user_id)` for the personal row; only an appropriately scoped TPO user may read/write. Keep the college identifier derived from the current authorized membership or reject an arbitrary unrelated college. Do not flatten to a global `user_id` key and allow one college to change another college's preferences.
 
-**API wave contract:** still return the same five camelCase properties; write partial boolean updates without erasing unaffected values. On GET, missing row yields the documented defaults. These rules are **not** proof of legacy personal preference delivery enforcement.
+**API wave contract:** keep the live GET/PUT endpoint contract and return the same five camelCase properties; write partial boolean updates without erasing unaffected values. On GET, missing row yields the documented defaults. UI phase must independently decide whether to surface these controls because current frozen page consumption is not proven. These rules are **not** proof of personal-preference delivery enforcement.
 
 ## Existing schema corruption repaired in the same claimed file
 
@@ -93,3 +93,10 @@ the now-removed JSONB checks. Both were updated under DB-036's expanded
 claimed paths, to reflect the actual 279-field source/design ledger without
 claiming runtime verification. DB-034's earlier normalization report was also
 cross-linked to this subsequent DB-036 redesign.
+
+
+## Frozen frontend/API evidence
+
+The frozen frontend `src/api/Services/TpoHubService.js` exposes both `getMyPreferences()` and `saveMyPreferences(body)`, matching the live backend controller routes. By contrast, direct inspection of the frozen TPO settings, notifications and profile surfaces did not find a current renderer for `morningDigest`, `recruiterMessages`, `requests`, `resultsReady` or `followUps`. That absence is not a retirement decision; it only limits the evidence claim. API persistence is active, current UI consumption is unproven.
+
+For college notification switches, frontend evidence is direct and stronger: Settings > Student notices renders exactly the four source keys and states that **the in-app notice always shows; these switches control only email**. This agrees with `NotificationOutboxService.dispatchOne`, which evaluates `switchedOff` only for non-APP channels.
