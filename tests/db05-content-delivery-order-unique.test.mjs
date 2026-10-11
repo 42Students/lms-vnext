@@ -6,7 +6,7 @@ import test from "node:test";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const source = (path) => readFileSync(join(root, path), "utf8");
-const draft = source("scripts/sql/db05-content-delivery-order-unique.draft.sql");
+const draft = source("scripts/sql/db05-content-delivery-order-unique-lesson.draft.sql");
 const other = source("scripts/sql/db05-content-delivery-order-scope.draft.sql");
 const staged = source("src/db/schema/lesson-content-order-staged.ts");
 const writer = source("src/modules/courses/lesson-content-order-service.ts");
@@ -22,7 +22,7 @@ test("DB05 staged order candidate witnesses the owning lesson, not a global sequ
   assert.match(draft, /REFERENCES lesson_contents \(id, lesson_id\)/);
   assert.match(draft, /ON UPDATE RESTRICT/);
   assert.match(draft, /UNIQUE \(delivery_id, lesson_id, sequence\)/);
-  assert.match(draft, /DEFERRABLE INITIALLY IMMEDIATE/);
+  assert.match(draft, /CREATE UNIQUE INDEX db05_delivery_order_lesson_sequence_uq/);
   assert.doesNotMatch(draft, /UNIQUE\s*\(\s*delivery_id\s*,\s*sequence\s*\)/);
 });
 
@@ -38,7 +38,7 @@ test("DB05 delivery reorder writer includes witnessed lesson ID in inserted rows
 
 test("DB05 new uniqueness companion does not silently replace tenant guard", () => {
   assert.match(draft, /UNREGISTERED companion/);
-  assert.match(draft, /does not need to defer the constraint/);
+  assert.match(draft, /W01 folds exactly once/);
   assert.doesNotMatch(draft, /CREATE TABLE\s+lesson_content_delivery_sequences/i);
   assert.doesNotMatch(draft, /CREATE TRIGGER/i);
   assert.match(other, /db05_content_delivery_order_scope_guard/);
@@ -53,11 +53,11 @@ test("DB05 new uniqueness companion does not silently replace tenant guard", () 
 
 test("DB05 order uniqueness remains source-only until real PostgreSQL and app proof", () => {
   for (const proof of [
-    "Same delivery, different lessons",
-    "Same delivery, same lesson, duplicate sequence",
-    "Source content lesson A but asserted lesson_id B",
-    "Concurrent complete reorder",
-    "Upstream learning-path/offering/section",
+    "Different lessons within one delivery",
+    "Same lesson/delivery duplicate position",
+    "Wrong lesson supplied on raw INSERT/UPDATE",
+    "two-connection",
+    "upstream course/lesson/offering",
   ]) assert.ok(draft.includes(proof), proof);
-  assert.match(draft, /No runtime PostgreSQL verification has been performed/);
+  assert.match(draft, /UNREGISTERED, NOT EXECUTED/);
 });
