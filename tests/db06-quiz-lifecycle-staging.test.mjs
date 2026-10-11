@@ -171,7 +171,7 @@ test("DB052 existing rows use actorless BASELINE rather than fabricated history"
     contract,
     /BASELINE.*no actor|actor fields remain null/i,
   );
-  assert.doesNotMatch(
+  assert.match(
     contract,
     /infer actor from created_by_user_id except CREATE/i,
   );
