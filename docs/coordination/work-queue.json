@@ -257,7 +257,7 @@
         "docs/planning/db-pass4-columns-db02_academics_and_timetable.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "c877e6f62514b311cc2388519711ff5e1fb9bbe5",
+      "latestEvidenceSha": "09009a5390c3457211f9f7b304aba498513e5471",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
@@ -292,7 +292,7 @@
           "reason": "Chat 4 begins legacy-vNext DB02 academic/timetable field and invariants reconciliation."
         }
       ],
-      "progressNote": "DB02 source+target design disposition remains 125/125. Latest static readiness: canonical 25/25 PL/pgSQL functions, deconflicted parent/enrollment extension 9/9, zero trigger-name overlap, no heterogeneous NEW/OLD record COALESCE. Acceptance harnesses now cover reversible INACTIVE, zero-credit CORE offerings, exact sectioned current_students, current-period classCount, learner suspension vs role/END withdrawal, tenant/enrollment/history/faculty/schedule/room invariants, promotion CAS, hall races and section reparent/history races. API follow-up matrix committed at docs/planning/db02-api-followup-after-database.md. Registered Drizzle DB02 structures still not found on latest main. PostgreSQL tests=0/runtime verified=0; DB-005 stays IN_PROGRESS."
+      "progressNote": "Chat 4 DB-005: 125/125 source and design fields classified; canonical UNREGISTERED DB02 stage structurally 45 paired PL/pgSQL functions/53 unique triggers, after concurrent consolidation of parent/enrollment, room/progression and historic parent guards. Authored 40 static source tests across 4 test files and 2 new rollback-only PostgreSQL acceptance scripts, now referencing the canonical stage; tests not run (Node/PG/CI=0). Exact review docs/planning/db02-stage-adversarial-review-chat04-2026-10-11.md. No numbered migration integration or runtime verified fields. IN_PROGRESS."
     },
     {
       "id": "DB-006",
