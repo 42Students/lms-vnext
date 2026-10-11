@@ -3411,28 +3411,28 @@
         "INTEGER_KEY_TO_UUID_MAPPING"
       ],
       "candidateVnextTables": [
-        "placement_prep_assignments (required staged design)"
+        "placement_prep_assignments"
       ],
       "mappingTarget": {
-        "table": "placement_prep_assignments (required staged design)",
-        "column": "assessment_id",
-        "status": "RESOURCE_IDENTITY_BLOCKED"
+        "table": "placement_prep_assignments",
+        "column": null,
+        "status": "RETIRED_DORMANT_COMPATIBILITY_FIELD"
       },
-      "semanticDefinition": "Active placement-readiness assignment references a learner and one reusable LMS prep resource (course or assessment), optional due time and assigning actor; completion is derived.",
-      "tenantKey": "Learner membership and resource offering/delivery must be same-college/authorized",
-      "actorPermission": "Source disposition only. Final actor/tenant authorization requires executed negative witnesses.",
+      "semanticDefinition": "Legacy assessment_id is not preserved in greenfield vNext. Frozen production UI assigns prep only by courseId; frozen backend has no generic assessment entity/table; prepProgress only renders course-backed rows. A future test-only prep feature must add an explicit typed resource contract instead of reviving an unconstrained generic ID.",
+      "tenantKey": "placement_prep_assignments.college_id + learner_membership_id; course authorization is organization/catalog scoped",
+      "actorPermission": "Authorized placement staff may assign only an allowed LMS course to learners in their scoped college/department.",
       "producerPaths": [
         "src/main/java/com/_42students/lms/model/tpo/PrepAssignment.java",
         "src/main/java/com/_42students/lms/repository/tpo/PrepAssignmentRepository.java",
         "src/main/resources/db/migration/V161__tpo_v1_drives.sql"
       ],
       "consumerPaths": [
-        "src/db/schema/courses.ts",
-        "src/db/schema/quizzes.ts",
-        "src/db/schema/assessments.ts"
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
+        "src/components/tpo/students/StudentActions.jsx",
+        "docs/planning/sql/db09-prep-bell-read-state-candidate.sql"
       ],
-      "constraintAndLifecycleEvidence": "No canonical placement-prep relation exists. DB05/DB06 must decide what legacy assessment_id means before an enforceable FK can be authored; generic notifications are not persistence parity.",
-      "status": "BLOCKED",
+      "constraintAndLifecycleEvidence": "Frozen FE posts courseId only for Assign prep. Frozen BE exposes assessmentId in a generic bulk DTO but has no generic assessment model/table and prepProgress joins only course_id, so assessment-only rows have no current user-facing read path. Staged vNext contract makes course_id required and explicitly retires assessment_id; runtime/API compatibility proof remains pending.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
       "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
@@ -10024,11 +10024,11 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "notification_outbox 13-field DB09/DB10 compatibility redesign",
-    "result": "Moved all 13 legacy notification_outbox fields from BLOCKED to REDESIGNED via staged notification intent/cancellation contract. Runtime/DB verification remains 0.",
+    "scope": "prep_assignment.assessment_id final disposition",
+    "result": "Resolved final DB09 field blocker by retiring dormant generic assessment_id and keeping prep course-backed in greenfield vNext. Canonical DB09 is 279/279 disposition-reviewed with zero field-level BLOCKED rows; runtime verification remains 0.",
     "evidence": [
-      "docs/planning/db09-notification-outbox-compatibility-contract.md",
-      "docs/planning/sql/db09-notification-intents-candidate.sql"
-    ]
+      "docs/planning/sql/db09-prep-bell-read-state-candidate.sql"
+    ],
+    "commit": "ca86ade0b9971ce8c41724a5f85e10406f60d801"
   }
 }
