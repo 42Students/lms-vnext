@@ -95,18 +95,17 @@ function sqlFor(probe: Probe): { violations: string; sample: string } {
   if (probe.expectedViolations !== 0 || probe.executionEvidence !== "NOT_RUN") {
     throw new Error(`Pass-5 ${probe.id} must not inherit fabricated execution evidence`);
   }
-  const primary = aliases[0]!;
   return {
     violations: `SELECT COUNT(*)::bigint AS violations FROM ${probe.from} WHERE ${probe.where}`,
-    sample: `SELECT COUNT(*)::bigint AS sample_count FROM ${primary[1]} ${primary[0]}`,
+    sample: `SELECT COUNT(*)::bigint AS sample_count FROM ${probe.from}`
   };
 }
 
-async function withRollback(run: (client: PoolClient) => Promise<void>) {
+async function withRollback(run: (client: PoolClient) => Promise<void>, readOnly = false) {
   const client = await db().connect();
   let transaction = false;
   try {
-    await client.query("BEGIN");
+    await client.query(readOnly ? "BEGIN READ ONLY" : "BEGIN");
     transaction = true;
     await client.query("SET LOCAL statement_timeout = '8000ms'");
     await client.query("SET LOCAL lock_timeout = '2000ms'");
@@ -131,8 +130,8 @@ afterAll(async () => {
       "DB018 observational witness coverage: " +
         JSON.stringify({
           probes: probes.length,
-          primaryTablesNonEmpty: nonEmpty.length,
-          primaryTablesEmpty: empty.length,
+          joinedSamplesNonEmpty: nonEmpty.length,
+          joinedSamplesEmpty: empty.length,
           emptyProbeIds: empty,
           directSqlNegativeCases: 4,
           caveat:
@@ -156,7 +155,6 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
       const sql = sqlFor(probe);
       await withRollback(async (client) => {
         // This is a real PostgreSQL read-only transaction, not a source shim.
-        await client.query("SET TRANSACTION READ ONLY");
         const sample = await client.query<{ sample_count: string }>(sql.sample);
         const count = await client.query<{ violations: string }>(sql.violations);
         const n = Number(count.rows[0]?.violations);
@@ -166,7 +164,7 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
         if (sampled > 0) nonEmpty.push(probe.id);
         else empty.push(probe.id);
         expect(n, `${probe.id} has relational mismatch rows`).toBe(0);
-      });
+      }, true);
     });
   }
 
