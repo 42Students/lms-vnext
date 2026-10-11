@@ -188,10 +188,12 @@ CREATE INDEX placement_round_reschedule_status_idx
 --    duplicate active status machines without deliberate domain ownership.
 -- 9. booked slots cannot be unconfirmed or shrunk below current bookings.
 -- 10. coordinator row requires ACTIVE LEARNER membership in the same college;
---     assigning user, when present, must hold ACTIVE same-college membership.
+--     assigning user, when present, must hold active TPO actor scope.
 
 
 -- Date-scoped student coordinator authorization for drive-day attendance.
+-- db09_has_active_tpo_actor comes from the collaboration supplemental
+-- candidate and is registered earlier per the DB09 integration manifest.
 -- Parent (id,college_id) keys for jobs/memberships come from the centralized
 -- DB09 parent-key candidate; this canonical file owns the child table.
 CREATE TABLE placement_drive_coordinator_assignments (
@@ -231,14 +233,12 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
-  IF NEW.created_by_user_id IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-      FROM college_memberships m
-     WHERE m.user_id = NEW.created_by_user_id
-       AND m.college_id = NEW.college_id
-       AND m.status = 'ACTIVE'
-  ) THEN
-    RAISE EXCEPTION 'drive coordinator assigning user is not active in job college'
+  IF NEW.created_by_user_id IS NOT NULL
+     AND NOT db09_has_active_tpo_actor(
+       NEW.created_by_user_id,
+       NEW.college_id
+     ) THEN
+    RAISE EXCEPTION 'drive coordinator assigning user lacks active TPO scope in job college'
       USING ERRCODE = '23514';
   END IF;
 
