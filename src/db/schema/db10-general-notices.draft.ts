@@ -68,7 +68,8 @@ export const db10GeneralNotices = pgTable(
   (t) => [
     uniqueIndex("db10_general_notices_idempotency_uq").on(t.idempotencyKey),
     uniqueIndex("db10_general_notices_source_recipient_channel_uq")
-      .on(t.sourceEventId, t.recipientUserId, t.channel),
+      // A single user can receive distinct LEARNER and FACULTY notices for one source event.
+      .on(t.sourceEventId, t.recipientUserId, t.recipientType, t.channel),
     index("db10_general_notices_due_idx").on(t.status, t.sendAfter),
     index("db10_general_notices_undo_idx").on(t.collegeId, t.undoGroupId, t.status),
     index("db10_general_notices_recipient_idx")
