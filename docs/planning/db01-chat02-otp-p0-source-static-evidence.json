@@ -1,0 +1,471 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_P0_AUTH_LIFECYCLE_IN_PROCESS_STATIC_EVIDENCE_NOT_RUNTIME",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "observedOn": "2026-10-11",
+  "provenance": "Connected GitHub fetch_file exact main blob contents evaluated as source-level JavaScript predicates; this is NOT node:test, Vitest, TypeScript compilation, PostgreSQL execution, or actual provider acceptance.",
+  "sourceBlobs": [
+    {
+      "path": "docs/planning/sql/db01-auth-attempts-staging.sql",
+      "blobSha": "613f0d7f1e36fd7e18386e60a0bd03ef305ce44d"
+    },
+    {
+      "path": "src/db/schema/db01-auth-attempts.staged.ts",
+      "blobSha": "8c31db4cd01d4b241179f47a34eee855426d987c"
+    },
+    {
+      "path": "docs/planning/sql/db01-auth-attempt-lifecycle-guard-staging.sql",
+      "blobSha": "d402e704f0d6b7b30418f10921802988382fdfa5"
+    },
+    {
+      "path": "tests/db01-auth-attempt-lifecycle-pg.test.mjs",
+      "blobSha": "e6ba3e82c1c887332887b0c622b11aa12b319fb7"
+    },
+    {
+      "path": "tests/db01-auth-attempt-lifecycle-source.test.mjs",
+      "blobSha": "4f893b84dde08b31be61f562614fc0dad19079f5"
+    },
+    {
+      "path": "docs/planning/db01-auth-security-p0-field-crosswalk.json",
+      "blobSha": "08b8f6880062045b04228c71da2894bc0cb59b13"
+    },
+    {
+      "path": "docs/planning/db01-chat02-no-target-disposition-queue.json",
+      "blobSha": "f46d7ebcca52eb57759a7a8fa55973451b4449dc"
+    },
+    {
+      "path": "docs/planning/db01-chat02-312-field-source-triage.json",
+      "blobSha": "efedb62f8738798e757186c7143836345405d33a"
+    },
+    {
+      "path": "tests/db01-auth-security-p0-field-crosswalk.test.mjs",
+      "blobSha": "39747bf730f0f8bfb8f04f8612fc91945479f7f5"
+    }
+  ],
+  "summary": {
+    "assertionsExecuted": 82,
+    "assertionsPassed": 82,
+    "assertionsFailed": 0,
+    "nodeTestsAuthored": 27,
+    "executedNodeTests": 0,
+    "executedPostgresTests": 0,
+    "registeredMigrationsThisBatch": 0,
+    "securityP0SourceFields": 38,
+    "securityP0SourceEvidenceGaps": 3,
+    "securityP0RuntimeVerified": 0
+  },
+  "checks": [
+    {
+      "id": "sql five-minute expiry",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "drizzle five-minute expiry",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "source bounded role",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "drizzle bounded role",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "sql consumed shape",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "drizzle consumed shape",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "sql verified <= used",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "sql SMS secret cleared",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "sql email secret cleared",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "drizzle all code secret fields cleared",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "sql verified timestamp in challenge",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "sql used timestamp in challenge",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "immutable scope id",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "immutable scope user_id",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "immutable scope college_id",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "immutable scope membership_id",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "immutable scope target_role",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "immutable scope contact_fingerprint",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "immutable scope created_at",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "verification_attempts never decreases",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "verification_attempts advances at most one",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "resend_attempts never decreases",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "resend_attempts advances at most one",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "version monotonic single step",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "expiry never extended",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "verified sticky",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "consumed sticky",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "verified challenge MAC immutable",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "consumed challenge even noop immutable",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "installed only as candidate row trigger",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "SQL no destructive stage",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "PG explicit opt in",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "PG separate DB URL",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "PG real row wait",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "PG cleanup",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "PG version-only consumed negative",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "14 authored monotonic source tests",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "13 authored P0 crosswalk source tests",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0 exact 38",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-01 auth_handoff_token.is_deleted",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-02 auth_handoff_token.token",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-03 auth_handoff_token.access_token",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-04 auth_handoff_token.refresh_token",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-05 auth_handoff_token.expires_at",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-06 auth_handoff_token.used",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-07 faculty.token_version",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-08 faculty_acct_verification.is_deleted",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-09 faculty_acct_verification.blocked_till_ts",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-10 faculty_acct_verification.incorrect_attempts",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-11 faculty_acct_verification.max_resend_attempts",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-12 faculty_acct_verification.otp",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-13 faculty_acct_verification.verify_status",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-14 learner.token_version",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-15 learner_acct_verification.is_deleted",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-16 learner_acct_verification.blocked_till_ts",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-17 learner_acct_verification.incorrect_attempts",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-18 learner_acct_verification.max_resend_attempts",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-19 learner_acct_verification.otp",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-20 learner_acct_verification.verify_status",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-21 mobile_login_attempt.is_deleted",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-22 mobile_login_attempt.expires_at",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-23 mobile_login_attempt.email_otp_expires_at",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-24 mobile_login_attempt.otp",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-25 mobile_login_attempt.email_otp",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-26 mobile_login_attempt.phone",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-27 mobile_login_attempt.used",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-28 mobile_login_attempt.verification_attempts",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-29 recruiter.token_version",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-30 recruiter_college_access.valid_until",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-31 recruiter_college_access_capability.capability",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-32 refresh_token_blocklist.jti",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-33 refresh_token_blocklist.expires_at",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-34 role.is_deleted",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-35 tenant_domain.is_deleted",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-36 user.password",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-37 user_session.jti",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0-38 user_session.expires_at",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "three named-source gaps accurately flagged",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "P0 domain 33-2-3",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "retirement approvals still zero",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "provider verification still zero",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    },
+    {
+      "id": "DB semantic verification still zero",
+      "result": "PASS",
+      "classification": "GITHUB_BLOB_STATIC_ASSERTION_NOT_NODE_OR_POSTGRES_EXECUTION"
+    }
+  ]
+}
