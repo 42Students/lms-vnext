@@ -277,6 +277,24 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Receipt insert/update trigger cannot protect existing receipts if membership/department/period/assignment/content/delivery/section ownership later changes."
+    },
+    {
+      "id": "COURSE_CONTENT_DELIVERY_ORDER_SCOPE_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Unregistered SQL companion only, no disposable PostgreSQL wrong-offering/tenant/cohort/term or archived-content tests."
+    },
+    {
+      "id": "COURSE_CONTENT_DELIVERY_ORDER_UNIQUE_PER_LESSON",
+      "status": "BLOCKED",
+      "owner": "DB05_W01_W02",
+      "evidence": "Current table has no lesson_id and a nonunique delivery/sequence index; needs scope-safe UNIQUE(delivery_id,lesson_id,sequence) design, not global delivery+sequence uniqueness."
+    },
+    {
+      "id": "COURSE_CONTENT_DELIVERY_ORDER_UPSTREAM_REPARENT_INTEGRITY",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Child-only trigger cannot detect later content/lesson/learning-path/section/cohort/academic-period/course department reparent changes."
     }
   ],
   "sourceReview": {
@@ -312,7 +330,8 @@
     "Lesson content source JSON 17 subfields remain unverified, including two DB06-only assignment resources/submission types; new settings table is unregistered.",
     "Course-parent graph same-college/indirect cycle companion not registered or tested; department and period upstream reparent still unguarded.",
     "Lesson discussions full college+optional-delivery tenant guard is companion-only; upstream reparent and concurrent mismatches require W01 PostgreSQL proof.",
-    "Course private upload receipts: separate DB06 base and DB16 overlay, shared same-college source-only guard unregistered; no PostgreSQL negatives or submission-file attestation binding proof."
+    "Course private upload receipts: separate DB06 base and DB16 overlay, shared same-college source-only guard unregistered; no PostgreSQL negatives or submission-file attestation binding proof.",
+    "Delivery-specific lesson-content ordering: scope trigger staged only; per-lesson+delivery sequence uniqueness and upstream offering/term/college changes unresolved, PG race/negative tests not run."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
@@ -334,6 +353,23 @@
         "REAL_POSTGRES_AND_API_RACE_TESTS"
       ],
       "note": "DB05/DB06/DB16 shared unregistered companion, NOT an eighth independent DB05 migration. No table/columns added; W01 must reconcile and merge exactly once."
+    },
+    {
+      "id": "DB05_CONTENT_DELIVERY_ORDER_SCOPE",
+      "path": "scripts/sql/db05-content-delivery-order-scope.draft.sql",
+      "baseCandidate": "docs/planning/sql/db05-lesson-content-delivery-order-candidate.sql",
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "dependencies": [
+        "LESSON_CONTENT_DELIVERY_SEQUENCE_TABLE_REGISTERED",
+        "OFFERING_DELIVERY_COHORT_TERM_COLLEGE_NEGATIVE",
+        "CONTENT_DELIVERY_SCOPE_NEGATIVE",
+        "PER_LESSON_DELIVERY_SEQUENCE_UNIQUE_POLICY",
+        "UPSTREAM_LESSON_COURSE_OFFERING_SECTION_REPARENT_GUARD",
+        "CONCURRENT_FULL_ORDER_REWRITE_TESTS"
+      ],
+      "note": "Not an eighth DB05 migration; fold as one SQL companion after base order table and service cutover. Duplicate sequences within a lesson/delivery unresolved."
     }
   ]
 }
