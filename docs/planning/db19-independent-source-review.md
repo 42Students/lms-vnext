@@ -123,3 +123,36 @@ current source files.
 **Remaining release gate**: Match and approve identity provider/cookie/token
 revocation behavior, integrate approved schema and run actual PostgreSQL
 tenant/concurrency/retention tests before changing any \`verifiedMapping\`.
+
+
+### DB01 crosswalk union enrichment (2026-10-12)
+
+The original 312-field triage was source-reviewed without changing immutable
+provenance, but it omitted two already-authored, disjoint proposal sets from
+the DB019 aggregate: **78 source-backed auth/security rows** and **150
+remaining-review rows**. The new \`reconcileDb01ProposalCoverage\` cross-check
+validates all 228 supplemental unique keys against the pinned 312-field triage,
+checks current legacy types/nullability and source status, rejects contradictory
+target choices, false runtime/PG acceptance, source queue blob mismatch, and
+duplicate or missing rows.
+
+The combined DB01 source *proposal* coverage is now:
+
+| Field disposition | Count |
+| --- | ---: |
+| Legacy DB01 fields | 312 |
+| Original triage target candidates | 116 |
+| Additional disjoint supplemental candidates | **59** |
+| **Distinct source target proposals** | **175 / 312 (56.09%)** |
+| Still without proposed target | **137** |
+| PostgreSQL-verified mappings | **0** |
+
+Source evidence by row retains distinction from actual mapped/registered DB.
+All **32** adversarial exact-source V8 test callbacks for the combined
+identity helper passed, no Node CLI or PostgreSQL execution claimed.
+The full eleven-domain global source ledger returned \`PASS\` with
+\`errors=[]\`, **199 tables / 2829 fields**, and separate
+\`db01CrosswalkUnionTargetCandidates=175\`,
+\`db01CrosswalkFieldsWithoutCandidate=137\`. Counts are not promoted into
+\`runtimeMappings\`, and DB019 is not marked completed until its prerequisite
+domains are accepted.
