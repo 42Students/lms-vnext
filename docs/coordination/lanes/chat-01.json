@@ -12,13 +12,13 @@
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB038_SOURCE_STAGING_COMPLETED",
+    "checkpointKind": "DB041_QUIZ_SHUFFLE_SOURCE_COMPLETED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "d67ff1cd3d092b73f97560906c4a9f4c88cfc67e",
-    "lastWorkerMergedSha": "c981943904764bab2bcaebae8964629bd51fd71a",
+    "observedMainSha": "4e9b69eaf7781308553a4699731e79bef2fb617a",
+    "lastWorkerMergedSha": "7bf177e24018e52903e33b905b5e5b5ba17daeeb",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-038 source-only assessment retention staging completed and post-completion hardened. Current source guards immutable quiz/answer history, assignment learner payload retention, authoring/scoring/snapshot coherence and poisoned-history preflight. Connector review 19/19; Node/PG not claimed."
+    "summary": "DB-041 source-only quiz shuffle persistence parity completed. Two active false-default legacy booleans staged; 11/11 connector source checks true; no Node/PG/API/UI claims."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -37,7 +37,8 @@
     "tests/db16-private-storage-safety.test.mjs",
     "tests/db-independent-verifier.test.mjs",
     "tests/db01-test-database-guard.test.mjs",
-    "tests/db06-assessment-retention-staging.test.mjs"
+    "tests/db06-assessment-retention-staging.test.mjs",
+    "tests/db06-quiz-shuffle-staging.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)"
@@ -46,7 +47,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Refresh global DATABASE queue. Pick a dependency-satisfied nonconflicting task; leave DB-030/DB-038 runtime verification pending until disposable PostgreSQL is executable.",
+  "nextAction": "Refresh global DATABASE queue; the primary remaining isolated DB06 source decision is assignment re-attempt persistence (legacy attempt_number vs current one-submission uniqueness).",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -78,7 +79,8 @@
     "DB-016",
     "DB-025",
     "DB-028",
-    "DB-038"
+    "DB-038",
+    "DB-041"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -88,10 +90,11 @@
     "DB-001",
     "DB-025",
     "DB-028",
-    "DB-038"
+    "DB-038",
+    "DB-041"
   ],
-  "lastPickedAt": "2026-10-11T08:25:15.235Z",
-  "lastCompletedAt": "2026-10-11T08:34:45.119Z",
+  "lastPickedAt": "2026-10-11T08:39:00.000Z",
+  "lastCompletedAt": "2026-10-11T08:44:30.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
@@ -101,7 +104,8 @@
     "DB-001",
     "DB-025",
     "DB-028",
-    "DB-038"
+    "DB-038",
+    "DB-041"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
