@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12T02:43:00+05:30",
+  "updatedOn": "2026-10-12T02:46:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -4090,6 +4090,59 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T20:56:54.840Z",
           "reason": "Chat 2 begins staged SQL, DB witness, and independent Node source guard for unscoped template-version FK."
+        }
+      ]
+    },
+    {
+      "id": "DB-069",
+      "phase": "DATABASE",
+      "title": "Preserve mutable TPO drive ownership and atomic team-member removal",
+      "scope": "Restore source-active mutable drive ownership separately from immutable creator identity; enforce same-college active placement-owner scope, prevent orphaned recruiter leads/open drives when TPO team membership is removed, and stage atomic reassignment/removal semantics matching legacy TpoTeamService. Source/staging only; Chat 1 owns migration registration.",
+      "priority": 2,
+      "dependsOn": [
+        "DB-011"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db09-team-owner-lifecycle-candidate.sql",
+        "docs/planning/db09-team-owner-lifecycle-audit.md",
+        "scripts/verify-db09-team-owner-source.mjs",
+        "tests/db09-team-owner-lifecycle.test.mjs"
+      ],
+      "status": "IN_PROGRESS",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-12T02:46:00+05:30",
+      "startedAt": "2026-10-12T02:46:00+05:30",
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-12T02:46:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12T02:46:00+05:30",
+          "reason": "Post-DB066 audit proved legacy job.owner_faculty_id is source-active and mutable while canonical placement_jobs retains only immutable created_by_user_id."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T02:46:00+05:30",
+          "reason": "Chat 3 available; DB-069 is isolated cross-domain DB08/DB09 ownership lifecycle work and does not touch Chat 1 migration paths."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-12T02:46:00+05:30",
+          "reason": "Frozen Job/TpoDriveService/TpoDriveExtrasService/TpoTeamService and TpoRecruiterLeadsHubService prove mutable owner assignment/reassignment and remove-member orphan prevention."
         }
       ]
     }
