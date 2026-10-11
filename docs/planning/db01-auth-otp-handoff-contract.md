@@ -61,3 +61,57 @@ A closed, unmerged `PR #61` also contains an alternative staging shape for devic
 - Privacy/cleanup: expired/used records purged within approved retention, without silently losing required security audit.
 
 **Current quality evidence:** DB01 has a source-only triage ledger for 312 candidate fields, with 66 legacy source fields now backed by direct active auth workflows; all 84 identity-provider/session candidates have an explicit current-source disposition. **Zero VNext fields are runtime-semantic verified**, and the staged model/SQL here has **not** been run through typecheck, CI, PostgreSQL replay or runtime integration. Do not advance DB-004 beyond IN_PROGRESS based on these drafts.
+
+## Cross-host handoff one-time row-transition hardening — 2026-10-11 Chat 2
+
+**New direct-main staged files (UNREGISTERED):**
+`docs/planning/sql/db01-auth-handoff-lifecycle-guard-staging.sql`,
+`tests/db01-auth-handoff-lifecycle-source.test.mjs`, and
+`tests/db01-auth-handoff-lifecycle-pg.test.mjs`.
+The accompanying candidate appears as `DB01-HANDOFF-MONOTONIC` in the
+migration integration manifest. **Auth/provider/API behavior remains unchanged.**
+
+The original `identity_auth_handoffs` table has a unique keyed-MAC code,
+two-minute lifetime check and optional `consumed_at`. A conditional
+`UPDATE ... WHERE consumed_at IS NULL AND expires_at > ... RETURNING`
+offers a one-winner consume transaction, but **does not by itself enforce
+immutable SQL state** if a privileged buggy writer later runs a direct update.
+The staged `BEFORE UPDATE` trigger therefore rejects mutation of
+`id`, `user_id`, `college_id`, `target_membership_id`,
+`target_domain_id`, `target_host`, `code_mac`, or `created_at`;
+rejects extension of `expires_at`; and forbids **any** update after
+`consumed_at` becomes non-NULL. It rechecks
+`clock_timestamp() >= NEW.expires_at` after acquiring the row lock,
+so a transaction that waited past the expiry cannot consume by providing a
+backdated `consumed_at` value.
+
+**Actual PostgreSQL test remains pending.** The authored disposable witness
+creates only a randomized temporary schema under explicit opt-in with a
+`TEST_DATABASE_URL` distinct from `DATABASE_URL`, then exercises
+scope/MAC/host rebinding, expiry extension, consumed replay, already-expired
+consumption, two simultaneous consumers, and a blocked writer that crosses
+the expiry deadline. It drops the fixture in `finally`; its synthetic
+parent fixture **does not** replace full migrated-schema composite tenant
+foreign-key or Identity Platform acceptance.
+
+When using a database-backed handoff, Chat 1 must register the **table and
+its row-transition trigger together** in a numbered migration; the actual
+API consume must use `clock_timestamp()` for conditional expiry checks and
+verify the ACTIVE user/membership/college/org and matching VERIFIED,
+nondeleted target domain/host **in the same consistent transaction**.
+Avoid hosting codes in URL querystrings or storing any raw bearer tokens.
+A bounded-retention `DELETE` is a separate explicit policy; do not reset
+a consumed record or rotate its MAC. A provider-only alternative would need
+equivalent replay/tenant proofs before retiring this staged model.
+
+To run *only after approving a separately disposable PostgreSQL database*:
+
+```sh
+node --test tests/db01-auth-handoff-lifecycle-source.test.mjs
+DB01_HANDOFF_DISPOSABLE=I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA TEST_DATABASE_URL='<disposable URL>' node --test tests/db01-auth-handoff-lifecycle-pg.test.mjs
+```
+
+The source tests and PostgreSQL witness are **authored**, not evidenced as
+Node or PostgreSQL executions in this documentation; passing source-text
+assertions alone do not satisfy DB-004 verification or unlock the global
+DATABASE phase.
