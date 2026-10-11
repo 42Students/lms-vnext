@@ -36,7 +36,7 @@ status **and user/college ownership** inside the same database transaction
 before mutating grants (additional scoped-identity guard at `e7bab10`).
 
 The source-drift guard `tests/db01-ended-membership-role-race-source.test.mjs`
-has **18 authored Node assertions** checking parent-before-child lock order,
+has **19 authored Node assertions** checking parent-before-child lock order,
 terminal membership denial, onboard ACTIVE recheck, preservation of the
 last-role policy, and negative mutation of the source pattern.
 
@@ -54,8 +54,9 @@ The independent real repository test
 - onboarding a SUSPENDED membership must fail without inserting a new role.
 
 The integration suite requires `DATABASE_URL === TEST_DATABASE_URL`, with no
-fallback, and uses unique users/memberships with explicit cleanup, not changes
-to seed memberships. A valid, dedicated PostgreSQL test database with current
+fallback, a database name explicitly containing the `_test` marker, and an
+exact explicit confirmation for remote PostgreSQL targets. It uses unique
+users/memberships with explicit cleanup, not changes to seed memberships. A valid, dedicated PostgreSQL test database with current
 Drizzle migrations and seed data is still needed.
 
 **Evidence accounting:** files committed; independently executed GitHub-content
