@@ -21,7 +21,7 @@ Current vNext stores `lesson_contents.created_by_user_id`, set to `context.user.
 | Active faculty assignment | Active membership with `FACULTY` role at the moment of first assignment/change | Cannot assign a learner-only, unknown or suspended member as faculty owner |
 | Historical owner | Retained owner if faculty later loses role/is suspended | Keep provenance without retaining edit permission; active teaching/role checks remain service responsibility |
 
-The unregistered SQL companion adds the nullable FK/index and an insert/update guard. A direct raw-SQL update cannot assign a faculty member from a different college, another offering/section, or a non-faculty membership. The guard checks both **course.department.college_id** and **offering.period.college_id**, not just a foreign-key target's existence. A signed-in faculty member cannot spoof another owner: the later application writes must take trusted role, teacher assignment, and admin context, never blindly accept a client-sent membership ID.
+The unregistered SQL companion adds the nullable FK/index and an insert/update guard. Assignment-time membership status/college is read with PostgreSQL `FOR SHARE`; a newly designated faculty role row is also locked `FOR SHARE`. Concurrent suspension or role removal therefore waits for or precedes the assignment transaction instead of racing an unlocked existence check. This design still requires executed two-session PostgreSQL deadlock/retry acceptance and upstream reparent protection. A direct raw-SQL update cannot assign a faculty member from a different college, another offering/section, or a non-faculty membership. The guard checks both **course.department.college_id** and **offering.period.college_id**, not just a foreign-key target's existence. A signed-in faculty member cannot spoof another owner: the later application writes must take trusted role, teacher assignment, and admin context, never blindly accept a client-sent membership ID.
 
 This is not a license to require ownership of every resource. Legacy generic content exists, and a faculty member may still have teaching scope but be blocked by a different explicit owner. API integration must preserve both conditions.
 
@@ -48,7 +48,7 @@ This is not a license to require ownership of every resource. Legacy generic con
 9. Attempting faculty owner reassignment through an untrusted client request fails authorization; admin reassignment is audited.
 10. Updating the owner must not modify `created_by_user_id`, and changing lesson/delivery scope revalidates the owner relation.
 11. Check upstream path/membership reparenting: the row-write trigger alone does **not** protect prior content ownership. A separate safety policy / upstream guard is required.
-12. Test two-session membership owner suspension/role removal and competing reassignment; the owner guard does not yet lock role changes, so no concurrency success claim is permitted.
+12. Test two-session membership suspension and faculty-role DELETE versus assignment in both commit orders; the staged owner guard locks membership/role rows `FOR SHARE`, but **race and deadlock success is not yet proven**. Also test competing reassignment and upstream college changes.
 13. Replay a clean, *new vNext* database with Chat 1's numbered migration and Drizzle schema changes. Do not connect to or migrate legacy production data.
 14. Execute Node, API/permission negative, real PostgreSQL, typecheck and build tests on the accepted commit SHA.
 
