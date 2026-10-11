@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "documentType": "DB04_CANDIDATE_PROMOTION_MANIFEST",
+  "worker": "CHAT_03",
+  "task": "DB-007",
+  "globalPhase": "DATABASE",
+  "state": "STAGED_UNREGISTERED_NOT_EXECUTED",
+  "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+  "governingRule": "Only W01/Chat 1 registers numbered Drizzle migrations or exports staged DB04 modules through src/db/schema/index.ts.",
+  "inventory": {
+    "sourceCandidates": 103,
+    "sourceDispositionReviewed": 103,
+    "activeOrSourceConfirmedFields": 70,
+    "historicalRetirementCandidateFields": 33,
+    "historicalRetirementSourceEvidenceStrongFields": 33,
+    "approvedRetirements": 0,
+    "runtimeSemanticVerified": 0
+  },
+  "parentKeys": [
+    {
+      "id": "DB04-UK-RECEIPT-OWNER",
+      "table": "profile_private_document_receipts",
+      "columns": [
+        "id",
+        "owning_membership_id"
+      ],
+      "constraint": "profile_private_doc_id_owner_uq",
+      "source": "src/db/schema/profile-verification.ts",
+      "stagingSql": "docs/planning/db04-proposed-migration.sql",
+      "state": "STAGED_UNREGISTERED"
+    },
+    {
+      "id": "DB04-UK-RECEIPT-OWNER-PURPOSE",
+      "table": "profile_private_document_receipts",
+      "columns": [
+        "id",
+        "owning_membership_id",
+        "purpose"
+      ],
+      "constraint": "profile_private_doc_id_owner_purpose_uq",
+      "source": "src/db/schema/profile-verification.ts",
+      "stagingSql": "docs/planning/db04-proposed-migration.sql",
+      "state": "STAGED_UNREGISTERED"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "DB04-PRIVATE-RECEIPTS",
+      "feature": "Private profile/document object receipt with owner, purpose, generation, digest, scan and retention metadata",
+      "schema": "src/db/schema/profile-verification.ts",
+      "stagingSql": "docs/planning/db04-proposed-migration.sql",
+      "dependencies": [],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "Private object key only; no public/presigned URL as canonical identity. Numeric object generation and 64-hex digest are DB constrained.",
+      "tests": [
+        "cross-owner receipt attachment rejection",
+        "wrong purpose rejection",
+        "malformed object key/generation/digest rejection",
+        "revoked/expired/non-clean evidence not usable by producer"
+      ]
+    },
+    {
+      "id": "DB04-EDUCATION-ENTRIES",
+      "feature": "Normalized learner education source of truth for profile verification and placement screening",
+      "schema": "src/db/schema/db04-profile-education-images.staged.ts",
+      "stagingSql": "docs/planning/db04-proposed-migration.sql",
+      "dependencies": [],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "Preserve GPA as well as CGPA, explicit currently-pursuing state, recent-education identity, exam details and per-row archival/history surface.",
+      "tests": [
+        "GPA accepted by persisted contract",
+        "currently pursuing rejects end year",
+        "end year before start year rejected",
+        "concurrent active recent-education uniqueness",
+        "archived education excluded from screening projection"
+      ]
+    },
+    {
+      "id": "DB04-EDUCATION-DOCUMENTS",
+      "feature": "Same-owner marksheet/education-certificate attachment",
+      "schema": "src/db/schema/db04-profile-education-images.staged.ts",
+      "stagingSql": "docs/planning/db04-proposed-migration.sql",
+      "dependencies": [
+        "DB04-PRIVATE-RECEIPTS",
+        "DB04-EDUCATION-ENTRIES",
+        "DB04-UK-RECEIPT-OWNER-PURPOSE"
+      ],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "Use enforceable composite owner/purpose FK rather than unconstrained polymorphic relatedEntryId.",
+      "tests": [
+        "foreign learner receipt rejected",
+        "wrong receipt purpose rejected",
+        "education and receipt owner mismatch rejected"
+      ]
+    },
+    {
+      "id": "DB04-PROFILE-IMAGES",
+      "feature": "Persisted learner profile-image collection with receipt-backed object identity and active/deactivation state",
+      "schema": "src/db/schema/db04-profile-education-images.staged.ts",
+      "stagingSql": "docs/planning/db04-proposed-migration.sql",
+      "dependencies": [
+        "DB04-PRIVATE-RECEIPTS",
+        "DB04-UK-RECEIPT-OWNER-PURPOSE"
+      ],
+      "status": "STAGED_UNREGISTERED",
+      "decision": "Receipt alone is not equivalent to legacy student_image collection semantics; preserve image identity/order/active state without arbitrary canonical URLs.",
+      "tests": [
+        "foreign-owner image receipt rejected",
+        "non PROFILE_IMAGE purpose rejected",
+        "duplicate receipt attachment rejected",
+        "deactivation state shape enforced"
+      ]
+    }
+  ],
+  "historicalDispositions": {
+    "evidence": "docs/planning/db04-historical-disposition-evidence-2026-10-11.md",
+    "studentRegistration": {
+      "fields": 22,
+      "state": "SOURCE_EVIDENCE_STRONG_RETIREMENT_CANDIDATE_PRODUCT_APPROVAL_OPEN",
+      "target": "none in canonical DB02/DB04"
+    },
+    "approverIdCard": {
+      "fields": 11,
+      "state": "SOURCE_EVIDENCE_STRONG_RETIREMENT_CANDIDATE_PRODUCT_APPROVAL_OPEN",
+      "target": "none; legacy assigned_exam/proctoring family"
+    }
+  },
+  "readiness": {
+    "candidateDraftsPrepared": true,
+    "sourceDispositionReviewed": true,
+    "schemaBarrelExported": false,
+    "numberedMigrationRegistered": false,
+    "disposablePostgresCleanReplayPassed": false,
+    "postgresNegativeOrConcurrencyTestsPassing": false,
+    "runtimeProducerConsumerVerified": false,
+    "historicalRetirementsApproved": false,
+    "phaseGateReady": false
+  },
+  "promotionChecklist": [
+    "Register receipt parent composite keys before education/image child FKs.",
+    "Deduplicate equivalent parent keys already introduced by DB01/DB08 integration.",
+    "Export the staged education/image module only in the same reviewed migration batch that creates its tables.",
+    "Generate one canonical Drizzle migration from approved schema; do not execute duplicate raw staging SQL.",
+    "Run empty-database and latest-database replay with schema/snapshot drift inspection.",
+    "Execute wrong-owner, wrong-purpose, direct-SQL and concurrency witnesses on disposable PostgreSQL.",
+    "Prove runtime profile CRUD, screening, verification and image APIs use the registered normalized source of truth.",
+    "Record explicit approval before treating either historical table as retired.",
+    "Keep DATABASE phase blocked until executed evidence exists."
+  ]
+}
