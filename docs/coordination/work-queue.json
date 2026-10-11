@@ -3154,17 +3154,17 @@
         "tests/integration/db18-placement-race-gap.test.ts",
         "docs/planning/db54-placement-application-race-contract.md"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "c523c8f88b47aaa1a0a65cf2b4ca070f77648023",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "P5-R01 fix authored: application transaction locks membership/academic/access/eligibility inputs, re-evaluates and persists only live eligibility; job policy/override writers serialize on placement_jobs and academic-evidence writers on college_memberships. Deterministic isolated P5-R01 regression requires rejection/zero persistence after paid access revocation. Manifest now SOURCE_FIX_AUTHORED_NEEDS_EXECUTION. No PostgreSQL execution/pass claimed.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T14:16:30Z",
       "startedAt": "2026-10-11T14:16:30Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T14:24:00Z",
+      "completionCommitSha": "c523c8f88b47aaa1a0a65cf2b4ca070f77648023",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -3188,6 +3188,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T14:16:30Z",
           "reason": "Starting source-safe transactional revalidation and deterministic race regression; no migration journal/API/UI changes."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T14:24:00Z",
+          "reason": "Placement application stale access/eligibility snapshot race implementation and deterministic regression committed; runtime PostgreSQL proof remains pending."
         }
       ]
     }
