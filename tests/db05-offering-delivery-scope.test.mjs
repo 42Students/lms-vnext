@@ -92,10 +92,23 @@ test("DB05 executed pure offering reference cases never promote PostgreSQL gate"
   const evidence = manifest.executedSourceReferenceSuites.find(
     row => row.id === "DB05_OFFERING_DELIVERY_SOURCE_REFERENCE"
   );
-  assert.equal(evidence.testCount, 19);
-  assert.equal(evidence.passed, 19);
+  assert.equal(evidence.testCount, 26);
+  assert.equal(evidence.passed, 26);
   assert.equal(evidence.failed, 0);
   assert.equal(evidence.countsForPgGate, false);
   assert.equal(evidence.countsForApplicationIntegration, false);
   assert.equal(manifest.sourceReferenceTotals.countsForDatabasePromotion, false);
+});
+
+test("DB05 INSERT-only source lifecycle checks preserve history on later close/archive", () => {
+  assert.match(sql, /IF TG_OP = 'INSERT' AND \(/);
+  assert.match(sql, /course_status IS DISTINCT FROM 'ACTIVE'/);
+  assert.match(sql, /cohort_status NOT IN \('PLANNED', 'ACTIVE'\)/);
+  assert.match(sql, /period_status IS DISTINCT FROM 'PLANNED'/);
+  assert.match(sql, /offering_status IS DISTINCT FROM 'ACTIVE'/);
+  assert.match(sql, /section_status IS DISTINCT FROM 'ACTIVE'/);
+  assert.match(sql, /historical|Historic/i);
+  assert.match(offering, /cohort\.status !== "PLANNED"/);
+  assert.match(offering, /period\.status === "CLOSED"/);
+  assert.match(delivery, /section\.status !== "ACTIVE"/);
 });
