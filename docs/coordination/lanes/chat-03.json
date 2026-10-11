@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-069",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB066_SOURCE_STAGING_COMPLETE",
-    "updatedOn": "2026-10-12T02:43:00+05:30",
-    "observedMainSha": "b7bf1a52a14bd65fa06a1d082dbc47b13d285fd6",
-    "lastWorkerMergedSha": "b7bf1a52a14bd65fa06a1d082dbc47b13d285fd6",
+    "checkpointKind": "DB069_TPO_OWNER_LIFECYCLE_STARTED",
+    "updatedOn": "2026-10-12T02:46:00+05:30",
+    "observedMainSha": "ed0c52ebc553c488d65fb3a0950a8be36460e5f2",
+    "lastWorkerMergedSha": "ed0c52ebc553c488d65fb3a0950a8be36460e5f2",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-066 completed source/staging design: same-job application-role, round-result, learner-request and reschedule-exception parent scope enforced in candidate SQL; request type discriminator added; source verifier and disposable PostgreSQL/race witness authored. Connector source audit 16/16 passed. Migration/PG/runtime execution remains unverified."
+    "summary": "DB-069 active. Frozen source proves mutable job.owner_faculty_id and lead owner semantics plus atomic reassign-before-team-remove behavior; canonical vNext placement_jobs currently has immutable created_by_user_id but no mutable drive owner."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -72,7 +72,7 @@
       "request": "Transferred by explicit user instruction. Original DB-056 and Chat3 contribution credited; Chat5 owns DB064 continuation."
     }
   ],
-  "nextAction": "Chat 3 available. DB-066 is source/staging complete, not verified. Take next non-conflicting DATABASE task; migration registration remains Chat 1-only.",
+  "nextAction": "Stage owner_membership_id and operation-specific drive-owner/team-removal relational guards without editing registered migrations/barrel; author source and disposable PostgreSQL witnesses.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -215,7 +215,8 @@
     "DB-062",
     "DB-063",
     "DB-064",
-    "DB-066"
+    "DB-066",
+    "DB-069"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -234,7 +235,7 @@
     "DB-063",
     "DB-066"
   ],
-  "lastPickedAt": "2026-10-12T02:23:00+05:30",
+  "lastPickedAt": "2026-10-12T02:46:00+05:30",
   "lastCompletedAt": "2026-10-12T02:43:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
