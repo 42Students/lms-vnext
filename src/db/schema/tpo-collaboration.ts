@@ -159,6 +159,36 @@ export const placementTpoShareLinks = pgTable(
       sql`(${table.emailCodeHash} is null and ${table.emailCodeExpiresAt} is null)
         or (${table.emailCodeHash} is not null and ${table.emailCodeExpiresAt} is not null)`,
     ),
+    check(
+      "placement_tpo_share_links_recipient_email_ck",
+      sql`${table.recipientEmail} = lower(${table.recipientEmail})
+        and length(trim(${table.recipientEmail})) > 3`,
+    ),
+    check(
+      "placement_tpo_share_links_columns_ck",
+      sql`${table.columns} is null
+        or (
+          jsonb_typeof(${table.columns}) = 'array'
+          and ${table.columns} <@
+            '["name","roll","branch","cgpa","tenth","twelfth","email","phone","resume","projects","skillMatch","stage"]'::jsonb
+        )`,
+    ),
+    check(
+      "placement_tpo_share_links_max_stage_ck",
+      sql`${table.maxStage} is null
+        or ${table.maxStage} in (
+          'APPLIED','SHORTLISTED','ASSESSMENT','INTERVIEW','OFFERED','HIRED'
+        )`,
+    ),
+    check(
+      "placement_tpo_share_links_revocation_ck",
+      sql`${table.revokedAt} is null or ${table.revokedAt} >= ${table.createdAt}`,
+    ),
+    check(
+      "placement_tpo_share_links_email_code_expiry_ck",
+      sql`${table.emailCodeExpiresAt} is null
+        or ${table.emailCodeExpiresAt} > ${table.createdAt}`,
+    ),
   ],
 );
 
@@ -233,6 +263,12 @@ export const placementTpoCollegeSettings = pgTable(
       "placement_tpo_college_settings_outcome_labels_ck",
       sql`${table.outcomeLabels} is null or jsonb_typeof(${table.outcomeLabels}) = 'array'`,
     ),
+    check(
+      "placement_tpo_college_settings_json_shape_ck",
+      sql`(${table.trustedDomains} is null or jsonb_typeof(${table.trustedDomains}) = 'array')
+        and (${table.prepCourseIds} is null or jsonb_typeof(${table.prepCourseIds}) = 'array')
+        and (${table.notifyToggles} is null or jsonb_typeof(${table.notifyToggles}) = 'object')`,
+    ),
   ],
 );
 
@@ -255,6 +291,10 @@ export const placementTpoUserPreferences = pgTable(
       name: "placement_tpo_user_preferences_pk",
       columns: [table.collegeId, table.userId],
     }),
+    check(
+      "placement_tpo_user_preferences_json_ck",
+      sql`${table.preferences} is null or jsonb_typeof(${table.preferences}) = 'object'`,
+    ),
   ],
 );
 
