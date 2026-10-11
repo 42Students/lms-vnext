@@ -44,6 +44,7 @@ DECLARE
   assoc_a uuid;
   teaching_a uuid;
   section_faculty_a uuid;
+  lifecycle_event uuid;
   event_a uuid;
   event_b uuid;
   progression_version bigint;
@@ -381,6 +382,17 @@ BEGIN
 
   failed := false;
   BEGIN
+    INSERT INTO section_faculty_assignments(section_id, membership_id, role)
+    VALUES (section_a, faculty_membership_b, 'ASSISTANT');
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cross-college section faculty assignment was accepted';
+  END IF;
+
+  failed := false;
+  BEGIN
     INSERT INTO course_teaching_assignments(delivery_id, membership_id, role)
     VALUES (delivery_a, faculty_membership_b, 'CO_TEACHER');
   EXCEPTION WHEN check_violation THEN
@@ -412,6 +424,14 @@ BEGIN
     RAISE EXCEPTION 'cross-college faculty-course association was accepted';
   END IF;
 
+  INSERT INTO section_schedule_events(
+    section_id, faculty_membership_id, title, starts_at, ends_at
+  ) VALUES (
+    section_a, faculty_membership_a, 'DB02 de-role future event',
+    date_trunc('day', now()) + interval '5 days 09 hours',
+    date_trunc('day', now()) + interval '5 days 10 hours'
+  ) RETURNING id INTO lifecycle_event;
+
   DELETE FROM membership_roles
    WHERE membership_id = faculty_membership_a
      AND role = 'FACULTY';
@@ -438,13 +458,37 @@ BEGIN
     RAISE EXCEPTION 'FACULTY role removal did not close active section faculty assignment';
   END IF;
 
+  IF EXISTS (
+    SELECT 1 FROM section_schedule_events
+     WHERE id = lifecycle_event
+       AND faculty_membership_id IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'FACULTY role removal did not unassign future scheduled event';
+  END IF;
+
   INSERT INTO membership_roles(membership_id, role)
   VALUES (faculty_membership_a, 'FACULTY');
 
-  -- Re-adding FACULTY must not reopen history; a new active association is explicit.
+  -- Re-adding FACULTY must not reopen history; new active rows are explicit.
   INSERT INTO faculty_course_associations(membership_id, course_id)
   VALUES (faculty_membership_a, course_core_a)
   RETURNING id INTO assoc_a;
+
+  INSERT INTO course_teaching_assignments(delivery_id, membership_id, role)
+  VALUES (delivery_a, faculty_membership_a, 'PRIMARY')
+  RETURNING id INTO teaching_a;
+
+  INSERT INTO section_faculty_assignments(section_id, membership_id, role)
+  VALUES (section_a, faculty_membership_a, 'PRIMARY')
+  RETURNING id INTO section_faculty_a;
+
+  INSERT INTO section_schedule_events(
+    section_id, faculty_membership_id, title, starts_at, ends_at
+  ) VALUES (
+    section_a, faculty_membership_a, 'DB02 suspension future event',
+    date_trunc('day', now()) + interval '6 days 09 hours',
+    date_trunc('day', now()) + interval '6 days 10 hours'
+  ) RETURNING id INTO lifecycle_event;
 
   UPDATE college_memberships
      SET status = 'SUSPENDED',
@@ -458,6 +502,28 @@ BEGIN
 
   IF ended_at_seen IS NULL THEN
     RAISE EXCEPTION 'membership suspension did not close active association';
+  END IF;
+
+  SELECT ended_at INTO ended_at_seen
+    FROM course_teaching_assignments
+   WHERE id = teaching_a;
+  IF ended_at_seen IS NULL THEN
+    RAISE EXCEPTION 'membership suspension did not close active course teaching assignment';
+  END IF;
+
+  SELECT ended_at INTO ended_at_seen
+    FROM section_faculty_assignments
+   WHERE id = section_faculty_a;
+  IF ended_at_seen IS NULL THEN
+    RAISE EXCEPTION 'membership suspension did not close active section faculty assignment';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM section_schedule_events
+     WHERE id = lifecycle_event
+       AND faculty_membership_id IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'membership suspension did not unassign future scheduled event';
   END IF;
 
   UPDATE college_memberships
