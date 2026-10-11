@@ -106,7 +106,99 @@ export const placementTpoLeads = pgTable(
     ),
     check(
       "placement_tpo_leads_invite_hash_ck",
-      sql`${t.inviteTokenHash} is null or ${t.inviteTokenHash} ~ '^[a-f0-9]{64}$'`,
+      sql`${t.inviteTokenHash} is null or ${t.inviteTokenHash} ~ '^[a-f0-9]{64}
+  ],
+);
+
+/**
+ * DB09-A: legacy recruiter_lead_activity (8 fields). Adds college_id
+ * for a composite tenant FK; updates/deletes prohibited by the
+ * staged PostgreSQL history trigger.
+ */
+export const placementTpoLeadActivities = pgTable(
+  "placement_tpo_lead_activities",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    leadId: uuid("lead_id").notNull(),
+    type: varchar("type", { length: 20 }).notNull(),
+    outcome: varchar("outcome", { length: 30 }),
+    note: varchar("note", { length: 2000 }),
+    isSystem: boolean("is_system").notNull().default(false),
+    createdByUserId: uuid("created_by_user_id")
+      .references(() => users.id, { onDelete: "restrict" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({
+      name: "placement_tpo_lead_activities_scoped_fk",
+      columns: [t.collegeId, t.leadId],
+      foreignColumns: [placementTpoLeads.collegeId, placementTpoLeads.id],
+    }).onDelete("restrict"),
+    index("placement_tpo_lead_activities_lead_time_idx")
+      .on(t.collegeId, t.leadId, t.createdAt),
+    check(
+      "placement_tpo_lead_activities_type_ck",
+      sql`${t.type} in ('CALL', 'WHATSAPP', 'EMAIL', 'MEETING', 'NOTE', 'SYSTEM')`,
+    ),
+    check(
+      "placement_tpo_lead_activities_system_ck",
+      sql`(${t.type} = 'SYSTEM') = ${t.isSystem}`,
+    ),
+  ],
+);
+
+/**
+ * DB09-A: legacy follow_up (7 fields). The same-college FK stops a
+ * forged child row from attaching to a lead in another college.
+ */
+export const placementTpoFollowups = pgTable(
+  "placement_tpo_followups",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    leadId: uuid("lead_id").notNull(),
+    dueAt: timestamp("due_at", { withTimezone: true }).notNull(),
+    ownerMembershipId: uuid("owner_membership_id")
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    note: varchar("note", { length: 500 }),
+    doneAt: timestamp("done_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({
+      name: "placement_tpo_followups_scoped_fk",
+      columns: [t.collegeId, t.leadId],
+      foreignColumns: [placementTpoLeads.collegeId, placementTpoLeads.id],
+    }).onDelete("restrict"),
+    index("placement_tpo_followups_college_due_idx")
+      .on(t.collegeId, t.doneAt, t.dueAt),
+    index("placement_tpo_followups_lead_idx")
+      .on(t.collegeId, t.leadId),
+    check(
+      "placement_tpo_followups_done_time_ck",
+      sql`${t.doneAt} is null or ${t.doneAt} >= ${t.createdAt}`,
+    ),
+  ],
+);
+`,
+    ),
+    check(
+      "placement_tpo_leads_invite_lifecycle_ck",
+      sql`(${t.inviteTokenHash} is null or ${t.inviteSentAt} is not null)
+        and (${t.inviteClickedAt} is null or
+          (${t.inviteSentAt} is not null and ${t.inviteClickedAt} >= ${t.inviteSentAt}))
+        and (${t.inviteReminderSentAt} is null or
+          (${t.inviteSentAt} is not null and ${t.inviteReminderSentAt} >= ${t.inviteSentAt}))
+        and (${t.inviteBouncedAt} is null or
+          (${t.inviteSentAt} is not null and ${t.inviteBouncedAt} >= ${t.inviteSentAt}))
+        and (${t.unsubscribedAt} is null or ${t.inviteTokenHash} is null)`,
     ),
   ],
 );
