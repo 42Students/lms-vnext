@@ -121,7 +121,7 @@ Current API gaps:
 
 ## 7. Learner academic identity lifecycle
 
-Database extension stages:
+Database canonical stage enforces:
 
 - active LEARNER tenant/program/cohort enforcement;
 - section enrollment cohort/period enforcement;
@@ -156,10 +156,12 @@ Current API work:
 
 Do not start these changes merely because this file exists. API work begins only after:
 
-1. Chat 1 consolidates and registers canonical DB02 plus the deconflicted parent/enrollment extension;
+1. Chat 1 translates/reviews and registers the single consolidated canonical DB02 stage;
 2. zero-to-current disposable PostgreSQL replay passes;
 3. `scripts/sql/db02-postgres-acceptance-unregistered.sql` passes;
-4. `scripts/sql/db02-postgres-concurrency-unregistered.sh` passes;
-5. DB-005 has exact registered-schema evidence.
+4. `scripts/sql/db02-schedule-progression-integrity-acceptance-unregistered.sql` passes;
+5. `scripts/sql/db02-historic-parent-reassignment-acceptance-unregistered.sql` passes;
+6. `scripts/sql/db02-postgres-concurrency-unregistered.sh` passes;
+7. DB-005 has exact registered-schema evidence.
 
 Until then, this file is a handoff matrix, not implementation authorization.
