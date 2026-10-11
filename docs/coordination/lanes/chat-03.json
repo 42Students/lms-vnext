@@ -7,19 +7,19 @@
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
   "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-060",
+  "activeTaskId": "DB-061",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB060_SHARE_EVENT_COMPLETENESS_STARTED",
+    "checkpointKind": "DB061_MESSAGE_CHRONOLOGY_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "b50656a46d24c9f1282addf12b1eae7aa6e56031",
-    "lastWorkerMergedSha": "b50656a46d24c9f1282addf12b1eae7aa6e56031",
+    "observedMainSha": "559c52e318af4749065903cd07d5065877a6e960",
+    "lastWorkerMergedSha": "559c52e318af4749065903cd07d5065877a6e960",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-059 completed source-only (5/5 connector assertions). DB-060 active: source secure-share lifecycle always records CREATED, and revocation records REVOKED in same transaction; staged DB lacks event completeness."
+    "summary": "DB-060 complete source-only with 16/16 function quoting valid and 6/6 source assertions. DB-061 active: enforce unread/non-future message creation, bounded one-way read_at, and exact thread last_message_at=max(message.created_at) at commit."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -64,7 +64,7 @@
       "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "Add unique CREATED/REVOKED event scope plus deferred share↔event completeness/state guards; add audit/static regression and execute source assertions.",
+  "nextAction": "Stage message chronology/update guard changes plus deferred thread projection checks, add source audit/regression, execute exact committed source assertions.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -197,7 +197,8 @@
     "DB-056",
     "DB-057",
     "DB-059",
-    "DB-060"
+    "DB-060",
+    "DB-061"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -209,9 +210,10 @@
     "DB-050",
     "DB-056",
     "DB-057",
-    "DB-059"
+    "DB-059",
+    "DB-060"
   ],
-  "lastPickedAt": "2026-10-11T21:00:00+05:30",
+  "lastPickedAt": "2026-10-11T21:14:00+05:30",
   "lastCompletedAt": "2026-10-11T13:50:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
