@@ -127,3 +127,24 @@ Three new/update source contract test suites were reconciled after deletion of t
 **37 authored source-test cases across these four files; 0 node:test runs and 0 PostgreSQL runs claimed by this continuation.** Static file-inspection checks found no stale references to the removed parent/enrollment, lifecycle overlay, or history-parent draft SQL paths. This is not substitute evidence for source tests actually executing.
 
 **Registration gate unchanged:** Chat 1 alone authors numbered Drizzle/schema-index integration and must run a full zero-to-current disposable PostgreSQL migration replay, all three rollback-only acceptance scripts, the two-session concurrency harness and tenant/history negative tests. The new history-parent lock ordering needs race/deadlock evaluation before certification; other DB domain triggers may interact. No DB02 field can be marked runtime-verified on static source proof alone.
+
+## DB02-S12 · HIGH · Promotion bypasses active target semester and mapped curriculum
+
+**Live canonical stage observed:** `scripts/sql/db02-academic-progression-and-rooms-staging.sql` (DB02 unregistered draft; 48 PL/pgSQL functions / 56 triggers as of this pass, subject to concurrent changes). `db02_guard_cohort_progression_state` validates monotonic term advancement and program-duration upper bound, but DOES NOT validate the cohort is ACTIVE or that its **target program-specific term** exists, is active and has at least one mapped curriculum course. Therefore a direct SQL writer can advance to an unconfigured semester while satisfying `current_term_number +1`, `version +1`, and duration.
+
+**Pinned legacy producer evidence:** `42Students/lms@prod-2026` `src/main/java/com/_42students/lms/service/impl/BatchServiceImpl.java` blob `9727013167f5c4ffd4eafa8064d45786b14c3dde`, method `validatePromotion`:
+- rejects promotion when batch status is not `ACTIVE`;
+- requires exact target current+1 and bound by `NewProgram.durationYears*2`;
+- rejects missing / isDeleted / isActive=false target `Semester`;
+- rejects target semester with zero ordered `SemesterCourse` mappings;
+- staffing readiness/active assignments are *preview data*, not a mandatory promotion precondition.
+
+**Additional unregistered Chat 4 staging** (do not register independently without Chat 1 reconciliation):
+- `scripts/sql/db02-promotion-readiness-guard.draft.sql`: `BEFORE UPDATE OF current_term_number`, program-scoped target term / one-course `FOR SHARE` locks and source-equivalent ACTIVE status check; allows initial term1 and same-term year/period corrections without requiring ready curriculum.
+- `scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql`: rollback-only disposable PostgreSQL negative witnesses for missing/inactive/empty term, inactive cohort, further unconfigured next term, and a valid promotion with one immutable event.
+- `scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh`: two-session deactivation-first and last-curriculum-course-deletion-first races. The script asserts the specific promotion-readiness error, not merely any failed SQL command, to avoid false positives.
+- `tests/db02-promotion-readiness-contract.test.mjs`: six authored source test cases.
+
+**Source inspection:** 12/12 static JS structural assertions true (no Node test runner). **Executed Node tests: 0; disposable PostgreSQL tests: 0; production database tests: 0; registered migration: 0.**
+
+**Remaining integration decisions:** preserve service-level optimistic compare-and-set `WHERE cohort_id=? AND version=?` so two simultaneous user requests do not *both* advance term; do not infer expected user version from database state alone. Keep outgoing teaching assignment deactivation atomic in the future API implementation. Test row-lock contention, deadlock behavior, disabled semester transitions and concurrent course-map deletion on disposable PostgreSQL before DB-005 closure. Do not overrestrict historical read after admins later deactivate a previously delivered semester.
