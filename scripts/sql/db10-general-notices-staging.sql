@@ -9,7 +9,7 @@ CREATE TABLE general_notification_outbox (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE RESTRICT,
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
-  source_event_id uuid NOT NULL,
+  source_event_id uuid NOT NULL REFERENCES activity_events(id) ON DELETE RESTRICT,
   event varchar(50) NOT NULL,
   recipient_type varchar(16) NOT NULL,
   recipient_user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
@@ -28,6 +28,7 @@ CREATE TABLE general_notification_outbox (
   claim_fence integer NOT NULL DEFAULT 0,
   sent_at timestamptz,
   failure_code varchar(60),
+  safe_failure_reason varchar(500),
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   idempotency_key varchar(64) NOT NULL,
@@ -56,7 +57,7 @@ CREATE TABLE general_notification_outbox (
     (status = 'CLAIMED' AND claimed_by IS NOT NULL
       AND claimed_at IS NOT NULL AND claim_expires_at IS NOT NULL)
     OR (status <> 'CLAIMED' AND claimed_by IS NULL
-      AND claimed_at IS NULL AND claim_expires_at IS NULL)
+      AND claim_expires_at IS NULL)
   ),
   CONSTRAINT db10_general_notices_claim_time_ck
     CHECK (claim_expires_at IS NULL OR claim_expires_at > claimed_at),
@@ -70,6 +71,8 @@ CREATE TABLE general_notification_outbox (
 );
 CREATE UNIQUE INDEX db10_general_notices_idempotency_uq
   ON general_notification_outbox (idempotency_key);
+CREATE UNIQUE INDEX db10_general_notices_source_recipient_channel_uq
+  ON general_notification_outbox (source_event_id,recipient_user_id,channel);
 CREATE INDEX db10_general_notices_due_idx
   ON general_notification_outbox (status,send_after);
 CREATE INDEX db10_general_notices_undo_idx
@@ -90,12 +93,25 @@ BEGIN
   IF NOT FOUND THEN
     RAISE EXCEPTION 'NOTIFICATION_COLLEGE_SCOPE_INVALID' USING ERRCODE='23514';
   END IF;
+
+  PERFORM 1 FROM activity_events e
+    WHERE e.id = NEW.source_event_id
+      AND e.module = 'PLACEMENTS'
+      AND e.organization_id = NEW.organization_id
+      AND e.college_id = NEW.college_id
+    FOR SHARE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'NOTIFICATION_SOURCE_EVENT_SCOPE_INVALID' USING ERRCODE='23514';
+  END IF;
   IF NEW.recipient_type IN ('LEARNER','FACULTY') THEN
     PERFORM 1 FROM college_memberships m
+      JOIN membership_roles mr ON mr.membership_id = m.id
       WHERE m.id = NEW.recipient_membership_id
         AND m.user_id = NEW.recipient_user_id
-        AND m.college_id = NEW.college_id AND m.status = 'ACTIVE'
-      FOR SHARE;
+        AND m.college_id = NEW.college_id
+        AND m.status = 'ACTIVE'
+        AND mr.role::text = NEW.recipient_type
+      FOR SHARE OF m;
     IF NOT FOUND THEN
       RAISE EXCEPTION 'NOTIFICATION_MEMBERSHIP_SCOPE_INVALID' USING ERRCODE='23514';
     END IF;
@@ -111,7 +127,7 @@ BEGIN
 END;
 $db10notice$;
 CREATE TRIGGER db10_general_notice_scope_trg
-BEFORE INSERT OR UPDATE OF organization_id,college_id,recipient_type,
+BEFORE INSERT OR UPDATE OF organization_id,college_id,source_event_id,recipient_type,
   recipient_user_id,recipient_membership_id
 ON general_notification_outbox
 FOR EACH ROW EXECUTE FUNCTION db10_general_notice_scope_guard();
