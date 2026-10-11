@@ -8,7 +8,19 @@ set -euo pipefail
 
 : "${DATABASE_URL:?Set DATABASE_URL to a disposable PostgreSQL database}"
 
+: "${DB02_EXPECTED_DATABASE:?Set the exact disposable PostgreSQL database name}"
+if [[ "${DB02_DISPOSABLE_ACCEPTANCE:-}" != "YES" ]]; then
+  echo "Refusing to run: explicitly set DB02_DISPOSABLE_ACCEPTANCE=YES" >&2
+  exit 2
+fi
+
 if ! command -v psql >/dev/null 2>&1; then
+
+ACTUAL_DATABASE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -c 'SELECT current_database()')"
+if [[ "$ACTUAL_DATABASE" != "$DB02_EXPECTED_DATABASE" ]]; then
+  echo "Refusing to run: DB name mismatch; expected $DB02_EXPECTED_DATABASE, actual $ACTUAL_DATABASE" >&2
+  exit 2
+fi
   echo "psql is required" >&2
   exit 2
 fi
