@@ -50,3 +50,20 @@ Current vNext `src/db/schema/discussions.ts` is `course_discussion_messages` key
 5. Run the actual `db:migrate`, `test:db`, `lint`, `typecheck`, `test`, `build` and applicable browser tests with exact executed SHA. Tests authored or source comparison DO NOT qualify.
 
 **Current gate:** OPEN. DB-008 remains `IN_PROGRESS`, not `COMPLETED` or `DONE_VERIFIED`.
+
+
+## Chat 6 database-integrity follow-up — 2026-10-12 (unregistered)
+
+**Problem 1: ancestor cycles.** The existing base draft CHECK only rejects `parent_discussion_id = id`. Composite same-content FK does not reject a 2+ hop cycle introduced by direct UPDATE. Staged `scripts/sql/db05-lesson-discussion-ancestry-integrity.draft.sql` proposes an iterative recursive ancestor walk using `UNION` (terminates even with pre-existing cycles), plus explicit `23514` rejection.
+
+**Problem 2: retained discussion history changes audience.** `lesson_contents.lesson_id` or `lesson_contents.delivery_id` may be updated while content-bound discussion rows still exist. Even if all joins still point to one college, the replies become visible in a different course or class. The new staged companion conservatively rejects both direct reparent mutations once **any** discussion exists, even if `deleted_at` was populated. No-op updates and content without discussion can proceed subject to other W01/DB02/DB05 scope guards.
+
+**Concurrency rule proposed:** the discussion write guard and lesson-content parent guard acquire existing DB05 transaction advisory key `605008003` before querying, and reject non-READ-COMMITTED writes. The existing lesson-content scope guard also takes this key. This **does not prove** lock ordering across other DB02 triggers, behavior under two simultaneous parent updates or a clean migration replay.
+
+**New artifacts:** `scripts/sql/db05-lesson-discussion-ancestry-integrity.draft.sql`, `scripts/sql/db05-lesson-discussion-ancestry-preflight.readonly.sql`, `tests/db05-discussion-ancestry-integrity.test.mjs`, and `tests/db05-discussion-ancestry-reference.test.mjs`. DB05 readiness manifest lists this as companion #12 and includes two new pending gates (71 total after incorporating a concurrent peer gate), **not a registered eighth primary migration**.
+
+**Actual executed proof (bounded):** Native Node v22.16.0 `node --test tests/db05-discussion-ancestry-reference.test.mjs` on an independent local exact-Git-blob source test: **11/11 pass**, blob SHA `5581c1ae8c512614910a3fe72c2d315a96ee67a4`. This exercises a pure graph reference model, **not** SQL, Drizzle, Postgres or API. Source-shape test authored separately; no `node --test` result for it at this checkpoint.
+
+**Mandatory W01 integration/negative acceptance:** execute `DG-01..DG-20` written in the SQL; run the read-only preflight after the draft base table exists on disposable PostgreSQL and require zero cycle/scope counts; prove two-session opposite parent updates and discussion insert vs content reparent; inspect deadlocks/rollbacks; reject release if same-college FK, deleted-history audience or DB02 membership reparent remains unconstrained. W01 must integrate exactly once AFTER the base discussion table, strengthened tenant guard and lesson-content scope lock are integrated. **No runtime feature enabled.**
+
+**Explicit source uncertainty:** historical parent/reply, resolution and private attachment columns were not proven live in the current legacy controller. Staging the defensive cycle constraint must not be used to justify a nested reply UI/API or to mark discussion field semantics VERIFIED. DB-008 remains IN_PROGRESS; global DATABASE phase remains ACTIVE.

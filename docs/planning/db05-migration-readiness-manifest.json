@@ -596,6 +596,18 @@
       "owner": 6,
       "evidence": "New tests/db05-hierarchy-paired-row-locks.test.mjs authored five Node source tests checking child parent SHARE+state in transaction before insert; source GitHub JS checks 10/10, not native node:test/tsc/PG; do not promote gate.",
       "nodeTestPath": "tests/db05-hierarchy-paired-row-locks.test.mjs"
+    },
+    {
+      "id": "DB05_DISCUSSION_PARENT_AND_CONTENT_REPARENT_PG_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": "W01_DB05_DB02",
+      "evidence": "20 DG-01..DG-20 cases: 2/3-node parent cycles, same-content FK, moved content lesson/delivery, retained deleted replies, READ COMMITTED two-session opposite parent updates and discussion insert versus content reparent. Unregistered SQL, no PostgreSQL execution."
+    },
+    {
+      "id": "DB05_DISCUSSION_PARENT_GRAPH_SOURCE_CONSUMER_DECISION",
+      "status": "BLOCKED",
+      "owner": "DB05_API_PHASE_SOURCE_DECISION",
+      "evidence": "Historical parent_discussion_id, resolved_by and attachment fields are not established active by current legacy DiscussionController. Do not expose reply/moderation API without producer/consumer proof. Persisted defensive constraints remain proposed only."
     }
   ],
   "sourceReview": {
@@ -919,6 +931,29 @@
       "postgresExecuted": false,
       "readyForProduction": false,
       "note": "W01 integrates after base schema and shared 605008003 scope lock. Guard NOW checks generic NULL-delivery content as visible in every offering delivery; delivery and section moves must reject even when no class-scoped row and no order override. CA-01..CA-18 PG acceptance (incl. two-session races) NOT RUN. DB02 term/department and DB06 assignment path remain separate."
+    },
+    {
+      "id": "DB05_DISCUSSION_PARENT_ANCESTRY_INTEGRITY",
+      "path": "scripts/sql/db05-lesson-discussion-ancestry-integrity.draft.sql",
+      "type": "HISTORICAL_PER_CONTENT_DISCUSSION_ANCESTRY_AND_AUDIENCE_SCOPE_COMPANION",
+      "baseCandidate": "scripts/sql/db05-lesson-content-discussions.draft.sql",
+      "purpose": "PREVENT_MULTI_LEVEL_PARENT_CYCLES_AND_CONTENT_REPARENT_WITH_RETAINED_DISCUSSION_HISTORY",
+      "dependencies": [
+        "scripts/sql/db05-lesson-content-discussions.draft.sql",
+        "scripts/sql/db05-lesson-discussions-same-college.draft.sql",
+        "scripts/sql/db05-lesson-content-delivery-scope.draft.sql",
+        "scripts/sql/db05-content-ancestry-with-content-guard.draft.sql",
+        "W01_TWO_CONNECTION_ADVISORY_LOCK_ORDER_PROOF"
+      ],
+      "preflight": "scripts/sql/db05-lesson-discussion-ancestry-preflight.readonly.sql",
+      "sourceUnitTest": "tests/db05-discussion-ancestry-integrity.test.mjs",
+      "referenceNodeTest": "tests/db05-discussion-ancestry-reference.test.mjs",
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "advisoryKey": "605008003",
+      "sourceSemantics": "Historical parent/resolution/attachment columns exist but nested reply API is not currently proven active; defensive constraint is not UI/API parity evidence.",
+      "note": "Conditional W01 integration only after original 16-field discussion draft and tenant guard. DG-01..DG-20 PostgreSQL and two-session race matrix NOT RUN. The authored pure reference-model test is not SQL acceptance."
     }
   ],
   "verifiedSourceReferenceTests": {
