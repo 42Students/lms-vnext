@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T02:45:00+05:30",
+  "updatedOn": "2026-10-11T05:31:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -26,13 +26,13 @@
         "scripts/db-test-prepare.ts",
         "docs/coordination/six-chat-operating-system.md"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": "d25f9aa9a31ea217bb0b87d6c2d22387604e5f00",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": "CI billing restriction is acknowledged by user as non-blocking. Task is actionable through independent local/ephemeral test execution; final verification remains pending until real PostgreSQL commands run. Prior CI investigations remain historical, not an active blocker.",
       "pickedBy": 1,
-      "pickedAt": "2026-10-11T01:55:00+05:30",
+      "pickedAt": "2026-10-11T05:31:00.000Z",
       "startedAt": "2026-10-10T20:28:11.898Z",
       "completedBy": null,
       "completedAt": null,
@@ -43,6 +43,10 @@
         {
           "chatNumber": 1,
           "pickedAt": "2026-10-11T01:55:00+05:30"
+        },
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T05:31:00.000Z"
         }
       ],
       "statusHistory": [
@@ -75,6 +79,11 @@
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Explicit user policy supersedes prior runner-allocation blockage. GitHub Actions paused for billing; engineer independently with optional non-Actions PostgreSQL. Historical CI failures remain recorded but are not an active blocker. Prior Chat 1 pick history retained."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T05:31:00.000Z",
+          "reason": "Chat 1 resumed CORE_INFRA ownership for CI-independent disposable PostgreSQL verification per user directive; GitHub Actions intentionally not used."
         }
       ],
       "qualityGateNote": "ACCEPTANCE_NOT_EXECUTED: independent disposable PostgreSQL verification still needs real run logs; Actions billing is NOT a blocker."
