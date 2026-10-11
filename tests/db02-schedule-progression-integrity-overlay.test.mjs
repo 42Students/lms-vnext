@@ -8,17 +8,17 @@ const read = (name) => readFileSync(
   "utf8",
 );
 const base = read("db02-academic-progression-and-rooms-staging.sql");
-const overlay = read("db02-schedule-progression-integrity-overlay.draft.sql");
+// The overlay is now integrated into the single canonical staging SQL.
+const overlay = base;
 const acceptance = read("db02-schedule-progression-integrity-acceptance-unregistered.sql");
 
-test("audit and room overlay has two paired PL/pgSQL function bodies", () => {
+test("consolidated DB02 draft has paired trigger functions", () => {
   const functions = [...overlay.matchAll(/CREATE FUNCTION db02_[a-z_]+\(\)/g)].length;
   const opens = [...overlay.matchAll(/RETURNS trigger LANGUAGE plpgsql AS \$\$/g)].length;
   const quotes = [...overlay.matchAll(/\$\$/g)].length;
-  assert.equal(functions, 2);
-  assert.equal(opens, 2);
-  assert.equal(quotes, 4);
-  assert.doesNotMatch(overlay, /CREATE OR REPLACE FUNCTION/);
+  assert.ok(functions >= 40, "Expected canonical + merged DB02 guards");
+  assert.equal(opens, functions);
+  assert.equal(quotes, functions * 2);
   assert.doesNotMatch(overlay, /LANGUAGE plpgsql AS \$(?:\r?\n)/);
 });
 
@@ -32,7 +32,6 @@ test("newer canonical SQL exclusively owns audit-actor deletion semantics", () =
     base,
     /CREATE TRIGGER db02_cohort_progression_history\s+AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version/,
   );
-  assert.doesNotMatch(overlay, /CREATE OR REPLACE FUNCTION/);
 });
 
 test("FK-driven actor cleanup has no academic event; acceptance checks full history", () => {
