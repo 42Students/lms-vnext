@@ -3,9 +3,16 @@ import { randomUUID } from "node:crypto";
 import { Pool, type PoolClient } from "pg";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!databaseUrl) {
-  throw new Error("DB-018 witnesses require TEST_DATABASE_URL or DATABASE_URL");
+// This suite performs rejected writes in transactions. Never contact the
+// application database, even for rollback-only tests.
+const databaseUrl = process.env.TEST_DATABASE_URL;
+const isolated =
+  process.env.DB018_ISOLATED_TEST_DATABASE === "1" ||
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+if (!databaseUrl || !isolated) {
+  throw new Error(
+    "DB-018 direct-SQL witnesses require explicit TEST_DATABASE_URL and an isolated database flag",
+  );
 }
 
 const pool = new Pool({ connectionString: databaseUrl, max: 2 });
