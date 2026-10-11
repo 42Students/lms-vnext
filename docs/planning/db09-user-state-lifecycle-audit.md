@@ -56,8 +56,12 @@ Before this batch, the staged `docs/planning/sql/db09-collaboration-scoped-fk-ca
 | P13: inactive/foreign actor attempts INSERT/UPDATE | rejected; exercise direct SQL |
 | P14: simultaneous TPO-role revocation and preference update | assert row locking and revocation race safety against DB-056 |
 
-**Additional adversarial risk:** updating a preferences row multiple times at submicrosecond intervals can interact with strict `OLD.updated_at > statement_timestamp()` rejection after a monotonic microsecond increment. Exercise rapid multi-statement updates under PostgreSQL before promotion and revise if a legitimate same-transaction write is rejected. Metadata timestamps should remain sourced from the DB, not client clocks. Do not claim this edge is resolved based on the static tests.
+**Adversarial rapid-update correction:** an initial guard compared `OLD.updated_at > statement_timestamp()`, which would reject a previous *database-generated* microsecond increment occurring faster than the next statement clock. Commit `11e7c01` changed it to reject only `NEW.updated_at IS DISTINCT FROM OLD.updated_at AND NEW.updated_at > statement_timestamp()`; unchanged DB-owned incoming timestamps are accepted, then a change receives a new monotonic DB value. Commit `62d77a0` added source regression. This fixes the identifiable source-level issue, but rapid multi-statement PostgreSQL witness P02/P03 is **still required** before DB acceptance.
 
 ## Completion claim
 
 DB-064 may be marked **COMPLETED at source/staging implementation level** once the staged SQL, tests and audit are committed; `DONE_VERIFIED` is withheld until PostgreSQL acceptance and DB-056 principal-race obligations run. DB-012 remains BLOCKED on DB09 integration; DB-020/global DATABASE remain open. Old Chat 3 work and DB-056 authorship remain credited to their original worker.
+
+## Final exact-source verification after rapid-update correction
+
+Re-fetched fresh `main` SQL blob `a16c86896c4481b771d14e8227986af3ddc91352`, test blob `679e7c38dca010009bf4e5e06ef65b005814527c`, and unchanged Drizzle model blob `17284285f360ebac8957fa382f26a7d29d3def60`. Re-executed all 20 tests in the source-bound V8 harness: **20 passed, 0 failed**, no direct PostgreSQL. Tests were authored for the Node runner but have not been executed by `node --test` in the full checkout.
