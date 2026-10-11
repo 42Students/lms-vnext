@@ -17,7 +17,10 @@
     "notificationTemplateFinalRetirementApproved": 0,
     "notificationTemplateVnextRuntimeVerified": 0,
     "notificationTemplateSourceTargetsNotRuntimeProven": 36,
-    "notificationTemplateSourceRetirementCandidates": 20
+    "notificationTemplateSourceRetirementCandidates": 20,
+    "adminAuditSourceDispositioned": 13,
+    "adminAuditStagedGapFields": 3,
+    "adminAuditRuntimeVerified": 0
   },
   "records": [
     {
@@ -61,15 +64,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.id",
+      "sourceDispositionRationale": "Greenfield UUID event identity replaces legacy bigint.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-02",
@@ -112,15 +119,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.actor_user_id",
+      "sourceDispositionRationale": "Canonical actor user FK already persists identity.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-03",
@@ -161,15 +172,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_STAGED_NOT_REGISTERED",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "STAGED_ADDITIVE_FORENSIC_FIELD",
+      "sourceDispositionTarget": "activity_events.actor_role_snapshot",
+      "sourceDispositionRationale": "Historical actor role must be captured at event write time; current roles cannot reconstruct past authority.",
+      "sourceDispositionState": "SOURCE_MAPPED_STAGED_NOT_REGISTERED"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-04",
@@ -212,15 +227,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "PRIVACY_REDESIGN_NORMALIZED_IDENTITY",
+      "sourceDispositionTarget": "users.phone_e164 via activity_events.actor_user_id",
+      "sourceDispositionRationale": "Do not duplicate mobile PII in every audit row; resolve canonical identity when privileged tooling needs contact.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-05",
@@ -261,15 +280,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.event_type",
+      "sourceDispositionRationale": "Namespaced event taxonomy preserves action semantics.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-06",
@@ -310,15 +333,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.subject_type",
+      "sourceDispositionRationale": "Canonical audited resource type.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-07",
@@ -359,15 +386,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.subject_id",
+      "sourceDispositionRationale": "Text subject id preserves UUIDs and human keys without legacy 60-char truncation.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-08",
@@ -410,15 +441,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.organization_id",
+      "sourceDispositionRationale": "Existing organization tenant scope.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-09",
@@ -461,15 +496,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.college_id",
+      "sourceDispositionRationale": "Existing college tenant scope.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-10",
@@ -512,15 +551,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_STAGED_NOT_REGISTERED",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "STAGED_ADDITIVE_FORENSIC_FIELD",
+      "sourceDispositionTarget": "activity_events.request_ip",
+      "sourceDispositionRationale": "Typed inet preserves active forensic request address; API must derive from trusted proxy/server provenance.",
+      "sourceDispositionState": "SOURCE_MAPPED_STAGED_NOT_REGISTERED"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-11",
@@ -563,15 +606,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_STAGED_NOT_REGISTERED",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "STAGED_ADDITIVE_FORENSIC_FIELD",
+      "sourceDispositionTarget": "activity_events.user_agent",
+      "sourceDispositionRationale": "Bounded 512-char forensic User-Agent preserves active legacy audit context.",
+      "sourceDispositionState": "SOURCE_MAPPED_STAGED_NOT_REGISTERED"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-12",
@@ -614,15 +661,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.metadata",
+      "sourceDispositionRationale": "Structured producer context already persists in JSONB and is sanitized for detail rendering.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ADMIN_AUDIT_LOG-13",
@@ -665,15 +716,19 @@
         "42Students/lms-vnext:src/db/schema/activity.ts",
         "42Students/lms-vnext:src/modules/activity/service.ts"
       ],
-      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN",
-      "familyReviewEvidence": "Registered activity_events is the canonical candidate; actor role/IP/User-Agent remain gaps and actor mobile is intentionally not duplicated.",
+      "familyDisposition": "PARTIAL_REGISTERED_REDESIGN_DB039_CONTEXT_STAGED",
+      "familyReviewEvidence": "DB-039 exact source mapping: 10 concepts use existing vNext activity/identity persistence; actor role snapshot, request IP and User-Agent are staged additive fields; actor mobile is normalized to canonical identity. Status remains UNMAPPED until migration/API/privacy/runtime proof.",
       "globalQueueSourceReview": {
-        "taskId": "DB-013",
+        "taskId": "DB-039",
         "chatNumber": 5,
         "reviewedOn": "2026-10-11",
-        "state": "SOURCE_REVIEWED_EXACT_FIELD_MAPPING_PENDING",
-        "note": "Family-level source/consumer disposition only; status intentionally remains UNMAPPED."
-      }
+        "state": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING",
+        "note": "Exact source disposition recorded; migration/API/runtime/retention verification pending."
+      },
+      "sourceDisposition": "MAPPED_EXISTING_REGISTERED",
+      "sourceDispositionTarget": "activity_events.occurred_at",
+      "sourceDispositionRationale": "timestamptz event occurrence replaces naive legacy datetime.",
+      "sourceDispositionState": "SOURCE_MAPPED_EXISTING_OR_REDESIGNED_RUNTIME_PROOF_PENDING"
     },
     {
       "id": "DB10-ANNOUNCEMENTS-01",
@@ -9088,6 +9143,16 @@
       "finalRetirementApproved": 0,
       "runtimeVerifiedFields": 0,
       "interpretation": "The 56 duplicate notification-template fields now have exact source dispositions to typed code/provider/DLT config or retired row metadata. They deliberately remain UNMAPPED/unverified until DB00/DB19 global native/live proof approves retirement/redesign."
+    },
+    "db039": {
+      "taskId": "DB-039",
+      "chatNumber": 5,
+      "reviewedOn": "2026-10-11",
+      "mappedExistingOrRedesignedFields": 10,
+      "stagedAdditiveFields": 3,
+      "runtimeVerifiedFields": 0,
+      "stagingSql": "scripts/sql/db10-activity-audit-context-staging.sql",
+      "interpretation": "All 13 active admin-audit fields have explicit source dispositions. Three missing forensic semantics are staged, not registered. No field advances beyond UNMAPPED until migration, trusted API capture and privacy/retention witnesses pass."
     }
   },
   "blockingFindings": [
@@ -9098,6 +9163,7 @@
     "Legacy app_setting is only partially represented by module_access_rules and requires a runtime configuration redesign/retirement decision.",
     "Registered in-app notifications do not yet cover the full legacy scheduled/delivery lifecycle.",
     "Draft outbound transport is recruiter-invitation-only and does not yet cover all legacy SMS/template/digest/undo/provider semantics.",
-    "Disposable PostgreSQL/runtime verification is unavailable; no field is advanced beyond UNMAPPED by this source review."
+    "Disposable PostgreSQL/runtime verification is unavailable; no field is advanced beyond UNMAPPED by this source review.",
+    "DB-039 source-mapped all 13 admin_audit_log fields: 10 existing/normalized targets and 3 staged forensic additions (role snapshot, request IP, User-Agent); migration/API/privacy/runtime verification remains pending."
   ]
 }
