@@ -152,6 +152,29 @@ CREATE TRIGGER db02_program_term_course_delete_guard
 BEFORE DELETE ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_delete();
 
+-- Keep a materialized CORE curriculum row historically CORE.
+CREATE FUNCTION db02_guard_program_term_course_type_history()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NEW.type IS DISTINCT FROM OLD.type
+     AND EXISTS (
+       SELECT 1
+         FROM course_offerings co
+        WHERE co.program_term_course_id = OLD.id
+          AND co.type = 'CORE'
+     ) THEN
+    RAISE EXCEPTION 'Mapped curriculum cannot change type after CORE offering materialization'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+CREATE TRIGGER db02_program_term_course_type_history_guard
+BEFORE UPDATE OF type ON program_term_courses
+FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_type_history();
+
+
 -- Legacy semester-course credits are valid from 0..30. A zero-credit curriculum row
 -- must remain materializable as a cohort offering instead of failing a stricter vNext check.
 ALTER TABLE course_offerings
@@ -860,6 +883,77 @@ CREATE TRIGGER db02_cohort_progression_state_guard
 BEFORE INSERT OR UPDATE OF current_term_number, current_academic_year_start, current_period_id, version, updated_by_user_id
 ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
+
+-- Source-parity semester promotion curriculum-readiness guard.
+CREATE FUNCTION db02_guard_cohort_promotion_readiness()
+RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE
+  v_program_id uuid;
+  v_cohort_status cohort_status;
+  v_term_id uuid;
+  v_term_active boolean;
+BEGIN
+  IF NEW.current_term_number IS NOT DISTINCT FROM OLD.current_term_number THEN
+    RETURN NEW;
+  END IF;
+
+  -- The canonical progression trigger separately rejects jumps and backward
+  -- moves. Recheck source state here to fail closed even under direct SQL.
+  SELECT c.program_id, c.status
+    INTO v_program_id, v_cohort_status
+    FROM cohorts c
+   WHERE c.id = NEW.cohort_id
+   FOR SHARE;
+
+  IF v_program_id IS NULL THEN
+    RAISE EXCEPTION 'Unknown cohort for promotion readiness'
+      USING ERRCODE = '23503';
+  END IF;
+
+  IF v_cohort_status <> 'ACTIVE' THEN
+    RAISE EXCEPTION 'Cohort must be ACTIVE to advance academic term'
+      USING ERRCODE = '23514';
+  END IF;
+
+  -- Lock the destination term row: deactivating it concurrently must serialize
+  -- with promotion. Never accept a college-scoped academic_period as a substitute
+  -- for this program-specific curriculum term identity.
+  SELECT pt.id, pt.is_active
+    INTO v_term_id, v_term_active
+    FROM program_terms pt
+   WHERE pt.program_id = v_program_id
+     AND pt.term_number = NEW.current_term_number
+   FOR SHARE;
+
+  IF v_term_id IS NULL OR v_term_active IS DISTINCT FROM true THEN
+    RAISE EXCEPTION 'Promotion target program term must be configured and ACTIVE'
+      USING ERRCODE = '23514';
+  END IF;
+
+  -- Lock one stable curriculum row for the remainder of this transaction.
+  -- Concurrent deletion of the LAST course row cannot invalidate readiness
+  -- before this promotion commits. A different course row is also acceptable;
+  -- mapped course count must be >=1, not necessarily CORE-only.
+  PERFORM 1
+    FROM program_term_courses ptc
+   WHERE ptc.program_term_id = v_term_id
+   ORDER BY ptc.id
+   LIMIT 1
+   FOR SHARE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Promotion target term requires at least one mapped course'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+CREATE TRIGGER db02_cohort_promotion_readiness_guard
+BEFORE UPDATE OF current_term_number
+ON cohort_progression_state
+FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_promotion_readiness();
+
 
 -- Database-owned history: a direct SQL update cannot advance canonical state without
 -- producing a matching immutable event. Application code must NOT insert a duplicate event.
