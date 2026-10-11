@@ -208,3 +208,25 @@ test("DB09 multi-college drive groups bind recruiter company and child college",
     "a grouped child job needs an active recruiter grant to the same company relationship and college",
   );
 });
+
+
+test("DB09 prep and TPO bell staging fail closed on tenant and history", () => {
+  const sql = read("docs/planning/sql/db09-prep-bell-read-state-candidate.sql");
+  assert.match(sql, /CREATE TRIGGER db09_prep_assignment_scope_guard/);
+  assert.match(
+    sql,
+    /JOIN departments d ON d\.id = c\.department_id[\s\S]*d\.college_id = NEW\.college_id/,
+  );
+  assert.match(
+    sql,
+    /m\.id = NEW\.learner_membership_id[\s\S]*m\.status = 'ACTIVE'/,
+  );
+  assert.match(
+    sql,
+    /m\.user_id = NEW\.assigned_by_user_id[\s\S]*m\.status = 'ACTIVE'/,
+  );
+  assert.match(sql, /NEW\.due_at < NEW\.created_at - interval '5 minutes'/);
+  assert.match(sql, /CREATE TRIGGER db09_bell_reader_scope_guard/);
+  assert.match(sql, /CREATE TRIGGER db09_bell_item_immutable/);
+  assert.match(sql, /CREATE TRIGGER db09_bell_receipt_immutable/);
+});
