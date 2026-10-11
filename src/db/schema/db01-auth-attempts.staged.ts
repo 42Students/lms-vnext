@@ -107,8 +107,26 @@ export const identityAuthAttemptsStaged = pgTable(
     ),
     check(
       "identity_auth_attempts_timestamp_ck",
-      sql`(${table.verifiedAt} IS NULL OR ${table.verifiedAt} >= ${table.createdAt}) AND
-          (${table.usedAt} IS NULL OR ${table.usedAt} >= ${table.createdAt})`,
+      sql`(${table.verifiedAt} IS NULL OR (${table.verifiedAt} >= ${table.createdAt} AND ${table.verifiedAt} < ${table.expiresAt})) AND
+          (${table.usedAt} IS NULL OR (${table.usedAt} >= ${table.createdAt} AND ${table.usedAt} < ${table.expiresAt}))`,
+    ),
+    check(
+      "identity_auth_attempts_five_minute_expiry_ck",
+      sql`${table.expiresAt} <= ${table.createdAt} + interval '5 minutes'`,
+    ),
+    check(
+      "identity_auth_attempts_target_role_shape_ck",
+      sql`char_length(btrim(${table.targetRole})) BETWEEN 1 AND 24`,
+    ),
+    check(
+      "identity_auth_attempts_consumed_shape_ck",
+      sql`${table.usedAt} IS NULL OR
+          (${table.verifiedAt} IS NOT NULL
+           AND ${table.verifiedAt} <= ${table.usedAt}
+           AND ${table.smsCodeMac} IS NULL
+           AND ${table.smsCodeExpiresAt} IS NULL
+           AND ${table.emailCodeMac} IS NULL
+           AND ${table.emailCodeExpiresAt} IS NULL)`,
     ),
   ],
 );
