@@ -137,6 +137,6 @@ test("DB047 integration handoff must prefer Drizzle structural source", () => {
 
 test("DB047 remains source-complete but unverified", () => {
   assert.match(contract, /not registered or PostgreSQL verified/i);
-  assert.match(contract, /does not constitute PostgreSQL\/runtime verification/i);
+  assert.match(contract, /does\s+not constitute PostgreSQL\/runtime verification/i);
   assert.equal(ledger.verifiedFieldCount, 0);
 });
