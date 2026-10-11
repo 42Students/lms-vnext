@@ -20,6 +20,26 @@ if (!testUrl || process.env.DATABASE_URL !== testUrl) {
   );
 }
 
+// This suite mutates and deletes fixture rows, so matching two URLs alone
+// must never authorize execution against a production-looking database.
+const target = new URL(testUrl);
+const database = decodeURIComponent(target.pathname.replace(/^\\//, ""));
+const testDatabaseName = /^(?:test_[a-z0-9_]+|[a-z0-9_]+_test(?:_[a-z0-9]+)*)$/i;
+if (
+  !["postgresql:", "postgres:"].includes(target.protocol) ||
+  !testDatabaseName.test(database)
+) {
+  throw new Error("DB01 role lock witnesses require an explicitly named disposable test database");
+}
+const localHosts = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
+if (
+  !localHosts.has(target.hostname.toLowerCase()) &&
+  process.env.DB01_REMOTE_TEST_DATABASE_CONFIRM !==
+    `RESET:${target.hostname.toLowerCase()}/${database}`
+) {
+  throw new Error("DB01 remote role-lock test target requires exact confirmation");
+}
+
 const pool = new Pool({
   connectionString: testUrl,
   max: 4,
