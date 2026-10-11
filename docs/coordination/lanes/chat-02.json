@@ -34,14 +34,14 @@
       "pullRequest": 65,
       "branch": "chat-02-db004-tenant-identity-negative-witness",
       "headSha": "da635154585a3453459539be29eba35bbf468c8f",
-      "status": "DRAFT_PG_ACCEPTANCE_PENDING_ACTIONS_BILLING_IGNORED",
+      "status": "CLOSED_PR65_EXACT_BLOB_COPIED_MAIN_PG_UNVERIFIED",
       "authoredTest": "tests/integration/db01-tenant-identity-invariants.test.ts",
-      "authoredCases": 14,
+      "authoredCases": 26,
       "ciRun": 1393,
       "ciRunId": 38085377072,
       "ciConclusion": "failure",
       "executedPassingPostgresCases": 0,
-      "note": "14 integration cases authored, not run against Postgres. GitHub Actions intentionally disabled for billing, NOT an implementation blocker; require independent disposable PostgreSQL execution.",
+      "note": "Original PR #65 14 cases copied to main, plus 12 core structure cases; 0 PG executed, 14 authorization unit cases also authored on main.",
       "authoredTests": [
         "tests/integration/db01-tenant-identity-invariants.test.ts",
         "tests/integration/db01-identity-fk-invariants.test.ts"
@@ -111,7 +111,7 @@
       "pullRequest": 73,
       "branch": "chat-02-db004-tenant-domain-tombstone",
       "headSha": "2d97369518561f5cdc798fba833325407d0ee0b4",
-      "status": "DRAFT_UNREGISTERED_NODE_SOURCE_GUARDS_PASSED",
+      "status": "CLOSED_PR73_EXACT_BLOB_COPIED_MAIN_STAGED_UNREGISTERED",
       "source": "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5 model/TenantDomain.java + BaseModel.java + TenantDomainRepository.java",
       "proposedSql": "docs/planning/sql/db01-tenant-domain-tombstone-staging.sql",
       "contract": "docs/planning/db01-tenant-domain-tombstone-contract.md",
@@ -130,7 +130,7 @@
       "executedNodeCases": 6,
       "passedNodeCases": 6,
       "executedPostgresCases": 0,
-      "note": "Ran isolated local Node (no Actions) against byte-identical Git blob SQL/schema/test fixtures; six static/mutation tests passed, no SQL migration/runtime acceptance."
+      "note": "Staging SQL, source contract, Node and Vitest guards copied to main without registered migration; not PG verified."
     },
     "db01PromotionManifest": {
       "state": "SOURCE_VALIDATED_STAGED_ONLY",
@@ -245,6 +245,40 @@
       "w01Handoff": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6106770007",
       "approvedMigration": false,
       "notes": "Archive organization/child activation can race to persisted ACTIVE college under ARCHIVED org; staged twin trigger + parent FOR UPDATE requires W01 review and independent two-connection PG tests."
+    },
+    "db01MainDirectAcceptance": {
+      "status": "AUTHORED_ON_MAIN_SOURCE_VERIFIED_RUNTIME_PENDING",
+      "testFiles": [
+        "tests/integration/db01-tenant-identity-invariants.test.ts",
+        "tests/integration/db01-identity-fk-invariants.test.ts",
+        "tests/integration/db01-core-structure-invariants.test.ts",
+        "tests/unit/db01-tenant-domain-authorization.test.ts"
+      ],
+      "acceptance": "docs/planning/db01-tenant-identity-pg-negative-acceptance.md",
+      "sourceEvidence": "docs/planning/db01-chat02-main-test-source-evidence.json",
+      "authoredPostgresCases": 26,
+      "authoredAuthorizationUnitCases": 14,
+      "sourceChecksExecuted": 13,
+      "sourceChecksPassed": 13,
+      "executedVitestCases": 0,
+      "executedPostgresCases": 0,
+      "landingEvidenceSha": "10857a211d652874679ec3538d5e15da0a442bcb",
+      "branchPolicy": "MAIN_ONLY; prior PR #65 and #73 closed as exact-blob copies",
+      "mainCommits": [
+        "19300368dd8cf89d4568b8db21e9ac341b9d1012",
+        "fa712a8e17f962373ab83e6d7d5d6652889d7bbb",
+        "bcbd2761801ae5106340e725af2678a8e864c096",
+        "7102a23e552f0e204ef65d5a96873fe182fa3131",
+        "b8ed6577bdee2dc81f8dd521f9c51a8311087e77",
+        "0c1757a7b4a7238a05f2c631ebe5ad812b5067c3",
+        "be574910c20ee90e3851a1f70181806de05f3a4f",
+        "54998ddd00998d2c51b2552da4b7a3bbf1db45c9",
+        "7b192e5063747e0fe75a9201077b8ff224221349",
+        "96d2920b4417f5b3cdc5e4606eb86a87cc0151b7",
+        "870642b5ce7cb0e8cd02da095b740369da033a8c",
+        "58ae2037decc1a0a37c2856587c370694216dac7",
+        "10857a211d652874679ec3538d5e15da0a442bcb"
+      ]
     }
   },
   "qualityGates": {
@@ -261,7 +295,10 @@
     "sourceTombstoneGuard": "PASS_LOCAL_NODE_6_OF_6_EXACT_GIT_BLOBS",
     "sourceMembershipGuard": "PASS_LOCAL_NODE_8_OF_8_EXACT_GIT_BLOBS",
     "membershipDomainBehavior": "PASS_LOCAL_NODE_12_OF_12_ACTUAL_VNEXT_TS_SOURCE",
-    "totalExecutedNodeChecks": "PASS_LOCAL_NODE_26_OF_26"
+    "totalExecutedNodeChecks": "PASS_LOCAL_NODE_26_OF_26",
+    "db01SourceContract": "PASS_13_OF_13_CONNECTOR_EXECUTED_NO_PG",
+    "db01NewPostgresCases": "AUTHORED_26_EXECUTED_0",
+    "db01NewUnitCases": "AUTHORED_14_EXECUTED_0"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -277,7 +314,9 @@
     "tests/db01-test-database-guard.test.mjs",
     "tests/db01-tenant-domain-tombstone-source.test.mjs",
     "tests/db01-membership-suspension-source.test.mjs",
-    "tests/db01-membership-domain-runtime.test.mjs"
+    "tests/db01-membership-domain-runtime.test.mjs",
+    "tests/integration/db01-core-structure-invariants.test.ts",
+    "tests/unit/db01-tenant-domain-authorization.test.ts"
   ],
   "lastExecutedPassingTests": [
     "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)"
@@ -297,7 +336,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DB-004 remains IN_PROGRESS. Coordinate W01 promotion of reviewed staging only after independent disposable PostgreSQL replay/race witnesses; direct-main source test and staged SQL for org/college archive are prepared, test Node+2-connection PG after W01 register.",
+  "nextAction": "DB-004 remains IN_PROGRESS (DATABASE): 40 new cases are authored on main and 13 source checks passed; need independent Vitest/Postgres and 312-field semantic acceptance. W01 sole migration/schema integrator; no Actions billing wait.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -362,7 +401,10 @@
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/sql/db01-org-college-archive-race-staging.sql",
     "https://github.com/42Students/lms-vnext/blob/main/tests/db01-org-college-archive-race-source.test.mjs",
     "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6106770007",
-    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-membership-suspension-local-test-evidence.md"
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-membership-suspension-local-test-evidence.md",
+    "https://github.com/42Students/lms-vnext/commit/10857a211d652874679ec3538d5e15da0a442bcb",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-main-test-source-evidence.json",
+    "https://github.com/42Students/lms-vnext/commit/58ae2037decc1a0a37c2856587c370694216dac7"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
