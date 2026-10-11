@@ -3,6 +3,52 @@
 **Effective:** 2026-10-11 IST · **Repository:** `42Students/lms-vnext` · **Branch:** `main` · **Workers:** Chats 1–6, interchangeable.
 **Authoritative state:** [phase-state.json](phase-state.json) + [work-queue.json](work-queue.json) + [six independent chat checkpoints](lanes/) + GitHub issues [#21–#26](https://github.com/42Students/lms-vnext/issues).
 
+## DATABASE closure-first directive — 2026-10-12
+
+**User request:** make substantive progress and **close the original remaining
+11 DATABASE tasks**, not endlessly increase the task denominator by creating
+new source-only microtasks. This takes precedence over the generic instruction
+to claim/append fresh task IDs whenever no ready item is available.
+
+Original open core tasks at the 2026-10-12 closure request:
+\`DB-002, DB-003, DB-004, DB-005, DB-007, DB-008, DB-012, DB-017,
+DB-019, DB-020, DB-030\`. Already-created later security tasks remain legitimate
+work, but their creation/completion **does not reduce** the open-core-11 count.
+For current stats show BOTH the core eleven closure progress and the moving
+global queue totals; never interpret increasing denominator/COMPLETED counts
+as database acceptance progress.
+
+Work priorities:
+1. **Integrate rather than redraft:** select already-authored Drizzle/SQL
+   candidates in dependency order, detect duplicate/conflicting constraints,
+   ensure registered migration and current barrel are consistent. W1/Chat1
+   remains sole migration journal/schema-barrel integrator.
+2. **Execute actual evidence:** on a genuinely disposable PostgreSQL instance,
+   replay 0000→head, verify catalog/snapshot drift and negative FK/tenant,
+   state/delete and two-session concurrency witnesses; record current SHA and
+   pass/fail outputs. GitHub Actions billing is not an excuse to fabricate
+   passing results. The opt-in \`scripts/db-staged-pg-witnesses.mjs\` covers five
+   *staging fixtures*, not full migration replay.
+3. **Close owner dispositions:** DB003's seven Smrithi tables (91 fields)
+   require explicit product intent; DB004's 137 unmapped/unproposed source
+   fields need mapped or justified dispositions; coordinate DB02/DB05/DB06,
+   DB04 private profiles and DB09 TPO owners rather than duplicating files.
+4. **Freeze routine task proliferation:** do not append a new database task
+   for another source-only scanner, duplicate SQL draft, or companion witness
+   when an existing open core task can own the work. A newly discovered P0
+   correctness/security gap may receive a separately scoped queue item ONLY
+   when it cannot be assigned to an existing task, is accompanied by precise
+   source evidence, and its dependency impact is explicit.
+5. **Status honesty:** \`COMPLETED\` means committed implementation with
+   documented remaining proof; \`DONE_VERIFIED\` requires actual acceptance.
+   Source-only callbacks, authored Node tests, and unrun PostgreSQL scripts
+   never certify DATABASE or unlock API. Keep global DATABASE ACTIVE until the
+   real phase-state gates pass.
+
+A worker finishing one isolated check should immediately move back to the
+highest-priority unfinished **original** task, not create a fresh easy-to-close
+task merely to show movement.
+
 ## CI unavailable by choice (billing) — verification provider is replaceable
 
 **User directive, 2026-10-11:** GitHub Actions CI is paused because of billing. It is NOT an impediment to progressing, picking, implementing, committing, peer reviewing, or completing source/implementation tasks. Do not repeatedly check GitHub Actions, demand billing remediation, or classify tasks BLOCKED merely because Actions runs fail at runner allocation. All six workers should proceed with independently bounded DATABASE work and use non-Actions test execution whenever available.
