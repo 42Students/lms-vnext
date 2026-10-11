@@ -209,10 +209,10 @@
         "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "41d1ff4e9dc9fc94bb0f04c6ec1b5c7d589195b6",
+      "latestEvidenceSha": "0f38b998326f5b6955e2abef05ca7729c7482a74",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "DB-004 IN_PROGRESS: 312/312 candidate source dispositions, 0 runtime-semantic verified. Current staging includes identity OTP/time/retry/session/handoff, state guards, hostname and organization/college archival concurrency. P0 security crosswalk draft covers 38 fields; 3 source-evidence gaps. All stages UNREGISTERED and PostgreSQL/provider acceptance not executed. GitHub Actions billing intentionally not a blocker.",
+      "completionNote": "DB-004 IN_PROGRESS: 312/312 legacy DB01 candidates source-triaged; all 38 P0 no-target fields have source policy but 0 vNext runtime-semantic verified. Three P0 named-source gap paths now resolved (not runtime parity); legacy deleted-role authority bypass is classified as security exception. DB01 tenant/session/OTP/lifecycle schema candidates remain UNREGISTERED; ended-membership role mutation has source-confirmed parent-lock race, with 11 authored Node tests and two-way PostgreSQL acceptance contract but NO executed PG witness. Actions CI intentionally disabled for billing, NOT engineering blocker.",
       "pickedBy": 2,
       "pickedAt": "2026-10-10T20:26:41.998Z",
       "startedAt": "2026-10-10T20:27:16.242Z",
@@ -244,7 +244,7 @@
           "reason": "Chat 2 now auditing DB01 source semantics."
         }
       ],
-      "progressNote": "Chat 2 2026-10-11 direct-main source iteration: optional DB-backed OTP challenge staging hardened with five-minute lifetime, consumed-secret clears and OLD/NEW scope/retry/expiry/verified/terminal monotonic trigger. 14 new source tests + one real two-client disposable PostgreSQL acceptance suite authored. 38 exact security P0 no-target fields now have owner/target/policy crosswalk, 13 new source tests, 3 named-current-source evidence gaps. 82/82 source-only in-process GitHub-blob assertions PASS; Node and PostgreSQL tests 0 EXECUTED this iteration, no registered migration or provider acceptance. Evidence docs/planning/db01-chat02-otp-p0-source-static-evidence.json. | 2026-10-11 handoff-hardening batch: immutable host/user/college/member/domain/code envelope, deadline non-extension, consumed terminal row, wall-clock expiry after lock. 12 Node source tests and one two-client disposable PG suite AUTHORED, not executed; 38/38 connector-source predicates passed; 0 PG or provider tests executed; staging unregistered. docs/planning/db01-chat02-handoff-lifecycle-source-evidence.json."
+      "progressNote": "Chat 2 main source batch: 38 P0 auth/security fields retain zero vNext verified; 3 previously unnamed current legacy producer/consumer paths pinned (role.is_deleted authority bypass, tenant_domain.is_deleted active query guards, user.password bcrypt save/login) with 30/30 exact GitHub-blob in-process assertions. New vNext ended-membership/role-grant TOCTOU audit: current service checks status before transaction; repository locks role rows, not parent; membership END locks parent. 11 new authored Node source-drift cases; 20/20 in-process source assertions. No new Node/PostgreSQL tests executed, no registered migration, no provider acceptance. CI billing intentionally not blocked."
     },
     {
       "id": "DB-005",
