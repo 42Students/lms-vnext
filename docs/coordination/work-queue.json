@@ -411,7 +411,7 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "7d913c9e90d0a73caac889b5c4086893131d018b",
+      "latestEvidenceSha": "cd1081a9fccaa0064d8fb23dc0e7913af97319bc",
       "verificationEvidence": [],
       "blockers": [
         "UNREGISTERED_MIGRATIONS: Seven isolated SQL drafts under scripts/sql/; Chat 1 exclusively owns registered Drizzle journal/schema barrel and replay. Metadata table dependency and 17 content-settings fields require explicit ordering. Classroom same-college guard is companion-only, NOT separately registered; canonical history draft owns columns/index.",
@@ -419,7 +419,9 @@
         "NESTED_JSON_NOT_CLOSED: Course MetaData has 14 fields, Lesson ContentDataDTO has 17. DB06 assignment resources/allowedSubmissionTypes, private material receipts, HTML, timezone and schedule gating still require producer/consumer and negative DB tests.",
         "SERVICE_CUTOVER_BLOCKED: vNext progress lacks attempt-aware consumers and first completion behavior; course/lesson/content writers lack optimistic version CAS; classroom messages hard-delete rather than preserve historic records.",
         "EXECUTED_TESTS_UNVERIFIED: Sixteen Node test definitions authored only. Connected read-only source consistency assertions succeeded, but node:test, PostgreSQL migration replay/negative tests, lint, typecheck, build and CI have not been executed/observed passing.",
-        "OPEN_DB05_GAPS: Twenty-five unresolved top-level semantic decisions, including three historical-only/unproven source columns default_subscription_days, formal_title and learner_content_progress.is_deleted; parent-course tenant/cycle invariants untested. Current progress is_deleted now has a source-backed draft candidate, but remains classified MISSING_OR_UNPROVEN pending reconciled ledger/consumer proof."
+        "OPEN_DB05_GAPS: Twenty-five unresolved top-level semantic decisions, including three historical-only/unproven source columns default_subscription_days, formal_title and learner_content_progress.is_deleted; parent-course tenant/cycle invariants untested. Current progress is_deleted now has a source-backed draft candidate, but remains classified MISSING_OR_UNPROVEN pending reconciled ledger/consumer proof.",
+        "COURSE_PARENT_CYCLE_TENANT_PG_PENDING: Parent graph companion is only staged; wrong-college, three-node cycles, existing child/offering parent moves and concurrent reciprocal parent edits still require disposable PostgreSQL.",
+        "LESSON_DISCUSSION_TENANT_PG_PENDING: Replacement guard joins owning course college, offering period, optional delivery/section period and author/resolver colleges; upstream reparent/race tests remain open."
       ],
       "completionNote": null,
       "pickedBy": 6,
@@ -459,7 +461,8 @@
         "SOURCE_ONLY_CHECKPOINT: seven SQL drafts and 17 nested lesson-content fields inventoried; 14 course metadata fields; 25 top-level semantic decisions open. 16 Node test definitions authored, not executed. In-memory static checks passed; no runtime DB/tests. Evidence commit 7015aa1ca21566ba3fe0879cc4d5605dee522e6c. Still IN_PROGRESS.",
         "CHAT06_2026_10_11_SIX_MERGED_PR_BATCH: #63 2e6a819, #67 5d32c5d, #69 71bae0b, #70 228d6ec, #72 812704c, #74 1c18b6d. Documented source semantics, staged companion classroom same-college guard, deduplicated classroom history columns and indexes, gated migration manifest, and staged progress tombstone with latest-attempt-before-filter rule. Source-only assertions passed; Node tests authored only, PostgreSQL/CI acceptance NOT PASS. DB008 stays IN_PROGRESS, 0 verified of 92; never register migrations until Chat1 signed gates.",
         "CHAT06_PROGRESS_LATEST_ATTEMPT_GATES: PR #75 merged c3ee0c62f8353b5b986d8d4e2b5a8a19b0f77f41. Manifest explicitly BLOCKS progress deleted_at candidate until per-reader/latest-attempt semantics, same-college tenant negatives and retake/rewatch races are executed; new Node guard authored, not run. Seven independent drafts unregistered; 0 verified DB05 fields.",
-        "CHAT06_PROGRESS_COLLEGE_SCOPE_COMPANION: PR #78 merged 7d913c9e90d0a73caac889b5c4086893131d018b. Staged unregistered SQL trigger checks content offering/period, course department college, membership college, optional delivery offering and section-period college; independent child write guard does NOT prevent later upstream reparent. Manifest gates BLOCKED and NOT_RUN, Node tests only authored; no executed PostgreSQL evidence. DB008 remains IN_PROGRESS."
+        "CHAT06_PROGRESS_COLLEGE_SCOPE_COMPANION: PR #78 merged 7d913c9e90d0a73caac889b5c4086893131d018b. Staged unregistered SQL trigger checks content offering/period, course department college, membership college, optional delivery offering and section-period college; independent child write guard does NOT prevent later upstream reparent. Manifest gates BLOCKED and NOT_RUN, Node tests only authored; no executed PostgreSQL evidence. DB008 remains IN_PROGRESS.",
+        "CHAT06_PARENT_AND_LESSON_DISCUSSION_SCOPE_COMPANIONS: Staged db05-course-parent-graph-guard.draft.sql (same-college and recursive cycle + child/offering department-move guard) and db05-lesson-discussions-same-college.draft.sql (course department/period/optional delivery/author-resolver tenant scope); companion-only, unregistered, no duplicate migrations. New 7 Node test definitions authored NOT RUN, read-only structural source checks 19/19 true, PG negative/races NOT RUN. W01 must integrate guard once and validate upstream department/period reparent. Evidence cd1081a9fccaa0064d8fb23dc0e7913af97319bc."
       ]
     },
     {
