@@ -543,6 +543,12 @@
       "status": "BLOCKED",
       "owner": "DB02_DB05_API_PHASE",
       "evidence": "Current application offering create rejects inactive cohort / closed period, delivery create requires ACTIVE section; staged DB trigger only enforces structure. Decide whether DB-level active-state-at-create guards are required without retroactively invalidating historical archived offerings."
+    },
+    {
+      "id": "DB05_OFFERING_DELIVERY_EXISTING_ROW_PREFLIGHT",
+      "status": "NOT_RUN",
+      "owner": "W01_DB02_DB05",
+      "evidence": "Read-only aggregate mismatch preflight scripts/sql/db05-offering-delivery-preflight.readonly.sql authored, not executed on disposable PG. Zero wrong-tenant/wrong-cohort/term rows must be witnessed before enabling child guards; not sufficient for races."
     }
   ],
   "sourceReview": {
@@ -823,7 +829,15 @@
       "postgresExecuted": false,
       "readyForProduction": false,
       "advisoryKey": "605008003",
-      "note": "Source-backed API invariant SQL companion ONLY; NOT a new eighth DB05 independent migration. No PostgreSQL/race evidence. W01 owns integration and DB02 overlap resolution."
+      "note": "Source-backed API invariant SQL companion ONLY; NOT a new eighth DB05 independent migration. No PostgreSQL/race evidence. W01 owns integration and DB02 overlap resolution.",
+      "existingRowPreflight": {
+        "path": "scripts/sql/db05-offering-delivery-preflight.readonly.sql",
+        "testPath": "tests/db05-offering-delivery-preflight.test.mjs",
+        "runOnDisposablePg": false,
+        "postgreSqlOutputCaptured": false,
+        "allMismatchesZero": null,
+        "countsForPromotion": false
+      }
     },
     {
       "id": "DB05_AUTHORED_CONTENT_ANCESTRY_REPARENT",
