@@ -101,9 +101,21 @@ The current vNext `academic_periods` table is college-scoped and therefore canno
 A normalized design should provide:
 
 - `program_terms(program_id, term_number, name, is_active, total_credits, ...)` with unique `(program_id, term_number)`;
-- `program_term_courses(program_term_id, course_id, type, credits, display_order, ...)` with unique term+course membership and deterministic ordering.
+- `program_term_courses(program_term_id, course_id, type, credits, display_order, ...)` with unique term+course membership; `display_order` is 1-based but intentionally **not unique** because the active legacy service permits collisions and sorts ties by row identity.
 
 Delivery tables may continue to materialize offerings for a particular cohort/period, but DB03 and promotion logic must read the canonical program-term identity rather than infer term number from a period code.
+
+### Curriculum display-order compatibility
+
+Legacy `semester_course` has a unique constraint on `(semester_id, course_id)`, not on `course_order`. The active service validates only `courseOrder >= 1`, supports single-row order updates, and reads `ORDER BY courseOrder ASC, id ASC`. Therefore duplicate positions are valid source state.
+
+DB02 preserves that behavior:
+
+- `program_term_courses.display_order >= 1`;
+- no `UNIQUE(program_term_id, display_order)`;
+- duplicate positions are accepted;
+- application reads/reorder projections must use a deterministic tie-break (display order, then stable row ID);
+- an API-phase bulk reorder may improve UX, but it must not retroactively make source-valid duplicate order impossible unless product explicitly approves that behavior change.
 
 ### Stable term identity on course offerings
 
