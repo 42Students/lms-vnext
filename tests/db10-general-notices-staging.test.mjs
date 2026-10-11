@@ -137,6 +137,10 @@ test("DB24 immutable enqueue and database-clock undo guard", () => {
     "NOTIFICATION_TERMINAL_STATE_IMMUTABLE",
   ]) assert.ok(sql.includes(code), "Missing SQL guard " + code);
   assert.match(spec, /DB24-15/);
+  // A retry path such as PENDING -> FAILED -> CLAIMED must not bypass the hold.
+  assert.match(sql, /NEW\.status IS DISTINCT FROM OLD\.status/);
+  assert.match(sql, /NEW\.status IN \('CLAIMED','HANDED_OFF','SENT'\)/);
+  assert.doesNotMatch(sql, /IF OLD\.status = 'PENDING'\s+AND NEW\.status IN \('CLAIMED','HANDED_OFF','SENT'\)/);
 });
 
 test("DB24 source event, role, payload and enqueue timestamp are immutable", () => {
