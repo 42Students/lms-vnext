@@ -228,6 +228,14 @@ export async function joinGroup(
     if (mode === "SELF") assertSelfWindow(group, new Date());
     else if (!["DRAFT", "ACTIVE"].includes(group.status))
       throw new GroupServiceError("GROUP_NOT_MUTABLE");
+    // Elective eligibility must be rechecked even for an existing membership:
+    // a current ACTIVE/WAITLISTED row can become stale after a program transfer.
+    if (slot) {
+      if (group.kind !== "ELECTIVE" || group.collegeId !== slot.collegeId)
+        throw new GroupServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
+      if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
+        throw new GroupServiceError("ELECTIVE_PRIMARY_SECTION_REQUIRED");
+    }
     const [existing] = await tx.select().from(lmsGroupMembers)
       .where(and(eq(lmsGroupMembers.groupId, groupId), eq(lmsGroupMembers.membershipId, memberId))).limit(1);
     if (existing?.state === "ACTIVE" || existing?.state === "WAITLISTED") return existing;
@@ -235,13 +243,7 @@ export async function joinGroup(
     // admin re-add may override the block, but the lock itself remains preserved.
     if (existing?.isLocked && existing.state === "REMOVED" && mode === "SELF")
       throw new GroupServiceError("GROUP_MEMBERSHIP_LOCKED");
-    if (slot) {
-      if (group.kind !== "ELECTIVE" || group.collegeId !== slot.collegeId)
-        throw new GroupServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
-      if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
-        throw new GroupServiceError("ELECTIVE_PRIMARY_SECTION_REQUIRED");
-      await assertElectivePickLimit(tx, slot, memberId);
-    }
+    if (slot) await assertElectivePickLimit(tx, slot, memberId);
     const available = group.capacity === null || group.activeCount < group.capacity;
     // Legacy configFlag(..., true): absent/non-boolean configuration keeps
     // waitlisting enabled. Only an explicit boolean false disables it.
