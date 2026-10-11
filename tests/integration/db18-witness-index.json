@@ -120,22 +120,7 @@
       "state": "AUTHORED_DB018_NOT_RUN"
     }
   ],
-  "missingConcurrencyWitnesses": [
-    {
-      "id": "DB18-M01",
-      "raceProbe": "P5-R01",
-      "domain": "PLACEMENTS",
-      "state": "SOURCE_CONFIRMED_GAP_TEST_MISSING",
-      "required": "Gate application insert against concurrent paid-module disable or inherited eligibility revocation inside the same ordering transaction."
-    },
-    {
-      "id": "DB18-M02",
-      "raceProbe": "P5-R02",
-      "domain": "ACADEMICS",
-      "state": "SOURCE_CONFIRMED_GAP_TEST_MISSING",
-      "required": "Prove enrollment cannot commit after cohort becomes completed/archived between precheck and insert."
-    }
-  ],
+  "missingConcurrencyWitnesses": [],
   "excludedUntilRegistered": [
     {
       "raceProbe": "P5-R08",
@@ -153,9 +138,32 @@
   "counts": {
     "directNegativeAuthored": 9,
     "existingConcurrencyAuthored": 4,
-    "explicitConcurrencyMissing": 2,
+    "explicitConcurrencyMissing": 0,
     "draftUnregisteredExcluded": 3,
     "runtimeExecuted": 0,
-    "runtimePassed": 0
-  }
+    "runtimePassed": 0,
+    "knownRedRaceAuthored": 2
+  },
+  "knownRedRaceWitnesses": [
+    {
+      "id": "DB18-R01",
+      "raceProbe": "P5-R01",
+      "domain": "PLACEMENTS",
+      "file": "tests/integration/db18-placement-race-gap.test.ts",
+      "title": "P5-R01 rejects placement application if paid access is revoked after precheck",
+      "state": "AUTHORED_EXPECTED_FAIL_UNTIL_FIXED",
+      "execution": "NOT_RUN",
+      "requiredFix": "Revalidate/order paid module plus inherited participation and job eligibility inside the application transaction against concurrent access writers."
+    },
+    {
+      "id": "DB18-R02",
+      "raceProbe": "P5-R02",
+      "domain": "ACADEMICS",
+      "file": "tests/integration/db18-known-race-gaps.test.ts",
+      "title": "P5-R02 rejects enrollment if the cohort stops being mutable after precheck",
+      "state": "AUTHORED_EXPECTED_FAIL_UNTIL_FIXED",
+      "execution": "NOT_RUN",
+      "requiredFix": "Lock/re-read cohort mutability inside learner enrollment transaction, ordered against cohort lifecycle transitions."
+    }
+  ]
 }
