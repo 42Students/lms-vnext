@@ -410,9 +410,10 @@
       "sourceNodeTestsExecuted": 0,
       "pgNodeSuiteAuthored": 1,
       "pgCasesExecuted": 0,
-      "sourceAssertionsInProcess": "24 of 24 passed on pre-terminal-patch; rerun against latest SHA to confirm",
+      "sourceAssertionsInProcess": "82 of 82 static source assertions passed across OTP guard + 38-field P0 crosswalk, exact GitHub blob hashes in evidence",
       "providerStrategyApproved": false,
-      "registeredMigration": false
+      "registeredMigration": false,
+      "sourceEvidence": "docs/planning/db01-chat02-otp-p0-source-static-evidence.json"
     },
     "db01AuthP0Crosswalk": {
       "status": "38_FIELDS_POLICY_DRAFT_ZERO_RUNTIME_VERIFIED",
@@ -441,7 +442,9 @@
       "handoffs": [
         "https://github.com/42Students/lms-vnext/issues/23#issuecomment-6107273075",
         "https://github.com/42Students/lms-vnext/issues/25#issuecomment-6107273467"
-      ]
+      ],
+      "sourceEvidence": "docs/planning/db01-chat02-otp-p0-source-static-evidence.json",
+      "authoredSourceNodeTests": 13
     }
   },
   "qualityGates": {
@@ -473,7 +476,10 @@
     "db01SecurityPolicyNode": "PASS_16_OF_16_INDEPENDENT_NODE",
     "authAttemptMonotonicSource": "24_IN_PROCESS_PASS_BEFORE_LAST_STAGED_GUARD_REVIEW; NODE_14_AUTHORED_NOT_RUN",
     "authAttemptMonotonicPostgres": "ONE_PG_SUITE_AUTHORED_UNEXECUTED",
-    "db01SecurityP0Crosswalk": "38_FIELD_POLICY_CROSSWALK_3_NAMED_CURRENT_SOURCE_EVIDENCE_GAPS_ZERO_PROVEN"
+    "db01SecurityP0Crosswalk": "38_FIELD_POLICY_CROSSWALK_3_NAMED_CURRENT_SOURCE_EVIDENCE_GAPS_ZERO_PROVEN",
+    "db01AuthP0SourceStatic": "EXECUTED_82_OF_82_IN_PROCESS_STATIC_ONLY_NO_NODE_PG",
+    "db01AuthP0NodeTests": "27_AUTHORED_0_EXECUTED_THIS_BATCH",
+    "db01AuthP0Pg": "ONE_DISPOSABLE_PG_SUITE_AUTHORED_0_EXECUTED"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -608,7 +614,8 @@
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-auth-security-p0-field-crosswalk.json",
     "https://github.com/42Students/lms-vnext/commit/f72ec43356a4119c77134e4d3f34541a81272b39",
     "https://github.com/42Students/lms-vnext/commit/af25ee0b3f20a0732606eed5340d9271d90fa40e",
-    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107272754"
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107272754",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-otp-p0-source-static-evidence.json"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
