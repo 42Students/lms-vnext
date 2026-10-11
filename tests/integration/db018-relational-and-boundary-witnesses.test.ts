@@ -65,13 +65,20 @@ function sqlFor(probe: Probe): { violations: string; sample: string } {
   if (!/^P5-\d{2}$/.test(probe.id)) {
     throw new Error("Unexpected Pass-5 check ID");
   }
-  if (
-    !/^[a-zA-Z0-9_ .=<>]+$/.test(probe.from) ||
-    !/^[a-zA-Z0-9_ .()=<>]+$/.test(probe.where) ||
-    /\b(?:INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|UNION|SELECT)\b/i.test(
-      probe.from + " " + probe.where,
-    )
-  ) {
+  const table = "[a-z_][a-z0-9_]*";
+  const alias = table;
+  const column = `${alias}\\.${table}`;
+  const equality = `${column}\\s*=\\s*${column}`;
+  const fromPattern = new RegExp(
+    `^${table}\\s+${alias}(?:\\s+JOIN\\s+${table}\\s+${alias}\\s+ON\\s+${equality})+$`,
+    "i",
+  );
+  const mismatch = `${column}\\s*<>\\s*${column}`;
+  const wherePattern = new RegExp(
+    `^${mismatch}(?:\\s+OR\\s+${mismatch})*$`,
+    "i",
+  );
+  if (!fromPattern.test(probe.from) || !wherePattern.test(probe.where)) {
     throw new Error(`Unsafe or unreviewed relational witness ${probe.id}`);
   }
 
