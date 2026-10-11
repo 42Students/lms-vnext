@@ -333,3 +333,21 @@ test("materialized CORE curriculum row cannot change type", () => {
   assert.match(concurrencyShell, /PASS curriculum type race A/);
   assert.match(concurrencyShell, /PASS curriculum type race B/);
 });
+
+
+test("shared DB02 harnesses satisfy promotion readiness before progression assertions", () => {
+  assert.match(
+    acceptanceSql,
+    /INSERT INTO program_term_courses\(program_term_id, course_id, type, credits, display_order\)\s+VALUES \(term_a2, course_core_a, 'CORE', 0, 1\)/,
+  );
+  assert.match(concurrencyShell, /PROMOTION_TERM2_ID="\$\(new_uuid\)"/);
+  assert.match(concurrencyShell, /PROMOTION_MAP_ID="\$\(new_uuid\)"/);
+  assert.match(
+    concurrencyShell,
+    /promotion_map_id[\s\S]*program_term_courses[\s\S]*promotion_term2_id/,
+  );
+  assert.match(
+    concurrencyShell,
+    /Race 1: two promotions with the same expected version -> exactly one winner/,
+  );
+});
