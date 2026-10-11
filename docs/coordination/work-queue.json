@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T11:15:00+05:30",
+  "updatedOn": "2026-10-11T07:32:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -1412,25 +1412,35 @@
         "scripts/db-test-prepare.ts",
         "tests/db01-test-database-guard.test.mjs"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": "3cdd218eecac83c85d46dcf25d92bec416ee2b26",
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 1,
+      "pickedAt": "2026-10-11T07:32:00.000Z",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 1,
+          "pickedAt": "2026-10-11T07:32:00.000Z"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11",
           "reason": "Chat 5 independent DB-001 peer review confirmed current main still lets requireDatabaseUrl('TEST_DATABASE_URL') fall back to DATABASE_URL while db:test:prepare performs destructive reset. Split from DB-001 verifier harness as a CORE_INFRA fail-closed safety task."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T07:32:00.000Z",
+          "reason": "Chat 1 CORE_INFRA claim; fail-close destructive test database target selection blocks DB-002 and DB-018."
         }
       ]
     },
