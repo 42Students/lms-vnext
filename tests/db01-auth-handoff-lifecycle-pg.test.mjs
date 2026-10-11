@@ -83,6 +83,12 @@ if (!optIn) {
 
       await expect23514(issue({ lifetimeSeconds: 150 }), "identity_auth_handoffs_lifetime_ck");
       const id = await issue();
+      // A future value may still be < expires_at, so a CHECK alone cannot
+      // prove consumed_at describes an already executed reservation.
+      await expect23514(
+        admin.query("UPDATE identity_auth_handoffs SET consumed_at=clock_timestamp()+interval '30 seconds' WHERE id=$1", [id]),
+        "db01_auth_handoff_future_consume_ck",
+      );
       for (const [column, value] of [
         ["user_id", randomUUID()], ["college_id", randomUUID()],
         ["target_membership_id", randomUUID()], ["target_domain_id", randomUUID()],
