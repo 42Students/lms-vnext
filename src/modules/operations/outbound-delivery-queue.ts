@@ -78,8 +78,10 @@ export async function queueOutboundDeliveryInTransaction(
   const envelope = sealOutboundDelivery(intent, encryptionKey);
   // Global email recipient HMAC is intentionally different from the
   // organization-scoped recipientHash. Null for SMS and WhatsApp.
-  const globalEmailSuppressionHash =
-    deriveGlobalEmailSuppressionHash(intent, encryptionKey);
+  const globalEmailSuppressionHash = deriveGlobalEmailSuppressionHash(
+    intent,
+    process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 ?? "",
+  );
   const notBefore = envelope.notBefore
     ? new Date(envelope.notBefore) : null;
   const expiresAt = envelope.expiresAt
