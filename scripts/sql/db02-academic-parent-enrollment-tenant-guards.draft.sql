@@ -226,6 +226,37 @@ BEFORE INSERT OR UPDATE OF learner_enrollment_id, section_id, academic_period_id
 ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_cohort_period();
 
+-- A non-key section UPDATE takes a PostgreSQL NO KEY UPDATE row lock.
+-- Referencing FK inserts ordinarily only take KEY SHARE, which is compatible
+-- with NO KEY UPDATE. Promote that to SHARE so an enrollment/schedule INSERT
+-- serializes against structural section reparenting before history is checked.
+CREATE FUNCTION db02_lock_section_history_parent()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  PERFORM 1 FROM sections WHERE id = NEW.section_id FOR SHARE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'DB02 referenced section is missing' USING ERRCODE = '23503';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER db02_lock_section_for_learner_enrollment
+BEFORE INSERT OR UPDATE OF section_id ON section_enrollments
+FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
+
+CREATE TRIGGER db02_lock_section_for_faculty_assignment
+BEFORE INSERT OR UPDATE OF section_id ON section_faculty_assignments
+FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
+
+CREATE TRIGGER db02_lock_section_for_course_delivery
+BEFORE INSERT OR UPDATE OF section_id ON course_section_deliveries
+FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
+
+CREATE TRIGGER db02_lock_section_for_schedule_event
+BEFORE INSERT OR UPDATE OF section_id ON section_schedule_events
+FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
+
 -- Enrollment historical foreign keys are stable; a movement creates a new
 -- section_enrollments row and ends the prior one. This matches roster-service.
 CREATE FUNCTION db02_guard_academic_enrollment_identity_immutable()
