@@ -110,7 +110,13 @@ Legacy `industry_company.export_columns_json` is redesigned to tenant-safe `plac
 
 `docs/planning/sql/db09-multicollege-drive-group-candidate.sql`
 
-Register after recruiter identity/company relationships and `placement_jobs`.
+Register after recruiter identity/company relationships, recruiter grants and
+`placement_jobs`. The parent-key catalog includes
+`placement_recruiter_profiles(user_id,company_id)`. The staged contract
+rejects inactive recruiter/company group owners, requires the grouped job
+creator to be that recruiter, requires an ACTIVE grant to the exact
+college-company relationship at attach time, and enforces one child job per
+group/college. Later grant revocation does not erase historical group links.
 
 ### 7. Round scheduling + drive coordinators
 
@@ -172,13 +178,14 @@ Before DB-012 can move beyond source/design completion:
 6. duplicate contact/invite-hash and invitation rotation races;
 7. message/share/recruiter-private-note cross-tenant privacy;
 8. share token/code hash, expiry, revocation and disclosure caps;
-9. scheduling cross-job/cross-round FK negatives and assignment/reschedule races;
-10. coordinator cross-college authorization negatives;
-11. TPO bell independent-reader semantics;
-12. prep course tenant/catalog authorization and dedupe race;
-13. notification undo vs claim race, APP exactly-once fanout, digest isolation;
-14. external sender lease/fence/idempotency and suppression behavior;
-15. runtime producer/consumer checks against the exact registered schema.
+9. recruiter drive-group cross-company/cross-college/archived-owner negatives and duplicate group+college race;
+10. scheduling cross-job/cross-round FK negatives and assignment/reschedule races;
+11. coordinator cross-college authorization negatives;
+12. TPO bell independent-reader semantics;
+13. prep course tenant/catalog authorization and dedupe race;
+14. notification undo vs claim race, APP exactly-once fanout, digest isolation;
+15. external sender lease/fence/idempotency and suppression behavior;
+16. runtime producer/consumer checks against the exact registered schema.
 
 GitHub Actions availability/billing is **not** a gate. Use the CI-independent disposable PostgreSQL verification path tracked by DB-001.
 
