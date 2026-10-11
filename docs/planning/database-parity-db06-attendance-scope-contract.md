@@ -130,3 +130,13 @@ Existing vNext services currently delete an exception row to represent PRESENT. 
 The SQL and static regression definitions are authored only. No disposable PostgreSQL, registered journal replay, Node test runner, TypeScript build, API runtime, or browser path has been executed by DB-042 yet. GitHub Actions availability is intentionally irrelevant.
 
 DB-042 may be source-complete while awaiting independent database verification; it must not become `DONE_VERIFIED` without executed acceptance evidence.
+
+
+## Source-level evidence executed
+
+Two CI-independent, non-PostgreSQL checks were executed against fresh committed/frozen sources:
+
+- **12 / 12 current DB-042 test callback bodies passed** in an isolated V8 runtime with read-file/assert shims, using the committed test, candidate SQL, this contract and DB-035 history candidate.
+- **43 / 43 independent cross-repo source assertions passed** across frozen legacy `Attend`, `RosterSql`, `LearnerServiceImpl`, bulk/admin attendance controllers; current vNext faculty/admin attendance services, delivery roster and attendance schema; and the DB-042 candidate/contract.
+
+These prove source/design consistency only. They do **not** execute the Node test runner, PostgreSQL DDL/functions/triggers, migration replay, TypeScript, API runtime or concurrency behavior. All disposable-PostgreSQL acceptance items above remain mandatory before `DONE_VERIFIED`.
