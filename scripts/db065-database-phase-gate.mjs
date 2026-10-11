@@ -110,7 +110,7 @@ export function inspectCheckout(root) {
   const read = rel => JSON.parse(fs.readFileSync(path.join(root,rel),'utf8'));
   const phaseState=read('docs/coordination/phase-state.json');
   const workQueue=read('docs/coordination/work-queue.json');
-  const lanes=Array.from({length:6},(_,i)=>read(\`docs/coordination/lanes/chat-0\${i+1}.json\`));
+  const lanes=Array.from({length:6},(_,i)=>read('docs/coordination/lanes/chat-0'+(i+1)+'.json'));
   return inspectGate({phaseState,workQueue,lanes});
 }
 
