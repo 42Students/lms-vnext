@@ -186,3 +186,25 @@ test("DB09 collaboration principal scope is fail-closed", () => {
     "message read state must not be rewindable or rewritten after first read",
   );
 });
+
+
+test("DB09 multi-college drive groups bind recruiter company and child college", () => {
+  const parents = read("docs/planning/sql/db09-parent-composite-keys-candidate.sql");
+  const sql = read("docs/planning/sql/db09-multicollege-drive-group-candidate.sql");
+
+  assert.match(parents, /UNIQUE \(user_id, company_id\)/);
+  assert.match(
+    sql,
+    /FOREIGN KEY \(recruiter_user_id, company_id\)[\s\S]*REFERENCES placement_recruiter_profiles\(user_id, company_id\)/,
+  );
+  assert.match(
+    sql,
+    /CREATE UNIQUE INDEX placement_jobs_recruiter_group_college_uq[\s\S]*WHERE recruiter_drive_group_id IS NOT NULL/,
+  );
+  assert.match(sql, /CREATE TRIGGER db09_drive_group_job_scope_guard/);
+  assert.match(
+    sql,
+    /r\.company_id = v_group_company[\s\S]*r\.college_id = NEW\.college_id[\s\S]*g\.status = 'ACTIVE'/,
+    "a grouped child job needs an active recruiter grant to the same company relationship and college",
+  );
+});
