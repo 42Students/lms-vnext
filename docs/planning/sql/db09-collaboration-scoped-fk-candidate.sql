@@ -581,7 +581,7 @@ BEGIN
     NEW.updated_at := OLD.updated_at;
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_tpo_user_preferences_lifecycle_guard
   BEFORE INSERT OR UPDATE OR DELETE
   ON placement_tpo_user_preferences
@@ -602,7 +602,7 @@ BEGIN
   END IF;
   RAISE EXCEPTION 'TPO saved views are immutable after creation'
     USING ERRCODE = '23514';
-END $;
+END $$;
 CREATE TRIGGER db09_tpo_saved_views_lifecycle_guard
   BEFORE INSERT OR UPDATE
   ON placement_tpo_saved_views
