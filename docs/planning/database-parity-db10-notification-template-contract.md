@@ -189,3 +189,17 @@ guards are authored, and owner handoffs are recorded.
 
 It cannot be DONE_VERIFIED until DB37-15..18 are satisfied with global
 producer/consumer/live-schema evidence and DB19 approves the final disposition.
+
+## Implementation-evidence distinction — follow-up DB-037 hardening
+
+The **56 source-dispositioned fields are not 56 implemented vNext fields**. The separate field ledger now records `targetImplementationStatus` for every historical field:
+
+- **36** channel/event/content/DLT/provider target concepts: `SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN`.
+- **20** historical row metadata candidates: `NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING`.
+- **0** runtime workflow-verified fields; **0** globally approved retirement fields.
+
+The vNext `notification-service.ts` is a recipient delivery service, not a registered typed event-to-template renderer. The `outbound-delivery-queue.ts` stage has an explicit runtime-disable gate until independent DB10 activation. Neither can be cited as proof that legacy event text or external channel behavior has been fully replaced.
+
+The pinned legacy `NotificationEventRegistry` has an especially important **negative channel rule**: offer/hired/cancelled/rescheduled events are in-app only pending missing email/SMS templates; `SYSTEM_OTP_SMS` bypasses the generic dispatcher. That behavior must be explicit in the later API channel contract. Imported historical CSV/table rows cannot silently enable extra notification channels.
+
+Source guard tests include a 56-row ledger sync check and a fail-closed check that no row can claim vNext runtime parity from source disposition alone. Those are **authored Node tests**, not recorded execution. This task remains eligible for source-implementation `COMPLETED`, but not `DONE_VERIFIED`.
