@@ -10,13 +10,13 @@
   "activeTaskId": "DB-004",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_FULL_SOURCE_DISPOSITION_NOT_RUNTIME_VERIFIED",
+    "checkpointKind": "DB004_SOURCE_RECONCILIATION_WITH_EXECUTED_DB_TEST_URL_GUARD",
     "updatedOn": "2026-10-11",
     "observedMainSha": "c48f3dd64fb5591c3ea9d6e3834c66d7e982c689",
-    "lastWorkerMergedSha": "706f5b33fae79b8ca87438eb685c8673eb57cebb",
+    "lastWorkerMergedSha": "35cbcbd65a2abdd9af0c7afb651a12d6a11c332b",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.",
+    "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.\nAdded source-owned fail-closed disposable PostgreSQL URL preflight and 8 test cases. Executed independent Node v22 runner with byte-identical Git blob copies: 8/8 PASS. This is test destination safety only, not database runtime proof. Shared db-lib fallback remains unpatched by W01; CI billing disabled is not an engineering blocker.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
@@ -171,6 +171,20 @@
       },
       "proof": "Connector JS remote source consistency PASS, not Node script or PostgreSQL test",
       "vnextRuntimeVerified": 0
+    },
+    "db01IndependentRunnerEvidence": {
+      "status": "8_OF_8_NODE_TESTS_PASSED",
+      "nodeVersion": "v22.16.0",
+      "executedCommand": "node --test /mnt/data/db01_guard_probe/tests/db01-test-database-guard.test.mjs",
+      "script": "scripts/db01-test-database-guard.mjs",
+      "scriptBlobSha": "26aa7f1eb056ca5f684eda6cf5bcf595315fb66b",
+      "test": "tests/db01-test-database-guard.test.mjs",
+      "testBlobSha": "ea962cdc855f8fd1e6eaf228e3be9bcc090cba2e",
+      "repoByteEqualityVerifiedViaGitHashObject": true,
+      "postgresConnected": false,
+      "migrationsReplayed": false,
+      "vnextSemanticFieldsVerified": 0,
+      "criticalSharedHelper": "scripts/db-lib.ts still falls back from TEST_DATABASE_URL to DATABASE_URL; W01 exclusive writer, escalated issue #21"
     }
   },
   "qualityGates": {
@@ -180,7 +194,10 @@
     "postgresIntegration": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE_PR65_1453",
     "build": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
     "browser": "NOT_EXECUTED_CI_INFRA_PRESTEP_FAILURE",
-    "sourceTriageConsistency": "PASS_IN_PROCESS_SOURCE_CHECK_NOT_RUNTIME"
+    "sourceTriageConsistency": "PASS_IN_PROCESS_SOURCE_CHECK_NOT_RUNTIME",
+    "db01TestTargetGuard": "EXECUTED_NODE_8_OF_8",
+    "databaseReplay": "NOT_EXECUTED",
+    "realTenantIsolation": "NOT_EXECUTED"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -192,9 +209,12 @@
     "tests/unit/db01-domain-tombstone-contract.test.ts",
     "tests/db01-integration-manifest.test.mjs",
     "tests/db01-snapshot-column-presence.test.mjs",
-    "tests/db01-type-nullability-review.test.mjs"
+    "tests/db01-type-nullability-review.test.mjs",
+    "tests/db01-test-database-guard.test.mjs"
   ],
-  "lastExecutedPassingTests": [],
+  "lastExecutedPassingTests": [
+    "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)"
+  ],
   "blockers": [
     "GitHub CI is currently failing before workflow steps across unrelated main pushes and PR #65 (latest DB01 run #1393); no runner output is available, so authored database witnesses cannot be credited as executed.",
     "DB-004 PR #65 remains draft: 14 authored PostgreSQL witnesses, 0 accepted runtime passes; CI run #1453 failed before retrievable steps.",
@@ -211,7 +231,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DB01 current source dispositions 312/312 and target snapshot/type screens recorded. Next gate: W01 decision and registration of canonical Drizzle DB01 migration, test runner/PG disposable replay, negative race and role/tenant cases and provider acceptance; distinguish source-only checks from true runtime field semantic proof.",
+  "nextAction": "Coordinate W01-only correction of db-lib TEST_DATABASE_URL fallback; continue registered DB01 staged schema integration and independent disposable PostgreSQL replay. CI billing is not a work blocker; 0 DB01 runtime semantic fields proven.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -261,7 +281,11 @@
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-target-decision-handoff.md",
     "https://github.com/42Students/lms-vnext/blob/main/tests/db01-snapshot-column-presence.test.mjs",
     "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-chat02-type-nullability-review.json",
-    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-type-nullability-review.test.mjs"
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-type-nullability-review.test.mjs",
+    "https://github.com/42Students/lms-vnext/blob/main/scripts/db01-test-database-guard.mjs",
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db01-test-database-guard.test.mjs",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-disposable-postgres-test-preflight.md",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6105879822"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
