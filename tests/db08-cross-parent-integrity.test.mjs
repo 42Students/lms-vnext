@@ -1,182 +1,361 @@
-// DB-066 / Chat 3.
-// Source: node --test tests/db08-cross-parent-integrity.test.mjs
-// Disposable PostgreSQL (explicit opt-in):
-// DB08_CROSS_PARENT_DISPOSABLE=I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA \
-// TEST_DATABASE_URL=postgres://.../test_lms_vnext \
-// node --test tests/db08-cross-parent-integrity.test.mjs
-// This file does NOT certify production, migrations or executed PG tests.
+// DB-066 / Chat 3: placement cross-parent relational integrity.
+// Static checks:
+//   node --test tests/db08-cross-parent-integrity.test.mjs
+// Disposable PostgreSQL witnesses:
+//   DB08_CROSS_PARENT_DISPOSABLE=I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA \
+//   TEST_DATABASE_URL=postgres://... \
+//   node --test tests/db08-cross-parent-integrity.test.mjs
+//
+// Presence of this file is NOT PostgreSQL execution evidence.
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import test from "node:test";
-import { verifyDB08CrossParentSource } from "../scripts/verify-db08-cross-parent-source.mjs";
 import { assertSafeDb01TestTarget } from "../scripts/db01-test-database-guard.mjs";
 
 const candidate = readFileSync(
-  resolve("docs/planning/sql/db08-cross-parent-consistency-candidate.sql"), "utf8");
+  resolve("docs/planning/sql/db08-cross-parent-consistency-candidate.sql"),
+  "utf8",
+);
 const schema = readFileSync(resolve("src/db/schema/placements.ts"), "utf8");
+const sourceVerifier = readFileSync(
+  resolve("scripts/verify-db08-cross-parent-source.mjs"),
+  "utf8",
+);
 
-test("DB-066 source guard tracks seven parents, nine scoped FKs and no DROP", () => {
-  const status = verifyDB08CrossParentSource(schema, candidate);
-  assert.equal(status.tables, 7);
-  assert.equal(status.parentKeys, 3);
-  assert.equal(status.scopedForeignKeys, 9);
-  assert.equal(status.childJobColumns, 3);
-  assert.equal(status.postgresExecution, "NOT_EXECUTED");
-});
-
-test("DB-066 guard catches dropped application/role relationship", () => {
-  assert.throws(
-    () => verifyDB08CrossParentSource(
-      schema, candidate.replace("db066_application_role_same_job_fk", "removed_fk")),
-    /Missing\/duplicate scoped invariant/,
+test("candidate stages every same-parent invariant", () => {
+  for (const name of [
+    "db066_application_role_same_job_fk",
+    "db066_round_result_round_job_fk",
+    "db066_round_result_application_job_fk",
+    "db066_request_application_job_fk",
+    "db066_request_round_job_fk",
+    "db066_request_offer_application_fk",
+    "db066_exception_application_job_fk",
+    "db066_exception_round_job_fk",
+    "db066_exception_request_scope_fk",
+    "db066_exception_request_type_ck",
+  ]) {
+    assert.match(candidate, new RegExp(name));
+  }
+  assert.match(
+    candidate,
+    /FOREIGN KEY \(request_id, application_id, round_id, request_type\)/,
+  );
+  assert.match(
+    candidate,
+    /placement_learner_requests\(id, application_id, round_id, request_type\)/,
   );
 });
 
-test("DB-066 guard catches child job column becoming nullable", () => {
-  assert.throws(
-    () => verifyDB08CrossParentSource(
-      schema,
-      candidate.replace(
-        "ALTER TABLE placement_learner_requests ALTER COLUMN job_id SET NOT NULL;",
-        "-- nullable change ignored;",
-      )),
-    /Missing fail-closed job discriminator/,
+test("current Drizzle shape still needs DB-066 integration", () => {
+  const result = schema.slice(
+    schema.indexOf("export const placementRoundResults"),
+    schema.indexOf("export const placementOffers"),
   );
+  const request = schema.slice(
+    schema.indexOf("export const placementLearnerRequests"),
+    schema.indexOf("export const placementApplicationRoundExceptions"),
+  );
+  const exception = schema.slice(
+    schema.indexOf("export const placementApplicationRoundExceptions"),
+    schema.indexOf("export const placementJoiningOutcomes"),
+  );
+  assert.doesNotMatch(result, /jobId: uuid\("job_id"\)/);
+  assert.doesNotMatch(request, /jobId: uuid\("job_id"\)/);
+  assert.doesNotMatch(exception, /jobId: uuid\("job_id"\)/);
+  assert.doesNotMatch(exception, /requestType: varchar\("request_type"/);
+});
+
+test("source verifier covers service assumptions and corrupt-row preflight", () => {
+  assert.match(sourceVerifier, /liveRole\.jobId\s*!==\s*job\.id/);
+  assert.match(sourceVerifier, /row\.application\.jobId\s*!==\s*round\.jobId/);
+  assert.match(sourceVerifier, /round\.jobId\s*!==\s*application\.job\.id/);
+  assert.match(sourceVerifier, /offer\.applicationId\s*!==\s*application\.application\.id/);
+  assert.match(sourceVerifier, /candidate has corrupt-row preflight/);
 });
 
 const approved =
-  process.env.DB08_CROSS_PARENT_DISPOSABLE === "I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA" &&
+  process.env.DB08_CROSS_PARENT_DISPOSABLE ===
+    "I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA" &&
   Boolean(process.env.TEST_DATABASE_URL) &&
   (!process.env.DATABASE_URL ||
-   process.env.DATABASE_URL !== process.env.TEST_DATABASE_URL);
+    process.env.DATABASE_URL !== process.env.TEST_DATABASE_URL);
 
-test("cross-job FK negative writes, reparent rejection and correct scoped writes in disposable PostgreSQL", {
-  skip: !approved, timeout: 90000,
-}, async () => {
-  assertSafeDb01TestTarget(process.env);
-  const pg = await import("pg");
-  const name = "db08_scope_" + randomUUID().replaceAll("-", "").slice(0, 18);
-  const quoted = '"' + name + '"';
-  const client = new pg.default.Client({
-    connectionString: process.env.TEST_DATABASE_URL,
-    application_name: "db08-same-job-integrity-witness",
-  });
-  let created = false;
-  const ids = Object.fromEntries([
-    "jobA","jobB","roleA","roleB","appA","appB",
-    "roundA","roundB","offerA","offerB","requestA","resultA","exceptionA",
-  ].map(k => [k,randomUUID()]));
-  const fkReject = async (sql, args) => {
-    await assert.rejects(client.query(sql,args), error => {
-      assert.equal(error.code, "23503", String(error));
-      return true;
+function baseTablesSql() {
+  return `
+    CREATE TABLE placement_jobs (
+      id uuid PRIMARY KEY
+    );
+    CREATE TABLE placement_job_role_options (
+      id uuid PRIMARY KEY,
+      job_id uuid NOT NULL REFERENCES placement_jobs(id)
+    );
+    CREATE TABLE placement_applications (
+      id uuid PRIMARY KEY,
+      job_id uuid NOT NULL REFERENCES placement_jobs(id),
+      role_option_id uuid NOT NULL REFERENCES placement_job_role_options(id),
+      UNIQUE (id, job_id)
+    );
+    CREATE TABLE placement_job_rounds (
+      id uuid PRIMARY KEY,
+      job_id uuid NOT NULL REFERENCES placement_jobs(id),
+      UNIQUE (id, job_id)
+    );
+    CREATE TABLE placement_offers (
+      id uuid PRIMARY KEY,
+      application_id uuid NOT NULL REFERENCES placement_applications(id)
+    );
+    CREATE TABLE placement_learner_requests (
+      id uuid PRIMARY KEY,
+      application_id uuid NOT NULL REFERENCES placement_applications(id),
+      request_type varchar(40) NOT NULL,
+      round_id uuid REFERENCES placement_job_rounds(id),
+      offer_id uuid REFERENCES placement_offers(id)
+    );
+    CREATE TABLE placement_round_results (
+      id uuid PRIMARY KEY,
+      round_id uuid NOT NULL REFERENCES placement_job_rounds(id),
+      application_id uuid NOT NULL REFERENCES placement_applications(id)
+    );
+    CREATE TABLE placement_application_round_exceptions (
+      id uuid PRIMARY KEY,
+      application_id uuid NOT NULL REFERENCES placement_applications(id),
+      round_id uuid NOT NULL REFERENCES placement_job_rounds(id),
+      request_id uuid NOT NULL REFERENCES placement_learner_requests(id)
+    );
+  `;
+}
+
+test(
+  "candidate rejects cross-job/request combinations and parent reparenting",
+  { skip: !approved, timeout: 90000 },
+  async () => {
+    assertSafeDb01TestTarget(process.env);
+    const pg = await import("pg");
+    const client = new pg.default.Client({
+      connectionString: process.env.TEST_DATABASE_URL,
+      application_name: "db066-cross-parent-witness",
     });
-  };
-  try {
-    await client.connect();
-    await client.query("CREATE SCHEMA " + quoted);
-    created = true;
-    await client.query("SET search_path TO " + quoted + ", pg_catalog");
-    // Deliberately minimal parent tables; parent superkeys mirror staged DB09.
-    await client.query(`
-      CREATE TABLE placement_job_role_options (
-        id uuid PRIMARY KEY, job_id uuid NOT NULL
-      );
-      CREATE TABLE placement_applications (
-        id uuid PRIMARY KEY, job_id uuid NOT NULL, role_option_id uuid NOT NULL
-      );
-      CREATE TABLE placement_job_rounds (
-        id uuid PRIMARY KEY, job_id uuid NOT NULL, UNIQUE(id,job_id)
-      );
-      CREATE TABLE placement_round_results (
-        id uuid PRIMARY KEY, round_id uuid NOT NULL, application_id uuid NOT NULL
-      );
-      CREATE TABLE placement_offers (
-        id uuid PRIMARY KEY, application_id uuid NOT NULL
-      );
-      CREATE TABLE placement_learner_requests (
-        id uuid PRIMARY KEY,
-        application_id uuid NOT NULL,
-        round_id uuid, offer_id uuid, request_type text NOT NULL
-      );
-      CREATE TABLE placement_application_round_exceptions (
-        id uuid PRIMARY KEY,
-        application_id uuid NOT NULL,
-        round_id uuid NOT NULL, request_id uuid NOT NULL
-      );
-      ALTER TABLE placement_applications ADD CONSTRAINT db09_placement_applications_id_job_uq UNIQUE(id,job_id);
-    `);
-    await client.query(candidate);
-    await client.query(
-      "INSERT INTO placement_job_role_options(id,job_id) VALUES ($1,$2),($3,$4)",
-      [ids.roleA,ids.jobA,ids.roleB,ids.jobB]);
-    await client.query(
-      "INSERT INTO placement_applications(id,job_id,role_option_id) VALUES ($1,$2,$3),($4,$5,$6)",
-      [ids.appA,ids.jobA,ids.roleA,ids.appB,ids.jobB,ids.roleB]);
-    await client.query(
-      "INSERT INTO placement_job_rounds(id,job_id) VALUES ($1,$2),($3,$4)",
-      [ids.roundA,ids.jobA,ids.roundB,ids.jobB]);
-    await client.query(
-      "INSERT INTO placement_offers(id,application_id) VALUES ($1,$2),($3,$4)",
-      [ids.offerA,ids.appA,ids.offerB,ids.appB]);
-    await client.query(
-      "INSERT INTO placement_round_results(id,round_id,application_id,job_id) VALUES ($1,$2,$3,$4)",
-      [ids.resultA,ids.roundA,ids.appA,ids.jobA]);
-    await client.query(
-      "INSERT INTO placement_learner_requests(id,application_id,round_id,request_type,job_id) VALUES ($1,$2,$3,'ROUND_RESCHEDULE',$4)",
-      [ids.requestA,ids.appA,ids.roundA,ids.jobA]);
-    await client.query(
-      "INSERT INTO placement_application_round_exceptions(id,application_id,round_id,request_id,job_id) VALUES ($1,$2,$3,$4,$5)",
-      [ids.exceptionA,ids.appA,ids.roundA,ids.requestA,ids.jobA]);
+    let racer = null;
+    let goodSchema = null;
+    let badSchema = null;
 
-    // Both the role option and application IDs exist: wrong pairing must fail.
-    await fkReject(
-      "INSERT INTO placement_applications(id,job_id,role_option_id) VALUES ($1,$2,$3)",
-      [randomUUID(),ids.jobA,ids.roleB]);
-    await fkReject(
-      "UPDATE placement_applications SET role_option_id=$1 WHERE id=$2",
-      [ids.roleB,ids.appA]);
+    const failFk = async (promise) =>
+      assert.rejects(promise, (error) => {
+        assert.equal(error.code, "23503", String(error));
+        return true;
+      });
 
-    // A valid round from job B + valid application from job A must fail.
-    await fkReject(
-      "INSERT INTO placement_round_results(id,round_id,application_id,job_id) VALUES ($1,$2,$3,$4)",
-      [randomUUID(),ids.roundB,ids.appA,ids.jobA]);
-    await fkReject(
-      "UPDATE placement_round_results SET application_id=$1 WHERE id=$2",
-      [ids.appB,ids.resultA]);
+    try {
+      await client.connect();
 
-    // Target application/round and application/offer must be coherent.
-    await fkReject(
-      "INSERT INTO placement_learner_requests(id,application_id,round_id,request_type,job_id) VALUES ($1,$2,$3,'ROUND_RESCHEDULE',$4)",
-      [randomUUID(),ids.appA,ids.roundB,ids.jobA]);
-    await fkReject(
-      "INSERT INTO placement_learner_requests(id,application_id,offer_id,request_type,job_id) VALUES ($1,$2,$3,'OFFER_EXTENSION',$4)",
-      [randomUUID(),ids.appA,ids.offerB,ids.jobA]);
+      // Preflight must fail before any ALTER when persisted rows are corrupt.
+      badSchema =
+        "db066_bad_" + randomUUID().replaceAll("-", "").slice(0, 20);
+      await client.query(`CREATE SCHEMA "${badSchema}"`);
+      await client.query(`SET search_path TO "${badSchema}", pg_catalog`);
+      await client.query(baseTablesSql());
+      const badJobA = randomUUID();
+      const badJobB = randomUUID();
+      const badRoleB = randomUUID();
+      await client.query(
+        "INSERT INTO placement_jobs(id) VALUES ($1),($2)",
+        [badJobA, badJobB],
+      );
+      await client.query(
+        "INSERT INTO placement_job_role_options(id,job_id) VALUES ($1,$2)",
+        [badRoleB, badJobB],
+      );
+      await client.query(
+        "INSERT INTO placement_applications(id,job_id,role_option_id) VALUES ($1,$2,$3)",
+        [randomUUID(), badJobA, badRoleB],
+      );
+      await assert.rejects(client.query(candidate), (error) => {
+        assert.match(String(error.message), /application role option belongs to another job/);
+        return true;
+      });
+      const [{ count: badConstraintCount }] = (
+        await client.query(
+          "SELECT count(*)::int AS count FROM pg_constraint WHERE conname='db066_application_role_same_job_fk'",
+        )
+      ).rows;
+      assert.equal(badConstraintCount, 0, "preflight must fail before ALTERs");
 
-    // Exception must bind to the EXACT request (not only its same-job round).
-    await fkReject(
-      "INSERT INTO placement_application_round_exceptions(id,application_id,round_id,request_id,job_id) VALUES ($1,$2,$3,$4,$5)",
-      [randomUUID(),ids.appB,ids.roundB,ids.requestA,ids.jobB]);
+      // Clean disposable schema: apply the candidate and exercise negatives.
+      goodSchema =
+        "db066_good_" + randomUUID().replaceAll("-", "").slice(0, 20);
+      await client.query(`CREATE SCHEMA "${goodSchema}"`);
+      await client.query(`SET search_path TO "${goodSchema}", pg_catalog`);
+      await client.query(baseTablesSql());
+      await client.query(candidate);
 
-    // Parent ownership changes cannot silently invalidate existing child rows.
-    await fkReject(
-      "UPDATE placement_job_role_options SET job_id=$1 WHERE id=$2",
-      [ids.jobB,ids.roleA]);
-    await fkReject(
-      "UPDATE placement_job_rounds SET job_id=$1 WHERE id=$2",
-      [ids.jobB,ids.roundA]);
+      const jobA = randomUUID();
+      const jobB = randomUUID();
+      const roleA = randomUUID();
+      const roleB = randomUUID();
+      const appA = randomUUID();
+      const appB = randomUUID();
+      const roundA = randomUUID();
+      const roundB = randomUUID();
+      const offerA = randomUUID();
+      const offerB = randomUUID();
 
-    const counts = await client.query(
-      "SELECT (SELECT count(*)::int FROM placement_round_results) AS results, (SELECT count(*)::int FROM placement_application_round_exceptions) AS exceptions");
-    assert.equal(counts.rows[0].results, 1);
-    assert.equal(counts.rows[0].exceptions, 1);
-  } finally {
-    if (created) {
-      await client.query("SET search_path TO public, pg_catalog").catch(() => {});
-      await client.query("DROP SCHEMA IF EXISTS " + quoted + " CASCADE").catch(() => {});
+      await client.query("INSERT INTO placement_jobs(id) VALUES ($1),($2)", [
+        jobA,
+        jobB,
+      ]);
+      await client.query(
+        "INSERT INTO placement_job_role_options(id,job_id) VALUES ($1,$2),($3,$4)",
+        [roleA, jobA, roleB, jobB],
+      );
+
+      await failFk(
+        client.query(
+          "INSERT INTO placement_applications(id,job_id,role_option_id) VALUES ($1,$2,$3)",
+          [randomUUID(), jobA, roleB],
+        ),
+      );
+
+      await client.query(
+        "INSERT INTO placement_applications(id,job_id,role_option_id) VALUES ($1,$2,$3),($4,$5,$6)",
+        [appA, jobA, roleA, appB, jobB, roleB],
+      );
+      await client.query(
+        "INSERT INTO placement_job_rounds(id,job_id) VALUES ($1,$2),($3,$4)",
+        [roundA, jobA, roundB, jobB],
+      );
+      await client.query(
+        "INSERT INTO placement_offers(id,application_id) VALUES ($1,$2),($3,$4)",
+        [offerA, appA, offerB, appB],
+      );
+
+      await failFk(
+        client.query(
+          "INSERT INTO placement_round_results(id,round_id,application_id,job_id) VALUES ($1,$2,$3,$4)",
+          [randomUUID(), roundB, appA, jobA],
+        ),
+      );
+
+      await client.query(
+        "INSERT INTO placement_round_results(id,round_id,application_id,job_id) VALUES ($1,$2,$3,$4)",
+        [randomUUID(), roundA, appA, jobA],
+      );
+
+      await failFk(
+        client.query(
+          "INSERT INTO placement_learner_requests(id,application_id,request_type,round_id,job_id) VALUES ($1,$2,'ROUND_RESCHEDULE',$3,$4)",
+          [randomUUID(), appA, roundB, jobA],
+        ),
+      );
+      await failFk(
+        client.query(
+          "INSERT INTO placement_learner_requests(id,application_id,request_type,offer_id,job_id) VALUES ($1,$2,'OFFER_EXTENSION',$3,$4)",
+          [randomUUID(), appA, offerB, jobA],
+        ),
+      );
+
+      const requestA = randomUUID();
+      await client.query(
+        "INSERT INTO placement_learner_requests(id,application_id,request_type,round_id,job_id) VALUES ($1,$2,'ROUND_RESCHEDULE',$3,$4)",
+        [requestA, appA, roundA, jobA],
+      );
+      const exceptionA = randomUUID();
+      await client.query(
+        "INSERT INTO placement_application_round_exceptions(id,application_id,round_id,request_id,job_id,request_type) VALUES ($1,$2,$3,$4,$5,'ROUND_RESCHEDULE')",
+        [exceptionA, appA, roundA, requestA, jobA],
+      );
+
+      const requestB = randomUUID();
+      await client.query(
+        "INSERT INTO placement_learner_requests(id,application_id,request_type,round_id,job_id) VALUES ($1,$2,'ROUND_RESCHEDULE',$3,$4)",
+        [requestB, appB, roundB, jobB],
+      );
+      await failFk(
+        client.query(
+          "INSERT INTO placement_application_round_exceptions(id,application_id,round_id,request_id,job_id,request_type) VALUES ($1,$2,$3,$4,$5,'ROUND_RESCHEDULE')",
+          [randomUUID(), appA, roundA, requestB, jobA],
+        ),
+      );
+
+      await failFk(
+        client.query(
+          "UPDATE placement_learner_requests SET request_type='APPLICATION_WITHDRAWAL' WHERE id=$1",
+          [requestA],
+        ),
+      );
+      await failFk(
+        client.query(
+          "UPDATE placement_job_role_options SET job_id=$1 WHERE id=$2",
+          [jobB, roleA],
+        ),
+      );
+      await failFk(
+        client.query(
+          "UPDATE placement_applications SET job_id=$1 WHERE id=$2",
+          [jobB, appA],
+        ),
+      );
+      await failFk(
+        client.query(
+          "UPDATE placement_job_rounds SET job_id=$1 WHERE id=$2",
+          [jobB, roundA],
+        ),
+      );
+
+      // Two-client race: parent reparent obtains its row lock first.
+      // A concurrent child insert using the old parent key must wait and then
+      // fail after the parent commits, never commit an inconsistent pair.
+      const raceRole = randomUUID();
+      const raceApp = randomUUID();
+      const raceRound = randomUUID();
+      await client.query(
+        "INSERT INTO placement_job_role_options(id,job_id) VALUES ($1,$2)",
+        [raceRole, jobA],
+      );
+      await client.query(
+        "INSERT INTO placement_applications(id,job_id,role_option_id) VALUES ($1,$2,$3)",
+        [raceApp, jobA, raceRole],
+      );
+      await client.query(
+        "INSERT INTO placement_job_rounds(id,job_id) VALUES ($1,$2)",
+        [raceRound, jobA],
+      );
+
+      racer = new pg.default.Client({
+        connectionString: process.env.TEST_DATABASE_URL,
+        application_name: "db066-cross-parent-racer",
+      });
+      await racer.connect();
+      await racer.query(`SET search_path TO "${goodSchema}", pg_catalog`);
+      await racer.query("SET statement_timeout = '10000ms'");
+
+      await client.query("BEGIN");
+      try {
+        await client.query(
+          "UPDATE placement_job_rounds SET job_id=$1 WHERE id=$2",
+          [jobB, raceRound],
+        );
+        const pending = racer.query(
+          "INSERT INTO placement_round_results(id,round_id,application_id,job_id) VALUES ($1,$2,$3,$4)",
+          [randomUUID(), raceRound, raceApp, jobA],
+        );
+        await client.query("COMMIT");
+        await failFk(pending);
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw error;
+      }
+    } finally {
+      if (racer) await racer.end().catch(() => {});
+      try {
+        await client.query("SET search_path TO pg_catalog");
+        if (goodSchema) await client.query(`DROP SCHEMA "${goodSchema}" CASCADE`);
+        if (badSchema) await client.query(`DROP SCHEMA "${badSchema}" CASCADE`);
+      } finally {
+        await client.end().catch(() => {});
+      }
     }
-    await client.end().catch(() => {});
-  }
-});
+  },
+);
