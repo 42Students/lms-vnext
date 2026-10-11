@@ -142,7 +142,11 @@
     "draftUnregisteredExcluded": 3,
     "runtimeExecuted": 0,
     "runtimePassed": 0,
-    "knownRedRaceAuthored": 2
+    "knownRedRaceAuthored": 2,
+    "observationalReadOnlyAuthored": 21,
+    "baselineDirectBoundaryAuthored": 4,
+    "directNegativeTotalAuthored": 13,
+    "positiveConcurrencyAuthored": 4
   },
   "knownRedRaceWitnesses": [
     {
@@ -164,6 +168,43 @@
       "state": "AUTHORED_EXPECTED_FAIL_UNTIL_FIXED",
       "execution": "NOT_RUN",
       "requiredFix": "Lock/re-read cohort mutability inside learner enrollment transaction, ordered against cohort lifecycle transitions."
+    }
+  ],
+  "observationalWitnesses": {
+    "count": 21,
+    "manifest": "docs/planning/database-parity-pass5-probe-manifest.json",
+    "executableFile": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+    "state": "AUTHORED_READ_ONLY_EXECUTION_NOT_RUN",
+    "caveat": "Zero mismatches are observational only and cannot prove a preventing constraint; fixture must contain nonempty joined samples."
+  },
+  "baselineDirectBoundaryWitnesses": [
+    {
+      "id": "DB18-B01",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects a membership with a nonexistent user using a real FK (23503)",
+      "expectedSqlState": "23503",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-B02",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects a role grant to a nonexistent membership (23503)",
+      "expectedSqlState": "23503",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-B03",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects an unverified primary tenant domain (23514)",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-B04",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects duplicate user membership within the same college (23505)",
+      "expectedSqlState": "23505",
+      "execution": "NOT_RUN"
     }
   ]
 }
