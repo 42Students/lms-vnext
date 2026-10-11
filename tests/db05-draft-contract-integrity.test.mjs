@@ -169,3 +169,16 @@ test("DB05 settings draft preserves flags and timezone without embedding private
   assert.doesNotMatch(payloadSql, /upload_token_hash|raw_file_bytes/);
   assert.match(payloadSql, /DB06 assignmentResources and allowedSubmissionTypes remain unmapped/);
 });
+
+test("DB05 readiness gate checks every companion and the witnessed lesson order constraint", () => {
+  assert.match(readinessScript, /const companions = manifest\.crossDomainCompanions \|\| \[\]/);
+  assert.match(readinessScript, /Companion NOT acceptance-ready/);
+  assert.match(readinessScript, /Missing companion:/);
+  assert.match(readinessScript, /item\.uniqueLessonCompanion/);
+  assert.match(readinessScript, /Missing subordinate companion:/);
+  assert.match(readinessScript, /companions: companionDetail/);
+  assert.ok(readiness.crossDomainCompanions.length >= 8);
+  assert.ok(readiness.crossDomainCompanions.every(c => !c.registered && !c.postgresExecuted && !c.readyForProduction));
+  assert.equal(readiness.crossDomainCompanions.filter(c => c.id === "DB05_LESSON_CONTENT_FACULTY_OWNER").length, 1);
+  assert.equal(readiness.crossDomainCompanions.filter(c => c.id === "DB05_LESSON_CONTENT_OWNER_MEMBERSHIP").length, 0);
+});
