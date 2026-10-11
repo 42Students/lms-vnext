@@ -288,7 +288,7 @@
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UNIQUE_PER_LESSON",
       "status": "BLOCKED",
       "owner": "DB05_W01_W02",
-      "evidence": "Source-backed unregistered per-(delivery_id,lesson_id,sequence) unique companion now staged at scripts/sql/db05-content-delivery-order-unique-lesson.draft.sql with composite lesson-parent FK. W01 must integrate after base table; PG duplicate, wrong-lesson, multi-lesson and reparent negatives NOT_RUN. Do NOT count as verified."
+      "evidence": "CANONICAL staged source-only SQL scripts/sql/db05-content-delivery-order-unique.draft.sql adds witnessed lesson_id, pair FK and DEFERRABLE UNIQUE(delivery_id,lesson_id,sequence). vNext writer/schema include lessonId. Integration requires actual PostgreSQL duplicate, wrong-lesson, deferrability, multi-lesson, reparent and concurrent tests. NOT RUN, BLOCKED."
     },
     {
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UPSTREAM_REPARENT_INTEGRITY",
@@ -300,13 +300,13 @@
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UNIQUE_BACKFILL_AND_PARENT_FK",
       "status": "NOT_RUN",
       "owner": 1,
-      "evidence": "Add lesson_id to staged override table and backfill from lesson_contents; two-column FK RESTRICT on lesson reparent; fail migration on duplicate/orphan; clean PG replay not executed."
+      "evidence": "Canonical unregistered source companion scripts/sql/db05-content-delivery-order-unique.draft.sql backfills lesson_id, defines composite FK with ON UPDATE RESTRICT, and DEFERRABLE unique constraint. Clean PG and drift/condeferrable proof NOT_RUN."
     },
     {
       "id": "COURSE_CONTENT_DELIVERY_ORDER_MULTI_LESSON_SCOPE",
       "status": "NOT_RUN",
       "owner": 1,
-      "evidence": "Same delivery two lessons may each use sequence 0; same delivery and same lesson duplicate position must reject 23505. Not executed."
+      "evidence": "Two lessons same delivery each sequence=0 valid; duplicate positions same lesson must reject 23505. Source tests authored, actual PostgreSQL NOT_RUN."
     }
   ],
   "sourceReview": {
@@ -332,7 +332,7 @@
   "testFiles": [
     "tests/db05-source-semantic-review.test.mjs",
     "tests/db05-draft-contract-integrity.test.mjs",
-    "tests/db05-content-delivery-order-unique-lesson.test.mjs"
+    "tests/db05-content-delivery-order-unique.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -384,9 +384,9 @@
         "PERSISTED_LESSON_ID_COMPOSITE_FK",
         "UNIQUE_DELIVERY_LESSON_SEQUENCE_POSTGRES_NEGATIVE"
       ],
-      "note": "Not an eighth independent DB05 migration; fold both scope and unique-lesson companions after base table and service cutover. Design STAGED, PostgreSQL proof still OPEN.",
-      "uniqueLessonCompanion": "scripts/sql/db05-content-delivery-order-unique-lesson.draft.sql",
-      "integrationNote": "Requires 2-column parent FK (lesson_content_id,lesson_id), derived lesson_id materialization, per-(delivery_id,lesson_id,sequence) unique index. Both scope and unique companions are UNREGISTERED and must be folded once by Chat1 after base table."
+      "note": "Not an eighth independent DB05 migration. Unique companion has DEFERRABLE PostgreSQL constraint; needs condeferrable checks. Both companions remain UNREGISTERED and PostgreSQL NOT_EXECUTED.",
+      "uniqueLessonCompanion": "scripts/sql/db05-content-delivery-order-unique.draft.sql",
+      "integrationNote": "SINGLE CANONICAL W06 COMPANION: scripts/sql/db05-content-delivery-order-unique.draft.sql (composite (lesson_content_id,lesson_id) FK, witness column, DEFERRABLE INITIALLY IMMEDIATE UNIQUE(delivery_id,lesson_id,sequence)). Writer and staged Drizzle model already set lessonId. Integrate with existing scope companion exactly once. Prior duplicate proposal removed."
     }
   ]
 }
