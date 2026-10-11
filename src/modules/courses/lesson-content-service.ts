@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { applyDeliveryContentOrderIfReady } from "./lesson-content-order-service";
-import { courseLessons, lessonContents } from "@/db/schema";
+import { courseLessons, courseSectionDeliveries, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   can,
@@ -369,6 +369,28 @@ export async function createLessonContent(
 
     if (!activeLesson) {
       throw new CoursesServiceError("LESSON_NOT_FOUND");
+    }
+
+    if (input.deliveryId) {
+      // Ending the delivery takes FOR UPDATE; acquire SHARE and repeat the
+      // active-delivery/offering check before persisting section content.
+      const [activeDelivery] = await tx
+        .select({
+          id: courseSectionDeliveries.id,
+          offeringId: courseSectionDeliveries.offeringId,
+        })
+        .from(courseSectionDeliveries)
+        .where(and(
+          eq(courseSectionDeliveries.id, input.deliveryId),
+          isNull(courseSectionDeliveries.endedAt),
+        ))
+        .for("share")
+        .limit(1);
+
+      if (!activeDelivery ||
+          activeDelivery.offeringId !== lesson.offeringId) {
+        throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
+      }
     }
 
     const [created] = await tx
