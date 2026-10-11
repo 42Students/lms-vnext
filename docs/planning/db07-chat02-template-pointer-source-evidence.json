@@ -1,0 +1,66 @@
+{
+  "taskId": "DB-071",
+  "date": "2026-10-12",
+  "worker": 2,
+  "status": "SOURCE_COMPLETED_NOT_PG_VERIFIED",
+  "sourceFilesAndBlobShas": [
+    {
+      "path": "src/db/schema/projects.ts",
+      "blobSha": "b9579c57e84d3db4f62b577bbf5603d1a8d26cdc"
+    },
+    {
+      "path": "src/modules/projects/template-service.ts",
+      "blobSha": "1cffa4871ae8bb1df43c8d658bfb7781f4cece54"
+    },
+    {
+      "path": "docs/planning/sql/db07-template-version-pointer-fks-staging.sql",
+      "blobSha": "c9e20e1922bd50e22b3143a1a66bfb35cdff50c4"
+    },
+    {
+      "path": "docs/planning/db07-template-version-pointer-contract.md",
+      "blobSha": "b00b7217d716063ad2967f10026113ab46e6f36c"
+    },
+    {
+      "path": "tests/db07-template-version-pointer-source.test.mjs",
+      "blobSha": "e18e524f5ec45c4fb4b1b571c2a864def673b1dd"
+    },
+    {
+      "path": "tests/integration/db07-template-version-pointer-fks.test.ts",
+      "blobSha": "3eb95e20f2cc0fdde4f29a509e70c41c3885bafa"
+    }
+  ],
+  "checksExecuted": {
+    "tool": "GitHub connector exact-blob V8 in-process source assertions",
+    "total": 29,
+    "passed": 29,
+    "failed": 0
+  },
+  "authoredTests": {
+    "nodeSource": 15,
+    "postgresIntegration": 7,
+    "nodeRunnerExecuted": 0,
+    "postgresCasesExecuted": 0
+  },
+  "registeredMigration": false,
+  "typecheckExecuted": false,
+  "actualDatabaseQueried": false,
+  "constraintProposal": [
+    "project_templates_current_version_snapshot_fk",
+    "project_templates_published_version_snapshot_fk"
+  ],
+  "fkTarget": "project_template_versions(template_id, version)",
+  "deferral": "DEFERRABLE INITIALLY DEFERRED",
+  "securityProperties": [
+    "reject missing current-version snapshot",
+    "reject published-version pointer to a nonowner/missing revision",
+    "allow parent-first template creation and revision in one transaction",
+    "allow null published_version"
+  ],
+  "outstanding": [
+    "Chat 1 numbered migration and schema integration",
+    "zero-to-head disposable PostgreSQL replay",
+    "7 runtime PG positive/negative witnesses",
+    "15 standalone Node cases",
+    "existing create/revise/duplicate/publish/unpublish tests"
+  ]
+}
