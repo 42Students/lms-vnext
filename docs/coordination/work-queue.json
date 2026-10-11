@@ -2419,17 +2419,17 @@
         "docs/planning/database-parity-db06-attendance-scope-contract.md",
         "tests/db06-attendance-scope-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "f28f77851ab9d782df4c3000eb524718f620587b",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB-042 source/staging implementation complete. Staged DB06 attendance current-row integrity covers event↔delivery section/college scope, ordinary vs elective/group roster semantics, active learner/user identity, SUPER_ADMIN/COLLEGE_ADMIN/assigned FACULTY marker scope, future-session blocking, faculty correction-window enforcement, deferred attendance-row→MARKED-session consistency, immutable session lifecycle, and retained PRESENT correction shape composed with DB-035 history. Authored 12 staging callbacks; 12/12 passed under V8 read/assert shims. Independent frozen/current source matrix passed 43/43. No Node runner, PostgreSQL DDL/replay, concurrency runtime, TypeScript or API execution; task is COMPLETED awaiting independent DB verification.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T13:10:00+05:30",
       "startedAt": "2026-10-11T13:12:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T13:35:00+05:30",
+      "completionCommitSha": "f28f77851ab9d782df4c3000eb524718f620587b",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2467,6 +2467,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:12:00+05:30",
           "reason": "Chat 3 began exact legacy attendance/roster/marker source reconciliation against current vNext attendance persistence."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T13:35:00+05:30",
+          "reason": "DB042 source/staging attendance integrity contract committed; 12/12 shim callbacks + 43/43 source assertions, with PostgreSQL/runtime verification still pending."
         }
       ]
     },
