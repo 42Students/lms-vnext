@@ -170,6 +170,31 @@ BEGIN
       progression_term, progression_version;
   END IF;
 
+  -- Period dates become historical parent state once cohorts/progression reference them.
+  failed := false;
+  BEGIN
+    UPDATE academic_periods
+       SET start_date = start_date + 1,
+           end_date = end_date + 1
+     WHERE id = period_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'referenced academic period dates were mutable';
+  END IF;
+
+  -- An unused planned period remains editable. Round-trip it so later negative-window
+  -- witnesses retain their original fixture shape.
+  UPDATE academic_periods
+     SET start_date = start_date + 1,
+         end_date = end_date + 1
+   WHERE id = period_a_outside;
+  UPDATE academic_periods
+     SET start_date = start_date - 1,
+         end_date = end_date - 1
+   WHERE id = period_a_outside;
+
   INSERT INTO sections(cohort_id, academic_period_id, name, code, capacity,
                        minimum_capacity, description, start_date, end_date)
   VALUES (cohort_a, period_a, 'Section A', 'DB02-SEC-A', 60, 10,
