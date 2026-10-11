@@ -555,6 +555,39 @@ ON section_schedule_event_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_event_delivery_scope();
 
 -- ---------------------------------------------------------------------------
+-- 1c) Cohort/class metadata that is independently editable in legacy admin
+-- ---------------------------------------------------------------------------
+-- Cohort period anchors are structural references, but legacy batch start/end dates are
+-- independently nullable/editable metadata. Preserve them explicitly instead of inferring
+-- exact dates from college-wide periods.
+ALTER TABLE cohorts
+  ADD COLUMN lifecycle_start_date date,
+  ADD COLUMN lifecycle_end_date date,
+  ADD CONSTRAINT cohorts_lifecycle_date_order_ck
+    CHECK (
+      lifecycle_start_date IS NULL
+      OR lifecycle_end_date IS NULL
+      OR lifecycle_end_date >= lifecycle_start_date
+    );
+
+-- Current class CRUD persists description plus a minimum/maximum learner bound. vNext already
+-- has sections.capacity as the maximum; add the missing description/minimum while retaining
+-- capacity as the upper bound.
+ALTER TABLE sections
+  ADD COLUMN description text,
+  ADD COLUMN minimum_capacity integer NOT NULL DEFAULT 0,
+  ADD CONSTRAINT sections_minimum_capacity_ck
+    CHECK (minimum_capacity >= 0),
+  ADD CONSTRAINT sections_capacity_bounds_ck
+    CHECK (
+      capacity IS NULL
+      OR (
+        capacity BETWEEN 1 AND 500
+        AND minimum_capacity <= capacity
+      )
+    );
+
+-- ---------------------------------------------------------------------------
 -- 2) Canonical cohort progression state + immutable history
 -- ---------------------------------------------------------------------------
 CREATE TABLE cohort_progression_state (
