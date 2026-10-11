@@ -76,3 +76,50 @@ The committed DB-019 verifier now invokes the separate DB00 crosscheck when `db0
 The integration is fail-closed: a mismatch in any existing field count, source-table classification, owner disposition or frozen legacy SHA yields a structural source-integrity error. If the owner ledger is absent, the overlay counters are `null`, never automatically classified as approved.
 
 **Executed evidence:** `node --test tests/db19-field-disposition-audit.test.mjs` on Node v22.16.0: **23 passed, 0 failed**, including three new overlay acceptance/rejection checks. Both local source/test `git hash-object` values exactly matched current GitHub blobs: `da1a2a2166477230e0a2176f0b5d6c5b83291a55` and `4dc351965fdcc924e7a64b5c8a848d877bcc9761`. The exact committed source was separately evaluated in the connected V8 runtime against all **2,829 actual GitHub ledger rows** and the existing DB00 disposition: **sourceIntegrity=PASS, errors=[]**, with the count split above. No PostgreSQL migration, tenant/race or runtime consumer tests were executed.
+
+
+## DB01 312-field pinned source triage overlay (2026-10-12)
+
+The DB01 312-column activeness/target triage was already produced in
+\`docs/planning/db01-chat02-312-field-source-triage.json\` but the DB019 global
+review was previously counting only directly annotated \`db-pass4\` fields.
+The new pinned-source cross-check \`scripts/db19-db01-triage-crosscheck.mjs\`
+reconciles **all 312 rows** to the immutable original DB01 inventory (Git
+blob \`52f91b969deea6bb6cb9a9f5553688f6805fa26c\`), without editing
+either pinned source ledger or claiming database parity.
+
+Current exact-fetched source results:
+
+| DB01 scope | Rows | Interpretation |
+| --- | ---: | --- |
+| Source-activeness classified | **312** | Review classification recorded, not a verified runtime mapping |
+| Active-classified | **289** | Includes sourced workflow and DB metadata classes |
+| Exception / retired / unknown | **23** | Explicitly recorded source dispositions, not approved retirements |
+| Proposed targets | **116** | All unverified |
+| No proposed target | **196** | Requires mapping, provider proof, owner handoff or explicit disposition |
+| Active-classified fields with code/summary evidence | **219** | Existing source excerpts or cited current code |
+| Active-classified fields lacking direct consumer evidence | **70** | Still open and **not claimed proved** |
+| PostgreSQL-backed field verifications | **0** | No migration or negative/tenant acceptance evidence |
+
+Full global source report against all eleven current ledgers:
+\`sourceInventoryIntegrity=PASS\`, zero structural errors,
+**199 tables**, **2,829 fields**, **580** direct semantic source-reviewed
+rows in original ledgers, and **312 separately classified DB01 source-activity
+rows** (do *not* sum these as equivalent runtime mappings). The DB00 overlay
+remains 631 historical backup fields retired for greenfield use, 10 Flyway
+metadata fields replaced, and 91 Smrithi fields awaiting product decision.
+DB019 itself remains READY with unsatisfied prerequisites.
+
+New mutation test suite:
+\`tests/db19-db01-triage-crosscheck.test.mjs\` defines **18 independent**
+checks (pinned blob drift, wrong legacy SHA, field duplication/loss, shape
+changes, false runtime promotions, missing category, target fraud).
+All **18/18 test callback bodies were executed successfully** against the
+exact GitHub-fetched sources in a V8 in-process evaluator. This is *not*
+an execution of the Node \`node:test\` CLI or a PostgreSQL witness. The full
+eleven-domain V8 audit also returned PASS with \`errors=[]\` on the exact
+current source files.
+
+**Remaining release gate**: Match and approve identity provider/cookie/token
+revocation behavior, integrate approved schema and run actual PostgreSQL
+tenant/concurrency/retention tests before changing any \`verifiedMapping\`.
