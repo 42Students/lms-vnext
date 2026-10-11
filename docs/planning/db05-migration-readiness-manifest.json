@@ -30,11 +30,21 @@
       "prereqs": [
         "CORE_COURSES_TABLE",
         "COURSE_PARENT_CYCLE_TENANT_ENFORCEMENT",
-        "COURSE_VISIBILITY_SEMANTIC_DECISION"
+        "COURSE_VISIBILITY_SEMANTIC_DECISION",
+        "COURSE_PARENT_GRAPH_GUARD_MERGED_ONCE",
+        "COURSE_PARENT_RACE_READ_COMMITTED_NEGATIVE",
+        "COURSE_DEPARTMENT_AND_PERIOD_UPSTREAM_REPARENT_POLICY"
       ],
       "registered": false,
       "executedAgainstPostgres": false,
-      "readyForProduction": false
+      "readyForProduction": false,
+      "companionIntegrityDraft": {
+        "path": "scripts/sql/db05-course-parent-graph-guard.draft.sql",
+        "purpose": "SAME_COLLEGE_PARENT_ANCESTOR_CYCLE_AND_EXISTING_CHILD_OFFERING_GUARD",
+        "registered": false,
+        "postgresExecuted": false,
+        "limitations": "Under READ COMMITTED source-only proposal. Does not protect updates to department/academic-period parent rows, or other attached course/content scopes. Requires W01 merge+negative tests."
+      }
     },
     {
       "id": "db05-metadata",
@@ -200,6 +210,18 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Child row write guard alone does not protect existing progress on parent scope reassignment."
+    },
+    {
+      "id": "COURSE_PARENT_GRAPH_SAME_COLLEGE_AND_MULTI_HOP_CYCLES",
+      "status": "BLOCKED",
+      "owner": 1,
+      "evidence": "Unregistered companion SQL only. Parent self/cycle, cross-college, child and offering reparent PostgreSQL negatives not run."
+    },
+    {
+      "id": "COURSE_PARENT_UPSTREAM_COLLEGE_MOVE_INTEGRITY",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Child course trigger cannot prevent later direct departments.college_id and academic_periods.college_id mutation; reconcile with DB02/DB05 parent owners."
     }
   ],
   "sourceReview": {
@@ -232,7 +254,8 @@
     "Migration replay and test runner acceptance unavailable",
     "Course-parent upstream reparent and discussions tenant integrity must be proven",
     "Course_display_contents itself remains staged/unregistered",
-    "Lesson content source JSON 17 subfields remain unverified, including two DB06-only assignment resources/submission types; new settings table is unregistered."
+    "Lesson content source JSON 17 subfields remain unverified, including two DB06-only assignment resources/submission types; new settings table is unregistered.",
+    "Course-parent graph same-college/indirect cycle companion not registered or tested; department and period upstream reparent still unguarded."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance."
 }
