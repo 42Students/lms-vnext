@@ -145,18 +145,38 @@ CREATE FUNCTION db06_guard_learner_delivery(
 ) RETURNS void LANGUAGE plpgsql AS $db06_learner$
 DECLARE
   delivery_section uuid;
+  offering_cohort uuid;
+  offering_period uuid;
+  offering_college uuid;
+  section_cohort uuid;
+  section_period uuid;
   section_college uuid;
   learner_college uuid;
 BEGIN
-  SELECT d.section_id, dep.college_id
-    INTO delivery_section, section_college
+  SELECT d.section_id,
+         co.cohort_id, co.academic_period_id, course_dep.college_id,
+         s.cohort_id, s.academic_period_id, section_dep.college_id
+    INTO delivery_section,
+         offering_cohort, offering_period, offering_college,
+         section_cohort, section_period, section_college
     FROM course_section_deliveries d
+    JOIN course_offerings co ON co.id = d.offering_id
+    JOIN courses course ON course.id = co.course_id
+    JOIN departments course_dep ON course_dep.id = course.department_id
     JOIN sections s ON s.id = d.section_id
     JOIN cohorts c ON c.id = s.cohort_id
     JOIN programs p ON p.id = c.program_id
-    JOIN departments dep ON dep.id = p.department_id
+    JOIN departments section_dep ON section_dep.id = p.department_id
     WHERE d.id = p_delivery_id
-    FOR SHARE OF d, s, c, p, dep;
+    FOR SHARE OF d, co, course, course_dep, s, c, p, section_dep;
+
+  IF delivery_section IS NULL
+     OR offering_cohort IS DISTINCT FROM section_cohort
+     OR offering_period IS DISTINCT FROM section_period
+     OR offering_college IS DISTINCT FROM section_college THEN
+    RAISE EXCEPTION 'Assessment delivery offering/section scope mismatch'
+      USING ERRCODE='23514';
+  END IF;
 
   SELECT m.college_id INTO learner_college
     FROM college_memberships m
@@ -166,8 +186,7 @@ BEGIN
     WHERE m.id = p_membership_id AND m.status = 'ACTIVE'
     FOR SHARE OF m, role, u;
 
-  IF delivery_section IS NULL OR section_college IS NULL
-     OR learner_college IS DISTINCT FROM section_college THEN
+  IF learner_college IS DISTINCT FROM section_college THEN
     RAISE EXCEPTION 'Assessment learner/delivery tenant mismatch'
       USING ERRCODE='23514';
   END IF;
