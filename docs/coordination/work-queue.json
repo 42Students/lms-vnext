@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12T02:55:00+05:30",
+  "updatedOn": "2026-10-12T03:02:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -4375,17 +4375,28 @@
         "scripts/verify-db08-recruiter-code-source.mjs",
         "tests/db08-recruiter-code-contract.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "ef65c5ed2b9c881d6ac9e391ea9c48bb0a0b2494",
+      "verificationEvidence": [
+        "CONNECTOR_SOURCE_STAGING_ASSERTIONS_34_OF_34_2026-10-12",
+        "FULL_CURRENT_SWEEP_54_SCHEMA_FILES_PLUS_54_PLACEMENTS_MODULE_FILES_2026-10-12",
+        "docs/planning/sql/db08-recruiter-round-result-code-candidate.sql@8f1ee3663999b764892e1091f8d8d1704cc4438b",
+        "docs/planning/db08-chat03-recruiter-code-audit.md@9121e12068e2a7272dc171e859bf7b89925d3644",
+        "scripts/verify-db08-recruiter-code-source.mjs@3aeb21cb5f249eb85c0fd81780d0dee6f22d3131",
+        "tests/db08-recruiter-code-contract.test.mjs@ef65c5ed2b9c881d6ac9e391ea9c48bb0a0b2494"
+      ],
+      "blockers": [
+        "API phase must update result-service recruiter writer HR→RECRUITER and make staged-result ownership/conflict logic transition-safe for any legacy HR rows before FINALIZE.",
+        "Chat 1/W01 must register EXPAND and FINALIZE as separate ordered/release-gated migrations and update canonical Drizzle final CHECK; FINALIZE must not run while old writers remain.",
+        "Authored Node/PostgreSQL witnesses are not executed in this chat. 34/34 connector assertions are source/staging evidence only."
+      ],
+      "completionNote": "Closed DB-072 source/staging contract after full 54 schema + 54 placements-module sweep. Final DB provenance vocabulary is TPO|RECRUITER|PANELIST|DRIVE_DAY|IMPORT with EXCEL→IMPORT redesign and no submitted_by_type recreation. Staged safe EXPAND migration accepts HR+RECRUITER without rewrite; FINALIZE is release-gated after API cutover, rewrites HR→RECRUITER and removes HR from strict CHECK. Authored dynamic source verifier and disposable PostgreSQL expand/finalize witness. Connector audit 34/34 passed. No API cutover, migration registration, Node, or PG execution claimed.",
       "pickedBy": 3,
       "pickedAt": "2026-10-12T02:55:00+05:30",
       "startedAt": "2026-10-12T02:55:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-12T03:02:00+05:30",
+      "completionCommitSha": "ef65c5ed2b9c881d6ac9e391ea9c48bb0a0b2494",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -4409,6 +4420,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T02:55:00+05:30",
           "reason": "Frozen V193 explicitly updates round_result.source and submitted_by_type HR→RECRUITER; vNext source CHECK and result-service still use HR."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T03:02:00+05:30",
+          "reason": "Chat 3 completed full stored-code/provenance source sweep, two-release DB design, dynamic source verifier and PG witness; API/migration/runtime verification remains downstream."
         }
       ]
     }
