@@ -29,8 +29,7 @@ const settings = [
 
 function quotedColumnNames(ts) {
   return [...ts.matchAll(/(?:uuid|varchar|text|integer|boolean|timestamp|bigint)\("([a-z_]+)"/g)]
-    .map((match) => match[1])
-    ;
+    .map((match) => match[1]);
 }
 function countDeclared(ts, name) {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -60,6 +59,7 @@ test("DB05 lesson content settings typed staging accounts for its 14 SQL columns
   assert.match(settingsTs, /\.primaryKey\(\)/);
   assert.match(settingsTs, /db05_lesson_content_settings_version_nonnegative_ck/);
   assert.match(settingsTs, /db05_lesson_content_settings_updated_idx/);
+  assert.match(settingsTs, /bigint\("version", \{ mode: "bigint" \}\)\.notNull\(\)\.default\(0n\)/);
   assert.match(settingsSql, /NOT A REGISTERED MIGRATION/);
 });
 
