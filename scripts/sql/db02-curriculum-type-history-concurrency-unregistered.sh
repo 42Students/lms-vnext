@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # DB02 / DB-005 curriculum-type vs CORE-offering creation concurrency harness.
 # UNREGISTERED / UNEXECUTED, requires an approved DISPOSABLE PostgreSQL database
-# with canonical DB02 and db02-curriculum-type-history-guard.draft.sql applied.
+# with canonical DB02 and db02-academic-progression-and-rooms-staging.sql applied.
 # Fixture rows are committed for two-session visibility. Dispose of entire DB.
 set -euo pipefail
 
