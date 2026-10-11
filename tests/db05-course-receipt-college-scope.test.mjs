@@ -75,7 +75,7 @@ test("gates retain upstream-reparent, identity, receipt/attestation race blocker
 });
 
 test("private receipt suffix rejects traversal and arbitrary path segments", () => {
-  const regexText = sql.match(/object_key_suffix !~\\* '([^']+)'/);
+  const regexText = sql.match(/object_key_suffix !~\* '([^']+)'/);
   assert.ok(regexText, "missing PostgreSQL suffix shape restriction");
   const keySuffix = new RegExp(regexText[1], "i");
   assert.match("f47ac10b-58cc-4372-a567-0e02b2c3d479", keySuffix);
