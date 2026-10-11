@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11",
+  "updatedOn": "2026-10-11T20:52:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3423,6 +3423,51 @@
           "status": "PICKED",
           "at": "2026-10-11T15:12:09.007Z",
           "reason": "Chat 5 reserved independent DB witness safety fix; no active domain overlap."
+        }
+      ]
+    },
+    {
+      "id": "DB-059",
+      "phase": "DATABASE",
+      "title": "Freeze DB09 secure share disclosure contract after creation",
+      "scope": "Harden staged placement_tpo_share_links to match active legacy lifecycle: creation fixes tenant/job/token/recipient/base code/columns/stage/shortlist/expiry/creator identity; post-create mutation is limited to one-way revocation and email-code rotation while the link is usable. Reject disclosure expansion, token/recipient/job rewrites, revoke rewind/rewrite and code rotation after revoke/expiry. Add source audit/static regression only; no migration/API/UI activation.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql",
+        "docs/planning/db09-secure-share-lifecycle-audit.md",
+        "tests/db09-secure-share-lifecycle.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T20:52:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T20:52:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T20:52:00+05:30",
+          "reason": "Independent DB09 review proved source TpoShareService only rotates email code fields and sets revoked_at after creation, while staged DB permits direct-SQL rewrite of token/job/recipient/disclosure/expiry/creator and revoke state."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T20:52:00+05:30",
+          "reason": "Chat 3 claimed fresh DB09 secure-share lifecycle integrity gap after DB-057 completion; DB-058 was already taken by Chat 5."
         }
       ]
     }
