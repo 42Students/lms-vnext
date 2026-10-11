@@ -39,6 +39,20 @@ BEGIN
         USING ERRCODE = '23514',
               CONSTRAINT = 'db01_domain_tombstone_nonprimary_ck';
     END IF;
+    -- Tombstoning is not an opportunity to rewrite historical DNS proof.
+    -- Erase any outstanding secret token, but keep the old host, status,
+    -- verification timestamp and diagnostic evidence unchanged.
+    IF NEW.host IS DISTINCT FROM OLD.host
+       OR NEW.is_verified IS DISTINCT FROM OLD.is_verified
+       OR NEW.verified_at IS DISTINCT FROM OLD.verified_at
+       OR NEW.last_checked_at IS DISTINCT FROM OLD.last_checked_at
+       OR NEW.last_check_result IS DISTINCT FROM OLD.last_check_result
+       OR NEW.created_at IS DISTINCT FROM OLD.created_at
+       OR NEW.verification_token IS NOT NULL THEN
+      RAISE EXCEPTION 'Tombstone must preserve proof history and erase DNS secret'
+        USING ERRCODE = '23514',
+              CONSTRAINT = 'db01_domain_tombstone_history_ck';
+    END IF;
     RETURN NEW;
   END IF;
 
