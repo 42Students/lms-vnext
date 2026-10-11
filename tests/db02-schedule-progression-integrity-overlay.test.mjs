@@ -31,8 +31,11 @@ test("FK-driven actor cleanup has no academic event and acceptance checks histor
   assert.match(acceptance, /Audit actor cleanup forged an academic event/);
 });
 
-test("canonical progression state cannot be reassigned, deleted or truncated", () => {
+test("canonical progression state cannot be reassigned, directly deleted, or truncated", () => {
   assert.match(canonical, /CREATE FUNCTION db02_guard_progression_state_identity\(\)/);
+  assert.match(canonical, /cohort_id uuid PRIMARY KEY REFERENCES cohorts\(id\) ON DELETE CASCADE/);
+  assert.match(canonical, /pg_trigger_depth\(\) >= 2/);
+  assert.match(canonical, /not directly deletable/);
   assert.match(canonical, /NEW\.cohort_id IS DISTINCT FROM OLD\.cohort_id/);
   assert.match(canonical, /BEFORE UPDATE OF cohort_id OR DELETE ON cohort_progression_state/);
   assert.match(canonical, /BEFORE TRUNCATE ON cohort_progression_state/);
