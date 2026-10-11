@@ -554,12 +554,22 @@
       "id": "DB05_ACTIVE_CHILD_ARCHIVE_SERIALIZATION_PG_NEGATIVE",
       "status": "NOT_RUN",
       "owner": "DB05_W01_INTEGRATOR",
-      "evidence": "DB05 Chat 6 unregistered scripts/sql/db05-hierarchy-active-child-archive-guard.draft.sql pairs course->offering, offering->delivery, delivery->teacher parent archive guards with active-child FOR SHARE row-locks. Twenty HL-01..20 acceptance cases, including two-session races, lock order, archived history and isolation; no real PostgreSQL execution. Static contract tests authored, not a PG acceptance witness.",
+      "evidence": "Application now pairs three parent ARCHIVE/END FOR UPDATE locks with three child CREATE FOR SHARE status rechecks in same transactions (six committed main paths). DB six-trigger companion remains UNREGISTERED; PostgreSQL HL-01..20 two-connection tenant/state, lock-order, same-tx and rollback acceptance NOT RUN. 17 new Node tests authored, not executed; exact GitHub source structural inspections 25/25 succeeded, NOT a real Node/PG run.",
       "companionDraft": "scripts/sql/db05-hierarchy-active-child-archive-guard.draft.sql",
       "readonlyPreflight": "scripts/sql/db05-hierarchy-archive-state-preflight.readonly.sql",
       "sqlRegistered": false,
       "pgExecuted": false,
-      "requiredPGCases": 20
+      "requiredPGCases": 20,
+      "appPaths": [
+        "src/modules/courses/course-service.ts#archiveCourse",
+        "src/modules/courses/offering-service.ts#createCourseOffering",
+        "src/modules/courses/offering-service.ts#archiveCourseOffering",
+        "src/modules/courses/delivery-service.ts#createCourseSectionDelivery",
+        "src/modules/courses/delivery-service.ts#endCourseSectionDelivery",
+        "src/modules/courses/teaching-assignment-service.ts#createCourseTeachingAssignment"
+      ],
+      "appPairedLocksSourceChecked": true,
+      "appPairedLocksNodeExecuted": false
     },
     {
       "id": "DB05_ACTIVE_CHILD_ARCHIVE_ZERO_STATE_DRIFT",
@@ -579,6 +589,13 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Companion-only db05-classroom-chat-parity.draft.sql validates section cohort program-department college and uses DB05 advisory lock 605008003 under READ COMMITTED. Execute right-tenant, wrong-program-college, same-college wrong-cohort/period, upstream reparent, two-session deadlock tests before registering."
+    },
+    {
+      "id": "DB05_PAIRED_SHARE_UPDATE_SOURCE_REGRESSION",
+      "status": "AUTHORED_NOT_EXECUTED",
+      "owner": 6,
+      "evidence": "New tests/db05-hierarchy-paired-row-locks.test.mjs authored five Node source tests checking child parent SHARE+state in transaction before insert; source GitHub JS checks 10/10, not native node:test/tsc/PG; do not promote gate.",
+      "nodeTestPath": "tests/db05-hierarchy-paired-row-locks.test.mjs"
     }
   ],
   "sourceReview": {
@@ -647,7 +664,7 @@
     "DB05_TOMBSTONE_OPTIMISTIC_VERSION: Guard staged to close stale CAS hole for course/lesson/content deletion/restore and cascade. W01 must register after version columns and prove TV-01..TV-14 concurrent PostgreSQL; 0 live DB acceptance, API version writers not yet switched.",
     "DB05_AUTHORED_CONTENT_UPSTREAM_REPARENT: content with no order override must remain scoped across lesson/path/offering/delivery/section ancestor moves; conservative guard companion staged, not registered/PG tested. W01 to prove CA-01..CA-16 including concurrent insertion, repair and rollback.",
     "DB05_GENERIC_CONTENT_AUDIENCE_DRIFT: lesson_content_service includes NULL-delivery content in every requested delivery. Conservative unregistered ancestry guard now blocks delivery/section moves with generic content. Must prove CA-17/CA-18 negative/race with actual PG and reconcile DB02 delivery scope.",
-    "Course/offering/delivery active-child vs archived-parent concurrent INSERT/ARCHIVE race: SQL companion plus 20-case negative witness staged, not registered or executed; W01 must merge once and prove lock-order with DB02/DB05 existing triggers."
+    "Paired app row locks committed across all 6 course/offering/delivery/teacher paths, but native Node/TS compilation and 20 two-session PostgreSQL HL tests NOT EXECUTED; direct SQL activation, upstream reparent and non-READ-COMMITTED lock order need W01 acceptance."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
