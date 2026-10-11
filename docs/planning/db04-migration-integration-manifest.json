@@ -135,7 +135,9 @@
     "postgresNegativeOrConcurrencyTestsPassing": false,
     "runtimeProducerConsumerVerified": false,
     "historicalRetirementsApproved": false,
-    "phaseGateReady": false
+    "phaseGateReady": false,
+    "postgresWitnessAuthored": true,
+    "postgresWitnessExecuted": false
   },
   "promotionChecklist": [
     "Register receipt parent composite keys before education/image child FKs.",
@@ -146,6 +148,24 @@
     "Execute wrong-owner, wrong-purpose, direct-SQL and concurrency witnesses on disposable PostgreSQL.",
     "Prove runtime profile CRUD, screening, verification and image APIs use the registered normalized source of truth.",
     "Record explicit approval before treating either historical table as retired.",
+    "Execute tests/db04-profile-education-images-pg.test.mjs only against an explicitly disposable TEST_DATABASE_URL distinct from DATABASE_URL and retain the output.",
     "Keep DATABASE phase blocked until executed evidence exists."
-  ]
+  ],
+  "postgresWitness": {
+    "path": "tests/db04-profile-education-images-pg.test.mjs",
+    "optInEnv": "DB04_PROFILE_DISPOSABLE=I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA",
+    "databaseEnv": "TEST_DATABASE_URL",
+    "requiresDatabaseUrlDifference": true,
+    "state": "AUTHORED_NOT_EXECUTED",
+    "covers": [
+      "private object key/generation/digest DB checks",
+      "GPA persistence parity",
+      "currently-pursuing/end-year check",
+      "year ordering",
+      "active recent-education uniqueness",
+      "same-owner education-document receipt FK",
+      "profile-image owner/purpose FK",
+      "profile-image active/deactivation shape"
+    ]
+  }
 }
