@@ -1634,11 +1634,11 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'1'",
           "riskFlags": [],
-          "decision": "TARGET_GAP_NEEDS_PRODUCT_CONFIRMATION",
-          "targetRef": "assignment_submissions.attempt_number / child attempt model",
-          "reason": "Legacy explicitly supports re-attempt numbering; current unique assignment+membership key prevents multiple persisted attempts.",
+          "decision": "DERIVED_METADATA_NOT_PERSISTED",
+          "targetRef": "assignment_submissions row existence under assignment_submissions_assignment_membership_uq",
+          "reason": "Current pinned prod enforces exactly one submission per student+assignment through V28 unique key and AssignmentServiceImpl duplicate rejection; accepted assignment submission is therefore effectively attempt 1. Re-attempt entity comment is dormant compatibility intent, not active behavior.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-attempt-contract.md + V28__student_assignment_unique_submission.sql + V57__student_assignment_semester.sql + pinned AssignmentServiceImpl/StudentAssignmentRepository@prod-2026"
         },
         {
           "legacyField": "is_grade_published",
@@ -1659,10 +1659,10 @@
           "defaultValue": "NULL",
           "riskFlags": [],
           "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "assignment delivery → offering.academic_period_id",
-          "reason": "Prefer immutable academic-period scope; prove this preserves legacy semester-scoped attempt reset.",
+          "targetRef": "assignment_submissions.delivery_id → course_section_deliveries.offering_id → course_offerings.academic_period_id",
+          "reason": "V57 added semester_number for a proposed semester-scoped attempt reset, but current submit does not set/read it and one-submission V28 semantics remain active. vNext derives academic scope relationally without redundant submission scalar.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/database-parity-db06-assignment-attempt-contract.md + V28__student_assignment_unique_submission.sql + V57__student_assignment_semester.sql + pinned AssignmentServiceImpl/StudentAssignmentRepository@prod-2026"
         }
       ]
     }
