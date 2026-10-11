@@ -6,15 +6,15 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "PICKED",
-  "activeTaskId": "DB-065",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB065_PHASE_GATE_PREFLIGHT_PICKED",
-    "updatedOn": "2026-10-12T00:42:19+05:30",
-    "observedMainSha": "7874ae446a3e7a80effc5648b6461580c646ae90",
-    "lastWorkerMergedSha": "a17c5cbcde72a3d19fc62b156fad8dd171f5b07d",
-    "summary": "Independent read-only DATABASE shared coordination integrity checker reserved. No migration, schema barrel, CI or live DB changes."
+    "checkpointKind": "DB065_SOURCE_ONLY_VERIFIED_DATABASE_GATE_OPEN",
+    "updatedOn": "2026-10-12T00:48:19+05:30",
+    "observedMainSha": "3bf1a9c680d62ffb37916698376434424a8b0e9d",
+    "lastWorkerMergedSha": "fb5504028847a9b1ca36611fe9ae942c735b351f",
+    "summary": "DB-065 source-only static six-worker phase gate complete: 30/30 true Node tests executed with exact Git blob match; live queue V8 source read errors=0, DB-064 unverified dependency warning preserved. No PG/CI/phase gate claim."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -44,9 +44,12 @@
     "tests/db10-notification-campaign-staging.test.mjs: 12 Node source assertions authored; not executed",
     "tests/db10-campaign-publish-guard.test.mjs: 10 authored Node source guards NOT_EXECUTED; DB49-01..16 PostgreSQL witnesses NOT_RUN.",
     "DB-018: 21 read-only Pass-5 probes + 13 direct negative SQL cases + 4 positive concurrency witnesses + 2 known-red race witnesses (P5-R01/P5-R02), authored not executed",
-    "DB-054: deterministic isolated P5-R01 placement paid-access revocation race regression + 5 no-DB source lock-order assertions; authored, runtime not executed"
+    "DB-054: deterministic isolated P5-R01 placement paid-access revocation race regression + 5 no-DB source lock-order assertions; authored, runtime not executed",
+    "tests/db065-database-phase-gate.test.mjs (30 cases, executed Node 30/30)"
   ],
-  "lastExecutedPassingTests": [],
+  "lastExecutedPassingTests": [
+    "DB-065: node --test tests/db065-database-phase-gate.test.mjs 30/30 PASS, Node v22.16.0, exact committed blob hashes 947ecb6 and be55547"
+  ],
   "blockers": [
     "DB015 P5-R01: learner placement application can race paid-module/inherited-eligibility revocation after precheck.",
     "DB015 P5-R02: learner enrollment can race cohort lifecycle transition after precheck.",
@@ -90,7 +93,7 @@
     "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows.",
     "DB-049 → Chat 1: integrate staged notification_campaigns SQL guarded at PUBLISHING/PUBLISHED with FOR SHARE target membership/active delivery, run DB49-01..16 in independent disposable PG. 10 Node tests authored not executed."
   ],
-  "nextAction": "Implement and independently execute 28 Node regressions for DB-065 read-only cross-worker phase gate, then mark source-complete with evidence.",
+  "nextAction": "Remain in DATABASE; next eligible READY task requires Chat1 migration authority or predecessor DONE_VERIFIED. Continue independent correctness review or await source owner handoff; do not mark DB019/020 accepted.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -131,7 +134,8 @@
     "https://github.com/42Students/lms-vnext/commit/cb61a4ee055329d5140bc3ef87ec6744c8c6aeba",
     "https://github.com/42Students/lms-vnext/commit/011f7cf02eae3a539e3cb28e6902d3eeea7acce2",
     "https://github.com/42Students/lms-vnext/commit/6c652ef6d03758d2b303c142ee719320a41965fe",
-    "https://github.com/42Students/lms-vnext/commit/9c56dcf67a13419cf651c0845698ca36dee222d1"
+    "https://github.com/42Students/lms-vnext/commit/9c56dcf67a13419cf651c0845698ca36dee222d1",
+    "docs/planning/db065-phase-gate-audit.md"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -179,11 +183,14 @@
     "DB-049",
     "DB-018",
     "DB-054",
-    "DB-058"
+    "DB-058",
+    "DB-065"
   ],
   "lastPickedAt": "2026-10-12T00:42:19+05:30",
-  "lastCompletedAt": "2026-10-11T15:18:26.270Z",
-  "verifiedTaskIds": [],
+  "lastCompletedAt": "2026-10-12T00:48:19+05:30",
+  "verifiedTaskIds": [
+    "DB-065"
+  ],
   "awaitingVerificationTaskIds": [
     "DB-006",
     "DB-011",
