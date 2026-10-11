@@ -149,3 +149,10 @@ test("learner identity lifecycle preserves suspension but closes role/end state"
     "temporary suspension must not academically withdraw the learner",
   );
 });
+
+
+test("canonical DB02 preserves reversible cohort INACTIVE and zero-credit offerings", () => {
+  assert.match(canonical, /ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE'/);
+  assert.match(canonical, /db02_course_offerings_credits_ck/);
+  assert.match(canonical, /credits IS NULL OR credits BETWEEN 0 AND 30/);
+});
