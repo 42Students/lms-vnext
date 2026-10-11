@@ -234,7 +234,8 @@ export const placementTpoCollegeSettings = pgTable(
     emailSignature: text("email_signature"),
     logoObjectPath: text("logo_object_path"),
     prepThresholdPct: integer("prep_threshold_pct").notNull().default(60),
-    // DB-036: four fixed legacy notification dispatch switches. All default on.
+    // DB-036: four fixed legacy optional-external-delivery switches.
+    // APP notifications remain visible regardless of these values. All default on.
     notifyDriveOpenEmail: boolean("notify_drive_open_email").notNull().default(true),
     notifyResultApplied: boolean("notify_result_applied").notNull().default(true),
     notifyNudges: boolean("notify_nudges").notNull().default(true),
@@ -354,7 +355,8 @@ export const placementTpoUserPreferences = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
-    // DB-036: source-fixed TPO user preferences; default digest off, others on.
+    // DB-036: source-fixed persisted TPO preference API state; default digest
+    // off, others on. Current rendered UI use and delivery consumption are unproven.
     morningDigest: boolean("morning_digest").notNull().default(false),
     recruiterMessages: boolean("recruiter_messages").notNull().default(true),
     requests: boolean("requests").notNull().default(true),
