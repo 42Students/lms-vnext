@@ -46,6 +46,8 @@ test("DB31 accepts truly global attempts but fail-closes forged tenant pairs", (
   assert.match(sql, /\(organization_id IS NULL\) = \(college_id IS NULL\)/);
   assert.match(sql, /CREATE OR REPLACE FUNCTION db31_guard_sms_attempt_scope/);
   assert.match(sql, /c\.organization_id = NEW\.organization_id/);
+  assert.match(sql, /FOR SHARE;\s*IF NOT FOUND THEN/);
+  assert.doesNotMatch(sql, /IF NEW\.college_id IS NOT NULL AND NOT EXISTS/);
   assert.match(sql, /ERRCODE = '23514'/);
 });
 
