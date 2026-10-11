@@ -35,6 +35,8 @@ test("DB-069 separates mutable owner from immutable creator", () => {
 
   assert.match(candidate, /ADD COLUMN owner_membership_id uuid/);
   assert.match(candidate, /db069_job_owner_college_fk/);
+  assert.match(candidate, /db069_live_job_owner_ck/);
+  assert.match(candidate, /db069_owner_preflight/);
   assert.doesNotMatch(candidate, /DROP COLUMN created_by_user_id/);
 });
 
@@ -67,7 +69,7 @@ test("DB-069 serializes owner assignment against removal", () => {
   assert.match(candidate, /pg_advisory_xact_lock/);
   assert.match(candidate, /db069_job_owner_scope_guard/);
   assert.match(candidate, /db069_lead_owner_serialization_guard/);
-  assert.match(candidate, /db069_team_member_delete_guard/);
+  assert.match(candidate, /db069_team_member_identity_guard/);
   assert.match(candidate, /v_old_college::text \|\| ':' \|\| v_old_owner::text/);
   assert.match(candidate, /v_new_college::text \|\| ':' \|\| v_new_owner::text/);
 });
