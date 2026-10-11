@@ -10,13 +10,13 @@
   "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB024_GENERAL_OUTBOX_HARDENED_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB024_SOURCE_STAGED_SEVEN_GUARDS_PASS_V8_NO_PG",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "50f004358cc2004286fd22380af5dd9a6a3bc3a5",
-    "lastWorkerMergedSha": "bc71648077a9ca4e8a06b680438ef208410b3618",
+    "observedMainSha": "1d7498bc473961a4a5e76c8709d5b76442e5c078",
+    "lastWorkerMergedSha": "26fb964665b0477c02aeeed34d5beb3d532bbcf3",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-024 remains COMPLETED/unverified. Newest staged artifacts add source-event FK/scope, matching learner/faculty membership-role guard, logical source-event idempotency, retained claim audit and safe legacy failure detail; 14/14 connector source consistency checks PASS, 0 Node/PG execution."
+    "summary": "DB-024 completed source-stage: 13 fields mapped, isolated general notification Drizzle/SQL + APP/undo/digest/role/scope/claim integrity; peer hardening added activity source event FK, unique source-recipient-channel, support-safe reason and durable claimed_at. All 7 authored Node-test assertion bodies independently executed within JS V8 harness against fetched main files: PASS 7/7; full Node runner and PostgreSQL NOT_EXECUTED. CI billing not a blocker."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -52,7 +52,7 @@
     "DB02/academics writer: lock/re-read cohort state inside enrollment transaction or enforce equivalent database transition guard; see P5-R02.",
     "Chat 1/shared ops: register and test DB10 scheduled lease/outbound/log-alert drafts before P5-R08..R10 can be verified."
   ],
-  "nextAction": "Refresh DATABASE queue and claim the next eligible unowned task; if none, peer-review active blockers without stealing claims.",
+  "nextAction": "Pick next eligible, nonconflicting DATABASE task if one appears; otherwise independent verification of existing stages on available non-CI environment. Chat 1 registers DB024 schema and Chat 3 owns DB09 general-outbox mapping. Keep runtime acceptance pending.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -111,5 +111,6 @@
     "completedTaskIds": "Unique task IDs for which this chat finished committed implementation (completedBy proof). Not automatically verified.",
     "verifiedTaskIds": "Unique task IDs whose acceptance evidence supports DONE_VERIFIED. VerifiedBy tracked separately on queue.",
     "activeTaskId": "One current PICKED or IN_PROGRESS task; null when none."
-  }
+  },
+  "lastWorkerMergedSha": "26fb964665b0477c02aeeed34d5beb3d532bbcf3"
 }
