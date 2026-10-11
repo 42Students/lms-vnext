@@ -66,3 +66,19 @@ test("receipt guard checks both target and submission delivery after their looku
   assert.match(draft, /submission_delivery_id IS DISTINCT FROM content_delivery_id/);
   assert.match(draft, /required_key_prefix := 'private\/'/);
 });
+
+test("readiness manifest explicitly blocks cohort-period PostgreSQL acceptance", () => {
+  const readiness = JSON.parse(readFileSync(
+    new URL("../docs/planning/db05-migration-readiness-manifest.json", import.meta.url), "utf8"));
+  const matrix = readFileSync(
+    new URL("../docs/planning/db05-delivery-cohort-period-negative-matrix.md", import.meta.url), "utf8");
+  const gate = readiness.gates.find(item => item.id === "DB05_DELIVERY_COHORT_PERIOD_MATCH_PG_NEGATIVE");
+  assert.ok(gate);
+  assert.equal(gate.status, "NOT_RUN");
+  assert.equal(gate.owner, 1);
+  assert.match(gate.evidence, /22-case acceptance matrix/);
+  assert.match(matrix, /ALL UNEXECUTED/);
+  for (const caseId of ["CP-01", "CP-02", "CP-03", "CP-15", "CP-20", "CP-22"]) {
+    assert.ok(matrix.includes(caseId), caseId);
+  }
+});
