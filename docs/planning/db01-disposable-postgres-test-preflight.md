@@ -64,3 +64,46 @@ Runner reported `1..8`, **8 tests, 8 passed, 0 failed, 0 skipped**. A separate C
 - Add its own regression proving `db:test:prepare` never opens `DATABASE_URL` as a fallback.
 - Integrate the guard into approved DB01 disposable-db command or add equivalent preflight to the shared DB testing pipeline.
 - Continue generated Drizzle migration work separately; this guard does not grant Chat 2 migration-file ownership.
+
+
+## One-command staged witness batch (2026-10-12)
+
+For CI-independent **disposable PostgreSQL only**, a new opt-in launcher
+\`scripts/db-staged-pg-witnesses.mjs\` runs five existing *staged* fixture
+witnesses in sequence: DB01 OTP attempt, DB01 one-time handoff, DB01 college
+membership/domain archive race, DB01 domain tombstone race, DB04 private
+receipt/profile image/education staging. Each test manages its **own**
+random temporary schema; the runner does not reset an application database,
+register Drizzle migrations, or claim Identity Platform/API integration.
+
+\`\`\`sh
+node scripts/db-staged-pg-witnesses.mjs --plan
+# After separately provisioning/approving disposable PostgreSQL:
+export TEST_DATABASE_URL='postgresql://test_user:<test_password>@127.0.0.1:5432/lms_vnext_test'
+export DB_STAGED_WITNESSES=I_ACCEPT_DESTRUCTIVE_TEMP_SCHEMA
+node scripts/db-staged-pg-witnesses.mjs --run
+\`\`\`
+
+The launcher refuses a missing URL, unrecognized protocols, system databases,
+non-test database names, query/redirect options, exact application DB targets
+(including localhost versus 127.0.0.1 aliases), or missing explicit consent.
+Remote test databases additionally require \`ALLOW_REMOTE_TEST_WITNESS=true\`
+and \`DB_WITNESS_REMOTE_CONFIRM=DISPOSABLE:<host>:<port>/<database>\`.
+For each subprocess it removes \`DATABASE_URL\`, destructive reset/seed
+authorizations, and all other suite opt-ins, providing only the chosen test
+suite's explicit opt-in and \`TEST_DATABASE_URL\`.
+
+**Fail-closed output:** a subprocess exit code of zero is insufficient.
+The Node TAP output must report positive tests, exactly the same number
+passed, zero failures/skips/cancellations, otherwise the batch fails.
+No real PG is available in this connected engineering environment, so the
+five fixtures remain **unexecuted**, and this launcher cannot be counted as
+PostgreSQL acceptance. Its 22 authored safety-test callbacks did execute
+against the exact Github-fetched source and a synthetic URL facade in V8:
+**22/22 in-process passed**; the full Node \`node --test\` CLI was *not*
+executed in the connected repo checkout.
+
+Before global DB closure, the Chat1 integrator still needs \`npm run
+db:verify:independent\` with fresh registered migration replay, real tenant
+FK negatives, exact current SHA evidence, and concurrent DB02/DB05/DB06/DB09
+acceptance. This staged witness batch is only one component.
