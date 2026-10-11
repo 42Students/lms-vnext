@@ -335,6 +335,54 @@
       "fullSchemaMigrationIntegrated": false,
       "needsCrossDomainReview": "DB02 DB03 DB05 DB08 DB09 other children, org-college staged guard, tombstone disposition",
       "issue21Comment": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107127571"
+    },
+    "db01TypedSecuritySettings": {
+      "status": "STAGED_POLICY_SOURCE_VERIFIED_NOT_POSTGRES",
+      "issueCrossDomain": "DB-033_APP_SETTING_DISPOSITION",
+      "registry": "docs/planning/database-parity-app-setting-disposition.json",
+      "policy": "docs/planning/db01-identity-security-settings-policy.json",
+      "stagingSql": "docs/planning/sql/db01-identity-global-security-policy-staging.sql",
+      "verifier": "scripts/verify-db01-identity-security-settings.mjs",
+      "test": "tests/db01-identity-security-settings-contract.test.mjs",
+      "evidence": "docs/planning/db01-chat02-security-settings-execution-evidence.md",
+      "sourceKeys": 7,
+      "deploymentSettings": 4,
+      "typedPolicyCandidateSettings": 3,
+      "localNodeVersion": "v22.16.0",
+      "localNodeTestsExecuted": 16,
+      "localNodeTestsPassed": 16,
+      "localAuditExecuted": 1,
+      "localAuditPassed": 1,
+      "connectorFullRegistrySourceChecks": 10,
+      "connectorFullRegistrySourceChecksPassed": 10,
+      "codeBlobs": {
+        "verifier": "268f01142dfb76f1ef7e60e9f3c0c5c250ae9f08",
+        "test": "4e5c163a1270c0f95a1972964325350bb9a0a94b",
+        "policy": "e14ef4c50976f6aed14f39b47dd9953508862e53",
+        "sql": "fe4d5a1e7becafb002cd10aeb8cf47024d880a2b"
+      },
+      "localSourceRegistryInput": "SYNTHETIC_DB01_ONLY_7_KEY_PROJECTION_NOT_BYTE_IDENTICAL_25_KEY_REGISTRY",
+      "actualPostgresExecuted": 0,
+      "policyApproved": false,
+      "numberedMigrationRegistered": false,
+      "w01Handoff": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107170040"
+    },
+    "db01Auth78Crosswalk": {
+      "status": "78_SOURCE_ONLY_CANDIDATE_DISPOSITIONS_NO_RUNTIME_VERIFICATION",
+      "crosswalk": "docs/planning/db01-chat02-auth-78-field-proposal-crosswalk.json",
+      "guard": "tests/db01-auth-78-source-crosswalk.test.mjs",
+      "sourceQueue": "docs/planning/db01-chat02-no-target-disposition-queue.json",
+      "fieldCount": 78,
+      "stagedFieldCandidates": 55,
+      "openRedesignDecisions": 19,
+      "normalizedCandidates": 4,
+      "connectorSourceChecksRun": 14,
+      "connectorSourceChecksPassed": 14,
+      "nodeGuardAuthoredCases": 14,
+      "nodeGuardExecutedCases": 0,
+      "actualPostgresVerifiedFields": 0,
+      "providerVerifiedFields": 0,
+      "commit": "f5ca3369fc107125187ba73e524901b73908df18"
     }
   },
   "qualityGates": {
@@ -358,7 +406,11 @@
     "db01MainSourceCases": "36_PG_PLUS_14_UNIT_AUTHORED",
     "db01UnmappedSource": "173_OPEN_12_OF_12_SOURCE_CHECKS_PASS",
     "collegeArchiveDb01Source": "PASS_16_OF_16_IN_PROCESS_CHECKS_NODE_TESTS_AUTHORED_NOT_EXECUTED",
-    "collegeArchiveDb01Postgres": "AUTHORED_FOUR_TWO_SESSION_RACES_NOT_EXECUTED"
+    "collegeArchiveDb01Postgres": "AUTHORED_FOUR_TWO_SESSION_RACES_NOT_EXECUTED",
+    "db01TypedPolicyNode": "EXECUTED_PASS_16_OF_16_SOURCE_ONLY",
+    "db01TypedPolicyFullRegistry": "PASS_10_OF_10_CONNECTOR_SOURCE",
+    "db01Auth78Mapping": "PASS_14_OF_14_CONNECTOR_SOURCE",
+    "db01NewPostgres": "NOT_EXECUTED"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -379,10 +431,13 @@
     "tests/unit/db01-tenant-domain-authorization.test.ts",
     "tests/integration/db01-concurrent-integrity.test.ts",
     "tests/integration/db01-tenant-routing-lifecycle.test.ts",
-    "tests/db01-no-target-disposition-queue.test.mjs"
+    "tests/db01-no-target-disposition-queue.test.mjs",
+    "tests/db01-identity-security-settings-contract.test.mjs",
+    "tests/db01-auth-78-source-crosswalk.test.mjs"
   ],
   "lastExecutedPassingTests": [
-    "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)"
+    "node --test tests/db01-test-database-guard.test.mjs (8/8 PASS independent Node v22, SHA-matched files; not PostgreSQL)",
+    "tests/db01-identity-security-settings-contract.test.mjs: 16/16 PASS Node 22.16.0 isolated repo-byte-matched fixtures with synthetic seven-key source-registry projection"
   ],
   "blockers": [
     "Separate verification gap (not GitHub Actions): disposable PostgreSQL not available in this runner for DB01 migration replay and 14 authored integration witnesses.",
@@ -399,7 +454,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DB-004 still IN_PROGRESS; resolve DB01 migration integration and cross-domain descendant guard coordination; execute isolated PostgreSQL two-session races and complete actual full-schema migration replay. Other existing DB01 source-field and auth/session gaps remain open.",
+  "nextAction": "DATABASE DB-004 remains IN_PROGRESS: typed seven-key security settings policy source verified with local Node 16/16; 78 auth/tenant no-target fields mapped to 55 staged / 19 open / 4 normalized. Await provider decisions, Chat 1 migration registration and independently executed PostgreSQL acceptance, not GitHub Actions billing.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -481,7 +536,11 @@
     "https://github.com/42Students/lms-vnext/commit/5f12dd05bd8425fda514302decfb4788da8fe4b4",
     "https://github.com/42Students/lms-vnext/commit/4a2ffda0a6f2ffe32f76ec44a747bacc97512838",
     "https://github.com/42Students/lms-vnext/commit/7750c2bbc51d2390c7343493ce32e07302dcae75",
-    "https://github.com/42Students/lms-vnext/commit/32eec78a241b782048535fe94d1833ef53f9640c"
+    "https://github.com/42Students/lms-vnext/commit/32eec78a241b782048535fe94d1833ef53f9640c",
+    "https://github.com/42Students/lms-vnext/commit/8371bfaba1fdf029087faf074dc2b2385aae9559",
+    "https://github.com/42Students/lms-vnext/commit/f5ca3369fc107125187ba73e524901b73908df18",
+    "https://github.com/42Students/lms-vnext/commit/f1a31e14a33f35b91b9d41a1aca3e4075a713a14",
+    "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107170040"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
