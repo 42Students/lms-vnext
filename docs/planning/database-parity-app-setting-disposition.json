@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-033",
+  "domain": "CROSS_DOMAIN_APP_SETTING_DISPOSITION",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "status": "KNOWN_CODE_KEYS_SOURCE_DISPOSITIONED_UNKNOWN_DYNAMIC_KEYS_UNRESOLVED",
+  "warning": "This registry covers source-active keys explicitly evidenced in the reviewed pinned service/controller/provider paths. TenantAdminController can persist arbitrary non-module keys at GLOBAL/ORGANIZATION/COLLEGE scopes, so this is not proof that no other legacy row/key can exist. vNext is greenfield/no data migration; unknown arbitrary-key parity needs an explicit typed-registry product decision, not silent module_access_rules mapping.",
+  "counts": {
+    "reviewedKeys": 25,
+    "routeDb01": 7,
+    "routeDb05": 1,
+    "routeDb08": 1,
+    "routeDb10": 8,
+    "moduleAccess": 6,
+    "sourceRetired": 2
+  },
+  "arbitraryKeySurface": {
+    "source": "TenantAdminController",
+    "writableScopes": [
+      "GLOBAL",
+      "ORGANIZATION",
+      "COLLEGE"
+    ],
+    "behavior": "Super-admin can PUT/DELETE arbitrary non-module keys; module keys are rejected and must use dedicated controls.",
+    "disposition": "REDESIGN_REQUIRED_TYPED_KEY_REGISTRY",
+    "rationale": "Do not recreate unrestricted cross-domain string K/V persistence merely for physical-schema parity. Each supported key needs owner, type, range, visibility, secret classification and scope."
+  },
+  "entries": [
+    {
+      "key": "baseDomain",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "STRING",
+      "domain": "DB01",
+      "disposition": "ROUTE_DB01",
+      "canonicalTarget": "tenant-domain/platform host policy",
+      "evidence": "getBaseDomain()",
+      "notes": "Do not map to module_access_rules."
+    },
+    {
+      "key": "globalHost",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "STRING",
+      "domain": "DB01",
+      "disposition": "ROUTE_DB01",
+      "canonicalTarget": "tenant-domain/global host policy",
+      "evidence": "getGlobalHost()",
+      "notes": "May ultimately be deployment config; owner must decide."
+    },
+    {
+      "key": "cookieDomain",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "STRING",
+      "domain": "DB01",
+      "disposition": "ROUTE_DB01",
+      "canonicalTarget": "auth/cookie deployment policy",
+      "evidence": "getCookieDomain()",
+      "notes": "Security-sensitive; never expose through client-settings."
+    },
+    {
+      "key": "cookieSameSite",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "STRING",
+      "domain": "DB01",
+      "disposition": "ROUTE_DB01",
+      "canonicalTarget": "auth/cookie deployment policy",
+      "evidence": "getCookieSameSite()",
+      "notes": "Default Lax in source."
+    },
+    {
+      "key": "otp.maxAttempts",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB01",
+      "disposition": "ROUTE_DB01",
+      "canonicalTarget": "authentication attempt policy",
+      "evidence": "getOtpMaxAttempts()",
+      "notes": "Security control."
+    },
+    {
+      "key": "otp.windowSeconds",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB01",
+      "disposition": "ROUTE_DB01",
+      "canonicalTarget": "authentication attempt policy",
+      "evidence": "getOtpWindowSeconds()",
+      "notes": "Security control."
+    },
+    {
+      "key": "ops.identityMaxJsonSize",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB01",
+      "disposition": "ROUTE_DB01",
+      "canonicalTarget": "identity request-size policy",
+      "evidence": "getIdentityMaxJsonSize()",
+      "notes": "Security/abuse limit."
+    },
+    {
+      "key": "ops.bulkStatusMax",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB10",
+      "disposition": "ROUTE_DB10",
+      "canonicalTarget": "shared operational runtime limits",
+      "evidence": "getBulkStatusMax()",
+      "notes": "Platform operational limit, not module entitlement."
+    },
+    {
+      "key": "ops.progressBulkIdsMax",
+      "sourceOwner": "AppSettingsService",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB10",
+      "disposition": "ROUTE_DB10",
+      "canonicalTarget": "shared operational runtime limits",
+      "evidence": "getProgressBulkIdsMax(); LearnerContentProgressServiceImpl",
+      "notes": "Consumer is course progress, but semantic is platform batch-size tuning."
+    },
+    {
+      "key": "ui.chatPollIntervalMs",
+      "sourceOwner": "ClientSettingsController",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB10",
+      "disposition": "ROUTE_DB10",
+      "canonicalTarget": "public client runtime tuning registry",
+      "evidence": "GET /api/v1/client-settings",
+      "notes": "Whitelisted to signed-in clients; source floor 3000ms."
+    },
+    {
+      "key": "ui.progressSaveIntervalMs",
+      "sourceOwner": "ClientSettingsController",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB10",
+      "disposition": "ROUTE_DB10",
+      "canonicalTarget": "public client runtime tuning registry",
+      "evidence": "GET /api/v1/client-settings",
+      "notes": "Whitelisted to signed-in clients; source floor 5000ms."
+    },
+    {
+      "key": "course.watchedThresholdPercent",
+      "sourceOwner": "ClientSettingsController + LearnerContentProgressServiceImpl",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB05",
+      "disposition": "ROUTE_DB05",
+      "canonicalTarget": "course progress/completion policy",
+      "evidence": "client-settings + authoritative server isWatched threshold",
+      "notes": "Default 90; client and server must share one canonical value."
+    },
+    {
+      "key": "placement.applyRateLimitPerMinute",
+      "sourceOwner": "JobServiceImpl",
+      "scope": "GLOBAL",
+      "valueType": "INTEGER",
+      "domain": "DB08",
+      "disposition": "ROUTE_DB08",
+      "canonicalTarget": "placement application abuse/rate policy",
+      "evidence": "applyRateLimitPerMinute()",
+      "notes": "Legacy in-memory limiter is replica-local; API/RELEASE must redesign enforcement."
+    },
+    {
+      "key": "sms.senderId",
+      "sourceOwner": "BulkSmsAppsServiceImpl",
+      "scope": "GLOBAL",
+      "valueType": "STRING",
+      "domain": "DB10",
+      "disposition": "ROUTE_DB10",
+      "canonicalTarget": "SMS provider/DLT configuration registry or secret-safe deployment config",
+      "evidence": "senderId()",
+      "notes": "Operational sender identity; not a learner-visible setting."
+    },
+    {
+      "key": "sms.traiJobUpdateTemplate",
+      "sourceOwner": "BulkSmsAppsServiceImpl + ExotelSmsServiceImpl",
+      "scope": "GLOBAL",
+      "valueType": "STRING",
+      "domain": "DB10",
+      "disposition": "ROUTE_DB10",
+      "canonicalTarget": "SMS/DLT template configuration",
+      "evidence": "traiJobUpdateTemplate()/globalSetting()",
+      "notes": "Must exactly match registered TRAI template; never treat as arbitrary client text."
+    },
+    {
+      "key": "sms.exotel.jobUpdateDltTemplateId",
+      "sourceOwner": "ExotelSmsServiceImpl",
+      "scope": "GLOBAL",
+      "valueType": "STRING",
+      "domain": "DB10",
+      "disposition": "ROUTE_DB10",
+      "canonicalTarget": "SMS provider/DLT template configuration",
+      "evidence": "sendJobUpdateSms()",
+      "notes": "Missing value fails closed."
+    },
+    {
+      "key": "sms.exotel.notificationDltTemplateId",
+      "sourceOwner": "ExotelSmsServiceImpl",
+      "scope": "GLOBAL",
+      "valueType": "STRING",
+      "domain": "DB10",
+      "disposition": "ROUTE_DB10",
+      "canonicalTarget": "SMS provider/DLT template configuration",
+      "evidence": "sendNotification()",
+      "notes": "Missing value fails closed."
+    },
+    {
+      "key": "module.projects.enabled",
+      "sourceOwner": "ModuleFeatureCatalog",
+      "scope": "HIERARCHICAL",
+      "valueType": "BOOLEAN",
+      "domain": "PLATFORM",
+      "disposition": "MAP_MODULE_ACCESS_RULES",
+      "canonicalTarget": "module_access_rules(module='projects', enabled)",
+      "evidence": "ModuleFeatureCatalog",
+      "notes": "Dedicated feature controls, not generic settings."
+    },
+    {
+      "key": "module.projects.locked",
+      "sourceOwner": "ModuleFeatureCatalog",
+      "scope": "HIERARCHICAL",
+      "valueType": "BOOLEAN",
+      "domain": "PLATFORM",
+      "disposition": "MAP_MODULE_ACCESS_RULES",
+      "canonicalTarget": "module_access_rules(module='projects', locked)",
+      "evidence": "ModuleFeatureCatalog.lockKeyFor()",
+      "notes": "Lock authority must preserve hierarchy."
+    },
+    {
+      "key": "module.placements.enabled",
+      "sourceOwner": "ModuleFeatureCatalog",
+      "scope": "COLLEGE_ONLY",
+      "valueType": "BOOLEAN",
+      "domain": "PLATFORM",
+      "disposition": "MAP_MODULE_ACCESS_RULES",
+      "canonicalTarget": "module_access_rules(module='placements', enabled)",
+      "evidence": "ModuleFeatureCatalog",
+      "notes": "Paid module; default off; below-college levels ignored."
+    },
+    {
+      "key": "module.placements.locked",
+      "sourceOwner": "ModuleFeatureCatalog",
+      "scope": "COLLEGE_ONLY",
+      "valueType": "BOOLEAN",
+      "domain": "PLATFORM",
+      "disposition": "MAP_MODULE_ACCESS_RULES",
+      "canonicalTarget": "module_access_rules(module='placements', locked)",
+      "evidence": "ModuleFeatureCatalog.lockKeyFor()",
+      "notes": "Below-college decisions are ignored for placements."
+    },
+    {
+      "key": "module.electives.enabled",
+      "sourceOwner": "ModuleFeatureCatalog",
+      "scope": "HIERARCHICAL",
+      "valueType": "BOOLEAN",
+      "domain": "PLATFORM",
+      "disposition": "MAP_MODULE_ACCESS_RULES",
+      "canonicalTarget": "module_access_rules(module='electives', enabled)",
+      "evidence": "ModuleFeatureCatalog",
+      "notes": "Dedicated feature controls."
+    },
+    {
+      "key": "module.electives.locked",
+      "sourceOwner": "ModuleFeatureCatalog",
+      "scope": "HIERARCHICAL",
+      "valueType": "BOOLEAN",
+      "domain": "PLATFORM",
+      "disposition": "MAP_MODULE_ACCESS_RULES",
+      "canonicalTarget": "module_access_rules(module='electives', locked)",
+      "evidence": "ModuleFeatureCatalog.lockKeyFor()",
+      "notes": "Dedicated feature controls."
+    },
+    {
+      "key": "module.courses.enabled",
+      "sourceOwner": "AppSettingsService",
+      "scope": "HISTORICAL",
+      "valueType": "BOOLEAN",
+      "domain": "DB05",
+      "disposition": "SOURCE_RETIRED",
+      "canonicalTarget": null,
+      "evidence": "isRetiredCourseModuleSetting()",
+      "notes": "Current legacy code refuses reads/writes; courses are core."
+    },
+    {
+      "key": "module.courses.locked",
+      "sourceOwner": "AppSettingsService",
+      "scope": "HISTORICAL",
+      "valueType": "BOOLEAN",
+      "domain": "DB05",
+      "disposition": "SOURCE_RETIRED",
+      "canonicalTarget": null,
+      "evidence": "isRetiredCourseModuleSetting()",
+      "notes": "Current legacy code refuses reads/writes; courses are core."
+    }
+  ]
+}
