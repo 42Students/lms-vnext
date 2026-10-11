@@ -77,7 +77,7 @@ A new scheduled event now checks active faculty membership and `membership_roles
 | DB02-S03 immutable events and TRUNCATE | **STATICALLY MITIGATED / runtime open** | Canonical stage now adds `db02_cohort_progression_events_no_truncate` with a statement-level BEFORE TRUNCATE guard. Runtime role ownership/DDL privileges still need deployment verification. |
 | DB02-S04 explicit academic-year override | **DATABASE DEFAULT DEFINED / API producer open** | Cohort insert initializes July-boundary canonical year; DB02 API handoff explicitly requires create/update support for a supplied legacy year override. This is API-phase work after database registration. |
 | DB02-S05 NOT NULL offering term replay | **OPEN RUNTIME GATE** | `course_offerings.program_term_id NOT NULL` is valid for the agreed greenfield zero-to-current path. A non-empty vNext dev DB must be reset or use a reviewed staged transition; no legacy production backfill is required. Disposable replay is still mandatory. |
-| DB02-S06 parent/reassignment tenant drift | **PROPOSED MITIGATION / integration + runtime open** | Canonical stage locks/guards core academic parents; `db02-academic-parent-enrollment-tenant-guards.draft.sql` adds learner/section/faculty parent history protections. Chat 1 must deconflict/register it with DB01/DB03 before PostgreSQL proof. |
+| DB02-S06 parent/reassignment tenant drift | **CONSOLIDATED STATIC MITIGATION / runtime open** | Learner/section/faculty parent guards, identity immutability and SHARE-lock serialization now live in the single canonical DB02 staging SQL. Historic offering/delivery/event parent guards are consolidated there too. Chat 1 still must reconcile/register with DB01/DB03 and prove them on PostgreSQL. |
 | DB02-S07 faculty de-role/suspension lifecycle | **STATICALLY MITIGATED / runtime open** | Role removal or membership non-ACTIVE closes broad/course/section assignments and unassigns future SCHEDULED events without rewriting past attribution. Acceptance harness covers no auto-reactivation. |
 | DB02-S08 PostgreSQL exclusion/replay/concurrency | **OPEN RUNTIME GATE** | Static contract checks are strong, but `btree_gist`, exclusion constraints, replay, promotion CAS and two-session races remain unexecuted until a disposable PostgreSQL runner exists. CI billing is not treated as a work blocker; no PASS is claimed. |
 
@@ -85,17 +85,13 @@ A new scheduled event now checks active faculty membership and `membership_roles
 
 The current staging has one definition for every DB02-created table/function/trigger inspected, paired PL/pgSQL `$` bodies, a stable `course_offerings.program_term_id`, a distinct broad `faculty_course_associations` pool, cohort/class compatibility fields, lecture-hall identity, and three half-open GiST overlap exclusions. The single-session acceptance harness covers tenant scope, program terms, CORE/ELECTIVE rules, zero credits, batch counts, class bounds/dates, learner parent history, progression corrections/promotions, faculty lifecycle, room archive/cancellation, and overlap behavior. These checks improve registration readiness but are **not PostgreSQL execution evidence**.
 
-## Follow-up: isolated parent/learner tenant guard proposal
+## Follow-up: parent/learner tenant and history guards are consolidated
 
-**Draft committed:** `scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql`  
-**Authored source test:** `tests/db02-academic-parent-tenancy-contract.test.mjs` (10 test cases).  
-**Source execution:** 12/12 independent read-only structure checks passed against current draft blob. **No Node project test runner or PostgreSQL session executed.**
+The former standalone parent/enrollment draft has been merged into `scripts/sql/db02-academic-progression-and-rooms-staging.sql` and deleted. `tests/db02-academic-parent-tenancy-contract.test.mjs` now reads only the canonical stage.
 
-This draft proposes a bounded remedy for **DB02-S06** without editing Chat 1's shared migration journal or colliding with simultaneous canonical staging changes. It forbids cross-college parent reparenting, permits same-college program/course department reassignment, enforces cohort/period/learner/faculty tenant relations with role checks, and protects source section-history identities. A generic `FOR SHARE` section parent-lock trigger is attached to learner enrollment, faculty assignment, course delivery and schedule event writes. Those locks are intended to conflict with concurrent `NO KEY UPDATE` section reparenting.
+Current static contract includes college-owner immutability, cohort/program-term identity, learner tenant/role scope, section-enrollment cohort/period scope, learner role/end lifecycle cleanup, section-history reparent protection, and SHARE-lock serialization. Historic offering/delivery/event parent immutability and attendance locks are also canonical.
 
-**DB02-S06 disposition: PROPOSED MITIGATION / NOT ACCEPTED.** Chat 1 must reconcile with existing DB01 and DB03 parent triggers, register an approved migration and run disposable PostgreSQL direct-SQL and concurrent writer tests. Broader cross-organization `colleges.organization_id` ownership remains a DB01 responsibility. Membership suspension/role revocation after historical assignments, and the controlled legacy class-with-roster transfer workflow, remain separate behavioral decisions.
-
-Do not count the 10 authored source tests or 12 static source checks as PostgreSQL runtime acceptance. DB-005 and the DATABASE global phase remain IN_PROGRESS.
+**Static/source evidence only. No Node test execution or PostgreSQL acceptance is claimed.**
 
 ## Follow-up: timestamp resurrection, progression identity, historical parent reassignment
 
@@ -123,11 +119,11 @@ Link-time matching of course offering → delivery → event is insufficient if 
 
 Three new/update source contract test suites were reconciled after deletion of the superseded drafts:
 
-- `tests/db02-academic-parent-tenancy-contract.test.mjs` — 15 cases.
-- `tests/db02-schedule-progression-integrity-overlay.test.mjs` — 6 cases, now reads canonical.
+- `tests/db02-academic-parent-tenancy-contract.test.mjs` — 11 cases.
+- `tests/db02-schedule-progression-integrity-overlay.test.mjs` — 7 cases, reads canonical.
 - `tests/db02-historic-parent-reassignment-contract.test.mjs` — 7 cases, now reads canonical.
 - `tests/db02-staging-contract.test.mjs` — 12 cases.
 
-**40 authored source-test cases across these four files; 0 node:test runs and 0 PostgreSQL runs claimed by this continuation.** Static file-inspection checks found no stale references to the removed parent/enrollment, lifecycle overlay, or history-parent draft SQL paths. This is not substitute evidence for source tests actually executing.
+**37 authored source-test cases across these four files; 0 node:test runs and 0 PostgreSQL runs claimed by this continuation.** Static file-inspection checks found no stale references to the removed parent/enrollment, lifecycle overlay, or history-parent draft SQL paths. This is not substitute evidence for source tests actually executing.
 
 **Registration gate unchanged:** Chat 1 alone authors numbered Drizzle/schema-index integration and must run a full zero-to-current disposable PostgreSQL migration replay, all three rollback-only acceptance scripts, the two-session concurrency harness and tenant/history negative tests. The new history-parent lock ordering needs race/deadlock evaluation before certification; other DB domain triggers may interact. No DB02 field can be marked runtime-verified on static source proof alone.
