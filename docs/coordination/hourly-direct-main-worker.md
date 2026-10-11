@@ -32,3 +32,9 @@ Two preexisting review PRs were consolidated **once**: [#79](https://github.com/
 - A new `tests/db10-draft-schema-parser.test.mjs` guard inventories and parses all staged DB10 Drizzle files without registering migrations.
 
 **Verification caution:** The above source and authored guard changes do not claim a fresh migration replay, PostgreSQL negative tests, production sender, or global phase completion.
+
+## Additional read-only global-phase evidence check (2026-10-12)
+
+Alongside the existing \`node scripts/db065-database-phase-gate.mjs\` six-worker claim validator, run \`node scripts/db066-transition-evidence.mjs\` from the current checkout when Node is available. DB-066 is an independent, read-only companion with 12 executed local Node tests; it flags (a) future-phase task entries inside the active-phase queue, (b) \`RETIRED_APPROVED\` without explicit and traceable USER approval, (c) \`DONE_VERIFIED\` backed only by authored/failing/noncommand evidence, and (d) missing executed passing evidence for every named prior-phase gate. Details: [DB-066 evidence review](../planning/db066-phase-transition-evidence-review.md).
+
+Both guard CLIs are *structural and metadata checks*, **not PostgreSQL acceptance or authorization to promote DATABASE**. Do not adjust any worker's status just to silence a finding: document it with source evidence, reconcile with the owning worker, and keep working on non-overlapping active-phase engineering. If a test runner is inaccessible, record NOT_RUN, never PASSED.
