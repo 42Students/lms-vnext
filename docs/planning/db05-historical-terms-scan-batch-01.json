@@ -1,0 +1,114 @@
+{
+  "task": "DB-008",
+  "ref": "prod-2026",
+  "bounded": true,
+  "terms": [
+    "default_subscription_days",
+    "defaultSubscriptionDays",
+    "formal_title",
+    "formalTitle"
+  ],
+  "backendCandidateCount": 207,
+  "frontendCandidateCount": 175,
+  "batch": "BE0-7_FE0-5",
+  "files": [
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/access/ResolvedLearnerScope.java",
+      "sha": "b0f488507ca50b8d4311990951a26c549580f749",
+      "bytes": 1128,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/config/CourseSlugBackfiller.java",
+      "sha": "fa5b96e19976559f2bc2ef1cf7fc41daabe56db8",
+      "bytes": 2106,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/configuration/CourseMutationRateLimitFilter.java",
+      "sha": "2ba5503313925d28bf1827d081cb9908071b837c",
+      "bytes": 3710,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java",
+      "sha": "bf69d7c1ba592b9e85e60ee20b1fd0cf441fdd6f",
+      "bytes": 7567,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/AdminCourseProgressController.java",
+      "sha": "e27706d60f3b07d736d4c258a7a80412d87d5c08",
+      "bytes": 11028,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/AdminLearnerProgressController.java",
+      "sha": "afaf76ae91412cb54628eefd23e9989f7ffb0f7b",
+      "bytes": 6612,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/AdminLessonBulkController.java",
+      "sha": "0e2c1b1b6b84d4fce76b52a5aaec801155ecfb09",
+      "bytes": 6982,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms",
+      "path": "src/main/java/com/_42students/lms/controller/BatchController.java",
+      "sha": "1c20a94efa663608772385e6b56f0017b078f2b9",
+      "bytes": 18646,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/academicMarks.test.jsx",
+      "sha": "e4eae82757674d60c3d9ae03f78dc082054a6457",
+      "bytes": 5136,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/batchManagementHardening.test.js",
+      "sha": "21be8f0b63ba069f3de5b70a3c73045189e3d2f5",
+      "bytes": 2393,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/batchPromotion.test.jsx",
+      "sha": "b2f1624c540dc22733a330f2b7c1984da0236f2a",
+      "bytes": 4207,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/coreCourseAvailability.test.jsx",
+      "sha": "3d3f697c86668e1926526270f4ec6b98631a42b9",
+      "bytes": 4208,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/courseHttpForbiddenRegression.test.js",
+      "sha": "8df8f53e0c217b90a03786f05397ecc69ca67217",
+      "bytes": 1310,
+      "matches": []
+    },
+    {
+      "repo": "42Students/lms2-fe",
+      "path": "src/__tests__/courseListing403RequestConfig.test.js",
+      "sha": "79edce20af8b4886a27c3a59bfa03d80fb957e80",
+      "bytes": 1390,
+      "matches": []
+    }
+  ]
+}
