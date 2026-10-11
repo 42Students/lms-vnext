@@ -3,9 +3,10 @@
   "task": "DB-018",
   "status": "AUTHORED_EXECUTION_NOT_RUN",
   "safety": {
-    "database": "TEST_DATABASE_URL preferred; DATABASE_URL fallback remains subject to DB-025 destructive-target guard when reset tooling is used",
-    "fixtures": "New direct SQL witnesses use BEGIN/ROLLBACK and create only per-test rows",
-    "ciPolicy": "GitHub Actions billing is not an execution dependency or blocker; independent disposable PostgreSQL evidence is still required"
+    "database": "Mutation/race witnesses require explicit TEST_DATABASE_URL plus DB018_ISOLATED_TEST_DATABASE=1 or DB03_ISOLATED_TEST_DATABASE=1; no DATABASE_URL fallback.",
+    "fixtures": "Direct negative tests are rollback-only; concurrency/race tests create isolated UUID fixtures and clean them. The independent verifier provisions/resets the disposable database before execution.",
+    "ciPolicy": "GitHub Actions billing is not an execution dependency or blocker; independent disposable PostgreSQL evidence is still required",
+    "serviceBackedRaces": "Service-backed P5-R01/P5-R02 additionally require DATABASE_URL === TEST_DATABASE_URL so getDb() and raw pg clients cannot target different databases."
   },
   "directNegativeWitnesses": [
     {
