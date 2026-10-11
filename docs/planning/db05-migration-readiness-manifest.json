@@ -288,7 +288,7 @@
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UNIQUE_PER_LESSON",
       "status": "BLOCKED",
       "owner": "DB05_W01_W02",
-      "evidence": "CANONICAL staged source-only SQL scripts/sql/db05-content-delivery-order-unique.draft.sql adds witnessed lesson_id, pair FK and DEFERRABLE UNIQUE(delivery_id,lesson_id,sequence). vNext writer/schema include lessonId. Integration requires actual PostgreSQL duplicate, wrong-lesson, deferrability, multi-lesson, reparent and concurrent tests. NOT RUN, BLOCKED."
+      "evidence": "Canonical unique lesson candidate is still UNREGISTERED and NOT EXECUTED. db05-migration-readiness.mjs now requires an explicit matching uniqueLessonProof object with registered=true, postgresExecuted=true, readyForProduction=true, plus nested ancestor/tenant guards. Static source shape alone never unlocks migration."
     },
     {
       "id": "COURSE_CONTENT_DELIVERY_ORDER_UPSTREAM_REPARENT_INTEGRITY",
@@ -580,6 +580,14 @@
           "race and deadlock replay"
         ],
         "note": "Requires shared child/ancestor advisory lock and READ COMMITTED. Draft unregistered, PG acceptance NOT RUN."
+      },
+      "uniqueLessonProof": {
+        "path": "scripts/sql/db05-content-delivery-order-unique.draft.sql",
+        "registered": false,
+        "postgresExecuted": false,
+        "readyForProduction": false,
+        "sourceReviewOnly": true,
+        "note": "W01 must explicitly record integrated deferrable UNIQUE + composite FK and executed PG duplicate/role/tenant/race proof before source readiness can pass."
       }
     },
     {
