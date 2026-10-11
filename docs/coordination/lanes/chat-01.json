@@ -12,13 +12,13 @@
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB052_QUIZ_LIFECYCLE_SOURCE_HARDENED",
+    "checkpointKind": "DB053_PRIVATE_RECEIPT_SOURCE_COMPLETED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "98e0911a06ec009d861309a539db2c9169ce91bf",
-    "lastWorkerMergedSha": "98e0911a06ec009d861309a539db2c9169ce91bf",
+    "observedMainSha": "7031ccdec311564b5279d03aa23f7dc46db9260a",
+    "lastWorkerMergedSha": "7394e4579c3ba14be9c4bc75743df3d773ffb486",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-052 completed source staging and was post-completion hardened with database-managed lifecycle versions, ordered multi-step event chains and legacy create-with-publish compatibility. Current-main connector source reconciliation 49/49 true; Node/PG execution not claimed."
+    "summary": "DB-053 source-complete: 19/19 legacy receipt fields dispositioned, multi-file exact receipt/file evidence, scanner/revocation/retention/deletion state, strict revoker authority and deferred completeness staged. 73/73 connector source assertions true; no Node/PG/GCS execution claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -41,7 +41,8 @@
     "tests/db06-quiz-shuffle-staging.test.mjs",
     "tests/db06-assignment-attempt-staging.test.mjs",
     "tests/db41-history-schema-drift.test.mjs",
-    "tests/db06-quiz-lifecycle-staging.test.mjs"
+    "tests/db06-quiz-lifecycle-staging.test.mjs",
+    "tests/db06-assignment-upload-receipt-staging.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)",
@@ -51,7 +52,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Pick DB-053 private assignment upload receipt lifecycle hardening and reconcile source/staged persistence without journal registration.",
+  "nextAction": "Refresh shared DATABASE queue and claim next dependency-satisfied nonconflicting task. DB-053 remains COMPLETED awaiting migration/runtime/PostgreSQL/GCS verification.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -89,7 +90,8 @@
     "DB-045",
     "DB-048",
     "DB-051",
-    "DB-052"
+    "DB-052",
+    "DB-053"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -105,10 +107,11 @@
     "DB-045",
     "DB-048",
     "DB-051",
-    "DB-052"
+    "DB-052",
+    "DB-053"
   ],
-  "lastPickedAt": "2026-10-11T14:58:00.000Z",
-  "lastCompletedAt": "2026-10-11T14:26:18.196Z",
+  "lastPickedAt": "2026-10-11T14:27:47.324Z",
+  "lastCompletedAt": "2026-10-11T14:20:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
@@ -124,7 +127,8 @@
     "DB-045",
     "DB-048",
     "DB-051",
-    "DB-052"
+    "DB-052",
+    "DB-053"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
