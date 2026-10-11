@@ -5,14 +5,16 @@ import {
 } from "@/db/schema";
 
 /**
- * DB03 elective student eligibility. Legacy requires a valid primary program
- * enrollment in the SAME COLLEGE (not necessarily the slot's program) and a
- * valid primary section. Semester/year remain
- * a separate tracked DB02 contract: never pretend period equality proves it.
+ * DB03 elective student eligibility. The pinned executable legacy
+ * ElectiveService.classEligibilityError requires the learner's primary
+ * section/program to match the elective slot program. V167 contains older
+ * prose saying cross-program allocation may be allowed; runtime behavior wins
+ * for clone parity. Semester/year remain a separate DB02 contract: never
+ * pretend academic-period equality proves current term/year equivalence.
  */
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
-type Slot = { collegeId: string; academicPeriodId: string | null };
+type Slot = { collegeId: string; programId: string; academicPeriodId: string | null };
 
 export async function hasElectiveAcademicEligibility(
   tx: Tx,
@@ -30,9 +32,8 @@ export async function hasElectiveAcademicEligibility(
     .innerJoin(sections, eq(sections.id, sectionEnrollments.sectionId))
     .where(and(
       eq(learnerProgramEnrollments.membershipId, membershipId),
-      // Legacy electives permit learners from OTHER programs in the same
-      // college: the curriculum slot program is NOT an enrollment restriction.
       eq(departments.collegeId, slot.collegeId),
+      eq(learnerProgramEnrollments.programId, slot.programId),
       eq(learnerProgramEnrollments.status, "ACTIVE"),
       eq(sectionEnrollments.status, "ACTIVE"),
       eq(sections.status, "ACTIVE"),
