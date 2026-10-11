@@ -28,8 +28,8 @@ The verifier does **not** invoke GitHub Actions.
 A worker may provide an already isolated PostgreSQL database:
 
 ```bash
-TEST_DATABASE_URL='postgresql://user:password@127.0.0.1:5432/lms_vnext_verify' \
-DATABASE_URL='postgresql://user:password@127.0.0.1:5432/lms_vnext_verify' \
+TEST_DATABASE_URL='postgresql://user:password@127.0.0.1:5432/lms_vnext_test_verify' \
+DATABASE_URL='postgresql://user:password@127.0.0.1:5432/lms_vnext_test_verify' \
 npm run db:verify:independent
 ```
 
