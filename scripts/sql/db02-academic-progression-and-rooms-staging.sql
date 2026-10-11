@@ -704,6 +704,60 @@ ALTER TABLE section_schedule_events
   ) WHERE (status = 'SCHEDULED' AND lecture_hall_id IS NOT NULL);
 
 -- ---------------------------------------------------------------------------
+-- 3b) Course teaching assignment tenant/role integrity
+-- ---------------------------------------------------------------------------
+CREATE FUNCTION db02_guard_course_teaching_assignment_scope()
+RETURNS trigger LANGUAGE plpgsql AS $
+DECLARE
+  delivery_college uuid;
+  membership_college uuid;
+BEGIN
+  SELECT d.college_id
+    INTO delivery_college
+    FROM course_section_deliveries csd
+    JOIN course_offerings co ON co.id = csd.offering_id
+    JOIN cohorts c ON c.id = co.cohort_id
+    JOIN programs p ON p.id = c.program_id
+    JOIN departments d ON d.id = p.department_id
+   WHERE csd.id = NEW.delivery_id;
+
+  SELECT cm.college_id
+    INTO membership_college
+    FROM college_memberships cm
+   WHERE cm.id = NEW.membership_id
+     AND cm.status = 'ACTIVE'
+   FOR SHARE;
+
+  IF delivery_college IS NULL OR membership_college IS NULL THEN
+    RAISE EXCEPTION 'Unknown delivery or inactive faculty membership'
+      USING ERRCODE = '23503';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+      FROM membership_roles mr
+     WHERE mr.membership_id = NEW.membership_id
+       AND mr.role = 'FACULTY'
+  ) THEN
+    RAISE EXCEPTION 'Course teaching assignment requires FACULTY role'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF delivery_college <> membership_college THEN
+    RAISE EXCEPTION 'Course teaching assignment must stay within one college'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$;
+
+CREATE TRIGGER db02_course_teaching_assignment_scope_guard
+BEFORE INSERT OR UPDATE OF delivery_id, membership_id
+ON course_teaching_assignments
+FOR EACH ROW EXECUTE FUNCTION db02_guard_course_teaching_assignment_scope();
+
+-- ---------------------------------------------------------------------------
 -- 4) Broad faculty-course association pool
 -- ---------------------------------------------------------------------------
 -- Distinct from course_teaching_assignments: legacy admins can associate faculty with a
@@ -794,6 +848,18 @@ BEGIN
            updated_at = now()
      WHERE membership_id = OLD.membership_id
        AND ended_at IS NULL;
+
+    UPDATE course_teaching_assignments
+       SET ended_at = COALESCE(ended_at, now()),
+           updated_at = now()
+     WHERE membership_id = OLD.membership_id
+       AND ended_at IS NULL;
+
+    UPDATE section_faculty_assignments
+       SET ended_at = COALESCE(ended_at, now()),
+           updated_at = now()
+     WHERE membership_id = OLD.membership_id
+       AND ended_at IS NULL;
   END IF;
   RETURN OLD;
 END;
@@ -808,6 +874,18 @@ RETURNS trigger LANGUAGE plpgsql AS $
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
     UPDATE faculty_course_associations
+       SET ended_at = COALESCE(ended_at, now()),
+           updated_at = now()
+     WHERE membership_id = NEW.id
+       AND ended_at IS NULL;
+
+    UPDATE course_teaching_assignments
+       SET ended_at = COALESCE(ended_at, now()),
+           updated_at = now()
+     WHERE membership_id = NEW.id
+       AND ended_at IS NULL;
+
+    UPDATE section_faculty_assignments
        SET ended_at = COALESCE(ended_at, now()),
            updated_at = now()
      WHERE membership_id = NEW.id
@@ -860,8 +938,10 @@ FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_course_arc
 -- 7. Verify a broad faculty-course association can exist before delivery, requires an ACTIVE
 --    FACULTY membership, rejects cross-college links, deactivates historically and cannot
 --    duplicate an active pair; removing FACULTY or suspending/ending the membership must close
---    active associations in the same transaction and must not auto-reactivate them later;
---    archiving the course must likewise close its active association pool.
+--    active associations and active course/section teaching assignments in the same transaction
+--    and must not auto-reactivate them later; archiving the course must likewise close its active
+--    broad association pool. Direct teaching-assignment inserts/updates must require an ACTIVE
+--    FACULTY membership in the delivery college.
 -- 8. Run concurrent promotion with same expected version: exactly one commit must win.
 -- 9. Verify backward/jump promotions fail, immutable history matches the winner, direct
 --    INSERT/UPDATE/DELETE/TRUNCATE of progression events fails, and user deletion only nulls
