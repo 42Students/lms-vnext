@@ -25,8 +25,11 @@ export function reconcileDb01Triage(inventory, triage, { inventoryBlobSha = null
     runtimeVerified: 0, sourceActivenessStatuses: statuses, categories };
   if (triage?.sourceInventory?.path !== INVENTORY_PATH)
     errors.push({code:"SOURCE_PATH_DRIFT"});
-  if (!validString(triage?.sourceInventory?.blobSha) ||
-      inventoryBlobSha !== null && triage.sourceInventory.blobSha !== inventoryBlobSha)
+  // An omitted hash is NOT authorization to skip the immutable source
+  // proof. Callers must supply the exact Git blob digest from raw bytes.
+  if (!/^[a-f0-9]{40}$/i.test(inventoryBlobSha || "") ||
+      !validString(triage?.sourceInventory?.blobSha) ||
+      triage.sourceInventory.blobSha !== inventoryBlobSha)
     errors.push({code:"PINNED_INVENTORY_BLOB_DRIFT"});
   if (triage?.sourceInventory?.legacyBackendSha !== inventory?.sourceSha)
     errors.push({code:"LEGACY_ORACLE_DRIFT"});
