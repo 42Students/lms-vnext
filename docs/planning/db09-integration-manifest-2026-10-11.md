@@ -104,16 +104,19 @@ The legacy `tpo_user_prefs.prefs_json` also has a closed key set and is now
 normalized to five required booleans in `placement_tpo_user_preferences`:
 `morning_digest` defaults false; `recruiter_messages`, `requests`,
 `results_ready` and `follow_ups` default true. The college/user composite
-primary key remains in force. The legacy personal preferences have active
-GET/PUT persistence, but source evidence does **not** establish delivery-side
-consumption.
+primary key remains in force. The legacy personal preferences have active backend GET/PUT persistence and
+matching frozen frontend service functions, but direct inspection of the
+frozen TPO settings/notifications/profile pages did **not** prove a rendered
+consumer. Source evidence also does **not** establish delivery-side consumption.
 
 **DB-036 canonical structural authority:** `src/db/schema/tpo-collaboration.ts`
 plus [source contract](db09-notification-preferences-normalization-2026-10-11.md)
 and `tests/db09-notification-preferences-normalization.test.mjs`.
-The four college settings switches actively govern six optional outbox event
-types. The API wave must map old camelCase JSON response keys to typed DB
-columns and preserve partial per-key updates. Do not add the two removed JSON
+The four college settings switches actively govern six optional **external**
+outbox deliveries while the APP notice remains present; the frozen TPO Settings
+page states this explicitly. The API wave must map old camelCase JSON response
+keys to typed DB columns, preserve partial per-key updates, and must not turn an
+email switch into an in-app visibility switch. Do not add the two removed JSON
 columns as parallel write paths. These structural changes are NOT registered
 migrations or executed PostgreSQL tests.
 
