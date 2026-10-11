@@ -181,8 +181,11 @@ export function auditCheckout(root) {
   const db00Disposition = fs.existsSync(decisionPath)
     ? JSON.parse(fs.readFileSync(decisionPath, 'utf8')) : null;
   const triagePath = path.join(root, 'docs/planning/db01-chat02-312-field-source-triage.json');
-  const db01Triage = fs.existsSync(triagePath)
-    ? JSON.parse(fs.readFileSync(triagePath, 'utf8')) : null;
+  // This source oracle was committed by DB004 and is now a mandatory global
+  // reconciliation input. A missing file cannot silently report PASS.
+  if (!fs.existsSync(triagePath))
+    throw new Error('Missing mandatory DB01 source triage: ' + triagePath);
+  const db01Triage = JSON.parse(fs.readFileSync(triagePath, 'utf8'));
   const db01LedgerPath = path.join(root, 'docs/planning/db-pass4-columns-db01_identity_and_tenancy.json');
   const db01InventoryBlobSha = fs.existsSync(db01LedgerPath)
     ? gitBlobSha(fs.readFileSync(db01LedgerPath)) : null;
