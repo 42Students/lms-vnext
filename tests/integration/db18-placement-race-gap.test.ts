@@ -6,19 +6,24 @@ import type { RequestContext } from "@/modules/identity/context";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!databaseUrl) {
-  throw new Error("DB-018 placement race witness requires TEST_DATABASE_URL or DATABASE_URL");
-}
-
-const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+const databaseUrl = process.env.TEST_DATABASE_URL;
+const explicitlyIsolated =
+  process.env.DB018_ISOLATED_TEST_DATABASE === "1" ||
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+const serviceTargetMatches = process.env.DATABASE_URL === databaseUrl;
+const enabled = Boolean(databaseUrl) && explicitlyIsolated && serviceTargetMatches;
+const pool = new Pool({
+  connectionString:
+    databaseUrl ?? "postgresql://disabled:disabled@127.0.0.1:1/disabled",
+  max: 4,
+});
 
 afterAll(async () => {
   await pool.end();
   await closeDatabaseConnection();
 });
 
-describe("DB-054 placement application race regression", () => {
+describe.skipIf(!enabled)("DB-054 placement application race regression", () => {
   it("P5-R01 rejects placement application if paid access is revoked after precheck", async () => {
     const suffix = randomUUID().replaceAll("-", "").slice(0, 10);
     const collegeId = randomUUID();
