@@ -3005,6 +3005,42 @@
           "reason": "DB-051 localhost/proxy destructive reset ambiguity closed at source/no-network level; executable repository/PostgreSQL verification remains separate."
         }
       ]
+    },
+    {
+      "id": "DB-052",
+      "phase": "DATABASE",
+      "title": "Stage DB06 quiz lifecycle and result-publication audit history",
+      "scope": "Source-only persistence follow-up: stage immutable course_quiz lifecycle/result-visibility events with actor/tenant attribution; enforce direct-SQL lifecycle transitions and result-publication state rules; require same-transaction event completeness for status/results_published mutations. No journal registration or API cutover.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/db06-quiz-lifecycle-staged.ts",
+        "docs/planning/sql/db06-quiz-lifecycle-history-candidate.sql",
+        "docs/planning/database-parity-db06-quiz-lifecycle-contract.md",
+        "tests/db06-quiz-lifecycle-staging.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Fresh DB06 persistence gap: course_quizzes.status/results_published are active lifecycle fields, current service mutates them, legacy emits quiz audit actions, but vNext has no immutable lifecycle actor/history table or DB state-machine enforcement."
+        }
+      ]
     }
   ],
   "eventModel": {
