@@ -7,19 +7,19 @@
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
   "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-042",
+  "activeTaskId": null,
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB042_ATTENDANCE_INTEGRITY_STARTED",
+    "checkpointKind": "CHAT03_MAIN_BRANCH_RECONCILIATION_AUDITED_WITH_SAFE_DIRECT_MAIN_FIXES",
     "updatedOn": "2026-10-11",
     "observedMainSha": "325c5303efcc6599bdf4ecb49d8644f670b3c541",
-    "lastWorkerMergedSha": "325c5303efcc6599bdf4ecb49d8644f670b3c541",
+    "lastWorkerMergedSha": "31f147f5ec7ae0ae7159374f6e8d867b67a26a46",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-042 IN_PROGRESS. Chat 3 is reconciling current-row attendance tenant/roster/marker integrity; no journal registration or PostgreSQL verification claimed."
+    "summary": "Audited all 8 chat3-db09 branches and open PRs. Seven branches are fully in main ancestry; sole diverged chat3-db09-drive-group-integrity branch has five historical commits. Safe missing creator/PLpgSQL fixes and regression tests ported directly to main; did NOT force-merge stale branch. Three affected exact test callbacks passed in isolated JS source evaluator, Node/PostgreSQL NOT executed; DB007/012 still acceptance blocked, global DATABASE active."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -56,7 +56,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Map legacy attendance source and current vNext persistence, then stage same-college/roster/marker/start-time invariants plus negative regression definitions without touching drizzle/**.",
+  "nextAction": "After this branch audit, resume the currently eligible DATABASE queue task. Do not force-merge historical chat3-db09-drive-group-integrity; source design has been reconciled on main, but independent PostgreSQL and API wave acceptance remain. Only Chat 1 may register/modify shared Drizzle migration journal and barrel.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -152,7 +152,10 @@
     "https://github.com/42Students/lms-vnext/blob/main/tests/db09-notification-preferences-normalization.test.mjs",
     "https://github.com/42Students/lms-vnext/commit/6a0785ae369ec1e404194494698fe3c37877b6c7",
     "https://github.com/42Students/lms-vnext/commit/d101e659ed41a43699a78be93417c3217f890a28",
-    "https://github.com/42Students/lms-vnext/commit/3180f169960d2b90af69f46cda45df22df26f7e3"
+    "https://github.com/42Students/lms-vnext/commit/3180f169960d2b90af69f46cda45df22df26f7e3",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/chat03-main-merge-reconciliation-2026-10-11.md",
+    "https://github.com/42Students/lms-vnext/commit/aa83c3f050a62db887fad6dd8d23c64d792be41e",
+    "https://github.com/42Students/lms-vnext/commit/a7eb6f584250ebf66fa063d48bd32bfbcc32101b"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
