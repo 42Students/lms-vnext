@@ -1465,17 +1465,17 @@
         "src/modules/electives/service.ts",
         "tests/integration/groups-db03.test.ts"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "3dcf5b167cf3324af5621ceb3b20249ad42ac78d",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Resolved the DB03 cross-program oracle conflict in favor of pinned executable legacy ElectiveService behavior. Current main enforces slot-program equality for learner join/move/read and backed-delivery cohort program; contradictory positive regression is absent. Added canonical decision doc and an admin-move transfer regression proving atomic rejection. Fresh source matrix passed 9/9 in connector inspection. PostgreSQL/runtime verification is still pending; DB02 owns current semester/year semantics and Chat 1 owns SQL-trigger/migration enforcement.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T11:00:00+05:30",
       "startedAt": "2026-10-11T11:01:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T13:13:00+05:30",
+      "completionCommitSha": "3dcf5b167cf3324af5621ceb3b20249ad42ac78d",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1504,6 +1504,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11",
           "reason": "Scope expanded non-conflictingly after source recheck confirmed legacy createOffering materializes backed class in slot program while current vNext backed-delivery validation omits cohort-program equality."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T13:13:00+05:30",
+          "reason": "Executable-oracle reconciliation is present on main, canonical decision documented, cross-program join/read/offering/admin-move regressions authored, stale PR #55 closed as superseded. Runtime DB proof remains downstream."
         }
       ]
     },
