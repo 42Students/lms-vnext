@@ -37,6 +37,9 @@ DECLARE
   cohort_start_date date;
   cohort_end_date date;
   has_cohort_end boolean;
+  course_status text;
+  cohort_status text;
+  period_status text;
 BEGIN
   IF current_setting('transaction_isolation') <> 'read committed' THEN
     RAISE EXCEPTION 'DB05 offering scope write requires READ COMMITTED'
@@ -53,7 +56,8 @@ BEGIN
          period.end_date,
          start_period.start_date,
          end_period.end_date,
-         cohort.expected_end_period_id IS NOT NULL
+         cohort.expected_end_period_id IS NOT NULL,
+         course_row.status::text, cohort.status::text, period.status::text
     INTO course_college_id,
          cohort_program_college_id,
          offering_period_college_id,
@@ -63,7 +67,8 @@ BEGIN
          current_period_end,
          cohort_start_date,
          cohort_end_date,
-         has_cohort_end
+         has_cohort_end,
+         course_status, cohort_status, period_status
   FROM courses course_row
   JOIN departments course_department ON course_department.id = course_row.department_id
   CROSS JOIN cohorts cohort
@@ -97,6 +102,18 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
+  -- The runtime createOffering path enforces ACTIVE course, PLANNED/ACTIVE
+  -- cohort and non-CLOSED period. Only apply this create-time restriction to
+  -- INSERT; historical offerings must survive later graduation/closure.
+  IF TG_OP = 'INSERT' AND (
+      course_status IS DISTINCT FROM 'ACTIVE'
+      OR cohort_status NOT IN ('PLANNED', 'ACTIVE')
+      OR period_status IS DISTINCT FROM 'PLANNED' AND period_status IS DISTINCT FROM 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'DB05 new course offering references inactive scope'
+      USING ERRCODE = '23514';
+  END IF;
+
   RETURN NEW;
 END;
 $db05_offering_scope$;
@@ -117,6 +134,9 @@ DECLARE
   section_period_id uuid;
   section_period_college_id uuid;
   section_program_college_id uuid;
+  offering_status text;
+  section_status text;
+  course_status text;
 BEGIN
   IF current_setting('transaction_isolation') <> 'read committed' THEN
     RAISE EXCEPTION 'DB05 delivery scope write requires READ COMMITTED'
@@ -125,9 +145,11 @@ BEGIN
   PERFORM pg_advisory_xact_lock(605008003::bigint);
 
   SELECT offering.cohort_id, offering.academic_period_id,
-         course_department.college_id, offering_period.college_id
+         course_department.college_id, offering_period.college_id,
+         offering.status::text, course_row.status::text
     INTO offering_cohort_id, offering_period_id,
-         offering_course_college_id, offering_period_college_id
+         offering_course_college_id, offering_period_college_id,
+         offering_status, course_status
   FROM course_offerings offering
   JOIN courses course_row ON course_row.id = offering.course_id
   JOIN departments course_department ON course_department.id = course_row.department_id
@@ -135,9 +157,11 @@ BEGIN
   WHERE offering.id = NEW.offering_id;
 
   SELECT section_row.cohort_id, section_row.academic_period_id,
-         section_period.college_id, program_department.college_id
+         section_period.college_id, program_department.college_id,
+         section_row.status::text
     INTO section_cohort_id, section_period_id,
-         section_period_college_id, section_program_college_id
+         section_period_college_id, section_program_college_id,
+         section_status
   FROM sections section_row
   JOIN academic_periods section_period ON section_period.id = section_row.academic_period_id
   JOIN cohorts cohort ON cohort.id = section_row.cohort_id
@@ -156,6 +180,18 @@ BEGIN
      OR offering_course_college_id IS DISTINCT FROM section_program_college_id
   THEN
     RAISE EXCEPTION 'DB05 delivery offering/section cohort/period/college mismatch'
+      USING ERRCODE = '23514';
+  END IF;
+
+  -- The runtime createDelivery path refuses archived offerings/courses and
+  -- non-ACTIVE sections. Historical delivery rows remain queryable after
+  -- a section is archived; this state guard applies to new INSERT only.
+  IF TG_OP = 'INSERT' AND (
+      offering_status IS DISTINCT FROM 'ACTIVE'
+      OR course_status IS DISTINCT FROM 'ACTIVE'
+      OR section_status IS DISTINCT FROM 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'DB05 new section delivery requires active course/offering/section'
       USING ERRCODE = '23514';
   END IF;
 
@@ -186,4 +222,7 @@ COMMIT;
 -- 12. Two-session offering/delivery insert-vs-parent-move under READ COMMITTED
 --     and consistency of advisory key 605008003, deadlock lock ordering,
 --     concurrent archive/delete/restore and migration rollback.
--- 13. Integrate exactly once; no numbered migration/trigger duplication.
+-- 13. Inactive/archived course, closed period or completed cohort cannot
+--     RECEIVE A NEW offering; archived offering/section cannot RECEIVE A
+--     NEW delivery. Historic rows remain after lifecycle transitions.
+-- 14. Integrate exactly once; no numbered migration/trigger duplication.
