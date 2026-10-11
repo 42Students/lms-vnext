@@ -1745,6 +1745,51 @@
         "Staged draft unregistered; Chat 1 owns numbered Drizzle migration. Must resolve parent-reparent/cross-writer concurrency and run 16 real PostgreSQL witnesses before completion/verification."
       ],
       "completionNote": null
+    },
+    {
+      "id": "DB-031",
+      "phase": "DATABASE",
+      "title": "Stage DB10 privacy-safe SMS provider attempt ledger",
+      "scope": "Preserve active legacy sms_delivery_log support semantics for OTP, attendance/notification and job-update sends without duplicating the outbound command queue: append-only provider-attempt outcome, purpose, privacy-safe recipient suffix, provider trace id, safe failure summary and optional college scope; distinguish provider acceptance from handset delivery.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "scripts/sql/db10-sms-delivery-attempts-staging.sql",
+        "docs/planning/database-parity-db10-sms-delivery-attempts.md",
+        "tests/db10-sms-delivery-attempts-staging.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T13:15:00+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T13:15:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Fresh source-backed DB10 gap: active BulkSmsAppsServiceImpl and ExotelSmsServiceImpl write sms_delivery_log, and AdminSmsLogController consumes it; recruiter-only encrypted outbound draft is not a generic support-attempt ledger."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T13:15:00+05:30",
+          "reason": "Chat 5 CAS-created and reserved isolated DB10 SMS attempt-ledger staging paths; no active worker owns them."
+        }
+      ]
     }
   ],
   "eventModel": {
