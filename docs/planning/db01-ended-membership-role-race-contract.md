@@ -26,6 +26,39 @@
 - Avoid silently changing current SUSPENDED behavior: the application currently prohibits role changes for ENDED, not SUSPENDED.
 - Source-only proof cannot establish the selected locking pattern actually works in PostgreSQL. Chat 1 still owns registered migrations, and any future raw-SQL/admin job that inserts roles must follow the same parent-lock rule or gain an approved database trigger. The current application writers implement the row lock, but two-connection database evidence remains required.
 
+## Committed fix and executable acceptance assets
+
+The application repository mitigation landed directly on `main` at
+`2194420972bd8fd7562ed6923a0c6720948e7c2d`:
+`persistPersonMembership`, `addMembershipRole`, and `removeMembershipRole`
+lock the parent `college_memberships` row with `FOR UPDATE` and re-evaluate
+status inside the same database transaction before mutating grants.
+
+The source-drift guard `tests/db01-ended-membership-role-race-source.test.mjs`
+has **16 authored Node assertions** checking parent-before-child lock order,
+terminal membership denial, onboard ACTIVE recheck, preservation of the
+last-role policy, and negative mutation of the source pattern.
+
+The independent real repository test
+`tests/integration/db01-membership-role-parent-lock.test.ts` contains
+**6 authored Vitest/PostgreSQL cases**:
+- role grant rejected after END even with a stale preflight snapshot;
+- role removal rejected after END;
+- END locks first and the repository grant must wait, then fail;
+- ordinary ACTIVE grant/removal still commit with activity writes;
+- onboarding existing ENDED membership rolls back earlier user edits and grant;
+- two concurrent removals must never remove the last role.
+
+The integration suite requires `DATABASE_URL === TEST_DATABASE_URL`, with no
+fallback, and uses unique users/memberships with explicit cleanup, not changes
+to seed memberships. A valid, dedicated PostgreSQL test database with current
+Drizzle migrations and seed data is still needed.
+
+**Evidence accounting:** files committed; independently executed GitHub-content
+source assertions only. The Node source suite, real Vitest/PostgreSQL suite,
+`tsc`, and a migration replay have **not been executed in this batch**. No
+verified runtime closure can be inferred from test authoring.
+
 ## Independent PostgreSQL gate (NOT EXECUTED)
 
 Use an isolated disposable DB with at least two separate connections:
