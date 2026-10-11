@@ -32,22 +32,24 @@ The application repository mitigation landed directly on `main` at
 `2194420972bd8fd7562ed6923a0c6720948e7c2d`:
 `persistPersonMembership`, `addMembershipRole`, and `removeMembershipRole`
 lock the parent `college_memberships` row with `FOR UPDATE` and re-evaluate
-status inside the same database transaction before mutating grants.
+status **and user/college ownership** inside the same database transaction
+before mutating grants (additional scoped-identity guard at `e7bab10`).
 
 The source-drift guard `tests/db01-ended-membership-role-race-source.test.mjs`
-has **16 authored Node assertions** checking parent-before-child lock order,
+has **18 authored Node assertions** checking parent-before-child lock order,
 terminal membership denial, onboard ACTIVE recheck, preservation of the
 last-role policy, and negative mutation of the source pattern.
 
 The independent real repository test
 `tests/integration/db01-membership-role-parent-lock.test.ts` contains
-**6 authored Vitest/PostgreSQL cases**:
+**8 authored Vitest/PostgreSQL cases**:
 - role grant rejected after END even with a stale preflight snapshot;
 - role removal rejected after END;
 - END locks first and the repository grant must wait, then fail;
 - ordinary ACTIVE grant/removal still commit with activity writes;
 - onboarding existing ENDED membership rolls back earlier user edits and grant;
-- two concurrent removals must never remove the last role.
+- two concurrent removals must never remove the last role;
+- a stale mutation snapshot with the wrong user or owning college must be denied under the parent lock.
 
 The integration suite requires `DATABASE_URL === TEST_DATABASE_URL`, with no
 fallback, and uses unique users/memberships with explicit cleanup, not changes
