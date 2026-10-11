@@ -154,3 +154,35 @@ test("DB09 prep FK depends on centralized parent key", () => {
     /FOREIGN KEY \(learner_membership_id, college_id\)[\s\S]*REFERENCES college_memberships\(id, college_id\)/,
   );
 });
+
+
+test("DB09 collaboration principal scope is fail-closed", () => {
+  const sql = read("docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql");
+  for (const needle of [
+    "CREATE FUNCTION db09_has_active_recruiter_grant",
+    "r.company_id = p.company_id",
+    "CREATE TRIGGER db09_message_thread_principal_scope_guard",
+    "CREATE TRIGGER db09_message_sender_scope_guard",
+    "CREATE TRIGGER db09_message_update_guard",
+    "CREATE TRIGGER db09_recruiter_private_note_scope_guard",
+    "CREATE TRIGGER db09_recruiter_read_scope_guard",
+    "CREATE TRIGGER db09_share_event_immutable",
+  ]) {
+    assert.match(sql, new RegExp(needle.replace(/[()]/g, "\\$&")));
+  }
+  assert.match(
+    sql,
+    /NEW\.sender_user_id <> v_recruiter_user_id/,
+    "a RECRUITER message must be authored by the recruiter who owns the thread",
+  );
+  assert.match(
+    sql,
+    /m\.user_id = NEW\.sender_user_id[\s\S]*m\.college_id = v_college_id[\s\S]*m\.status = 'ACTIVE'/,
+    "a TPO message needs an active membership in the thread college",
+  );
+  assert.match(
+    sql,
+    /OLD\.read_at IS NOT NULL[\s\S]*NEW\.read_at IS DISTINCT FROM OLD\.read_at/,
+    "message read state must not be rewindable or rewritten after first read",
+  );
+});
