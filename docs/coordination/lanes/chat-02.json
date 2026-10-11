@@ -312,6 +312,29 @@
       "identityRegisteredTableDiffFrom0040": 0,
       "postgresVerifiedFields": 0,
       "warning": "Do not confuse no single-column target with 173 missing physical columns; normalized/provider, staged and retirement policy require explicit proof."
+    },
+    "collegeArchiveDb01DescendantGuard": {
+      "task": "DB-004",
+      "state": "STAGED_MAIN_NOT_REGISTERED",
+      "sql": "docs/planning/sql/db01-college-membership-domain-archive-guard-staging.sql",
+      "contract": "docs/planning/db01-college-membership-domain-archive-race-contract.md",
+      "sourceTests": "tests/db01-college-membership-domain-archive-source.test.mjs",
+      "postgresWitness": "tests/db01-college-membership-domain-archive-pg.test.mjs",
+      "commits": {
+        "sql": "5f12dd05bd8425fda514302decfb4788da8fe4b4",
+        "pg": "4a2ffda0a6f2ffe32f76ec44a747bacc97512838",
+        "source": "7750c2bbc51d2390c7343493ce32e07302dcae75",
+        "contract": "32eec78a241b782048535fe94d1833ef53f9640c",
+        "manifest": "dd71e946368a7bb79fc2d8db83b4d10915968b66"
+      },
+      "observedSourceAssertions": "16 of 16 in-process static assertions passed against committed GitHub files",
+      "authoredSourceTests": 13,
+      "authoredPostgresRaces": 4,
+      "executedNodeTestsThisBatch": 0,
+      "executedPostgresTestsThisBatch": 0,
+      "fullSchemaMigrationIntegrated": false,
+      "needsCrossDomainReview": "DB02 DB03 DB05 DB08 DB09 other children, org-college staged guard, tombstone disposition",
+      "issue21Comment": "https://github.com/42Students/lms-vnext/issues/21#issuecomment-6107127571"
     }
   },
   "qualityGates": {
@@ -333,7 +356,9 @@
     "db01NewPostgresCases": "AUTHORED_36_EXECUTED_0",
     "db01NewUnitCases": "AUTHORED_14_EXECUTED_0",
     "db01MainSourceCases": "36_PG_PLUS_14_UNIT_AUTHORED",
-    "db01UnmappedSource": "173_OPEN_12_OF_12_SOURCE_CHECKS_PASS"
+    "db01UnmappedSource": "173_OPEN_12_OF_12_SOURCE_CHECKS_PASS",
+    "collegeArchiveDb01Source": "PASS_16_OF_16_IN_PROCESS_CHECKS_NODE_TESTS_AUTHORED_NOT_EXECUTED",
+    "collegeArchiveDb01Postgres": "AUTHORED_FOUR_TWO_SESSION_RACES_NOT_EXECUTED"
   },
   "lastAuthoredTests": [
     "scripts/verify-db01-field-triage.mjs",
@@ -374,7 +399,7 @@
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
     "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
   ],
-  "nextAction": "DB-004 DATABASE IN_PROGRESS: direct-main 36 PG+14 unit cases authored, no runtime acceptance; 173 active/lifecycle no-target fields routed DB01=78 DB04=76 DB09=19; 13 Node queue guards authored but not executed. Independent PG/Vitest needed, staged DB01 migration integration reserved Chat1.",
+  "nextAction": "DB-004 still IN_PROGRESS; resolve DB01 migration integration and cross-domain descendant guard coordination; execute isolated PostgreSQL two-session races and complete actual full-schema migration replay. Other existing DB01 source-field and auth/session gaps remain open.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
@@ -451,7 +476,12 @@
     "https://github.com/42Students/lms-vnext/commit/aeb7fc5ad8892a958476e5b905f73a876203d06a",
     "https://github.com/42Students/lms-vnext/commit/2f9a82a4b7ae6555a46091870d75520aff6c5f15",
     "https://github.com/42Students/lms-vnext/commit/a063cfdd007ff8ef1e57d5b5b2b40b216c9e52d6",
-    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6106878447"
+    "https://github.com/42Students/lms-vnext/issues/22#issuecomment-6106878447",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db01-college-membership-domain-archive-race-contract.md",
+    "https://github.com/42Students/lms-vnext/commit/5f12dd05bd8425fda514302decfb4788da8fe4b4",
+    "https://github.com/42Students/lms-vnext/commit/4a2ffda0a6f2ffe32f76ec44a747bacc97512838",
+    "https://github.com/42Students/lms-vnext/commit/7750c2bbc51d2390c7343493ce32e07302dcae75",
+    "https://github.com/42Students/lms-vnext/commit/32eec78a241b782048535fe94d1833ef53f9640c"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
