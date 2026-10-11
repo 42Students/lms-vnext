@@ -59,8 +59,37 @@ test("grant status check is inside its SQL transaction", () => {
   assert.ok(grant.indexOf("parent.status") < grant.indexOf(".insert(membershipRoles)"));
 });
 
-test("grant fails closed for a parent membership deleted concurrently", () => {
-  assert.match(grant, /if \(!parent\)\s*\{\s*throw new PeopleServiceError\("MEMBERSHIP_NOT_FOUND"\)/);
+test("grant fails closed for a missing or rebound parent membership", () => {
+  for (const writer of [grant, revoke]) {
+    assert.match(writer, /!parent\s*\|\|/);
+    assert.match(writer, /parent\.userId\s*!==\s*mutation\.person\.user\.id/);
+    assert.match(writer, /parent\.collegeId\s*!==\s*mutation\.person\.membership\.collegeId/);
+    assert.match(writer, /PeopleServiceError\("MEMBERSHIP_NOT_FOUND"\)/);
+  }
+});
+
+test("role writer checks current owner and college while holding parent lock", () => {
+  for (const writer of [grant, revoke]) {
+    const lockAt = writer.indexOf('.for("update")');
+    const userAt = writer.indexOf("parent.userId !== mutation.person.user.id", lockAt);
+    const collegeAt = writer.indexOf("parent.collegeId !== mutation.person.membership.collegeId", lockAt);
+    const roleReadAt = writer.indexOf(".from(membershipRoles)", lockAt);
+    assert.ok(lockAt >= 0 && userAt > lockAt && collegeAt > lockAt);
+    assert.ok(userAt < roleReadAt && collegeAt < roleReadAt);
+  }
+});
+
+test("onboarding protects owner/college from stale membership rebinding", () => {
+  const lockedAt = onboard.indexOf("const [lockedMembership]");
+  const rolesAt = onboard.indexOf(".insert(membershipRoles)", lockedAt);
+  assert.ok(lockedAt >= 0 && rolesAt > lockedAt);
+  for (const line of [
+    "lockedMembership.userId !== user.id",
+    "lockedMembership.collegeId !== input.collegeId",
+  ]) {
+    const at = onboard.indexOf(line, lockedAt);
+    assert.ok(at > lockedAt && at < rolesAt, line);
+  }
 });
 
 test("duplicate no-op grants also require live parent after lock", () => {
