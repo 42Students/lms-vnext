@@ -88,17 +88,37 @@ The supplemental collaboration SQL now stages fail-closed principal-scope guards
 
 The canonical schema uses final recruiter-era codes directly: `RECRUITER` and `RECRUITER_LEADS`. No HR→RECRUITER data-conversion migration is needed in greenfield vNext.
 
-### 4. College TPO settings
+### 4. College TPO settings + normalized trusted/prep selections
 
-All four later settings are now canonical columns in
+Scalar/structured settings that remain canonical columns in
 `src/db/schema/tpo-collaboration.ts :: placementTpoCollegeSettings`:
 
 - `job_types`
 - `outcome_labels`
 - `recruiter_access_months`
 - `recruiter_drive_needs_approval`
+- templates, SMS cap, branding, prep threshold and notification toggles
 
-Do **not** register a post-create ALTER for these fields. The old
+Two source-active legacy JSON lists are **not** canonical columns anymore:
+
+- `trusted_domains_json` → `placement_tpo_trusted_domains`
+- `prep_course_ids_json` → `placement_tpo_prep_courses`
+
+Structural source: `src/db/schema/tpo-collaboration.ts`  
+Supplemental scope/reference SQL:
+`docs/planning/sql/db09-tpo-settings-normalization-candidate.sql`
+
+Trusted domains preserve the frozen source normalization and free-mail denylist
+and require an active TPO writer. Prep-course settings carry a real course FK
+and allow only active courses from the settings college's **organization**;
+this deliberately preserves the legacy `prepCourses(organizationId)`
+selector instead of incorrectly narrowing to same-college courses.
+
+The runtime API may continue to expose arrays, but it must project/replace
+normalized rows transactionally. Do not recreate `trusted_domains` or
+`prep_course_ids` JSON columns as a second writable source of truth.
+
+Do **not** register a post-create ALTER for the four scalar fields. The old
 `db09-college-recruiter-settings-candidate.sql` is superseded, and
 `db09-job-outcome-settings-candidate.sql` is source-reference text only.
 
@@ -187,7 +207,9 @@ Before DB-012 can move beyond source/design completion:
 9. scheduling cross-job/cross-round FK negatives and assignment/reschedule races;
 10. coordinator cross-college authorization negatives;
 11. TPO bell independent-reader semantics;
-12. prep course tenant/catalog authorization and dedupe race;
+12. prep assignment tenant/catalog authorization and dedupe race;
+12a. trusted-domain malformed/free-mail/cross-college writer negatives and exact-match isolation;
+12b. normalized prep-course same-organization FK/scope, archived/inactive parent rejection and atomic settings replacement;
 13. notification undo vs claim race, APP exactly-once fanout, digest isolation;
 14. external sender lease/fence/idempotency and suppression behavior;
 15. runtime producer/consumer checks against the exact registered schema;
@@ -221,3 +243,28 @@ The pass covers recruiter/TPO principal status, company/grant agreement, share d
 A staging syntax audit also caught single-dollar PL/pgSQL delimiters introduced by text-generation/replacement. All canonical DB09 function drafts were repaired to PostgreSQL `$$` delimiters and the guard suite now rejects a single-dollar opener/terminator regression.
 
 **Evidence classification:** authored staging + read-only source assertions only. Node tests and disposable PostgreSQL have not been executed by Chat 3. W01 must register the final approved shape, then independent DB execution must prove every negative/concurrency witness before DB09 can be runtime-verified.
+
+
+## DB-034 trusted-domain and prep-course normalization
+
+A post-disposition source audit proved two college settings are active
+authorization/readiness inputs, not passive JSON:
+
+- `TpoDriveService.isTrustedRecruiter` uses exact trusted-domain membership
+  to auto-approve eligible recruiter drive requests.
+- `TpoStudentsReadService.prepAverages` uses selected prep courses to compute
+  learner readiness.
+
+DB-034 removes `trustedDomains` and `prepCourseIds` JSON fields from the
+canonical structural settings row and replaces them with normalized
+`placement_tpo_trusted_domains` and `placement_tpo_prep_courses`.
+
+The canonical DB09 ledger rows for `trusted_domains_json` and
+`prep_course_ids_json` are now `REDESIGNED`, not JSON-mapped. W01 must not
+resurrect the old JSON targets.
+
+Detailed evidence and runtime cutover notes:
+`docs/planning/db09-tpo-settings-normalization-2026-10-11.md`.
+
+**Evidence classification:** source/design/staging only. Static test definitions
+are authored; Node and disposable PostgreSQL execution remain downstream.
