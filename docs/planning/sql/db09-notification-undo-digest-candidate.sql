@@ -51,7 +51,8 @@ CREATE TABLE placement_notification_intents (
   digest_day date,
   -- External content must be encrypted in the DB10 envelope before the
   -- generalized sender is enabled. There is deliberately no payload_json.
-  encrypted_outbound_ref_id uuid,
+  encrypted_outbound_ref_id uuid
+    REFERENCES outbound_messages(id) ON DELETE RESTRICT,
   claimed_at timestamptz,
   claim_lease_expires_at timestamptz,
   claim_token uuid,
@@ -103,7 +104,8 @@ CREATE TABLE placement_notification_intents (
       (status IN ('APP_PUBLISHED','PROVIDER_ACCEPTED','DELIVERED')
        AND sent_at IS NOT NULL)
       OR
-      (status NOT IN ('APP_PUBLISHED','PROVIDER_ACCEPTED','DELIVERED'))
+      (status NOT IN ('APP_PUBLISHED','PROVIDER_ACCEPTED','DELIVERED')
+       AND sent_at IS NULL)
     )
 );
 CREATE INDEX db09_notification_due_idx
@@ -127,7 +129,8 @@ CREATE INDEX db09_notification_digest_idx
 -- SEND: update only when claim_token still matches and group not cancelled;
 -- APP: insert one recipient-scoped in_app_notifications row idempotently
 -- using (user_id,event_id), then mark APP_PUBLISHED in the same transaction.
--- EMAIL/SMS: hand off an encrypted, scoped DB10 payload; provider accepted
+-- EMAIL/SMS: encrypted_outbound_ref_id is a real FK to DB10 outbound_messages;
+-- create/seal that child before external intent dispatch. Provider accepted
 -- must NOT be represented as actual delivery; suppressions rechecked at send.
 -- DIGEST: group only by organization + college + recipient + digest_day
 -- (not just a recipient id); preserve individual delivery audit.
