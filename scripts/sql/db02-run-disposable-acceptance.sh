@@ -174,6 +174,7 @@ source_tests=(
   tests/db02-curriculum-type-history-contract.test.mjs
   tests/db02-disposable-runner-contract.test.mjs
   tests/db02-role-reactivation-contract.test.mjs
+  tests/db02-active-parent-lifecycle-contract.test.mjs
 )
 single_session_sql=(
   scripts/sql/db02-postgres-acceptance-unregistered.sql
@@ -189,6 +190,7 @@ two_session_bash=(
   scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh
   scripts/sql/db02-curriculum-type-history-concurrency-unregistered.sh
   scripts/sql/db02-role-reactivation-concurrency-unregistered.sh
+  scripts/sql/db02-active-parent-lifecycle-concurrency-unregistered.sh
 )
 
 for path in "${source_tests[@]}" "${single_session_sql[@]}" "${two_session_bash[@]}"; do
