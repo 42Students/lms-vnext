@@ -13,7 +13,12 @@ const contract = readFileSync(
 
 test("DB37 covers both duplicate legacy template families exactly", () => {
   assert.equal(disposition.records.length, 56);
-  const byTable = Map.groupBy(disposition.records, row => row.legacyTable);
+  const byTable = new Map();
+  for (const row of disposition.records) {
+    const bucket = byTable.get(row.legacyTable) ?? [];
+    bucket.push(row);
+    byTable.set(row.legacyTable, bucket);
+  }
   assert.equal(byTable.get("notification_template")?.length, 28);
   assert.equal(byTable.get("lms_notification_template")?.length, 28);
   const a = [...new Set(byTable.get("notification_template").map(r => r.legacyColumn))].sort();
