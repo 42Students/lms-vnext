@@ -32,9 +32,9 @@
     "sourceFields": 92,
     "byClass": {
       "SOURCE_CANDIDATE": 30,
-      "UNREGISTERED_DRAFT": 37,
+      "UNREGISTERED_DRAFT": 38,
       "REMODELED_NEEDS_PROOF": 22,
-      "MISSING_OR_UNPROVEN": 3
+      "MISSING_OR_UNPROVEN": 2
     }
   },
   "criticalOpenRisks": [
@@ -735,13 +735,14 @@
       "sourceType": "tinyint(1)",
       "sourceNullable": "NOT_NULL",
       "sourceRiskFlags": [],
-      "targetProposal": "NO_DIRECT_FIELD: vNext progress has no soft-delete state",
-      "classification": "MISSING_OR_UNPROVEN",
+      "targetProposal": "SOURCE-BACKED UNREGISTERED_DRAFT: scripts/sql/db05-version-progress-attempts.draft.sql adds learner_content_progress.deleted_at. The legacy BaseModel.isDeleted field is consumed by LearnerContentProgressRepository.countCompletedPerLearner AFTER MAX(attempt), while findTopBy/findByIn do not filter deletion. Not verified; per-reader policy and API writers remain blocked.",
+      "classification": "UNREGISTERED_DRAFT",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "LEGACY_ENTITY_CONFIRMED_CONSUMER_SEMANTICS_UNPROVEN",
-      "legacyEntityEvidence": "LearnerContentProgress.java extends BaseModel",
-      "sourceReviewFinding": "Soft-delete state is inherited from BaseModel; cannot assume absence in subclass means retired."
+      "producerConsumerVerification": "LEGACY_CONSUMER_SOURCE_CONFIRMED_VNEXT_SERVICE_NOT_ADAPTED",
+      "legacyEntityEvidence": "LearnerContentProgress extends BaseModel.isDeleted; V36 DDL; V132 attempt migration; LearnerContentProgressRepository.countCompletedPerLearner/select latest; startNewAttempt resets is_deleted",
+      "sourceReviewFinding": "Not historical-only. Explicit tombstone read/write field persists in source; normalized deleted_at drafted. Distinct latest-attempt counting vs direct latest read must be preserved. Still unregistered and never PostgreSQL executed.",
+      "sourceContractStatus": "LIVE_LEGACY_REPOSITORY_QUERY_CONFIRMED_PER_READER_DIVERGENCE"
     },
     {
       "source": "learner_content_progress.first_completed_at",
