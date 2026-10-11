@@ -2639,6 +2639,16 @@
             "observation": "Recruiter plan and TPO workspace read current industry_company; not all fields individually proven.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "BROWSER_SHARE_MEMORY_PREFERENCE_V162_COLUMN_ACTIVE_PRODUCER_UNPROVEN",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "frontendOracleSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+            "source": "V162; ShareModal.js; shareMemory.js",
+            "observedGap": "Current ShareModal remembers columns/contact/maxStage in browser localStorage keyed by company name and sends columns per link. No actual producer for industry_company.export_columns_json established; owner must be explicitly agreed.",
+            "owner": "DB09 TPO company share and DB10 privacy",
+            "runtimeTested": false
           }
         }
       ]
@@ -3583,6 +3593,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "source serial identity to UUID",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -3627,6 +3651,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "legacy broad event vocabulary, not invitation-only",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -3680,6 +3718,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "V193 RECRUITER and distinct LEARNER/FACULTY identity sources",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -3726,6 +3778,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "polymorphic legacy integer ID, resolve identity and active grant",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -3776,6 +3842,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "APP/EMAIL/SMS versus DB10 invitation-only EMAIL/SMS/WHATSAPP",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -3822,6 +3902,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "legacy arbitrary JSON; privacy-safe encrypted envelope needed",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -3874,6 +3968,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "30-second hold and email digest at local 08:00",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -3924,6 +4032,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "legacy SENT vs APP published/provider accepted/delivered distinction",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -3968,6 +4090,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "atomic undo before claim/publish, tenant scoped",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -4014,6 +4150,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "SKIP LOCKED row claim with lease fencing needed",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -4060,6 +4210,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "provider acceptance distinct from actual delivery",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -4104,6 +4268,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "redacted failure-code retention instead of unsafe provider text",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         },
         {
@@ -4156,6 +4334,20 @@
             "observation": "Outbox service handles durable retries/scheduling/recipient routing and cap counting; DB10 cross-domain.",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "STAGED_ONLY_NOT_PG_VERIFIED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "legacySources": [
+              "NotificationOutboxEntry.java",
+              "NotificationOutboxService.java",
+              "NotificationOutboxRepository.java"
+            ],
+            "stagedCandidate": "docs/planning/sql/db09-notification-undo-digest-candidate.sql",
+            "observedGap": "origin time for undo/digest/event timeline",
+            "owner": "DB10 generalized notifications and DB09 event producer",
+            "runtimeTested": false
           }
         }
       ]
@@ -4344,6 +4536,16 @@
             "observation": "TPO student read service queries and inserts learner preparation tasks (course/assessment, due date, assigner).",
             "fieldSemanticsVerified": false,
             "postgresTested": false
+          },
+          "crossDomainEvidence": {
+            "reviewedOn": "2026-10-11",
+            "status": "UI_ONLY_COURSE_BACKEND_ACCEPTS_ASSESSMENT_UNRESOLVED",
+            "legacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "frontendOracleSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
+            "source": "TpoStudentsReadService.bulkAssignPrep; StudentActions.jsx",
+            "observedGap": "Legacy API accepts assessmentId, but current TPO Assign Prep UI sends only courseId. Do not invent quiz FK, do not retire assessment API without decision.",
+            "owner": "DB06 assessment resource kind",
+            "runtimeTested": false
           }
         },
         {
@@ -12626,6 +12828,9 @@
       "tpo_bell": 8,
       "tpo_bell_read": 4
     },
-    "usageAuditLimitation": "Legacy table active does not imply every field populated/required. No vNext migration/consumer or real PostgreSQL proof."
+    "usageAuditLimitation": "Legacy table active does not imply every field populated/required. No vNext migration/consumer or real PostgreSQL proof.",
+    "unresolvedCrossDomainSourceRevisitedFields": 15,
+    "unresolvedCrossDomainReviewOn": "2026-10-11",
+    "crossDomainNoSqlOrPgExecution": true
   }
 }
