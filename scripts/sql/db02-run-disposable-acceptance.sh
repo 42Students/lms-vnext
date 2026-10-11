@@ -71,12 +71,16 @@ WHERE NOT tgisinternal
     'db02_teaching_reactivation_role_guard',
     'db02_program_enrollment_reactivation_role_guard',
     'db02_section_enrollment_reactivation_role_guard',
-    'db02_program_exit_close_active_sections'
+    'db02_program_exit_close_active_sections',
+    'db02_course_archive_dependency_guard',
+    'db02_course_offering_archive_dependency_guard',
+    'db02_delivery_end_dependency_guard',
+    'db02_section_archive_dependency_guard'
   );
 SQL
 )"
-if [[ "$TRIGGER_WITNESSES" != "18" ]]; then
-  echo "DB02 canonical migration is not fully registered (required trigger witnesses: 18, found: $TRIGGER_WITNESSES)" >&2
+if [[ "$TRIGGER_WITNESSES" != "22" ]]; then
+  echo "DB02 canonical migration is not fully registered (required trigger witnesses: 22, found: $TRIGGER_WITNESSES)" >&2
   exit 2
 fi
 
@@ -178,6 +182,7 @@ single_session_sql=(
   scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql
   scripts/sql/db02-curriculum-type-history-acceptance-unregistered.sql
   scripts/sql/db02-activation-role-lifecycle-acceptance-unregistered.sql
+  scripts/sql/db02-active-parent-lifecycle-acceptance-unregistered.sql
 )
 two_session_bash=(
   scripts/sql/db02-postgres-concurrency-unregistered.sh
