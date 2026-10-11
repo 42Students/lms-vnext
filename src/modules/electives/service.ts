@@ -128,6 +128,7 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
         collegeId: departments.collegeId,
         offeringPeriodId: courseOfferings.academicPeriodId,
         offeringCohortId: courseOfferings.cohortId,
+        offeringProgramId: cohorts.programId,
         offeringStatus: courseOfferings.status,
         offeringType: courseOfferings.type,
         sectionCohortId: sections.cohortId,
@@ -145,6 +146,7 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
           delivery.offeringType !== "ELECTIVE" || delivery.offeringStatus !== "ACTIVE" ||
           delivery.sectionStatus !== "ACTIVE" || delivery.endedAt !== null ||
           delivery.sectionCohortId !== delivery.offeringCohortId ||
+          delivery.offeringProgramId !== slot.programId ||
           delivery.sectionPeriodId !== delivery.offeringPeriodId ||
           (slot.academicPeriodId !== null && slot.academicPeriodId !== delivery.offeringPeriodId)) {
         throw new ElectivesServiceError("ELECTIVE_DELIVERY_MISMATCH");
