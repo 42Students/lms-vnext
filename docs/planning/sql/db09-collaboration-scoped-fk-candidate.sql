@@ -267,7 +267,7 @@ CREATE TRIGGER db09_recruiter_private_note_scope_guard
   FOR EACH ROW EXECUTE FUNCTION db09_assert_recruiter_private_note_scope();
 
 CREATE FUNCTION db09_assert_recruiter_read_scope() RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql AS $
 BEGIN
   IF NOT db09_has_active_recruiter_grant(
     NEW.recruiter_user_id,
@@ -277,10 +277,31 @@ BEGIN
     RAISE EXCEPTION 'recruiter notification read marker is outside grant scope'
       USING ERRCODE = '23514';
   END IF;
+
+  -- Source producer advances this watermark to database NOW(). A future value
+  -- would hide notifications that have not happened yet; a regression would
+  -- make already-read feed items unread again. Neither is a valid transition.
+  IF NEW.read_through > statement_timestamp() THEN
+    RAISE EXCEPTION 'recruiter notification read watermark cannot be in the future'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF TG_OP = 'UPDATE' THEN
+    IF NEW.recruiter_user_id IS DISTINCT FROM OLD.recruiter_user_id
+       OR NEW.college_id IS DISTINCT FROM OLD.college_id THEN
+      RAISE EXCEPTION 'recruiter notification read marker identity is immutable'
+        USING ERRCODE = '23514';
+    END IF;
+    IF NEW.read_through < OLD.read_through THEN
+      RAISE EXCEPTION 'recruiter notification read watermark cannot move backward'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
   RETURN NEW;
-END $$;
+END $;
 CREATE TRIGGER db09_recruiter_read_scope_guard
-  BEFORE INSERT OR UPDATE OF recruiter_user_id,college_id
+  BEFORE INSERT OR UPDATE
   ON placement_recruiter_notification_reads
   FOR EACH ROW EXECUTE FUNCTION db09_assert_recruiter_read_scope();
 
@@ -414,3 +435,6 @@ CREATE TRIGGER db09_share_event_immutable
 --     FACULTY_COORDINATOR) does not widen this authority; coordinator workflows
 --     require separate department/job-scoped guards. Student-note subjects
 --     themselves carry an ACTIVE LEARNER membership role.
+-- 17. Recruiter notification read-through is an immutable-identity monotonic
+--     watermark: ACTIVE grant required, no future timestamps and no backward
+--     movement on update.
