@@ -160,7 +160,7 @@ test("DB01 expired challenge cannot be retroactively verified or consumed", () =
   assert.ok(missing(ddl, guard.replace("OLD.used_at IS NULL AND NEW.used_at IS NOT NULL", "FALSE"), drizzle).includes("deny expired consumption"));
 });
 test("DB01 expired challenge cannot reserve additional verification or resend slots", () => {
-  const clause=guard.match(/IF clock_timestamp\(\) >= OLD.expires_at([\s\S]*?)END IF;/);
+  const clause=guard.match(/IF clock_timestamp\(\) >= LEAST\(OLD.expires_at, NEW.expires_at\)([\s\S]*?)END IF;/);
   assert.ok(clause);
   assert.match(clause[1],/NEW.verification_attempts > OLD.verification_attempts/);
   assert.match(clause[1],/NEW.resend_attempts > OLD.resend_attempts/);
