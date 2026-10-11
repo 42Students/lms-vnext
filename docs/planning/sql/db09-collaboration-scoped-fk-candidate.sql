@@ -530,6 +530,82 @@ CREATE TRIGGER db09_tpo_saved_views_scope_guard
   ON placement_tpo_saved_views
   FOR EACH ROW EXECUTE FUNCTION db09_assert_tpo_user_state_scope();
 
+-- DB-064: personal TPO preferences are mutable state with immutable
+-- college+user ownership. Only the five sourced booleans may change. The
+-- timestamp is database-controlled to prevent backdating, synthetic updates
+-- or a producer writing a future timestamp. Equal writes stay idempotent.
+CREATE FUNCTION db09_restrict_tpo_user_preferences_lifecycle() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    RAISE EXCEPTION 'TPO user preference record cannot be deleted'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.updated_at > statement_timestamp() THEN
+      RAISE EXCEPTION 'TPO preference creation timestamp must not be future dated'
+        USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+  END IF;
+
+  IF NEW.college_id IS DISTINCT FROM OLD.college_id
+     OR NEW.user_id IS DISTINCT FROM OLD.user_id THEN
+    RAISE EXCEPTION 'TPO preference owner identity cannot be changed'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF OLD.updated_at > statement_timestamp()
+     OR NEW.updated_at > statement_timestamp() THEN
+    RAISE EXCEPTION 'TPO preference timestamp must not be future dated'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF ROW(
+    NEW.morning_digest, NEW.recruiter_messages, NEW.requests,
+    NEW.results_ready, NEW.follow_ups
+  ) IS DISTINCT FROM ROW(
+    OLD.morning_digest, OLD.recruiter_messages, OLD.requests,
+    OLD.results_ready, OLD.follow_ups
+  ) THEN
+    -- The monotonic microsecond avoids losing a change in a tight update
+    -- loop, even where transaction_timestamp() is unchanged.
+    NEW.updated_at := GREATEST(
+      clock_timestamp(), OLD.updated_at + interval '1 microsecond'
+    );
+  ELSE
+    NEW.updated_at := OLD.updated_at;
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_tpo_user_preferences_lifecycle_guard
+  BEFORE INSERT OR UPDATE OR DELETE
+  ON placement_tpo_user_preferences
+  FOR EACH ROW EXECUTE FUNCTION db09_restrict_tpo_user_preferences_lifecycle();
+
+-- DB-064: saved filters are named snapshots, created or deleted by their
+-- scoped owner. The active legacy TpoSettingsHubService has no edit path.
+-- An UPDATE (including ownership/scope/filters/timestamps) is never valid.
+CREATE FUNCTION db09_restrict_tpo_saved_view_lifecycle() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.created_at > statement_timestamp() THEN
+      RAISE EXCEPTION 'TPO saved view timestamp must not be future dated'
+        USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+  END IF;
+  RAISE EXCEPTION 'TPO saved views are immutable after creation'
+    USING ERRCODE = '23514';
+END $;
+CREATE TRIGGER db09_tpo_saved_views_lifecycle_guard
+  BEFORE INSERT OR UPDATE
+  ON placement_tpo_saved_views
+  FOR EACH ROW EXECUTE FUNCTION db09_restrict_tpo_saved_view_lifecycle();
+
+
 CREATE FUNCTION db09_assert_student_note_principals() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
