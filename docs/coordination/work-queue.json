@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12",
+  "updatedOn": "2026-10-12T02:55:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -4356,6 +4356,59 @@
           "status": "COMPLETED",
           "at": "2026-10-11T21:15:23.621Z",
           "reason": "Parent-first valid transaction ordering preserved through DEFERRABLE INITIALLY DEFERRED; 29/29 exact-source checks PASS, SQL execution pending."
+        }
+      ]
+    },
+    {
+      "id": "DB-072",
+      "phase": "DATABASE",
+      "title": "Normalize final RECRUITER stored code for placement round results",
+      "scope": "Close the last placement schema/runtime legacy HR stored-code drift after V193: stage safe placement_round_results.source HR→RECRUITER data/check migration, prove the full schema+placement-module sweep, and document required result-service producer/consumer cutover without entering API phase.",
+      "priority": 2,
+      "dependsOn": [
+        "DB-011"
+      ],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db08-recruiter-round-result-code-candidate.sql",
+        "docs/planning/db08-chat03-recruiter-code-audit.md",
+        "scripts/verify-db08-recruiter-code-source.mjs",
+        "tests/db08-recruiter-code-contract.test.mjs"
+      ],
+      "status": "IN_PROGRESS",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-12T02:55:00+05:30",
+      "startedAt": "2026-10-12T02:55:00+05:30",
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-12T02:55:00+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12T02:55:00+05:30",
+          "reason": "Full 54-file schema + 54-file placements module sweep found one remaining legacy HR stored-code family: placement_round_results.source and result-service producer/consumer."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T02:55:00+05:30",
+          "reason": "Chat 3 available after DB-069; isolated DB08 recruiter naming contract does not overlap Chat 2 tasks or Chat 1 migration files."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-12T02:55:00+05:30",
+          "reason": "Frozen V193 explicitly updates round_result.source and submitted_by_type HR→RECRUITER; vNext source CHECK and result-service still use HR."
         }
       ]
     }
