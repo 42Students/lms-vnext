@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-037",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB037_NOTIFICATION_TEMPLATE_DISPOSITION_STARTED",
+    "checkpointKind": "DB037_NOTIFICATION_TEMPLATE_DISPOSITION_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "aff7a9bcac47fa1c5198c2dd31893dfb2f887640",
-    "lastWorkerMergedSha": "432dcd558f9147c75914c0de5fc7e1afb8643b46",
+    "observedMainSha": "1148ef7ee02b86a195865f9703989b738f6c8d73",
+    "lastWorkerMergedSha": "ef781089f34d2e49c1eb2773276f65aa3883906e",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-037 started: disposition 56 legacy notification template fields; current pinned runtime uses in-code event content + provider config, not DB/CSV template registry."
+    "summary": "DB-037 source-dispositioned all 56 duplicate legacy notification-template fields to typed code/provider/DLT config or retired row metadata; shared DB10 ledger reconciled; 39/39 source consistency checks; final retirement/runtime proof pending."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -39,7 +39,8 @@
     "tests/integration/groups-db03.test.ts: reject wrong-program backed delivery and reject admin elective move after learner program transfer atomically (authored, not PostgreSQL-executed)",
     "tests/db08-offer-lifecycle-staging.test.mjs: 8 static DB29 lifecycle shape/evidence assertions (authored, Node runtime not executed)",
     "tests/db10-sms-delivery-attempts-staging.test.mjs: 8 static privacy/outcome/tenant/append-only evidence assertions (authored, Node runtime not executed)",
-    "tests/db10-app-setting-disposition.test.mjs: 8 static cross-domain key/disposition/security assertions (authored, Node runtime not executed)"
+    "tests/db10-app-setting-disposition.test.mjs: 8 static cross-domain key/disposition/security assertions (authored, Node runtime not executed)",
+    "tests/db10-notification-template-disposition.test.mjs: 8 static duplicate-registry/source-disposition guards (authored, Node runtime not executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -59,7 +60,9 @@
     "DB031: staged sms_delivery_attempts is not registered in Drizzle; all DB31-01..16 PostgreSQL/workflow witnesses remain NOT_RUN.",
     "DB031: provider writer cutover and super-admin support API are API/runtime work; 32/32 connector source assertions are not runtime verification.",
     "DB033: unknown arbitrary legacy app_setting keys remain unresolved because TenantAdminController accepts generic non-module keys; typed registry/product disposition required before DB19 freeze.",
-    "DB033: domain targets for DB01/DB05/DB08/DB10 are source-routed but not runtime verified; 28/28 connector checks are not test execution."
+    "DB033: domain targets for DB01/DB05/DB08/DB10 are source-routed but not runtime verified; 28/28 connector checks are not test execution.",
+    "DB037: final retirement of notification_template/lms_notification_template requires DB00 native/detached/live-consumer proof and DB19 approval.",
+    "DB037: 39/39 connector consistency assertions are source checks, not Node/PostgreSQL runtime verification."
   ],
   "handoffs": [
     "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55.",
@@ -73,9 +76,10 @@
     "Chat 1: integrate DB-031 append-only SMS attempt ledger in migration order without broadening recruiter outbound send permissions.",
     "Chat 3 DB-027: include DB-031 SQL and trigger/function names in staged SQL collision preflight.",
     "Chat 2 DB01: own host/cookie/OTP/identity limit setting targets from DB-033 registry.",
-    "Chat 6 DB05: own course.watchedThresholdPercent canonical client/server setting from DB-033 registry."
+    "Chat 6 DB05: own course.watchedThresholdPercent canonical client/server setting from DB-033 registry.",
+    "Chat 6 DB00: prove absence of current native-SQL/detached/external consumers for notification_template and lms_notification_template before DB19 retirement approval."
   ],
-  "nextAction": "Build exact 56-field machine-readable disposition, source contract and static guards. No Drizzle migration/table unless source proves an active persisted template writer/reader.",
+  "nextAction": "Refresh DATABASE queue; claim eligible work or continue non-conflicting DB10 source gap reconciliation while dependency gates stay closed.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -104,7 +108,11 @@
     "https://github.com/42Students/lms-vnext/commit/d0fd4ddd7612624656d2afe559c8f1c9126d9005",
     "https://github.com/42Students/lms-vnext/commit/a7445d962ab4a3c023a08871b5bf5e9ed0f9a646",
     "https://github.com/42Students/lms-vnext/commit/8a4467592e31dc620de515db20d7e041b00a1636",
-    "https://github.com/42Students/lms-vnext/commit/432dcd558f9147c75914c0de5fc7e1afb8643b46"
+    "https://github.com/42Students/lms-vnext/commit/432dcd558f9147c75914c0de5fc7e1afb8643b46",
+    "https://github.com/42Students/lms-vnext/commit/9247da4e68bb45b7cbc9cf288ba2755283acccd8",
+    "https://github.com/42Students/lms-vnext/commit/03728c09c66f1d2796bbbccef65f2c3f62a02bf3",
+    "https://github.com/42Students/lms-vnext/commit/656b6f09fb259b39b81939827b44f91c34d67e55",
+    "https://github.com/42Students/lms-vnext/commit/ef781089f34d2e49c1eb2773276f65aa3883906e"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -134,10 +142,11 @@
     "DB-026",
     "DB-029",
     "DB-031",
-    "DB-033"
+    "DB-033",
+    "DB-037"
   ],
   "lastPickedAt": "2026-10-11T13:42:00+05:30",
-  "lastCompletedAt": "2026-10-11T13:31:00+05:30",
+  "lastCompletedAt": "2026-10-11T13:49:30+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-006",
@@ -151,7 +160,8 @@
     "DB-026",
     "DB-029",
     "DB-031",
-    "DB-033"
+    "DB-033",
+    "DB-037"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
