@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reconcileDb00 } from './db19-db00-disposition-crosscheck.mjs';
-import { reconcileDb01Triage, gitBlobSha } from './db19-db01-triage-crosscheck.mjs';
+import { reconcileDb01Triage, reconcileDb01ProposalCoverage, gitBlobSha } from './db19-db01-triage-crosscheck.mjs';
 
 export const DOMAIN_SUFFIXES = Object.freeze([
   'db00_historical_and_engine', 'db01_identity_and_tenancy',
@@ -19,7 +19,8 @@ const LEDGER_PREFIX = 'docs/planning/db-pass4-columns-';
 const missing = value => typeof value !== 'string' || value.trim() === '';
 
 export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = true,
-  db00Disposition = null, db01Triage = null, db01InventoryBlobSha = null } = {}) {
+  db00Disposition = null, db01Triage = null, db01InventoryBlobSha = null,
+  db01Auth78 = null, db01Remaining150 = null, db01QueueBlobSha = null } = {}) {
   const errors = [];
   const tableOwners = new Map();
   const fieldOwners = new Map();
@@ -150,6 +151,14 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
   if (db01Review && !db01Review.valid)
     for (const detail of db01Review.errors)
       errors.push({code:'DB01_SOURCE_TRIAGE_' + detail.code,detail});
+  const db01Proposals = db01Triage === null || db01Auth78 === null ||
+    db01Remaining150 === null ? null : reconcileDb01ProposalCoverage(
+      db01Triage, db01Auth78, db01Remaining150,
+      {authNoTargetQueueBlobSha:db01QueueBlobSha},
+    );
+  if (db01Proposals && !db01Proposals.valid)
+    for (const detail of db01Proposals.errors)
+      errors.push({code:'DB01_PROPOSAL_' + detail.code,detail});
 
   return {
     verification: 'SOURCE_LEDGER_INTEGRITY_ONLY_NOT_POSTGRES_ACCEPTANCE',
@@ -164,9 +173,11 @@ export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = 
       smrithiFieldsPendingProductDecision: db00Review?.valid ? db00Review.summary.pendingProductFields : null,
       db01SourceActivenessReviewed: db01Review?.valid ? db01Review.summary.reviewedFields : null,
       db01SourceActiveFields: db01Review?.valid ? db01Review.summary.sourceActiveFields : null,
-      db01TargetCandidatesUnverified: db01Review?.valid ? db01Review.summary.targetCandidatesUnverified : null },
+      db01TargetCandidatesUnverified: db01Review?.valid ? db01Review.summary.targetCandidatesUnverified : null,
+      db01CrosswalkUnionTargetCandidates: db01Proposals?.valid ? db01Proposals.summary.unionTargetCandidates : null,
+      db01CrosswalkFieldsWithoutCandidate: db01Proposals?.valid ? db01Proposals.summary.withoutTargetCandidate : null },
     statusCounts, perDomain, db00DispositionOverlay: db00Review,
-    db01SourceTriageOverlay: db01Review, errors,
+    db01SourceTriageOverlay: db01Review, db01ProposalCoverageOverlay: db01Proposals, errors,
   };
 }
 
@@ -189,7 +200,18 @@ export function auditCheckout(root) {
   const db01LedgerPath = path.join(root, 'docs/planning/db-pass4-columns-db01_identity_and_tenancy.json');
   const db01InventoryBlobSha = fs.existsSync(db01LedgerPath)
     ? gitBlobSha(fs.readFileSync(db01LedgerPath)) : null;
-  return auditLedgers(inputs, { db00Disposition, db01Triage, db01InventoryBlobSha });
+  const readRequiredDb01Json = relative => {
+    const full = path.join(root,relative);
+    if (!fs.existsSync(full)) throw new Error('Missing mandatory DB01 source proposal: '+full);
+    return JSON.parse(fs.readFileSync(full,'utf8'));
+  };
+  const db01Auth78 = readRequiredDb01Json('docs/planning/db01-chat02-auth-78-field-proposal-crosswalk.json');
+  const db01Remaining150 = readRequiredDb01Json('docs/planning/db01-chat02-remaining-150-review-queue.json');
+  const noTargetPath = path.join(root,'docs/planning/db01-chat02-no-target-disposition-queue.json');
+  if (!fs.existsSync(noTargetPath)) throw new Error('Missing pinned DB01 proposal source: '+noTargetPath);
+  const db01QueueBlobSha = gitBlobSha(fs.readFileSync(noTargetPath));
+  return auditLedgers(inputs, { db00Disposition, db01Triage, db01InventoryBlobSha,
+    db01Auth78, db01Remaining150, db01QueueBlobSha });
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
