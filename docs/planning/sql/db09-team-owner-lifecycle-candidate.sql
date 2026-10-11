@@ -70,7 +70,7 @@ LANGUAGE sql STABLE AS $$
          )
        )
   );
-$;
+$$;
 
 -- Greenfield/backfill rule: current vNext creates jobs through
 -- placements.manage. Preserve legacy creator->owner default only when the
