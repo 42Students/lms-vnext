@@ -26,6 +26,10 @@ ALTER TABLE placement_company_relationships
   ADD CONSTRAINT db09_company_relationships_id_college_uq
   UNIQUE (id, college_id);
 
+ALTER TABLE placement_recruiter_profiles
+  ADD CONSTRAINT db09_recruiter_profiles_user_company_uq
+  UNIQUE (user_id, company_id);
+
 ALTER TABLE placement_jobs
   ADD CONSTRAINT db09_placement_jobs_id_college_uq
   UNIQUE (id, college_id);
@@ -46,7 +50,8 @@ ALTER TABLE activity_events
 -- 1) inspect pg_constraint/pg_index and skip any equivalent existing UNIQUE;
 -- 2) generated Drizzle migration declares each surviving key once;
 -- 3) no alternate college-first duplicate exists solely for DB09;
--- 4) child FKs use the ID-first order above;
+-- 4) child FKs use the canonical order above (ID-first tenant/job shapes;
+--    recruiter profile uses user_id,company_id to bind person to company);
 -- 5) empty-db replay succeeds before DB09 child tables are registered;
 -- 6) indexes are reviewed for unnecessary duplicate storage if a broader
 --    cross-domain canonical tenant-key strategy supersedes this staging file.
