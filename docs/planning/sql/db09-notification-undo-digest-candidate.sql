@@ -91,10 +91,20 @@ CREATE TABLE placement_notification_intents (
   CONSTRAINT db09_notify_claim_state_ck
     CHECK (
       (status = 'CLAIMED' AND claimed_at IS NOT NULL
-       AND claim_lease_expires_at IS NOT NULL AND claim_token IS NOT NULL)
+       AND claim_lease_expires_at IS NOT NULL
+       AND claim_lease_expires_at > claimed_at
+       AND claim_token IS NOT NULL)
       OR
       (status <> 'CLAIMED' AND claim_lease_expires_at IS NULL AND claim_token IS NULL)
     ),
+  CONSTRAINT db09_notify_channel_terminal_ck
+    CHECK (
+      (channel = 'APP' AND status NOT IN ('PROVIDER_ACCEPTED','DELIVERED'))
+      OR
+      (channel IN ('EMAIL','SMS') AND status <> 'APP_PUBLISHED')
+    ),
+  CONSTRAINT db09_notify_failure_shape_ck
+    CHECK ((status = 'FAILED') = (failure_code IS NOT NULL)),
   CONSTRAINT db09_notify_external_ref_ck
     CHECK (channel = 'APP' OR encrypted_outbound_ref_id IS NOT NULL),
   CONSTRAINT db09_notify_app_ref_ck
@@ -120,12 +130,209 @@ CREATE INDEX db09_notification_digest_idx
   ON placement_notification_intents(college_id, recipient_user_id, digest_day)
   WHERE status = 'PENDING' AND digest_day IS NOT NULL;
 
+-- Recipient identity is tenant-bearing state. A canonical user UUID alone is
+-- not enough to make a learner/faculty/recruiter recipient valid for a college.
+CREATE FUNCTION db09_assert_notification_recipient_scope() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+  IF NEW.recipient_kind = 'LEARNER' THEN
+    IF NOT EXISTS (
+      SELECT 1
+        FROM college_memberships m
+        JOIN membership_roles r ON r.membership_id = m.id
+       WHERE m.user_id = NEW.recipient_user_id
+         AND m.college_id = NEW.college_id
+         AND m.status = 'ACTIVE'
+         AND r.role = 'LEARNER'
+    ) THEN
+      RAISE EXCEPTION 'notification learner recipient is not active in college'
+        USING ERRCODE = '23514';
+    END IF;
+  ELSIF NEW.recipient_kind = 'FACULTY' THEN
+    IF NOT EXISTS (
+      SELECT 1
+        FROM college_memberships m
+        JOIN membership_roles r ON r.membership_id = m.id
+       WHERE m.user_id = NEW.recipient_user_id
+         AND m.college_id = NEW.college_id
+         AND m.status = 'ACTIVE'
+         AND r.role IN ('FACULTY','COLLEGE_ADMIN','MENTOR','TPO')
+    ) THEN
+      RAISE EXCEPTION 'notification faculty recipient is not active in college'
+        USING ERRCODE = '23514';
+    END IF;
+  ELSIF NEW.recipient_kind = 'RECRUITER' THEN
+    IF NOT db09_has_active_recruiter_grant(
+      NEW.recipient_user_id,
+      NEW.college_id,
+      NULL
+    ) THEN
+      RAISE EXCEPTION 'notification recruiter recipient lacks active college grant'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_notification_recipient_scope_guard
+  BEFORE INSERT OR UPDATE OF college_id,recipient_user_id,recipient_kind
+  ON placement_notification_intents
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_notification_recipient_scope();
+
+CREATE FUNCTION db09_assert_notification_undo_timing() RETURNS trigger
+LANGUAGE plpgsql AS $
+DECLARE
+  v_deadline timestamptz;
+  v_cancelled timestamptz;
+BEGIN
+  IF NEW.undo_group_id IS NOT NULL THEN
+    SELECT undo_deadline,cancelled_at
+      INTO v_deadline,v_cancelled
+      FROM placement_notification_undo_groups
+     WHERE id = NEW.undo_group_id
+       AND organization_id = NEW.organization_id
+       AND college_id = NEW.college_id;
+
+    IF v_deadline IS NULL THEN
+      RAISE EXCEPTION 'notification undo group does not match intent scope'
+        USING ERRCODE = '23503';
+    END IF;
+    IF NEW.send_after < v_deadline THEN
+      RAISE EXCEPTION 'undoable notification cannot become due before undo deadline'
+        USING ERRCODE = '23514';
+    END IF;
+    IF NEW.status IN ('CLAIMED','APP_PUBLISHED','PROVIDER_ACCEPTED','DELIVERED')
+       AND (v_cancelled IS NOT NULL OR clock_timestamp() < v_deadline) THEN
+      RAISE EXCEPTION 'cancelled or still-undoable notification cannot be claimed/published'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+
+  IF NEW.status = 'CLAIMED'
+     AND NEW.send_after > clock_timestamp() THEN
+    RAISE EXCEPTION 'notification cannot be claimed before send_after'
+      USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END $;
+CREATE TRIGGER db09_notification_undo_timing_guard
+  BEFORE INSERT OR UPDATE OF
+    organization_id,college_id,undo_group_id,status,send_after
+  ON placement_notification_intents
+  FOR EACH ROW EXECUTE FUNCTION db09_assert_notification_undo_timing();
+
+-- Atomic full-undo operation. It fails closed if any member has already moved
+-- beyond PENDING; callers cannot truthfully report a partial undo as success.
+CREATE FUNCTION db09_cancel_notification_undo_group(p_group_id uuid)
+RETURNS integer
+LANGUAGE plpgsql AS $
+DECLARE
+  v_group placement_notification_undo_groups%ROWTYPE;
+  v_non_pending integer;
+  v_cancelled integer;
+BEGIN
+  SELECT *
+    INTO v_group
+    FROM placement_notification_undo_groups
+   WHERE id = p_group_id
+   FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'notification undo group not found'
+      USING ERRCODE = '23503';
+  END IF;
+  IF v_group.cancelled_at IS NOT NULL THEN
+    RETURN 0;
+  END IF;
+  IF clock_timestamp() > v_group.undo_deadline THEN
+    RAISE EXCEPTION 'notification undo deadline passed'
+      USING ERRCODE = '23514';
+  END IF;
+
+  PERFORM 1
+    FROM placement_notification_intents
+   WHERE undo_group_id = p_group_id
+   FOR UPDATE;
+
+  SELECT count(*)
+    INTO v_non_pending
+    FROM placement_notification_intents
+   WHERE undo_group_id = p_group_id
+     AND status <> 'PENDING';
+
+  IF v_non_pending > 0 THEN
+    RAISE EXCEPTION 'notification undo group already started delivery'
+      USING ERRCODE = '23514';
+  END IF;
+
+  UPDATE placement_notification_undo_groups
+     SET cancelled_at = clock_timestamp()
+   WHERE id = p_group_id;
+
+  UPDATE placement_notification_intents
+     SET status = 'CANCELLED'
+   WHERE undo_group_id = p_group_id
+     AND status = 'PENDING';
+  GET DIAGNOSTICS v_cancelled = ROW_COUNT;
+  RETURN v_cancelled;
+END $;
+
+-- Canonical claim path for workers. Row locks + SKIP LOCKED serialize workers,
+-- while the timing trigger and group predicate make cancellation win before
+-- the deadline and prevent a cancelled group from being claimed later.
+CREATE FUNCTION db09_claim_notification_intents(
+  p_limit integer,
+  p_claim_token uuid,
+  p_lease_seconds integer
+) RETURNS SETOF placement_notification_intents
+LANGUAGE plpgsql AS $
+BEGIN
+  IF p_limit < 1 OR p_limit > 1000 THEN
+    RAISE EXCEPTION 'invalid notification claim batch size'
+      USING ERRCODE = '22023';
+  END IF;
+  IF p_lease_seconds < 1 OR p_lease_seconds > 900 THEN
+    RAISE EXCEPTION 'invalid notification claim lease'
+      USING ERRCODE = '22023';
+  END IF;
+
+  RETURN QUERY
+  WITH due AS (
+    SELECT i.id
+      FROM placement_notification_intents i
+     WHERE i.status = 'PENDING'
+       AND i.send_after <= clock_timestamp()
+       AND (
+         i.undo_group_id IS NULL
+         OR EXISTS (
+           SELECT 1
+             FROM placement_notification_undo_groups g
+            WHERE g.id = i.undo_group_id
+              AND g.organization_id = i.organization_id
+              AND g.college_id = i.college_id
+              AND g.cancelled_at IS NULL
+              AND g.undo_deadline <= clock_timestamp()
+         )
+       )
+     ORDER BY i.send_after,i.created_at,i.id
+     FOR UPDATE SKIP LOCKED
+     LIMIT p_limit
+  )
+  UPDATE placement_notification_intents i
+     SET status = 'CLAIMED',
+         claimed_at = clock_timestamp(),
+         claim_lease_expires_at =
+           clock_timestamp() + make_interval(secs => p_lease_seconds),
+         claim_token = p_claim_token
+    FROM due
+   WHERE i.id = due.id
+  RETURNING i.*;
+END $;
+
 -- Atomic state transitions expected from the eventual trusted service:
--- UNDO: lock undo group + all queued intent rows in same transaction,
--- assert clock < undo_deadline; update only PENDING to CANCELLED; reject a
--- request claiming *full* undo if ANY member was claimed/published already.
--- CLAIM: SELECT ... FOR UPDATE SKIP LOCKED for status=PENDING,
--- send_after<=now(), cancelled_at IS NULL; set CLAIMED and fence with token.
+-- UNDO: db09_cancel_notification_undo_group locks group + member rows,
+-- rejects deadline expiry or any member beyond PENDING, then cancels all.
+-- CLAIM: db09_claim_notification_intents uses FOR UPDATE SKIP LOCKED,
+-- send_after<=clock, cancelled/deadline checks and a bounded lease token.
 -- SEND: update only when claim_token still matches and group not cancelled;
 -- APP: insert one recipient-scoped in_app_notifications row idempotently
 -- using (user_id,event_id), then mark APP_PUBLISHED in the same transaction.
@@ -139,6 +346,7 @@ CREATE INDEX db09_notification_digest_idx
 --
 -- ACCEPTANCE NOT EXECUTED: negative tests for cross-college event FK, wrong
 -- undo-group tenant, stale lease token, already-claimed undo, APP visibility,
--- two-reader independent read flags, digest isolation, duplicate event,
--- retry/recipient privacy and 100-way concurrent claim/cancel must pass on
+-- recipient-kind/college forgery, wrong channel terminal status, invalid
+-- claim lease, two-reader independent read flags, digest isolation, duplicate
+-- event, retry privacy and 100-way concurrent claim/cancel must pass on
 -- disposable PostgreSQL before migrator can promote this candidate.
