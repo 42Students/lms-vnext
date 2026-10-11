@@ -133,12 +133,14 @@ afterEach(async () => {
     await pool.query("DELETE FROM course_section_deliveries WHERE id=$1",[f.deliveryId]);
     await pool.query("DELETE FROM course_offerings WHERE id=$1",[f.offeringId]);
     await pool.query("DELETE FROM courses WHERE id=$1",[f.courseId]);
+    // Both cohorts reference the same academic period; remove every dependent
+    // section/cohort before deleting the period, including transfer fixtures.
     await pool.query("DELETE FROM sections WHERE id=$1",[f.sectionId]);
+    if(f.crossSectionId) await pool.query("DELETE FROM sections WHERE id=$1",[f.crossSectionId]);
     await pool.query("DELETE FROM cohorts WHERE id=$1",[f.cohortId]);
+    if(f.crossCohortId) await pool.query("DELETE FROM cohorts WHERE id=$1",[f.crossCohortId]);
     await pool.query("DELETE FROM academic_periods WHERE id=$1",[f.periodId]);
     await pool.query("DELETE FROM programs WHERE id=$1",[f.programId]);
-    if(f.crossSectionId) await pool.query("DELETE FROM sections WHERE id=$1",[f.crossSectionId]);
-    if(f.crossCohortId) await pool.query("DELETE FROM cohorts WHERE id=$1",[f.crossCohortId]);
     if(f.crossProgramId) await pool.query("DELETE FROM programs WHERE id=$1",[f.crossProgramId]);
     await pool.query("DELETE FROM lms_groups WHERE id=$1",[f.groupId]);
     if(f.otherMembershipId) {
@@ -262,11 +264,54 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
     expect((await getLearnerClassSchedule(student.ctx)).events
       .some(row=>row.id===f.scheduleEventId)).toBe(false);
 
+    // An idempotent join must NOT report this stale ACTIVE membership as valid.
+    // Returning the old row before checking the current program is an auth leak.
+    await expect(joinGroup(student.ctx,f.groupId,student.membershipId))
+      .rejects.toMatchObject({code:"ELECTIVE_PRIMARY_SECTION_REQUIRED"});
+
     // Once the stale membership is removed, allocation back into this slot is
     // rejected by the same program-scoped eligibility rule.
     await leaveGroup(student.ctx,f.groupId,student.membershipId);
     await expect(joinGroup(student.ctx,f.groupId,student.membershipId))
       .rejects.toMatchObject({code:"ELECTIVE_PRIMARY_SECTION_REQUIRED"});
+  });
+
+  it("rejects a first elective join from a different program in the same college", async () => {
+    const f=await setupRosterFixture();
+    const student=await createHostSectionLearner(f);
+    const p=randomUUID(), c=randomUUID(), s=randomUUID();
+    f.crossProgramId=p; f.crossCohortId=c; f.crossSectionId=s;
+    await pool.query(
+      "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
+      [p,SEED_IDS.departmentA,label(),label()],
+    );
+    await pool.query(
+      "INSERT INTO cohorts (id,program_id,name,code,start_period_id,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
+      [c,p,label(),label(),f.periodId],
+    );
+    await pool.query(
+      "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
+      [s,c,f.periodId,label(),label()],
+    );
+    await pool.query(
+      "UPDATE learner_program_enrollments SET program_id=$1,cohort_id=$2 WHERE id=$3",
+      [p,c,f.otherEnrollmentId],
+    );
+    await pool.query(
+      "UPDATE section_enrollments SET section_id=$1 WHERE id=$2",
+      [s,f.otherSectionEnrollmentId],
+    );
+    // College and period still match. The pinned legacy service rejects on
+    // program mismatch, even though old V167 commentary suggests otherwise.
+    await expect(joinGroup(student.ctx,f.groupId,student.membershipId))
+      .rejects.toMatchObject({code:"ELECTIVE_PRIMARY_SECTION_REQUIRED"});
+    const events=await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=$1",
+      [f.groupId],
+    );
+    expect(events.rows[0].n).toBe(0);
+    expect((await listLearnerCourseDeliveries(student.ctx))
+      .some(row=>row.deliveryId===f.deliveryId)).toBe(false);
   });
 
   it("denies elective access after persisted user disable even when request context is stale", async () => {
