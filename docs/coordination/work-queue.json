@@ -2004,17 +2004,17 @@
         "docs/planning/database-parity-db06-history-contract.md",
         "tests/db06-history-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "2935f2aea35285348a07f1c0d412ec626da97d69",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB06 immutable history source staging complete: assignment_grade_events and attendance_record_events staged outside schema barrel/journal; exact composite parent identities, tenant/actor scope, College Admin/active teaching Faculty grade actor gate, append-only UPDATE/DELETE/TRUNCATE rejection, deferred same-transaction audit completeness, attendance version CAS and retention RESTRICT contract documented. Static source guard registered. No migration/API cutover or PostgreSQL acceptance executed; promotion intentionally requires coordinated producer changes.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T08:00:53.475Z",
       "startedAt": "2026-10-11T08:01:43.463Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T08:08:18.754Z",
+      "completionCommitSha": "2935f2aea35285348a07f1c0d412ec626da97d69",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2038,6 +2038,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T08:01:43.463Z",
           "reason": "Staging append-only assignment grade and attendance correction event tables from DB-009 source semantics; no journal/schema-barrel registration."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T08:08:18.754Z",
+          "reason": "DB-035 source-only persistence design and static contract complete; runtime/migration/API cutover intentionally not part of this task."
         }
       ]
     },
