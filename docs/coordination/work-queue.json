@@ -1040,13 +1040,13 @@
         "tests/integration/**",
         "tests/db-parity-pass5.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "READY",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": 1,
-      "pickedAt": "2026-10-11T19:34:00+05:30",
+      "pickedBy": null,
+      "pickedAt": null,
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
@@ -1074,6 +1074,11 @@
           "status": "PICKED",
           "at": "2026-10-11T19:34:00+05:30",
           "reason": "Chat 1 supplemental continuation: isolated PostgreSQL negative/read-only witness suite, avoiding shared schema journal and all active domain drafts."
+        },
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Released conflicting Chat 1 pickup after detecting active DB-048 in Chat 1 checkpoint; preserve pick history."
         }
       ]
     },
