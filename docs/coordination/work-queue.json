@@ -1262,6 +1262,42 @@
           "reason": "Corrected staged identity and integer semantics; logged 10 privacy/concurrency acceptance witnesses; no runtime acceptance claimed."
         }
       ]
+    },
+    {
+      "id": "DB-024",
+      "phase": "DATABASE",
+      "title": "Stage DB10 general TPO notification outbox and undo/digest persistence",
+      "scope": "Reconcile legacy V161 notification_outbox 13 fields and NotificationOutboxService for APP/EMAIL/SMS, per-event recipient identity, 30-second undo hold, conditional cancellation, digest scheduling and claim/write audit. Stage isolated DB10 Drizzle/SQL only, without touching active DB09 or Chat 1 migration journal.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "src/db/schema/db10-general-notices.draft.ts",
+        "scripts/sql/db10-general-notices-staging.sql",
+        "docs/planning/database-parity-db10-general-notices-contract.md",
+        "tests/db10-general-notices-staging.test.mjs"
+      ],
+      "status": "READY",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "DB-012 Chat 3 blocker: general legacy notification_outbox 13 fields cannot map to invitation-only DB10 outbound draft. New strictly isolated database staging batch."
+        }
+      ]
     }
   ],
   "eventModel": {
