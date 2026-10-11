@@ -43,6 +43,27 @@ BEGIN
   END IF;
 
   IF NEW.purpose = 'ASSIGNMENT_SUBMISSION' THEN
+    IF NEW.declared_content_type NOT IN (
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/plain',
+      'text/csv',
+      'application/rtf',
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'application/zip'
+    ) THEN
+      RAISE EXCEPTION
+        'DB06 assignment upload receipt MIME type is not allowed'
+        USING ERRCODE='23514';
+    END IF;
+
     PERFORM 1
       FROM membership_roles mr
       WHERE mr.membership_id = NEW.owner_membership_id
