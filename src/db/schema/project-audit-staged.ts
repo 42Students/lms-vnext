@@ -111,4 +111,11 @@ export const projectTaskCommentsStaged=pgTable("project_task_comments",{
     sql`${t.message} is null or length(trim(${t.message})) > 0`),
   check("project_task_comments_type_ck",
     sql`length(trim(${t.commentType})) > 0`),
+  // SQL promotion draft additionally installs UPDATE/DELETE/TRUNCATE triggers
+  // for comment identity and recoverable deletion; Drizzle check metadata must
+  // preserve the same chronology requirements.
+  check("w03_task_comments_updated_after_created_ck",
+    sql`${t.updatedAt} >= ${t.createdAt}`),
+  check("w03_task_comments_deleted_after_created_ck",
+    sql`${t.deletedAt} is null or ${t.deletedAt} >= ${t.createdAt}`),
 ]);
