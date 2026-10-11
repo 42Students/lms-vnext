@@ -61,3 +61,18 @@ The global implementation tracker remains **52 / 64 COMPLETED**. The machine-sou
 ## DB00 disposition reconciliation addendum
 
 A separate fail-closed reader `scripts/db19-db00-disposition-crosscheck.mjs` and `tests/db19-db00-disposition-crosscheck.test.mjs` compare exact source-ledger table/field inventories against the Chat 6-owned DB00 disposition without editing those records. **17/17 real Node v22 tests passed** against byte-identical GitHub blobs; the actual two GitHub DB00 inputs produced `valid=true`, 39 tables/732 fields, 32 source-dispositioned tables/641 fields and 7 product-decision-pending tables/91 fields. Source-oracle drift, missing/duplicate table dispositions and unapproved Smrithi retirement fail closed. See [DB00 reconciliation evidence](./db19-db00-disposition-crosscheck.md). All evidence remains SOURCE_ONLY; DB003 is still BLOCKED pending product decision and consumer/runtime proof.
+
+
+### Executable master-ledger overlay integration
+
+The committed DB-019 verifier now invokes the separate DB00 crosscheck when `db00-historical-engine-disposition.json` is available. The two evidence sources stay distinct:
+
+- `historicRetirementPending=631`: raw initial DB00 ledger review-status count, unchanged for source fidelity.
+- `backupFieldsSourceDisposed=631`: existing source-owned backup retirement decisions, **not unresolved Smrithi work**.
+- `migrationMetadataFieldsSourceDisposed=10`: Flyway metadata mapped to Drizzle tooling.
+- `smrithiFieldsPendingProductDecision=91`: the actual seven Smrithi table field candidates still awaiting product decision.
+- `runtimeMappings=0`: no runtime DB verification inferred from source disposition.
+
+The integration is fail-closed: a mismatch in any existing field count, source-table classification, owner disposition or frozen legacy SHA yields a structural source-integrity error. If the owner ledger is absent, the overlay counters are `null`, never automatically classified as approved.
+
+**Executed evidence:** `node --test tests/db19-field-disposition-audit.test.mjs` on Node v22.16.0: **23 passed, 0 failed**, including three new overlay acceptance/rejection checks. Both local source/test `git hash-object` values exactly matched current GitHub blobs: `da1a2a2166477230e0a2176f0b5d6c5b83291a55` and `4dc351965fdcc924e7a64b5c8a848d877bcc9761`. The exact committed source was separately evaluated in the connected V8 runtime against all **2,829 actual GitHub ledger rows** and the existing DB00 disposition: **sourceIntegrity=PASS, errors=[]**, with the count split above. No PostgreSQL migration, tenant/race or runtime consumer tests were executed.
