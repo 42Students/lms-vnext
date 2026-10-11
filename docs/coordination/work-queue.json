@@ -2897,14 +2897,14 @@
         "tests/db10-global-email-suppression-contract.test.mjs",
         "docs/planning/db10-global-email-suppression-parity.md"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 3,
       "pickedAt": "2026-10-11T19:35:00+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T19:36:00+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2926,6 +2926,11 @@
           "status": "PICKED",
           "at": "2026-10-11T19:35:00+05:30",
           "reason": "Chat 3 claimed uncovered database-stage opt-out parity gap after checking no dependency-eligible READY work."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T19:36:00+05:30",
+          "reason": "Implement separately derived secret HMAC global opt-out check, draft schema and executable contract regression without activating sender."
         }
       ],
       "id": "DB-050"
