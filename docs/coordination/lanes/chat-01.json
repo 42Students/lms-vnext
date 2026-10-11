@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-028",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB025_SOURCE_COMPLETED_PG_PENDING",
+    "checkpointKind": "DB028_E2E_RESET_GUARD_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "be155f23f6e47e836403080cc21e526e21efcc93",
+    "observedMainSha": "6c9928f851d53a3fe6793b1cdf7704973f9fec97",
     "lastWorkerMergedSha": "5088bbb27c2c2058f393dbda3da3f8872f1bb95b",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-025 completed: destructive test prepare now fails closed without explicit TEST_DATABASE_URL and preflights the conservative target guard before any reset. 12/12 no-PG safety assertions passed in isolated Node harness. Full disposable PostgreSQL acceptance remains pending."
+    "summary": "Chat 1 started DB-028 CORE_INFRA hardening for destructive browser E2E database preparation."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -41,7 +41,7 @@
   ],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "No dependency-satisfied pre-existing READY task. Add/claim a non-duplicating DATABASE source-preparation task for the global staged migration collision/order manifest, leaving DB-002/DB-017 actual replay/registration gated.",
+  "nextAction": "Route db:e2e:prepare through the shared disposable-target preflight before DATABASE_URL assignment/imports, extend explicit disposable naming to E2E targets, and add static/process guards.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -71,7 +71,8 @@
     "DB-010",
     "DB-014",
     "DB-016",
-    "DB-025"
+    "DB-025",
+    "DB-028"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -81,7 +82,7 @@
     "DB-001",
     "DB-025"
   ],
-  "lastPickedAt": "2026-10-11T07:32:00.000Z",
+  "lastPickedAt": "2026-10-11T07:42:00.000Z",
   "lastCompletedAt": "2026-10-11T07:37:43.189Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
