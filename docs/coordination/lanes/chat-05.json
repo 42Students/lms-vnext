@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-040",
+  "executionState": "COMPLETED",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB040_STAGED_DRAFT_PREFLIGHT_STARTED",
+    "checkpointKind": "DB040_STAGED_DRAFT_PREFLIGHT_COMPLETED_UNVERIFIED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "8fcf46c76c32e2df9ff4ec905852ab25dd45e0ec",
-    "lastWorkerMergedSha": "c8688c5265d8461272c38e07e37769afd18c0345",
+    "observedMainSha": "a59e26496905f0c066f4ce7baf9591402b53de55",
+    "lastWorkerMergedSha": "6c652ef6d03758d2b303c142ee719320a41965fe",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-040 started: exact 75-field source→draft preflight for announcements, bug tracker and scheduled-job leases; no schema/migration edits."
+    "summary": "DB-040 exact-source preflight covers 75 DB10 fields in isolated drafts; fixed test parser and refreshed source/shape audit 342/342. All rows remain UNMAPPED/verified=0 pending migration and runtime proof."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -41,7 +41,8 @@
     "tests/db10-sms-delivery-attempts-staging.test.mjs: 8 static privacy/outcome/tenant/append-only evidence assertions (authored, Node runtime not executed)",
     "tests/db10-app-setting-disposition.test.mjs: 8 static cross-domain key/disposition/security assertions (authored, Node runtime not executed)",
     "tests/db10-notification-template-disposition.test.mjs: 8 static duplicate-registry/source-disposition guards (authored, Node runtime not executed)",
-    "tests/db10-activity-audit-context-staging.test.mjs: 8 static forensic-field/privacy/source guards (authored, Node runtime not executed)"
+    "tests/db10-activity-audit-context-staging.test.mjs: 8 static forensic-field/privacy/source guards (authored, Node runtime not executed)",
+    "tests/db10-staged-drafts-source-map.test.mjs: 8 static 75-field draft-target/migration-readiness guards (authored; source audit 342/342, Node runtime not executed)"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
@@ -65,7 +66,9 @@
     "DB037: final retirement of notification_template/lms_notification_template requires DB00 native/detached/live-consumer proof and DB19 approval.",
     "DB037: 39/39 connector consistency assertions are source checks, not Node/PostgreSQL runtime verification.",
     "DB039: staged actor_role_snapshot/request_ip/user_agent are not registered in Drizzle; PostgreSQL witnesses remain NOT_RUN.",
-    "DB039: trusted server request-context capture and retention/disclosure policy remain API/product follow-ons; 40/40 connector checks are not runtime evidence."
+    "DB039: trusted server request-context capture and retention/disclosure policy remain API/product follow-ons; 40/40 connector checks are not runtime evidence.",
+    "DB040: announcements/bug-tracker/scheduled-job draft schemas remain unregistered; PostgreSQL family witnesses remain NOT_RUN.",
+    "DB040: 342/342 connector source/shape checks prove draft target presence, not migrated/runtime database behavior."
   ],
   "handoffs": [
     "DB02 coordinator: define and prove current cohort semester/year persisted semantics required by legacy ElectiveService.classEligibilityError; see draft PR #55.",
@@ -81,9 +84,10 @@
     "Chat 2 DB01: own host/cookie/OTP/identity limit setting targets from DB-033 registry.",
     "Chat 6 DB05: own course.watchedThresholdPercent canonical client/server setting from DB-033 registry.",
     "Chat 6 DB00: prove absence of current native-SQL/detached/external consumers for notification_template and lms_notification_template before DB19 retirement approval.",
-    "Chat 1: register DB-039 three-column activity audit context stage through forward migration; preserve privacy/retention gates."
+    "Chat 1: register DB-039 three-column activity audit context stage through forward migration; preserve privacy/retention gates.",
+    "Chat 1: register DB-040 families in dependency order and run disposable PostgreSQL replay/integration witnesses before advancing any of the 75 rows."
   ],
-  "nextAction": "Author consolidated migration-readiness manifest + static source-target preflight, reconcile 75 DB10 ledger rows, preserve UNMAPPED/0 verified state.",
+  "nextAction": "Refresh DATABASE queue; claim eligible work or continue non-conflicting DB10 exact field reconciliation while phase gates remain closed.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -120,7 +124,10 @@
     "https://github.com/42Students/lms-vnext/commit/f659fbcc357aed459434beecd7017fd508f3969f",
     "https://github.com/42Students/lms-vnext/commit/e68e94179aff28321b8e818e4710f7f381456db6",
     "https://github.com/42Students/lms-vnext/commit/d14f61a110f584d43f98588e1b16bd21c779b7f5",
-    "https://github.com/42Students/lms-vnext/commit/c8688c5265d8461272c38e07e37769afd18c0345"
+    "https://github.com/42Students/lms-vnext/commit/c8688c5265d8461272c38e07e37769afd18c0345",
+    "https://github.com/42Students/lms-vnext/commit/cb61a4ee055329d5140bc3ef87ec6744c8c6aeba",
+    "https://github.com/42Students/lms-vnext/commit/011f7cf02eae3a539e3cb28e6902d3eeea7acce2",
+    "https://github.com/42Students/lms-vnext/commit/6c652ef6d03758d2b303c142ee719320a41965fe"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -154,10 +161,11 @@
     "DB-031",
     "DB-033",
     "DB-037",
-    "DB-039"
+    "DB-039",
+    "DB-040"
   ],
   "lastPickedAt": "2026-10-11T14:10:30+05:30",
-  "lastCompletedAt": "2026-10-11T14:04:00+05:30",
+  "lastCompletedAt": "2026-10-11T14:18:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-006",
@@ -173,7 +181,8 @@
     "DB-031",
     "DB-033",
     "DB-037",
-    "DB-039"
+    "DB-039",
+    "DB-040"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
