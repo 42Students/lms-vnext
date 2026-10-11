@@ -1620,7 +1620,15 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql -> course_lessons.legacy_deleted_at. Source atomic child tombstones, ONLY parent restore; NOT status=ARCHIVED equivalent.",
+          "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+            "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+            "No registered migration or executed PostgreSQL/API evidence"
+          ]
         },
         {
           "legacyTable": "lesson",
@@ -1670,7 +1678,15 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-active-enabled.draft.sql -> course_lessons.legacy_active. Legacy create default true, update only if field provided; status distinct.",
+          "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+            "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+            "No registered migration or executed PostgreSQL/API evidence"
+          ]
         },
         {
           "legacyTable": "lesson",
@@ -1712,7 +1728,15 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-active-enabled.draft.sql -> course_lessons.legacy_enabled. Independent from active and archive; source create default true.",
+          "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+            "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+            "No registered migration or executed PostgreSQL/API evidence"
+          ]
         },
         {
           "legacyTable": "lesson",
@@ -2024,7 +2048,15 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-soft-delete-cascade.draft.sql -> lesson_contents.legacy_deleted_at. Separate content deletion disables active/enabled, parent lesson restore does not restore children.",
+          "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+            "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+            "No registered migration or executed PostgreSQL/API evidence"
+          ]
         },
         {
           "legacyTable": "lesson_contents",
@@ -2278,7 +2310,15 @@
           ],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-lesson-content-owner-membership.draft.sql -> lesson_contents.owner_membership_id nullable, not created_by_user_id; source edit/delete checks owner/admin and teaching scope.",
+          "db008SourceDisposition": "LEGACY_ACTIVE_PRODUCER_CONFIRMED_SQL_COMPANION_STAGED_CONSUMER_AND_PG_PROOF_MISSING",
+          "db008Evidence": [
+            "legacy BE 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "LessonServiceImpl.java, LessonContentsServiceImpl.java, Lesson.java, LessonContents.java, BaseModel.java",
+            "docs/planning/db05-lesson-soft-delete-owner-contract.md",
+            "No registered migration or executed PostgreSQL/API evidence"
+          ]
         },
         {
           "legacyTable": "lesson_contents",
