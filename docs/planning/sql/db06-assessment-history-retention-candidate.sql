@@ -253,6 +253,78 @@ CREATE TRIGGER db06_quiz_option_authoring_guard
 BEFORE INSERT OR UPDATE OR DELETE ON quiz_options
 FOR EACH ROW EXECUTE FUNCTION db06_guard_quiz_option_authoring();
 
+-- Mirror the active authoring validator at the database boundary. Sequence
+-- uniqueness already exists in the base schema; add case-insensitive option
+-- text uniqueness and deferred correct-option cardinality.
+CREATE UNIQUE INDEX quiz_options_question_lower_text_uq
+  ON quiz_options(question_id, lower(option_text));
+
+CREATE FUNCTION db06_require_quiz_question_option_shape()
+RETURNS trigger LANGUAGE plpgsql AS $db06_question_shape$
+DECLARE
+  target_question uuid;
+  q_type text;
+  option_count integer;
+  correct_count integer;
+BEGIN
+  target_question := CASE
+    WHEN TG_TABLE_NAME = 'quiz_questions' THEN
+      CASE WHEN TG_OP = 'DELETE' THEN OLD.id ELSE NEW.id END
+    ELSE
+      CASE WHEN TG_OP = 'DELETE' THEN OLD.question_id ELSE NEW.question_id END
+  END;
+
+  SELECT q.question_type::text
+    INTO q_type
+    FROM quiz_questions q
+    WHERE q.id = target_question;
+
+  IF q_type IS NULL THEN
+    IF TG_OP = 'DELETE' THEN
+      RETURN OLD;
+    END IF;
+    RETURN NEW;
+  END IF;
+
+  SELECT count(*),
+         count(*) FILTER (WHERE o.is_correct)
+    INTO option_count, correct_count
+    FROM quiz_options o
+    WHERE o.question_id = target_question;
+
+  IF option_count < 2 OR option_count > 20 THEN
+    RAISE EXCEPTION 'DB06 quiz question requires 2 to 20 options'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF q_type = 'SINGLE_CHOICE' AND correct_count <> 1 THEN
+    RAISE EXCEPTION 'DB06 single-choice question requires exactly one correct option'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF q_type = 'MULTIPLE_CHOICE'
+     AND (correct_count < 1 OR correct_count >= option_count) THEN
+    RAISE EXCEPTION 'DB06 multiple-choice question requires correct and incorrect options'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+  RETURN NEW;
+END;
+$db06_question_shape$;
+
+CREATE CONSTRAINT TRIGGER db06_quiz_question_shape_from_question
+AFTER INSERT OR UPDATE ON quiz_questions
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION db06_require_quiz_question_option_shape();
+
+CREATE CONSTRAINT TRIGGER db06_quiz_question_shape_from_options
+AFTER INSERT OR UPDATE OR DELETE ON quiz_options
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION db06_require_quiz_question_option_shape();
+
 -- Snapshot fidelity ---------------------------------------------------------
 -- submitCourseQuiz currently materializes question/option rows before opening
 -- its write transaction. A concurrent authoring transaction could therefore
@@ -550,3 +622,6 @@ $db06_retention_preflight$;
 -- M direct SQL attempt_number gaps or max-attempt overflow fail.
 -- N service/direct attempt races share advisory lock namespace 6206001.
 -- O quiz total_points must equal sum(question.points) at COMMIT.
+
+-- P option text is unique case-insensitively within a question.
+-- Q each question has 2-20 options and valid correct-option cardinality.
