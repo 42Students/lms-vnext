@@ -4014,6 +4014,52 @@
           "reason": "Chat2 available; staged outbound candidate does not overlap existing active task or single-writer registered migrations."
         }
       ]
+    },
+    {
+      "id": "DB-068",
+      "phase": "DATABASE",
+      "title": "Enforce DB07 project-template version ownership in assignments and instances",
+      "scope": "Stage composite FK keys and executable negative PostgreSQL witnesses for template_id/template_version_id of project_template_college_assignments and project_instances. Individual UUID references do not establish that version belongs to named template; application joins already enforce on read, but a direct SQL writer can forge mixed parents. No migration/barrel edits.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db07-template-version-parent-integrity-staging.sql",
+        "docs/planning/db07-template-version-integrity-contract.md",
+        "tests/db07-template-version-parent-integrity-source.test.mjs",
+        "tests/integration/db07-template-version-parent-integrity.test.ts"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 2,
+      "pickedAt": "2026-10-11T20:56:38.125Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 2,
+          "pickedAt": "2026-10-11T20:56:38.125Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T20:56:38.125Z",
+          "reason": "Registered project schema has independent template/version FKs; existing DB07 core integrity staging covers project-release/task but not template-version ownership."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T20:56:38.125Z",
+          "reason": "Chat 2 claims independent DB07 template/version parent relationship hardening after DB-004 transferred to Chat 5."
+        }
+      ]
     }
   ],
   "eventModel": {
