@@ -172,6 +172,12 @@
       "kind": "DB05_COHORT_PERIOD_RECEIPT_SCOPE_AND_DRAFT_SYNTAX_20261011",
       "commitSha": "a9e08e1104eaf954b5bd128cf6e1a575535f3a4f",
       "message": "Eight direct-to-main commits: repair malformed receipt SQL tail; check same-college cohort/term identity in receipt create+consume and three other DB05 companion guards; add two static Node suites and 22-case unexecuted PG acceptance matrix. 17 remote-source assertions passed, 22 source SQL draft transaction/tail checks passed; Node/PG not executed, 0 DB field verifications. W01 owns single registration and must protect upstream reparenting."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "EXECUTED_PROGRESS_REFERENCE_AND_HISTORICAL_TWO_COLUMN_SOURCE_PROOF",
+      "commitSha": "42ac7d097049a1c79799b55a7a5372e9a2a06e28",
+      "message": "APPENDED HANDOFF (no overwrite of sibling Chat 6 work): Node v22.16.0, exact Git blob 1d6dd100b35f77fed90b06acec6cd13a0fd42ba2, pure progress reference tests 8/8 pass executed, evidence docs/coordination/evidence/chat-06-db008-progress-reference-node-2026-10-11.md; does NOT prove API/PG/CI. Read docs/planning/db05-progress-consumer-query-handoff.md for latest-attempt-before-deletion count, one-row lateral learner join, attempt-specific updates and stale tab race. 28 pinned BE+FE course surfaces contain zero references to default_subscription_days/formal_title, but bounded scan only; optional conditional compatibility SQL unregistered, explicit preserve-vs-retire status OPEN. 7 independent drafts, 0/92 DB verified, 25 decisions open."
     }
   ],
   "nextAction": "Continue DB008 source-contract closure and coordinate with Chat1: register only after same-college + cohort + exact academic period guard integration, upstream reparent race policy, typed source/DB06 cross-contract and 22-case disposable PostgreSQL acceptance. Verify actual Node tests on independent local runner. Global phase remains DATABASE.",
@@ -295,7 +301,11 @@
     "https://github.com/42Students/lms-vnext/commit/da6ed8eefe5483f02ab003d791f7a0f3e40e771c",
     "https://github.com/42Students/lms-vnext/commit/36d2ceb430e8bbff8e2f3aff8cac6f947c1ada0c",
     "https://github.com/42Students/lms-vnext/commit/7dd5284f6cbc429dc00ffe6942a0f9cdb16bd7d6",
-    "https://github.com/42Students/lms-vnext/commit/a9e08e1104eaf954b5bd128cf6e1a575535f3a4f"
+    "https://github.com/42Students/lms-vnext/commit/a9e08e1104eaf954b5bd128cf6e1a575535f3a4f",
+    "https://github.com/42Students/lms-vnext/commit/3f5189f976439fbb73e702d11128609b3618f3b3",
+    "https://github.com/42Students/lms-vnext/commit/ec6313e045a4b614bab1dd9bafd96be35f8d2207",
+    "https://github.com/42Students/lms-vnext/commit/61dd449f506722234fecd58e4582438f197dc44a",
+    "https://github.com/42Students/lms-vnext/commit/71cbcb3f9abd8130bd1c86d01072f017b3aabec8"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
