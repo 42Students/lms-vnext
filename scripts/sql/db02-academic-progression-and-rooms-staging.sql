@@ -99,7 +99,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_tenant();
 -- Semester-course parent identity is immutable in the active legacy service: only
 -- mandatory/type, credits and display order are editable. Keep the normalized pair stable.
 CREATE FUNCTION db02_guard_program_term_course_identity()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.program_term_id IS DISTINCT FROM OLD.program_term_id
      OR NEW.course_id IS DISTINCT FROM OLD.course_id THEN
@@ -108,7 +108,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_program_term_course_identity_guard
 BEFORE UPDATE OF program_term_id, course_id ON program_term_courses
@@ -118,7 +118,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_identity();
 -- Once any offering materializes the term/course pair, deletion would rewrite historical
 -- curriculum identity and is therefore rejected.
 CREATE FUNCTION db02_guard_program_term_course_delete()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF EXISTS (
     SELECT 1
@@ -131,7 +131,7 @@ BEGIN
   END IF;
   RETURN OLD;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_program_term_course_delete_guard
 BEFORE DELETE ON program_term_courses
@@ -1387,7 +1387,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 -- at the period, changing its boundaries would reinterpret cohort/section/offering history.
 -- Child writers lock the period row before validation so this rule is race-safe.
 CREATE FUNCTION db02_guard_academic_period_date_history()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.start_date IS NOT DISTINCT FROM OLD.start_date
      AND NEW.end_date IS NOT DISTINCT FROM OLD.end_date THEN
@@ -1408,7 +1408,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE TRIGGER db02_academic_period_date_history_guard
 BEFORE UPDATE OF start_date, end_date ON academic_periods
