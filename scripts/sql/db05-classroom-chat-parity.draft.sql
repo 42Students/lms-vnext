@@ -35,7 +35,9 @@ BEGIN;
 -- The existing independent FKs permit a sender membership from college A
 -- to reference a delivery from college B unless same-college is checked.
 -- This staged trigger checks all three delivery scope paths on write:
--- course->department, offering->academic period, section->academic period.
+-- course->department, offering->academic period, section->academic period,
+-- AND exact offering/section cohort + academic period identity (same college
+-- by itself does NOT prove the learner's class belongs to the offering).
 -- An INSERT trigger alone does not protect later upstream reparenting.
 CREATE OR REPLACE FUNCTION db05_class_chat_same_college_guard()
 RETURNS trigger
@@ -45,10 +47,18 @@ DECLARE
   course_college_id uuid;
   offering_college_id uuid;
   section_college_id uuid;
+  offering_cohort_id uuid;
+  offering_period_id uuid;
+  section_cohort_id uuid;
+  section_period_id uuid;
   sender_college_id uuid;
 BEGIN
-  SELECT dep.college_id, offering_period.college_id, section_period.college_id
-    INTO course_college_id, offering_college_id, section_college_id
+  SELECT dep.college_id, offering_period.college_id, section_period.college_id,
+         offering.cohort_id, offering.academic_period_id,
+         section_row.cohort_id, section_row.academic_period_id
+    INTO course_college_id, offering_college_id, section_college_id,
+         offering_cohort_id, offering_period_id,
+         section_cohort_id, section_period_id
   FROM course_section_deliveries delivery
   INNER JOIN course_offerings offering ON offering.id = delivery.offering_id
   INNER JOIN courses course_row ON course_row.id = offering.course_id
@@ -68,7 +78,9 @@ BEGIN
      OR section_college_id IS NULL OR sender_college_id IS NULL
      OR course_college_id IS DISTINCT FROM offering_college_id
      OR course_college_id IS DISTINCT FROM section_college_id
-     OR course_college_id IS DISTINCT FROM sender_college_id THEN
+     OR course_college_id IS DISTINCT FROM sender_college_id
+     OR offering_cohort_id IS DISTINCT FROM section_cohort_id
+     OR offering_period_id IS DISTINCT FROM section_period_id THEN
     RAISE EXCEPTION 'classroom message violates college boundary'
       USING ERRCODE = '23514';
   END IF;
@@ -86,7 +98,8 @@ COMMIT;
 
 -- PROOF GATES (none run here):
 -- A. Same-college sender/section/offering/course accepted; each mismatched
---    college edge rejected (SQLSTATE 23514).
+--    college edge rejected (SQLSTATE 23514). Same-college but different
+--    offering/section cohort OR academic period must also reject 23514.
 -- B. Server exclusively derives sender_name_snapshot at create time; a
 --    later user rename leaves historic message attribution unchanged.
 -- C. Delete sets deleted_at, retains audit record; list filters deleted_at
