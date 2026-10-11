@@ -142,11 +142,12 @@
     "draftUnregisteredExcluded": 3,
     "runtimeExecuted": 0,
     "runtimePassed": 0,
-    "knownRedRaceAuthored": 2,
+    "knownRedRaceAuthored": 1,
     "observationalReadOnlyAuthored": 21,
     "baselineDirectBoundaryAuthored": 4,
     "directNegativeTotalAuthored": 13,
-    "positiveConcurrencyAuthored": 4
+    "positiveConcurrencyAuthored": 4,
+    "fixAuthoredRaceRuntimePending": 1
   },
   "knownRedRaceWitnesses": [
     {
@@ -155,9 +156,14 @@
       "domain": "PLACEMENTS",
       "file": "tests/integration/db18-placement-race-gap.test.ts",
       "title": "P5-R01 rejects placement application if paid access is revoked after precheck",
-      "state": "AUTHORED_EXPECTED_FAIL_UNTIL_FIXED",
+      "state": "FIX_AUTHORED_RUNTIME_NOT_RUN",
       "execution": "NOT_RUN",
-      "requiredFix": "Revalidate/order paid module plus inherited participation and job eligibility inside the application transaction against concurrent access writers."
+      "requiredFix": "Authored in DB-054: application locks/revalidates current gate inputs; policy/override writers serialize on job; evidence writers serialize on membership. Disposable PostgreSQL race execution remains pending.",
+      "fixEvidence": [
+        "src/modules/placements/application-service.ts",
+        "src/modules/placements/eligibility-service.ts",
+        "tests/db54-placement-application-race.test.mjs"
+      ]
     },
     {
       "id": "DB18-R02",
