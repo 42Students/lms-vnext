@@ -217,11 +217,12 @@
       "sourceType": "tinyint(1)",
       "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
       "sourceRiskFlags": [],
-      "targetProposal": "courses.status (partial only; legacy soft deletion/recovery must be proven)",
+      "targetProposal": "scripts/sql/db05-course-soft-delete-guard.draft.sql: courses.legacy_deleted_at separate from status; legacy deletion rejects any live lesson OR live content (only nondeleted rows counted); restore is single-course only, college-scoped; SQL parent lock companion source-only.",
       "classification": "REMODELED_NEEDS_PROOF",
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
-      "producerConsumerVerification": "NOT_VERIFIED"
+      "producerConsumerVerification": "NOT_VERIFIED",
+      "sourceContractStatus": "LEGACY_COURSE_LIVE_DESCENDANT_DELETE_RESTORE_SOURCE_CONFIRMED_RUNTIME_UNVERIFIED"
     },
     {
       "source": "course.updated_at",
@@ -1347,5 +1348,26 @@
     "sourceField": "lesson_contents.faculty_id",
     "companion": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql",
     "status": "SOURCE_ONLY_NO_PG_OR_API_VERIFICATION"
+  },
+  "courseTombstoneFollowUp": {
+    "source": [
+      "CourseServiceImpl.deleteCourse/restoreCourse",
+      "LessonRepository.countActiveByCourseId",
+      "LessonContentsRepository.countByCourseId"
+    ],
+    "draft": "scripts/sql/db05-course-soft-delete-guard.draft.sql",
+    "facts": [
+      "Live contents or live lessons block course soft delete",
+      "Already-deleted children do not block",
+      "Restoring course does not restore lessons or contents",
+      "Course restore requires matching authorized college"
+    ],
+    "risks": [
+      "Active offering/path reparent may invalidate previously checked parent",
+      "Course lesson insert vs course deletion needs row-level lock and two-connection tests",
+      "Current vNext status/archive enum not equivalent to independent deletion"
+    ],
+    "verified": false,
+    "postgres": "NOT_RUN"
   }
 }
