@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T14:58:00.000Z",
+  "updatedOn": "2026-10-11T15:00:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3020,14 +3020,14 @@
         "docs/planning/database-parity-db06-quiz-lifecycle-contract.md",
         "tests/db06-quiz-lifecycle-staging.test.mjs"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-11T14:58:00.000Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T15:00:00.000Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -3049,6 +3049,11 @@
           "status": "PICKED",
           "at": "2026-10-11T14:58:00.000Z",
           "reason": "Chat 1 CAS claim; DB06 quiz lifecycle/result-publication audit history staging."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T15:00:00.000Z",
+          "reason": "Auditing vNext quiz lifecycle/result visibility mutations and pinned legacy quiz audit semantics; staging immutable history and DB transition rules only."
         }
       ]
     }
