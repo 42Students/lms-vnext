@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_CANONICAL_51_59_WITH_GUARDED_DISPOSABLE_ACCEPTANCE_HARNESS",
+    "checkpointKind": "DB005_CANONICAL_52_FUNCTIONS_60_TRIGGERS_60_SOURCE_TESTS",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "19fc69d96f3d94fa6052623f432a0118cbe99e80",
-    "lastWorkerMergedSha": "e5d9fe6e9a4eccba8faa3c9e40d8e9297fac7906",
+    "observedMainSha": "2b7c4c742b70c2ab7574c1b38840aa241dafec0c",
+    "lastWorkerMergedSha": "8c2c63d8a28d41dcba1c188a3a551c60390ab742",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 125/125 source/target design reconciliation; 0 runtime-verified. Chat4 consolidated legacy promotion active target/current cohort/nonnull mapped curriculum and immutability of materialized CORE course type into UNREGISTERED canonical SQL (51 paired PL/pgSQL funcs/59 unique triggers, no duplicates). Author of new rollback-only type acceptance, two-session type races, six source tests, plus guarded full disposable DB02 acceptance runner (6 source suites, 5 single-session PG scripts, 3 concurrency suites). Read-only QA 15/15 checks true. None of Node, PostgreSQL, migration replay or CI execution occurred. Task remains IN_PROGRESS."
+    "summary": "DB02 source+target design reconciliation is 125/125 with 0 runtime-verified fields. Canonical UNREGISTERED staging is structurally clean at 52 paired PL/pgSQL functions and 60 unique triggers. Authored static evidence now includes 60 node:test cases across 6 files, five rollback-only PostgreSQL suites, and three two-session race harnesses: the combined harness specifies 17 named race families and focused promotion/type harnesses add exact-error scenarios. Recent hardening closes CORE concrete curriculum/type history, promotion readiness, progression-backed term deletion, empty-cohort hard delete, archive-vs-INACTIVE lifecycle, referenced period/window mutation, parent/history, hall and faculty races. Shared acceptance/CAS fixtures were reconciled with promotion readiness. No Node/PostgreSQL/migration replay/CI execution is claimed; DB-005 stays IN_PROGRESS."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -31,20 +31,22 @@
     "tests/db02-academic-parent-tenancy-contract.test.mjs",
     "tests/db02-schedule-progression-integrity-overlay.test.mjs",
     "tests/db02-historic-parent-reassignment-contract.test.mjs",
+    "tests/db02-curriculum-type-history-contract.test.mjs",
+    "tests/db02-promotion-readiness-contract.test.mjs",
+    "scripts/sql/db02-postgres-acceptance-unregistered.sql",
     "scripts/sql/db02-schedule-progression-integrity-acceptance-unregistered.sql",
     "scripts/sql/db02-historic-parent-reassignment-acceptance-unregistered.sql",
-    "tests/db02-promotion-readiness-contract.test.mjs",
-    "scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql",
-    "scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh",
-    "tests/db02-curriculum-type-history-contract.test.mjs",
     "scripts/sql/db02-curriculum-type-history-acceptance-unregistered.sql",
+    "scripts/sql/db02-promotion-readiness-acceptance-unregistered.sql",
+    "scripts/sql/db02-postgres-concurrency-unregistered.sh",
     "scripts/sql/db02-curriculum-type-history-concurrency-unregistered.sh",
+    "scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh",
     "scripts/sql/db02-run-disposable-acceptance.sh"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "DB-005 staging review: hall archival/booking race, history TRUNCATE, actor-FK delete semantics and migration replay remain unresolved; see docs/planning/db02-stage-adversarial-review-chat04-2026-10-11.md.",
-    "DB02 direct SQL parent/reparent and enrollment guard proposal remains unregistered and requires consolidation with Chat 1 DB01/DB03 migration guards plus disposable PostgreSQL tenant/concurrency verification. Controlled legacy class with history transfer still unspecified."
+    "Verification gate only: canonical DB02 is still UNREGISTERED under Chat 1 migration ownership and Chat 4 has executed 0 PostgreSQL/Node acceptance runs.",
+    "Chat 1 must translate/review the consolidated stage into numbered Drizzle/schema changes, replay zero-to-current on a disposable PostgreSQL database, then execute all DB02 rollback and concurrency suites. CI billing is intentionally not treated as a blocker."
   ],
   "handoffs": [
     {
@@ -83,7 +85,7 @@
       "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Chat1 must register canonical DB02 in numbered Drizzle migration; run independently on freshly replayed disposable PostgreSQL: DB02_DISPOSABLE_ACCEPTANCE=YES DB02_EXPECTED_DATABASE=<exact> DATABASE_URL=<secret> bash scripts/sql/db02-run-disposable-acceptance.sh. Capture complete outputs and PG version/commit; do not treat authored tests as passed. No CI-billing dependency or API phase advancement.",
+  "nextAction": "Remain in DATABASE. Chat1 registers/reconciles canonical DB02 with shared schema/migrations; then use a freshly replayed disposable PostgreSQL database to execute db02-run-disposable-acceptance.sh plus focused promotion-readiness and curriculum-type race suites. Capture PostgreSQL version, exact commit and full outputs. Do not mark DB-005 DONE_VERIFIED or advance API from Chat4 on authored/static evidence alone.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
@@ -154,7 +156,13 @@
     "https://github.com/42Students/lms-vnext/commit/9a5c3c01573a90148de70aa50d5ff694b179c15d",
     "https://github.com/42Students/lms-vnext/commit/91b72e0deedbd2e05a077c8fdc0f818e30c61891",
     "https://github.com/42Students/lms-vnext/commit/e5d9fe6e9a4eccba8faa3c9e40d8e9297fac7906",
-    "https://github.com/42Students/lms-vnext/commit/03cf2fff840549f8f4cafd898c3b9aa6cb9c6514"
+    "https://github.com/42Students/lms-vnext/commit/03cf2fff840549f8f4cafd898c3b9aa6cb9c6514",
+    "https://github.com/42Students/lms-vnext/commit/8c2c63d8a28d41dcba1c188a3a551c60390ab742",
+    "https://github.com/42Students/lms-vnext/commit/262ab9f703076dace6d113529ecb4c356871d7e4",
+    "https://github.com/42Students/lms-vnext/commit/64d6ea12b0070af99396fae7a4e34c01d86225f6",
+    "https://github.com/42Students/lms-vnext/commit/61cc3bce77cd95c2f992d1779f8eecc81647631f",
+    "https://github.com/42Students/lms-vnext/commit/6fd9302f3d1b93000e70ef3602d180cdc56c9243",
+    "https://github.com/42Students/lms-vnext/issues/24#issuecomment-6107151836"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
