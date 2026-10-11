@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T07:43:00.000Z",
+  "updatedOn": "2026-10-11",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -1666,6 +1666,43 @@
           "reason": "Chat 5 started source-to-vNext offer lifecycle persistence staging after confirming active legacy selection/release/expiry/reversal producers."
         }
       ]
+    },
+    {
+      "id": "DB-030",
+      "phase": "DATABASE",
+      "title": "Promote DB06 assessment cross-parent integrity guards and negative witnesses",
+      "scope": "Independently review and integrate the DB06 staged same-offering/exact-delivery/learner-section/quiz-question guards, resolve parent reparent/race/grade-retention exceptions, register via Chat 1 migration integrator and execute 16 PostgreSQL negative/positive/race witnesses. Draft and seven source checks already committed; not live/verified.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/db06-assessment-relational-integrity-handoff.md",
+        "docs/planning/sql/db06-assessment-parent-scope-candidate.sql",
+        "tests/db028-assessment-parent-scope.test.mjs"
+      ],
+      "status": "READY",
+      "pickedBy": null,
+      "pickedAt": null,
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11",
+          "reason": "Independent coordinator source/audit contribution on main; no worker has picked or completed promotion/test task."
+        }
+      ],
+      "latestEvidenceSha": "7d61e776a608b9b9ddf12dda95193ffbd65273f0",
+      "verificationEvidence": [],
+      "blockers": [
+        "Staged draft unregistered; Chat 1 owns numbered Drizzle migration. Must resolve parent-reparent/cross-writer concurrency and run 16 real PostgreSQL witnesses before completion/verification."
+      ],
+      "completionNote": null
     }
   ],
   "eventModel": {
