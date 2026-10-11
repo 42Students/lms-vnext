@@ -416,7 +416,7 @@
         "docs/planning/db-pass4-columns-db05_courses_and_content.json"
       ],
       "status": "IN_PROGRESS",
-      "latestEvidenceSha": "1d2349f2272827dbd223e4bf9cc4d4015f324c99",
+      "latestEvidenceSha": "656ed80173eacf744f9ab66d125733c7e44c7177",
       "verificationEvidence": [],
       "blockers": [
         "UNREGISTERED_MIGRATIONS: Seven isolated SQL drafts under scripts/sql/; Chat 1 exclusively owns registered Drizzle journal/schema barrel and replay. Metadata table dependency and 17 content-settings fields require explicit ordering. Classroom same-college guard is companion-only, NOT separately registered; canonical history draft owns columns/index.",
@@ -472,7 +472,8 @@
         "CHAT06_PROGRESS_COLLEGE_SCOPE_COMPANION: PR #78 merged 7d913c9e90d0a73caac889b5c4086893131d018b. Staged unregistered SQL trigger checks content offering/period, course department college, membership college, optional delivery offering and section-period college; independent child write guard does NOT prevent later upstream reparent. Manifest gates BLOCKED and NOT_RUN, Node tests only authored; no executed PostgreSQL evidence. DB008 remains IN_PROGRESS.",
         "CHAT06_PARENT_AND_LESSON_DISCUSSION_SCOPE_COMPANIONS: Staged db05-course-parent-graph-guard.draft.sql (same-college and recursive cycle + child/offering department-move guard) and db05-lesson-discussions-same-college.draft.sql (course department/period/optional delivery/author-resolver tenant scope); companion-only, unregistered, no duplicate migrations. New 7 Node test definitions authored NOT RUN, read-only structural source checks 19/19 true, PG negative/races NOT RUN. W01 must integrate guard once and validate upstream department/period reparent. Evidence cd1081a9fccaa0064d8fb23dc0e7913af97319bc.",
         "CHAT06_PRIVATE_RECEIPT_AND_PARENT_GATES_20261011: PR #82 a12ef3b deduplicated parent SQL candidate; PR #83 72fbfce recorded canonical parent + department upstream companion; PR #86 4011dce fixed staged receipt import; PR #87 9cd0bcc staged unregistered cross-college receipt guard; PR #88 a862d47 recorded separate DB06/DB16 companion, with static tests authored and GitHub-source assertions passed. PostgreSQL, node:test suite, tsc/build/CI NOT accepted; still 0 formally verified DB05 fields. W01 sole migration integrator.",
-        "CHAT06_CONTENT_DELIVERY_ORDER_SCOPE_20261011: PR #91 e5033dcd staged unregistered ordering scope guard checking same offering, scoped delivery, course/period/section college, cohort and term, archived content; PR #92 1d2349f2 tracked as companion. Per-lesson/delivery sequence uniqueness and upstream reparent remain blocked; 16+9 GitHub source assertions pass, authored Node tests NOT executed, no PG/CI acceptance. DB008 stays IN_PROGRESS."
+        "CHAT06_CONTENT_DELIVERY_ORDER_SCOPE_20261011: PR #91 e5033dcd staged unregistered ordering scope guard checking same offering, scoped delivery, course/period/section college, cohort and term, archived content; PR #92 1d2349f2 tracked as companion. Per-lesson/delivery sequence uniqueness and upstream reparent remain blocked; 16+9 GitHub source assertions pass, authored Node tests NOT executed, no PG/CI acceptance. DB008 stays IN_PROGRESS.",
+        "CHAT06_PRIVATE_RECEIPT_OBJECT_KEY_EXACT_SHAPE: PR #94 merged 656ed80173eacf744f9ab66d125733c7e44c7177; staged UNREGISTERED receipt college guard now validates exact private/<college>/<membership>/<namespace>/<uuid> shape (not prefix alone). Static source assertions passed, Node/PG/CI NOT executed. DB008 remains IN_PROGRESS."
       ]
     },
     {
