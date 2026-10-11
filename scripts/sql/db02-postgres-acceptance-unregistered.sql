@@ -765,12 +765,11 @@ BEGIN
   END IF;
 
   -- -------------------------------------------------------------------------
-  -- Cohort progression monotonicity + database-owned history
+  -- Cohort progression: versioned CORRECTION vs PROMOTION + immutable history
   -- -------------------------------------------------------------------------
+  -- Legacy batch academic_year can be edited without a semester promotion.
   UPDATE cohort_progression_state
-     SET current_term_number = 2,
-         current_academic_year_start = 2026,
-         current_period_id = period_a,
+     SET current_academic_year_start = 2025,
          version = 1
    WHERE cohort_id = cohort_a
      AND version = 0;
@@ -780,23 +779,79 @@ BEGIN
     FROM cohort_progression_state
    WHERE cohort_id = cohort_a;
 
-  IF progression_term <> 2 OR progression_version <> 1 THEN
-    RAISE EXCEPTION 'valid progression update did not persist expected state';
+  IF progression_term <> 1 OR progression_version <> 1 THEN
+    RAISE EXCEPTION 'same-term academic-year correction did not persist expected state';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+      FROM cohort_progression_events
+     WHERE cohort_id = cohort_a
+       AND state_version = 1
+       AND event_kind = 'CORRECTION'
+       AND from_term_number = 1
+       AND to_term_number = 1
+       AND to_academic_year_start = 2025
+  ) THEN
+    RAISE EXCEPTION 'academic-year correction was not journaled as CORRECTION';
+  END IF;
+
+  -- A version-only no-op is not a valid correction.
+  failed := false;
+  BEGIN
+    UPDATE cohort_progression_state
+       SET version = 2
+     WHERE cohort_id = cohort_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'version-only progression no-op was accepted';
+  END IF;
+
+  -- Forward movement remains exactly one term and produces PROMOTION history.
+  UPDATE cohort_progression_state
+     SET current_term_number = 2,
+         current_academic_year_start = 2026,
+         current_period_id = period_a,
+         version = 2
+   WHERE cohort_id = cohort_a
+     AND version = 1;
+
+  SELECT current_term_number, version
+    INTO progression_term, progression_version
+    FROM cohort_progression_state
+   WHERE cohort_id = cohort_a;
+
+  IF progression_term <> 2 OR progression_version <> 2 THEN
+    RAISE EXCEPTION 'valid promotion did not persist expected state';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+      FROM cohort_progression_events
+     WHERE cohort_id = cohort_a
+       AND state_version = 2
+       AND event_kind = 'PROMOTION'
+       AND from_term_number = 1
+       AND to_term_number = 2
+  ) THEN
+    RAISE EXCEPTION 'term advance was not journaled as PROMOTION';
   END IF;
 
   SELECT count(*) INTO event_count
     FROM cohort_progression_events
-   WHERE cohort_id = cohort_a AND state_version = 1;
+   WHERE cohort_id = cohort_a;
 
-  IF event_count <> 1 THEN
-    RAISE EXCEPTION 'expected exactly one progression event, found %', event_count;
+  IF event_count <> 2 THEN
+    RAISE EXCEPTION 'expected correction + promotion events, found %', event_count;
   END IF;
 
   failed := false;
   BEGIN
     UPDATE cohort_progression_state
        SET current_term_number = 4,
-           version = 2
+           version = 3
      WHERE cohort_id = cohort_a;
   EXCEPTION WHEN check_violation THEN
     failed := true;
@@ -808,9 +863,22 @@ BEGIN
   failed := false;
   BEGIN
     UPDATE cohort_progression_state
+       SET current_term_number = 1,
+           version = 3
+     WHERE cohort_id = cohort_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'backward semester correction was accepted';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE cohort_progression_state
        SET current_term_number = 3,
            current_period_id = period_b,
-           version = 2
+           version = 3
      WHERE cohort_id = cohort_a;
   EXCEPTION WHEN check_violation THEN
     failed := true;
@@ -824,7 +892,7 @@ BEGIN
     UPDATE cohort_progression_state
        SET current_term_number = 3,
            current_period_id = period_a_outside,
-           version = 2
+           version = 3
      WHERE cohort_id = cohort_a;
   EXCEPTION WHEN check_violation THEN
     failed := true;
@@ -836,8 +904,8 @@ BEGIN
   failed := false;
   BEGIN
     INSERT INTO cohort_progression_events(
-      cohort_id, from_term_number, to_term_number, state_version
-    ) VALUES (cohort_a, 2, 3, 2);
+      cohort_id, from_term_number, to_term_number, event_kind, reason, state_version
+    ) VALUES (cohort_a, 2, 3, 'PROMOTION', 'FORGED', 3);
   EXCEPTION WHEN check_violation THEN
     failed := true;
   END;
