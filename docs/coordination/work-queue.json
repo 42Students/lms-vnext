@@ -4198,6 +4198,52 @@
           "reason": "Frozen Job/TpoDriveService/TpoDriveExtrasService/TpoTeamService and TpoRecruiterLeadsHubService prove mutable owner assignment/reassignment and remove-member orphan prevention."
         }
       ]
+    },
+    {
+      "id": "DB-070",
+      "phase": "DATABASE",
+      "title": "Preserve immutable DB07 project-template revision history",
+      "scope": "Prevent in-place UPDATE or DELETE to versioned project template blueprints, which source services only append as new versions; stage an unregistered history guard plus direct-negative PostgreSQL witnesses. Template header status/currentVersion remain mutable. No shared migration/schema journal changes.",
+      "priority": 2,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "docs/planning/sql/db07-template-version-append-only-staging.sql",
+        "docs/planning/db07-template-version-append-only-contract.md",
+        "tests/db07-template-version-append-only-source.test.mjs",
+        "tests/integration/db07-template-version-append-only.test.ts"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 2,
+      "pickedAt": "2026-10-11T21:07:02.420Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 2,
+          "pickedAt": "2026-10-11T21:07:02.420Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T21:07:02.420Z",
+          "reason": "Registered project_template_versions has immutable revision intent but no DB prohibition on UPDATE/DELETE. Template service has 3 version INSERT callsites and 0 version UPDATE or DELETE callsites."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T21:07:02.420Z",
+          "reason": "Chat 2 claims independent project-version history integrity after DB068 source completion."
+        }
+      ]
     }
   ],
   "eventModel": {
