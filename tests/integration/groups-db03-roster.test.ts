@@ -220,9 +220,16 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       .rejects.toMatchObject({ code: "LEARNER_SCHEDULE_ACCESS_DENIED" });
   });
 
-  it("permits cross-program learners from the same college without moving their primary section", async () => {
+  it("denies stale elective access and rejoin after learner moves to another program", async () => {
     const f=await setupRosterFixture();
     const student=await createHostSectionLearner(f);
+
+    // Establish a valid allocation first, then simulate a legitimate academic
+    // transfer while the historical elective group membership remains ACTIVE.
+    await joinGroup(student.ctx,f.groupId,student.membershipId);
+    await expect(requireLearningReadAccess(student.ctx,f.offeringId,f.deliveryId))
+      .resolves.toBe("LEARNER");
+
     const p=randomUUID(), c=randomUUID(), s=randomUUID();
     f.crossProgramId=p; f.crossCohortId=c; f.crossSectionId=s;
     await pool.query(
@@ -245,17 +252,21 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       "UPDATE section_enrollments SET section_id=$1 WHERE id=$2",
       [s,f.otherSectionEnrollmentId],
     );
-    const joined=await joinGroup(student.ctx,f.groupId,student.membershipId);
-    expect(joined.state).toBe("ACTIVE");
+
+    // Membership history remains, but it must no longer authorize the slot's
+    // delivery after the learner's primary program changes.
     await expect(requireLearningReadAccess(student.ctx,f.offeringId,f.deliveryId))
-      .resolves.toBe("LEARNER");
-    const home=await pool.query(
-      "SELECT section_id FROM section_enrollments WHERE id=$1",
-      [f.otherSectionEnrollmentId],
-    );
-    expect(home.rows[0].section_id).toBe(s);
-    const listed=await listLearnerCourseDeliveries(student.ctx);
-    expect(listed.some(row=>row.deliveryId===f.deliveryId)).toBe(true);
+      .rejects.toMatchObject({code:"LEARNER_ENROLLMENT_SCOPE_REQUIRED"});
+    expect((await listLearnerCourseDeliveries(student.ctx))
+      .some(row=>row.deliveryId===f.deliveryId)).toBe(false);
+    expect((await getLearnerClassSchedule(student.ctx)).events
+      .some(row=>row.id===f.scheduleEventId)).toBe(false);
+
+    // Once the stale membership is removed, allocation back into this slot is
+    // rejected by the same program-scoped eligibility rule.
+    await leaveGroup(student.ctx,f.groupId,student.membershipId);
+    await expect(joinGroup(student.ctx,f.groupId,student.membershipId))
+      .rejects.toMatchObject({code:"ELECTIVE_PRIMARY_SECTION_REQUIRED"});
   });
 
   it("denies elective access after persisted user disable even when request context is stale", async () => {
