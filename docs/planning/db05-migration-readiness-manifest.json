@@ -542,7 +542,7 @@
       "id": "DB05_OFFERING_DELIVERY_PERIOD_COHORT_STATUS_POLICY",
       "status": "BLOCKED",
       "owner": "DB02_DB05_API_PHASE",
-      "evidence": "Current application offering create rejects inactive cohort / closed period, delivery create requires ACTIVE section; staged DB trigger only enforces structure. Decide whether DB-level active-state-at-create guards are required without retroactively invalidating historical archived offerings."
+      "evidence": "Source-backed INSERT-only guard now proposes ACTIVE course, PLANNED/ACTIVE cohort and non-CLOSED period for new offering, ACTIVE offering/course/section for new delivery; 26/26 pure source model PASS. Actual disposable PG SQL trigger/status negative, lifecycle historical-archive behavior and 2-connection race NOT RUN."
     },
     {
       "id": "DB05_OFFERING_DELIVERY_EXISTING_ROW_PREFLIGHT",
@@ -837,6 +837,23 @@
         "postgreSqlOutputCaptured": false,
         "allMismatchesZero": null,
         "countsForPromotion": false
+      },
+      "newRowLifecycle": {
+        "sourceFiles": [
+          "src/modules/courses/offering-service.ts",
+          "src/modules/courses/delivery-service.ts",
+          "src/modules/courses/scope.ts"
+        ],
+        "sourceBackedInsertOnly": true,
+        "registered": false,
+        "postgresExecuted": false,
+        "rules": [
+          "NEW_OFFERING_REQUIRES_ACTIVE_COURSE",
+          "NEW_OFFERING_REQUIRES_PLANNED_OR_ACTIVE_COHORT",
+          "NEW_OFFERING_REQUIRES_NOT_CLOSED_PERIOD",
+          "NEW_DELIVERY_REQUIRES_ACTIVE_OFFERING_COURSE_SECTION"
+        ],
+        "historyPolicy": "Do not reject existing historical offering/delivery rows solely on later archive/closure."
       }
     },
     {
@@ -923,19 +940,20 @@
     {
       "id": "DB05_OFFERING_DELIVERY_SOURCE_REFERENCE",
       "path": "tests/db05-offering-delivery-reference.test.mjs",
-      "evidence": "docs/coordination/evidence/chat-06-db008-offering-delivery-reference-node-2026-10-11.md",
-      "gitHubBlobSha": "c73011e74df7dfd738c69445cf0ce88e11e4c6ac",
+      "evidence": "docs/coordination/evidence/chat-06-db008-offering-delivery-source-model-v2-26-2026-10-11.md",
+      "gitHubBlobSha": "b2ef07b1535082cbbf0b01391e15e8476eb372e5",
       "runner": "Node.js v22.16.0",
       "nodeSyntaxCheckExecuted": true,
       "command": "node --test /tmp/db05-offering-delivery-reference.test.mjs",
-      "testCount": 19,
-      "passed": 19,
+      "testCount": 26,
+      "passed": 26,
       "failed": 0,
       "executed": true,
       "validatedGitBlobIdentity": true,
       "appliesTo": "PURE_SOURCE_REFERENCE_MODEL_ONLY",
       "countsForPgGate": false,
-      "countsForApplicationIntegration": false
+      "countsForApplicationIntegration": false,
+      "sourceVersion": "INSERT_ONLY_LIFECYCLE_PLUS_STRUCTURAL_SCOPE"
     },
     {
       "id": "DB05_PROGRESS_SOURCE_REFERENCE",
@@ -956,8 +974,8 @@
   ],
   "sourceReferenceTotals": {
     "executedSuites": 2,
-    "executedTests": 27,
-    "passed": 27,
+    "executedTests": 34,
+    "passed": 34,
     "failed": 0,
     "countsForDatabasePromotion": false
   }
