@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11",
+  "updatedOn": "2026-10-11T14:18:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2796,17 +2796,17 @@
         "docs/database-workflow.md",
         "docs/coordination/db-independent-verification.md"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "8585e875e6112fe94b93c4e3f305904ba0a5ba8d",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Shared destructive reset safety hardened: reset URLs must be PostgreSQL with explicit host/simple database; target-changing query parameters are rejected; remote resets require ALLOW_DB_RESET=true plus exact DB_RESET_CONFIRM=RESET:<host>:<port>/<database>; local/test/E2E workflows preserved. Three DB48 process regressions authored and canonical parity command already includes the safety test file. Current-main connector source audit 24/24 true. Node process tests and PostgreSQL reset/replay were NOT executed here, so task is COMPLETED, not DONE_VERIFIED.",
       "pickedBy": 1,
       "pickedAt": "2026-10-11T14:08:00.000Z",
       "startedAt": "2026-10-11T14:09:00.000Z",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 1,
+      "completedAt": "2026-10-11T14:18:00.000Z",
+      "completionCommitSha": "8585e875e6112fe94b93c4e3f305904ba0a5ba8d",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2830,6 +2830,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T14:09:00.000Z",
           "reason": "Hardening shared remote reset authorization to require exact target confirmation before any connection/drop."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T14:18:00.000Z",
+          "reason": "DB-048 source implementation, regressions and runbook updates committed; 24/24 current-main connector source assertions true; executable Node/PG proof still pending."
         }
       ]
     },
