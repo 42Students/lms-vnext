@@ -81,6 +81,10 @@ test("DB24 source event, idempotency and claim audit hardening stay aligned", ()
   assert.match(sql, /source_event_id uuid NOT NULL REFERENCES activity_events\(id\) ON DELETE RESTRICT/);
   assert.match(schema, /sourceEventId: uuid\("source_event_id"\)\.notNull\(\)[\s\S]*activityEvents\.id/);
   assert.match(spec, /HMAC input MUST include `sourceEventId`/);
+  assert.match(sql, /\(source_event_id,recipient_user_id,recipient_type,channel\)/);
+  assert.match(schema, /\.on\(t\.sourceEventId, t\.recipientUserId, t\.recipientType, t\.channel\)/);
+  assert.doesNotMatch(sql, /\(source_event_id,recipient_user_id,channel\)/);
+  assert.doesNotMatch(schema, /\.on\(t\.sourceEventId, t\.recipientUserId, t\.channel\)/);
   assert.match(sql, /safe_failure_reason varchar\(500\)/);
   assert.match(schema, /safeFailureReason: varchar\("safe_failure_reason", \{ length: 500 \}\)/);
   assert.match(sql, /status <> 'CLAIMED' AND claimed_by IS NULL\s+AND claim_expires_at IS NULL/);
