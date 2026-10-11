@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-12T02:31:00+05:30",
+  "updatedOn": "2026-10-12T02:43:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3940,17 +3940,27 @@
         "tests/db08-cross-parent-integrity.test.mjs",
         "scripts/verify-db08-cross-parent-source.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
-      "verificationEvidence": [],
-      "blockers": [],
-      "completionNote": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "15988bac994e22a93e4523daf4868c8717d1e600",
+      "verificationEvidence": [
+        "CONNECTOR_SOURCE_ASSERTIONS_16_OF_16_2026-10-12",
+        "docs/planning/sql/db08-cross-parent-consistency-candidate.sql@329117aec996e9d4035ac665a365012ec12b6625",
+        "docs/planning/db08-chat03-cross-parent-integrity-contract.md@a282e35c93f0bdaed0229ca4fb1a7856d71d36e9",
+        "scripts/verify-db08-cross-parent-source.mjs@37d6550783fd8500cc20a3b7b0c314df2f571b1c",
+        "tests/db08-cross-parent-integrity.test.mjs@15988bac994e22a93e4523daf4868c8717d1e600"
+      ],
+      "blockers": [
+        "W01/Chat 1 must add the new job_id/request_type discriminator columns and composite FKs to canonical Drizzle, deduplicate parent superkeys, register one ordered migration and replay from zero.",
+        "Authored Node source tests and opt-in disposable PostgreSQL witnesses have not been executed in this chat; 16/16 connector assertions are source-only evidence.",
+        "Runtime writers must derive placement_round_results.job_id, placement_learner_requests.job_id, and placement_application_round_exceptions.job_id/request_type from canonical parents before migration activation."
+      ],
+      "completionNote": "Closed DB-066 source/staging design. Candidate SQL now fail-closes application role-option same-job scope, round-result round/application same-job scope, learner-request round/offer ownership, and round-exception exact request/application/round/request_type binding. Added corrupt-row preflight, request-type discriminator, source verifier, disposable PostgreSQL negatives and two-client reparent race. Connector read-only audit 16/16 passed. No registered migration or PostgreSQL execution claimed.",
       "pickedBy": 3,
       "pickedAt": "2026-10-12T02:23:00+05:30",
       "startedAt": "2026-10-12T02:31:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-12T02:43:00+05:30",
+      "completionCommitSha": "15988bac994e22a93e4523daf4868c8717d1e600",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -3974,6 +3984,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-12T02:31:00+05:30",
           "reason": "Chat 3 began exact Drizzle/candidate relational-scope audit; found request-type preservation gap in draft."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-12T02:43:00+05:30",
+          "reason": "Chat 3 completed isolated source/staging contract and authored source/negative/race witnesses; runtime/migration verification intentionally remains downstream."
         }
       ]
     },
