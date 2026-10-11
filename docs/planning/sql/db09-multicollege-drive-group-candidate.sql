@@ -37,7 +37,7 @@ CREATE UNIQUE INDEX placement_jobs_recruiter_group_college_uq
   WHERE recruiter_drive_group_id IS NOT NULL;
 
 CREATE FUNCTION db09_assert_drive_group_job_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_group_recruiter uuid;
   v_group_company uuid;
@@ -87,7 +87,7 @@ BEGIN
   END IF;
 
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_drive_group_job_scope_guard
   BEFORE INSERT OR UPDATE OF
     recruiter_drive_group_id,college_id,company_relationship_id
