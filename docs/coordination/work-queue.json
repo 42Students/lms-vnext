@@ -3941,20 +3941,22 @@
         "scripts/verify-db08-cross-parent-source.mjs"
       ],
       "status": "COMPLETED",
-      "latestEvidenceSha": "15988bac994e22a93e4523daf4868c8717d1e600",
+      "latestEvidenceSha": "c4d859ff749e2dac1b26df3821fa8310fc461c6e",
       "verificationEvidence": [
         "CONNECTOR_SOURCE_ASSERTIONS_16_OF_16_2026-10-12",
         "docs/planning/sql/db08-cross-parent-consistency-candidate.sql@329117aec996e9d4035ac665a365012ec12b6625",
         "docs/planning/db08-chat03-cross-parent-integrity-contract.md@a282e35c93f0bdaed0229ca4fb1a7856d71d36e9",
         "scripts/verify-db08-cross-parent-source.mjs@37d6550783fd8500cc20a3b7b0c314df2f571b1c",
-        "tests/db08-cross-parent-integrity.test.mjs@15988bac994e22a93e4523daf4868c8717d1e600"
+        "tests/db08-cross-parent-integrity.test.mjs@15988bac994e22a93e4523daf4868c8717d1e600",
+        "V8_EXACT_GITHUB_SOURCE_SHIM_10_VERIFIER_3_STATIC_TEST_PASS_PG_SKIPPED_2026-10-12",
+        "tests/db08-cross-parent-integrity.test.mjs@c4d859ff749e2dac1b26df3821fa8310fc461c6e"
       ],
       "blockers": [
         "W01/Chat 1 must add the new job_id/request_type discriminator columns and composite FKs to canonical Drizzle, deduplicate parent superkeys, register one ordered migration and replay from zero.",
         "Authored Node source tests and opt-in disposable PostgreSQL witnesses have not been executed in this chat; 16/16 connector assertions are source-only evidence.",
         "Runtime writers must derive placement_round_results.job_id, placement_learner_requests.job_id, and placement_application_round_exceptions.job_id/request_type from canonical parents before migration activation."
       ],
-      "completionNote": "Closed DB-066 source/staging design. Candidate SQL now fail-closes application role-option same-job scope, round-result round/application same-job scope, learner-request round/offer ownership, and round-exception exact request/application/round/request_type binding. Added corrupt-row preflight, request-type discriminator, source verifier, disposable PostgreSQL negatives and two-client reparent race. Connector read-only audit 16/16 passed. No registered migration or PostgreSQL execution claimed.",
+      "completionNote": "Closed DB-066 source/staging design. Candidate SQL now fail-closes application role-option same-job scope, round-result round/application same-job scope, learner-request round/offer ownership, and round-exception exact request/application/round/request_type binding. Added corrupt-row preflight, request-type discriminator, source verifier, disposable PostgreSQL negatives and two-client reparent race. Connector read-only audit 16/16 passed. No registered migration or PostgreSQL execution claimed. Subsequent correction c4d859f fixed a false-negative test comparing a regex source literal to decoded service code; exact GitHub source executed in isolated V8 shims: verifier 10/10 and non-PG static tests 3/3 pass, PostgreSQL witness skipped; Node CLI still NOT EXECUTED.",
       "pickedBy": 3,
       "pickedAt": "2026-10-12T02:23:00+05:30",
       "startedAt": "2026-10-12T02:31:00+05:30",
