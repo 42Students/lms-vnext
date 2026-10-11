@@ -162,6 +162,7 @@ DECLARE
   submission_membership uuid;
   submission_type text;
   submission_college uuid;
+  owner_user uuid;
 BEGIN
   -- Grant/object identity is immutable from creation, not merely consumption.
   IF NEW.college_id IS DISTINCT FROM OLD.college_id
@@ -207,12 +208,33 @@ BEGIN
       USING ERRCODE='23514';
   END IF;
 
-  -- Revocation is irreversible. The actor must be a live persisted user.
+  -- Revocation is irreversible and the evidence is immutable. An unused
+  -- owner may cancel their own grant; consumed evidence can only be revoked by
+  -- a same-college College Admin or a persisted active SUPER_ADMIN.
   IF OLD.revoked = true AND NEW.revoked = false THEN
     RAISE EXCEPTION 'DB06 revoked upload receipt cannot be restored'
       USING ERRCODE='23514';
   END IF;
+
+  IF OLD.revoked = true
+     AND (
+       NEW.revoked_at IS DISTINCT FROM OLD.revoked_at
+       OR NEW.revoked_by_user_id IS DISTINCT FROM OLD.revoked_by_user_id
+       OR NEW.revocation_reason IS DISTINCT FROM OLD.revocation_reason
+     ) THEN
+    RAISE EXCEPTION 'DB06 upload receipt revocation evidence is immutable'
+      USING ERRCODE='23514';
+  END IF;
+
   IF OLD.revoked = false AND NEW.revoked = true THEN
+    SELECT cm.user_id
+      INTO owner_user
+      FROM college_memberships cm
+      WHERE cm.id = OLD.owner_membership_id
+        AND cm.college_id = OLD.college_id
+        AND cm.status = 'ACTIVE'
+      FOR SHARE;
+
     PERFORM 1
       FROM users u
       WHERE u.id = NEW.revoked_by_user_id
@@ -220,6 +242,36 @@ BEGIN
       FOR SHARE;
     IF NOT FOUND THEN
       RAISE EXCEPTION 'DB06 upload receipt revoker must be active user'
+        USING ERRCODE='23514';
+    END IF;
+
+    IF NEW.revoked_by_user_id = owner_user
+       AND OLD.consumed_at IS NULL THEN
+      NULL;
+    ELSIF EXISTS (
+      SELECT 1
+      FROM system_roles sr
+      JOIN users u ON u.id = sr.user_id
+      WHERE sr.user_id = NEW.revoked_by_user_id
+        AND sr.role = 'SUPER_ADMIN'
+        AND u.platform_status = 'ACTIVE'
+    ) THEN
+      NULL;
+    ELSIF EXISTS (
+      SELECT 1
+      FROM college_memberships cm
+      JOIN membership_roles mr ON mr.membership_id = cm.id
+      JOIN users u ON u.id = cm.user_id
+      WHERE cm.user_id = NEW.revoked_by_user_id
+        AND cm.college_id = OLD.college_id
+        AND cm.status = 'ACTIVE'
+        AND mr.role = 'COLLEGE_ADMIN'
+        AND u.platform_status = 'ACTIVE'
+    ) THEN
+      NULL;
+    ELSE
+      RAISE EXCEPTION
+        'DB06 upload receipt revoker lacks owner/admin authority'
         USING ERRCODE='23514';
     END IF;
   END IF;
@@ -234,7 +286,15 @@ BEGIN
       USING ERRCODE='23514';
   END IF;
 
-  -- Deletion lifecycle is one-way and timestamps cannot be rewritten.
+  -- Deletion lifecycle is one-way. Deletion is an administrative terminal
+  -- action and must first revoke future reads.
+  IF OLD.deletion_requested_at IS NULL
+     AND NEW.deletion_requested_at IS NOT NULL
+     AND NEW.revoked IS DISTINCT FROM true THEN
+    RAISE EXCEPTION 'DB06 upload receipt deletion requires prior revocation'
+      USING ERRCODE='23514';
+  END IF;
+
   IF OLD.deletion_requested_at IS NOT NULL
      AND NEW.deletion_requested_at IS DISTINCT FROM OLD.deletion_requested_at THEN
     RAISE EXCEPTION 'DB06 upload receipt deletion request is immutable'
@@ -425,6 +485,69 @@ FOR EACH STATEMENT
 EXECUTE FUNCTION db06_reject_assignment_file_history_mutation();
 
 -- ---------------------------------------------------------------------------
+-- Deferred FILE/receipt completeness.
+-- ---------------------------------------------------------------------------
+CREATE FUNCTION db06_require_assignment_submission_file_set()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $db06_file_set$
+BEGIN
+  IF NEW.submission_type::text = 'FILE' THEN
+    PERFORM 1
+      FROM assignment_submission_files f
+      WHERE f.assignment_submission_id = NEW.id;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'DB06 FILE submission requires at least one immutable file row'
+        USING ERRCODE='23514';
+    END IF;
+  ELSE
+    IF EXISTS (
+      SELECT 1
+      FROM assignment_submission_files f
+      WHERE f.assignment_submission_id = NEW.id
+    ) THEN
+      RAISE EXCEPTION 'DB06 non-FILE submission cannot own assignment file rows'
+        USING ERRCODE='23514';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$db06_file_set$;
+
+CREATE CONSTRAINT TRIGGER db06_assignment_submission_file_set_required
+AFTER INSERT OR UPDATE OF submission_type ON assignment_submissions
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW
+EXECUTE FUNCTION db06_require_assignment_submission_file_set();
+
+CREATE FUNCTION db06_require_consumed_receipt_file_row()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $db06_receipt_file$
+BEGIN
+  IF NEW.purpose = 'ASSIGNMENT_SUBMISSION'
+     AND NEW.consumed_at IS NOT NULL THEN
+    PERFORM 1
+      FROM assignment_submission_files f
+      WHERE f.upload_receipt_id = NEW.id
+        AND f.assignment_submission_id = NEW.consumed_by_submission_id;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'DB06 consumed assignment receipt requires immutable file row'
+        USING ERRCODE='23514';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$db06_receipt_file$;
+
+CREATE CONSTRAINT TRIGGER db06_consumed_receipt_file_row_required
+AFTER INSERT OR UPDATE OF consumed_at, consumed_by_submission_id
+ON course_upload_receipts
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW
+EXECUTE FUNCTION db06_require_consumed_receipt_file_row();
+
+-- ---------------------------------------------------------------------------
 -- Producer/read cutover requirements
 -- ---------------------------------------------------------------------------
 -- 1. readPrivateObjectAttestation must require and return a trusted
@@ -472,6 +595,10 @@ EXECUTE FUNCTION db06_reject_assignment_file_history_mutation();
 -- M file key/generation/MIME/size/hash/name drift fails.
 -- N file UPDATE/DELETE/TRUNCATE and receipt DELETE/TRUNCATE fail.
 -- O second concurrent consumer loses the receipt CAS.
--- P revocation actor/time/reason is durable and later signed read fails.
--- Q deleted/revoked receipt cannot issue signed read.
--- R zero-to-head migration/schema snapshot and readiness gate pass.
+-- P unused owner revocation succeeds; unrelated/faculty revoker fails.
+-- P2 consumed receipt revocation requires same-college COLLEGE_ADMIN or active
+--    SUPER_ADMIN; revocation evidence is immutable and later signed read fails.
+-- Q deletion requires prior revocation; deleted/revoked receipt cannot issue read.
+-- R FILE submission with zero files and consumed receipt with no file row fail
+--   only at COMMIT; exact multi-file set commits.
+-- S zero-to-head migration/schema snapshot and readiness gate pass.
