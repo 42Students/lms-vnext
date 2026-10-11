@@ -22,7 +22,8 @@
     "Creator must not supply raw arbitrary recipient identity, external assessment_url, delivery_error or private data.",
     "Campaign state changes and scope/owner changes must be auditable and race safe.",
     "Source-determined times were local datetime; explicit IANA timezone is mandatory at new vNext schedule input.",
-    "No original data migration required; all work targets greenfield vNext data."
+    "No original data migration required; all work targets greenfield vNext data.",
+    "Legacy NotificationServiceImpl defaults a non-course notification with null type to GENERAL; GENERAL is an active source type, not a historical alias."
   ],
   "records": [
     {
@@ -289,7 +290,7 @@
       "riskFlags": [],
       "canonicalTarget": "notification_campaigns.notification_type; activity_events.module",
       "disposition": "REDESIGNED_STAGED_UNREGISTERED",
-      "sourceRationale": "Legacy JOB/COURSE/SYSTEM classification becomes typed enum and activity taxonomy.",
+      "sourceRationale": "Legacy GENERAL default plus JOB/COURSE/SYSTEM producer classifications become a typed campaign enum and activity taxonomy.",
       "sourceEvidence": [
         "Notification.java",
         "NotificationServiceImpl.java",
