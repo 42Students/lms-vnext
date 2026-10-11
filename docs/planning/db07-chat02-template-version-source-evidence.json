@@ -1,0 +1,92 @@
+{
+  "taskId": "DB-068",
+  "worker": 2,
+  "date": "2026-10-12",
+  "evidenceType": "EXACT_GITHUB_BLOB_V8_IN_PROCESS_SOURCE_ASSERTIONS",
+  "sourcePathsAndBlobShas": [
+    {
+      "path": "src/db/schema/projects.ts",
+      "blobSha": "b9579c57e84d3db4f62b577bbf5603d1a8d26cdc"
+    },
+    {
+      "path": "src/modules/projects/template-service.ts",
+      "blobSha": "1cffa4871ae8bb1df43c8d658bfb7781f4cece54"
+    },
+    {
+      "path": "src/modules/projects/instance-service.ts",
+      "blobSha": "c72a17bd7859073bae5d5a8a6e13df116bfffad7"
+    },
+    {
+      "path": "docs/planning/sql/db07-w03-core-project-relationship-integrity-candidate.sql",
+      "blobSha": "e049a4e31dd0ca466773bcdb3785c73b67e666f7"
+    },
+    {
+      "path": "docs/planning/sql/db07-template-version-parent-integrity-staging.sql",
+      "blobSha": "5967e71580c716032160da4e34795083168f38be"
+    },
+    {
+      "path": "docs/planning/db07-template-version-integrity-contract.md",
+      "blobSha": "2533c831de2cd61ab5c67529aa9194c0493df07c"
+    },
+    {
+      "path": "tests/db07-template-version-parent-integrity-source.test.mjs",
+      "blobSha": "983b80893664f98f861f26e7cc1001b404ff2712"
+    },
+    {
+      "path": "tests/integration/db07-template-version-parent-integrity.test.ts",
+      "blobSha": "ec31493d20198d0ff365b2c40fb9fe8319c0ced3"
+    }
+  ],
+  "assertions": {
+    "total": 30,
+    "passed": 30,
+    "failed": 0,
+    "results": {
+      "versionOwner": true,
+      "assignmentParentColumns": true,
+      "instanceParentColumns": true,
+      "registeredTargetStillUnstaged": true,
+      "compositeUnique": true,
+      "assignmentCompositeFk": true,
+      "instanceCompositeFk": true,
+      "assignmentMismatchProbe": true,
+      "instanceMismatchProbe": true,
+      "abortOnMismatch": true,
+      "error23514": true,
+      "doGuardQuoted": true,
+      "draftOnly": true,
+      "noDestructiveDdl": true,
+      "sameOwnerAssignmentAdvance": true,
+      "instanceServiceChecksOwner": true,
+      "separateFromCoreProposal": true,
+      "contractExplainsRevokedHistory": true,
+      "contractExplainsDirectSql": true,
+      "contractNoRegisteredMigration": true,
+      "authoredNodeCases": true,
+      "authoredPgCases": true,
+      "pgRequiresOptIn": true,
+      "pgSkipsIfDisabled": true,
+      "pgExplicitTestUrl": true,
+      "pgTargetNameSuffix": true,
+      "pgRollback": true,
+      "pgChecksCatalog": true,
+      "pgChecks23503": true,
+      "pgChecksConstraintNames": true
+    }
+  },
+  "authoredTests": {
+    "nodeSource": 16,
+    "postgresIntegration": 8,
+    "nodeExecuted": 0,
+    "postgresExecuted": 0
+  },
+  "registeredMigration": false,
+  "postgresCatalogQueried": false,
+  "typecheckExecuted": false,
+  "interpretation": "SOURCE_ONLY_NOT_DATABASE_RUNTIME_VERIFIED",
+  "notes": [
+    "30 exact-blob source checks, not actual Node tests",
+    "Staged composite unique index and two owner FKs have explicit mismatch preflights",
+    "PostgreSQL witnesses are opt-in, rollback-only and have no passing runtime execution"
+  ]
+}
