@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-032",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB27_SOURCE_PREFLIGHT_COMPLETED_NOT_DB_VERIFIED",
+    "checkpointKind": "DB032_DB09_FAIL_CLOSE_HARDENING_IN_PROGRESS",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "c23bfc4b500f6ba3c6137659abeaca3bb3743cf6",
-    "lastWorkerMergedSha": "f3bf7dbfd4e44d2135e9267e9f6fe88ee7cf2873",
+    "observedMainSha": "f6d1650c1499f41e724d63b28f53d6f254811040",
+    "lastWorkerMergedSha": "0bb1cd6188e6d7fbb777ce8366bbb33de7753ab6",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat 3 completed DB-027 source-only cross-domain SQL analyzer, 14 Node test definitions, and explicit DB04 duplicate SQL tombstones. 12 pure V8 source unit probes passed, plus real canonical DB04 source guard and follow-up intra-file duplicate check. Full Node suite/Postgres NOT RUN. DB-007 and DB-012 remain BLOCKED pending Chat 1 migration replay and downstream acceptance; DATABASE globally active."
+    "summary": "DB-032 tracks post-disposition DB09 integration hardening: principal scope, share privacy, drive-group identity, scheduling capacity, prep/bell scope, notification undo/claim race safety and staging SQL syntax guards. Work is authored only; no PostgreSQL execution."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -54,7 +54,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "No non-conflicting READY task currently eligible: check newest queue and claims. If DB-002/DB-025 integration prereqs clear, help execute independent DB negative witnesses. Otherwise conduct only bounded unclaimed source peer-review or claim a genuine new DB gap through queue CAS. Never steal Chat1 migration or another worker's source claim.",
+  "nextAction": "Finish DB-032 adversarial DB09 staged principal/race hardening, keep migration journal/schema barrel untouched, then release as COMPLETED with authored/static evidence only; PostgreSQL verification remains separate.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -136,12 +136,13 @@
   "pickedTaskIds": [
     "DB-007",
     "DB-012",
-    "DB-027"
+    "DB-027",
+    "DB-032"
   ],
   "completedTaskIds": [
     "DB-027"
   ],
-  "lastPickedAt": "2026-10-11T02:14:00+05:30",
+  "lastPickedAt": "2026-10-11T13:32:00+05:30",
   "lastCompletedAt": null,
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
