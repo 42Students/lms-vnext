@@ -58,6 +58,8 @@ test("direct SQL owner writes cannot pair faculty with wrong college, offering o
     "course_college_id IS DISTINCT FROM owner_college_id",
     "delivery_offering_id IS DISTINCT FROM content_offering_id",
     "section_period_college_id IS DISTINCT FROM course_college_id",
+    "section_cohort_id IS DISTINCT FROM offering_cohort_id",
+    "section_period_id IS DISTINCT FROM offering_period_id",
     "USING ERRCODE = '23514'",
   ];
   for (const token of required) assert.ok(sql.includes(token), token);
@@ -72,7 +74,7 @@ test("faculty assignment requires active FACULTY membership without wiping old o
   assert.match(sql, /FROM college_memberships membership[\s\S]*?FOR SHARE/);
   assert.match(sql, /FROM membership_roles membership_role[\s\S]*?FOR SHARE/);
   assert.match(sql, /NEW\.faculty_owner_membership_id[\s\S]*IS DISTINCT FROM OLD\.faculty_owner_membership_id/);
-  assert.match(sql, /IF newly_assigned AND/);
+  assert.match(sql, /IF newly_assigned THEN/);
   assert.match(contract, /Historical owner/);
   assert.match(contract, /later loses role\/is suspended/);
 });
