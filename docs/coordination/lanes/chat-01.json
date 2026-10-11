@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-051",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB051_LOCAL_PROXY_RESET_GUARD_STARTED",
+    "checkpointKind": "DB051_LOCAL_PROXY_RESET_GUARD_COMPLETED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "bd085b480031afc7dcef0d2031ac64a9ad55e0cf",
-    "lastWorkerMergedSha": "8585e875e6112fe94b93c4e3f305904ba0a5ba8d",
+    "observedMainSha": "49efc04c1b1b004bf6e0bde2366320d2e4089034",
+    "lastWorkerMergedSha": "e66e66d4a4d38d43cdb63d1ee52b10b123776b19",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat 1 started DB-051 CORE_INFRA: localhost is not sufficient proof of disposability because Cloud SQL Auth Proxy also appears local."
+    "summary": "DB-051 completed: localhost/proxy reset ambiguity closed. Explicit local test/E2E names stay frictionless; all other local DBs require exact DB_RESET_CONFIRM; remote still requires ALLOW_DB_RESET + exact token. Redirect params/system DBs fail closed. 10/10 isolated no-network matrix passed; repo tsx/PG execution not claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -43,13 +43,14 @@
     "tests/db41-history-schema-drift.test.mjs"
   ],
   "lastExecutedPassingTests": [
-    "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)"
+    "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)",
+    "DB051 isolated no-network reset safety matrix 10/10 PASS (Node; no PostgreSQL)"
   ],
   "blockers": [
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Require exact DB_RESET_CONFIRM for local non-test/non-E2E reset targets, leave explicit disposable test/E2E local DBs frictionless, preserve DB-048 remote guard, add process/static regressions and workflow docs.",
+  "nextAction": "Refresh DATABASE queue; if no dependency-satisfied unowned task exists, continue a non-duplicating DB06 source persistence gap.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -100,10 +101,11 @@
     "DB-041",
     "DB-044",
     "DB-045",
-    "DB-048"
+    "DB-048",
+    "DB-051"
   ],
   "lastPickedAt": "2026-10-11T14:30:00.000Z",
-  "lastCompletedAt": "2026-10-11T14:18:00.000Z",
+  "lastCompletedAt": "2026-10-11T14:14:04.081Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
@@ -117,7 +119,8 @@
     "DB-041",
     "DB-044",
     "DB-045",
-    "DB-048"
+    "DB-048",
+    "DB-051"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
