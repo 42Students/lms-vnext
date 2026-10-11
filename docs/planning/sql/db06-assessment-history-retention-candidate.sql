@@ -648,6 +648,80 @@ BEGIN
     RAISE EXCEPTION 'DB06 retention preflight: answer snapshots mismatch committed definition'
       USING ERRCODE='23514';
   END IF;
+
+
+  IF EXISTS (
+    SELECT 1
+    FROM quiz_questions q
+    LEFT JOIN LATERAL (
+      SELECT count(*) AS option_count,
+             count(DISTINCT lower(trim(o.option_text))) AS distinct_text_count,
+             count(*) FILTER (WHERE o.is_correct) AS correct_count
+      FROM quiz_options o
+      WHERE o.question_id = q.id
+    ) shape ON true
+    WHERE shape.option_count < 2
+       OR shape.option_count > 20
+       OR shape.distinct_text_count <> shape.option_count
+       OR (q.question_type::text = 'SINGLE_CHOICE'
+           AND shape.correct_count <> 1)
+       OR (q.question_type::text = 'MULTIPLE_CHOICE'
+           AND (shape.correct_count < 1
+                OR shape.correct_count >= shape.option_count))
+  ) THEN
+    RAISE EXCEPTION 'DB06 retention preflight: invalid quiz option-set shape'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM quiz_attempt_answers aa
+    JOIN quiz_questions q ON q.id = aa.question_id
+    LEFT JOIN LATERAL (
+      SELECT count(*) AS selected_count,
+             count(DISTINCT selected.value) AS distinct_selected_count
+      FROM jsonb_array_elements_text(aa.selected_option_ids) selected(value)
+    ) selected ON true
+    LEFT JOIN LATERAL (
+      SELECT count(*) FILTER (WHERE o.is_correct) AS correct_option_count,
+             count(*) FILTER (
+               WHERE aa.selected_option_ids ? o.id::text
+             ) AS selected_matching_count,
+             count(*) FILTER (
+               WHERE o.is_correct
+                 AND aa.selected_option_ids ? o.id::text
+             ) AS selected_correct_count,
+             count(*) FILTER (
+               WHERE NOT o.is_correct
+                 AND aa.selected_option_ids ? o.id::text
+             ) AS selected_incorrect_count
+      FROM quiz_options o
+      WHERE o.question_id = aa.question_id
+    ) answer_key ON true
+    WHERE selected.selected_count <> selected.distinct_selected_count
+       OR selected.selected_count <> answer_key.selected_matching_count
+       OR (q.question_type::text = 'SINGLE_CHOICE'
+           AND selected.selected_count > 1)
+       OR aa.correct IS DISTINCT FROM (
+            selected.selected_count > 0
+            AND answer_key.selected_incorrect_count = 0
+            AND answer_key.selected_correct_count =
+                answer_key.correct_option_count
+          )
+       OR aa.points_awarded IS DISTINCT FROM (
+            CASE
+              WHEN selected.selected_count > 0
+               AND answer_key.selected_incorrect_count = 0
+               AND answer_key.selected_correct_count =
+                   answer_key.correct_option_count
+              THEN q.points
+              ELSE 0
+            END
+          )
+  ) THEN
+    RAISE EXCEPTION 'DB06 retention preflight: invalid selected-option/correctness history'
+      USING ERRCODE='23514';
+  END IF;
 END;
 $db06_retention_preflight$;
 
