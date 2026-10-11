@@ -6,20 +6,20 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
+  "executionState": "IDLE_ELIGIBLE_WORK_PENDING",
   "activeTaskId": null,
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB034_TPO_SETTINGS_NORMALIZATION_COMPLETE_SOURCE_ONLY",
+    "checkpointKind": "DB036_NINE_TYPED_NOTIFICATION_PREF_FIELDS_COMPLETED_SOURCE_ONLY",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "2d822b650f428e755ead9ca89b62192c5975ddb8",
-    "lastWorkerMergedSha": "3620bd6afdaac813a460a2f80b2b4ff0443e59db",
+    "observedMainSha": "519e179696524dc594109bdcd1d216e1ccd8a12a",
+    "lastWorkerMergedSha": "942066d0846c5fd9ef6598e0031cd07ce8bb9065",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-034 COMPLETED source/staging implementation. Trusted domains and prep-course selections are normalized, old JSON targets removed from canonical schema, two DB09 ledger rows are REDESIGNED, 47/47 connector source assertions clean. Node/PostgreSQL not executed."
+    "summary": "DB036 COMPLETED source and Drizzle staging. Repaired 216-line duplicate/unterminated SQL check in tpo-collaboration, normalized 4 active college notification switches and 5 saved personal preferences to NOT NULL booleans with source defaults. Ledger 279/279: 195 MAPPED + 84 REDESIGNED, 0 verified. Seven focused tests authored; five stale ledger checks and one preexisting collaboration check revised; 13/13 source-test callbacks executed/passed under isolated V8 shims (not Node). TypeScript, PostgreSQL, runtime notification delivery NOT executed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -56,7 +56,7 @@
       "request": "After DB03/shared schema collision is clear, integrate/register approved DB04 schema constraints and run migration replay/PostgreSQL witnesses; Chat 3 has not edited drizzle/** or schema barrel."
     }
   ],
-  "nextAction": "Pick next eligible DATABASE task. DB-034 is complete but not verified; W01 must register normalized settings and independent PostgreSQL must execute acceptance witnesses.",
+  "nextAction": "Fetch latest main/queue; if eligible database task available CAS claim. Otherwise help independent Postgres integration once Chat1 resolves migration availability; don't revisit closed DB09 field mapping or claim Actions billing as blocker. Node db09 static and DB-036 run still needed.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -147,7 +147,12 @@
     "https://github.com/42Students/lms-vnext/commit/4d0cefff147c30b10bbe9b889bb73c2e6cc2779e",
     "https://github.com/42Students/lms-vnext/commit/5f44d16bec1fb6393de3a50febab550974c3b9b1",
     "https://github.com/42Students/lms-vnext/commit/651ca523646627695899a3a121f05226a265a493",
-    "https://github.com/42Students/lms-vnext/commit/3620bd6afdaac813a460a2f80b2b4ff0443e59db"
+    "https://github.com/42Students/lms-vnext/commit/3620bd6afdaac813a460a2f80b2b4ff0443e59db",
+    "https://github.com/42Students/lms-vnext/blob/main/docs/planning/db09-notification-preferences-normalization-2026-10-11.md",
+    "https://github.com/42Students/lms-vnext/blob/main/tests/db09-notification-preferences-normalization.test.mjs",
+    "https://github.com/42Students/lms-vnext/commit/6a0785ae369ec1e404194494698fe3c37877b6c7",
+    "https://github.com/42Students/lms-vnext/commit/d101e659ed41a43699a78be93417c3217f890a28",
+    "https://github.com/42Students/lms-vnext/commit/3180f169960d2b90af69f46cda45df22df26f7e3"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
@@ -155,12 +160,14 @@
     "DB-012",
     "DB-027",
     "DB-032",
-    "DB-034"
+    "DB-034",
+    "DB-036"
   ],
   "completedTaskIds": [
     "DB-027",
     "DB-032",
-    "DB-034"
+    "DB-034",
+    "DB-036"
   ],
   "lastPickedAt": "2026-10-11T13:50:00+05:30",
   "lastCompletedAt": "2026-10-11T14:05:00+05:30",
