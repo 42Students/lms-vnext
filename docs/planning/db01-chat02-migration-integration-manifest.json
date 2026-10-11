@@ -201,7 +201,8 @@
     "postgresNegativeOrConcurrencyTestsPassing": false,
     "providerEndToEndVerified": false,
     "CIStatus": "FAILURE_NO_TRUSTWORTHY_STEP_OUTPUT",
-    "phaseGateReady": false
+    "phaseGateReady": false,
+    "postgresCrossRowArchiveRacesVerified": false
   },
   "promotionChecklist": [
     "Chat 1 review active legacy source semantic contracts and approve redesign/retirements field by field.",
@@ -212,5 +213,26 @@
     "Run all negative cross-tenant, FK, replay and concurrency tests on disposable Postgres and retain logs.",
     "Record either accepted source parity or explicit justified intentional security exception for each live legacy behavior.",
     "Only after all implementation and executed acceptance update DB-004 to COMPLETED then DONE_VERIFIED; no worker may advance the shared phase alone."
+  ],
+  "crossRowInvariantCandidates": [
+    {
+      "id": "DB01-ORG-COLLEGE-ARCHIVE-RACE",
+      "status": "STAGED_UNREGISTERED",
+      "stagingSql": "docs/planning/sql/db01-org-college-archive-race-staging.sql",
+      "scope": "Active college insert/activate/move must not race organization archive",
+      "requires": "Chat 1 numbered migration plus genuine two-session PostgreSQL proof and lock-order review",
+      "evidence": "docs/planning/db01-org-college-archive-race-contract.md"
+    },
+    {
+      "id": "DB01-COLLEGE-MEMBERSHIP-DOMAIN-ARCHIVE-RACE",
+      "status": "STAGED_UNREGISTERED",
+      "stagingSql": "docs/planning/sql/db01-college-membership-domain-archive-guard-staging.sql",
+      "scope": "Non-ENDED membership and persisted tenant domain inserts/moves must not race college archive",
+      "requires": "Chat 1 migration plus full descendant domain coordination and two-session PostgreSQL proof",
+      "witness": "tests/db01-college-membership-domain-archive-pg.test.mjs",
+      "sourceTest": "tests/db01-college-membership-domain-archive-source.test.mjs",
+      "evidence": "docs/planning/db01-college-membership-domain-archive-race-contract.md",
+      "sourceAssertionsObserved": "16/16 in-process JS static checks; Node tests authored only; PostgreSQL not run"
+    }
   ]
 }
