@@ -31,8 +31,8 @@ function readPgTarget(raw, name) {
 
 export function assertSafeDb01TestTarget(env = process.env) {
   const test = readPgTarget(env.TEST_DATABASE_URL, 'TEST_DATABASE_URL');
-  if (!/^(?:test_[a-z0-9_]+|[a-z0-9_]+_test(?:_[a-z0-9]+)?)$/i.test(test.db)) {
-    throw new Error('Refusing to reset a database whose name is not explicitly a test database');
+  if (!/^(?:(?:test|e2e)_[a-z0-9_]+|[a-z0-9_]+_(?:test|e2e)(?:_[a-z0-9]+)*)$/i.test(test.db)) {
+    throw new Error('Refusing to reset a database whose name is not explicitly a test database or E2E database');
   }
   if (env.DATABASE_URL) {
     const app = readPgTarget(env.DATABASE_URL, 'DATABASE_URL');
