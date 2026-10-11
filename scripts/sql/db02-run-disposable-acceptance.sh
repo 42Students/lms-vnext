@@ -49,21 +49,82 @@ fi
 
 # Registration must have already occurred. Avoid accidentally measuring the
 # UNREGISTERED source artifacts against an older schema and reporting success.
-INSTALLED="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
+TRIGGER_WITNESSES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
 SELECT count(*)::integer
 FROM pg_trigger
 WHERE NOT tgisinternal
   AND tgname IN (
     'db02_cohort_promotion_readiness_guard',
     'db02_program_term_course_type_history_guard',
+    'db02_program_term_delete_history_guard',
+    'db02_cohort_status_lifecycle_guard',
+    'db02_academic_period_date_history_guard',
     'db02_cohort_progression_history',
+    'db02_progression_state_no_truncate',
     'db02_lecture_hall_archive_guard',
-    'db02_historic_offering_parent_guard'
+    'db02_schedule_future_hall_lifecycle_guard',
+    'db02_historic_offering_parent_guard',
+    'db02_learner_program_enrollment_tenant',
+    'db02_section_enrollment_cohort_period'
   );
 SQL
 )"
-if [[ "$INSTALLED" != "5" ]]; then
-  echo "DB02 canonical migration is not fully registered (required trigger witnesses: 5, found: $INSTALLED)" >&2
+if [[ "$TRIGGER_WITNESSES" != "12" ]]; then
+  echo "DB02 canonical migration is not fully registered (required trigger witnesses: 12, found: $TRIGGER_WITNESSES)" >&2
+  exit 2
+fi
+
+TABLE_WITNESSES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
+SELECT count(*)::integer
+FROM information_schema.tables
+WHERE table_schema = current_schema()
+  AND table_name IN (
+    'program_terms',
+    'program_term_courses',
+    'cohort_progression_state',
+    'cohort_progression_events',
+    'lecture_halls',
+    'faculty_course_associations'
+  );
+SQL
+)"
+if [[ "$TABLE_WITNESSES" != "6" ]]; then
+  echo "DB02 canonical migration is missing staged tables (required: 6, found: $TABLE_WITNESSES)" >&2
+  exit 2
+fi
+
+COLUMN_WITNESSES="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
+SELECT count(*)::integer
+FROM information_schema.columns
+WHERE table_schema = current_schema()
+  AND (table_name, column_name) IN (
+    ('course_offerings','program_term_id'),
+    ('course_offerings','program_term_course_id'),
+    ('cohorts','start_date'),
+    ('cohorts','end_date'),
+    ('sections','description'),
+    ('sections','minimum_capacity'),
+    ('sections','start_date'),
+    ('sections','end_date'),
+    ('section_schedule_events','lecture_hall_id')
+  );
+SQL
+)"
+if [[ "$COLUMN_WITNESSES" != "9" ]]; then
+  echo "DB02 canonical migration is missing staged columns (required: 9, found: $COLUMN_WITNESSES)" >&2
+  exit 2
+fi
+
+INACTIVE_ENUM_WITNESS="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 <<'SQL'
+SELECT count(*)::integer
+FROM pg_type t
+JOIN pg_enum e ON e.enumtypid = t.oid
+WHERE t.typname = 'cohort_status'
+  AND e.enumlabel = 'INACTIVE';
+SQL
+)"
+if [[ "$INACTIVE_ENUM_WITNESS" != "1" ]]; then
+  echo "DB02 canonical migration is missing cohort_status.INACTIVE" >&2
   exit 2
 fi
 
