@@ -14,7 +14,7 @@ CREATE TABLE placement_recruiter_drive_groups (
     REFERENCES placement_companies(id) ON DELETE RESTRICT,
   shared_form jsonb,
   created_at timestamptz NOT NULL DEFAULT now(),
-  created_by_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
+  created_by_user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   CONSTRAINT placement_recruiter_drive_groups_recruiter_company_fk
     FOREIGN KEY (recruiter_user_id, company_id)
     REFERENCES placement_recruiter_profiles(user_id, company_id)
@@ -26,7 +26,7 @@ CREATE INDEX placement_recruiter_drive_groups_recruiter_time_idx
   ON placement_recruiter_drive_groups(recruiter_user_id, created_at);
 
 CREATE FUNCTION db09_assert_drive_group_owner_scope() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 DECLARE
   v_profile_company uuid;
 BEGIN
@@ -54,13 +54,12 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
 
-  IF NEW.created_by_user_id IS NOT NULL
-     AND NEW.created_by_user_id <> NEW.recruiter_user_id THEN
+  IF NEW.created_by_user_id IS DISTINCT FROM NEW.recruiter_user_id THEN
     RAISE EXCEPTION 'drive group creator must be the recruiter owner'
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $;
+END $$;
 CREATE TRIGGER db09_drive_group_owner_scope_guard
   BEFORE INSERT OR UPDATE OF recruiter_user_id,company_id,created_by_user_id
   ON placement_recruiter_drive_groups
@@ -108,6 +107,12 @@ BEGIN
   IF v_relationship_company IS NULL
      OR v_relationship_company <> v_group_company THEN
     RAISE EXCEPTION 'drive group company does not match child job relationship'
+      USING ERRCODE = '23514';
+  END IF;
+
+  -- Legacy RecruiterPlanDriveService creates grouped jobs as this same recruiter.
+  IF NEW.created_by_user_id IS DISTINCT FROM v_group_recruiter THEN
+    RAISE EXCEPTION 'grouped job creator must be the group recruiter'
       USING ERRCODE = '23514';
   END IF;
 
