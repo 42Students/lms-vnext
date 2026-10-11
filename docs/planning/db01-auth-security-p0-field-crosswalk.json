@@ -36,9 +36,9 @@
     "registeredMigrations": 0,
     "runtimeVerified": 0,
     "providerVerified": 0,
-    "currentSourceEvidenceGaps": 3
+    "currentSourceEvidenceGaps": 0
   },
-  "policy": "Raw short OTP, bearer tokens, legacy refresh/ID tokens or password secrets may not be retained for convenience. Target columns are staged suggestions, not proof of safe parity. DB04/DB09 owners must approve their own decisions. Cannot close fields without real migration/provider tests. Three source-queue candidates lack named source paths, documented as currentSourceEvidenceGap; do not treat legacy DDL alone as current producer/consumer proof.",
+  "policy": "Raw short OTP, bearer tokens, legacy refresh/ID tokens or password secrets may not be retained for convenience. Target columns are staged suggestions, not proof of safe parity. DB04/DB09 owners must approve their own decisions. Cannot close fields without real migration/provider tests. Three source-queue candidates lack named source paths, documented as currentSourceEvidenceGap; do not treat legacy DDL alone as current producer/consumer proof. Three previously unnamed P0 legacy producer/consumer source references are now pinned; role.is_deleted reveals a legacy authority-read soft-delete bypass requiring an explicit security fix rather than clone. This does not change any runtime or provider approval.",
   "rows": [
     {
       "legacyField": "auth_handoff_token.is_deleted",
@@ -912,14 +912,21 @@
         "mustNotStoreRaw": false,
         "requiresRuntimeEvidence": true
       },
-      "sourceEvidenceSummary": null,
-      "sourcePaths": [],
+      "sourceEvidenceSummary": "Role inherits BaseModel.isDeleted; the active UserServiceImpl.getAuthority iterates user.getRoles() and adds ROLE_<name> without checking role.isDeleted. RoleServiceImpl.findByName resolves by roleDao.findRoleByName(name) without an explicit disabled-role check. Source-backed legacy privilege-retention bug/exception; vNext role revoke must fail closed. An active role SOFT-DELETE write path has not been demonstrated.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/Role.java@6953e76dc222d835e424a9bbaa29713c437cf0d0",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java@71ce29fa6d6b5082a58c4cfffb01e54de976d30",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java@45e1c992e53be0c7e0f7cdd8f074ffc7fd2363ed",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/RoleServiceImpl.java@ea254558e1cde9681e5d16841d406901a9516746"
+      ],
       "approvedRetirement": false,
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
       "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
-      "currentSourceEvidenceGap": true
+      "currentSourceEvidenceGap": false,
+      "sourceEvidenceClassification": "ACTIVE_AUTHORITY_CONSUMER_IGNORES_SOFT_DELETE__SECURITY_EXCEPTION",
+      "legacySecurityException": "LEGACY_ROLE_SOFT_DELETE_IGNORED_BY_AUTHORITY_BUILDER"
     },
     {
       "legacyField": "tenant_domain.is_deleted",
@@ -935,14 +942,21 @@
         "mustNotStoreRaw": false,
         "requiresRuntimeEvidence": true
       },
-      "sourceEvidenceSummary": null,
-      "sourcePaths": [],
+      "sourceEvidenceSummary": "TenantDomain inherits BaseModel.isDeleted; TenantDomainRepository.findActiveByHost, findVerifiedActiveByHost, findActiveByCollegeId and both primary-host queries explicitly filter isDeleted=false. TenantAdminController uses these query paths to list domains and run onboarding readiness. vNext still hard-deletes domains; tombstone draft unregistered.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/TenantDomain.java@530ecd12e36f39f13dc08587af85239f807e4cae",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/BaseModel.java@71ce29fa6d6b5082a58c4cfffb01e54de976d30",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/repository/TenantDomainRepository.java@0fccbb083c7ce3348a379751adf60fee80b27aef",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/controller/TenantAdminController.java@8273eb87ebef09e4c0585becc1f98f92498f6a01"
+      ],
       "approvedRetirement": false,
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
       "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
-      "currentSourceEvidenceGap": true
+      "currentSourceEvidenceGap": false,
+      "sourceEvidenceClassification": "ACTIVE_TENANT_HOST_QUERY_FILTER_CONFIRMED",
+      "legacySecurityException": null
     },
     {
       "legacyField": "user.password",
@@ -958,14 +972,19 @@
         "mustNotStoreRaw": true,
         "requiresRuntimeEvidence": true
       },
-      "sourceEvidenceSummary": null,
-      "sourcePaths": [],
+      "sourceEvidenceSummary": "Legacy User.password is persisted by UserServiceImpl.save via bcryptEncoder.encode(user.getPassword()); login loadUserByUsername reads user.getPassword() into Spring Security UserDetails. This is a live password-auth producer/consumer, NOT permission to persist it in vNext. vNext managed provider needs actual sign-in and recovery parity acceptance before approval.",
+      "sourcePaths": [
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/model/User.java@eba5c9607238c06d9cccae50cdfdac1c56d9f51c",
+        "lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5:src/main/java/com/_42students/lms/service/impl/UserServiceImpl.java@45e1c992e53be0c7e0f7cdd8f074ffc7fd2363ed"
+      ],
       "approvedRetirement": false,
       "registeredMigration": false,
       "providerVerified": false,
       "runtimeSemanticVerified": false,
       "status": "POLICY_CROSSWALK_DRAFT_NOT_ACCEPTED",
-      "currentSourceEvidenceGap": true
+      "currentSourceEvidenceGap": false,
+      "sourceEvidenceClassification": "ACTIVE_LEGACY_PASSWORD_HASH_PRODUCER_AND_CONSUMER_CONFIRMED",
+      "legacySecurityException": null
     },
     {
       "legacyField": "user_session.jti",
@@ -1020,9 +1039,24 @@
       "currentSourceEvidenceGap": false
     }
   ],
-  "currentSourceEvidenceGapFields": [
-    "role.is_deleted",
-    "tenant_domain.is_deleted",
-    "user.password"
-  ]
+  "currentSourceEvidenceGapFields": [],
+  "currentLegacyEvidenceResolution": {
+    "status": "THREE_NAMED_SOURCE_PATHS_RESOLVED_LEGACY_ONLY",
+    "evidenceSnapshot": "42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "originalNamedGaps": [
+      "role.is_deleted",
+      "tenant_domain.is_deleted",
+      "user.password"
+    ],
+    "newlyResolvedNamedGaps": 3,
+    "sourceLevelSecurityExceptions": [
+      "role.is_deleted authority builder ignores deleted role"
+    ],
+    "caveats": [
+      "Neither role deletion writer nor vNext normalized grant-revocation behavior is proven by this source review.",
+      "Password hash retention in vNext remains explicitly unapproved.",
+      "Tenant tombstone is staged only, no registered migration or runtime acceptance.",
+      "No DB01 source field becomes runtime semantic verified from legacy source evidence."
+    ]
+  }
 }
