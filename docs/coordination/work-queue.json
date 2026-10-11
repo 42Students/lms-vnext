@@ -2306,17 +2306,17 @@
         "tests/db10-staged-drafts-source-map.test.mjs",
         "docs/planning/database-parity-db10-field-ledger.json"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "6c652ef6d03758d2b303c142ee719320a41965fe",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Preflighted 75 DB10 source fields across announcements (13), bug tracker (58) and scheduled_job_lock (4) against isolated draft schemas. Every proposed target exists; shared ledger records SOURCE_MAPPED_DRAFT_PRESENT_MIGRATION_NOT_REGISTERED while preserving all rows UNMAPPED and DB10 verified=0. Authored migration-readiness manifest and static test, fixed a whitespace-sensitive table parser, and refreshed connector audit to 342/342. Runtime/PostgreSQL/migration verification remains downstream.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T14:10:30+05:30",
       "startedAt": "2026-10-11T14:11:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T14:18:00+05:30",
+      "completionCommitSha": "6c652ef6d03758d2b303c142ee719320a41965fe",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2340,6 +2340,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T14:11:00+05:30",
           "reason": "Chat 5 started exact 75-field source→draft integration preflight across DB10 announcements, bug tracker and scheduled job leases."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T14:18:00+05:30",
+          "reason": "75-field exact draft-target source preflight + migration manifest + ledger reconciliation complete; runtime evidence pending."
         }
       ]
     },
