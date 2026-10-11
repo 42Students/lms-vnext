@@ -338,7 +338,17 @@
           "riskFlags": [],
           "reviewStatus": "UNVERIFIED_FIELD_SEMANTICS",
           "verifiedMapping": null,
-          "validationEvidence": null
+          "validationEvidence": null,
+          "proposedSemanticMapping": "scripts/sql/db05-course-soft-delete-guard.draft.sql -> courses.legacy_deleted_at. CourseServiceImpl refuses delete with ANY live lesson or live content (repo counts exclude is_deleted=true). Restore same-college course only, does NOT restore descendants. Do not confuse courses.status ARCHIVED.",
+          "db008SourceDisposition": "LEGACY_COURSE_LIVE_DESCENDANT_DELETE_SOURCE_CONFIRMED_UNREGISTERED_PG_UNVERIFIED",
+          "db008Evidence": [
+            "legacy BE SHA 21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "CourseServiceImpl.deleteCourse and restoreCourse",
+            "LessonRepository.countActiveByCourseId",
+            "LessonContentsRepository.countByCourseId",
+            "scripts/sql/db05-course-soft-delete-guard.draft.sql",
+            "No PostgreSQL negative/rollback or concurrent lesson insertion proof"
+          ]
         },
         {
           "legacyTable": "course",
