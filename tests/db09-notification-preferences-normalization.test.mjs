@@ -104,3 +104,48 @@ test("full PostgreSQL and API output parity remain external verification gates",
   assert.ok(!college.includes("notify_toggles"));
   assert.ok(!personal.includes("prefs_json"));
 });
+
+
+test("college notification switches preserve exact event map and APP-always-on semantics", () => {
+  const contract = readFileSync(
+    "docs/planning/db09-notification-preferences-normalization-2026-10-11.md",
+    "utf8",
+  );
+  for (const [event, key] of [
+    ["DRIVE_PUBLISHED", "driveOpenEmail"],
+    ["DRIVE_UPDATED", "driveOpenEmail"],
+    ["APPLICATION_STATUS_CHANGED", "resultApplied"],
+    ["NOW_INELIGIBLE", "resultApplied"],
+    ["NUDGE", "nudges"],
+    ["PREP_ASSIGNED", "prepAssigned"],
+  ]) {
+    assert.match(
+      contract,
+      new RegExp(event + "[^\\n]*" + key),
+      event + " must remain mapped to " + key,
+    );
+  }
+  assert.match(contract, /in-app notification is still materialized\/sent/i);
+  assert.match(contract, /suppresses? only the \*\*non-APP delivery\*\*/i);
+  assert.match(contract, /must \*\*never\*\* suppress mandatory/i);
+});
+
+test("personal preference evidence is API-persistent without invented UI or delivery claims", () => {
+  const contract = readFileSync(
+    "docs/planning/db09-notification-preferences-normalization-2026-10-11.md",
+    "utf8",
+  );
+  const row = lookup("DB09-TPO_USER_PREFS-02");
+  assert.match(contract, /GET \/api\/v1\/tpo\/my-preferences/);
+  assert.match(contract, /PUT \/api\/v1\/tpo\/my-preferences/);
+  assert.match(contract, /current frozen TPO page consumption is not proven/i);
+  assert.match(row.semanticDefinition, /current frozen TPO page consumption.*not proven/i);
+  assert.match(row.constraintAndLifecycleEvidence, /rendered consumer.*did not prove/i);
+  assert.match(row.constraintAndLifecycleEvidence, /delivery honoring.*NOT established/i);
+  assert.ok(
+    row.consumerPaths.includes("src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java"),
+  );
+  assert.ok(
+    row.consumerPaths.includes("lms2-fe/src/api/Services/TpoHubService.js"),
+  );
+});
