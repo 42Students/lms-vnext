@@ -10,8 +10,7 @@ CREATE TABLE placement_prep_assignments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
   learner_membership_id uuid NOT NULL,
-  course_id uuid REFERENCES courses(id) ON DELETE RESTRICT,
-  assessment_ref_id uuid,
+  course_id uuid NOT NULL REFERENCES courses(id) ON DELETE RESTRICT,
   due_at timestamptz,
   assigned_by_user_id uuid REFERENCES users(id) ON DELETE RESTRICT,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -19,19 +18,23 @@ CREATE TABLE placement_prep_assignments (
     FOREIGN KEY (learner_membership_id, college_id)
     REFERENCES college_memberships(id, college_id)
     ON DELETE RESTRICT,
-  CONSTRAINT placement_prep_assignments_content_ck
-    CHECK (course_id IS NOT NULL OR assessment_ref_id IS NOT NULL)
+  CONSTRAINT placement_prep_assignments_learner_course_uq
+    UNIQUE (learner_membership_id, course_id)
 );
 CREATE INDEX placement_prep_assignments_student_idx
   ON placement_prep_assignments(learner_membership_id,created_at);
 
 -- WARN: Existing college_memberships(id,college_id) must have a unique
 -- parent constraint at migration integration (coordinate CRM tenant-FK
--- proposals with Chat 1). assessment_ref_id intentionally lacks a fake
--- FK: source assessment identity could be quiz/assignment and must be
--- mapped to the actual canonical assessment content in DB06/DB08.
--- Duplicate suppression including nullable course/assessment needs a
--- reviewed PostgreSQL unique strategy and concurrent write tests.
+-- proposals with Chat 1). Legacy prep_assignment.assessment_id is intentionally
+-- retired for greenfield vNext: the frozen production UI only posts courseId,
+-- the frozen backend tree has no generic assessment entity/table, and the
+-- current prepProgress read path only renders course-backed rows. Do not invent
+-- a polymorphic/unconstrained UUID FK. If a future product adds test-only prep,
+-- introduce an explicit typed resource contract against course_quizzes or
+-- course_assignments with real FKs and its own parity review.
+-- The writer must also prove the chosen course belongs to the caller's
+-- organization/authorized catalogue before insert.
 
 -- Source `tpo_bell` is a college-wide event; V184 `tpo_bell_read` is the
 -- actual per-reader state. The vNext user may have several college roles,
@@ -68,8 +71,8 @@ CREATE INDEX placement_tpo_bell_reads_reader_time_idx
 -- Required tests (NOT EXECUTED):
 -- 1. Learner A assignment references their own active college/eligible course;
 --    forged learner B-college owner is rejected by a composite FK.
--- 2. Assignment producer validates quiz/assessment references, deadlines,
---    course membership and dedupe; no orphaned assessment_ref_id remains.
+-- 2. Assignment producer accepts only an authorized LMS course, validates
+--    deadline and dedupe, and cannot create an orphaned generic assessment ref.
 -- 3. Same bell: reader A marked read, reader B still unread, even when
 --    A and B belong to the same placement team; wrong-college bell rejected.
 -- 4. Reader must hold current college TPO/eligible recruiter grant and active
