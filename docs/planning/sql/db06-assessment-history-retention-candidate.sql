@@ -432,6 +432,46 @@ DO $db06_retention_preflight$
 DECLARE
   bad_attempt uuid;
 BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM course_quizzes q
+    LEFT JOIN LATERAL (
+      SELECT count(*) AS question_count,
+             COALESCE(sum(qq.points), 0) AS authored_points
+      FROM quiz_questions qq
+      WHERE qq.quiz_id = q.id
+    ) authored ON true
+    WHERE authored.question_count <= 0
+       OR authored.authored_points <> q.total_points
+  ) THEN
+    RAISE EXCEPTION 'DB06 retention preflight: quiz total points mismatch authored questions'
+      USING ERRCODE='23514';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM (
+      SELECT a.quiz_id,
+             a.membership_id,
+             a.attempt_number,
+             row_number() OVER (
+               PARTITION BY a.quiz_id, a.membership_id
+               ORDER BY a.attempt_number, a.id
+             ) AS expected_attempt_number,
+             count(*) OVER (
+               PARTITION BY a.quiz_id, a.membership_id
+             ) AS attempt_count,
+             q.max_attempts
+      FROM quiz_attempts a
+      JOIN course_quizzes q ON q.id = a.quiz_id
+    ) numbered
+    WHERE numbered.attempt_number <> numbered.expected_attempt_number
+       OR numbered.attempt_count > numbered.max_attempts
+  ) THEN
+    RAISE EXCEPTION 'DB06 retention preflight: invalid quiz attempt sequence/max-attempt history'
+      USING ERRCODE='23514';
+  END IF;
+
   SELECT a.id INTO bad_attempt
     FROM quiz_attempts a
     JOIN course_quizzes q ON q.id = a.quiz_id
