@@ -1,8 +1,12 @@
-# DB06 — assessment cross-parent integrity staging and PostgreSQL acceptance
+# DB06 — assessment cross-parent integrity registration and PostgreSQL acceptance
 
-**2026-10-11 IST, DATABASE phase.** Independent peer-review batch; no assignment to a six-chat worker and no registered migration. Existing registered snapshot: Drizzle `0040`. Legacy oracles: `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5` and `42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`.
+**2026-10-11 IST, DATABASE phase.** DB-030 is owned by Chat 1. Legacy oracles: `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5` and `42Students/lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`.
 
-**Staged only:** `docs/planning/sql/db06-assessment-parent-scope-candidate.sql` (five PostgreSQL guard functions/five triggers). **Source guard:** `tests/db028-assessment-parent-scope.test.mjs` (seven assertions). Function prefix `db28_` and the historical test filename are source identifiers and **not shared queue task DB-028**; that task is already assigned to an unrelated browser test-target guard. A separately numbered queue task is required for integration.
+The historical source draft remains at `docs/planning/sql/db06-assessment-parent-scope-candidate.sql` with its original `db28_` source identifiers. Chat 1 independently hardened that design and **registered** `drizzle/0041_db06_assessment_parent_scope.sql` plus `drizzle/meta/0041_snapshot.json` and journal entry `0041_db06_assessment_parent_scope`.
+
+Registered 0041 is trigger-only and contains a non-destructive poisoned-row preflight plus **11 PostgreSQL functions / 11 triggers**. It extends the five original child guards with lesson, learning-path, quiz-question, delivery, section and offering history/reparent guards, and it takes SHARE locks on mutable assessment parents, the offering row, learner identity/role rows and active enrollment rows to serialize the relevant races.
+
+Static contract: `tests/db06-assessment-parent-scope-migration.test.mjs`. Disposable PostgreSQL acceptance: `tests/integration/db06-assessment-parent-scope.test.ts`. The CI-independent verifier exports `DB06_ISOLATED_TEST_DATABASE=1`, so DB06 witnesses are automatically included when the repository can run against its disposable PostgreSQL.
 
 ## Discovered gap
 
@@ -18,7 +22,7 @@ Registered `quiz_attempts`, `assignment_submissions` and `quiz_attempt_answers` 
 | `db28_guard_assignment_submission_parent` | Submission delivery matches its assignment; points never exceed assignment max; historical grade-only update does not require newly active enrollment |
 | `db28_guard_quiz_answer_parent` | Question's quiz matches the quiz of the recorded attempt |
 
-**Not yet solved:** parent retargeting via `course_lessons.learning_path_id`, `course_learning_paths.offering_id` and `quiz_questions.quiz_id`; simultaneous enrollment revocation vs attempt insert; simultaneous section/cohort/delivery reassignment vs submission insert; cross-role grader privilege; legacy grade correction retention; existing invalid seed rows. W01 must reconcile this with DB02/DB05 drafts before registration, standardize parent lock order or use stable composite scoped FKs, verify table/enum/trigger syntax on PostgreSQL, and emit one numbered Drizzle migration and snapshot. Do **not** execute this SQL standalone.
+**Registration decisions:** 0041 now guards lesson/path/question reparenting, delivery/section/offering history reinterpretation, active learner enrollment races, exact fixed-delivery scope and assignment max-grade bounds. Grade-only corrections deliberately remain allowed after the learner's enrollment becomes historical. Cross-college grader privilege remains enforced by the existing service authorization boundary rather than a user-id-only trigger because legitimate college-admin/scoped-admin grading cannot be represented safely from `graded_by_user_id` alone. DB02/DB05 later registration must preserve the DB06 lock order and must not introduce duplicate/contradictory trigger ownership.
 
 ## Independent PostgreSQL acceptance matrix — ALL NOT_EXECUTED
 
@@ -43,9 +47,9 @@ Registered `quiz_attempts`, `assignment_submissions` and `quiz_attempt_answers` 
 
 ## Executed evidence versus unfinished requirements
 
-- **7/7 source-only assertions passed** using the actual connected GitHub SQL/test/Drizzle file contents in an isolated V8 test harness on 2026-10-11. This was **not** `node --test`, PostgreSQL or real migration replay.
-- **0/16 PostgreSQL witnesses executed**. No table/field/runtime parity certification has occurred.
-- **Needed for completion:** review source conflicts, real SQL parsing/replay on a disposable PG, transactional negative/positive tests, concurrency tests, and independent verification with exact commit/test output.
-- Do not count a committed draft or a source test as `DONE_VERIFIED`.
+- Historical draft source assertions remain source-only evidence.
+- Current-main static reconciliation confirms journal head 0041, **11 functions / 11 triggers**, non-destructive preflight, offering-row serialization and all six parent-history guard families. This was connector/source inspection, not PostgreSQL execution.
+- PostgreSQL suite is now authored for PG01–PG16, with PG14 tested in both lock/commit directions plus a direct quiz-question history case. **0 PostgreSQL witnesses are claimed executed in this chat.**
+- DB-030 must not become `DONE_VERIFIED` until zero-to-head replay and the disposable PostgreSQL suite actually pass.
 
 **Coordination:** Existing workers' claims and shared migrations were left unchanged. This is additional unclaimed database design evidence; a worker may later pick its separate integration task when eligible. Only Chat 1 may register numbered Drizzle migrations and touch the schema barrel.
