@@ -26,7 +26,10 @@
     "REDESIGNED_CHANNEL_SPECIFIC": 8,
     "REDESIGNED_TO_CODE_SCHEMA_OR_DOCUMENTATION": 8,
     "REDESIGNED_TO_SMS_DLT_CONFIGURATION": 8,
-    "REDESIGNED_TO_PROVIDER_CONFIGURATION": 2
+    "REDESIGNED_TO_PROVIDER_CONFIGURATION": 2,
+    "sourceDispositionedFields": 56,
+    "vnextWorkflowVerifiedFields": 0,
+    "formallyApprovedRetiredFields": 0
   },
   "globalProofStillRequired": [
     "DB00/native-SQL/detached-consumer sweep must find no current producer/reader of either table.",
@@ -53,7 +56,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-02",
@@ -74,7 +78,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-03",
@@ -93,7 +98,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-04",
@@ -114,7 +120,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-05",
@@ -133,7 +140,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-06",
@@ -152,7 +160,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-07",
@@ -171,7 +180,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-08",
@@ -190,7 +200,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-09",
@@ -209,7 +220,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-10",
@@ -228,7 +240,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-11",
@@ -247,7 +260,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-12",
@@ -268,7 +282,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-13",
@@ -287,7 +302,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-14",
@@ -306,7 +322,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-15",
@@ -325,7 +342,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-16",
@@ -344,7 +362,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-17",
@@ -363,7 +382,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-18",
@@ -382,7 +402,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-19",
@@ -401,7 +422,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-20",
@@ -420,7 +442,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-21",
@@ -441,7 +464,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-22",
@@ -460,7 +484,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-23",
@@ -479,7 +504,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-24",
@@ -498,7 +524,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-25",
@@ -517,7 +544,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-26",
@@ -536,7 +564,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-27",
@@ -557,7 +586,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-LMS_NOTIFICATION_TEMPLATE-28",
@@ -576,7 +606,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-01",
@@ -597,7 +628,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-02",
@@ -618,7 +650,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-03",
@@ -637,7 +670,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-04",
@@ -658,7 +692,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-05",
@@ -677,7 +712,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-06",
@@ -696,7 +732,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-07",
@@ -715,7 +752,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-08",
@@ -734,7 +772,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-09",
@@ -753,7 +792,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-10",
@@ -772,7 +812,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-11",
@@ -791,7 +832,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-12",
@@ -812,7 +854,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-13",
@@ -831,7 +874,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-14",
@@ -850,7 +894,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-15",
@@ -869,7 +914,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-16",
@@ -888,7 +934,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-17",
@@ -907,7 +954,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-18",
@@ -926,7 +974,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-19",
@@ -945,7 +994,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-20",
@@ -964,7 +1014,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-21",
@@ -985,7 +1036,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-22",
@@ -1004,7 +1056,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-23",
@@ -1023,7 +1076,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-24",
@@ -1042,7 +1096,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-25",
@@ -1061,7 +1116,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-26",
@@ -1080,7 +1136,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-27",
@@ -1101,7 +1158,8 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "SOURCE_DESIGN_ONLY_VNEXT_PRODUCER_CONSUMER_NOT_PROVEN"
     },
     {
       "legacyId": "DB10-NOTIFICATION_TEMPLATE-28",
@@ -1120,7 +1178,16 @@
         "ZeptoMailTemplateIdResolver: provider template ID from zepto.template.<event.templateKey> application/environment property"
       ],
       "exactRuntimeVerified": false,
-      "finalRetirementApproved": false
+      "finalRetirementApproved": false,
+      "targetImplementationStatus": "NOT_APPLICABLE_SOURCE_RETIREMENT_PENDING"
     }
-  ]
+  ],
+  "targetEvidenceBoundary": {
+    "reviewedLegacyCurrentRuntime": "SOURCE_REVIEWED_CODE_REGISTRY_PROVIDER_CONFIG",
+    "existingVnextInAppPersistence": "in_app_notifications is an implemented recipient receipt, not a per-event editable template registry",
+    "existingVnextExternalPersistence": "db10-outbound-messages draft is a disabled, encrypted intent boundary; not a complete runtime notification template renderer or provider integration",
+    "targetParity": "NOT_VNEXT_RUNTIME_VERIFIED",
+    "sourceRetirement": "NOT_FORMALLY_APPROVED_PENDING_GLOBAL_NATIVE_SQL_DETACHED_CONSUMER_SWEEP",
+    "migrationDecision": "DO_NOT_CREATE_TWO_HISTORICAL_TABLES_SOLELY_FROM_PHYSICAL_DDL"
+  }
 }
