@@ -28,7 +28,7 @@ Legacy APP notices were `SENT` outbox rows polled directly by the frontend. Curr
 | failure_reason | `failure_code` + `safe_failure_reason` | Preserve a support-safe explanation up to 500 chars while separating stable machine code; never persist raw provider response, tokens, email or phone |
 | created_at | `created_at` timestamptz | Original enqueue timestamp, used for 30-second hold minimum |
 
-Additional fields: organization/college scope, `sourceEventId` FK to the canonical placement `activity_events` row, durable HMAC idempotencyKey, holdForUndo, digestLocalDate/digestTimezone, updatedAt. The HMAC input MUST include `sourceEventId`; event-name + recipient alone is not unique across two real occurrences. A second unique `(source_event_id, recipient_user_id, channel)` constraint prevents duplicate fanout even if a caller miscomputes the HMAC. All existing `outbound_messages`, `in_app_notifications`, and scheduling lease tables remain separate.
+Additional fields: organization/college scope, `sourceEventId` FK to the canonical placement `activity_events` row, durable HMAC idempotencyKey, holdForUndo, digestLocalDate/digestTimezone, updatedAt. The HMAC input MUST include `sourceEventId`; event-name + recipient alone is not unique across two real occurrences. A second unique `(source_event_id, recipient_user_id, recipient_type, channel)` constraint prevents duplicate fanout within the same role even if a caller miscomputes the HMAC; distinct LEARNER and FACULTY notices remain possible for a dual-role user. All existing `outbound_messages`, `in_app_notifications`, and scheduling lease tables remain separate.
 
 ## Source behavior and intentional deviations
 
