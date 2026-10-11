@@ -59,3 +59,16 @@ DB-027 can be **implementation-completed** based on committed preflight tooling 
 ## Follow-up: intra-file CREATE duplicate regression
 
 The first version de-duplicated table names *inside each file* before checking duplicates across files. Chat 3 closed that false-negative: `inspect()` now preserves `createDuplicates` and the analyzer emits `repeatedWithinFile` as a promotion hazard. Added regression test #14. Executed the **committed** pure analyzer code again in an isolated V8 evaluator at blob `4d67e0d3ffd67879eed8267681e7eafb6b8a4497`; the duplicate case was detected and parent-before-child ordering remained correct. This check is not Node `node:test` or a database acceptance run.
+
+
+## Independent DB-027 follow-up: partition and ancestry source preflight (2026-10-11)
+
+**Scope:** Unclaimed source-integrity hardening of previously implementation-completed DB-027; no change of Chat 3's original ownership/credit. No Drizzle migration, schema barrel, CI or database modified.
+
+- [`f8a6207`](https://github.com/42Students/lms-vnext/commit/f8a6207acfdadd0911a6d3261ad0fc42754e8427) makes the source preflight track `ALTER TABLE ONLY`, `CREATE TABLE ... PARTITION OF`, `ALTER TABLE ... ATTACH PARTITION`, `CREATE TABLE ... INHERITS`, `ALTER TABLE ... INHERIT`, and `CREATE TABLE ... LIKE` dependencies. It flags `DETACH PARTITION`, `NO INHERIT`, `SET UNLOGGED` and `DISABLE RULE` as potentially destructive draft operations.
+- [`4cedae6`](https://github.com/42Students/lms-vnext/commit/4cedae60112a71cbb66397a030f36e7b049815ff) prevents a false dependency when a SQL `CHECK` expression contains `column LIKE other_column`. Unsupported complex quoted DDL names and malformed ancestry clauses are lexical-review hazards, not silently accepted.
+- [`8ee135a`](https://github.com/42Students/lms-vnext/commit/8ee135acce31869bc7d42475ce12ec4611b27a5c) adds six executable `node:test` regression definitions covering dependency order, malformed ancestry, false positives and security-sensitive DDL.
+
+**Actually executed:** An in-process JavaScript V8 evaluator ran 15/15 synthetic targeted cases before the source write, 3/3 targeted false-positive checks before the follow-up write, and 24/24 source-only callbacks from the exact committed DB-027 test/scanner blobs after the test commit. Three filesystem-dependent tests were intentionally skipped in that evaluator. **These are not Node `node --test` runs.** An independent hosted shell has Node v22.16.0 but cannot resolve `github.com` to clone the repository; no PostgreSQL instance or migration replay was exercised. GitHub Actions was intentionally unused because of billing, not an engineering blocker.
+
+**Remaining review risk:** This source scanner is not a complete PostgreSQL grammar or migration executor. Particularly, qualified/quoted complex table names, actual partition attachment feasibility, inherited constraint semantics, and transaction ordering still require migration-integrator review and independently executed PostgreSQL acceptance. Source-only DB-027 remains `COMPLETED`, not `DONE_VERIFIED`. Global DATABASE is still ACTIVE.
