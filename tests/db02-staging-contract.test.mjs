@@ -287,3 +287,16 @@ test("curriculum display order remains non-unique for legacy parity", () => {
   assert.match(table, /CHECK \(display_order >= 1\)/);
   assert.match(acceptanceSql, /duplicate curriculum display_order was unexpectedly rejected/);
 });
+
+
+test("cohort archive lifecycle stays separate from reversible legacy statuses", () => {
+  assert.match(sql, /CREATE FUNCTION db02_guard_cohort_status_lifecycle\(\)/);
+  assert.match(sql, /CREATE TRIGGER db02_cohort_status_lifecycle_guard/);
+  assert.match(sql, /Cohort cannot be created already archived/);
+  assert.match(sql, /Archived cohort status is terminal/);
+  assert.match(sql, /Cohort may archive only from PLANNED or COMPLETED/);
+  assert.match(acceptanceSql, /cohort INACTIVE -> ACTIVE reactivation did not persist/);
+  assert.match(acceptanceSql, /cohort was created directly in ARCHIVED state/);
+  assert.match(acceptanceSql, /ACTIVE cohort bypassed archive lifecycle/);
+  assert.match(acceptanceSql, /ARCHIVED cohort was resurrected/);
+});
