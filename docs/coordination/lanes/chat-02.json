@@ -13,7 +13,7 @@
     "checkpointKind": "DB004_SOURCE_RECONCILIATION_WITH_EXECUTED_DB_TEST_URL_GUARD",
     "updatedOn": "2026-10-11",
     "observedMainSha": "c48f3dd64fb5591c3ea9d6e3834c66d7e982c689",
-    "lastWorkerMergedSha": "41d1ff4e9dc9fc94bb0f04c6ec1b5c7d589195b6",
+    "lastWorkerMergedSha": "14dabc3698f5fc638e538852a6f436f598d50e01",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
     "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.\nAdded source-owned fail-closed disposable PostgreSQL URL preflight and 8 test cases. Executed independent Node v22 runner with byte-identical Git blob copies: 8/8 PASS. This is test destination safety only, not database runtime proof. Shared db-lib fallback remains unpatched by W01; CI billing disabled is not an engineering blocker.\nNew direct-main batch: brought five audited membership suspension staging/test/evidence files from Chat 2 draft to main without PR merge; source-domain behavior 20/20 earlier locally executed. Identified check-then-update archive-org vs create-college cross-table race; staged guarded parent FOR UPDATE triggers, mutation-based source test and interleaving acceptance doc, 10/10 connector-source assertions passed. Zero new PG/Node execution for that trigger; no registered migration/phase promotion.",
@@ -543,6 +543,29 @@
         "31f97b8d8ec69edcbbd1db4c28ea2e73d6a71596",
         "19e8a55f2f0fc705805670c47a1e34f7a441dd79"
       ]
+    },
+    "db01DomainTombstoneStateRace": {
+      "status": "STAGED_SOURCE_CHECKED_PG_UNVERIFIED",
+      "task": "DB-004",
+      "sourceEvidence": "docs/planning/db01-chat02-domain-tombstone-race-source-evidence.json",
+      "stateGuardSql": "docs/planning/sql/db01-domain-tombstone-state-guard-staging.sql",
+      "sourceTest": "tests/db01-domain-tombstone-state-source.test.mjs",
+      "postgresTest": "tests/db01-domain-tombstone-state-pg.test.mjs",
+      "migrationManifestCandidate": "DB01-DOMAIN-TOMBSTONE-STATE",
+      "dependencies": [
+        "DB01-DOMAIN-TOMBSTONE",
+        "API tombstone DELETE-to-UPDATE and active read filters"
+      ],
+      "inProcessStaticAssertions": 43,
+      "passedInProcess": 43,
+      "authoredNodeTests": 15,
+      "executedNodeTests": 0,
+      "authoredPgSuites": 1,
+      "executedPgSuites": 0,
+      "registeredMigration": false,
+      "providerVerified": false,
+      "verificationWarning": "Source matching tests only, no exact Node/PG test execution; no live schema mutation",
+      "latestCommit": "14dabc3698f5fc638e538852a6f436f598d50e01"
     }
   },
   "qualityGates": {
