@@ -12,6 +12,8 @@ DECLARE
   v_period uuid;
   v_cohort uuid;
   v_term uuid;
+  v_term_course_a uuid;
+  v_term_course_b uuid;
   v_course_a uuid;
   v_course_b uuid;
   v_section_a uuid;
@@ -48,9 +50,11 @@ BEGIN
   VALUES (v_program,1,'History Term 1',true)
   RETURNING id INTO v_term;
   INSERT INTO program_term_courses(program_term_id,course_id,type,credits,display_order)
-  VALUES(v_term,v_course_a,'CORE',0,1);
+  VALUES(v_term,v_course_a,'CORE',0,1)
+  RETURNING id INTO v_term_course_a;
   INSERT INTO program_term_courses(program_term_id,course_id,type,credits,display_order)
-  VALUES(v_term,v_course_b,'CORE',0,2);
+  VALUES(v_term,v_course_b,'CORE',0,2)
+  RETURNING id INTO v_term_course_b;
   INSERT INTO cohorts(program_id,name,code,start_period_id,expected_end_period_id,status)
   VALUES (v_program,'DB02 History Cohort','HISTORY-' || substr(gen_random_uuid()::text,1,8),
           v_period,v_period,'ACTIVE')
@@ -62,8 +66,9 @@ BEGIN
   VALUES(v_cohort,v_period,'History Section B','HISTORY-B-' || substr(gen_random_uuid()::text,1,8),30)
   RETURNING id INTO v_section_b;
   INSERT INTO course_offerings(
-    course_id,cohort_id,academic_period_id,program_term_id,type,credits,display_order
-  ) VALUES(v_course_a,v_cohort,v_period,v_term,'CORE',0,1)
+    course_id,cohort_id,academic_period_id,program_term_id,program_term_course_id,
+    type,credits,display_order
+  ) VALUES(v_course_a,v_cohort,v_period,v_term,v_term_course_a,'CORE',0,1)
   RETURNING id INTO v_offering;
   INSERT INTO course_section_deliveries(offering_id,section_id)
   VALUES(v_offering,v_section_a)
@@ -80,7 +85,10 @@ BEGIN
   -- a forbidden historic rewrite, NOT an unrelated curriculum check failure.
   v_failed := false;
   BEGIN
-    UPDATE course_offerings SET course_id=v_course_b WHERE id=v_offering;
+    UPDATE course_offerings
+       SET course_id=v_course_b,
+           program_term_course_id=v_term_course_b
+     WHERE id=v_offering;
   EXCEPTION WHEN check_violation THEN
     v_failed := true;
   END;
