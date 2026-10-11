@@ -79,12 +79,37 @@ export function auditDb41(stagedSql,historySql){
   }
   const gradeTriggerStart=historySql.indexOf("CREATE FUNCTION db06_require_assignment_grade_event()");
   const gradeTrigger=gradeTriggerStart>=0?historySql.slice(gradeTriggerStart):"";
+  const attendanceTriggerStart=historySql.indexOf("CREATE FUNCTION db06_require_attendance_event()");
+  const attendanceTrigger=attendanceTriggerStart>=0?historySql.slice(attendanceTriggerStart):"";
   if(!/NEW\.feedback\s+IS\s+NOT\s+DISTINCT\s+FROM\s+OLD\.feedback/i.test(gradeTrigger))
     errors.push("Grade completeness trigger ignores feedback-only edits");
   for(const name of TABLES){
     if(!/\bactor_role\b/i.test(sqlTable(historySql,name)||""))
       errors.push(name+": SQL does not persist actor_role");
   }
+  const attendanceTable=sqlTable(historySql,"attendance_record_events")||"";
+  for(const field of [
+    "attendance_record_id","delivery_id","actor_role",
+    "previous_marked_by_user_id","new_marked_by_user_id",
+    "previous_marked_at","new_marked_at",
+    "record_version_before","record_version_after"
+  ]){
+    if(!new RegExp("\\b"+field+"\\b","i").test(attendanceTable))
+      errors.push("attendance_record_events: missing canonical field "+field);
+  }
+  if(/\brevision\b|previous_attendance_record_id|new_attendance_record_id/i.test(attendanceTable))
+    errors.push("attendance_record_events: legacy delete/recreate identity leaked into canonical SQL");
+  for(const fragment of [
+    "previous_marked_by_user_id","new_marked_by_user_id",
+    "previous_marked_at","new_marked_at"
+  ]){
+    if(!new RegExp(fragment,"i").test(attendanceTrigger))
+      errors.push("Attendance completeness trigger ignores "+fragment);
+  }
+  if(!/attendance record identity is immutable/i.test(historySql))
+    errors.push("Attendance current-row identity immutability guard is missing");
+  if(!/actor must equal current marker/i.test(historySql))
+    errors.push("Attendance event actor/current-marker equality guard is missing");
   const fieldDifferences=Object.values(tables).reduce((n,t)=>
      n+t.missingSqlColumns.length+t.missingStagedColumns.length,0);
   return {
@@ -92,9 +117,9 @@ export function auditDb41(stagedSql,historySql){
     readyForPromotion:false,verifiedPostgreSQL:false,fieldDifferences,
     malformedRawSqlLiterals:malformed,tables,errors,warnings,
     requiredEvidence:[
-      "Select one attendance history identity/version model",
+      "Stable attendance-record version model retained through migration integration",
       "Drizzle+SQL field and CHECK parity",
-      "Atomic grade/publish/attendance producers with request actor",
+      "Atomic grade/publish/attendance producers with request actor and CAS",
       "Real disposable PostgreSQL replay and negative/race tests"
     ]
   };
