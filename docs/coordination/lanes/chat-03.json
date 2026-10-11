@@ -7,19 +7,19 @@
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
   "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-062",
+  "activeTaskId": "DB-063",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB062_RECRUITER_PRIVATE_NOTE_STARTED",
+    "checkpointKind": "DB063_STUDENT_NOTE_HISTORY_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "d9a8384103376c804f42ae196963bd634b751930",
-    "lastWorkerMergedSha": "d9a8384103376c804f42ae196963bd634b751930",
+    "observedMainSha": "61057fd254b983d9b29c3c8614b581eaf58da8fd",
+    "lastWorkerMergedSha": "61057fd254b983d9b29c3c8614b581eaf58da8fd",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-061 complete source-only (9/9 connector source assertions; 18/18 staged functions valid quoting). DB-062 active: preserve fixed recruiter/college/job/application identity while allowing rating/note update or delete; harden created/updated chronology."
+    "summary": "DB-062 complete source-only (6/6 assertions; 19/19 function quoting valid). DB-063 active: legacy TPO student notes are insert/list history only; harden staged DB against rewrite/delete and future-dated creation."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -64,7 +64,7 @@
       "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "Add recruiter-private note update lifecycle trigger, audit/static regression, exact source assertions; no runtime/API implementation.",
+  "nextAction": "Add append-only student-note trigger, audit/static regression, execute exact committed source assertions.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -199,7 +199,8 @@
     "DB-059",
     "DB-060",
     "DB-061",
-    "DB-062"
+    "DB-062",
+    "DB-063"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -213,9 +214,10 @@
     "DB-057",
     "DB-059",
     "DB-060",
-    "DB-061"
+    "DB-061",
+    "DB-062"
   ],
-  "lastPickedAt": "2026-10-11T21:23:00+05:30",
+  "lastPickedAt": "2026-10-11T21:31:00+05:30",
   "lastCompletedAt": "2026-10-11T13:50:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
