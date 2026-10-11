@@ -49,7 +49,7 @@ export function stripSqlLiterals(sql, lexicalErrors = []) {
       // complex quoted relation must be manually dispositioned, not skipped
       // as if its CREATE, ALTER or REFERENCES never existed.
       if(closed&&!simpleIdentifier&&
-         /\b(?:CREATE\s+(?:UNLOGGED\s+)?TABLE|ALTER\s+TABLE|REFERENCES|DROP\s+TABLE|TRUNCATE\s+TABLE)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?(?:public\.)?$/i.test(out))
+         /\b(?:CREATE\s+(?:UNLOGGED\s+)?TABLE|ALTER\s+TABLE(?:\s+ONLY)?|REFERENCES|DROP\s+TABLE|TRUNCATE\s+TABLE|PARTITION\s+OF|ATTACH\s+PARTITION|INHERITS\s*\(|INHERIT|LIKE)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?(?:public\.)?$/i.test(out))
         lexicalErrors.push("UNSUPPORTED_QUOTED_DDL_IDENTIFIER");
       out+=closed&&simpleIdentifier
         ?raw:raw.replace(/[^\n]/g," ");
@@ -69,7 +69,7 @@ export function stripSqlLiterals(sql, lexicalErrors = []) {
   return out;
 }
 const creations=/\bCREATE\s+(?:UNLOGGED\s+)?TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?("[\w]+"|[\w]+)/gi;
-const alters=/\bALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:public\.)?("[\w]+"|[\w]+)/gi;
+const alters=/\bALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:ONLY\s+)?(?:public\.)?("[\w]+"|[\w]+)/gi;
 const refs=/\bREFERENCES\s+(?:public\.)?("[\w]+"|[\w]+)/gi;
 // Source-only hazard detection: never authorize migration promotion from regex.
 const destructiveStatements = [
@@ -80,7 +80,45 @@ const destructiveStatements = [
   /\bALTER\s+TABLE\b[^;]*?\bALTER\s+COLUMN\b[^;]*?\b(?:SET\s+DATA\s+)?TYPE\b/i,
   /\bALTER\s+TABLE\b[^;]*?\bSET\s+SCHEMA\b/i,
   /\bALTER\s+TABLE\b[^;]*?\b(?:DISABLE\s+(?:ROW\s+LEVEL\s+SECURITY|TRIGGER)|NO\s+FORCE\s+ROW\s+LEVEL\s+SECURITY)\b/i,
+  /\bALTER\s+TABLE\b[^;]*?\b(?:DETACH\s+PARTITION|NO\s+INHERIT|SET\s+UNLOGGED|DISABLE\s+RULE)\b/i,
 ];
+
+// Source-only parent reference inventory for partitions, inheritance and LIKE.
+// These relationships are ordering hints, not runnable migration proof.
+function relationDependencies(body, lexicalErrors) {
+ const qualified = '(?:public\\.)?(?:"[\\w]+"|[\\w]+)';
+ const values = [];
+ for (const statement of body.split(";")) {
+  const create = /^\s*CREATE\s+(?:UNLOGGED\s+)?TABLE\b/i.test(statement);
+  const alter = /^\s*ALTER\s+TABLE\b/i.test(statement);
+  if (!create && !alter) continue;
+  const add = prefix => {
+   const expression = new RegExp(prefix + '(' + qualified + ')', 'gi');
+   for (const match of statement.matchAll(expression))
+    values.push(match[1].replaceAll('"','').replace(/^public\./i,'').toLowerCase());
+  };
+  if (create) {
+   add('\\bPARTITION\\s+OF\\s+');
+   add('\\bLIKE\\s+');
+   if (/\bINHERITS\b/i.test(statement)) {
+    const clause = /\bINHERITS\s*\(([^)]*)\)/i.exec(statement);
+    if (!clause) lexicalErrors.push("MALFORMED_INHERITS_CLAUSE");
+    else for (const raw of clause[1].split(",")) {
+     const name = raw.trim();
+     if (!new RegExp('^' + qualified + '$', 'i').test(name))
+      lexicalErrors.push("UNSUPPORTED_INHERITS_PARENT");
+     else values.push(name.replaceAll('"','').replace(/^public\./i,'').toLowerCase());
+    }
+   }
+  }
+  if (alter) {
+   add('\\bATTACH\\s+PARTITION\\s+');
+   add('\\bINHERIT\\s+');
+  }
+ }
+ return [...new Set(values)];
+}
+
 function take(body,re){return [...new Set([...body.matchAll(re)].map(m=>m[1].replaceAll('"',"").toLowerCase()))];}
 export function classify(sql) {
   const head=sql.split("\n").slice(0,20).join("\n");
@@ -93,9 +131,10 @@ export function inspect(item){
   const body=stripSqlLiterals(item.sql,lexicalErrors);
   const allCreates=[...body.matchAll(creations)].map(m=>m[1].replaceAll('"',"").toLowerCase());
   const createDuplicates=[...new Set(allCreates.filter((t,i)=>allCreates.indexOf(t)!==i))];
+  const tableParents=relationDependencies(body,lexicalErrors);
   return {path:item.path,state:classify(item.sql),lexicalErrors,
     create:[...new Set(allCreates)],createDuplicates,
-    alter:take(body,alters),references:take(body,refs),
+    alter:take(body,alters),references:[...new Set([...take(body,refs),...tableParents])],
     destructive:destructiveStatements.some(pattern=>pattern.test(body))};
 }
 export function analyze({candidates,registered=[],declared=[]}) {
