@@ -17,9 +17,9 @@ const snapshot = JSON.parse(
 );
 
 test("DB06 assessment guard migration is registered as trigger-only 0041", () => {
-  const last = journal.entries.at(-1);
-  assert.equal(last.idx, 41);
-  assert.equal(last.tag, "0041_db06_assessment_parent_scope");
+  const entry = journal.entries.find((item) => item.idx === 41);
+  assert.ok(entry);
+  assert.equal(entry.tag, "0041_db06_assessment_parent_scope");
   assert.equal(snapshot.prevId, previous.id);
   assert.notEqual(snapshot.id, previous.id);
 
