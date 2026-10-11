@@ -150,3 +150,52 @@ test("fixture: timezone loss or missing columns are detected", () => {
   assert.throws(() => compareColumnTypes(typedTS, typedSQL.replace("occurred_at timestamptz", "occurred_at timestamp"), "time"), /column name or type drift/);
   assert.throws(() => compareColumnTypes(typedTS, typedSQL.replace("label varchar(64) NOT NULL,", ""), "column"), /column name or type drift/);
 });
+
+
+/**
+ * Nullability is a separate safety contract: matching names and primitive
+ * types would miss a SQL nullable FK that Drizzle advertises as required.
+ * A primary key counts as NOT NULL even without an explicit .notNull().
+ */
+export function compareColumnNullability(schema, sql, label) {
+  const tsTables = [...schema.matchAll(/\bpgTable\(\s*["'](\w+)["'],\s*{([\s\S]*?)^\s*},\s*\(t\)\s*=>/gm)];
+  const sqlTables = [...sql.matchAll(/^\s*CREATE\s+TABLE\s+(\w+)\s*\(([\s\S]*?)^\);/gim)];
+  let seen = 0;
+  for (const [, table, draftBody] of tsTables) {
+    const stageBody = sqlTables.find((m) => m[1] === table)?.[2];
+    assert.ok(stageBody, label + ": missing SQL table " + table);
+    const draftFields = [...draftBody.matchAll(
+      /^\s*\w+:\s*(?:uuid|bigint|integer|boolean|varchar|timestamp|date|jsonb|text)\(\s*["'](\w+)["']/gm,
+    )];
+    const sqlFields = [...stageBody.matchAll(
+      /^\s*(\w+)\s+(?:uuid|bigint|integer|boolean|varchar\(\d+\)|timestamp with time zone|timestamptz|date|jsonb|text)(?=\s|,|$)([^\n]*)/gim,
+    )];
+    for (let i = 0; i < draftFields.length; i++) {
+      const field = draftFields[i];
+      const chain = draftBody.slice(field.index, draftFields[i + 1]?.index ?? draftBody.length);
+      const required = /\.notNull\s*\(|\.primaryKey\s*\(/.test(chain);
+      const match = sqlFields.find((m) => m[1] === field[1]);
+      assert.ok(match, label + ": missing SQL field " + table + "." + field[1]);
+      const sqlRequired = /\bNOT NULL\b|\bPRIMARY KEY\b/i.test(match[2]);
+      assert.equal(required, sqlRequired,
+        label + ": nullability drift in " + table + "." + field[1]);
+      seen++;
+    }
+  }
+  assert.ok(seen > 0, label + ": no columns checked");
+  return seen;
+}
+for (const [draft, stage] of pairs) {
+  test("DB10 draft/SQL nullability parity: " + draft, () => {
+    compareColumnNullability(readFileSync(draft, "utf8"), readFileSync(stage, "utf8"), draft);
+  });
+}
+test("fixture: required columns agree and nullable/required changes are detected", () => {
+  assert.equal(compareColumnNullability(typedTS, typedSQL, "typed fixture"), 4);
+  assert.throws(() =>
+    compareColumnNullability(typedTS, typedSQL.replace("count bigint NOT NULL", "count bigint"), "missing required"),
+    /nullability drift in typed_table.count/);
+  assert.throws(() =>
+    compareColumnNullability(typedTS.replace(".primaryKey()", ""), typedSQL, "missing PK"),
+    /nullability drift in typed_table.id/);
+});
