@@ -91,3 +91,19 @@ test("PG acceptance covers denied resurrection, positive role restore and parent
   assert.match(acceptance, /^BEGIN;/m);
   assert.match(acceptance, /^ROLLBACK;/m);
 });
+
+test("two-session faculty reactivation races guard both commit orders", () => {
+  const races = readFileSync(
+    new URL("../scripts/sql/db02-role-reactivation-concurrency-unregistered.sh", import.meta.url),
+    "utf8",
+  );
+  assert.match(races, /DB02_DISPOSABLE_ACCEPTANCE:-/);
+  assert.match(races, /DB02_EXPECTED_DATABASE/);
+  assert.match(races, /SELECT current_database\(\)/);
+  assert.match(races, /role-delete-first: reopened faculty course rejected/);
+  assert.match(races, /reactivation-first: subsequent role deletion closed faculty relationship/);
+  assert.match(races, /Cannot reactivate faculty assignment without FACULTY role/);
+  assert.match(races, /STATE_A/);
+  assert.match(races, /STATE_B/);
+  assert.match(races, /CLOSED:0/);
+});
