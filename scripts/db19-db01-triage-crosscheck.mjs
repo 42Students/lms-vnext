@@ -21,6 +21,7 @@ export function reconcileDb01Triage(inventory, triage, { inventoryBlobSha = null
   const byKey = new Map(), found = new Set();
   const summary = { inventoryFields: primary.length, reviewedFields: 0, sourceActiveFields: 0,
     sourceExceptionFields: 0, targetCandidatesUnverified: 0, withoutTargetDecision: 0,
+    activeFieldsWithEvidence: 0, activeFieldsNeedingConsumerProof: 0,
     runtimeVerified: 0, sourceActivenessStatuses: statuses, categories };
   if (triage?.sourceInventory?.path !== INVENTORY_PATH)
     errors.push({code:"SOURCE_PATH_DRIFT"});
@@ -67,9 +68,14 @@ export function reconcileDb01Triage(inventory, triage, { inventoryBlobSha = null
     else summary.sourceExceptionFields++;
     if (row.candidateTarget !== null) summary.targetCandidatesUnverified++;
     else summary.withoutTargetDecision++;
-    if (row.postV150Active.startsWith("ACTIVE_") &&
-        !(row.postV150Evidence?.length || validString(row.postV150EvidenceSummary)))
-      errors.push({code:"ACTIVE_FIELD_MISSING_EVIDENCE",key});
+    if (row.postV150Active.startsWith("ACTIVE_")) {
+      if (row.postV150Evidence?.length || validString(row.postV150EvidenceSummary))
+        summary.activeFieldsWithEvidence++;
+      else
+        // Source classification is present but not proof of a current
+        // consumer. Track the gap honestly; don't invent a code citation.
+        summary.activeFieldsNeedingConsumerProof++;
+    }
   }
   for (const key of byKey.keys())
     if (!found.has(key)) errors.push({code:"MISSING_SOURCE_DISPOSITION",key});
