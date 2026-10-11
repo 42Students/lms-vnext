@@ -292,43 +292,53 @@ export async function archiveCourse(
     collegeId: scope.collegeId,
   });
 
-  const db = getDb();
-  const [dependent] = await db
-    .select({ id: courseOfferings.id })
-    .from(courseOfferings)
-    .where(
-      and(
-        eq(courseOfferings.courseId, courseId),
-        eq(courseOfferings.status, "ACTIVE"),
-      ),
-    )
-    .limit(1);
-
-  if (dependent) {
-    throw new CoursesServiceError(
-      "COURSE_HAS_ACTIVE_OFFERINGS",
-    );
-  }
-
-  const [archived] = await db
-    .update(courses)
-    .set({
-      status: "ARCHIVED",
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
+  // Serialize the child-existence check with offering INSERT. PostgreSQL
+  // FK checks take KEY SHARE on the referenced course; FOR UPDATE conflicts
+  // with that lock. A pre-read outside a transaction leaves a phantom race.
+  return getDb().transaction(async (tx) => {
+    const [lockedCourse] = await tx
+      .select({ id: courses.id })
+      .from(courses)
+      .where(and(
         eq(courses.id, courseId),
         eq(courses.status, "ACTIVE"),
-      ),
-    )
-    .returning();
+      ))
+      .for("update")
+      .limit(1);
 
-  if (!archived) {
-    throw new CoursesServiceError(
-      "COURSE_NOT_FOUND",
-    );
-  }
+    if (!lockedCourse) {
+      throw new CoursesServiceError("COURSE_NOT_FOUND");
+    }
 
-  return archived;
+    const [dependent] = await tx
+      .select({ id: courseOfferings.id })
+      .from(courseOfferings)
+      .where(and(
+        eq(courseOfferings.courseId, courseId),
+        eq(courseOfferings.status, "ACTIVE"),
+      ))
+      .limit(1);
+
+    if (dependent) {
+      throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
+    }
+
+    const [archived] = await tx
+      .update(courses)
+      .set({
+        status: "ARCHIVED",
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(courses.id, courseId),
+        eq(courses.status, "ACTIVE"),
+      ))
+      .returning();
+
+    if (!archived) {
+      throw new CoursesServiceError("COURSE_NOT_FOUND");
+    }
+
+    return archived;
+  });
 }
