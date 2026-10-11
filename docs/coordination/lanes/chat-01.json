@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "AVAILABLE",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-025",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB001_INDEPENDENT_VERIFIER_COMPLETED_PG_PENDING",
+    "checkpointKind": "DB025_DESTRUCTIVE_DB_GUARD_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "99ec56270b7daf54eed423a1f411b02cea1fa25a",
+    "observedMainSha": "6eabcf8cb56df5b455aee6e5b01705e29c38329e",
     "lastWorkerMergedSha": "eadb9b5ed8120cb4e366452132a805764589b928",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-001 source implementation complete: CI-independent disposable PostgreSQL verifier, evidence capture, static guard, runbook and hosted-runtime preflight committed. Real PostgreSQL acceptance remains PG_VERIFICATION_PENDING; Actions billing is not a blocker."
+    "summary": "Chat 1 started DB-025 CORE_INFRA hardening: fail-close destructive test database target selection before DB replay and negative integration witnesses."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -38,7 +38,7 @@
   "lastExecutedPassingTests": [],
   "blockers": [],
   "handoffs": [],
-  "nextAction": "No dependency-satisfied READY task after DB-001 completion. Inspect global DATABASE gate for a fresh non-duplicating independent task while DB-001 awaits real PostgreSQL execution.",
+  "nextAction": "Audit scripts/db-lib.ts, scripts/db-test-prepare.ts and destructive DB test entrypoints; make test database selection fail closed against production/non-disposable targets; add static/unit guards without relying on Actions.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -67,7 +67,8 @@
     "DB-009",
     "DB-010",
     "DB-014",
-    "DB-016"
+    "DB-016",
+    "DB-025"
   ],
   "completedTaskIds": [
     "DB-009",
@@ -76,7 +77,7 @@
     "DB-016",
     "DB-001"
   ],
-  "lastPickedAt": "2026-10-11T05:31:00.000Z",
+  "lastPickedAt": "2026-10-11T07:32:00.000Z",
   "lastCompletedAt": "2026-10-11T05:38:00.000Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
