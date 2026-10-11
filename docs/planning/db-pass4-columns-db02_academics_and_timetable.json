@@ -7889,7 +7889,7 @@
     },
     "integrationReadiness": {
       "id": "CHAT04_DB005_INTEGRATION_READINESS_2026_10_11",
-      "observedMainSha": "c463accc1839f3513c851354261a30393e7a2454",
+      "observedMainSha": "9b38d0686e03fa98b9fcac951e32d6f32a033774",
       "sourceDispositions": {
         "classified": 125,
         "total": 125
@@ -7907,10 +7907,11 @@
       },
       "parentEnrollmentExtension": {
         "path": "scripts/sql/db02-academic-parent-enrollment-tenant-guards.draft.sql",
-        "blobSha": "87a7d23dda879b5c8a7637a4e27bbe4440bfa302",
-        "plpgsqlFunctions": 8,
-        "pairedDollarQuoteOpenings": 8,
-        "triggerNameOverlapWithCanonical": []
+        "blobSha": "e4314c8a3021f3a0936a4a8c00b4ae4e9bc86795",
+        "plpgsqlFunctions": 9,
+        "pairedDollarQuoteOpenings": 9,
+        "triggerNameOverlapWithCanonical": [],
+        "heterogeneousRecordCoalesce": false
       },
       "acceptanceHarnesses": [
         {
@@ -7952,10 +7953,11 @@
       ],
       "staticChecks": {
         "canonicalFunctionDelimiterPairs": "25/25",
-        "extensionFunctionDelimiterPairs": "8/8",
+        "extensionFunctionDelimiterPairs": "9/9",
         "canonicalExtensionTriggerOverlap": 0,
         "singleSessionHarnessEndsWithRollback": true,
-        "concurrencyRaceFamilies": 5
+        "concurrencyRaceFamilies": 5,
+        "heterogeneousTriggerRecordCoalesce": 0
       },
       "registeredDrizzleDb02Found": false,
       "postgresTestsExecuted": 0,
