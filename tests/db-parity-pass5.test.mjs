@@ -123,8 +123,8 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.task, "DB-018");
   assert.equal(index.status, "AUTHORED_EXECUTION_NOT_RUN");
   assert.equal(index.counts.directNegativeAuthored, 8);
-  assert.equal(index.counts.existingConcurrencyAuthored, 2);
-  assert.equal(index.counts.explicitConcurrencyMissing, 4);
+  assert.equal(index.counts.existingConcurrencyAuthored, 3);
+  assert.equal(index.counts.explicitConcurrencyMissing, 3);
   assert.equal(index.counts.draftUnregisteredExcluded, 3);
   assert.equal(index.counts.runtimeExecuted, 0);
   assert.equal(index.counts.runtimePassed, 0);
@@ -151,7 +151,7 @@ test("DB18 witness index remains honest about authored versus executed coverage"
 
   assert.deepEqual(
     index.missingConcurrencyWitnesses.map((w) => w.raceProbe),
-    ["P5-R01", "P5-R02", "P5-R06", "P5-R07"],
+    ["P5-R01", "P5-R02", "P5-R06"],
   );
   assert.ok(index.missingConcurrencyWitnesses.every((w) => /MISSING/.test(w.state)));
   assert.ok(index.excludedUntilRegistered.every((w) => /unregistered/.test(w.reason)));
