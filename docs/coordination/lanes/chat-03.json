@@ -7,19 +7,19 @@
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
   "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-061",
+  "activeTaskId": "DB-062",
   "blockedTaskIds": [
     "DB-007",
     "DB-012"
   ],
   "checkpoint": {
-    "checkpointKind": "DB061_MESSAGE_CHRONOLOGY_STARTED",
+    "checkpointKind": "DB062_RECRUITER_PRIVATE_NOTE_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "559c52e318af4749065903cd07d5065877a6e960",
-    "lastWorkerMergedSha": "559c52e318af4749065903cd07d5065877a6e960",
+    "observedMainSha": "d9a8384103376c804f42ae196963bd634b751930",
+    "lastWorkerMergedSha": "d9a8384103376c804f42ae196963bd634b751930",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-060 complete source-only with 16/16 function quoting valid and 6/6 source assertions. DB-061 active: enforce unread/non-future message creation, bounded one-way read_at, and exact thread last_message_at=max(message.created_at) at commit."
+    "summary": "DB-061 complete source-only (9/9 connector source assertions; 18/18 staged functions valid quoting). DB-062 active: preserve fixed recruiter/college/job/application identity while allowing rating/note update or delete; harden created/updated chronology."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -64,7 +64,7 @@
       "request": "Future authenticated unsubscribe/bounce/complaint writer must derive global HMAC with DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64; dispatcher must check global+tenant suppression just before provider handoff. A queue anti-join alone does not solve races."
     }
   ],
-  "nextAction": "Stage message chronology/update guard changes plus deferred thread projection checks, add source audit/regression, execute exact committed source assertions.",
+  "nextAction": "Add recruiter-private note update lifecycle trigger, audit/static regression, exact source assertions; no runtime/API implementation.",
   "historicalPriorAssignment": {
     "previousTitle": "Projects, Mentor and cross-role project workflows",
     "previousDomains": [
@@ -198,7 +198,8 @@
     "DB-057",
     "DB-059",
     "DB-060",
-    "DB-061"
+    "DB-061",
+    "DB-062"
   ],
   "completedTaskIds": [
     "DB-027",
@@ -211,9 +212,10 @@
     "DB-056",
     "DB-057",
     "DB-059",
-    "DB-060"
+    "DB-060",
+    "DB-061"
   ],
-  "lastPickedAt": "2026-10-11T21:14:00+05:30",
+  "lastPickedAt": "2026-10-11T21:23:00+05:30",
   "lastCompletedAt": "2026-10-11T13:50:00+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [],
