@@ -1,3 +1,4 @@
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { afterAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { Pool, type PoolClient } from "pg";
@@ -15,6 +16,7 @@ if (!databaseUrl || !isolated) {
   );
 }
 
+assertDb018DisposableTarget(process.env);
 const pool = new Pool({ connectionString: databaseUrl, max: 2 });
 
 afterAll(async () => {
