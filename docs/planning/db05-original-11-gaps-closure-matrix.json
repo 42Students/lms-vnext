@@ -9,7 +9,7 @@
   },
   "sourceInventory": "docs/planning/db05-chat06-source-semantic-review.json",
   "globalMigrationReadiness": "docs/planning/db05-migration-readiness-manifest.json",
-  "note": "This accounts for the original 11 missing/unproven rows. Source-staged does NOT mean implemented, registered, executed, workflow-verified or DB-complete. Do not treat all 11 as current missing-field count; 2 remain historical missing, 6 have unregistered direct drafts, 1 progress draft, 2 remodeling proof gaps.",
+  "note": "Original eleven gaps accounted for at source level, not completed. Six now have unregistered candidate mappings (including learner progress), three require remodeled semantic proof, and two historical-only columns still lack approved retain/retire decisions. Database acceptance remains 0/11.",
   "counts": {
     "originalMissingListLength": 11,
     "currentDisposition": {
