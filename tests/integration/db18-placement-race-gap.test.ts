@@ -18,7 +18,7 @@ afterAll(async () => {
   await closeDatabaseConnection();
 });
 
-describe("DB-018 known placement race gap (red until fixed)", () => {
+describe("DB-054 placement application race regression", () => {
   it("P5-R01 rejects placement application if paid access is revoked after precheck", async () => {
     const suffix = randomUUID().replaceAll("-", "").slice(0, 10);
     const collegeId = randomUUID();
@@ -153,9 +153,9 @@ describe("DB-018 known placement race gap (red until fixed)", () => {
     try {
       await blocker.query("BEGIN");
       blockerOpen = true;
-      // A correct fix should take a lock/read which orders with the paid
-      // module writer. Current code only performs ordinary pre-transaction
-      // reads, then later blocks on the membership FK during application insert.
+      // The application must take locks which order with the paid-module
+      // writer. Before DB-054 it only performed ordinary pre-transaction
+      // reads and later blocked on the membership FK during application insert.
       await blocker.query(
         "select id from module_access_rules where id = $1 for update",
         [moduleRuleId],
