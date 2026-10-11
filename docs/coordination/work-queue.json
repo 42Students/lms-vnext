@@ -1759,17 +1759,17 @@
         "docs/planning/database-parity-db10-sms-delivery-attempts.md",
         "tests/db10-sms-delivery-attempts-staging.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "d0fd4ddd7612624656d2afe559c8f1c9126d9005",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "Staged active legacy generic SMS support audit as an append-only privacy-safe provider-attempt ledger separate from recruiter outbound commands. Legacy SENT maps to PROVIDER_ACCEPTED, FAILED stays FAILED; no message/full phone/OTP/credential fields. Added optional tenant-pair scope guard, append-only trigger, purpose/provider/support indexes, 16 PostgreSQL/workflow witnesses and 8 static test definitions. Fresh connector source matrix passed 32/32; Node/PostgreSQL NOT RUN. No numbered migration or schema-barrel edit.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T13:15:00+05:30",
       "startedAt": "2026-10-11T13:15:30+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 5,
+      "completedAt": "2026-10-11T13:21:00+05:30",
+      "completionCommitSha": "d0fd4ddd7612624656d2afe559c8f1c9126d9005",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -1793,6 +1793,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T13:15:30+05:30",
           "reason": "Chat 5 started source-to-vNext generic SMS provider-attempt ledger staging after confirming both active providers and super-admin support consumer."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T13:21:00+05:30",
+          "reason": "DB-031 isolated SQL/doc/test staging committed; active provider writers + support reader source-proven, 32/32 source checks, runtime verification downstream."
         }
       ]
     },
