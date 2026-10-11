@@ -1166,11 +1166,11 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'DRAFT'",
           "riskFlags": [],
-          "decision": "NORMALIZED_TARGET_FIELD",
-          "targetRef": "course_quizzes.status",
-          "reason": "DRAFT/PUBLISHED lifecycle is active.",
+          "decision": "NORMALIZED_LIFECYCLE_WITH_IMMUTABLE_HISTORY",
+          "targetRef": "course_quizzes.status + course_quiz_lifecycle_events",
+          "reason": "DRAFT/PUBLISHED lifecycle remains active; vNext adds CLOSED/ARCHIVED. DB-052 stages versioned immutable PUBLISH/UNPUBLISH/CLOSE/ARCHIVE actor history and database state-machine enforcement.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-quiz-lifecycle-history-candidate.sql + docs/planning/database-parity-db06-quiz-lifecycle-contract.md + pinned QuizServiceImpl@prod-2026 + vNext quiz-service.ts"
         },
         {
           "legacyField": "due_at",
@@ -1240,11 +1240,11 @@
           "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "NORMALIZED_LIFECYCLE",
-          "targetRef": "course_quizzes.status",
-          "reason": "Archive/lifecycle state replaces generic soft-delete.",
+          "decision": "NORMALIZED_LIFECYCLE_WITH_IMMUTABLE_HISTORY",
+          "targetRef": "course_quizzes.status=ARCHIVED + course_quiz_lifecycle_events.ARCHIVE",
+          "reason": "Legacy quiz soft-delete exists to retain grading history. vNext ARCHIVED is the normalized retirement state; DB-052 stages immutable ARCHIVE actor/history and rejects hard DELETE/TRUNCATE.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-quiz-lifecycle-history-candidate.sql + legacy QuizServiceImpl.deleteQuiz@prod-2026"
         },
         {
           "legacyField": "created_at",
@@ -1280,11 +1280,11 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'1'",
           "riskFlags": [],
-          "decision": "NORMALIZED_TARGET_FIELD",
-          "targetRef": "course_quizzes.results_published",
-          "reason": "Active learner result visibility gate.",
+          "decision": "NORMALIZED_LIFECYCLE_WITH_IMMUTABLE_HISTORY",
+          "targetRef": "course_quizzes.results_published + course_quiz_lifecycle_events",
+          "reason": "Learner result visibility is active state. DB-052 stages immutable RESULTS_PUBLISH/RESULTS_UNPUBLISH actor history plus CLOSED/ARCHIVED state rules.",
           "runtimeVerified": false,
-          "validationEvidence": null
+          "validationEvidence": "docs/planning/sql/db06-quiz-lifecycle-history-candidate.sql + legacy setGradePublished@prod-2026 + vNext setCourseQuizResults"
         },
         {
           "legacyField": "shuffle_questions",
