@@ -191,27 +191,32 @@ export function auditCheckout(root) {
   const decisionPath = path.join(root, 'docs/planning/db00-historical-engine-disposition.json');
   const db00Disposition = fs.existsSync(decisionPath)
     ? JSON.parse(fs.readFileSync(decisionPath, 'utf8')) : null;
-  const triagePath = path.join(root, 'docs/planning/db01-chat02-312-field-source-triage.json');
-  // This source oracle was committed by DB004 and is now a mandatory global
-  // reconciliation input. A missing file cannot silently report PASS.
-  if (!fs.existsSync(triagePath))
-    throw new Error('Missing mandatory DB01 source triage: ' + triagePath);
-  const db01Triage = JSON.parse(fs.readFileSync(triagePath, 'utf8'));
-  const db01LedgerPath = path.join(root, 'docs/planning/db-pass4-columns-db01_identity_and_tenancy.json');
-  const db01InventoryBlobSha = fs.existsSync(db01LedgerPath)
-    ? gitBlobSha(fs.readFileSync(db01LedgerPath)) : null;
-  const readRequiredDb01Json = relative => {
-    const full = path.join(root,relative);
-    if (!fs.existsSync(full)) throw new Error('Missing mandatory DB01 source proposal: '+full);
-    return JSON.parse(fs.readFileSync(full,'utf8'));
-  };
-  const db01Auth78 = readRequiredDb01Json('docs/planning/db01-chat02-auth-78-field-proposal-crosswalk.json');
-  const db01Remaining150 = readRequiredDb01Json('docs/planning/db01-chat02-remaining-150-review-queue.json');
-  const noTargetPath = path.join(root,'docs/planning/db01-chat02-no-target-disposition-queue.json');
-  if (!fs.existsSync(noTargetPath)) throw new Error('Missing pinned DB01 proposal source: '+noTargetPath);
-  const db01QueueBlobSha = gitBlobSha(fs.readFileSync(noTargetPath));
-  return auditLedgers(inputs, { db00Disposition, db01Triage, db01InventoryBlobSha,
-    db01Auth78, db01Remaining150, db01QueueBlobSha });
+  // Mandatory overlays fail closed, but report structural errors instead
+  // of throwing, so an empty/incomplete checkout still yields diagnostics.
+  const requiredDb01Paths = [
+    'docs/planning/db01-chat02-312-field-source-triage.json',
+    'docs/planning/db01-chat02-auth-78-field-proposal-crosswalk.json',
+    'docs/planning/db01-chat02-remaining-150-review-queue.json',
+    'docs/planning/db01-chat02-no-target-disposition-queue.json',
+  ];
+  const missingDb01Paths=requiredDb01Paths.filter(rel=>!fs.existsSync(path.join(root,rel)));
+  const optionalDb01Json=rel=>fs.existsSync(path.join(root,rel))
+    ? JSON.parse(fs.readFileSync(path.join(root,rel),'utf8')):null;
+  const db01Triage=optionalDb01Json(requiredDb01Paths[0]);
+  const db01Auth78=optionalDb01Json(requiredDb01Paths[1]);
+  const db01Remaining150=optionalDb01Json(requiredDb01Paths[2]);
+  const noTargetPath=path.join(root,requiredDb01Paths[3]);
+  const db01QueueBlobSha=fs.existsSync(noTargetPath)
+    ? gitBlobSha(fs.readFileSync(noTargetPath)):null;
+  const db01LedgerPath=path.join(root,'docs/planning/db-pass4-columns-db01_identity_and_tenancy.json');
+  const db01InventoryBlobSha=fs.existsSync(db01LedgerPath)
+    ? gitBlobSha(fs.readFileSync(db01LedgerPath)):null;
+  const report=auditLedgers(inputs,{db00Disposition,db01Triage,db01InventoryBlobSha,
+    db01Auth78,db01Remaining150,db01QueueBlobSha});
+  for(const missingPath of missingDb01Paths)
+    report.errors.push({code:'MISSING_MANDATORY_DB01_SOURCE_FILE',path:missingPath});
+  if(missingDb01Paths.length)report.sourceInventoryIntegrity='FAIL';
+  return report;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
