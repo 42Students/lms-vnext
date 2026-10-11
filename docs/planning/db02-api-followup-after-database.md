@@ -23,8 +23,9 @@ Current API gaps:
 - `cohortTransitionSchema` only supports ACTIVATE / COMPLETE / ARCHIVE; legacy INACTIVE is reversible and requires explicit deactivate/reactivate behavior.
 - cohort create/update validation does not author compatibility `startDate`, `endDate`, or explicit legacy academic-year override.
 - no vNext promotion API currently drives compare-and-set `current_term_number/version`, current period/year, outgoing teaching assignment closure and promotion preview semantics;
-- legacy batch **delete** is distinct from native cohort archive: compatibility delete must refuse while linked classes/sections exist, matching the production server/UI dependency contract;
+- legacy batch **delete** is distinct from native cohort archive: compatibility delete must refuse while linked classes/sections, learner-program enrollments, offerings, or progression history exist; a truly history-free/child-free cohort may hard-delete and its version-0 initializer state cascades with it; native archive remains a separate endpoint/lifecycle;
 - expected-end-period updates must map the database conflict when shrinking the cohort window would exclude existing sections, offerings or current progression state.
+- progression-state CASCADE is only for cohort-owned initializer cleanup during a valid empty-cohort delete; API code must never directly delete `cohort_progression_state` or progression events.
 
 Compatibility reads:
 
