@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "COMPLETED",
-  "activeTaskId": null,
+  "executionState": "IN_PROGRESS",
+  "activeTaskId": "DB-039",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB037_NOTIFICATION_TEMPLATE_DISPOSITION_COMPLETED_UNVERIFIED",
+    "checkpointKind": "DB039_ACTIVITY_AUDIT_CONTEXT_STARTED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "1148ef7ee02b86a195865f9703989b738f6c8d73",
+    "observedMainSha": "6de6b4712c2645a9916b42d6402b8b52d1d9c8e1",
     "lastWorkerMergedSha": "ef781089f34d2e49c1eb2773276f65aa3883906e",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-037 source-dispositioned all 56 duplicate legacy notification-template fields to typed code/provider/DLT config or retired row metadata; shared DB10 ledger reconciled; 39/39 source consistency checks; final retirement/runtime proof pending."
+    "summary": "DB-039 started: preserve active legacy actor-role/request-IP/User-Agent audit semantics with privacy-safe explicit activity-event fields; actor phone remains normalized identity data."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -79,7 +79,7 @@
     "Chat 6 DB05: own course.watchedThresholdPercent canonical client/server setting from DB-033 registry.",
     "Chat 6 DB00: prove absence of current native-SQL/detached/external consumers for notification_template and lms_notification_template before DB19 retirement approval."
   ],
-  "nextAction": "Refresh DATABASE queue; claim eligible work or continue non-conflicting DB10 source gap reconciliation while dependency gates stay closed.",
+  "nextAction": "Stage DB10 activity audit context SQL/doc/static contract and reconcile the 13 admin_audit_log ledger rows. Do not modify numbered migrations/schema barrel or API request context in DATABASE phase.",
   "historicalPriorAssignment": {
     "previousTitle": "TPO/HR recruiter CRM and non-Drive operations",
     "previousDomains": [
@@ -128,7 +128,8 @@
     "DB-029",
     "DB-031",
     "DB-033",
-    "DB-037"
+    "DB-037",
+    "DB-039"
   ],
   "completedTaskIds": [
     "DB-006",
@@ -145,7 +146,7 @@
     "DB-033",
     "DB-037"
   ],
-  "lastPickedAt": "2026-10-11T13:42:00+05:30",
+  "lastPickedAt": "2026-10-11T13:55:00+05:30",
   "lastCompletedAt": "2026-10-11T13:49:30+05:30",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
