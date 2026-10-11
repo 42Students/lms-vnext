@@ -45,6 +45,10 @@ COURSE_RACE_B_ID="$(new_uuid)"
 COURSE_RACE_C_ID="$(new_uuid)"
 COURSE_RACE_D_ID="$(new_uuid)"
 TERM_RACE_ID="$(new_uuid)"
+TERM_COURSE_RACE_A_ID="$(new_uuid)"
+TERM_COURSE_RACE_B_ID="$(new_uuid)"
+TERM_COURSE_RACE_C_ID="$(new_uuid)"
+TERM_COURSE_RACE_D_ID="$(new_uuid)"
 OFFERING_RACE_A_ID="$(new_uuid)"
 OFFERING_RACE_B_ID="$(new_uuid)"
 OFFERING_RACE_C_ID="$(new_uuid)"
@@ -453,6 +457,10 @@ psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
   -v course_race_c_id="$COURSE_RACE_C_ID" \
   -v course_race_d_id="$COURSE_RACE_D_ID" \
   -v term_race_id="$TERM_RACE_ID" \
+  -v term_course_race_a_id="$TERM_COURSE_RACE_A_ID" \
+  -v term_course_race_b_id="$TERM_COURSE_RACE_B_ID" \
+  -v term_course_race_c_id="$TERM_COURSE_RACE_C_ID" \
+  -v term_course_race_d_id="$TERM_COURSE_RACE_D_ID" \
   -v offering_race_a_id="$OFFERING_RACE_A_ID" \
   -v offering_race_b_id="$OFFERING_RACE_B_ID" \
   -v offering_race_c_id="$OFFERING_RACE_C_ID" \
@@ -469,18 +477,27 @@ VALUES
 INSERT INTO program_terms(id, program_id, term_number, name, is_active)
 VALUES (:'term_race_id', :'program_id', 1, :'run_tag' || ' history term', true);
 
-INSERT INTO program_term_courses(program_term_id, course_id, type, credits, display_order)
+INSERT INTO program_term_courses(
+  id, program_term_id, course_id, type, credits, display_order
+)
 VALUES
-  (:'term_race_id', :'course_race_a_id', 'CORE', 3, 1),
-  (:'term_race_id', :'course_race_b_id', 'CORE', 3, 2),
-  (:'term_race_id', :'course_race_c_id', 'CORE', 3, 3),
-  (:'term_race_id', :'course_race_d_id', 'CORE', 3, 4);
+  (:'term_course_race_a_id', :'term_race_id', :'course_race_a_id', 'CORE', 3, 1),
+  (:'term_course_race_b_id', :'term_race_id', :'course_race_b_id', 'CORE', 3, 2),
+  (:'term_course_race_c_id', :'term_race_id', :'course_race_c_id', 'CORE', 3, 3),
+  (:'term_course_race_d_id', :'term_race_id', :'course_race_d_id', 'CORE', 3, 4);
 
 INSERT INTO course_offerings(
-  id, course_id, cohort_id, academic_period_id, program_term_id, type, credits, display_order
+  id, course_id, cohort_id, academic_period_id, program_term_id, program_term_course_id,
+  type, credits, display_order
 ) VALUES
-  (:'offering_race_a_id', :'course_race_a_id', :'cohort_id', :'period_id', :'term_race_id', 'CORE', 3, 1),
-  (:'offering_race_b_id', :'course_race_b_id', :'cohort_id', :'period_id', :'term_race_id', 'CORE', 3, 2);
+  (
+    :'offering_race_a_id', :'course_race_a_id', :'cohort_id', :'period_id',
+    :'term_race_id', :'term_course_race_a_id', 'CORE', 3, 1
+  ),
+  (
+    :'offering_race_b_id', :'course_race_b_id', :'cohort_id', :'period_id',
+    :'term_race_id', :'term_course_race_b_id', 'CORE', 3, 2
+  );
 
 INSERT INTO section_schedule_events(id, section_id, title, starts_at, ends_at)
 VALUES
@@ -726,12 +743,15 @@ CURRICULUM_DELETE_AFTER="$(mktemp)"
 (
   psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
     -v offering_id="$OFFERING_RACE_C_ID" -v course_id="$COURSE_RACE_C_ID" \
-    -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" -v term_id="$TERM_RACE_ID" <<'SQL'
+    -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" -v term_id="$TERM_RACE_ID" \
+    -v term_course_id="$TERM_COURSE_RACE_C_ID" <<'SQL'
 BEGIN;
 INSERT INTO course_offerings(
-  id, course_id, cohort_id, academic_period_id, program_term_id, type, credits, display_order
+  id, course_id, cohort_id, academic_period_id, program_term_id, program_term_course_id,
+  type, credits, display_order
 ) VALUES (
-  :'offering_id', :'course_id', :'cohort_id', :'period_id', :'term_id', 'CORE', 3, 3
+  :'offering_id', :'course_id', :'cohort_id', :'period_id', :'term_id',
+  :'term_course_id', 'CORE', 3, 3
 );
 SELECT pg_sleep(3);
 COMMIT;
@@ -800,11 +820,14 @@ sleep 0.5
 set +e
 psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 \
   -v offering_id="$OFFERING_RACE_D_ID" -v course_id="$COURSE_RACE_D_ID" \
-  -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" -v term_id="$TERM_RACE_ID" <<'SQL' >"$OFFERING_AFTER_DELETE" 2>&1
+  -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" -v term_id="$TERM_RACE_ID" \
+  -v term_course_id="$TERM_COURSE_RACE_D_ID" <<'SQL' >"$OFFERING_AFTER_DELETE" 2>&1
 INSERT INTO course_offerings(
-  id, course_id, cohort_id, academic_period_id, program_term_id, type, credits, display_order
+  id, course_id, cohort_id, academic_period_id, program_term_id, program_term_course_id,
+  type, credits, display_order
 ) VALUES (
-  :'offering_id', :'course_id', :'cohort_id', :'period_id', :'term_id', 'CORE', 3, 4
+  :'offering_id', :'course_id', :'cohort_id', :'period_id', :'term_id',
+  :'term_course_id', 'CORE', 3, 4
 );
 SQL
 OFFERING_STATUS=$?
