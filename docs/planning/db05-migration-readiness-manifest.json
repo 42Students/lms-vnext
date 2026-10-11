@@ -355,6 +355,30 @@
       "status": "BLOCKED",
       "owner": "DB05_W01_API_PHASE",
       "evidence": "Legacy LessonContentsServiceImpl requires active&&enabled for learner visibility; current vNext filters PUBLISHED and path publication but not separate persisted flags. Source truth table docs/planning/db05-learner-content-visibility-matrix.json; no API/PG acceptance. Keep PUBLISHED gate while reconciling independent flags."
+    },
+    {
+      "id": "DB05_LESSON_CONTENT_BASE_DELIVERY_TENANT_SCOPE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Unregistered direct lesson_contents row guard verifies offering/course/section cohort-period-college, with shared 605008003 advisory lock. Wrong offering/tenant and two-session PostgreSQL checks NOT RUN."
+    },
+    {
+      "id": "DB05_LESSON_CONTENT_BASE_UPSTREAM_REPARENT",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Content row trigger alone cannot revalidate saved content when path/offering/department/period/section changes without order overrides; broader DB02/DB05 ancestry policy and PG replay OPEN."
+    },
+    {
+      "id": "DB05_FACULTY_OWNER_SAME_COLLEGE_AND_ROLE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Unregistered faculty_owner_membership_id proposal validates course/period/optional delivery and active FACULTY role only upon assignment. PG mismatched college, role, suspended/assignment race proof NOT RUN."
+    },
+    {
+      "id": "DB05_FACULTY_OWNER_VS_CREATOR_API_PARITY",
+      "status": "BLOCKED",
+      "owner": "DATABASE_TO_API_HANDOFF",
+      "evidence": "Legacy faculty_id authorizes owner-specific update/delete; vNext created_by_user_id is creator only. Need trusted admin assignment, faculty teacher scope and owner edit/delete tests before activation."
     }
   ],
   "sourceReview": {
@@ -384,7 +408,9 @@
     "tests/db05-lesson-content-authoring-facets.test.mjs",
     "tests/db05-learner-course-card-source-contract.test.mjs",
     "tests/db05-content-order-upstream-reparent.test.mjs",
-    "tests/db05-learner-content-visibility-matrix.test.mjs"
+    "tests/db05-learner-content-visibility-matrix.test.mjs",
+    "tests/db05-lesson-faculty-owner-guard.test.mjs",
+    "tests/db05-lesson-content-tenant-scope.test.mjs"
   ],
   "currentBlockers": [
     "Unknown active consumers for three historical source columns",
@@ -398,7 +424,9 @@
     "Course private upload receipts: separate DB06 base and DB16 overlay, shared same-college source-only guard unregistered; no PostgreSQL negatives or submission-file attestation binding proof.",
     "Delivery-specific lesson-content ordering: scope trigger staged only; per-lesson+delivery sequence uniqueness and upstream offering/term/college changes unresolved, PG race/negative tests not run.",
     "Independent legacy lesson-content active/enabled flags, Java long points and explicit-cleared LocalDateTime deadline need W01/DB06/API decision; shadow draft not registered.",
-    "Legacy student card allowed_for_display == 0 hides course; metadata.courseCode nonblank overrides shortTitle. VNext courses.status/code not equivalent without producer+consumer acceptance."
+    "Legacy student card allowed_for_display == 0 hides course; metadata.courseCode nonblank overrides shortTitle. VNext courses.status/code not equivalent without producer+consumer acceptance.",
+    "Lesson content basic optional delivery FK still allows wrong offering/cohort/period/college via direct SQL; companion staged, W01 integration and disposable PostgreSQL negatives pending.",
+    "Legacy lesson_contents.faculty_id owner distinct from vNext creator: same-college membership+role companion staged, but API owner assignment/edit authorization and membership race policy pending."
   ],
   "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
   "crossDomainCompanions": [
@@ -478,6 +506,40 @@
         "REAL_POSTGRES_SQLSTATE_AND_API_TESTS"
       ],
       "note": "NOT an eighth independent DB05 migration: merge source-only shadow columns into W01 DB05 content evolution. Legacy active/enabled, points and LocalDateTime deadline are NOT equivalent to vNext status or DB06 assignments."
+    },
+    {
+      "id": "DB05_LESSON_CONTENT_DELIVERY_SCOPE",
+      "path": "scripts/sql/db05-lesson-content-delivery-scope.draft.sql",
+      "type": "COMPANION_NOT_INDEPENDENT_MIGRATION",
+      "purpose": "MATCH_LESSON_OFFERING_TO_OPTIONAL_DELIVERY_AND_SECTION_COHORT_PERIOD_COLLEGE",
+      "dependsOn": [
+        "LESSON_CONTENT_AND_COURSE_OFFERING_BASE_REGISTERED",
+        "SAME_COLLEGE_COHORT_PERIOD_FULL_GRAPH",
+        "SHARED_ORDER_ANCESTOR_LOCK_605008003",
+        "UPSTREAM_REPARENT_AND_DELETE_POLICY",
+        "TWO_SESSION_PG_NEGATIVE_AND_REPLAY"
+      ],
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "note": "All generic and faculty-owned content; separate from order override row guard. READ COMMITTED/shared 605008003. W01 folds once; NO PG proof."
+    },
+    {
+      "id": "DB05_LESSON_CONTENT_FACULTY_OWNER",
+      "path": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql",
+      "type": "COMPANION_NOT_INDEPENDENT_MIGRATION",
+      "purpose": "PRESERVE_FACULTY_OWNER_MEMBERSHIP_DISTINCT_FROM_CREATED_BY_USER_WITH_TENANT_ROLE_GUARD",
+      "dependsOn": [
+        "LESSON_CONTENT_AND_MEMBERSHIP_BASE_REGISTERED",
+        "SAME_COLLEGE_FACULTY_MEMBERSHIP_NEGATIVES",
+        "OWNER_ASSIGNMENT_AND_TEACHING_SCOPE_SERVICE",
+        "OWNER_ROLE_REVOCATION_RACE_TESTS",
+        "UPSTREAM_COLLEGE_AND_LESSON_REPARENT_POLICY"
+      ],
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "note": "NULL generic owner preserved. Checks trusted active FACULTY on assignment, not role/current-status on historic owner; no API writes or PG proof."
     }
   ]
 }
