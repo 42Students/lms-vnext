@@ -10,7 +10,7 @@
 -- These invariants require a row-transition guard within the same UPDATE.
 
 CREATE OR REPLACE FUNCTION db01_auth_attempt_monotonic_guard()
-RETURNS trigger LANGUAGE plpgsql AS $
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   -- A new challenge must be clean. The legacy source never creates an
   -- already-verified/consumed OTP record or starts with spent retry slots.
