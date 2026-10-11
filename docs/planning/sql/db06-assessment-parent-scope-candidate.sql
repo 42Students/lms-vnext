@@ -621,16 +621,20 @@ BEGIN
   -- A historical learner may have graduated; grade correction does not
   -- re-check learner roster. It DOES require the newly persisted grader to be
   -- currently authorized whenever grade content/actor is written.
-  IF NEW.grading_status = 'GRADED'
-     AND (
-       TG_OP = 'INSERT'
-       OR NEW.points_awarded IS DISTINCT FROM OLD.points_awarded
+  IF NEW.grading_status = 'GRADED' THEN
+    IF TG_OP = 'INSERT' THEN
+      PERFORM db30_guard_assignment_grader(
+        NEW.delivery_id, NEW.graded_by_user_id
+      );
+    ELSIF NEW.points_awarded IS DISTINCT FROM OLD.points_awarded
        OR NEW.feedback IS DISTINCT FROM OLD.feedback
        OR NEW.grading_status IS DISTINCT FROM OLD.grading_status
        OR NEW.graded_by_user_id IS DISTINCT FROM OLD.graded_by_user_id
-       OR NEW.graded_at IS DISTINCT FROM OLD.graded_at
-     ) THEN
-    PERFORM db30_guard_assignment_grader(NEW.delivery_id, NEW.graded_by_user_id);
+       OR NEW.graded_at IS DISTINCT FROM OLD.graded_at THEN
+      PERFORM db30_guard_assignment_grader(
+        NEW.delivery_id, NEW.graded_by_user_id
+      );
+    END IF;
   END IF;
 
   RETURN NEW;
