@@ -222,21 +222,41 @@ export async function createCourseOffering(
   });
 
   try {
-    const [created] = await getDb()
-      .insert(courseOfferings)
-      .values({
-        courseId: input.courseId,
-        cohortId: input.cohortId,
-        academicPeriodId:
-          input.academicPeriodId,
-        type: input.type,
-        credits: input.credits ?? null,
-        displayOrder: input.displayOrder,
-      })
-      .returning();
+    return await getDb().transaction(async (tx) => {
+      // The initial course scope read precedes this transaction and can
+      // race with course archival. Lock and recheck inside the INSERT tx.
+      // SHARE conflicts with the course archive's FOR UPDATE.
+      const [activeCourse] = await tx
+        .select({ id: courses.id })
+        .from(courses)
+        .where(and(
+          eq(courses.id, input.courseId),
+          eq(courses.status, "ACTIVE"),
+        ))
+        .for("share")
+        .limit(1);
 
-    return created;
+      if (!activeCourse) {
+        throw new CoursesServiceError("COURSE_NOT_FOUND");
+      }
+
+      const [created] = await tx
+        .insert(courseOfferings)
+        .values({
+          courseId: input.courseId,
+          cohortId: input.cohortId,
+          academicPeriodId:
+            input.academicPeriodId,
+          type: input.type,
+          credits: input.credits ?? null,
+          displayOrder: input.displayOrder,
+        })
+        .returning();
+
+      return created;
+    });
   } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
     throw mapOfferingConstraint(error);
   }
 }
