@@ -6,17 +6,17 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-004",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB004_SOURCE_RECONCILIATION_WITH_EXECUTED_DB_TEST_URL_GUARD",
-    "updatedOn": "2026-10-11",
+    "checkpointKind": "DB004_TRANSFERRED_TO_CHAT05",
+    "updatedOn": "2026-10-11T19:50:36.641Z",
     "observedMainSha": "c48f3dd64fb5591c3ea9d6e3834c66d7e982c689",
     "lastWorkerMergedSha": "c03cb4164dd97db31b1c362c0898e491433737ef",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.\nAdded source-owned fail-closed disposable PostgreSQL URL preflight and 8 test cases. Executed independent Node v22 runner with byte-identical Git blob copies: 8/8 PASS. This is test destination safety only, not database runtime proof. Shared db-lib fallback remains unpatched by W01; CI billing disabled is not an engineering blocker.\nNew direct-main batch: brought five audited membership suspension staging/test/evidence files from Chat 2 draft to main without PR merge; source-domain behavior 20/20 earlier locally executed. Identified check-then-update archive-org vs create-college cross-table race; staged guarded parent FOR UPDATE triggers, mutation-based source test and interleaving acceptance doc, 10/10 connector-source assertions passed. Zero new PG/Node execution for that trigger; no registered migration/phase promotion.",
+    "summary": "DB-004 source triage: all 312 frozen legacy DB01 table-field candidates have explicit evidence-backed source dispositions (282 active workflows, 6 persistence/lifecycle, 24 exceptional/pending). No active legacy field can yet be counted as vNext runtime-semantic verified. Five staged auth/branding/tenant state models and scoped composite FK SQL remain UNREGISTERED. Chat 1 alone integrates migrations/CI. Authored Node and PostgreSQL negative tests have no passing runtime evidence; CI job failures pre-step. Legacy registration-admin and faculty session revoke hazards documented as security exceptions.\nAdded source-owned fail-closed disposable PostgreSQL URL preflight and 8 test cases. Executed independent Node v22 runner with byte-identical Git blob copies: 8/8 PASS. This is test destination safety only, not database runtime proof. Shared db-lib fallback remains unpatched by W01; CI billing disabled is not an engineering blocker.\nNew direct-main batch: brought five audited membership suspension staging/test/evidence files from Chat 2 draft to main without PR merge; source-domain behavior 20/20 earlier locally executed. Identified check-then-update archive-org vs create-college cross-table race; staged guarded parent FOR UPDATE triggers, mutation-based source test and interleaving acceptance doc, 10/10 connector-source assertions passed. Zero new PG/Node execution for that trigger; no registered migration/phase promotion.\nExplicit Chat2→Chat5 transfer per user. No Chat2 completion credit altered.",
     "staticSourceConsistencyWitness": {
       "result": "PASS_REMOTE_CONNECTOR_IN_PROCESS",
       "tests": "312 source keys, duplicate count, type/nullability snapshot, classification counts, false-verified guard, staged-schema exclusion",
@@ -699,9 +699,15 @@
     "DB-004 → Chat 1/issue #21: promote only one auth-attempt/handoff schema including parent composite unique/FKs and 2-minute TTL after PG replay; do not mix closed unmerged PR#61/#64.",
     "DB-004 → legacy security review: UserController /register / UserServiceImpl assigns ADMIN role, current security matcher appears only authenticated; no exploitation claim.",
     "DB-004 → Chat 1 issue #21: unified DB01 8-candidate/2-parent-key promotion DAG (node/static file existence witness only).",
-    "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns."
+    "DB-004 → Chat 1/DB04/DB09: exact target closure decisions for 173 active-source fields with no single-field target in snapshot; NOT a claim of 173 missing SQL columns.",
+    {
+      "to": "CHAT_05",
+      "scope": "DB-004",
+      "at": "2026-10-11T19:50:36.641Z",
+      "request": "User-authorized resumed database identity work; original Chat2 findings, commits, tests and pending policy decisions retained; Chat5 owns current source-only hardening."
+    }
   ],
-  "nextAction": "DB-004 DATABASE: review 38 P0 auth/security source policy decisions and three missing named witnesses; Chat1 must decide provider-only vs staged DB auth before integration; run independent node and PG tests for retry/version/consumed immutability; coordinate four-way live tenant lifecycle with other domain owners. 0 verified DB01 runtime-semantic fields.",
+  "nextAction": "DB004 transferred to Chat5 by user for current single-worker session; Chat2 lane AVAILABLE.",
   "historicalPriorAssignment": {
     "previousTitle": "Courses, assessments and Learner/Faculty delivery",
     "previousDomains": [
