@@ -1,13 +1,21 @@
--- DB02 additive DRAFT ONLY, not a registered migration. Apply AFTER the canonical
--- db02-academic-progression-and-rooms-staging.sql draft, then consolidate into
--- Chat 1-owned numbered Drizzle migrations after cross-domain review.
--- Source: docs/planning/db02-academic-progression-contract.md
--- Objective: make database-native tenant claims stable under UPDATE/reparent.
--- Existing 0002 schema has independent FKs but no compound tenant/cohort FKs.
+-- DB02 additive DRAFT ONLY, not a registered migration.
+-- Apply AFTER scripts/sql/db02-academic-progression-and-rooms-staging.sql.
+-- Chat 1 must consolidate both drafts into one numbered Drizzle migration set.
+--
+-- IMPORTANT: canonical DB02 already owns:
+--   * department college immutability;
+--   * program/course same-college department moves;
+--   * cohort/section/offering period tenant + window guards;
+--   * section/course teaching faculty tenant + FACULTY-role guards;
+--   * delivery/event scope integrity.
+-- This extension intentionally does NOT redefine those functions/triggers.
+--
+-- Objective here: close the remaining parent/enrollment/history invariants.
 
--- These identities are ownership roots; an account/program/period move between
--- colleges must create a new scoped record, not mutate the history of an old one.
-CREATE FUNCTION db02_guard_college_owner_immutable()
+-- ---------------------------------------------------------------------------
+-- 1) Remaining tenant-owner roots are immutable
+-- ---------------------------------------------------------------------------
+CREATE FUNCTION db02_guard_remaining_college_owner_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.college_id IS DISTINCT FROM OLD.college_id THEN
@@ -18,69 +26,45 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_department_college_immutable
-BEFORE UPDATE OF college_id ON departments
-FOR EACH ROW EXECUTE FUNCTION db02_guard_college_owner_immutable();
-
 CREATE TRIGGER db02_academic_period_college_immutable
 BEFORE UPDATE OF college_id ON academic_periods
-FOR EACH ROW EXECUTE FUNCTION db02_guard_college_owner_immutable();
+FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 
 CREATE TRIGGER db02_membership_college_immutable
 BEFORE UPDATE OF college_id ON college_memberships
-FOR EACH ROW EXECUTE FUNCTION db02_guard_college_owner_immutable();
+FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 
 CREATE TRIGGER db02_lecture_hall_college_immutable
 BEFORE UPDATE OF college_id ON lecture_halls
-FOR EACH ROW EXECUTE FUNCTION db02_guard_college_owner_immutable();
+FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 
--- Program and course owners may change *departments within the same college*.
--- This preserves the actual NewProgramServiceImpl same-college reassignment
--- contract while rejecting an out-of-tenant department switch by direct SQL.
-CREATE FUNCTION db02_guard_department_reassignment_college()
-RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE
-  old_college uuid;
-  new_college uuid;
-BEGIN
-  IF NEW.department_id IS NOT DISTINCT FROM OLD.department_id THEN
-    RETURN NEW;
-  END IF;
-  SELECT college_id INTO old_college FROM departments WHERE id = OLD.department_id FOR SHARE;
-  SELECT college_id INTO new_college FROM departments WHERE id = NEW.department_id FOR SHARE;
-  IF old_college IS NULL OR new_college IS NULL OR old_college <> new_college THEN
-    RAISE EXCEPTION 'DB02 department reassignment cannot cross colleges'
-      USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER db02_program_department_reassignment_scope
-BEFORE UPDATE OF department_id ON programs
-FOR EACH ROW EXECUTE FUNCTION db02_guard_department_reassignment_college();
-
-CREATE TRIGGER db02_course_department_reassignment_scope
-BEFORE UPDATE OF department_id ON courses
-FOR EACH ROW EXECUTE FUNCTION db02_guard_department_reassignment_college();
-
--- BatchServiceImpl explicitly forbids moving a batch to another program.
--- The program-term ordinal is a stable identity used by teaching and offerings.
+-- ---------------------------------------------------------------------------
+-- 2) Academic parent identity cannot be silently rewritten
+-- ---------------------------------------------------------------------------
+-- Legacy BatchService rejects moving an existing batch/cohort to another program.
+-- vNext also treats the start period as creation identity. A controlled transfer must
+-- create explicit history instead of rewriting the parent keys in place.
 CREATE FUNCTION db02_guard_immutable_academic_parent()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_TABLE_NAME = 'cohorts'
-     AND (NEW.program_id IS DISTINCT FROM OLD.program_id
-       OR NEW.start_period_id IS DISTINCT FROM OLD.start_period_id) THEN
+     AND (
+       NEW.program_id IS DISTINCT FROM OLD.program_id
+       OR NEW.start_period_id IS DISTINCT FROM OLD.start_period_id
+     ) THEN
     RAISE EXCEPTION 'DB02 cohort program/start period are immutable; use a controlled transfer'
       USING ERRCODE = '23514';
   END IF;
+
   IF TG_TABLE_NAME = 'program_terms'
-     AND (NEW.program_id IS DISTINCT FROM OLD.program_id
-       OR NEW.term_number IS DISTINCT FROM OLD.term_number) THEN
+     AND (
+       NEW.program_id IS DISTINCT FROM OLD.program_id
+       OR NEW.term_number IS DISTINCT FROM OLD.term_number
+     ) THEN
     RAISE EXCEPTION 'DB02 program term identity is immutable'
       USING ERRCODE = '23514';
   END IF;
+
   RETURN NEW;
 END;
 $$;
@@ -93,82 +77,36 @@ CREATE TRIGGER db02_program_term_identity_immutable
 BEFORE UPDATE OF program_id, term_number ON program_terms
 FOR EACH ROW EXECUTE FUNCTION db02_guard_immutable_academic_parent();
 
--- Independent reference FKs alone do not prove that a cohort's academic
--- calendar periods belong to its parent program's college.
-CREATE FUNCTION db02_guard_cohort_period_tenant()
+-- Empty sections may still be reparented within the canonical same-college/window rules.
+-- Once any learner/faculty/delivery/schedule history exists, structural movement requires an
+-- explicit controlled-transfer workflow so prior history is not silently reinterpreted.
+CREATE FUNCTION db02_guard_section_history_reparent()
 RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE
-  owner_college uuid;
-  start_college uuid;
-  end_college uuid;
 BEGIN
-  SELECT d.college_id INTO owner_college
-    FROM programs p JOIN departments d ON d.id = p.department_id
-   WHERE p.id = NEW.program_id;
-  SELECT college_id INTO start_college FROM academic_periods WHERE id = NEW.start_period_id;
-  IF owner_college IS NULL OR start_college IS DISTINCT FROM owner_college THEN
-    RAISE EXCEPTION 'DB02 cohort starting period must match program college'
+  IF (
+    NEW.cohort_id IS DISTINCT FROM OLD.cohort_id
+    OR NEW.academic_period_id IS DISTINCT FROM OLD.academic_period_id
+  ) AND (
+    EXISTS (SELECT 1 FROM section_enrollments WHERE section_id = OLD.id)
+    OR EXISTS (SELECT 1 FROM section_faculty_assignments WHERE section_id = OLD.id)
+    OR EXISTS (SELECT 1 FROM course_section_deliveries WHERE section_id = OLD.id)
+    OR EXISTS (SELECT 1 FROM section_schedule_events WHERE section_id = OLD.id)
+  ) THEN
+    RAISE EXCEPTION 'DB02 section with historical references requires controlled transfer'
       USING ERRCODE = '23514';
   END IF;
-  IF NEW.expected_end_period_id IS NOT NULL THEN
-    SELECT college_id INTO end_college
-      FROM academic_periods WHERE id = NEW.expected_end_period_id;
-    IF end_college IS DISTINCT FROM owner_college THEN
-      RAISE EXCEPTION 'DB02 cohort expected ending period must match program college'
-        USING ERRCODE = '23514';
-    END IF;
-  END IF;
+
   RETURN NEW;
 END;
 $$;
 
-CREATE TRIGGER db02_cohort_period_tenant
-BEFORE INSERT OR UPDATE OF program_id, start_period_id, expected_end_period_id ON cohorts
-FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_period_tenant();
+CREATE TRIGGER db02_section_history_reparent_guard
+BEFORE UPDATE OF cohort_id, academic_period_id ON sections
+FOR EACH ROW EXECUTE FUNCTION db02_guard_section_history_reparent();
 
-CREATE FUNCTION db02_guard_section_period_tenant()
-RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE
-  owner_college uuid;
-  period_college uuid;
-BEGIN
-  SELECT d.college_id INTO owner_college
-    FROM cohorts c JOIN programs p ON p.id = c.program_id
-    JOIN departments d ON d.id = p.department_id
-   WHERE c.id = NEW.cohort_id;
-  SELECT college_id INTO period_college
-    FROM academic_periods WHERE id = NEW.academic_period_id;
-  IF owner_college IS NULL OR period_college IS DISTINCT FROM owner_college THEN
-    RAISE EXCEPTION 'DB02 section period must match cohort college'
-      USING ERRCODE = '23514';
-  END IF;
-
-  -- Legacy classes can be reassigned through ClassServiceImpl.updateClass;
-  -- never silently rewrite already recorded learner/course/schedule history.
-  -- Empty sections can still be reparented within the same college.
-  IF TG_OP = 'UPDATE' THEN
-    IF (NEW.cohort_id IS DISTINCT FROM OLD.cohort_id
-       OR NEW.academic_period_id IS DISTINCT FROM OLD.academic_period_id)
-       AND (
-         EXISTS (SELECT 1 FROM section_enrollments WHERE section_id = OLD.id)
-         OR EXISTS (SELECT 1 FROM section_faculty_assignments WHERE section_id = OLD.id)
-         OR EXISTS (SELECT 1 FROM course_section_deliveries WHERE section_id = OLD.id)
-         OR EXISTS (SELECT 1 FROM section_schedule_events WHERE section_id = OLD.id)
-       ) THEN
-      RAISE EXCEPTION 'DB02 section with historical references requires controlled transfer'
-        USING ERRCODE = '23514';
-    END IF;
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER db02_section_period_tenant
-BEFORE INSERT OR UPDATE OF cohort_id, academic_period_id ON sections
-FOR EACH ROW EXECUTE FUNCTION db02_guard_section_period_tenant();
-
--- Tenant-owned membership + program + cohort must all describe one college and
--- one program; existing individual FKs do not guarantee this.
+-- ---------------------------------------------------------------------------
+-- 3) Learner program/section enrollment scope
+-- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_learner_program_enrollment_tenant()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
@@ -176,33 +114,48 @@ DECLARE
   program_college uuid;
   cohort_program uuid;
 BEGIN
-  SELECT college_id INTO membership_college
+  SELECT college_id
+    INTO membership_college
     FROM college_memberships
-   WHERE id = NEW.membership_id AND status = 'ACTIVE'
+   WHERE id = NEW.membership_id
+     AND status = 'ACTIVE'
    FOR SHARE;
+
   IF membership_college IS NULL THEN
     RAISE EXCEPTION 'DB02 learner enrollment requires active college membership'
       USING ERRCODE = '23514';
   END IF;
-  PERFORM 1 FROM membership_roles
-   WHERE membership_id = NEW.membership_id AND role = 'LEARNER'
+
+  PERFORM 1
+    FROM membership_roles
+   WHERE membership_id = NEW.membership_id
+     AND role = 'LEARNER'
    FOR SHARE;
+
   IF NOT FOUND THEN
     RAISE EXCEPTION 'DB02 learner enrollment requires an active LEARNER'
       USING ERRCODE = '23514';
   END IF;
-  SELECT d.college_id INTO program_college
-    FROM programs p JOIN departments d ON d.id = p.department_id
-   WHERE p.id = NEW.program_id;
-  SELECT program_id INTO cohort_program
-    FROM cohorts WHERE id = NEW.cohort_id;
 
-  IF membership_college IS NULL OR program_college IS NULL
-     OR cohort_program IS NULL OR membership_college <> program_college
+  SELECT d.college_id
+    INTO program_college
+    FROM programs p
+    JOIN departments d ON d.id = p.department_id
+   WHERE p.id = NEW.program_id;
+
+  SELECT program_id
+    INTO cohort_program
+    FROM cohorts
+   WHERE id = NEW.cohort_id;
+
+  IF program_college IS NULL
+     OR cohort_program IS NULL
+     OR membership_college <> program_college
      OR cohort_program <> NEW.program_id THEN
     RAISE EXCEPTION 'DB02 learner enrollment membership/program/cohort scope mismatch'
       USING ERRCODE = '23514';
   END IF;
+
   RETURN NEW;
 END;
 $$;
@@ -219,17 +172,25 @@ DECLARE
   target_cohort uuid;
   target_period uuid;
 BEGIN
-  SELECT cohort_id INTO learner_cohort
-    FROM learner_program_enrollments WHERE id = NEW.learner_enrollment_id;
-  SELECT cohort_id, academic_period_id INTO target_cohort, target_period
-    FROM sections WHERE id = NEW.section_id;
+  SELECT cohort_id
+    INTO learner_cohort
+    FROM learner_program_enrollments
+   WHERE id = NEW.learner_enrollment_id;
 
-  IF learner_cohort IS NULL OR target_cohort IS NULL OR target_period IS NULL
+  SELECT cohort_id, academic_period_id
+    INTO target_cohort, target_period
+    FROM sections
+   WHERE id = NEW.section_id;
+
+  IF learner_cohort IS NULL
+     OR target_cohort IS NULL
+     OR target_period IS NULL
      OR learner_cohort <> target_cohort
      OR NEW.academic_period_id <> target_period THEN
     RAISE EXCEPTION 'DB02 learner section cohort/period scope mismatch'
       USING ERRCODE = '23514';
   END IF;
+
   RETURN NEW;
 END;
 $$;
@@ -239,17 +200,25 @@ BEFORE INSERT OR UPDATE OF learner_enrollment_id, section_id, academic_period_id
 ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_cohort_period();
 
--- A non-key section UPDATE takes a PostgreSQL NO KEY UPDATE row lock.
--- Referencing FK inserts ordinarily only take KEY SHARE, which is compatible
--- with NO KEY UPDATE. Promote that to SHARE so an enrollment/schedule INSERT
--- serializes against structural section reparenting before history is checked.
+-- ---------------------------------------------------------------------------
+-- 4) Serialize history creation against section structural movement
+-- ---------------------------------------------------------------------------
+-- PostgreSQL FK inserts normally take KEY SHARE, compatible with NO KEY UPDATE.
+-- Promote history-producing references to SHARE so they serialize with section reparenting
+-- before the history guard decides whether a move remains legal.
 CREATE FUNCTION db02_lock_section_history_parent()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  PERFORM 1 FROM sections WHERE id = NEW.section_id FOR SHARE;
+  PERFORM 1
+    FROM sections
+   WHERE id = NEW.section_id
+   FOR SHARE;
+
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'DB02 referenced section is missing' USING ERRCODE = '23503';
+    RAISE EXCEPTION 'DB02 referenced section is missing'
+      USING ERRCODE = '23503';
   END IF;
+
   RETURN NEW;
 END;
 $$;
@@ -270,8 +239,9 @@ CREATE TRIGGER db02_lock_section_for_schedule_event
 BEFORE INSERT OR UPDATE OF section_id ON section_schedule_events
 FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
 
--- Enrollment historical foreign keys are stable; a movement creates a new
--- section_enrollments row and ends the prior one. This matches roster-service.
+-- ---------------------------------------------------------------------------
+-- 5) Enrollment identity is historical, not mutable parentage
+-- ---------------------------------------------------------------------------
 CREATE FUNCTION db02_guard_academic_enrollment_identity_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
@@ -290,6 +260,7 @@ BEGIN
         USING ERRCODE = '23514';
     END IF;
   END IF;
+
   RETURN NEW;
 END;
 $$;
@@ -304,57 +275,16 @@ BEFORE UPDATE OF learner_enrollment_id, section_id, academic_period_id
 ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_academic_enrollment_identity_immutable();
 
--- Faculty advisor/coordinator relationships must be rooted in the section
--- college; this is not guaranteed by their independent UUID foreign keys.
-CREATE FUNCTION db02_guard_section_faculty_assignment_tenant()
-RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE
-  section_college uuid;
-  membership_college uuid;
-BEGIN
-  SELECT d.college_id INTO section_college
-    FROM sections s JOIN cohorts c ON c.id = s.cohort_id
-    JOIN programs p ON p.id = c.program_id
-    JOIN departments d ON d.id = p.department_id
-   WHERE s.id = NEW.section_id;
-  SELECT college_id INTO membership_college
-    FROM college_memberships
-   WHERE id = NEW.membership_id AND status = 'ACTIVE'
-   FOR SHARE;
-  IF membership_college IS NULL THEN
-    RAISE EXCEPTION 'DB02 section faculty assignment requires active membership'
-      USING ERRCODE = '23514';
-  END IF;
-  PERFORM 1 FROM membership_roles
-   WHERE membership_id = NEW.membership_id AND role = 'FACULTY'
-   FOR SHARE;
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'DB02 section faculty assignment requires FACULTY role'
-      USING ERRCODE = '23514';
-  END IF;
-  IF section_college IS NULL OR membership_college IS NULL
-     OR section_college <> membership_college THEN
-    RAISE EXCEPTION 'DB02 faculty section assignment must match college'
-      USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER db02_section_faculty_assignment_tenant
-BEFORE INSERT OR UPDATE OF section_id, membership_id ON section_faculty_assignments
-FOR EACH ROW EXECUTE FUNCTION db02_guard_section_faculty_assignment_tenant();
-
--- Chat 1 integration gates:
--- 1. Check which parent/membership guards already exist in DB01 or newer
---    numbered migrations; consolidate, do not double-register equivalent triggers.
--- 2. Test same-college program/course department reassignment remains permitted,
---    cross-college reassignment is denied, and ownership-root moves are denied.
--- 3. Test invalid direct SQL cohort/period, section/period, member/program/cohort,
---    learner/section/period, and faculty/section scopes all fail.
--- 4. Test valid learner enrollment/section transfer into a new period remains
---    possible with the same primary cohort and full learner history.
--- 5. Test direct SQL section reparent with existing historical references fails;
---    establish a separate audited controlled-transfer operation for legacy parity.
--- 6. Test concurrent parent scope updates versus child INSERT for tenant drift.
--- 7. This is UNREGISTERED and NO PostgreSQL or CI tests have been executed.
+-- ---------------------------------------------------------------------------
+-- Chat 1 integration gates
+-- ---------------------------------------------------------------------------
+-- 1. Consolidate this extension with canonical DB02; do not register duplicate trigger names.
+-- 2. Confirm zero trigger-name overlap between the two drafts.
+-- 3. Test academic-period, membership and lecture-hall college ownership immutability.
+-- 4. Test cohort program/start-period and program-term identity immutability.
+-- 5. Test valid empty-section same-college/window reparenting and reject reparent after any
+--    learner/faculty/delivery/schedule history exists.
+-- 6. Test invalid direct SQL member/program/cohort and learner/section/period scopes.
+-- 7. Test valid learner enrollment/section transfer by ending prior history and creating a new row.
+-- 8. Test concurrent section move versus learner/faculty/delivery/schedule history insertion.
+-- 9. This file is UNREGISTERED. No PostgreSQL/runtime PASS is claimed.

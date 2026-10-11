@@ -259,6 +259,24 @@
       "status": "NOT_RUN",
       "owner": 1,
       "evidence": "Two-connection PostgreSQL race between department ownership reassignment, course INSERT and parent mutation; SQLSTATE 23514/25001/deadlock handling not executed. Companion draft must be merged exactly once."
+    },
+    {
+      "id": "COURSE_PRIVATE_RECEIPT_SAME_COLLEGE_NEGATIVE",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Unregistered SQL-only companion; wrong college membership, offering, department, delivery, section period and submission scope not executed on PostgreSQL."
+    },
+    {
+      "id": "COURSE_PRIVATE_RECEIPT_CONSUMPTION_AND_ATTESTATION",
+      "status": "BLOCKED",
+      "owner": "DB06_DB16_W01",
+      "evidence": "File-submission binding, immutable receipt state, private storage attestation, malware/generation and same-college consumer access require DB06/DB16 integration."
+    },
+    {
+      "id": "COURSE_PRIVATE_RECEIPT_UPSTREAM_REPARENT",
+      "status": "NOT_RUN",
+      "owner": 1,
+      "evidence": "Receipt insert/update trigger cannot protect existing receipts if membership/department/period/assignment/content/delivery/section ownership later changes."
     }
   ],
   "sourceReview": {
@@ -293,7 +311,29 @@
     "Course_display_contents itself remains staged/unregistered",
     "Lesson content source JSON 17 subfields remain unverified, including two DB06-only assignment resources/submission types; new settings table is unregistered.",
     "Course-parent graph same-college/indirect cycle companion not registered or tested; department and period upstream reparent still unguarded.",
-    "Lesson discussions full college+optional-delivery tenant guard is companion-only; upstream reparent and concurrent mismatches require W01 PostgreSQL proof."
+    "Lesson discussions full college+optional-delivery tenant guard is companion-only; upstream reparent and concurrent mismatches require W01 PostgreSQL proof.",
+    "Course private upload receipts: separate DB06 base and DB16 overlay, shared same-college source-only guard unregistered; no PostgreSQL negatives or submission-file attestation binding proof."
   ],
-  "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance."
+  "successCriteria": "No draft is registered/enabled until each prerequisite and gate has executed pass evidence tied to exact main SHA. QUEUE DB-008 remains IN_PROGRESS until source/consumer audit completes; DONE_VERIFIED requires independent DB acceptance.",
+  "crossDomainCompanions": [
+    {
+      "id": "DB05_DB06_COURSE_PRIVATE_RECEIPT_SCOPE",
+      "path": "scripts/sql/db05-course-receipt-college-scope.draft.sql",
+      "baseCandidate": "docs/planning/sql/db06-assignment-private-files-candidate.sql",
+      "db16Overlay": "docs/planning/sql/db16-private-object-receipt-overlay-candidate.sql",
+      "registered": false,
+      "postgresExecuted": false,
+      "readyForProduction": false,
+      "dependencies": [
+        "COURSE_UPLOAD_RECEIPTS_BASE_TABLE_REGISTERED",
+        "SAME_COLLEGE_MEMBERSHIP_TARGET_DELIVERY_NEGATIVES",
+        "PRIVATE_OBJECT_KEY_AND_SHA_SHAPE_TESTS",
+        "RECEIPT_CONSUMED_SUBMISSION_BINDING_NEGATIVES",
+        "DB16_RECEIPT_IMMUTABLE_IDENTITY",
+        "UPSTREAM_SCOPE_REPARENT_INTEGRITY",
+        "REAL_POSTGRES_AND_API_RACE_TESTS"
+      ],
+      "note": "DB05/DB06/DB16 shared unregistered companion, NOT an eighth independent DB05 migration. No table/columns added; W01 must reconcile and merge exactly once."
+    }
+  ]
 }
