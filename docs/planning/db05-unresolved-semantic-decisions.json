@@ -3,9 +3,9 @@
   "phase": "DATABASE",
   "generated": "2026-10-11",
   "sourceBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
-  "scope": "Only unresolved/renamed source semantics after source candidate and unregistered draft staging; not complete database",
+  "scope": "Unresolved source semantics: missing/remodeled field rows plus explicitly retained active tombstone draft with non-equivalent per-reader consumers.",
   "totalOutstanding": 25,
-  "missingOrUnproven": 3,
+  "missingOrUnproven": 2,
   "remodeledNeedProof": 22,
   "formalDbVerified": 0,
   "items": [
@@ -107,13 +107,13 @@
     },
     {
       "source": "learner_content_progress.is_deleted",
-      "classification": "MISSING_OR_UNPROVEN",
+      "classification": "UNREGISTERED_DRAFT",
       "priority": "P1",
       "area": "DELETE_RESTORE_HISTORY",
-      "targetProposal": "NO_DIRECT_FIELD: vNext progress has no soft-delete state",
-      "action": "Prove tombstone and restore visibility across consumers; no hard-delete regression",
+      "targetProposal": "Source-backed draft scripts/sql/db05-version-progress-attempts.draft.sql -> learner_content_progress.deleted_at; legacy query countCompletedPerLearner filters deletion only after MAX(attempt).",
+      "action": "Source-side confirmed, but implement exact per-reader read semantics, secure tombstone producers/admin deletion/restore, race/retake behavior, multi-college scopes and real disposable PostgreSQL integration proof. Keep OPEN.",
       "disposition": "OPEN",
-      "sourceRuntimeStatus": "UNDETERMINED",
+      "sourceRuntimeStatus": "LEGACY_ACTIVE_CONSUMER_CONFIRMED_VNEXT_NOT_IMPLEMENTED",
       "verified": false,
       "postgresExecuted": false
     },
@@ -316,5 +316,6 @@
     "API/UI producer-consumer gates locked behind global DATABASE phase except necessary source inspection",
     "W01 controls migration integration"
   ],
-  "status": "OPEN_NOT_VERIFIED"
+  "status": "OPEN_NOT_VERIFIED",
+  "stagedButUnverifiedOpen": 1
 }
