@@ -96,19 +96,37 @@ test("field source evidence remains traceable to pinned source triage", () => {
     assert.equal(row.currentSourceEvidenceGap, row.sourcePaths.length === 0, row.legacyField);
   }
 });
-test("three historical-DDL-only fields remain flagged for named producer/consumer proof", () => {
-  assert.equal(file.counts.currentSourceEvidenceGaps, 3);
-  assert.deepEqual(file.currentSourceEvidenceGapFields, [
-    "role.is_deleted",
-    "tenant_domain.is_deleted",
-    "user.password",
-  ]);
-  for (const f of file.currentSourceEvidenceGapFields) {
-    const row = file.rows.find(r => r.legacyField === f);
-    assert.ok(row.currentSourceEvidenceGap);
+test("three formerly unnamed legacy P0 fields now have pinned producer/consumer source", () => {
+  assert.equal(file.counts.currentSourceEvidenceGaps, 0);
+  assert.deepEqual(file.currentSourceEvidenceGapFields, []);
+  const expected = {
+    "role.is_deleted": "ACTIVE_AUTHORITY_CONSUMER_IGNORES_SOFT_DELETE__SECURITY_EXCEPTION",
+    "tenant_domain.is_deleted": "ACTIVE_TENANT_HOST_QUERY_FILTER_CONFIRMED",
+    "user.password": "ACTIVE_LEGACY_PASSWORD_HASH_PRODUCER_AND_CONSUMER_CONFIRMED",
+  };
+  for (const [field, classification] of Object.entries(expected)) {
+    const row = file.rows.find(r => r.legacyField === field);
+    assert.equal(row.sourceEvidenceClassification, classification);
+    assert.ok(row.sourcePaths.length >= 2);
+    assert.equal(row.currentSourceEvidenceGap, false);
+    assert.ok(row.sourceEvidenceSummary.length >= 90);
     assert.equal(row.runtimeSemanticVerified, false);
+    assert.equal(row.approvedRetirement, false);
   }
+  assert.equal(file.currentLegacyEvidenceResolution.newlyResolvedNamedGaps, 3);
 });
+
+test("never clone deleted-role authority bypass or persist legacy passwords", () => {
+  const role = file.rows.find(r => r.legacyField === "role.is_deleted");
+  const password = file.rows.find(r => r.legacyField === "user.password");
+  assert.equal(role.legacySecurityException, "LEGACY_ROLE_SOFT_DELETE_IGNORED_BY_AUTHORITY_BUILDER");
+  assert.match(role.sourceEvidenceSummary, /without checking role.isDeleted/);
+  assert.equal(password.review.policy, "SECURITY_RETIREMENT_PROPOSED");
+  assert.equal(password.review.mustNotStoreRaw, true);
+  assert.equal(password.review.candidate, null);
+  assert.equal(password.providerVerified, false);
+});
+
 test("all crosswalk policy decisions have explicit reasoning and a handoff artifact", () => {
   for (const r of file.rows) {
     assert.ok(r.review.explanation.length >= 60, r.legacyField);
