@@ -135,9 +135,15 @@
       "kind": "DB008_LESSON_AUTHORING_CARD_VISIBILITY_ORDER_CANONICAL_DEDUP",
       "commitSha": "7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
       "message": "Canonical uniqueness is scripts/sql/db05-content-delivery-order-unique.draft.sql (DEFERRABLE, witnessed lesson id); duplicate Chat6 file/test deleted. Additional unregistered authoring companion scripts/sql/db05-lesson-content-authoring-facets.draft.sql preserves active/enabled/points Java long/deadline LocalDateTime clear semantics. Source matrix docs/planning/db05-learner-content-visibility-matrix.json, course card code/visibility docs/planning/db05-learner-course-card-source-contract.json. 25 open, 0 verified, no PG executed."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "ORDER_UPSTREAM_ANCESTOR_TRANSACTION_GUARD",
+      "message": "SINGLE manifest canonical witnessed lesson ordering candidate + DEFERRABLE per-delivery/lesson sequence uniqueness; child scope guard and 6 ancestor reparent triggers share 605008003 advisory lock under READ COMMITTED. Staged SQL/docs/Node static test, not registered or runtime verified. W01 must execute wrong-tenant/reparent/race/deadlock/period/department/DELETE negative tests, no API flag flip. 16/16 independent connector source assertions passed; Node/PG NOT RUN.",
+      "commitSha": "0b95409dc149996fca949f1964b07a0b18d51e16"
     }
   ],
-  "nextAction": "Continue DB008 DATABASE-only source/consumer parity on 25 open decisions; W01 folds seven independent SQL drafts and relevant scoped companions with correct order (unique witness/DEFERRABLE, lesson authoring independent flags and LocalDateTime), executes disposable PostgreSQL constraints/races and hands off API cutover after global DB phase. Do not mark verification complete based on source static tests.",
+  "nextAction": "DB-008 remains IN_PROGRESS: W01 integrate seven independent DB05 drafts with canonical order uniqueness + child scope + upstream lock companion exactly once after PostgreSQL replay/race and source semantics. Continue any nonconflicting 25 unresolved course/content field audits; do not certify from authored tests.",
   "historicalPriorAssignment": {
     "previousTitle": "College/Super Admin and shared operations",
     "previousDomains": [
@@ -216,7 +222,11 @@
     "https://github.com/42Students/lms-vnext/commit/fb9f8a9c8befae1477c468af9a450d8606d1febe",
     "https://github.com/42Students/lms-vnext/commit/9e41c32c0965a423f7628739167a700083a84ca8",
     "https://github.com/42Students/lms-vnext/commit/7b9ce1776f2e686bae9413537cf9f2b6716d38ed",
-    "https://github.com/42Students/lms-vnext/commit/193b8ddead233d63e74997cbb90383bfb6a46041"
+    "https://github.com/42Students/lms-vnext/commit/193b8ddead233d63e74997cbb90383bfb6a46041",
+    "https://github.com/42Students/lms-vnext/commit/0b95409dc149996fca949f1964b07a0b18d51e16",
+    "https://github.com/42Students/lms-vnext/commit/34d71cca1af87f65aa003432ecc3d520ef5d8724",
+    "https://github.com/42Students/lms-vnext/commit/4acbf95880345f2408e250606f4e0e8289872d59",
+    "https://github.com/42Students/lms-vnext/commit/7cc68a361098b71e10d810c5d8aea974a3f89d06"
   ],
   "overallPercentComplete": null,
   "pickedTaskIds": [
