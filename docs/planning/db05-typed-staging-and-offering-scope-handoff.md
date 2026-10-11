@@ -54,6 +54,22 @@ Both guards request the shared DB05 child/order advisory key `605008003` and ref
 
 No exact database run or PostgreSQL SQLSTATE output is claimed here.
 
+## Read-only seeded-row preflight (NOT EXECUTED)
+
+Run `scripts/sql/db05-offering-delivery-preflight.readonly.sql` in a **read-only transaction on disposable PostgreSQL** before registering/enabling the new offering/delivery row-write triggers. It returns aggregate counts of existing cross-college offering mismatches, cohort start/end date violations, same-college wrong delivery cohort/term and delivery college mismatch. It returns **no personal identifiers**.
+
+```bash
+# Only on disposable PostgreSQL, with the baseline journal + seed installed
+psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 \
+  -c 'BEGIN TRANSACTION READ ONLY' \
+  -f scripts/sql/db05-offering-delivery-preflight.readonly.sql \
+  -c 'COMMIT'
+```
+
+If any mismatch count is nonzero, W01 should inspect the seeded data and rectify source/validation coherently. Installing a trigger does NOT repair historical bad rows, and a zero row-count is NOT proof of race safety or a passing two-session negative suite. The source preflight and its Node regression guards are **authored, not executed** in this GitHub-connected environment.
+
+**Separately executed source reference model:** `tests/db05-offering-delivery-reference.test.mjs` was executed on Node 22.16.0 with **19/19 PASS**, exact local/git blob `c73011e74df7dfd738c69445cf0ce88e11e4c6ac`. Execution log `docs/coordination/evidence/chat-06-db008-offering-delivery-reference-node-2026-10-11.md`. This proves only the pure modeled acceptance rules, not SQL triggers or actual API behavior.
+
 ## How W01 can validate *after* migration integration
 
 The read-only opt-in checker `scripts/db05-staged-schema-db-audit.mjs` introspects 2 lesson-content tables, column types/presence, composite FK, indexes, constraints, and the strengthened live discussion tenant function. It refuses missing explicit nonproduction opt-in:
