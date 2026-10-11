@@ -70,8 +70,9 @@ CREATE FUNCTION db02_guard_immutable_academic_parent()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_TABLE_NAME = 'cohorts'
-     AND NEW.program_id IS DISTINCT FROM OLD.program_id THEN
-    RAISE EXCEPTION 'DB02 cohort program is immutable; use a controlled transfer'
+     AND (NEW.program_id IS DISTINCT FROM OLD.program_id
+       OR NEW.start_period_id IS DISTINCT FROM OLD.start_period_id) THEN
+    RAISE EXCEPTION 'DB02 cohort program/start period are immutable; use a controlled transfer'
       USING ERRCODE = '23514';
   END IF;
   IF TG_TABLE_NAME = 'program_terms'
@@ -85,7 +86,7 @@ END;
 $$;
 
 CREATE TRIGGER db02_cohort_program_immutable
-BEFORE UPDATE OF program_id ON cohorts
+BEFORE UPDATE OF program_id, start_period_id ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_immutable_academic_parent();
 
 CREATE TRIGGER db02_program_term_identity_immutable
@@ -145,17 +146,18 @@ BEGIN
   -- Legacy classes can be reassigned through ClassServiceImpl.updateClass;
   -- never silently rewrite already recorded learner/course/schedule history.
   -- Empty sections can still be reparented within the same college.
-  IF TG_OP = 'UPDATE'
-     AND (NEW.cohort_id IS DISTINCT FROM OLD.cohort_id
+  IF TG_OP = 'UPDATE' THEN
+    IF (NEW.cohort_id IS DISTINCT FROM OLD.cohort_id
        OR NEW.academic_period_id IS DISTINCT FROM OLD.academic_period_id)
-     AND (
-       EXISTS (SELECT 1 FROM section_enrollments WHERE section_id = OLD.id)
-       OR EXISTS (SELECT 1 FROM section_faculty_assignments WHERE section_id = OLD.id)
-       OR EXISTS (SELECT 1 FROM course_section_deliveries WHERE section_id = OLD.id)
-       OR EXISTS (SELECT 1 FROM section_schedule_events WHERE section_id = OLD.id)
-     ) THEN
-    RAISE EXCEPTION 'DB02 section with historical references requires controlled transfer'
-      USING ERRCODE = '23514';
+       AND (
+         EXISTS (SELECT 1 FROM section_enrollments WHERE section_id = OLD.id)
+         OR EXISTS (SELECT 1 FROM section_faculty_assignments WHERE section_id = OLD.id)
+         OR EXISTS (SELECT 1 FROM course_section_deliveries WHERE section_id = OLD.id)
+         OR EXISTS (SELECT 1 FROM section_schedule_events WHERE section_id = OLD.id)
+       ) THEN
+      RAISE EXCEPTION 'DB02 section with historical references requires controlled transfer'
+        USING ERRCODE = '23514';
+    END IF;
   END IF;
   RETURN NEW;
 END;
@@ -223,6 +225,40 @@ CREATE TRIGGER db02_section_enrollment_cohort_period
 BEFORE INSERT OR UPDATE OF learner_enrollment_id, section_id, academic_period_id
 ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_cohort_period();
+
+-- Enrollment historical foreign keys are stable; a movement creates a new
+-- section_enrollments row and ends the prior one. This matches roster-service.
+CREATE FUNCTION db02_guard_academic_enrollment_identity_immutable()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF TG_TABLE_NAME = 'learner_program_enrollments' THEN
+    IF NEW.membership_id IS DISTINCT FROM OLD.membership_id
+       OR NEW.program_id IS DISTINCT FROM OLD.program_id
+       OR NEW.cohort_id IS DISTINCT FROM OLD.cohort_id THEN
+      RAISE EXCEPTION 'DB02 learner program enrollment identity is immutable'
+        USING ERRCODE = '23514';
+    END IF;
+  ELSIF TG_TABLE_NAME = 'section_enrollments' THEN
+    IF NEW.learner_enrollment_id IS DISTINCT FROM OLD.learner_enrollment_id
+       OR NEW.section_id IS DISTINCT FROM OLD.section_id
+       OR NEW.academic_period_id IS DISTINCT FROM OLD.academic_period_id THEN
+      RAISE EXCEPTION 'DB02 section enrollment history identity is immutable'
+        USING ERRCODE = '23514';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER db02_academic_enrollment_identity_immutable
+BEFORE UPDATE OF membership_id, program_id, cohort_id
+ON learner_program_enrollments
+FOR EACH ROW EXECUTE FUNCTION db02_guard_academic_enrollment_identity_immutable();
+
+CREATE TRIGGER db02_section_enrollment_identity_immutable
+BEFORE UPDATE OF learner_enrollment_id, section_id, academic_period_id
+ON section_enrollments
+FOR EACH ROW EXECUTE FUNCTION db02_guard_academic_enrollment_identity_immutable();
 
 -- Faculty advisor/coordinator relationships must be rooted in the section
 -- college; this is not guaranteed by their independent UUID foreign keys.
