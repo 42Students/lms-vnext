@@ -11,6 +11,9 @@ const review = load("docs/planning/db05-chat06-source-semantic-review.json");
 const inventory = load("docs/planning/db-pass4-columns-db05_courses_and_content.json");
 const decisions = load("docs/planning/db05-unresolved-semantic-decisions.json");
 
+const manifest = load("docs/planning/db05-migration-readiness-manifest.json");
+const compatibleSql = readFileSync(resolve(root, "scripts/sql/db05-historical-course-columns.compatibility.draft.sql"), "utf8");
+
 const columns = ["course.default_subscription_days", "course.formal_title"];
 
 test("DB05 historical-only course column evidence must remain bounded and exact", () => {
@@ -51,4 +54,28 @@ test("DB05 source-backed progress deletion draft does not consume the two histor
     review.fields.filter(f => f.classification === "MISSING_OR_UNPROVEN").map(f => f.source).sort(),
     columns.sort()
   );
+});
+
+test("DB05 historical course audit includes 15 independently pinned FE course surfaces", () => {
+  assert.equal(bounded.inspectedRelevantCurrentLegacyFrontendFiles.length, 15);
+  assert.equal(bounded.boundedInspectedFilesTotal, 28);
+  assert.equal(new Set(bounded.inspectedRelevantCurrentLegacyFrontendFiles.map(x => x.path)).size, 15);
+  assert.ok(bounded.inspectedRelevantCurrentLegacyFrontendFiles.every(x =>
+    x.formalTitleHits === 0 && x.defaultSubscriptionDaysHits === 0 &&
+    /^[0-9a-f]{40}$/.test(x.blobSha)
+  ));
+});
+
+test("DB05 historical compatibility SQL stays conditional and not an eighth migration", () => {
+  assert.match(compatibleSql, /UNREGISTERED CONDITIONAL COMPANION/);
+  assert.match(compatibleSql, /legacy_default_subscription_days integer/);
+  assert.match(compatibleSql, /legacy_formal_title varchar\(255\)/);
+  assert.match(compatibleSql, /No DEFAULT, NOT NULL, forced positive check/);
+  assert.equal(manifest.artifacts.length, 7);
+  assert.equal(manifest.historicalCourseColumnDecision.status, "OPEN_RETAIN_OR_RETIRE");
+  assert.equal(manifest.historicalCourseColumnDecision.registered, false);
+  assert.equal(manifest.historicalCourseColumnDecision.postgresExecuted, false);
+  assert.ok(manifest.gates.some(x =>
+    x.id === "HISTORICAL_COURSE_COLUMNS_RETAIN_OR_RETIRE" && x.status === "BLOCKED"
+  ));
 });
