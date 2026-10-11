@@ -82,6 +82,39 @@ if (!optIn) {
       await expect23514(createAttempt({minutes: 6}), "identity_auth_attempts_five_minute_expiry_ck");
       await expect23514(createAttempt({role: "   "}), "identity_auth_attempts_target_role_shape_ck");
 
+      // Source-backed DB004 expiry-invariant witness: the table CHECK allows
+      // backdated verified_at/used_at, but the trigger must not. The short
+      // real wait deliberately moves PostgreSQL's clock past the deadline.
+      const stale = await createAttempt();
+      await update(
+        "UPDATE identity_auth_attempts SET expires_at=clock_timestamp()+interval '1 second',version=version+1 WHERE id=$1",
+        [stale],
+      );
+      await new Promise(resolve => setTimeout(resolve, 1300));
+      await expect23514(
+        update("UPDATE identity_auth_attempts SET verified_at=created_at+interval '100 milliseconds',version=version+1 WHERE id=$1", [stale]),
+        "db01_auth_attempt_expired_mutation_ck",
+      );
+      await expect23514(
+        update("UPDATE identity_auth_attempts SET verified_at=created_at+interval '100 milliseconds',used_at=created_at+interval '200 milliseconds',sms_code_mac=NULL,sms_code_expires_at=NULL,version=version+1 WHERE id=$1", [stale]),
+        "db01_auth_attempt_expired_mutation_ck",
+      );
+      for (const counter of ["verification_attempts", "resend_attempts"]) {
+        await expect23514(
+          update("UPDATE identity_auth_attempts SET "+counter+"="+counter+"+1,version=version+1 WHERE id=$1", [stale]),
+          "db01_auth_attempt_expired_mutation_ck",
+        );
+      }
+      const futureProof = await createAttempt();
+      await expect23514(
+        update("UPDATE identity_auth_attempts SET verified_at=clock_timestamp()+interval '2 seconds',version=version+1 WHERE id=$1", [futureProof]),
+        "db01_auth_attempt_future_event_ck",
+      );
+      await expect23514(
+        update("UPDATE identity_auth_attempts SET verified_at=clock_timestamp()+interval '1 second',used_at=clock_timestamp()+interval '2 seconds',sms_code_mac=NULL,sms_code_expires_at=NULL,version=version+1 WHERE id=$1", [futureProof]),
+        "db01_auth_attempt_future_event_ck",
+      );
+
       const id = await createAttempt();
       // A new challenge cannot be pre-verified/consumed, pre-exhausted,
       // future-created or issued already expired via direct SQL.
