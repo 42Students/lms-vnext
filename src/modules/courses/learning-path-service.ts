@@ -269,17 +269,17 @@ export async function transitionLearningPath(
         status: nextStatus,
         updatedAt: new Date(),
       })
-      .where(
-        eq(
-          courseLearningPaths.id,
-          learningPathId,
-        ),
-      )
+      .where(and(
+        eq(courseLearningPaths.id, learningPathId),
+        input.action === "PUBLISH"
+          ? eq(courseLearningPaths.status, "DRAFT")
+          : ne(courseLearningPaths.status, "ARCHIVED"),
+      ))
       .returning();
 
     if (!updated) {
       throw new CoursesServiceError(
-        "LEARNING_PATH_NOT_FOUND",
+        "INVALID_LEARNING_PATH_TRANSITION",
       );
     }
 
