@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "kind": "DB01_HANDOFF_MONOTONIC_SOURCE_ONLY_WITNESS",
+  "worker": "CHAT_02",
+  "task": "DB-004",
+  "phase": "DATABASE",
+  "observedDate": "2026-10-11",
+  "classification": "GITHUB_CONNECTED_SOURCE_TEXT_JS_PREDICATES_NOT_NODE_POSTGRES_OR_PROVIDER_EXECUTION",
+  "summary": {
+    "inProcessStaticChecks": 38,
+    "staticChecksPassed": 38,
+    "staticChecksFailed": 0,
+    "authoredNodeSourceTestCases": 12,
+    "authoredDisposablePostgresSuites": 1,
+    "executedNodeTestCases": 0,
+    "executedPostgresTests": 0,
+    "postgreSQLMigrationReplayExecuted": false,
+    "registeredMigrationsForHandoff": 0,
+    "credentialProviderVerified": false,
+    "vnextRuntimeSemanticVerifiedFields": 0
+  },
+  "sourceArtifacts": [
+    {
+      "path": "docs/planning/sql/db01-auth-handoff-lifecycle-guard-staging.sql",
+      "blobSha": "e477252008df6852aed519330d6b4cc6d429e107"
+    },
+    {
+      "path": "docs/planning/sql/db01-auth-handoffs-staging.sql",
+      "blobSha": "c8decf895d565e23bd55b80378663ebbd1fdc801"
+    },
+    {
+      "path": "tests/db01-auth-handoff-lifecycle-source.test.mjs",
+      "blobSha": "9853b2666129cfd437d8656f44daa77121210ecc"
+    },
+    {
+      "path": "tests/db01-auth-handoff-lifecycle-pg.test.mjs",
+      "blobSha": "2b371a30015a2e9ee17e25c167f1c66271250c6e"
+    },
+    {
+      "path": "docs/planning/db01-chat02-migration-integration-manifest.json",
+      "blobSha": "07388ad8665a51604264aa8e25ec5e3d77815ed2"
+    }
+  ],
+  "invariantsReviewed": [
+    "eight identity/scope fields cannot be retargeted by update",
+    "MAC unique and no raw bearer storage",
+    "deadline cannot be extended",
+    "consumed row cannot be rearmed or even no-op-updated",
+    "wall-clock expiry rechecked after row lock",
+    "exact-one-winner consume statement required",
+    "disposable PG witness exercises concurrent consume and crossing-expiry wait",
+    "source test includes mutation cases and unregistered staged separation"
+  ],
+  "knownLimitations": [
+    "GitHub connector JavaScript predicates are not the committed node:test or Vitest runner",
+    "PG witness is authored but no disposable PostgreSQL connection was available in this worker",
+    "The PG witness uses synthetic parent tables; it does not prove registered composite membership/domain foreign keys",
+    "Current user/member/college/org/domain status and host equality must be revalidated consistently at consume time",
+    "No API implementation, provider mint, migration promotion or global phase certification in this batch"
+  ],
+  "integrationOwner": "CHAT_01",
+  "handoff": "Issue #21 must integrate only after deciding the database-backed handoff versus provider-only alternative"
+}
