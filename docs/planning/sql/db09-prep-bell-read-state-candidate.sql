@@ -28,7 +28,20 @@ CREATE INDEX placement_prep_assignments_student_idx
 
 CREATE FUNCTION db09_assert_prep_assignment_scope() RETURNS trigger
 LANGUAGE plpgsql AS $$
+DECLARE
+  v_assignment_org uuid;
 BEGIN
+  SELECT organization_id
+    INTO v_assignment_org
+    FROM colleges
+   WHERE id = NEW.college_id
+     AND status = 'ACTIVE';
+
+  IF v_assignment_org IS NULL THEN
+    RAISE EXCEPTION 'prep assignment college is not active'
+      USING ERRCODE = '23514';
+  END IF;
+
   IF NOT EXISTS (
     SELECT 1
       FROM college_memberships m
@@ -38,7 +51,7 @@ BEGIN
        AND m.status = 'ACTIVE'
        AND r.role = 'LEARNER'
   ) THEN
-    RAISE EXCEPTION 'prep learner membership is not active in assignment college'
+    RAISE EXCEPTION 'prep learner is not an active learner in assignment college'
       USING ERRCODE = '23514';
   END IF;
 
@@ -46,11 +59,14 @@ BEGIN
     SELECT 1
       FROM courses c
       JOIN departments d ON d.id = c.department_id
+      JOIN colleges owner_college ON owner_college.id = d.college_id
      WHERE c.id = NEW.course_id
        AND c.status = 'ACTIVE'
-       AND d.college_id = NEW.college_id
+       AND d.archived_at IS NULL
+       AND owner_college.status = 'ACTIVE'
+       AND owner_college.organization_id = v_assignment_org
   ) THEN
-    RAISE EXCEPTION 'prep course is not an active course in assignment college'
+    RAISE EXCEPTION 'prep course is not active in assignment organization'
       USING ERRCODE = '23514';
   END IF;
 
@@ -160,8 +176,9 @@ CREATE TRIGGER db09_bell_receipt_immutable
 
 -- Required tests (NOT EXECUTED):
 -- 1. Learner A assignment references their own ACTIVE college and an ACTIVE
---    course whose department belongs to that college; wrong-college learner,
---    course or assigning user is rejected.
+--    course from any ACTIVE college/department in the same organization,
+--    matching legacy prepCourses(organizationId); cross-organization course,
+--    wrong-college learner or non-TPO assigning user is rejected.
 -- 2. Assignment producer accepts only an authorized LMS course, validates
 --    deadline and dedupe, and cannot create an orphaned generic assessment ref.
 -- 3. Same bell: reader A marked read, reader B still unread, even when
