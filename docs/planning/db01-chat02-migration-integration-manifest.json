@@ -185,6 +185,30 @@
       ]
     },
     {
+      "id": "DB01-HANDOFF-MONOTONIC",
+      "feature": "Immutable cross-host code envelope, deadline cannot extend, terminal single consume and lock-time expiry guard",
+      "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
+      "schema": "src/db/schema/db01-auth-handoffs.staged.ts",
+      "stagingSql": "docs/planning/sql/db01-auth-handoff-lifecycle-guard-staging.sql",
+      "dependencies": [
+        "DB01-HANDOFF-TABLE"
+      ],
+      "status": "STAGED_OPTIONAL_PENDING_PROVIDER_AND_INTEGRATION_PROOF",
+      "decision": "Only register with approved handoff table; refuse rebind/rearm, use clock_timestamp after lock acquisition at expiry edge; current valid ACTIVE target/actor and host still must be proved separately",
+      "sourceTest": "tests/db01-auth-handoff-lifecycle-source.test.mjs",
+      "postgresTest": "tests/db01-auth-handoff-lifecycle-pg.test.mjs",
+      "acceptance": "docs/planning/db01-auth-otp-handoff-contract.md",
+      "executedPostgresTests": 0,
+      "tests": [
+        "all original scope fields immutable",
+        "MAC immutable and expiry cannot extend",
+        "consumed row cannot be reset or touched",
+        "expired row cannot consume with an earlier timestamp",
+        "two PostgreSQL sessions competing for a code yield one consumer",
+        "stale transaction cannot consume after row-lock delay"
+      ]
+    },
+    {
       "id": "DB01-OTP-MONOTONIC",
       "feature": "OTP challenge state integrity, bounded lifespan and terminal consumption",
       "owner": "CHAT_02_STAGING_CHAT_01_PROMOTION",
@@ -225,7 +249,8 @@
     "phaseGateReady": false,
     "postgresCrossRowArchiveRacesVerified": false,
     "otpMonotonicStatePgVerified": false,
-    "otpProviderReplacementVerified": false
+    "otpProviderReplacementVerified": false,
+    "handoffLifecyclePgVerified": false
   },
   "promotionChecklist": [
     "Chat 1 review active legacy source semantic contracts and approve redesign/retirements field by field.",
@@ -236,7 +261,8 @@
     "Run all negative cross-tenant, FK, replay and concurrency tests on disposable Postgres and retain logs.",
     "Record either accepted source parity or explicit justified intentional security exception for each live legacy behavior.",
     "Only after all implementation and executed acceptance update DB-004 to COMPLETED then DONE_VERIFIED; no worker may advance the shared phase alone.",
-    "If and only if DB-backed auth is chosen, apply OTP table five-minute TTL/consumed check and OLD/NEW monotonic trigger together; run separate 5th-retry concurrency and terminal-row negative tests, never silently substitute static proof for PostgreSQL."
+    "If and only if DB-backed auth is chosen, apply OTP table five-minute TTL/consumed check and OLD/NEW monotonic trigger together; run separate 5th-retry concurrency and terminal-row negative tests, never silently substitute static proof for PostgreSQL.",
+    "If DB-backed handoffs are approved, register db01-auth-handoff-lifecycle-guard-staging.sql with its table and execute the opt-in two-client PostgreSQL witness; conditional consume alone is insufficient against direct SQL rearm or expiry-edge races."
   ],
   "crossRowInvariantCandidates": [
     {
