@@ -89,6 +89,23 @@ DECLARE
   course_college uuid;
   creator_college uuid;
 BEGIN
+  -- DB-049: scope-only checks at enqueue are insufficient for scheduled
+  -- campaigns. Revalidate when a worker CLAIMS (PUBLISHING) and FINALIZES
+  -- (PUBLISHED), in the same transaction as per-recipient receipt writes.
+  -- Allow status-only cancellation/failure/cleanup after a member leaves;
+  -- changing any scope/recipient field must ALWAYS pass the full guard.
+  IF TG_OP = 'UPDATE' AND NEW.status NOT IN ('PUBLISHING','PUBLISHED')
+     AND ROW(NEW.organization_id, NEW.college_id, NEW.source_event_id,
+             NEW.creator_membership_id, NEW.audience_scope,
+             NEW.target_section_id, NEW.target_course_id, NEW.target_user_id)
+         IS NOT DISTINCT FROM
+         ROW(OLD.organization_id, OLD.college_id, OLD.source_event_id,
+             OLD.creator_membership_id, OLD.audience_scope,
+             OLD.target_section_id, OLD.target_course_id, OLD.target_user_id)
+  THEN
+    RETURN NEW;
+  END IF;
+
   SELECT c.organization_id INTO actual_org FROM colleges c
    WHERE c.id = NEW.college_id FOR SHARE;
   IF actual_org IS NULL OR actual_org <> NEW.organization_id THEN
@@ -141,28 +158,36 @@ BEGIN
   END IF;
 
   IF NEW.audience_scope='SECTION_COURSE' THEN
-    -- No cross-section/cross-program broadcast by combining unrelated IDs.
-    IF NOT EXISTS (
-      SELECT 1
+    -- DB-049: lock the actual active-delivery witness. A naked EXISTS could
+    -- race another transaction ending the delivery or deactivating its
+    -- offering after we checked but before a scheduled publish commits.
+    -- FOR SHARE waits for concurrent parent writes and rechecks eligibility.
+    PERFORM 1
       FROM course_section_deliveries cd
       JOIN course_offerings o ON o.id=cd.offering_id
-      WHERE cd.section_id=NEW.target_section_id
-        AND o.course_id=NEW.target_course_id
-        AND cd.ended_at IS NULL AND o.status='ACTIVE'
-    ) THEN
+     WHERE cd.section_id=NEW.target_section_id
+       AND o.course_id=NEW.target_course_id
+       AND cd.ended_at IS NULL AND o.status='ACTIVE'
+     FOR SHARE OF cd, o;
+    IF NOT FOUND THEN
       RAISE EXCEPTION 'Campaign section and course have no active delivery'
         USING ERRCODE='23514';
     END IF;
   END IF;
 
-  IF NEW.target_user_id IS NOT NULL AND NOT EXISTS (
-    SELECT 1 FROM college_memberships m
+  IF NEW.target_user_id IS NOT NULL THEN
+    -- DB-049: protect the ACTIVE college membership witness against a
+    -- simultaneous suspension, user transfer or membership deletion.
+    -- Checking EXISTS without a row lock permits a stale authorization.
+    PERFORM 1 FROM college_memberships m
      WHERE m.user_id=NEW.target_user_id
        AND m.college_id=NEW.college_id
        AND m.status='ACTIVE'
-  ) THEN
-    RAISE EXCEPTION 'Campaign personal recipient is not active in college'
-      USING ERRCODE='23514';
+     FOR SHARE OF m;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Campaign personal recipient is not active in college'
+        USING ERRCODE='23514';
+    END IF;
   END IF;
 
   -- Scheduling is not publication. An immediate campaign may have NULL
@@ -172,7 +197,7 @@ END;
 $$;
 
 CREATE TRIGGER db43_notification_campaign_scope_guard
-BEFORE INSERT OR UPDATE OF organization_id, college_id, source_event_id,
+BEFORE INSERT OR UPDATE OF status, organization_id, college_id, source_event_id,
   creator_membership_id, audience_scope, target_section_id, target_course_id,
   target_user_id
 ON notification_campaigns FOR EACH ROW
@@ -181,8 +206,13 @@ EXECUTE FUNCTION db43_guard_campaign_scope();
 -- INTEGRATION RULES, intentionally NOT faked by an SQL side effect:
 -- * Service inserts the activity event and campaign in one transaction.
 -- * Due releases SELECT ... FOR UPDATE SKIP LOCKED with a fenced claim.
--- * Re-evaluate active target learner/faculty/mentor college and course/
---   section access after claiming and before publishing.
+-- * DB-049 trigger locks/reevaluates the personal membership or active
+--   SECTION_COURSE delivery at BOTH PUBLISHING and PUBLISHED status writes.
+--   Publisher must still re-evaluate every derived learner/faculty/mentor
+--   recipient's actual college/role/course/section access in its transaction;
+--   the campaign target guard alone is NOT a complete recipient entitlement.
+-- * Parent updates after commit still require producer/dispatch revalidation
+--   and end-to-end negative/concurrency PostgreSQL witnesses.
 -- * Publisher transaction inserts in_app_notifications per authorized user,
 --   using UNIQUE(user_id,event_id) ON CONFLICT DO NOTHING; then sets status
 --   PUBLISHED/published_at and clears claim in the SAME transaction.
