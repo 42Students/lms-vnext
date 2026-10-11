@@ -6,19 +6,19 @@
   "assignment": "SHARED_PHASE_WORKER",
   "permanentDomainOwner": false,
   "currentPhase": "DATABASE",
-  "executionState": "IN_PROGRESS",
-  "activeTaskId": "DB-052",
+  "executionState": "AVAILABLE",
+  "activeTaskId": null,
   "blockedTaskIds": [
     "DB-030"
   ],
   "checkpoint": {
-    "checkpointKind": "DB052_QUIZ_LIFECYCLE_HISTORY_STARTED",
+    "checkpointKind": "DB052_QUIZ_LIFECYCLE_SOURCE_HARDENED",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "d4ec3673e035c1e16bc7160f5ef56ee0fed1580c",
-    "lastWorkerMergedSha": "e66e66d4a4d38d43cdb63d1ee52b10b123776b19",
+    "observedMainSha": "98e0911a06ec009d861309a539db2c9169ce91bf",
+    "lastWorkerMergedSha": "98e0911a06ec009d861309a539db2c9169ce91bf",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Chat 1 started DB-052: stage immutable quiz lifecycle/result-publication history and direct-SQL state rules. Source-only; no journal/API cutover."
+    "summary": "DB-052 completed source staging and was post-completion hardened with database-managed lifecycle versions, ordered multi-step event chains and legacy create-with-publish compatibility. Current-main connector source reconciliation 49/49 true; Node/PG execution not claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -40,7 +40,8 @@
     "tests/db06-assessment-retention-staging.test.mjs",
     "tests/db06-quiz-shuffle-staging.test.mjs",
     "tests/db06-assignment-attempt-staging.test.mjs",
-    "tests/db41-history-schema-drift.test.mjs"
+    "tests/db41-history-schema-drift.test.mjs",
+    "tests/db06-quiz-lifecycle-staging.test.mjs"
   ],
   "lastExecutedPassingTests": [
     "DB025 isolated Node safety harness 12/12 PASS (Node 22.16; no PostgreSQL)",
@@ -50,7 +51,7 @@
     "DB-030 source promotion is registered as migration 0041 with PG01–PG16 suite, but required disposable PostgreSQL execution is unavailable in the current connector-only runtime. GitHub Actions billing is intentionally irrelevant; any approved executable checkout + disposable PG can resume it."
   ],
   "handoffs": [],
-  "nextAction": "Read current vNext quiz schema/services and pinned legacy quiz audit/state behavior; define source-backed lifecycle transitions, actor/tenant history row shape, same-transaction event completeness and static guards; keep migration unregistered.",
+  "nextAction": "Pick DB-053 private assignment upload receipt lifecycle hardening and reconcile source/staged persistence without journal registration.",
   "historicalPriorAssignment": {
     "previousTitle": "Platform, identity, academics and shared migration integration",
     "previousDomains": [
@@ -103,10 +104,11 @@
     "DB-044",
     "DB-045",
     "DB-048",
-    "DB-051"
+    "DB-051",
+    "DB-052"
   ],
   "lastPickedAt": "2026-10-11T14:58:00.000Z",
-  "lastCompletedAt": "2026-10-11T14:14:04.081Z",
+  "lastCompletedAt": "2026-10-11T14:26:18.196Z",
   "verifiedTaskIds": [],
   "awaitingVerificationTaskIds": [
     "DB-009",
@@ -121,7 +123,8 @@
     "DB-044",
     "DB-045",
     "DB-048",
-    "DB-051"
+    "DB-051",
+    "DB-052"
   ],
   "trackingDefinitions": {
     "pickedTaskIds": "All unique task IDs this chat ever reserved (pickHistory proof). Can include incomplete, blocked and later verified tasks.",
