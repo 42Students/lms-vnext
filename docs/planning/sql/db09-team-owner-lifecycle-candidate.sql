@@ -70,7 +70,49 @@ LANGUAGE sql STABLE AS $$
          )
        )
   );
-$$;
+$;
+
+-- Greenfield/backfill rule: current vNext creates jobs through
+-- placements.manage. Preserve legacy creator->owner default only when the
+-- creator resolves to exactly one active same-college placement-owner
+-- membership. Never guess across ambiguous memberships.
+UPDATE placement_jobs j
+   SET owner_membership_id = m.id
+  FROM college_memberships m
+ WHERE j.owner_membership_id IS NULL
+   AND j.status IN ('DRAFT','PUBLISHED')
+   AND m.user_id = j.created_by_user_id
+   AND m.college_id = j.college_id
+   AND db069_has_active_drive_owner(m.id,j.college_id)
+   AND NOT EXISTS (
+     SELECT 1
+       FROM college_memberships other
+      WHERE other.user_id = j.created_by_user_id
+        AND other.college_id = j.college_id
+        AND other.id <> m.id
+        AND db069_has_active_drive_owner(other.id,j.college_id)
+   );
+
+DO $db069_owner_preflight$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+      FROM placement_jobs
+     WHERE status IN ('DRAFT','PUBLISHED')
+       AND owner_membership_id IS NULL
+  ) THEN
+    RAISE EXCEPTION
+      'DB069: live placement jobs require explicit owner backfill before migration';
+  END IF;
+END
+$db069_owner_preflight$;
+
+ALTER TABLE placement_jobs
+  ADD CONSTRAINT db069_live_job_owner_ck
+  CHECK (
+    status NOT IN ('DRAFT','PUBLISHED')
+    OR owner_membership_id IS NOT NULL
+  );
 
 -- Serialize assignment/removal around one college+membership identity. A
 -- transaction deleting a team member and a transaction concurrently assigning
@@ -106,7 +148,7 @@ BEGIN
   RETURN NEW;
 END $$;
 CREATE TRIGGER db069_job_owner_scope_guard
-  BEFORE INSERT OR UPDATE OF college_id,owner_membership_id
+  BEFORE INSERT OR UPDATE OF college_id,owner_membership_id,status
   ON placement_jobs
   FOR EACH ROW EXECUTE FUNCTION db069_assert_job_owner_scope();
 
@@ -159,8 +201,8 @@ CREATE TRIGGER db069_lead_owner_serialization_guard
 -- Direct team-row deletion must preserve the same source rule as
 -- TpoTeamService.removeMember(null): a member cannot disappear while they own
 -- any recruiter lead or a live DRAFT/PUBLISHED drive.
-CREATE FUNCTION db069_guard_team_member_delete() RETURNS trigger
-LANGUAGE plpgsql AS $$
+CREATE FUNCTION db069_guard_team_member_identity_change() RETURNS trigger
+LANGUAGE plpgsql AS $
 BEGIN
   PERFORM db069_lock_owner_identity(OLD.college_id,OLD.membership_id);
 
@@ -170,7 +212,7 @@ BEGIN
      WHERE l.college_id = OLD.college_id
        AND l.owner_membership_id = OLD.membership_id
   ) THEN
-    RAISE EXCEPTION 'team member still owns recruiter leads; reassign before removal'
+    RAISE EXCEPTION 'team member still owns recruiter leads; reassign before identity change/removal'
       USING ERRCODE='23514',
             CONSTRAINT='db069_team_member_owned_leads';
   END IF;
@@ -182,16 +224,17 @@ BEGIN
        AND j.owner_membership_id = OLD.membership_id
        AND j.status IN ('DRAFT','PUBLISHED')
   ) THEN
-    RAISE EXCEPTION 'team member still owns live placement drives; reassign before removal'
+    RAISE EXCEPTION 'team member still owns live placement drives; reassign before identity change/removal'
       USING ERRCODE='23514',
             CONSTRAINT='db069_team_member_owned_drives';
   END IF;
 
-  RETURN OLD;
-END $$;
-CREATE TRIGGER db069_team_member_delete_guard
-  BEFORE DELETE ON placement_tpo_team_members
-  FOR EACH ROW EXECUTE FUNCTION db069_guard_team_member_delete();
+  RETURN CASE WHEN TG_OP='DELETE' THEN OLD ELSE NEW END;
+END $;
+CREATE TRIGGER db069_team_member_identity_guard
+  BEFORE UPDATE OF college_id,membership_id OR DELETE
+  ON placement_tpo_team_members
+  FOR EACH ROW EXECUTE FUNCTION db069_guard_team_member_identity_change();
 
 -- Source-equivalent transactional operation:
 -- * source team row is locked;
@@ -314,7 +357,8 @@ END $$;
 -- W01 / API cutover notes:
 -- 1) Add ownerMembershipId to canonical placementJobs Drizzle but do not
 --    replace createdByUserId; both fields have different semantics.
--- 2) TPO-created/copied jobs set owner to the acting membership.
+-- 2) TPO-created/copied jobs set owner to the acting membership. Live
+--    DRAFT/PUBLISHED rows are CHECK-constrained to have an owner.
 -- 3) Recruiter-request approval sets owner to the approving TPO membership.
 -- 4) Team removal must call the atomic function (or equivalent transaction),
 --    never DELETE the team row first.
