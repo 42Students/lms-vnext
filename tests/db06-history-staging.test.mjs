@@ -151,6 +151,7 @@ test("DB035 tenant actor checks require matching membership or persisted superad
   for (const message of [
     "grade event submission/learner tenant mismatch",
     "grade event actor membership mismatch",
+    "grade event actor lacks grading scope",
     "tenant grade event requires actor membership",
     "attendance event schedule/learner tenant mismatch",
     "attendance event actor membership mismatch",
@@ -160,6 +161,14 @@ test("DB035 tenant actor checks require matching membership or persisted superad
   }
   assert.ok(
     (sql.match(/role = 'SUPER_ADMIN'/g) ?? []).length >= 2,
+  );
+  assert.match(
+    sql,
+    /mr\.role = 'COLLEGE_ADMIN'/,
+  );
+  assert.match(
+    sql,
+    /mr\.role = 'FACULTY'[\s\S]*cta\.delivery_id = NEW\.delivery_id[\s\S]*cta\.ended_at IS NULL/,
   );
 });
 
