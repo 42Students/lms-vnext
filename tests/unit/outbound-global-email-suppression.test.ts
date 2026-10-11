@@ -70,6 +70,18 @@ describe("DB-050 legacy global EMAIL opt-out parity", () => {
     expect(first).not.toContain(address);
   });
 
+  it("keeps global opt-out identity stable when the envelope encryption key rotates", () => {
+    const email = intent();
+    const globalKey = key; // Dedicated DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64
+    const before = deriveGlobalEmailSuppressionHash(email, globalKey);
+    const envelopeBefore = sealOutboundDelivery(email, key);
+    const envelopeAfter = sealOutboundDelivery(email, differentKey);
+    const after = deriveGlobalEmailSuppressionHash(email, globalKey);
+    expect(before).toBe(after);
+    expect(envelopeBefore.requestDigest).not.toBe(envelopeAfter.requestDigest);
+    expect(envelopeBefore.recipientHash).not.toBe(envelopeAfter.recipientHash);
+  });
+
   it("does not treat SMS and WhatsApp organization-scoped suppressions as legacy global email opt-outs", () => {
     for (const channel of ["SMS", "WHATSAPP"]) {
       expect(deriveGlobalEmailSuppressionHash(
