@@ -49,7 +49,10 @@ DECLARE
   learner_membership_a uuid;
   user_learner_b uuid;
   learner_membership_b uuid;
+  user_learner_unsectioned uuid;
+  learner_membership_unsectioned uuid;
   learner_program_enrollment_a uuid;
+  learner_program_enrollment_unsectioned uuid;
   section_enrollment_a uuid;
   hall_a uuid;
   hall_owner_test uuid;
@@ -62,6 +65,7 @@ DECLARE
   progression_version bigint;
   progression_term integer;
   event_count integer;
+  current_student_count integer;
   ended_at_seen timestamptz;
   period_start date := current_date - 30;
   period_end date := current_date + 365;
@@ -229,6 +233,20 @@ BEGIN
   VALUES (learner_membership_a, 'LEARNER');
   INSERT INTO membership_roles(membership_id, role)
   VALUES (learner_membership_b, 'LEARNER');
+
+  INSERT INTO users(identity_uid, email, display_name)
+  VALUES (
+    'db02-learner-unsectioned-' || gen_random_uuid()::text,
+    'db02-learner-unsectioned-' || substr(gen_random_uuid()::text,1,8) || '@example.invalid',
+    'DB02 Unsectioned Learner'
+  ) RETURNING id INTO user_learner_unsectioned;
+
+  INSERT INTO college_memberships(user_id, college_id)
+  VALUES (user_learner_unsectioned, college_a)
+  RETURNING id INTO learner_membership_unsectioned;
+
+  INSERT INTO membership_roles(membership_id, role)
+  VALUES (learner_membership_unsectioned, 'LEARNER');
 
   INSERT INTO lecture_halls(college_id, department_id, name, capacity, room_type)
   VALUES (college_a, dept_a, 'DB02 Hall A', 120, 'LECTURE_HALL')
@@ -507,12 +525,77 @@ BEGIN
   VALUES (learner_membership_a, program_a, cohort_a)
   RETURNING id INTO learner_program_enrollment_a;
 
+  INSERT INTO learner_program_enrollments(membership_id, program_id, cohort_id)
+  VALUES (learner_membership_unsectioned, program_a, cohort_a)
+  RETURNING id INTO learner_program_enrollment_unsectioned;
+
   INSERT INTO section_enrollments(
     learner_enrollment_id, section_id, academic_period_id, status
   ) VALUES (
     learner_program_enrollment_a, section_a, period_a, 'ACTIVE'
   )
   RETURNING id INTO section_enrollment_a;
+
+  -- Legacy batch current_students counts learners actually attached to an ordinary class.
+  -- Canonical compatibility count therefore requires an active section enrollment and must
+  -- not count an active cohort enrollment that has not yet been placed into a section.
+  SELECT count(DISTINCT lpe.id)
+    INTO current_student_count
+    FROM learner_program_enrollments lpe
+    JOIN section_enrollments se
+      ON se.learner_enrollment_id = lpe.id
+     AND se.status = 'ACTIVE'
+    JOIN sections s
+      ON s.id = se.section_id
+     AND s.cohort_id = lpe.cohort_id
+     AND s.status = 'ACTIVE'
+   WHERE lpe.cohort_id = cohort_a
+     AND lpe.status = 'ACTIVE';
+
+  IF current_student_count <> 1 THEN
+    RAISE EXCEPTION 'current_students compatibility count included unsectioned learner: %',
+      current_student_count;
+  END IF;
+
+  -- Temporary suspension blocks access but does not academically withdraw the learner.
+  UPDATE college_memberships
+     SET status = 'SUSPENDED',
+         suspended_at = now(),
+         suspension_reason = 'DB02 learner suspension acceptance'
+   WHERE id = learner_membership_a;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM learner_program_enrollments
+     WHERE id = learner_program_enrollment_a AND status = 'ACTIVE'
+  ) OR NOT EXISTS (
+    SELECT 1 FROM section_enrollments
+     WHERE id = section_enrollment_a AND status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'temporary learner suspension incorrectly withdrew academic enrollment';
+  END IF;
+
+  SELECT count(DISTINCT lpe.id)
+    INTO current_student_count
+    FROM learner_program_enrollments lpe
+    JOIN section_enrollments se
+      ON se.learner_enrollment_id = lpe.id
+     AND se.status = 'ACTIVE'
+    JOIN sections s
+      ON s.id = se.section_id
+     AND s.cohort_id = lpe.cohort_id
+     AND s.status = 'ACTIVE'
+   WHERE lpe.cohort_id = cohort_a
+     AND lpe.status = 'ACTIVE';
+
+  IF current_student_count <> 1 THEN
+    RAISE EXCEPTION 'suspended but academically active learner disappeared from current_students';
+  END IF;
+
+  UPDATE college_memberships
+     SET status = 'ACTIVE',
+         suspended_at = NULL,
+         suspension_reason = NULL
+   WHERE id = learner_membership_a;
 
   failed := false;
   BEGIN
@@ -594,6 +677,58 @@ BEGIN
   ) VALUES (
     learner_program_enrollment_a, section_a_alt, period_a_alt, 'ACTIVE'
   );
+
+  DELETE FROM membership_roles
+   WHERE membership_id = learner_membership_a
+     AND role = 'LEARNER';
+
+  IF NOT EXISTS (
+    SELECT 1 FROM learner_program_enrollments
+     WHERE id = learner_program_enrollment_a
+       AND status = 'WITHDRAWN'
+       AND withdrawn_at IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'LEARNER role removal did not withdraw active program enrollment';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM section_enrollments
+     WHERE learner_enrollment_id = learner_program_enrollment_a
+       AND status = 'ACTIVE'
+  ) THEN
+    RAISE EXCEPTION 'LEARNER role removal left active section enrollment';
+  END IF;
+
+  SELECT count(DISTINCT lpe.id)
+    INTO current_student_count
+    FROM learner_program_enrollments lpe
+    JOIN section_enrollments se
+      ON se.learner_enrollment_id = lpe.id
+     AND se.status = 'ACTIVE'
+    JOIN sections s
+      ON s.id = se.section_id
+     AND s.cohort_id = lpe.cohort_id
+     AND s.status = 'ACTIVE'
+   WHERE lpe.cohort_id = cohort_a
+     AND lpe.status = 'ACTIVE';
+
+  IF current_student_count <> 0 THEN
+    RAISE EXCEPTION 'withdrawn learner or unsectioned learner still inflated current_students: %',
+      current_student_count;
+  END IF;
+
+  UPDATE college_memberships
+     SET status = 'ENDED'
+   WHERE id = learner_membership_unsectioned;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM learner_program_enrollments
+     WHERE id = learner_program_enrollment_unsectioned
+       AND status = 'WITHDRAWN'
+       AND withdrawn_at IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'membership END did not withdraw unsectioned active program enrollment';
+  END IF;
 
   -- -------------------------------------------------------------------------
   -- Cohort progression monotonicity + database-owned history
