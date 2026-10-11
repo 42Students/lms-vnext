@@ -25,6 +25,8 @@ It adds two proposed `BEFORE INSERT OR UPDATE` guards:
 1. **`course_offerings`** — course department college, cohort program department college, offering academic period college and cohort start/end period colleges must agree; the offering period must fall within the cohort's authored start/end date range. This mirrors the current `src/modules/courses/offering-service.ts#validateOfferingStructure` pre-insert source checks, but enforces them against direct privileged/seed SQL.
 2. **`course_section_deliveries`** — offering's cohort ID and academic period ID must exactly match the section's IDs; course/period/section-program college IDs also agree. Same college but different cohort or term is **not valid**. This mirrors `src/modules/courses/delivery-service.ts#createCourseSectionDelivery`.
 
+**New-INSERT lifecycle:** the proposed direct-SQL guard also mirrors the current app's create-time lifecycle restrictions: an offering needs ACTIVE course, PLANNED/ACTIVE cohort and a non-CLOSED period; a delivery needs ACTIVE offering, ACTIVE course and ACTIVE section. These checks are only on `TG_OP='INSERT'`. Existing historical rows are not retroactively forbidden when the term closes or a course/cohort/section is archived. State+ancestor races and actual PostgreSQL acceptance remain OPEN.
+
 Both guards request the shared DB05 child/order advisory key `605008003` and refuse unproven non-READ-COMMITTED writes (`25001`). Neither guard executes now. No FK/trigger can stop **later ancestor reparenting** unless the ancestor itself is guarded. Separate DB02 work may already own related course/cohort/period invariants; W01 must merge once and reject duplicated names or conflicting advisory locks.
 
 ### Critical failure/race acceptance (NOT EXECUTED)
@@ -68,7 +70,7 @@ psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 \
 
 If any mismatch count is nonzero, W01 should inspect the seeded data and rectify source/validation coherently. Installing a trigger does NOT repair historical bad rows, and a zero row-count is NOT proof of race safety or a passing two-session negative suite. The source preflight and its Node regression guards are **authored, not executed** in this GitHub-connected environment.
 
-**Separately executed source reference model:** `tests/db05-offering-delivery-reference.test.mjs` was executed on Node 22.16.0 with **19/19 PASS**, exact local/git blob `c73011e74df7dfd738c69445cf0ce88e11e4c6ac`. Execution log `docs/coordination/evidence/chat-06-db008-offering-delivery-reference-node-2026-10-11.md`. This proves only the pure modeled acceptance rules, not SQL triggers or actual API behavior.
+**Separately executed source reference model:** `tests/db05-offering-delivery-reference.test.mjs` was executed on Node 22.16.0 with **26/26 PASS**, exact local/git blob `b2ef07b1535082cbbf0b01391e15e8476eb372e5`. Execution log `docs/coordination/evidence/chat-06-db008-offering-delivery-source-model-v2-26-2026-10-11.md`. This proves only the pure modeled acceptance rules, not SQL triggers or actual API behavior.
 
 ## How W01 can validate *after* migration integration
 
