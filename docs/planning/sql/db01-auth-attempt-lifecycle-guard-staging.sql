@@ -10,8 +10,27 @@
 -- These invariants require a row-transition guard within the same UPDATE.
 
 CREATE OR REPLACE FUNCTION db01_auth_attempt_monotonic_guard()
-RETURNS trigger LANGUAGE plpgsql AS $$
+RETURNS trigger LANGUAGE plpgsql AS $
 BEGIN
+  -- A new challenge must be clean. The legacy source never creates an
+  -- already-verified/consumed OTP record or starts with spent retry slots.
+  -- Without INSERT coverage a direct SQL writer can fabricate terminal
+  -- challenge history while satisfying every row-level CHECK constraint.
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.verified_at IS NOT NULL
+       OR NEW.used_at IS NOT NULL
+       OR NEW.verification_attempts <> 0
+       OR NEW.resend_attempts <> 0
+       OR NEW.version <> 1
+       OR NEW.created_at > clock_timestamp()
+       OR NEW.expires_at <= clock_timestamp() THEN
+      RAISE EXCEPTION 'Auth attempt creation must start unused with fresh counters'
+        USING ERRCODE = '23514',
+              CONSTRAINT = 'db01_auth_attempt_creation_state_ck';
+    END IF;
+    RETURN NEW;
+  END IF;
+
   -- Challenge identity, scope, role, contact, and creation timestamp are
   -- immutable. Never rebind already-issued OTPs to another actor/college.
   IF NEW.id IS DISTINCT FROM OLD.id
@@ -90,7 +109,7 @@ END;
 $$;
 
 CREATE TRIGGER db01_auth_attempt_monotonic_trg
-BEFORE UPDATE ON identity_auth_attempts
+BEFORE INSERT OR UPDATE ON identity_auth_attempts
 FOR EACH ROW
 EXECUTE FUNCTION db01_auth_attempt_monotonic_guard();
 
