@@ -1137,7 +1137,11 @@
       "semanticVerification": "NOT_VERIFIED",
       "runtimeDatabaseVerification": "NOT_RUN",
       "producerConsumerVerification": "NOT_VERIFIED",
-      "sourceContractStatus": "LEGACY_FACULTY_OWNER_TEACHING_SCOPE_SOURCE_CONFIRMED"
+      "sourceContractStatus": "LEGACY_FACULTY_OWNER_TEACHING_SCOPE_SOURCE_CONFIRMED",
+      "sourceProducerEvidence": "42Students/lms@21bad59d: LessonContents.java @Column faculty_id Integer nullable; LessonContentsServiceImpl.createLessonContents lines ~140-149 overwrites facultyId for ordinary authenticated faculty; setLessonContents line 461 persists owner; updateLessonContent ~794-812 and deleteLessonContent ~1011-1026 compare owner vs trusted principal and also enforce teaching scope; admin faculty exception.",
+      "vnextConsumerGap": "vNext lesson_contents.created_by_user_id is creator provenance; current lesson-content-service.ts only uses delivery teaching-scope management, no persisted explicit faculty owner. Owner != creator and owner-specific authorization are not yet implemented.",
+      "proposedFacultyOwnerDraft": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql",
+      "sourceProducerConfidence": "SOURCE_CONFIRMED_WRITES_AND_AUTHORIZATION_NOT_RUNTIME_VERIFIED"
     },
     {
       "source": "lesson_contents.lesson_id",
@@ -1336,5 +1340,12 @@
       "Lesson active enabled independently default true on source create and only changed when supplied on source update"
     ],
     "verification": "SOURCE_ONLY; PG/API/browser/CI not run; no migration journal registration"
+  },
+  "latestChat6FacultyOwnerSourceReview": {
+    "reviewedOn": "2026-10-11",
+    "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    "sourceField": "lesson_contents.faculty_id",
+    "companion": "scripts/sql/db05-lesson-content-faculty-owner.draft.sql",
+    "status": "SOURCE_ONLY_NO_PG_OR_API_VERIFICATION"
   }
 }
