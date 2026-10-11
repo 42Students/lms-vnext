@@ -7466,29 +7466,32 @@
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
       "candidateVnextTables": [
-        "placement_tpo_college_settings"
+        "placement_tpo_trusted_domains"
       ],
       "mappingTarget": {
-        "table": "placement_tpo_college_settings",
-        "column": "trusted_domains",
-        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+        "table": "placement_tpo_trusted_domains",
+        "column": "domain",
+        "status": "REDESIGNED_NORMALIZED_SOURCE_REVIEWED_UNVERIFIED"
       },
-      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
-      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
-      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "semanticDefinition": "Source-active trusted recruiter company domains. Normalized per college because exact domain membership controls recruiter drive auto-approval after verification; no JSON blob is canonical in vNext.",
+      "tenantKey": "placement_tpo_trusted_domains.college_id",
+      "actorPermission": "Writer must satisfy DB09 active TPO actor scope for the college; exact domain match never grants trust across colleges.",
       "producerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
       ],
       "consumerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoDriveService.java",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
-      "status": "MAPPED",
+      "constraintAndLifecycleEvidence": "DB-034 normalizes lower/trimmed domains, enforces the frozen legacy domain shape and free-mail denylist, unique college/domain rows, and TPO writer scope. Runtime exact-domain auto-approval and PostgreSQL witnesses remain unverified.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "redesignEvidence": [
+        "docs/planning/sql/db09-tpo-settings-normalization-candidate.sql",
+        "docs/planning/db09-tpo-settings-normalization-2026-10-11.md"
+      ]
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-10",
@@ -7502,29 +7505,32 @@
         "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
       ],
       "candidateVnextTables": [
-        "placement_tpo_college_settings"
+        "placement_tpo_prep_courses"
       ],
       "mappingTarget": {
-        "table": "placement_tpo_college_settings",
-        "column": "prep_course_ids",
-        "status": "PROPOSED_SOURCE_REVIEWED_UNVERIFIED"
+        "table": "placement_tpo_prep_courses",
+        "column": "course_id",
+        "status": "REDESIGNED_NORMALIZED_SOURCE_REVIEWED_UNVERIFIED"
       },
-      "semanticDefinition": "Live college-wide TPO settings for templates, notification caps/toggles, trusted domains, prep inputs and branding. Later source additions split across DB04/DB08/DB09 and must not be silently dropped.",
-      "tenantKey": "placement_tpo_college_settings.college_id or owning parent",
-      "actorPermission": "Tenant/actor scope requires executed negative authorization and direct-SQL witnesses; source mapping alone is not permission proof.",
+      "semanticDefinition": "Source-active organization-level TPO prep-course selection used to compute learner readiness. Normalized to FK-backed course rows instead of unvalidated JSON IDs.",
+      "tenantKey": "placement_tpo_prep_courses.college_id with same-organization course scope",
+      "actorPermission": "Writer must satisfy DB09 active TPO actor scope; selected course must be active, in an unarchived department and an active college belonging to the settings college organization.",
       "producerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsService.java"
+        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java"
       ],
       "consumerPaths": [
-        "src/main/java/com/_42students/lms/service/tpo/TpoSettingsHubService.java",
+        "src/main/java/com/_42students/lms/service/tpo/TpoStudentsReadService.java",
         "src/db/schema/tpo-collaboration.ts"
       ],
-      "constraintAndLifecycleEvidence": "Exact frozen legacy DDL + active service producer/consumer compared with staged vNext collaboration schema. Identity remaps, DB constraints, privacy and runtime workflow remain unverified.",
-      "status": "MAPPED",
+      "constraintAndLifecycleEvidence": "DB-034 replaces raw prep-course JSON with a real courses(id) FK and same-organization trigger, preserving the legacy prepCourses(organizationId) selector. Runtime readiness cutover and PostgreSQL witnesses remain unverified.",
+      "status": "REDESIGNED",
       "dbTestEvidence": [],
       "workflowEvidence": [],
-      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5"
+      "reviewedAtLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "redesignEvidence": [
+        "docs/planning/sql/db09-tpo-settings-normalization-candidate.sql",
+        "docs/planning/db09-tpo-settings-normalization-2026-10-11.md"
+      ]
     },
     {
       "id": "DB09-TPO_COLLEGE_SETTINGS-11",
@@ -10024,11 +10030,16 @@
   "lastReview": {
     "worker": "CHAT_03",
     "date": "2026-10-11",
-    "scope": "prep_assignment.assessment_id final disposition",
-    "result": "Resolved final DB09 field blocker by retiring dormant generic assessment_id and keeping prep course-backed in greenfield vNext. Canonical DB09 is 279/279 disposition-reviewed with zero field-level BLOCKED rows; runtime verification remains 0.",
+    "scope": "tpo_college_settings trusted_domains_json + prep_course_ids_json normalized redesign",
+    "result": "Two previously JSON-mapped active fields moved to normalized relations. DB09 remains 279/279 disposition-reviewed with 0 runtime/workflow verified.",
     "evidence": [
-      "docs/planning/sql/db09-prep-bell-read-state-candidate.sql"
+      "docs/planning/sql/db09-tpo-settings-normalization-candidate.sql",
+      "docs/planning/db09-tpo-settings-normalization-2026-10-11.md",
+      "tests/db09-tpo-settings-normalization.test.mjs"
     ],
-    "commit": "ca86ade0b9971ce8c41724a5f85e10406f60d801"
+    "sourceConsumers": [
+      "TpoDriveService.isTrustedRecruiter",
+      "TpoStudentsReadService.prepAverages"
+    ]
   }
 }
