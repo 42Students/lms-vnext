@@ -84,7 +84,7 @@ test("DB052 row state machine versions lifecycle mutations exactly once", () => 
     "ADD COLUMN lifecycle_version integer NOT NULL DEFAULT 0",
     "new quiz must start DRAFT, unpublished, lifecycle version 0",
     "lifecycle version cannot change without lifecycle mutation",
-    "quiz lifecycle mutation requires next version",
+    "lifecycle_version is database-managed",
     "status and result visibility must transition separately",
     "cannot publish quiz after due time",
     "cannot publish quiz without scored questions",
@@ -189,5 +189,54 @@ test("DB052 lifecycle event and quiz retirement are append-only", () => {
   assert.match(
     sql,
     /quiz lifecycle history is append-only/,
+  );
+});
+
+
+test("DB052 staged Drizzle and SQL keep lifecycle booleans/actions aligned", () => {
+  for (const action of [
+    "BASELINE",
+    "CREATE",
+    "PUBLISH",
+    "UNPUBLISH",
+    "CLOSE",
+    "ARCHIVE",
+    "RESULTS_PUBLISH",
+    "RESULTS_UNPUBLISH",
+  ]) {
+    assert.ok(staged.includes(`'${action}'`), `staged missing ${action}`);
+    assert.ok(sql.includes(`'${action}'`), `sql missing ${action}`);
+  }
+
+  assert.match(
+    staged,
+    /boolean\("previous_results_published"\)/,
+  );
+  assert.match(
+    staged,
+    /boolean\("new_results_published"\)\.notNull\(\)/,
+  );
+  assert.doesNotMatch(
+    staged,
+    /integer\("previous_results_published"\)|integer\("new_results_published"\)/,
+  );
+});
+
+test("DB052 lifecycle version is database-managed on state mutations", () => {
+  assert.match(
+    sql,
+    /NEW\.lifecycle_version IS DISTINCT FROM OLD\.lifecycle_version[\s\S]*lifecycle_version is database-managed/,
+  );
+  assert.match(
+    sql,
+    /NEW\.lifecycle_version := OLD\.lifecycle_version \+ 1/,
+  );
+  assert.match(
+    contract,
+    /increments exactly once \*\*inside the database guard\*\*/,
+  );
+  assert.match(
+    contract,
+    /callers may not supply\/skip\/reuse lifecycle versions/,
   );
 });
