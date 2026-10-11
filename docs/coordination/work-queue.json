@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T21:41:00+05:30",
+  "updatedOn": "2026-10-12T00:42:19+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3792,6 +3792,51 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T21:41:00+05:30",
           "reason": "Chat 3 begins fixed-identity TPO preference and create/delete-only saved-view lifecycle guards."
+        }
+      ]
+    },
+    {
+      "id": "DB-065",
+      "phase": "DATABASE",
+      "title": "Fail-closed global DATABASE task and worker phase gate preflight",
+      "scope": "Create and independently execute a read-only six-worker DATABASE coordination preflight. Detect duplicate/missing task identities, phase inconsistencies, dependency cycles/unverified dependencies, unauthorized migration-integrator claims, simultaneous active claims, lane conflicts and unsupported source-only certification; never register migrations or promote a global phase.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "scripts/db065-database-phase-gate.mjs",
+        "tests/db065-database-phase-gate.test.mjs",
+        "docs/planning/db065-phase-gate-audit.md"
+      ],
+      "status": "PICKED",
+      "pickedBy": 5,
+      "pickedAt": "2026-10-12T00:42:19+05:30",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "latestEvidenceSha": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-12T00:42:19+05:30"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-12T00:42:19+05:30",
+          "reason": "New uncovered read-only coordination validation gap; no overlap with Chat 1 migration/schema writer."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-12T00:42:19+05:30",
+          "reason": "Chat 5 available checkpoint; CAS claim. Independent source tooling only; DB-020 remains dependency locked."
         }
       ]
     }
