@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11",
+  "updatedOn": "2026-10-11T21:12:00+05:30",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -3347,10 +3347,10 @@
         "tests/db09-recruiter-read-watermark.test.mjs"
       ],
       "status": "COMPLETED",
-      "latestEvidenceSha": "cdd35f51172a5a7f0c4ee0f9cfccbabbd860094c",
+      "latestEvidenceSha": "886f6256b54696e446b1f80ca9a7e6a448e1a294",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "DB-057 source/staging implementation complete. Recruiter notification read marker stays active-grant scoped, key identity is immutable, future watermark writes fail, and watermark regression fails. 5/5 exact committed source assertions executed in connector V8 and passed. Node test/registered migration/PostgreSQL/concurrency execution not claimed; COMPLETED not DONE_VERIFIED.",
+      "completionNote": "DB-057 source/staging implementation complete. Recruiter notification read marker stays active-grant scoped, key identity is immutable, future watermark writes fail, and watermark regression fails. 5/5 exact committed source assertions executed in connector V8 and passed. Node test/registered migration/PostgreSQL/concurrency execution not claimed; COMPLETED not DONE_VERIFIED. Shared candidate-SQL dollar-quoting regression was subsequently repaired by DB-060 (d860a4e264a4913d476b66ca1004178ded4ff379); current-main SQL passes the DB-060 all-function quoting guard.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T20:44:00+05:30",
       "startedAt": "2026-10-11T20:45:00+05:30",
@@ -3385,6 +3385,11 @@
           "status": "COMPLETED",
           "at": "2026-10-11T20:49:00+05:30",
           "reason": "Read watermark grant/future/monotonic/identity guards + audit/regression committed; 5/5 source assertions passed, PostgreSQL pending."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T21:12:00+05:30",
+          "reason": "Current-main staged SQL syntax evidence refreshed by DB-060 delimiter repair; original implementation history preserved."
         }
       ]
     },
@@ -3458,10 +3463,10 @@
         "tests/db09-secure-share-lifecycle.test.mjs"
       ],
       "status": "COMPLETED",
-      "latestEvidenceSha": "a0fb8ac04d80caaf8cdb71bebf54e1c8db0f027b",
+      "latestEvidenceSha": "886f6256b54696e446b1f80ca9a7e6a448e1a294",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": "DB-059 source/staging implementation complete. Secure share token/job/recipient/base-code/disclosure/expiry/creator contract is immutable after creation; only live email-code rotation and one-way non-future revocation are allowed. 5/5 exact committed source assertions executed in connector V8 and passed. Node test/registered migration/PostgreSQL/runtime public-share execution not claimed.",
+      "completionNote": "DB-059 source/staging implementation complete. Secure share token/job/recipient/base-code/disclosure/expiry/creator contract is immutable after creation; only live email-code rotation and one-way non-future revocation are allowed. 5/5 exact committed source assertions executed in connector V8 and passed. Node test/registered migration/PostgreSQL/runtime public-share execution not claimed. Shared candidate-SQL dollar-quoting regression was subsequently repaired by DB-060 (d860a4e264a4913d476b66ca1004178ded4ff379); current-main SQL passes the DB-060 all-function quoting guard.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T20:52:00+05:30",
       "startedAt": "2026-10-11T20:53:00+05:30",
@@ -3496,6 +3501,11 @@
           "status": "COMPLETED",
           "at": "2026-10-11T20:58:00+05:30",
           "reason": "Secure share lifecycle guard + audit/regression committed; 5/5 connector source assertions passed, PostgreSQL pending."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T21:12:00+05:30",
+          "reason": "Current-main staged SQL syntax evidence refreshed by DB-060 delimiter repair; original implementation history preserved."
         }
       ]
     },
@@ -3514,17 +3524,17 @@
         "docs/planning/db09-share-event-completeness-audit.md",
         "tests/db09-share-event-completeness.test.mjs"
       ],
-      "status": "IN_PROGRESS",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "886f6256b54696e446b1f80ca9a7e6a448e1a294",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "DB-060 source/staging implementation complete. Secure shares require exactly one CREATED and, when revoked, exactly one REVOKED event at transaction commit; lifecycle events are state/timestamp checked and use/delivery events cannot be appended after revoke/expiry. During the pass, four recently authored staged PL/pgSQL functions (DB-057/059/060) were found with single-dollar delimiters and repaired to valid $$ quoting. 16/16 staged functions now have valid quoting; 6/6 committed connector V8 source assertions pass. Node/PostgreSQL/migration execution not claimed.",
       "pickedBy": 3,
       "pickedAt": "2026-10-11T21:00:00+05:30",
       "startedAt": "2026-10-11T21:01:00+05:30",
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "completedBy": 3,
+      "completedAt": "2026-10-11T21:12:00+05:30",
+      "completionCommitSha": "886f6256b54696e446b1f80ca9a7e6a448e1a294",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -3548,6 +3558,11 @@
           "status": "IN_PROGRESS",
           "at": "2026-10-11T21:01:00+05:30",
           "reason": "Chat 3 begins deferred share CREATED/REVOKED event completeness guards and regression."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T21:12:00+05:30",
+          "reason": "Share lifecycle event completeness + state/timestamp guards committed; staged SQL quoting repaired; 6/6 source assertions pass, PostgreSQL pending."
         }
       ]
     }
