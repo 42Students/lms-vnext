@@ -96,6 +96,14 @@ test("DB06 same-offering and exact-delivery guards cover quiz and assignment his
     migration,
     /NEW\.points_awarded > max_points/,
   );
+  assert.match(
+    migration,
+    /Assignment with submissions cannot change max points/,
+  );
+  assert.match(
+    migration,
+    /UPDATE OF lesson_id, delivery_id, max_points ON course_assignments/,
+  );
 });
 
 test("DB06 grade-only corrections do not require a newly active learner enrollment", () => {
