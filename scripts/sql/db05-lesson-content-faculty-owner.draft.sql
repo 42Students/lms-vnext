@@ -52,6 +52,16 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  -- Paired with lesson content delivery scope and content order ancestors.
+  -- Explicit isolation/lock discipline reduces reparent/read skew. This
+  -- DOES NOT protect membership role/status changes: those need upstream
+  -- ownership locks and executable two-session acceptance separately.
+  IF current_setting('transaction_isolation') <> 'read committed' THEN
+    RAISE EXCEPTION 'lesson faculty owner write requires read committed isolation pending proof'
+      USING ERRCODE = '25001';
+  END IF;
+  PERFORM pg_advisory_xact_lock(605008003::bigint);
+
   SELECT department.college_id, period.college_id, offering.id,
          delivery.offering_id, section_period.college_id
     INTO course_college_id, period_college_id, content_offering_id,
