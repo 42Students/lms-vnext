@@ -1,0 +1,142 @@
+#!/usr/bin/env node
+// DB-019 source-level field ledger audit. NEVER certifies database runtime parity.
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+export const DOMAIN_SUFFIXES = Object.freeze([
+  'db00_historical_and_engine', 'db01_identity_and_tenancy',
+  'db02_academics_and_timetable', 'db03_groups_and_electives',
+  'db04_profiles_and_verification', 'db05_courses_and_content',
+  'db06_assessments_and_attendance', 'db07_projects',
+  'db08_placement_policy_and_outcomes', 'db09_tpo_and_recruiter_operations',
+  'db10_shared_operations',
+]);
+export const HISTORICAL_FLOOR = Object.freeze({ tables: 199, fields: 2829 });
+const LEDGER_PREFIX = 'docs/planning/db-pass4-columns-';
+const missing = value => typeof value !== 'string' || value.trim() === '';
+
+export function auditLedgers(inputs, { requireAllDomains = true, enforceFloor = true } = {}) {
+  const errors = [];
+  const tableOwners = new Map();
+  const fieldOwners = new Map();
+  const domainNames = new Set();
+  const statusCounts = {};
+  const perDomain = [];
+  let totalTables = 0, totalFields = 0, proposedMappings = 0;
+  let runtimeMappings = 0, sourceReviewed = 0, historicRetirementPending = 0;
+  let noSourceEvidence = 0;
+
+  if (!Array.isArray(inputs)) throw new TypeError('inputs must be an array of ledger entries');
+  const paths = new Set();
+  for (const entry of inputs) {
+    const filename = entry?.path;
+    const ledger = entry?.ledger;
+    if (missing(filename) || !ledger || typeof ledger !== 'object') {
+      errors.push({ code: 'INVALID_LEDGER_ENTRY', path: filename ?? null });
+      continue;
+    }
+    if (paths.has(filename)) errors.push({ code: 'DUPLICATE_LEDGER_PATH', path: filename });
+    paths.add(filename);
+    if (missing(ledger.domain)) {
+      errors.push({ code: 'MISSING_DOMAIN', path: filename });
+      continue;
+    }
+    if (domainNames.has(ledger.domain)) errors.push({ code: 'DUPLICATE_DOMAIN', domain: ledger.domain });
+    domainNames.add(ledger.domain);
+    if (!Array.isArray(ledger.tables)) {
+      errors.push({ code: 'MISSING_TABLE_LIST', path: filename });
+      continue;
+    }
+    const record = { domain: ledger.domain, tables: ledger.tables.length, fields: 0,
+      sourceReviewed: 0, proposedMappings: 0, runtimeMappings: 0,
+      retirementCandidatesPending: 0, reviewStatuses: {} };
+    totalTables += ledger.tables.length;
+    for (const table of ledger.tables) {
+      const tableName = table?.table;
+      if (missing(tableName) || !Array.isArray(table?.rows)) {
+        errors.push({ code: 'INVALID_TABLE', domain: ledger.domain, table: tableName ?? null });
+        continue;
+      }
+      if (tableOwners.has(tableName)) errors.push({ code: 'DUPLICATE_TABLE_OWNER', table: tableName,
+        first: tableOwners.get(tableName), second: ledger.domain });
+      else tableOwners.set(tableName, ledger.domain);
+      if (table.sourceFieldCount !== table.rows.length) errors.push({ code: 'TABLE_FIELD_COUNT_MISMATCH',
+        table: tableName, declared: table.sourceFieldCount, actual: table.rows.length });
+      record.fields += table.rows.length;
+      totalFields += table.rows.length;
+      for (const row of table.rows) {
+        const key = (row?.legacyTable ?? '') + '.' + (row?.legacyColumn ?? '');
+        if (row?.legacyTable !== tableName || missing(row?.legacyColumn) || missing(row?.sourceType)) {
+          errors.push({ code: 'INVALID_FIELD_IDENTITY', table: tableName, key });
+          continue;
+        }
+        if (fieldOwners.has(key)) errors.push({ code: 'DUPLICATE_FIELD_OWNER', key,
+          first: fieldOwners.get(key), second: ledger.domain });
+        else fieldOwners.set(key, ledger.domain);
+        const status = row.reviewStatus || 'UNCLASSIFIED';
+        record.reviewStatuses[status] = (record.reviewStatuses[status] || 0) + 1;
+        statusCounts[status] = (statusCounts[status] || 0) + 1;
+        if (status.startsWith('SOURCE_REVIEWED_')) { record.sourceReviewed++; sourceReviewed++; }
+        if (row.proposedVnextTargets?.length || row.proposedSemanticMapping) {
+          record.proposedMappings++; proposedMappings++;
+        }
+        if (status === 'CLASSIFY_HISTORIC_RETIREMENT') {
+          record.retirementCandidatesPending++; historicRetirementPending++;
+        }
+        if (!row.sourceEvidence) noSourceEvidence++;
+        if (row.verifiedMapping !== null && row.verifiedMapping !== undefined) {
+          record.runtimeMappings++; runtimeMappings++;
+          if (!row.validationEvidence || /source[- ]only|not (?:runtime|postgres)|pending/i.test(row.validationEvidence))
+            errors.push({ code: 'UNSUPPORTED_VERIFIED_MAPPING', key });
+        }
+        if (/(?:DONE_VERIFIED|WORKFLOW_VERIFIED|DB_TESTED)/.test(status) &&
+            (row.verifiedMapping == null || !row.validationEvidence))
+          errors.push({ code: 'VERIFIED_STATUS_WITHOUT_EVIDENCE', key, status });
+      }
+    }
+    if (ledger.counts?.tables !== record.tables || ledger.counts?.fields !== record.fields)
+      errors.push({ code: 'LEDGER_COUNTS_MISMATCH', domain: ledger.domain,
+        declared: ledger.counts, actual: { tables: record.tables, fields: record.fields } });
+    perDomain.push(record);
+  }
+  if (requireAllDomains) for (const suffix of DOMAIN_SUFFIXES) {
+    const filename = LEDGER_PREFIX + suffix + '.json';
+    if (!paths.has(filename)) errors.push({ code: 'MISSING_DOMAIN_LEDGER', path: filename });
+  }
+  if (enforceFloor && (totalTables < HISTORICAL_FLOOR.tables || totalFields < HISTORICAL_FLOOR.fields))
+    errors.push({ code: 'HISTORICAL_INVENTORY_REGRESSION', floor: HISTORICAL_FLOOR,
+      actual: { tables: totalTables, fields: totalFields } });
+  return {
+    verification: 'SOURCE_LEDGER_INTEGRITY_ONLY_NOT_POSTGRES_ACCEPTANCE',
+    sourceInventoryIntegrity: errors.length === 0 ? 'PASS' : 'FAIL',
+    databaseParityVerified: false,
+    counts: { domains: perDomain.length, tables: totalTables, fields: totalFields,
+      uniqueTables: tableOwners.size, uniqueFields: fieldOwners.size,
+      sourceReviewed, proposedMappings, runtimeMappings, historicRetirementPending,
+      rowsMissingSourceEvidence: noSourceEvidence },
+    statusCounts, perDomain, errors,
+  };
+}
+
+export function auditCheckout(root) {
+  const inputs = DOMAIN_SUFFIXES.map(suffix => {
+    const filename = LEDGER_PREFIX + suffix + '.json';
+    const full = path.join(root, filename);
+    if (!fs.existsSync(full)) return { path: filename, ledger: null };
+    return { path: filename, ledger: JSON.parse(fs.readFileSync(full, 'utf8')) };
+  });
+  return auditLedgers(inputs);
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  try {
+    const root = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+    const report = auditCheckout(root);
+    console.log(JSON.stringify(report, null, 2));
+    if (report.errors.length) process.exitCode = 2;
+  } catch (error) {
+    console.error(error instanceof Error ? error.stack : error);
+    process.exitCode = 1;
+  }
+}
