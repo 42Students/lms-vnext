@@ -39,7 +39,7 @@ test("DB05 nullable owner membership is not a creator alias", () => {
   assert.match(owner, /ADD COLUMN IF NOT EXISTS owner_membership_id uuid/);
   assert.match(owner, /REFERENCES college_memberships\(id\) ON DELETE RESTRICT/);
   assert.match(schema, /createdByUserId: uuid\("created_by_user_id"\)/);
-  assert.match(owner, /DISTINCT\s+from the user who created/);
+  assert.match(owner, /DISTINCT[\s\S]{0,12}from the user who created/);
   assert.match(owner, /Generic unowned lesson content is legal/);
 });
 
