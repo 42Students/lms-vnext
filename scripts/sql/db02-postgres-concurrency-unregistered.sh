@@ -32,8 +32,11 @@ COLLEGE_ID="$(new_uuid)"
 DEPT_ID="$(new_uuid)"
 PROGRAM_ID="$(new_uuid)"
 PERIOD_ID="$(new_uuid)"
+ALT_PERIOD_ID="$(new_uuid)"
 COHORT_ID="$(new_uuid)"
 SECTION_ID="$(new_uuid)"
+RACE_SECTION_A_ID="$(new_uuid)"
+RACE_SECTION_B_ID="$(new_uuid)"
 USER_ID="$(new_uuid)"
 MEMBERSHIP_ID="$(new_uuid)"
 HALL_ID="$(new_uuid)"
@@ -45,8 +48,11 @@ psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
   -v dept_id="$DEPT_ID" \
   -v program_id="$PROGRAM_ID" \
   -v period_id="$PERIOD_ID" \
+  -v alt_period_id="$ALT_PERIOD_ID" \
   -v cohort_id="$COHORT_ID" \
   -v section_id="$SECTION_ID" \
+  -v race_section_a_id="$RACE_SECTION_A_ID" \
+  -v race_section_b_id="$RACE_SECTION_B_ID" \
   -v user_id="$USER_ID" \
   -v membership_id="$MEMBERSHIP_ID" \
   -v hall_id="$HALL_ID" <<'SQL'
@@ -68,6 +74,12 @@ VALUES (
   current_date - 30, current_date + 365, 'ACTIVE'
 );
 
+INSERT INTO academic_periods(id, college_id, name, code, start_date, end_date, status)
+VALUES (
+  :'alt_period_id', :'college_id', :'run_tag' || ' alt period', :'run_tag' || '-alt-period',
+  current_date - 30, current_date + 365, 'ACTIVE'
+);
+
 INSERT INTO cohorts(
   id, program_id, name, code, start_period_id, expected_end_period_id, status,
   start_date, end_date
@@ -81,6 +93,20 @@ INSERT INTO sections(
 ) VALUES (
   :'section_id', :'cohort_id', :'period_id', :'run_tag' || ' section',
   :'run_tag' || '-section', 60, 0
+);
+
+INSERT INTO sections(
+  id, cohort_id, academic_period_id, name, code, capacity, minimum_capacity
+) VALUES (
+  :'race_section_a_id', :'cohort_id', :'period_id', :'run_tag' || ' race section A',
+  :'run_tag' || '-race-a', 60, 0
+);
+
+INSERT INTO sections(
+  id, cohort_id, academic_period_id, name, code, capacity, minimum_capacity
+) VALUES (
+  :'race_section_b_id', :'cohort_id', :'period_id', :'run_tag' || ' race section B',
+  :'run_tag' || '-race-b', 60, 0
 );
 
 INSERT INTO users(id, identity_uid, email, display_name)
@@ -111,7 +137,7 @@ echo "Fixture committed: $RUN_TAG"
 # ---------------------------------------------------------------------------
 PROMOTE_A="$(mktemp)"
 PROMOTE_B="$(mktemp)"
-trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}"' EXIT
+trap 'rm -f "$PROMOTE_A" "$PROMOTE_B" "${BOOK_A:-}" "${ARCHIVE_B:-}" "${ARCHIVE_A:-}" "${BOOK_B:-}" "${HISTORY_A:-}" "${MOVE_B:-}" "${MOVE_A:-}" "${HISTORY_B:-}"' EXIT
 
 (
   psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v cohort_id="$COHORT_ID" -v period_id="$PERIOD_ID" <<'SQL'
@@ -280,5 +306,120 @@ if [[ "$HALL_STATUS" != "ACTIVE" ]]; then
 fi
 
 echo "PASS hall race B: booking winner kept hall ACTIVE and archive was rejected"
+
+# ---------------------------------------------------------------------------
+# Race 3A: history insert obtains SHARE first -> section reparent must block,
+# then reject after the history transaction commits.
+# ---------------------------------------------------------------------------
+HISTORY_A="$(mktemp)"
+MOVE_B="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v section_id="$RACE_SECTION_A_ID" <<'SQL'
+BEGIN;
+INSERT INTO section_schedule_events(section_id, title, starts_at, ends_at)
+VALUES (
+  :'section_id', 'db02 history-first event',
+  date_trunc('day', now()) + interval '10 days 09 hours',
+  date_trunc('day', now()) + interval '10 days 10 hours'
+);
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$HISTORY_A" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1   -v section_id="$RACE_SECTION_A_ID" -v alt_period_id="$ALT_PERIOD_ID" <<'SQL' >"$MOVE_B" 2>&1
+UPDATE sections
+   SET academic_period_id = :'alt_period_id'
+ WHERE id = :'section_id';
+SQL
+MOVE_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$MOVE_STATUS" -eq 0 ]]; then
+  echo "Section history-first race failed: reparent unexpectedly succeeded" >&2
+  cat "$MOVE_B" >&2
+  exit 1
+fi
+
+RACE_A_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1   -v section_id="$RACE_SECTION_A_ID" -v period_id="$PERIOD_ID" <<'SQL'
+SELECT
+  (academic_period_id = :'period_id')::int || ':' ||
+  (SELECT count(*) FROM section_schedule_events e WHERE e.section_id = s.id)
+FROM sections s
+WHERE id = :'section_id';
+SQL
+)"
+
+if [[ "$RACE_A_STATE" != "1:1" ]]; then
+  echo "Section history-first final state mismatch: $RACE_A_STATE" >&2
+  exit 1
+fi
+
+echo "PASS section race A: committed history prevented structural reparent"
+
+# ---------------------------------------------------------------------------
+# Race 3B: reparent obtains NO KEY UPDATE first -> history insert must block,
+# then succeed against the newly committed section parent. Both commits are valid
+# because history is created only after the structural move is visible.
+# ---------------------------------------------------------------------------
+MOVE_A="$(mktemp)"
+HISTORY_B="$(mktemp)"
+
+(
+  psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1     -v section_id="$RACE_SECTION_B_ID" -v alt_period_id="$ALT_PERIOD_ID" <<'SQL'
+BEGIN;
+UPDATE sections
+   SET academic_period_id = :'alt_period_id'
+ WHERE id = :'section_id';
+SELECT pg_sleep(3);
+COMMIT;
+SQL
+) >"$MOVE_A" 2>&1 &
+PID_A=$!
+
+sleep 0.5
+
+set +e
+psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -v section_id="$RACE_SECTION_B_ID" <<'SQL' >"$HISTORY_B" 2>&1
+INSERT INTO section_schedule_events(section_id, title, starts_at, ends_at)
+VALUES (
+  :'section_id', 'db02 move-first event',
+  date_trunc('day', now()) + interval '11 days 09 hours',
+  date_trunc('day', now()) + interval '11 days 10 hours'
+);
+SQL
+HISTORY_STATUS=$?
+set -e
+
+wait "$PID_A"
+
+if [[ "$HISTORY_STATUS" -ne 0 ]]; then
+  echo "Section move-first race failed: history insert did not succeed after reparent" >&2
+  cat "$HISTORY_B" >&2
+  exit 1
+fi
+
+RACE_B_STATE="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1   -v section_id="$RACE_SECTION_B_ID" -v alt_period_id="$ALT_PERIOD_ID" <<'SQL'
+SELECT
+  (academic_period_id = :'alt_period_id')::int || ':' ||
+  (SELECT count(*) FROM section_schedule_events e WHERE e.section_id = s.id)
+FROM sections s
+WHERE id = :'section_id';
+SQL
+)"
+
+if [[ "$RACE_B_STATE" != "1:1" ]]; then
+  echo "Section move-first final state mismatch: $RACE_B_STATE" >&2
+  exit 1
+fi
+
+echo "PASS section race B: reparent committed before serialized history insert"
 echo "DB02 concurrency acceptance PASS"
 echo "Fixture rows are intentionally left in this disposable database under tag: $RUN_TAG"

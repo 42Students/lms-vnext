@@ -25,7 +25,9 @@ DECLARE
   period_a uuid;
   period_b uuid;
   period_a_outside uuid;
+  period_a_alt uuid;
   cohort_a uuid;
+  cohort_a2 uuid;
   cohort_b uuid;
   term_a1 uuid;
   term_a2 uuid;
@@ -33,6 +35,8 @@ DECLARE
   course_elective_a uuid;
   course_b uuid;
   section_a uuid;
+  section_a2 uuid;
+  section_a_alt uuid;
   section_b uuid;
   elective_offering_a uuid;
   delivery_a uuid;
@@ -41,7 +45,14 @@ DECLARE
   faculty_membership_a uuid;
   user_faculty_b uuid;
   faculty_membership_b uuid;
+  user_learner_a uuid;
+  learner_membership_a uuid;
+  user_learner_b uuid;
+  learner_membership_b uuid;
+  learner_program_enrollment_a uuid;
+  section_enrollment_a uuid;
   hall_a uuid;
+  hall_owner_test uuid;
   assoc_a uuid;
   teaching_a uuid;
   section_faculty_a uuid;
@@ -103,6 +114,13 @@ BEGIN
           period_end + 1, period_end + 90, 'ACTIVE')
   RETURNING id INTO period_a_outside;
 
+  INSERT INTO academic_periods(college_id, name, code, start_date, end_date, status)
+  VALUES (
+    college_a, 'DB02 Alternate Period A', 'DB02-A-ALT-' || substr(gen_random_uuid()::text,1,8),
+    period_start + 60, LEAST(period_end, period_start + 120), 'ACTIVE'
+  )
+  RETURNING id INTO period_a_alt;
+
   INSERT INTO courses(department_id, name, code)
   VALUES (dept_a, 'DB02 Core A', 'DB02-CORE-A') RETURNING id INTO course_core_a;
   INSERT INTO courses(department_id, name, code)
@@ -123,6 +141,12 @@ BEGIN
   VALUES (program_a, 'DB02 Cohort A', 'DB02-CA', period_a, period_a, 'ACTIVE',
           period_start, period_end)
   RETURNING id INTO cohort_a;
+
+  INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status,
+                      start_date, end_date)
+  VALUES (program_a, 'DB02 Cohort A2', 'DB02-CA2', period_a, period_a, 'ACTIVE',
+          period_start, period_end)
+  RETURNING id INTO cohort_a2;
 
   INSERT INTO cohorts(program_id, name, code, start_period_id, expected_end_period_id, status,
                       start_date, end_date)
@@ -152,6 +176,14 @@ BEGIN
           'DB02 cross-tenant section', period_start, period_end)
   RETURNING id INTO section_b;
 
+  INSERT INTO sections(cohort_id, academic_period_id, name, code, capacity, minimum_capacity)
+  VALUES (cohort_a, period_a, 'Section A2', 'DB02-SEC-A2', 60, 0)
+  RETURNING id INTO section_a2;
+
+  INSERT INTO sections(cohort_id, academic_period_id, name, code, capacity, minimum_capacity)
+  VALUES (cohort_a, period_a_alt, 'Section A Alt', 'DB02-SEC-A-ALT', 60, 0)
+  RETURNING id INTO section_a_alt;
+
   INSERT INTO users(identity_uid, email, display_name)
   VALUES ('db02-fac-a-' || gen_random_uuid()::text,
           'db02-fac-a-' || substr(gen_random_uuid()::text,1,8) || '@example.invalid',
@@ -174,13 +206,91 @@ BEGIN
   INSERT INTO membership_roles(membership_id, role)
   VALUES (faculty_membership_b, 'FACULTY');
 
+  INSERT INTO users(identity_uid, email, display_name)
+  VALUES (
+    'db02-learner-a-' || gen_random_uuid()::text,
+    'db02-learner-a-' || substr(gen_random_uuid()::text,1,8) || '@example.invalid',
+    'DB02 Learner A'
+  ) RETURNING id INTO user_learner_a;
+
+  INSERT INTO users(identity_uid, email, display_name)
+  VALUES (
+    'db02-learner-b-' || gen_random_uuid()::text,
+    'db02-learner-b-' || substr(gen_random_uuid()::text,1,8) || '@example.invalid',
+    'DB02 Learner B'
+  ) RETURNING id INTO user_learner_b;
+
+  INSERT INTO college_memberships(user_id, college_id)
+  VALUES (user_learner_a, college_a) RETURNING id INTO learner_membership_a;
+  INSERT INTO college_memberships(user_id, college_id)
+  VALUES (user_learner_b, college_b) RETURNING id INTO learner_membership_b;
+
+  INSERT INTO membership_roles(membership_id, role)
+  VALUES (learner_membership_a, 'LEARNER');
+  INSERT INTO membership_roles(membership_id, role)
+  VALUES (learner_membership_b, 'LEARNER');
+
   INSERT INTO lecture_halls(college_id, department_id, name, capacity, room_type)
   VALUES (college_a, dept_a, 'DB02 Hall A', 120, 'LECTURE_HALL')
   RETURNING id INTO hall_a;
 
+  INSERT INTO lecture_halls(college_id, department_id, name, capacity, room_type)
+  VALUES (college_a, NULL, 'DB02 Owner Test Hall', 30, 'CLASSROOM')
+  RETURNING id INTO hall_owner_test;
+
   -- -------------------------------------------------------------------------
   -- Stable tenant ownership + cohort/section period scope
   -- -------------------------------------------------------------------------
+  failed := false;
+  BEGIN
+    UPDATE academic_periods SET college_id = college_b WHERE id = period_a_alt;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'academic period college ownership changed in place';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE college_memberships SET college_id = college_b WHERE id = learner_membership_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'membership college ownership changed in place';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE lecture_halls SET college_id = college_b WHERE id = hall_owner_test;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'lecture hall college ownership changed in place';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE cohorts SET start_period_id = period_a_alt WHERE id = cohort_a2;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cohort start-period identity changed in place';
+  END IF;
+
+  failed := false;
+  BEGIN
+    UPDATE program_terms SET term_number = 3 WHERE id = term_a1;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'program-term ordinal identity changed in place';
+  END IF;
+
   failed := false;
   BEGIN
     UPDATE departments SET college_id = college_b WHERE id = dept_a;
@@ -367,6 +477,123 @@ BEGIN
   IF NOT failed THEN
     RAISE EXCEPTION 'reversed section lifecycle dates were accepted';
   END IF;
+
+  -- -------------------------------------------------------------------------
+  -- Learner program/section enrollment tenant + historical identity
+  -- -------------------------------------------------------------------------
+  failed := false;
+  BEGIN
+    INSERT INTO learner_program_enrollments(membership_id, program_id, cohort_id)
+    VALUES (faculty_membership_a, program_a, cohort_a);
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'FACULTY-only membership was accepted as learner enrollment';
+  END IF;
+
+  failed := false;
+  BEGIN
+    INSERT INTO learner_program_enrollments(membership_id, program_id, cohort_id)
+    VALUES (learner_membership_b, program_a, cohort_a);
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'cross-college learner program enrollment was accepted';
+  END IF;
+
+  INSERT INTO learner_program_enrollments(membership_id, program_id, cohort_id)
+  VALUES (learner_membership_a, program_a, cohort_a)
+  RETURNING id INTO learner_program_enrollment_a;
+
+  INSERT INTO section_enrollments(
+    learner_enrollment_id, section_id, academic_period_id, status
+  ) VALUES (
+    learner_program_enrollment_a, section_a, period_a, 'ACTIVE'
+  )
+  RETURNING id INTO section_enrollment_a;
+
+  failed := false;
+  BEGIN
+    INSERT INTO section_enrollments(
+      learner_enrollment_id, section_id, academic_period_id, status
+    ) VALUES (
+      learner_program_enrollment_a, section_b, period_b, 'ACTIVE'
+    );
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'learner was enrolled into section from another cohort/college';
+  END IF;
+
+  -- Same-program cohort change passes tenant/program scope but must fail immutable identity.
+  failed := false;
+  BEGIN
+    UPDATE learner_program_enrollments
+       SET cohort_id = cohort_a2
+     WHERE id = learner_program_enrollment_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'learner program enrollment parent identity was rewritten';
+  END IF;
+
+  -- Same-cohort/same-period section change passes scope but must fail historical identity.
+  failed := false;
+  BEGIN
+    UPDATE section_enrollments
+       SET section_id = section_a2
+     WHERE id = section_enrollment_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'section enrollment historical parent identity was rewritten';
+  END IF;
+
+  -- Section A already has enrollment history. Alternate period is same college and within
+  -- cohort window, so canonical scope allows it; the extension must reject silent reparent.
+  failed := false;
+  BEGIN
+    UPDATE sections
+       SET academic_period_id = period_a_alt
+     WHERE id = section_a;
+  EXCEPTION WHEN check_violation THEN
+    failed := true;
+  END;
+  IF NOT failed THEN
+    RAISE EXCEPTION 'section with academic history was silently reparented';
+  END IF;
+
+  -- A history-free section may move inside the same tenant/window.
+  UPDATE sections
+     SET academic_period_id = period_a_alt
+   WHERE id = section_a2;
+
+  IF NOT EXISTS (
+    SELECT 1
+      FROM sections
+     WHERE id = section_a2
+       AND academic_period_id = period_a_alt
+  ) THEN
+    RAISE EXCEPTION 'history-free same-college section reparent did not succeed';
+  END IF;
+
+  -- Explicit transfer creates new history instead of mutating the prior row.
+  UPDATE section_enrollments
+     SET status = 'MOVED',
+         ended_at = now(),
+         updated_at = now()
+   WHERE id = section_enrollment_a;
+
+  INSERT INTO section_enrollments(
+    learner_enrollment_id, section_id, academic_period_id, status
+  ) VALUES (
+    learner_program_enrollment_a, section_a_alt, period_a_alt, 'ACTIVE'
+  );
 
   -- -------------------------------------------------------------------------
   -- Cohort progression monotonicity + database-owned history

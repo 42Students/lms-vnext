@@ -62,8 +62,7 @@ learner record. If no detached integration remains in scope, the 22 fields can b
 retired as historical duplicate/snapshot state once DB01/DB02/product ownership signs
 off.
 
-The remaining proof gap is specifically **detached/external integration**, not an
-unexplored in-repo Java/UI producer.
+The remaining proof gap is specifically a **detached/external integration outside the connected 42Students GitHub organization**, not an unexplored company repository or in-repo Java/UI producer.
 
 ## approver_id_card — 11 fields
 
@@ -99,6 +98,25 @@ old URL/object/encoding fields merely because they remain in the physical snapsh
 If a current assessment identity-card feature is discovered outside the repository,
 it needs a fresh private-object/receipt contract rather than automatic resurrection of
 this historical table.
+
+## Connected-organization detached-service sweep
+
+A follow-up search across the connected **42Students GitHub organization**, not
+just `lms` / `lms2-fe`, returned zero indexed code matches for:
+
+- `student_registration`
+- `crm_sync`
+- `registration_number`
+- `approver_id_card`
+- `assigned_exam`
+
+Repository-name/description searches for likely separate CRM or exam services
+also returned no connected 42Students repository matches.
+
+This does not rule out infrastructure or a service outside the connected
+GitHub organization, but it narrows both retirement uncertainties from
+"possibly another company repo" to "possibly an externally hosted/untracked
+integration."
 
 ## What this review does and does not prove
 
