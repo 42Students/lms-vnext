@@ -560,6 +560,24 @@ CREATE TRIGGER db09_student_note_principal_scope_guard
   ON placement_tpo_student_notes
   FOR EACH ROW EXECUTE FUNCTION db09_assert_student_note_principals();
 
+CREATE FUNCTION db09_restrict_student_note_history() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.created_at > statement_timestamp() + interval '5 minutes' THEN
+      RAISE EXCEPTION 'TPO student note creation timestamp is unreasonably future dated'
+        USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+  END IF;
+
+  RAISE EXCEPTION 'TPO student note history is append-only'
+    USING ERRCODE = '23514';
+END $$;
+CREATE TRIGGER db09_student_note_history_guard
+  BEFORE INSERT OR UPDATE OR DELETE ON placement_tpo_student_notes
+  FOR EACH ROW EXECUTE FUNCTION db09_restrict_student_note_history();
+
 CREATE FUNCTION db09_assert_team_member_principal_scope() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
