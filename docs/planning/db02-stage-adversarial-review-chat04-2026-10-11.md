@@ -148,3 +148,18 @@ Three new/update source contract test suites were reconciled after deletion of t
 **Source inspection:** 12/12 static JS structural assertions true (no Node test runner). **Executed Node tests: 0; disposable PostgreSQL tests: 0; production database tests: 0; registered migration: 0.**
 
 **Remaining integration decisions:** preserve service-level optimistic compare-and-set `WHERE cohort_id=? AND version=?` so two simultaneous user requests do not *both* advance term; do not infer expected user version from database state alone. Keep outgoing teaching assignment deactivation atomic in the future API implementation. Test row-lock contention, deadlock behavior, disabled semester transitions and concurrent course-map deletion on disposable PostgreSQL before DB-005 closure. Do not overrestrict historical read after admins later deactivate a previously delivered semester.
+
+## DB02-S13 · HIGH · Mutating materialized CORE curriculum type breaks existing offerings
+
+**Found by Chat 4:** `program_term_courses.type` was editable after a `CORE` offering had already been created referencing the row via `course_offerings.program_term_course_id`. The canonical `db02_guard_course_offering_program_term_scope` verifies `ptc.type = 'CORE'` on offering INSERT/update, but does not fire when only the parent curriculum's type changes. A foreign key protects deletion/key moves, **not non-key type mutation**. Result: direct SQL could leave historic CORE offerings referencing ELECTIVE curriculum rows.
+
+**Remedy in canonical staging:** `db02_guard_program_term_course_type_history` and `db02_program_term_course_type_history_guard` reject only a materialized type change, preserving legacy-supported edits to credits/display order and allowing edits to unused curriculum rows. The existing CORE offering guard takes `FOR SHARE` on that parent row, serializing type updates and offering creation.
+
+**Authored acceptance:**
+- `scripts/sql/db02-curriculum-type-history-acceptance-unregistered.sql` — rollback-only fixture, unused curriculum retyping allowed, 0-credit CORE offering, metadata editing allowed, historical CORE type change denied even when offering is ARCHIVED.
+- `scripts/sql/db02-curriculum-type-history-concurrency-unregistered.sh` — two-session curriculum-edit-first and offering-insert-first races, checking exact error messages and final row states.
+- `tests/db02-curriculum-type-history-contract.test.mjs` — six source-only test cases.
+
+**Consolidation:** Chat 4 folded S13 and S12 promotion-readiness into `scripts/sql/db02-academic-progression-and-rooms-staging.sql` at commit `087013aaa8942532f063716d18286b9241ab3584`, with **51 structurally paired functions and 59 distinct trigger names**. The independent proposal drafts are superseded and must **NOT** be applied after canonical SQL. The updated tests read canonical directly, and disposable acceptance scripts target that canonical stage. Chat 1 alone registers numbered migration/schema-barrel and runs PostgreSQL.
+
+**Status:** source inspection only; **0 PostgreSQL executions/0 runtime-verified DB02 fields**. Must test actual migration, both concurrency orderings, historical read consistency and role privileges before DONE_VERIFIED.
