@@ -78,6 +78,7 @@ test("grant/relationship/profile company mismatch and reassignment fail at Postg
     const relationshipB = randomUUID();
     const grantA = randomUUID();
     let created = false;
+    let racer = null;
     const failCheck = async (promise, expected) => assert.rejects(promise, (error) => {
       assert.equal(error.code, "23514", String(error));
       if (expected) assert.equal(error.constraint, expected);
@@ -170,7 +171,74 @@ test("grant/relationship/profile company mismatch and reassignment fail at Postg
         ),
         "db09_recruiter_profile_grant_company_immutable",
       );
+
+      // Adversarial two-client witness (1): parent company reassignment wins
+      // its row lock before a competing grant INSERT can inspect the parent.
+      // The insert must see the final company and reject the old-company link.
+      racer = new pg.default.Client({
+        connectionString: process.env.TEST_DATABASE_URL,
+        application_name: "db09-grant-company-racer",
+      });
+      await racer.connect();
+      await racer.query("SET search_path TO " + qSchema + ", pg_catalog");
+      await racer.query("SET statement_timeout = '10000ms'");
+      const raceUser1 = randomUUID();
+      const raceRelationship1 = randomUUID();
+      await client.query(
+        "INSERT INTO placement_recruiter_profiles(user_id,company_id) VALUES ($1,$2)",
+        [raceUser1,companyA],
+      );
+      await client.query(
+        "INSERT INTO placement_company_relationships(id,company_id) VALUES ($1,$2)",
+        [raceRelationship1,companyA],
+      );
+      await client.query("BEGIN");
+      try {
+        await client.query(
+          "UPDATE placement_recruiter_profiles SET company_id=$1 WHERE user_id=$2",
+          [companyB,raceUser1],
+        );
+        const pendingGrant = racer.query(
+          "INSERT INTO placement_recruiter_college_grants(id,recruiter_user_id,company_relationship_id) VALUES ($1,$2,$3)",
+          [randomUUID(),raceUser1,raceRelationship1],
+        );
+        await client.query("COMMIT");
+        await failCheck(pendingGrant,"db09_grant_company_consistent");
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw error;
+      }
+
+      // Two-client witness (2): an uncommitted valid grant is inserted
+      // first. Parent company reassignment must lose after grant commits.
+      const raceUser2 = randomUUID();
+      const raceRelationship2 = randomUUID();
+      await client.query(
+        "INSERT INTO placement_recruiter_profiles(user_id,company_id) VALUES ($1,$2)",
+        [raceUser2,companyA],
+      );
+      await client.query(
+        "INSERT INTO placement_company_relationships(id,company_id) VALUES ($1,$2)",
+        [raceRelationship2,companyA],
+      );
+      await client.query("BEGIN");
+      try {
+        await client.query(
+          "INSERT INTO placement_recruiter_college_grants(id,recruiter_user_id,company_relationship_id) VALUES ($1,$2,$3)",
+          [randomUUID(),raceUser2,raceRelationship2],
+        );
+        const pendingMove = racer.query(
+          "UPDATE placement_recruiter_profiles SET company_id=$1 WHERE user_id=$2",
+          [companyB,raceUser2],
+        );
+        await client.query("COMMIT");
+        await failCheck(pendingMove,"db09_recruiter_profile_grant_company_immutable");
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw error;
+      }
     } finally {
+      if (racer) await racer.end().catch(() => {});
       if (created) {
         try {
           await client.query("SET search_path TO pg_catalog");
