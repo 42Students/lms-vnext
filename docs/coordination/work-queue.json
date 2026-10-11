@@ -2664,17 +2664,17 @@
         "tests/db10-source-disposition-closure.test.mjs",
         "docs/planning/database-parity-db10-field-ledger.json"
       ],
-      "status": "PICKED",
-      "latestEvidenceSha": null,
+      "status": "COMPLETED",
+      "latestEvidenceSha": "45d1efb73611c020ce5cb743aa988d5d1a373e0b",
       "verificationEvidence": [],
       "blockers": [],
-      "completionNote": null,
+      "completionNote": "77/77 remaining DB10 source dispositions overlayed and reflected exactly in shared ledger: 221/221 source-dispositioned, 221/221 still UNMAPPED, 0/221 runtime verified. 9 authored Node test assertions present; connector-side structure/matching checks performed but no Node/PostgreSQL suite executed. This is source parity accounting, not DB certification.",
       "pickedBy": 5,
       "pickedAt": "2026-10-11T14:34:00+05:30",
-      "startedAt": null,
-      "completedBy": null,
-      "completedAt": null,
-      "completionCommitSha": null,
+      "startedAt": "2026-10-11T09:04:00Z",
+      "completedBy": 5,
+      "completedAt": "2026-10-11T14:04:00Z",
+      "completionCommitSha": "45d1efb73611c020ce5cb743aa988d5d1a373e0b",
       "verifiedBy": null,
       "verifiedAt": null,
       "pickHistory": [
@@ -2693,6 +2693,11 @@
           "status": "PICKED",
           "at": "2026-10-11T14:34:00+05:30",
           "reason": "Chat 5 reserved a ledger/source-evidence closure pass only; no new schema or migration ownership overlaps active workers."
+        },
+        {
+          "status": "COMPLETED",
+          "at": "2026-10-11T14:04:00Z",
+          "reason": "Chat 5 verified committed DB-046 artifacts and 77 overlay-to-ledger matches; reviewed authored 9 assertions. Implementation tracked at 45d1efb; tests NOT EXECUTED; source closure only."
         }
       ]
     },
