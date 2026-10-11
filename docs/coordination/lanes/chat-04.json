@@ -10,13 +10,13 @@
   "activeTaskId": "DB-005",
   "blockedTaskIds": [],
   "checkpoint": {
-    "checkpointKind": "DB005_CANONICAL_52_FUNCTIONS_60_TRIGGERS_60_SOURCE_TESTS",
+    "checkpointKind": "DB005_CANONICAL_52_60_WITH_66_SOURCE_TESTS_AND_GUARDED_RUNNER",
     "updatedOn": "2026-10-11",
-    "observedMainSha": "2b7c4c742b70c2ab7574c1b38840aa241dafec0c",
-    "lastWorkerMergedSha": "8c2c63d8a28d41dcba1c188a3a551c60390ab742",
+    "observedMainSha": "88f77c130435ff05a2313967a26be483306e84f3",
+    "lastWorkerMergedSha": "905620c62467dbdf842be7fcb5c963a8004cf57a",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "DB02 source+target design reconciliation is 125/125 with 0 runtime-verified fields. Canonical UNREGISTERED staging is structurally clean at 52 paired PL/pgSQL functions and 60 unique triggers. Authored static evidence now includes 60 node:test cases across 6 files, five rollback-only PostgreSQL suites, and three two-session race harnesses: the combined harness specifies 17 named race families and focused promotion/type harnesses add exact-error scenarios. Recent hardening closes CORE concrete curriculum/type history, promotion readiness, progression-backed term deletion, empty-cohort hard delete, archive-vs-INACTIVE lifecycle, referenced period/window mutation, parent/history, hall and faculty races. Shared acceptance/CAS fixtures were reconciled with promotion readiness. No Node/PostgreSQL/migration replay/CI execution is claimed; DB-005 stays IN_PROGRESS."
+    "summary": "DB02 remains IN_PROGRESS in DATABASE. Source/target mapping 125/125; runtime verified 0. Canonical UNREGISTERED staging is structurally clean at 52 paired functions / 60 unique triggers. Authored evidence: 66 source-test cases across 7 files, five rollback-only PG suites, three two-session race suites; combined harness has 17 named race families. Guarded disposable runner now preflights 12 critical triggers, 6 staged tables, 9 staged columns and INACTIVE enum before executing every suite. Shared promotion CAS/acceptance fixtures satisfy new promotion-readiness rules. No Node/PG/migration replay/CI execution claimed."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -41,12 +41,13 @@
     "scripts/sql/db02-postgres-concurrency-unregistered.sh",
     "scripts/sql/db02-curriculum-type-history-concurrency-unregistered.sh",
     "scripts/sql/db02-promotion-readiness-concurrency-unregistered.sh",
-    "scripts/sql/db02-run-disposable-acceptance.sh"
+    "scripts/sql/db02-run-disposable-acceptance.sh",
+    "tests/db02-disposable-runner-contract.test.mjs"
   ],
   "lastExecutedPassingTests": [],
   "blockers": [
-    "Verification gate only: canonical DB02 is still UNREGISTERED under Chat 1 migration ownership and Chat 4 has executed 0 PostgreSQL/Node acceptance runs.",
-    "Chat 1 must translate/review the consolidated stage into numbered Drizzle/schema changes, replay zero-to-current on a disposable PostgreSQL database, then execute all DB02 rollback and concurrency suites. CI billing is intentionally not treated as a blocker."
+    "Verification gate only: DB02 remains unregistered under Chat 1 schema/migration ownership and Chat 4 has 0 executed PostgreSQL/Node acceptance runs.",
+    "Chat 1 must register/reconcile DB02, zero-to-current replay a disposable PostgreSQL DB, then run the guarded DB02 runner and preserve exact outputs/version/commit. CI billing is intentionally not a blocker."
   ],
   "handoffs": [
     {
@@ -85,7 +86,7 @@
       "evidence": "issue comment 6105903005"
     }
   ],
-  "nextAction": "Remain in DATABASE. Chat1 registers/reconciles canonical DB02 with shared schema/migrations; then use a freshly replayed disposable PostgreSQL database to execute db02-run-disposable-acceptance.sh plus focused promotion-readiness and curriculum-type race suites. Capture PostgreSQL version, exact commit and full outputs. Do not mark DB-005 DONE_VERIFIED or advance API from Chat4 on authored/static evidence alone.",
+  "nextAction": "Remain in DATABASE. Chat1 registers/reconciles canonical DB02; on a freshly replayed disposable PostgreSQL database run DB02_DISPOSABLE_ACCEPTANCE=YES DB02_EXPECTED_DATABASE=<exact> DATABASE_URL=<secret> bash scripts/sql/db02-run-disposable-acceptance.sh. The runner now executes 7 source-test files, 5 rollback suites and 3 race suites after registration witnesses pass. Do not mark DB-005 DONE_VERIFIED from authored/static evidence.",
   "historicalPriorAssignment": {
     "previousTitle": "Placement execution, eligibility and outcomes",
     "previousDomains": [
