@@ -96,6 +96,15 @@ CREATE TRIGGER db02_program_term_course_tenant
 BEFORE INSERT OR UPDATE OF program_term_id, course_id ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_tenant();
 
+-- Legacy semester-course credits are valid from 0..30. A zero-credit curriculum row
+-- must remain materializable as a cohort offering instead of failing a stricter vNext check.
+ALTER TABLE course_offerings
+  DROP CONSTRAINT IF EXISTS course_offerings_credits_ck;
+
+ALTER TABLE course_offerings
+  ADD CONSTRAINT db02_course_offerings_credits_ck
+  CHECK (credits IS NULL OR credits BETWEEN 0 AND 30);
+
 -- ---------------------------------------------------------------------------
 -- 1a) Stable tenant ownership + academic-period scope
 -- ---------------------------------------------------------------------------
