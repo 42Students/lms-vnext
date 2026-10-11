@@ -2061,14 +2061,14 @@
         "tests/db09-notification-preferences-normalization.test.mjs",
         "docs/planning/db09-integration-manifest-2026-10-11.md"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 3,
       "pickedAt": "2026-10-11T14:10:00+05:30",
-      "startedAt": null,
+      "startedAt": "2026-10-11T14:12:00+05:30",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2090,6 +2090,11 @@
           "status": "PICKED",
           "at": "2026-10-11T14:10:00+05:30",
           "reason": "Chat 3 reserved isolated schema/ledger/doc/test/manifest normalization paths."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T14:12:00+05:30",
+          "reason": "Resume Chat 3: repair corrupted duplicate tpo-collaboration declarations, then source-backed normalization of fixed notification and personal preference booleans."
         }
       ]
     },
