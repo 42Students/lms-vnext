@@ -313,7 +313,7 @@ test("DB09 staged PLpgSQL uses valid dollar-quote delimiters", () => {
   }
 });
 
-test("DB09 share disclosure and collaboration JSON are DB constrained", () => {
+test("DB09 share disclosure and collaboration fixed boolean settings are DB constrained", () => {
   const schema = read("src/db/schema/tpo-collaboration.ts");
   assert.match(schema, /placement_tpo_share_links_recipient_email_ck/);
   assert.match(schema, /placement_tpo_share_links_columns_ck/);
@@ -329,8 +329,20 @@ test("DB09 share disclosure and collaboration JSON are DB constrained", () => {
     assert.match(schema, new RegExp("'" + stage + "'"));
   }
   assert.match(schema, /placement_tpo_share_links_revocation_ck/);
-  assert.match(schema, /placement_tpo_college_settings_json_shape_ck/);
-  assert.match(schema, /placement_tpo_user_preferences_json_ck/);
+  for (const field of [
+    'notifyDriveOpenEmail: boolean("notify_drive_open_email").notNull().default(true)',
+    'notifyResultApplied: boolean("notify_result_applied").notNull().default(true)',
+    'notifyNudges: boolean("notify_nudges").notNull().default(true)',
+    'notifyPrepAssigned: boolean("notify_prep_assigned").notNull().default(true)',
+    'morningDigest: boolean("morning_digest").notNull().default(false)',
+    'recruiterMessages: boolean("recruiter_messages").notNull().default(true)',
+    'requests: boolean("requests").notNull().default(true)',
+    'resultsReady: boolean("results_ready").notNull().default(true)',
+    'followUps: boolean("follow_ups").notNull().default(true)',
+  ]) {
+    assert.ok(schema.includes(field), "DB036 missing typed setting: " + field);
+  }
+  assert.doesNotMatch(schema, /placement_tpo_college_settings_json_shape_ck|placement_tpo_user_preferences_json_ck/);
 });
 
 
