@@ -17,6 +17,11 @@ test("DB25 guard accepts verifier-style disposable local database names", () => 
   assert.deepEqual(assertSafeDb01TestTarget({ TEST_DATABASE_URL: url }),
     {host:"127.0.0.1",database:"lms_vnext_test_4242",mode:"local"});
 });
+test("DB28 guard allows an explicitly named local E2E database", () => {
+  const url = "postgresql://e2e_user:secret@127.0.0.1:5432/lms_vnext_e2e";
+  assert.deepEqual(assertSafeDb01TestTarget({ TEST_DATABASE_URL: url }),
+    {host:"127.0.0.1",database:"lms_vnext_e2e",mode:"local"});
+});
 test("DB01 guard refuses a production database name", () => {
   assert.throws(() => assertSafeDb01TestTarget({ TEST_DATABASE_URL:"postgres://x:x@127.0.0.1/lms_production" }),
     /not explicitly a test database/);
@@ -56,6 +61,10 @@ test("DB01 guard redacts secrets and rejects multiple path segments", () => {
 const dbLibSource = readFileSync("scripts/db-lib.ts", "utf8");
 const dbTestPrepareSource = readFileSync(
   "scripts/db-test-prepare.ts",
+  "utf8",
+);
+const dbE2EPrepareSource = readFileSync(
+  "scripts/db-e2e-prepare.ts",
   "utf8",
 );
 const independentVerifierSource = readFileSync(
@@ -175,6 +184,63 @@ test("DB25 destructive prepare refuses before any database connection when TEST_
 
   assert.notEqual(result.status, 0);
   assert.match(output, /TEST_DATABASE_URL must be explicitly set/);
+  assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
+});
+
+
+test("DB28 browser E2E preflight runs before DATABASE_URL assignment and reset", () => {
+  const preflight = dbE2EPrepareSource.indexOf(
+    "assertDestructiveE2ETargetPreflight(databaseUrl);",
+  );
+  const setApplicationUrl = dbE2EPrepareSource.indexOf(
+    "process.env.DATABASE_URL = databaseUrl",
+  );
+  const imports = dbE2EPrepareSource.indexOf(
+    "const [",
+  );
+  const reset = dbE2EPrepareSource.indexOf(
+    "await dbLib.resetDatabase(databaseUrl)",
+  );
+
+  assert.ok(preflight >= 0);
+  assert.ok(setApplicationUrl > preflight);
+  assert.ok(imports > setApplicationUrl);
+  assert.ok(reset > imports);
+  assert.match(
+    dbE2EPrepareSource,
+    /delete guardEnv\.DATABASE_URL/,
+  );
+  assert.match(
+    dbE2EPrepareSource,
+    /db01-test-database-guard\.mjs/,
+  );
+});
+
+test("DB28 browser E2E preparation refuses a production-like target before connecting", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB28 process regression");
+
+  const secret = "e2eProductionSecret";
+  const result = spawnSync(
+    process.execPath,
+    [tsx, "scripts/db-e2e-prepare.ts"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        E2E_DATABASE_URL:
+          `postgresql://app:${secret}@127.0.0.1:1/lms_production`,
+        DATABASE_URL:
+          "postgresql://valuable:do-not-use@127.0.0.1:1/lms_vnext",
+        TEST_DATABASE_URL: "",
+      },
+    },
+  );
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(output, /not explicitly a test database or E2E database/);
   assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
   assert.doesNotMatch(output, new RegExp(secret));
 });
