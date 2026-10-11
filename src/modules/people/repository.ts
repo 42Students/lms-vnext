@@ -355,7 +355,21 @@ export const drizzlePeopleRepository:
           }
         }
 
-        if (!membership || membership.status !== "ACTIVE") {
+        if (!membership) {
+          throw new PeopleServiceError("MEMBERSHIP_NOT_ACTIVE");
+        }
+
+        // A membership may be ENDED after the earlier read. Serialize
+        // onboarding grants with transitionMembershipLifecycle on its parent
+        // row; checking a stale status before the INSERT is not sufficient.
+        const [lockedMembership] = await tx
+          .select({ status: collegeMemberships.status })
+          .from(collegeMemberships)
+          .where(eq(collegeMemberships.id, membership.id))
+          .for("update")
+          .limit(1);
+
+        if (!lockedMembership || lockedMembership.status !== "ACTIVE") {
           throw new PeopleServiceError("MEMBERSHIP_NOT_ACTIVE");
         }
 
@@ -515,6 +529,22 @@ export const drizzlePeopleRepository:
   ) {
     const db = getDb();
     return db.transaction(async (tx) => {
+      // Serialize role grants with SUSPEND/END and other mutations before
+      // inspecting child role rows. A service-level precheck can be stale.
+      const [parent] = await tx
+        .select({ status: collegeMemberships.status })
+        .from(collegeMemberships)
+        .where(eq(collegeMemberships.id, membershipId))
+        .for("update")
+        .limit(1);
+
+      if (!parent) {
+        throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
+      }
+      if (parent.status === "ENDED") {
+        throw new PeopleServiceError("MEMBERSHIP_ENDED");
+      }
+
       const currentRows = await tx
         .select({
           role: membershipRoles.role,
@@ -611,6 +641,22 @@ export const drizzlePeopleRepository:
     const db = getDb();
 
     return db.transaction(async (tx) => {
+      // Lock the same parent used by transitionMembershipLifecycle and grant
+      // mutations. Serializing removals also preserves the last-role rule.
+      const [parent] = await tx
+        .select({ status: collegeMemberships.status })
+        .from(collegeMemberships)
+        .where(eq(collegeMemberships.id, membershipId))
+        .for("update")
+        .limit(1);
+
+      if (!parent) {
+        throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
+      }
+      if (parent.status === "ENDED") {
+        throw new PeopleServiceError("MEMBERSHIP_ENDED");
+      }
+
       const currentRows = await tx
         .select({ role: membershipRoles.role })
         .from(membershipRoles)
