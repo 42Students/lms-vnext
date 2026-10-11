@@ -100,6 +100,12 @@ BEGIN
       RAISE EXCEPTION 'Assignment with submissions cannot change lesson/delivery'
         USING ERRCODE='23514';
     END IF;
+    IF TG_TABLE_NAME = 'course_assignments'
+       AND NEW.max_points IS DISTINCT FROM OLD.max_points
+       AND EXISTS (SELECT 1 FROM assignment_submissions s WHERE s.assignment_id = OLD.id) THEN
+      RAISE EXCEPTION 'Assignment with submissions cannot change max points'
+        USING ERRCODE='23514';
+    END IF;
   END IF;
 
   SELECT o.id INTO lesson_offering
@@ -136,7 +142,7 @@ BEFORE INSERT OR UPDATE OF lesson_id, delivery_id ON course_quizzes
 FOR EACH ROW EXECUTE FUNCTION db06_guard_assessment_definition();
 --> statement-breakpoint
 CREATE TRIGGER db06_course_assignment_parent_guard
-BEFORE INSERT OR UPDATE OF lesson_id, delivery_id ON course_assignments
+BEFORE INSERT OR UPDATE OF lesson_id, delivery_id, max_points ON course_assignments
 FOR EACH ROW EXECUTE FUNCTION db06_guard_assessment_definition();
 --> statement-breakpoint
 
