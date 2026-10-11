@@ -232,6 +232,7 @@ async function main() {
       DATABASE_URL: databaseUrl,
       TEST_DATABASE_URL: databaseUrl,
       DB03_ISOLATED_TEST_DATABASE: "1",
+      DB06_ISOLATED_TEST_DATABASE: "1",
     };
     // The destructive reset command must never see the application URL as an
     // alias for its target. Preserve the explicit TEST_DATABASE_URL but remove
