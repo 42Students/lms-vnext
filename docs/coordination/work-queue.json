@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "phase": "DATABASE",
-  "updatedOn": "2026-10-11T14:30:00.000Z",
+  "updatedOn": "2026-10-11T14:31:00.000Z",
   "queuePolicy": "READ and atomically pick one READY task using newest file blob SHA; PICKED differs from COMPLETED. A worker starts a PICKED task (IN_PROGRESS), marks source-done as COMPLETED with exact commit SHA (not verified), then independent execution evidence leads to DONE_VERIFIED. Preserve history for picked and completed, even after reassignment. One current PICKED/IN_PROGRESS task per worker. Re-fetch and retry on conflict; no silent lease stealing.",
   "sourceBaseline": "2026-10-10 inventory and six-chat issues",
   "taskStates": [
@@ -2948,14 +2948,14 @@
         "tests/db01-test-database-guard.test.mjs",
         "docs/database-workflow.md"
       ],
-      "status": "PICKED",
+      "status": "IN_PROGRESS",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
       "pickedBy": 1,
       "pickedAt": "2026-10-11T14:30:00.000Z",
-      "startedAt": null,
+      "startedAt": "2026-10-11T14:31:00.000Z",
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
@@ -2977,6 +2977,11 @@
           "status": "PICKED",
           "at": "2026-10-11T14:30:00.000Z",
           "reason": "Chat 1 CORE_INFRA claim; protect localhost/proxy resets while preserving explicit local test/E2E disposable targets."
+        },
+        {
+          "status": "IN_PROGRESS",
+          "at": "2026-10-11T14:31:00.000Z",
+          "reason": "Hardening localhost/proxy destructive reset semantics; explicitly named test/E2E targets stay frictionless, other local DBs require exact confirmation."
         }
       ]
     }
