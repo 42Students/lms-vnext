@@ -54,6 +54,7 @@ API work required:
 - compatibility projections for any retained `new_program_structure` API;
 - curriculum remove must map the database conflict once any offering materializes the term/course pair; do not silently delete historical curriculum identity.
 - curriculum CORE/ELECTIVE type may change only before materialization; once an offering references the row, map the database conflict instead of rewriting historical type identity.
+- program-term delete must map the database conflict once canonical cohort progression currently occupies or has historically traversed that term; deactivation remains a separate allowed edit.
 - do not add a uniqueness contract on `(programTermId, displayOrder)` during API work; legacy single-row reorder can create duplicate positions.
 
 Do not revive JSON `course_ids` storage.
