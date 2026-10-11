@@ -49,3 +49,18 @@ Run the full committed test in an independent checkout before relying on it as e
 This is a conservative source-pair drift check, **not a SQL parser**. It does not prove that SQL CHECK *expressions* equal Drizzle tagged SQL expressions, compare every default, enforce composite uniqueness beyond the enumerated index fields, verify cross-tenant FK conditions, test trigger side effects, or validate runtime producer access. SQL statements outside the three explicit pairs are excluded. If a new SQL/TypeScript syntax is introduced, update the extractor and demonstrate a negative fixture instead of treating silently omitted objects as verified.
 
 **Integrator handoff (Chat 1):** Retain these three draft/SQL pair checks during journal integration; then run the actual Node test, Drizzle generation diff, fresh PostgreSQL replay, constraints/catalog diff, negative tenant/race witnesses and product scenario checks. No queue status has been changed to `DONE_VERIFIED` and the global DATABASE gate remains open.
+
+
+## CHECK/default expansion — independent review
+
+**New direct-to-main source guards:**
+
+- [089bb8a0](https://github.com/42Students/lms-vnext/commit/089bb8a0b46f0dc28d33fa17b9603fc75023b970) adds `tests/db10-check-expression-parity.test.mjs`: compares CHECK *predicates*, not merely constraint names, across the same three DB10 draft pairs. Lowercases SQL identifiers/keywords and treats source `trim(x)` / PostgreSQL `btrim(x)` as equivalent while preserving case-sensitive quoted values and regex contents. Negative fixtures detect changed status literals, numeric conditions and missing/repeated CHECKs.
+- [a3c8fc84](https://github.com/42Students/lms-vnext/commit/a3c8fc848ab142f0b66daa340388eb4079de67eb) adds `tests/db10-column-default-parity.test.mjs`: compares presence and source-supported semantics of UUID, now(), bigint integer, boolean, JSONB and string defaults for every parsed column. Rejects unsupported expressions rather than assuming equivalence.
+- [c48a8e95](https://github.com/42Students/lms-vnext/commit/c48a8e9575ea53da4a849f9e3c4626b7e8cc84e5) repairs a defect identified during independent fixture review: SQL `DEFAULT` lexical extraction included trailing column commas, causing false mismatches on legitimate staged declarations. The new extractor strips the final comma before comparing.
+
+**Source comparison evidence:** Refetched all six staged source files from `main`; the bounded comparison found **27/27 CHECK predicates** and **22/22 column defaults** aligned, drawn from seven tables and 66 fields. Distinctions such as uppercase `'OPEN'` versus lowercase `'open'` are *not* normalized away. This adds to, and does not replace, the earlier field/index/FK source inventory.
+
+**Executed:** Local Node v22.16.0 command `node --test /mnt/data/db10-review/independent-fixtures.test.mjs` succeeded with **10 passed / 0 failed**. Those fixtures independently exercise keyword whitespace normalization, literal-case sensitivity, interval/regex retention, trim-btrim alias, bigint and JSONB default equivalence, and failure on unsupported defaults. This is *not* an execution of the full committed repository test files.
+
+**Not executed:** `node --test tests/db10-cross-draft-surface-parity.test.mjs tests/db10-check-expression-parity.test.mjs tests/db10-column-default-parity.test.mjs` from a full repository checkout, the broader Node test suite, compiler/typecheck, or a disposable PostgreSQL migration replay. The parser is intentionally source-limited; it does not certify complex SQL expressions, triggers, tenant-scoped FK enforcement, safe migrations or live runtime behavior. No task was marked `DONE_VERIFIED`.
