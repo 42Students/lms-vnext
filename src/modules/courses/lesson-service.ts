@@ -232,25 +232,39 @@ export async function archiveCourseLesson(
     collegeId: current.collegeId,
   });
 
-  const [updated] = await getDb()
-    .update(courseLessons)
-    .set({
-      status: "ARCHIVED",
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
+  return getDb().transaction(async (tx) => {
+    // Lock the lesson before changing visibility; new content creation
+    // takes a matching SHARE lock on this row before its INSERT.
+    const [liveLesson] = await tx
+      .select({ id: courseLessons.id })
+      .from(courseLessons)
+      .where(and(
         eq(courseLessons.id, lessonId),
         eq(courseLessons.status, "ACTIVE"),
-      ),
-    )
-    .returning();
+      ))
+      .for("update")
+      .limit(1);
 
-  if (!updated) {
-    throw new CoursesServiceError(
-      "LESSON_NOT_FOUND",
-    );
-  }
+    if (!liveLesson) {
+      throw new CoursesServiceError("LESSON_NOT_FOUND");
+    }
 
-  return updated;
+    const [updated] = await tx
+      .update(courseLessons)
+      .set({
+        status: "ARCHIVED",
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(courseLessons.id, lessonId),
+        eq(courseLessons.status, "ACTIVE"),
+      ))
+      .returning();
+
+    if (!updated) {
+      throw new CoursesServiceError("LESSON_NOT_FOUND");
+    }
+
+    return updated;
+  });
 }
