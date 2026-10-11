@@ -12,6 +12,11 @@ const acceptanceSql = readFileSync(
   "utf8",
 );
 
+const concurrencyShell = readFileSync(
+  new URL("../scripts/sql/db02-postgres-concurrency-unregistered.sh", import.meta.url),
+  "utf8",
+);
+
 test("DB02 draft has paired PL/pgSQL dollar-quoted function bodies", () => {
   const functions = [...sql.matchAll(/\bCREATE FUNCTION\s+db02_[a-z_]+\s*\(/g)];
   const openings = [...sql.matchAll(/\bRETURNS trigger LANGUAGE plpgsql AS \$\$/g)];
@@ -147,4 +152,38 @@ test("DB02 user deletion scrubs progression actor references without creating ac
   assert.match(acceptanceSql, /DELETE FROM users WHERE id = user_progression_actor/);
   assert.match(acceptanceSql, /actor deletion mutated progression state/);
   assert.match(acceptanceSql, /actor deletion manufactured progression history/);
+});
+
+
+test("DB02 concurrency harness preserves all nine race families", () => {
+  for (const label of [
+    "Race 1:",
+    "Race 2A:",
+    "Race 2B:",
+    "Race 3A:",
+    "Race 3B:",
+    "Race 4A:",
+    "Race 4B:",
+    "Race 5A:",
+    "Race 5B:",
+  ]) {
+    assert.match(concurrencyShell, new RegExp("# " + label));
+  }
+
+  for (const pass of [
+    "PASS promotion CAS race",
+    "PASS hall race A",
+    "PASS hall race B",
+    "PASS section race A",
+    "PASS section race B",
+    "PASS offering race A",
+    "PASS offering race B",
+    "PASS event race A",
+    "PASS event race B",
+  ]) {
+    assert.ok(concurrencyShell.includes(pass), "missing concurrency witness: " + pass);
+  }
+
+  assert.match(concurrencyShell, /set -euo pipefail/);
+  assert.match(concurrencyShell, /DB02 concurrency acceptance PASS/);
 });
