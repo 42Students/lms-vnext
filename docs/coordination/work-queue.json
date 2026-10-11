@@ -2832,6 +2832,51 @@
           "reason": "Hardening shared remote reset authorization to require exact target confirmation before any connection/drop."
         }
       ]
+    },
+    {
+      "id": "DB-049",
+      "phase": "DATABASE",
+      "title": "Harden DB10 notification campaign publish authorization races",
+      "scope": "Harden staged campaign scope guard: revalidate active USER and SECTION_COURSE target authorization at PUBLISHING/PUBLISHED transitions; lock target membership/course delivery rows against concurrent revocation; allow cancellation cleanup for revoked targets; add source race/negative witnesses. No shared Drizzle files.",
+      "priority": 3,
+      "dependsOn": [],
+      "restriction": "ANY",
+      "paths": [
+        "scripts/sql/db10-notification-campaign-staging.sql",
+        "docs/planning/database-parity-db10-campaign-publish-guard.md",
+        "tests/db10-campaign-publish-guard.test.mjs"
+      ],
+      "status": "PICKED",
+      "latestEvidenceSha": null,
+      "verificationEvidence": [],
+      "blockers": [],
+      "completionNote": null,
+      "pickedBy": 5,
+      "pickedAt": "2026-10-11T14:25:00Z",
+      "startedAt": null,
+      "completedBy": null,
+      "completedAt": null,
+      "completionCommitSha": null,
+      "verifiedBy": null,
+      "verifiedAt": null,
+      "pickHistory": [
+        {
+          "chatNumber": 5,
+          "pickedAt": "2026-10-11T14:25:00Z"
+        }
+      ],
+      "statusHistory": [
+        {
+          "status": "READY",
+          "at": "2026-10-11T14:25:00Z",
+          "reason": "Audited DB-043: unlocked user-membership and active course-delivery lookups; publication state transitions bypass original trigger."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T14:25:00Z",
+          "reason": "Chat 5 isolated DB10 stage; no active worker edits these three paths."
+        }
+      ]
     }
   ],
   "eventModel": {
