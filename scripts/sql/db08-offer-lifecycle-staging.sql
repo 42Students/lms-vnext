@@ -149,10 +149,8 @@ ALTER TABLE placement_offer_status_history
     OR length(btrim(coalesce(reason, ''))) > 0
   ),
   ADD CONSTRAINT db29_offer_history_system_transition_ck CHECK (
-    actor_type <> 'SYSTEM' OR (
-      (from_status = 'ISSUED' AND to_status = 'EXPIRED')
-      OR (from_status IS NULL AND to_status = 'ISSUED')
-    )
+    actor_type <> 'SYSTEM'
+    OR (from_status = 'ISSUED' AND to_status = 'EXPIRED')
   );
 
 -- Deliberate normalized mappings, not duplicate columns:
