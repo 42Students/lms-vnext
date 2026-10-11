@@ -12,13 +12,13 @@
     "DB-003"
   ],
   "checkpoint": {
-    "checkpointKind": "DB008_HIERARCHY_ARCHIVE_LOCKS_COMMITTED_SOURCE_ASSERTIONS_ONLY",
+    "checkpointKind": "DB008_DISCUSSION_ANCESTRY_CYCLE_REPARENT_STAGED_SOURCE_ONLY",
     "updatedOn": "2026-10-12",
-    "observedMainSha": "4e5d5c65f9461c961897874658a469b459c800ce",
-    "lastWorkerMergedSha": "fb16b2b5665219c2afa49c06dfc4effdc225bcc9",
+    "observedMainSha": "d16540d8f21f933e7d05017759ffe1048fd4b5b2",
+    "lastWorkerMergedSha": "d16540d8f21f933e7d05017759ffe1048fd4b5b2",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
-    "summary": "Maintained previously staged DB05, and this iteration commits three live transactional parent FOR UPDATE archive/end fixes to main, non-numbered 6-trigger parent/child lifecycle companion, read-only 3-count hierarchy drift preflight and 12 authored Node test definitions. 15 read-only GitHub source assertions passed; independent Node unit/typecheck/build and two-session PostgreSQL HL01..20 not executed. Seven main DB05 drafts and companions still unregistered. Formal verified 0/92, global DATABASE active, DB008 IN_PROGRESS."
+    "summary": "Chat 6 DB008 committed UNREGISTERED lesson discussion acyclic ancestry + content direct reparent guard and read-only count preflight on PR #97. Two regression files plus 20 mandatory DG PostgreSQL scenarios; native exact-blob reference-model Node 11/11 PASS, 16/16 GitHub source structure checks PASS, no SQL/PG migration executed. DB05 primary seven drafts remain unregistered, companion set now 12 in manifest, 71 readiness gates NOT certified, 0/92 verified; global DATABASE ACTIVE. W01 only migration integrator."
   },
   "qualityGates": {
     "lint": "NOT_VERIFIED",
@@ -57,9 +57,13 @@
     "tests/db05-delivery-cohort-period-integrity.test.mjs: 6 Node tests authored, NOT executed",
     "tests/db05-tombstone-version-invariant.test.mjs (4 V8 mocked-source callbacks PASS; native Node and PostgreSQL NOT RUN)",
     "tests/db05-content-ancestry-authored-guard.test.mjs (6 V8 mocked-source callbacks PASS incl generic content; native Node/PG NOT RUN)",
-    "tests/db05-lesson-delete-restore-and-owner.test.mjs (10 V8 mocked-source callbacks PASS after brittle regex repair; native Node/PG NOT RUN)"
+    "tests/db05-lesson-delete-restore-and-owner.test.mjs (10 V8 mocked-source callbacks PASS after brittle regex repair; native Node/PG NOT RUN)",
+    "tests/db05-discussion-ancestry-reference.test.mjs (11/11 native pure reference-model PASS, not SQL)",
+    "tests/db05-discussion-ancestry-integrity.test.mjs (authored static SQL/manifest guard, NOT native-executed)"
   ],
-  "lastExecutedPassingTests": [],
+  "lastExecutedPassingTests": [
+    "2026-10-12: node --test /mnt/data/db008-check/tests/db05-discussion-ancestry-reference.test.mjs | native Node 22.16.0 11/11 PASS | exact blob 5581c1ae8c512614910a3fe72c2d315a96ee67a4 | PURE REFERENCE MODEL ONLY, NOT POSTGRES"
+  ],
   "blockers": [],
   "handoffs": [
     {
@@ -205,6 +209,12 @@
       "kind": "DB05_ARCHIVE_ACTIVE_CHILD_TXN_AND_20_CASE_PG_WITNESS",
       "commitSha": "fb16b2b5665219c2afa49c06dfc4effdc225bcc9",
       "message": "Chat6 direct main source fixes: archiveCourse dabe1e4, archiveOffering d50ae54, endDelivery 7fa2b3c all take parent FOR UPDATE and do child precondition+UPDATE in same transaction. SQL 5ead8a2, read-only drift 27a319f; 12 regression Node tests authored NOT_EXECUTED, 20 PostgreSQL HL two-session cases NOT_RUN. 15 exact connected GitHub source structure assertions PASS, no DB evidence. W01 only can register 6-trigger companion. Keep DB008 IN_PROGRESS."
+    },
+    {
+      "taskId": "DB-008",
+      "kind": "DB05_DISCUSSION_PARENT_CYCLE_AND_HISTORY_SCOPE_GUARDS",
+      "commitSha": "d16540d8f21f933e7d05017759ffe1048fd4b5b2",
+      "message": "PR #97 staged 2-trigger unregistered DB05 discussion parent-acyclic and lesson_content lesson_id/delivery_id reparent protection sharing advisory 605008003; read-only cycle/tenant preflight; pure native reference Node 11/11 PASS exact blob 5581c1ae; 16 connector source checks PASS. 20 DG cases, clean W01 PostgreSQL integration, non-READ-COMMITTED lock policy proof and nested reply source consumer decision NOT RUN. Source evidence docs/coordination/evidence/chat-06-db008-discussion-graph-2026-10-12.md. DO NOT mark DONE_VERIFIED."
     }
   ],
   "nextAction": "Run actual native Node regression/tests and independent TS build; W01 merge archive guard exactly once and run HL-01..20 disposable PG two-session interleavings/read committed lock order, plus existing TV/CA and DB02 academic guards. Continue DB05 unresolved semantic and private receipt consumer cutovers; no phase jump.",
