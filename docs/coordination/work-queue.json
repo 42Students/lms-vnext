@@ -2706,25 +2706,35 @@
         "tests/db09-company-share-defaults-staging.test.mjs",
         "docs/planning/db09-integration-manifest-2026-10-11.md"
       ],
-      "status": "READY",
+      "status": "PICKED",
       "latestEvidenceSha": null,
       "verificationEvidence": [],
       "blockers": [],
       "completionNote": null,
-      "pickedBy": null,
-      "pickedAt": null,
+      "pickedBy": 3,
+      "pickedAt": "2026-10-11T13:42:00+05:30",
       "startedAt": null,
       "completedBy": null,
       "completedAt": null,
       "completionCommitSha": null,
       "verifiedBy": null,
       "verifiedAt": null,
-      "pickHistory": [],
+      "pickHistory": [
+        {
+          "chatNumber": 3,
+          "pickedAt": "2026-10-11T13:42:00+05:30"
+        }
+      ],
       "statusHistory": [
         {
           "status": "READY",
           "at": "2026-10-11T13:40:00+05:30",
           "reason": "Chat 3 independent integration-readiness sweep proved candidate SQL/ledger target share_column_defaults is absent from canonical placementCompanyRelationships Drizzle schema; new non-overlapping DATABASE gap."
+        },
+        {
+          "status": "PICKED",
+          "at": "2026-10-11T13:42:00+05:30",
+          "reason": "Chat 3 claimed fresh non-overlapping DB09 structural-drift gap after DB-042 completion."
         }
       ]
     }
