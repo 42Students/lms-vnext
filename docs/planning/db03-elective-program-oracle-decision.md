@@ -113,3 +113,16 @@ No item above is marked passing merely because a test exists.
 PR #55 was created before the user switched the working rule to direct-to-`main` only. Its branch is hundreds of commits behind current main. The DB-026 runtime-oracle corrections it was meant to stage are now present directly on current main.
 
 The stale PR must not be merged wholesale. Close it as superseded by direct-main DB-026 reconciliation; retain it only as historical review evidence.
+
+## 9. Post-completion hardening: stale idempotent join + DB02-dependent direct SQL
+
+**Added in a follow-up Chat 5 main iteration after the original DB-026 source closure.**
+
+- `src/modules/groups/service.ts`, commit `2d36687a40d4cdc3edf02714b621850b0a3688a8`: before returning an already `ACTIVE`/`WAITLISTED` member on an idempotent join, recheck current slot/program eligibility. Previously the early return bypassed eligibility and misleadingly reported a stale transferred member as a valid join. New member admission and existing member authorization now share the predicate; capacity/max-pick remains checked only on new admission.
+- `tests/integration/groups-db03-roster.test.ts`, commit `c3daec38de3ba4a13a8e28ef1622ec96319a858e`: added same-college *first join* wrong-program regression and stale-ACTIVE idempotent rejoin assertion. Fixed teardown ordering to delete both program-transfer fixture cohorts before their shared academic period, preventing an unrelated FK teardown failure.
+- `scripts/sql/db03-elective-learner-integrity-post-db02-staging.sql`, commit `e031253f05387f52051d5bb1ce8c1520015ba803`: added a **staged, unregistered** SQL guard for elective `ACTIVE`/`WAITLISTED` writes. It reads canonical primary program, DB02 current term and known-year-start semantics, and takes `FOR SHARE` locks on enrollment/section/progression rows. This explicitly depends on Chat 4's unregistered `cohort_progression_state`; Chat 1 alone can register after reconciling triggers, actor privileges, promotion lock ordering and PostgreSQL concurrency.
+- `tests/db03-elective-program-oracle.test.mjs`, commit `5a17af3fe9604e96c2b8c20a633c577d7c0ba698`: eight static Node source-guard test definitions authored.
+
+**Acceptance distinction:** All four changes are committed on `main`, but the Node/Vitest/PostgreSQL tests were **not executed** in this iteration, the SQL is **not an active migration**, and DB02 term/year live consumer integration remains open. CI billing must not block work; it also cannot be substituted for real DB proof.
+
+**Follow-up integration requirements:** (1) Register DB02 progression state; (2) update the DB03 read-service predicates to compare canonical term and null-tolerant year, not just optional period UUID; (3) review/activate the staged DB03 direct-write SQL only after DB02; (4) execute direct-SQL wrong-program, wrong-term, differing known-year, null-year, and promotion/transfer interleaving witnesses in disposable PostgreSQL; (5) retain current-year/term checks for stale historical ACTIVE memberships on every elective delivery read. No `DONE_VERIFIED` is credited.
